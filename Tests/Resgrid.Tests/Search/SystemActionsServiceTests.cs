@@ -131,6 +131,42 @@ namespace Resgrid.Tests.Search
 		}
 
 		[Test]
+		public async Task Dispatcher_desk_pages_follow_the_pages_own_access_rules()
+		{
+			// PR #589: Shift_View alone used to list the desk board, the break planner and the activity page, which then answered 401.
+			_claims.Add("Shift:View");
+			var access = new Mock<IDispatchAccessService>();
+			var presence = new Mock<IDispatcherPresenceService>();
+			var authorization = new Mock<IAuthorizationService>();
+			authorization.Setup(a => a.GetShiftManagementScopeAsync("u1", 7)).ReturnsAsync(ShiftManagementScope.None());
+			var service = new SystemActionsService(_flags.Object, _cutover.Object, new System.Lazy<IDispatchAccessService>(() => access.Object),
+				new System.Lazy<IDispatcherPresenceService>(() => presence.Object), new System.Lazy<IAuthorizationService>(() => authorization.Object));
+			var deskKeys = new[] { "dispatcher-desk", "dispatcher-breaks", "dispatcher-desk-activity" };
+
+			async Task<List<string>> Keys(SearchPrincipal principal) => (await service.ListAsync(principal)).Select(h => h.Key).Where(deskKeys.Contains).ToList();
+
+			(await Keys(Principal())).Should().BeEmpty("a shift viewer who is not on the desk is refused by those pages");
+			(await _service.ListAsync(Principal())).Select(h => h.Key).Should().NotContain(deskKeys, "without the desk services the rule fails closed");
+			(await _service.ListAsync(Principal())).Select(h => h.Key).Should().Contain("shift-dispatchers", "the Shifts On Duty page has no desk rule");
+
+			access.Setup(a => a.CanUseDispatchAsync(7, "u1")).ReturnsAsync(true);
+			(await Keys(Principal())).Should().BeEquivalentTo(new[] { "dispatcher-desk", "dispatcher-breaks" }, "activity is for desk supervisors");
+
+			access.Setup(a => a.CanUseDispatchAsync(7, "u1")).ReturnsAsync(false);
+			authorization.Setup(a => a.GetShiftManagementScopeAsync("u1", 7)).ReturnsAsync(new ShiftManagementScope { AllGroups = true });
+			(await Keys(Principal())).Should().BeEquivalentTo(new[] { "dispatcher-desk", "dispatcher-breaks" }, "shift managers see the board and the planner");
+
+			presence.Setup(p => p.CanSuperviseAsync(7, "u1")).ReturnsAsync(true);
+			(await Keys(Principal())).Should().BeEquivalentTo(deskKeys);
+
+			presence.Setup(p => p.CanSuperviseAsync(7, "u1")).ThrowsAsync(new System.InvalidOperationException("desk down"));
+			authorization.Setup(a => a.GetShiftManagementScopeAsync("u1", 7)).ReturnsAsync(ShiftManagementScope.None());
+			(await Keys(Principal())).Should().BeEmpty("a failed check hides the entry");
+
+			(await _service.ListAsync(Principal(admin: true))).Select(h => h.Key).Should().Contain(deskKeys, "department admins pass every desk page");
+		}
+
+		[Test]
 		public void Within_one_edit_is_symmetric_and_bounded()
 		{
 			SystemActionsService.WithinOneEdit("personel", "personnel").Should().BeTrue();

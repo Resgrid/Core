@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
@@ -22,10 +23,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 	/// <summary>
 	/// The dispatcher desk ("Dispatchers on duty", M0324): signing in to the desk from the Dispatch app, the work routed to on-duty
 	/// dispatchers (pending and scheduled calls, texts, phone calls, emails, chats), their breaks and the coverage timeline, and the
-	/// dispatch rosters of shift days. Everything but the shift roster reads and changes is for people allowed to work dispatch
+	/// dispatch rosters of shift days. Everything but the shift roster reads and changes (and taking the caller's own device off
+	/// desk pushes) is for people allowed to work dispatch
 	/// (the Dispatch app login permission, 403 otherwise); acting for another dispatcher (their breaks, work they hold) and the
 	/// activity numbers are for desk supervisors, shift managers and department admins. Every POST answers a
-	/// <see cref="DispatcherDeskActionResult"/>: a refusal is Success false with the DispatcherDeskErrors name, never an HTTP error.
+	/// <see cref="DispatcherDeskActionResult"/>: a business-rule refusal is HTTP 200 with Success false and the DispatcherDeskErrors
+	/// name. Authorization is the exception: a POST by a caller without the Dispatch app login permission gets 403 whose body is that
+	/// result with the NotADispatcher error, and a GET the caller may not read answers 403 with no body.
 	/// </summary>
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
@@ -316,7 +320,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					.Select(ToDutyData).ToList();
 				data.IsSignedUp = data.Dispatchers.Any(x => SameUser(x.UserId, UserId));
 				data.CanSignup = data.IsEnabled && !data.IsSignedUp && shift.AssignmentType == (int)ShiftAssignmentTypes.Signup &&
-								 await _shiftDispatchersService.IsEligibleDispatcherAsync(DepartmentId, UserId);
+								 !await IsShiftDayOverAsync(day, shift) && await _shiftDispatchersService.IsEligibleDispatcherAsync(DepartmentId, UserId);
 			}
 			else
 			{
@@ -543,17 +547,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(await ActionResultAsync(registered ? DispatcherDeskResult<bool>.Ok(true) : DispatcherDeskResult<bool>.Fail(DispatcherDeskErrors.ChannelUnavailable)));
 		}
 
-		/// <summary>Takes this device's push token off the desk subscriber (signing out of the Dispatch app).</summary>
+		/// <summary>
+		/// Takes this device's push token off the desk subscriber (signing out of the Dispatch app). Open to a caller who may no
+		/// longer dispatch too: it only ever removes the caller's own token, and a revoked dispatcher's device must be able to stop
+		/// desk pushes.
+		/// </summary>
 		[HttpPost("UnregisterDevice")]
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status403Forbidden)]
 		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<ActionResult<DispatcherDeskActionResult>> UnregisterDevice(DispatcherDeviceInput input, CancellationToken cancellationToken)
 		{
-			if (!await IsDispatcherAsync())
-				return NotADispatcher();
-
 			if (!IsValidDevice(input))
 				return await RefusedAsync(DispatcherDeskErrors.InvalidInput);
 
@@ -954,8 +958,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (mine.Any(x => x.Source != (int)ShiftDispatcherSources.Signup))
 				return await RefusedAsync(DispatcherDeskErrors.NotPermitted);
 
+			// The source is rechecked inside the remove so a row a manager re-assigned after the read above is not withdrawn.
 			return Ok(await ActionResultAsync(await _shiftDispatchersService.RemoveFromDayAsync(DepartmentId, day.ShiftDayId, UserId, UserId, Trim(input.Note, 500),
-				cancellationToken)));
+				(int)ShiftDispatcherSources.Signup, cancellationToken)));
 		}
 
 		/// <summary>A shift manager puts a dispatcher on one day of the shift (either shift type).</summary>
@@ -1037,16 +1042,36 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>ISO-8601 UTC, or null.</summary>
 		public static string Iso(DateTime? utc) => utc.HasValue ? Iso(utc.Value) : null;
 
-		/// <summary>An ISO-8601 instant (zone-less = UTC) as UTC; false for anything else or outside years 1900 to 9000.</summary>
+		/// <summary>
+		/// An ISO-8601 date and time (zone-less = UTC) as UTC; false for anything else or outside years 1900 to 9000. A time alone
+		/// ("09:00") is refused: it would take today's date from the server clock (the RecurringCalls rule).
+		/// </summary>
 		public static bool TryParseInstant(string value, out DateTime utc)
 		{
 			utc = default;
-			if (string.IsNullOrWhiteSpace(value) ||
+			if (string.IsNullOrWhiteSpace(value) || !StartsWithIsoDateAndTime(value.Trim()) ||
 				!DateTimeOffset.TryParse(value.Trim(), CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out var parsed) ||
 				parsed.Year < 1900 || parsed.Year > 9000)
 				return false;
 
 			utc = DateTime.SpecifyKind(parsed.UtcDateTime, DateTimeKind.Utc);
+			return true;
+		}
+
+		/// <summary>"yyyy-MM-ddTHH:mm" at the start (seconds, fraction and zone may follow).</summary>
+		private static bool StartsWithIsoDateAndTime(string value)
+		{
+			const string pattern = "dddd-dd-ddTdd:dd";
+			if (value.Length < pattern.Length)
+				return false;
+
+			for (var i = 0; i < pattern.Length; i++)
+			{
+				var ok = pattern[i] == 'd' ? value[i] >= '0' && value[i] <= '9' : value[i] == pattern[i];
+				if (!ok)
+					return false;
+			}
+
 			return true;
 		}
 
@@ -1140,9 +1165,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 		}
 
-		/// <summary>Answer (a held caller is waiting) or Call back (the item has a phone number to ring back).</summary>
+		/// <summary>Answer (a held caller is waiting) or Call back (a text or phone call with a phone number to ring back).</summary>
 		private static bool CanConnectVoice(DispatcherQueueItem item, IEnumerable<DispatcherQueueEvent> events) =>
-			item.IsOpen() && (IsCallerWaiting(item, events) || IsPhoneNumber(item.SourceAddress));
+			item.IsOpen() && (IsCallerWaiting(item, events) ||
+				DispatcherRoutingPolicy.CanCallBack((DispatcherQueueItemKinds)item.Kind) && IsPhoneNumber(item.SourceAddress));
 
 		private async Task<List<DispatcherQueueItemData>> ToItemsDataAsync(IEnumerable<DispatcherQueueItem> items)
 		{
@@ -1157,11 +1183,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 				List<DispatcherQueueEvent> events = null;
 				List<DispatcherConversationMessage> messages = null;
 				Call call = null;
+				var snapshot = item;
 
 				if (IsConversation(item) || item.Kind == (int)DispatcherQueueItemKinds.Voice)
 				{
-					// Conversation counts and the held caller's state come from the item's history.
+					// Conversation counts and the held caller's state come from the item's history. The row then takes everything
+					// (its call link included) from that later read, so a call linked in between never shows beside a null CallId.
 					var detail = await _routingService.GetItemDetailAsync(DepartmentId, item.DispatcherQueueItemId);
+					snapshot = detail?.Item != null && detail.Item.DepartmentId == DepartmentId ? detail.Item : item;
+					if (!snapshot.IsOpen())
+						continue; // finished between the two reads: no longer open work
+
 					events = detail?.Events;
 					messages = detail?.Messages;
 					call = detail?.Call;
@@ -1169,19 +1201,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 						calls[call.CallId] = call;
 				}
 
-				if (call == null && item.CallId.HasValue)
+				if (call == null && snapshot.CallId.HasValue)
 				{
-					if (!calls.TryGetValue(item.CallId.Value, out call))
+					if (!calls.TryGetValue(snapshot.CallId.Value, out call))
 					{
-						call = await _callsService.GetCallByIdAsync(item.CallId.Value);
+						call = await _callsService.GetCallByIdAsync(snapshot.CallId.Value);
 						if (call != null && call.DepartmentId != DepartmentId)
 							call = null;
 
-						calls[item.CallId.Value] = call;
+						calls[snapshot.CallId.Value] = call;
 					}
 				}
 
-				list.Add(await ToItemDataAsync(item, call, events, messages));
+				list.Add(await ToItemDataAsync(snapshot, call, events, messages));
 			}
 
 			return list;
@@ -1231,7 +1263,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			};
 		}
 
-		private async Task<DispatcherConversationMessageData> ToMessageDataAsync(DispatcherConversationMessage message)
+		private async Task<DispatcherConversationMessageData> ToMessageDataAsync(DispatcherConversationMessage message) =>
+			ToMessageData(message, await NameForAsync(message.UserId));
+
+		private static DispatcherConversationMessageData ToMessageData(DispatcherConversationMessage message, string userName)
 		{
 			return new DispatcherConversationMessageData
 			{
@@ -1241,7 +1276,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				ToAddress = message.ToAddress,
 				Body = message.Body,
 				UserId = message.UserId,
-				UserName = await NameForAsync(message.UserId),
+				UserName = userName,
 				CreatedOn = Iso(message.CreatedOn),
 				DeliveryState = message.DeliveryState,
 				Error = message.Error
@@ -1393,7 +1428,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private async Task<ActionResult> RefusedAsync(DispatcherDeskErrors error) =>
 			Ok(await ActionResultAsync(DispatcherDeskResult<bool>.Fail(error)));
 
-		/// <summary>The action's outcome with the caller's refreshed desk member.</summary>
+		/// <summary>
+		/// The action's outcome with the caller's refreshed desk member. The outcome is already committed (a reply may be sent), so a
+		/// failed refresh read leaves Me unset rather than failing the request: a client that saw an error would repeat the action.
+		/// </summary>
 		private async Task<DispatcherDeskActionResult> ActionResultAsync<T>(DispatcherDeskResult<T> result)
 		{
 			result ??= DispatcherDeskResult<T>.Fail(DispatcherDeskErrors.InvalidInput);
@@ -1405,9 +1443,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 				Warnings = (result.Warnings ?? new List<DispatcherDeskWarning>()).Where(x => x != null).Select(ToWarningData).ToList()
 			};
 
-			var me = await _presenceService.GetMemberAsync(DepartmentId, UserId, DateTime.UtcNow);
-			if (me != null)
-				action.Me = await ToMemberDataAsync(me, await _presenceService.CanSuperviseAsync(DepartmentId, UserId));
+			try
+			{
+				var me = await _presenceService.GetMemberAsync(DepartmentId, UserId, DateTime.UtcNow);
+				if (me != null)
+					action.Me = await ToMemberDataAsync(me, await _presenceService.CanSuperviseAsync(DepartmentId, UserId));
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Dispatcher desk: refreshing the caller's desk member after an action");
+			}
 
 			action.Status = result.Success ? ResponseHelper.Success : ResponseHelper.Failure;
 			ResponseHelper.PopulateV4ResponseData(action);
@@ -1415,14 +1460,35 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return action;
 		}
 
+		/// <summary>The item as it is after the action, or as the action returned it when the refresh read fails (supplemental, like Me).</summary>
+		private async Task<DispatcherQueueItemData> RefreshedItemDataAsync(DispatcherQueueItem fallback)
+		{
+			DispatcherQueueItemDetail detail = null;
+			try
+			{
+				detail = await _routingService.GetItemDetailAsync(DepartmentId, fallback.DispatcherQueueItemId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Dispatcher desk: refreshing item {fallback.DispatcherQueueItemId} after an action");
+			}
+
+			try
+			{
+				return await ToItemDataAsync(detail?.Item ?? fallback, detail?.Call, detail?.Events, detail?.Messages);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Dispatcher desk: mapping item {fallback.DispatcherQueueItemId} after an action");
+				return null;
+			}
+		}
+
 		private async Task<DispatcherDeskActionResult> ItemActionResultAsync(DispatcherDeskResult<DispatcherQueueItem> result)
 		{
 			var action = await ActionResultAsync(result);
 			if (result?.Value != null)
-			{
-				var detail = await _routingService.GetItemDetailAsync(DepartmentId, result.Value.DispatcherQueueItemId);
-				action.Item = await ToItemDataAsync(detail?.Item ?? result.Value, detail?.Call, detail?.Events, detail?.Messages);
-			}
+				action.Item = await RefreshedItemDataAsync(result.Value);
 
 			return action;
 		}
@@ -1440,13 +1506,31 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var action = await ActionResultAsync(result);
 			if (result?.Value != null)
-				action.Message = await ToMessageDataAsync(result.Value);
+			{
+				try
+				{
+					action.Message = await ToMessageDataAsync(result.Value);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Dispatcher desk: naming the sender of message {result.Value.DispatcherConversationMessageId}");
+					action.Message = ToMessageData(result.Value, null);
+				}
+			}
 
 			if (result?.Success == true)
 			{
-				var detail = await _routingService.GetItemDetailAsync(DepartmentId, itemId);
-				if (detail?.Item != null)
-					action.Item = await ToItemDataAsync(detail.Item, detail.Call, detail.Events, detail.Messages);
+				// The reply is already sent: a failed refresh read must not turn it into an error the app would retry.
+				try
+				{
+					var detail = await _routingService.GetItemDetailAsync(DepartmentId, itemId);
+					if (detail?.Item != null)
+						action.Item = await ToItemDataAsync(detail.Item, detail.Call, detail.Events, detail.Messages);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Dispatcher desk: refreshing item {itemId} after a message");
+				}
 			}
 
 			return action;
@@ -1505,6 +1589,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var shift = day != null ? await _shiftsService.GetShiftByIdAsync(day.ShiftId) : null;
 
 			return shift == null || shift.DepartmentId != DepartmentId ? (null, null) : (day, shift);
+		}
+
+		/// <summary>The shift day has ended in department-local time (the boundary ShiftDispatchersService.SignupForDayAsync refuses at).</summary>
+		private async Task<bool> IsShiftDayOverAsync(ShiftDay day, Shift shift)
+		{
+			_department ??= await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var (_, endLocal) = ShiftTimeWindow.GetWindow(day.Day, shift.StartTime, shift.EndTime, shift.Hours);
+
+			return DispatcherDutyCalculator.ToUtc(endLocal, _department) <= DateTime.UtcNow;
 		}
 
 		/// <summary>The dispatch roster is the whole shift's (no group), so it takes the whole shift's management scope.</summary>

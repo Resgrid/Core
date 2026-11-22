@@ -597,7 +597,8 @@ namespace Resgrid.Services.Intake
 			}
 			catch (Exception ex)
 			{
-				// The desk's sweep adds the pending call it missed.
+				// The call event that follows tries again under the same kind (DispatcherDeskCallEventService reads the call's intake
+				// channel), as does every later update of the waiting call, so a desk that takes chats but not pending calls still gets it.
 				Framework.Logging.LogException(ex, $"Intake chat call {saved.CallId} could not be put on the dispatcher desk.");
 			}
 		}

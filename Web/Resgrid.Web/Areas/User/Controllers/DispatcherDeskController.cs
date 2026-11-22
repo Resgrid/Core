@@ -418,6 +418,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (entity.State != (int)DispatcherBreakStates.Scheduled)
 					return Json(Refused(DispatcherDeskErrors.BreakNotStartable));
+
+				// The editor posts zone-less local text. An unchanged start keeps its stored instant: in the repeated hour when clocks go
+				// back, the text names two instants and converting it again could move the break by an hour on a note-only edit.
+				if (entity.ScheduledStartOn.HasValue && TryParseLocal(ToInput(entity.ScheduledStartOn.Value, department), out var storedLocal) &&
+					storedLocal == localStart)
+					startUtc = entity.ScheduledStartOn.Value;
 			}
 			else
 			{
@@ -640,13 +646,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return await CanSuperviseAsync();
 		}
 
-		/// <summary>Supervisors plan anyone's breaks; a dispatcher plans their own on a shift that allows self-scheduled breaks.</summary>
+		/// <summary>
+		/// Supervisors plan anyone's breaks; a dispatcher (current Dispatch access, as for every other self-service action) plans their
+		/// own on a shift that allows self-scheduled breaks. The break service checks again against the duty window a re-planned
+		/// break moves into.
+		/// </summary>
 		private async Task<bool> CanPlanBreakAsync(string userId, int? shiftId)
 		{
 			if (await CanSuperviseAsync())
 				return true;
 
-			if (!SameUser(userId, UserId) || !shiftId.HasValue)
+			if (!SameUser(userId, UserId) || !shiftId.HasValue || !await _dispatchAccessService.CanUseDispatchAsync(DepartmentId, UserId))
 				return false;
 
 			return (await GetSelfSchedulingShiftIdsAsync()).Contains(shiftId.Value);
@@ -945,10 +955,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return new DateTimeOffset(DateTime.SpecifyKind(utc, DateTimeKind.Utc)).ToUnixTimeMilliseconds();
 		}
 
+		/// <summary>
+		/// Dates the pages accept: far enough from <see cref="DateTime.MinValue"/> / <see cref="DateTime.MaxValue"/> that the windows built
+		/// from them (a week back for the activity report, the next day and the time zone shift for the planner) cannot overflow.
+		/// </summary>
+		internal static bool IsUsableDate(DateTime value) => value.Year >= 1900 && value.Year <= 9000;
+
 		internal static bool TryParseDate(string value, out DateTime date)
 		{
 			return DateTime.TryParseExact((value ?? "").Trim(), new[] { "yyyy-MM-dd", "MM/dd/yyyy", "M/d/yyyy" }, CultureInfo.InvariantCulture,
-				DateTimeStyles.None, out date);
+				DateTimeStyles.None, out date) && IsUsableDate(date);
 		}
 
 		/// <summary>A department-local date and time from a datetime-local input (yyyy-MM-ddTHH:mm), Kind unspecified.</summary>
@@ -958,7 +974,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				CultureInfo.InvariantCulture, DateTimeStyles.None, out local);
 			local = DateTime.SpecifyKind(local, DateTimeKind.Unspecified);
 
-			return parsed;
+			return parsed && IsUsableDate(local);
 		}
 
 		/// <summary>Shift colours come from a picker as #rrggbb; anything else is not passed to the page.</summary>

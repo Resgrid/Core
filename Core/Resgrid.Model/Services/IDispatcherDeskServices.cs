@@ -36,11 +36,22 @@ namespace Resgrid.Model.Services
 		Task<List<ShiftDispatcher>> GetRosterForShiftAsync(int shiftId);
 
 		/// <summary>
-		/// Replaces the shift's standing dispatch roster (rows with no day) with these people. Per-day rows (signups, one-day
-		/// assignments, day exclusions) are kept. People not allowed to dispatch are refused.
+		/// Replaces the shift's standing dispatch roster (rows with no day) with these people, in one transaction. Per-day rows
+		/// (signups, one-day assignments, day exclusions) are kept. People added who are not allowed to dispatch are refused.
 		/// </summary>
 		Task<DispatcherDeskResult<List<ShiftDispatcher>>> SetStandingRosterAsync(int departmentId, int shiftId,
 			IEnumerable<(string UserId, bool IsSupervisor)> dispatchers, string byUserId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Applies an editor's changes to the standing roster as it is now, not as it was when the editor opened: <paramref name="previous"/>
+		/// is what the editor showed as on the roster, <paramref name="wanted"/> what it submits. Only the people the editor took off
+		/// leave, only the people it put on join, and a supervisor flag changes only where the editor changed it, so a dispatcher added
+		/// by someone else meanwhile stays. Standing dispatchers the editor could not show stay too, unless they are no longer allowed
+		/// to dispatch. One transaction; people added who are not allowed to dispatch are refused.
+		/// </summary>
+		Task<DispatcherDeskResult<List<ShiftDispatcher>>> UpdateStandingRosterAsync(int departmentId, int shiftId,
+			IEnumerable<(string UserId, bool IsSupervisor)> previous, IEnumerable<(string UserId, bool IsSupervisor)> wanted, string byUserId,
+			CancellationToken cancellationToken = default);
 
 		/// <summary>A shift manager puts a dispatcher on one day (either shift type).</summary>
 		Task<DispatcherDeskResult<ShiftDispatcher>> AssignToDayAsync(int departmentId, int shiftDayId, string userId, bool isSupervisor,
@@ -55,6 +66,14 @@ namespace Resgrid.Model.Services
 		/// day keeps them off it. Their future breaks that day are cancelled.
 		/// </summary>
 		Task<DispatcherDeskResult<bool>> RemoveFromDayAsync(int departmentId, int shiftDayId, string userId, string byUserId, string note,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// <see cref="RemoveFromDayAsync(int, int, string, string, string, CancellationToken)"/>, refused (NotPermitted, nothing written)
+		/// unless the dispatcher's newest row for the day is of <paramref name="requiredSource"/> (a <see cref="ShiftDispatcherSources"/>
+		/// value): a withdrawal passes Signup so a row a manager has since made an assignment is never denied by the dispatcher.
+		/// </summary>
+		Task<DispatcherDeskResult<bool>> RemoveFromDayAsync(int departmentId, int shiftDayId, string userId, string byUserId, string note, int? requiredSource,
 			CancellationToken cancellationToken = default);
 
 		Task<DispatcherDeskResult<ShiftDispatcher>> ReviewSignupAsync(int departmentId, string shiftDispatcherId, bool approve, string byUserId,
@@ -212,7 +231,10 @@ namespace Resgrid.Model.Services
 		Task<DispatcherDeskResult<DispatcherQueueItem>> CompleteAsync(int departmentId, string dispatcherQueueItemId, string userId,
 			DispatcherQueueItemOutcomes outcome, int? callId, string note, bool notifyParticipant = true, CancellationToken cancellationToken = default);
 
-		/// <summary>Links the call created from a conversation (the item stays held until completed).</summary>
+		/// <summary>
+		/// Links the call created from a conversation (the item stays held until completed). Only the item's holder, anyone while it waits
+		/// in the queue, or a supervisor; the call's own open item, if it has one nobody is working, is completed as covered by this one.
+		/// </summary>
 		Task<DispatcherDeskResult<DispatcherQueueItem>> LinkCallAsync(int departmentId, string dispatcherQueueItemId, string userId, int callId,
 			CancellationToken cancellationToken = default);
 
@@ -266,6 +288,13 @@ namespace Resgrid.Model.Services
 		Task MarkOverflowedAsync(DispatcherQueueItem item, string note, CancellationToken cancellationToken = default);
 
 		/// <summary>
+		/// <see cref="MarkOverflowedAsync"/> only for the item as the caller read it: true when it was overflowed; false (nothing written)
+		/// when its Version or State changed since (a dispatcher accepted it, another overflow ran). <paramref name="item"/> is refreshed
+		/// from the stored row when it was overflowed or found changed.
+		/// </summary>
+		Task<bool> TryMarkOverflowedAsync(DispatcherQueueItem item, string note, CancellationToken cancellationToken = default);
+
+		/// <summary>
 		/// Voice webhooks (DispatcherVoiceController): records VoiceConnecting / VoiceConnected / VoiceEnded on the item, touches
 		/// its LastActivityOn and publishes the queue change. The item's state is not changed (an abandoned caller stays open for
 		/// Call back). Convention: events about the held caller's own leg carry <paramref name="userId"/> null; events about a
@@ -285,7 +314,11 @@ namespace Resgrid.Model.Services
 	{
 		Task<List<DispatcherConversationMessage>> GetMessagesAsync(int departmentId, string dispatcherQueueItemId);
 
-		/// <summary>Records an inbound message on the item (idempotent on the provider message id).</summary>
+		/// <summary>
+		/// Records an inbound message on the item, once per provider message id (unique in the table, so overlapping deliveries
+		/// store one row). Returns the stored message, or null when nothing was stored (an empty body, or a redelivery of a message
+		/// already stored): a caller announces MessageReceived only for a message it got back.
+		/// </summary>
 		Task<DispatcherConversationMessage> RecordInboundAsync(DispatcherQueueItem item, string from, string to, string body, string providerMessageId,
 			CancellationToken cancellationToken = default);
 
@@ -293,7 +326,7 @@ namespace Resgrid.Model.Services
 		Task<DispatcherDeskResult<DispatcherConversationMessage>> SendReplyAsync(int departmentId, string dispatcherQueueItemId, string userId, string body,
 			CancellationToken cancellationToken = default);
 
-		/// <summary>A desk note on the item, never sent.</summary>
+		/// <summary>A desk note on an open item, never sent: by its holder, or a desk supervisor (as a reply).</summary>
 		Task<DispatcherDeskResult<DispatcherConversationMessage>> AddNoteAsync(int departmentId, string dispatcherQueueItemId, string userId, string body,
 			CancellationToken cancellationToken = default);
 
@@ -334,7 +367,10 @@ namespace Resgrid.Model.Services
 		/// <summary>Break coming up (<paramref name="due"/> false) or due now (true).</summary>
 		Task NotifyBreakReminderAsync(DispatcherBreak dispatcherBreak, bool due, CancellationToken cancellationToken = default);
 
-		/// <summary>Break over (to the dispatcher) or, with supervisors, the dispatcher is overdue / was auto-returned.</summary>
+		/// <summary>
+		/// Break over: to the dispatcher when <paramref name="supervisorUserIds"/> is null; otherwise to those supervisors only (the
+		/// dispatcher is overdue / was auto-returned), and to nobody when the list is empty.
+		/// </summary>
 		Task NotifyBreakOverAsync(DispatcherBreak dispatcherBreak, IEnumerable<string> supervisorUserIds, bool autoReturned, CancellationToken cancellationToken = default);
 
 		/// <summary>Desk board changed (presence, breaks, roster): EventingTypes 19.</summary>

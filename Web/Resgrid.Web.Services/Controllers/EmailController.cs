@@ -426,13 +426,17 @@ namespace Resgrid.Web.Services.Controllers
 									await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedCall.CallId, pendingSteps);
 									saveRecorded = true;
 
+									var onDesk = true;
 									if (holdAsPending)
-										await _dispatcherEmailCallService.OnPendingCallSavedAsync(savedCall, message.FromFull?.Email, callEmail.Subject, cancellationToken);
+										onDesk = await _dispatcherEmailCallService.OnPendingCallSavedAsync(savedCall, message.FromFull?.Email, callEmail.Subject, cancellationToken);
 									else
 										await QueueCallBroadcastAsync(savedCall, cancellationToken);
 
 									if (enrich)
-										await QueueAiDispatchEnrichmentAsync(savedCall, 1, message.FromFull?.Email, cancellationToken);
+										await QueueAiDispatchEnrichmentAsync(savedCall, 1, message.FromFull?.Email, cancellationToken, heldForDispatcher: holdAsPending);
+
+									if (!onDesk)
+										return await DeskHandOffOwedAsync(receipt, enrich);
 
 									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 									return Ok(savedCall);
@@ -830,19 +834,40 @@ namespace Resgrid.Web.Services.Controllers
 			}
 
 			// A pending call (email call mode Pending / EnhancedAi) is never paged here: only its desk entry and screen refresh are owed.
+			var onDesk = true;
 			if (call.State == (int)CallStates.Pending)
 			{
 				if (receipt.Has(InboundEmailPendingSteps.CallAddedEvent))
-					await _dispatcherEmailCallService.OnPendingCallSavedAsync(call, message.FromFull?.Email, message.Subject, cancellationToken);
+					onDesk = await _dispatcherEmailCallService.OnPendingCallSavedAsync(call, message.FromFull?.Email, message.Subject, cancellationToken);
 			}
 			else if (receipt.Has(InboundEmailPendingSteps.CallBroadcast))
 				await QueueCallBroadcastAsync(call, cancellationToken, allowRunCardEnrichment);
 
-			if (receipt.Has(InboundEmailPendingSteps.AiEnrichment))
-				await QueueAiDispatchEnrichmentAsync(call, aiChannel, message.FromFull?.Email, cancellationToken);
+			// The original delivery recorded the desk step only for a call its email call mode held for a dispatcher.
+			var enrich = receipt.Has(InboundEmailPendingSteps.AiEnrichment);
+			if (enrich)
+				await QueueAiDispatchEnrichmentAsync(call, aiChannel, message.FromFull?.Email, cancellationToken,
+					heldForDispatcher: receipt.Has(InboundEmailPendingSteps.CallAddedEvent));
+
+			if (!onDesk)
+				return await DeskHandOffOwedAsync(receipt, enrich);
 
 			await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 			return Ok(call);
+		}
+
+		/// <summary>
+		/// A held emailed call is saved but could not be put on the dispatcher desk: only that step is still owed (the AI step, when
+		/// queued, is recorded done), and the claim goes back with a 400 so Postmark redelivers and the resume retries the desk entry.
+		/// With only Emails ticked nothing else would ever add it (the call-event hand-off and the desk's sweep take pending calls).
+		/// </summary>
+		private async Task<ActionResult> DeskHandOffOwedAsync(InboundEmailReceiptClaim receipt, bool aiQueued)
+		{
+			if (aiQueued)
+				await _inboundEmailReceiptsService.CompleteStepAsync(receipt, InboundEmailPendingSteps.AiEnrichment);
+
+			await _inboundEmailReceiptsService.ReleaseAsync(receipt);
+			return BadRequest();
 		}
 
 		/// <summary>Sends a group message an earlier delivery of the same email saved and then failed to send.</summary>
@@ -915,8 +940,10 @@ namespace Resgrid.Web.Services.Controllers
 		/// <summary>
 		/// AI dispatch, Enrich mode: the call above is already saved and its broadcast queued exactly as for GenericTemplate.
 		/// Enrichment runs afterwards on the worker, so a disabled host or a failed enqueue never touches the dispatch itself.
+		/// <paramref name="heldForDispatcher"/>: the dispatcher desk's email call mode held the call pending (the worker enriches it while
+		/// it waits, under that mode's entitlement); otherwise the job keeps the active-call, AI-format rule.
 		/// </summary>
-		private async Task QueueAiDispatchEnrichmentAsync(Call savedCall, int channel, string sender, CancellationToken cancellationToken)
+		private async Task QueueAiDispatchEnrichmentAsync(Call savedCall, int channel, string sender, CancellationToken cancellationToken, bool heldForDispatcher = false)
 		{
 			if (!Config.AiDispatchConfig.EnrichEnabled || savedCall == null || savedCall.CallId <= 0)
 				return;
@@ -927,7 +954,8 @@ namespace Resgrid.Web.Services.Controllers
 				await _queueService.EnqueueAiDispatchTriageAsync(new AiDispatchQueueItem
 				{
 					DepartmentId = savedCall.DepartmentId, CallId = savedCall.CallId, Channel = channel, QueuedOnUtc = DateTime.UtcNow,
-					SenderNotAllowed = !await _aiDispatchAdminService.IsSenderAllowedAsync(savedCall.DepartmentId, sender)
+					SenderNotAllowed = !await _aiDispatchAdminService.IsSenderAllowedAsync(savedCall.DepartmentId, sender),
+					HeldForDispatcher = heldForDispatcher
 				}, cancellationToken);
 			}
 			catch (Exception ex)

@@ -45,7 +45,13 @@ namespace Resgrid.Web.Services.Controllers
 		/// <summary>Seconds a call back rings the caller.</summary>
 		public const int CallBackRingSeconds = 30;
 
+		/// <summary>How often a transcription that arrived before its voicemail call was linked re-reads the item (within Twilio's 15 s).</summary>
+		public const int TranscriptionLinkChecks = 4;
+
 		private static readonly TimeSpan TtsPromptBudget = TimeSpan.FromSeconds(6);
+
+		/// <summary>The pause between those re-reads (tests set zero).</summary>
+		public TimeSpan TranscriptionLinkCheckInterval { get; set; } = TimeSpan.FromSeconds(1);
 
 		private readonly IDispatcherQueueItemsRepository _dispatcherQueueItemsRepository;
 		private readonly IDispatcherRoutingService _dispatcherRoutingService;
@@ -172,7 +178,9 @@ namespace Resgrid.Web.Services.Controllers
 
 		/// <summary>
 		/// The voicemail's record action: the message becomes a pending call (recording in its notes) and the overflowed voice item
-		/// becomes that call, waiting in the queue again for a dispatcher (Call back works from it). A repeat does nothing more.
+		/// becomes that call, waiting in the queue again for a dispatcher (Call back works from it). A repeat does nothing more. The
+		/// caller hears that the message was passed on only once it is held as a pending call; otherwise they are asked to call back,
+		/// and the recording is kept in the item's history for the dispatchers.
 		/// </summary>
 		[HttpGet(DispatcherVoiceRoutes.Voicemail)]
 		[HttpPost(DispatcherVoiceRoutes.Voicemail)]
@@ -185,22 +193,32 @@ namespace Resgrid.Web.Services.Controllers
 			var item = await CallerItemAsync(itemId);
 			var recordingUrl = Field("RecordingUrl");
 
+			// An item that already is its voicemail call (a repeat of this request) has nothing more to save.
+			var durable = item?.CallId != null;
 			if (item != null && !item.CallId.HasValue && !string.IsNullOrWhiteSpace(recordingUrl))
 			{
 				try
 				{
 					// The caller is done with the line: the reopened item must not read as a caller still waiting.
 					await RecordVoiceEventAsync(item, DispatcherQueueEventTypes.VoiceEnded, null, "Caller left a voicemail");
-					await _pendingCalls.FromVoicemailAsync(item, item.SourceAddress ?? DeskPhoneNumbers.ToE164(Field("From")), recordingUrl,
+					var result = await _pendingCalls.FromVoicemailAsync(item, item.SourceAddress ?? DeskPhoneNumbers.ToE164(Field("From")), recordingUrl,
 						ParseInt(Field("RecordingDuration")), Field("RecordingSid"));
+					durable = result != null && result.Durable;
 				}
 				catch (Exception ex)
 				{
 					Logging.LogException(ex, $"Dispatcher desk: the voicemail for item {itemId} could not be made a pending call.");
 				}
+
+				if (!durable)
+					await RecordVoiceEventAsync(item, DispatcherQueueEventTypes.VoiceEnded, null, $"The voicemail could not be saved as a call. Recording: {recordingUrl}");
+			}
+			else if (item == null && !string.IsNullOrWhiteSpace(recordingUrl))
+			{
+				Logging.LogError($"[Dispatcher desk] Voicemail for unknown item {itemId} could not be kept: {recordingUrl}");
 			}
 
-			await AppendPromptAsync(response, DispatcherDeskVoicePrompts.VoicemailThanks, item?.DepartmentId);
+			await AppendPromptAsync(response, durable ? DispatcherDeskVoicePrompts.VoicemailThanks : DispatcherDeskVoicePrompts.VoicemailNotSaved, item?.DepartmentId);
 			response.Hangup();
 
 			return Twiml(response);
@@ -218,12 +236,25 @@ namespace Resgrid.Web.Services.Controllers
 			var text = Field("TranscriptionText");
 			var status = Field("TranscriptionStatus");
 
-			if (item?.CallId == null || string.IsNullOrWhiteSpace(text) ||
+			if (item == null || string.IsNullOrWhiteSpace(text) ||
 				(!string.IsNullOrWhiteSpace(status) && !status.Equals("completed", StringComparison.OrdinalIgnoreCase)))
-			{
-				if (item != null && !item.CallId.HasValue)
-					Logging.LogInfo($"[Dispatcher desk] Voicemail transcription for item {itemId} arrived before its pending call existed; not added.");
+				return Twiml(new VoiceResponse());
 
+			// Twilio does not order this callback after the record action: give the voicemail's save a moment to link its call.
+			for (var wait = 0; !item.CallId.HasValue && wait < TranscriptionLinkChecks; wait++)
+			{
+				if (TranscriptionLinkCheckInterval > TimeSpan.Zero)
+					await System.Threading.Tasks.Task.Delay(TranscriptionLinkCheckInterval);
+
+				item = await AnyItemAsync(item.DispatcherQueueItemId) ?? item;
+			}
+
+			if (!item.CallId.HasValue)
+			{
+				// Still no call (its save failed, or it could not be linked): the transcript stays with the item's history rather than
+				// being dropped.
+				Logging.LogInfo($"[Dispatcher desk] Voicemail transcription for item {itemId} arrived before its pending call was linked; kept on the item.");
+				await RecordVoiceEventAsync(item, DispatcherQueueEventTypes.VoiceEnded, null, $"Voicemail transcription (automatic): {text.Trim()}");
 				return Twiml(new VoiceResponse());
 			}
 
@@ -458,12 +489,14 @@ namespace Resgrid.Web.Services.Controllers
 		/// Status callback of a leg the desk placed (<see cref="DispatcherVoiceRoutes.Legs"/>; the voice service sends
 		/// <c>leg=dispatcher</c> for both). A dispatcher's phone that was busy, did not answer or failed, or that hung up before
 		/// connecting, returns the item to the queue only while a held caller is still waiting for it (Answer); a call back leg
-		/// (an abandoned caller, or a text item) only records what happened and the dispatcher keeps the item.
+		/// (an abandoned caller, or a text item) only records what happened and the dispatcher keeps the item. <paramref name="attempt"/>
+		/// (UTC ticks the voice service took before placing the leg) ties the callback to its ring: a late status of an earlier ring,
+		/// once the dispatcher has been rung again, only records what happened, so it cannot return the item while the newer leg rings.
 		/// </summary>
 		[HttpGet(DispatcherVoiceRoutes.Status)]
 		[HttpPost(DispatcherVoiceRoutes.Status)]
 		[ValidateRequest]
-		public async Task<ActionResult> Status([FromQuery] string itemId, [FromQuery] string userId, [FromQuery] string leg)
+		public async Task<ActionResult> Status([FromQuery] string itemId, [FromQuery] string userId, [FromQuery] string leg, [FromQuery] long? attempt = null)
 		{
 			await LoadFieldsAsync();
 
@@ -482,11 +515,14 @@ namespace Resgrid.Web.Services.Controllers
 						 !string.Equals(leg, DispatcherVoiceRoutes.Legs.CallBack, StringComparison.OrdinalIgnoreCase)
 				? (await _dispatcherRoutingService.GetItemDetailAsync(item.DepartmentId, item.DispatcherQueueItemId))?.Events
 				: null;
-			var answerLeg = events != null && CallerWaiting(events);
+			var attemptStartedOn = AttemptStartedOn(attempt);
+			var superseded = events != null && attemptStartedOn.HasValue && NewerAttemptStarted(events, userId, attemptStartedOn.Value);
+			var answerLeg = events != null && CallerWaiting(events) && !superseded;
 
 			if (unanswered)
 			{
-				await RecordVoiceEventAsync(item, DispatcherQueueEventTypes.VoiceEnded, userId, $"Dispatcher's phone: {status}");
+				await RecordVoiceEventAsync(item, DispatcherQueueEventTypes.VoiceEnded, userId,
+					superseded ? $"Dispatcher's phone: {status} (an earlier ring)" : $"Dispatcher's phone: {status}");
 
 				if (answerLeg)
 					await ReleaseIfHeldAsync(item, userId, null);
@@ -509,7 +545,7 @@ namespace Resgrid.Web.Services.Controllers
 		#region Helpers
 
 		/// <summary>The decision of <see cref="Hold"/>: whether the held caller must leave the queue for the overflow handling now.</summary>
-		private async Task<bool> LeaveHoldAsync(DispatcherQueueItem item)
+		private async Task<bool> LeaveHoldAsync(DispatcherQueueItem item, bool recheck = true)
 		{
 			if (item.State == (int)DispatcherQueueItemStates.Overflowed)
 				return true;
@@ -531,11 +567,27 @@ namespace Resgrid.Web.Services.Controllers
 			if (heldSeconds < limit)
 				return false;
 
-			await MarkOverflowedAsync(item, item.State == (int)DispatcherQueueItemStates.Queued
-				? $"No dispatcher free after {(int)heldSeconds} seconds on hold: voicemail"
-				: $"Not connected after {(int)heldSeconds} seconds on hold: voicemail");
+			// The limit belongs to the state read above. A dispatcher who took the caller (or was offered them) while the settings
+			// loaded changes the item; its own limit decides then, so a caller being answered is not sent to voicemail.
+			if (recheck)
+			{
+				var current = await _dispatcherQueueItemsRepository.GetItemAsync(item.DispatcherQueueItemId);
+				if (current != null && (current.Version != item.Version || current.State != item.State))
+					return await LeaveHoldAsync(current, recheck: false);
+			}
 
-			return true;
+			var note = item.State == (int)DispatcherQueueItemStates.Queued
+				? $"No dispatcher free after {(int)heldSeconds} seconds on hold: voicemail"
+				: $"Not connected after {(int)heldSeconds} seconds on hold: voicemail";
+
+			// The overflow is written only for the version the limit was measured against. A dispatcher who takes the caller between
+			// the re-read above and this write makes it fail; the caller then stays on hold and the next hold poll decides on the item
+			// as it is by then (a closed item still leaves for the message).
+			if (await TryMarkOverflowedAsync(item, note))
+				return true;
+
+			var latest = await _dispatcherQueueItemsRepository.GetItemAsync(item.DispatcherQueueItemId);
+			return latest == null || !latest.IsOpen();
 		}
 
 		private async Task<ActionResult> OverflowTwimlAsync(DispatcherQueueItem item)
@@ -641,6 +693,21 @@ namespace Resgrid.Web.Services.Controllers
 			return mine.Any(x => x.EventType == (int)DispatcherQueueEventTypes.VoiceConnected && (lastAttempt == null || x.OccurredOn >= lastAttempt.OccurredOn));
 		}
 
+		/// <summary>The ring attempt's start from the status callback's <c>attempt</c> (UTC ticks); null for a leg placed without one.</summary>
+		public static DateTime? AttemptStartedOn(long? ticks) =>
+			ticks.HasValue && ticks.Value > 0 && ticks.Value <= DateTime.MaxValue.Ticks ? new DateTime(ticks.Value, DateTimeKind.Utc) : (DateTime?)null;
+
+		/// <summary>
+		/// The dispatcher was rung again after the attempt that started at <paramref name="attemptStartedOn"/>: every placed leg records
+		/// one VoiceConnecting for its dispatcher after it is placed, so a second one since then belongs to a later ring.
+		/// </summary>
+		public static bool NewerAttemptStarted(IEnumerable<DispatcherQueueEvent> events, string userId, DateTime attemptStartedOn)
+		{
+			return (events ?? Enumerable.Empty<DispatcherQueueEvent>())
+				.Count(x => x.EventType == (int)DispatcherQueueEventTypes.VoiceConnecting && string.Equals(x.UserId, userId, StringComparison.OrdinalIgnoreCase) &&
+							x.OccurredOn >= attemptStartedOn) > 1;
+		}
+
 		private async System.Threading.Tasks.Task ReleaseAsync(DispatcherQueueItem item, string userId, string detail)
 		{
 			try
@@ -678,6 +745,27 @@ namespace Resgrid.Web.Services.Controllers
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
+			}
+		}
+
+		/// <summary>
+		/// <see cref="MarkOverflowedAsync"/> only while the item still has the version and state the caller read: false when another
+		/// write (a dispatcher accepting the caller) got there first. A failed write is logged and counts as overflowed, as before, so
+		/// a caller is never left on hold because the desk store is unreachable.
+		/// </summary>
+		private async Task<bool> TryMarkOverflowedAsync(DispatcherQueueItem item, string note)
+		{
+			if (item == null || !item.IsOpen())
+				return true;
+
+			try
+			{
+				return await _dispatcherRoutingService.TryMarkOverflowedAsync(item, note, CancellationToken.None);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return true;
 			}
 		}
 

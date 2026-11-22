@@ -41,7 +41,16 @@ namespace Resgrid.Services
 
 		public static string CallBackUrl(string itemId, string userId) => Url("DeskCallBack", itemId, userId);
 
-		public static string LegStatusUrl(string itemId, string userId) => Url("DeskLegStatus", itemId, userId) + "&leg=dispatcher";
+		/// <summary>
+		/// The status callback of a dispatcher leg. <paramref name="attemptStartedOn"/> (UTC ticks, taken before the leg is placed) names
+		/// the ring attempt, so a late terminal status of an earlier attempt does not return the item while a newer leg rings.
+		/// </summary>
+		public static string LegStatusUrl(string itemId, string userId, DateTime? attemptStartedOn = null) =>
+			Url("DeskLegStatus", itemId, userId) + "&leg=dispatcher" +
+			(attemptStartedOn.HasValue ? "&attempt=" + attemptStartedOn.Value.Ticks.ToString(System.Globalization.CultureInfo.InvariantCulture) : string.Empty);
+
+		/// <summary>The clock of ring attempts (tests replace it).</summary>
+		public Func<DateTime> UtcNow { get; set; } = () => DateTime.UtcNow;
 
 		private static string Url(string action, string itemId, string userId) =>
 			$"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/{action}?itemId={Uri.EscapeDataString(itemId ?? string.Empty)}&userId={Uri.EscapeDataString(userId ?? string.Empty)}";
@@ -95,32 +104,39 @@ namespace Resgrid.Services
 			if (!item.IsOpen())
 				return DispatcherDeskResult<DispatcherQueueItem>.Fail(DispatcherDeskErrors.ItemNotAvailable);
 
-			if (callBack ? DispatcherPresenceService.NormalizePhone(item.SourceAddress) == null : item.Kind != (int)DispatcherQueueItemKinds.Voice)
+			if (callBack
+					? !DispatcherRoutingPolicy.CanCallBack((DispatcherQueueItemKinds)item.Kind) || DispatcherPresenceService.NormalizePhone(item.SourceAddress) == null
+					: item.Kind != (int)DispatcherQueueItemKinds.Voice)
 				return DispatcherDeskResult<DispatcherQueueItem>.Fail(DispatcherDeskErrors.ChannelUnavailable);
 
 			var number = await ResolveCallbackNumberAsync(departmentId, userId, callbackNumber);
 			if (number == null)
 				return DispatcherDeskResult<DispatcherQueueItem>.Fail(DispatcherDeskErrors.NoCallbackNumber);
 
+			// Every prerequisite of the dial is checked before the item is taken: a department with no number to call from must
+			// leave the work where it was (offered, or waiting in the queue for overflow), not held by someone who cannot call.
+			var from = DispatcherPresenceService.NormalizePhone(item.TargetAddress) ??
+					   DispatcherPresenceService.NormalizePhone(await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(departmentId));
+			if (from == null)
+				return DispatcherDeskResult<DispatcherQueueItem>.Fail(DispatcherDeskErrors.ChannelUnavailable, "The department has no number to call from.");
+
 			// The dispatcher takes the item first (an offer to them, or the queue), so nobody else is offered it while their phone rings.
+			var acquiredNow = false;
 			if (!(item.State == (int)DispatcherQueueItemStates.Accepted && string.Equals(item.AssignedUserId, userId, StringComparison.OrdinalIgnoreCase)))
 			{
 				var accepted = await _routingService.AcceptAsync(departmentId, itemId, userId, cancellationToken);
 				if (!accepted.Success)
 					return accepted;
 				item = accepted.Value;
+				acquiredNow = true;
 			}
 
-			var from = DispatcherPresenceService.NormalizePhone(item.TargetAddress) ??
-					   DispatcherPresenceService.NormalizePhone(await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(departmentId));
-			if (from == null)
-				return DispatcherDeskResult<DispatcherQueueItem>.Fail(DispatcherDeskErrors.ChannelUnavailable, "The department has no number to call from.");
-
+			var attemptStartedOn = UtcNow();
 			string sid;
 			try
 			{
 				sid = await _voiceProvider.PlaceCallAsync(number, from, callBack ? CallBackUrl(item.DispatcherQueueItemId, userId) : ConnectUrl(item.DispatcherQueueItemId, userId),
-					LegStatusUrl(item.DispatcherQueueItemId, userId), RingTimeoutSeconds, cancellationToken);
+					LegStatusUrl(item.DispatcherQueueItemId, userId, attemptStartedOn), RingTimeoutSeconds, cancellationToken);
 			}
 			catch (Exception ex)
 			{
@@ -129,12 +145,36 @@ namespace Resgrid.Services
 			}
 
 			if (string.IsNullOrWhiteSpace(sid))
+			{
+				// Work this attempt took goes back where it came from, so the held caller is offered on (or overflows) instead of
+				// waiting on a dispatcher with no leg. Releasing is safe even when the provider did create the leg after all: its
+				// TwiML refuses an item the dispatcher no longer holds, or takes it again from the queue on "press 1". Work the
+				// dispatcher already held stays theirs.
+				if (acquiredNow)
+					await ReleaseAfterFailedDialAsync(departmentId, item.DispatcherQueueItemId, userId);
+
 				return DispatcherDeskResult<DispatcherQueueItem>.Fail(DispatcherDeskErrors.ChannelUnavailable, "The call to your phone could not be placed.");
+			}
 
 			await _routingService.RecordVoiceEventAsync(item, DispatcherQueueEventTypes.VoiceConnecting, userId, (callBack ? "Call back via " : "Ringing ") + Mask(number),
 				cancellationToken);
 
 			return DispatcherDeskResult<DispatcherQueueItem>.Ok(item);
+		}
+
+		private async Task ReleaseAfterFailedDialAsync(int departmentId, string itemId, string userId)
+		{
+			try
+			{
+				// The dispatcher's request may be gone; the item must not stay held either way.
+				var released = await _routingService.ReleaseAsync(departmentId, itemId, userId, CancellationToken.None);
+				if (released == null || !released.Success)
+					Logging.LogInfo($"[Dispatcher desk] Item {itemId} could not be returned after a failed dial ({released?.Error}).");
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Dispatcher desk: item {itemId} could not be returned after a failed dial.");
+			}
 		}
 
 		/// <summary>The last four digits only, for the item history.</summary>

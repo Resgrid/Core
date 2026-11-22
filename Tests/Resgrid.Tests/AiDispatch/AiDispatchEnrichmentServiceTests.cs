@@ -345,14 +345,57 @@ namespace Resgrid.Tests.AiDispatch
 			VerifyCallUntouched();
 		}
 
+		private Task<string> EnrichHeld() =>
+			_service.EnrichAsync(new AiDispatchQueueItem { DepartmentId = DepartmentId, CallId = CallId, Channel = 1, HeldForDispatcher = true }, CancellationToken.None);
+
 		[Test]
 		public async Task A_pending_call_held_for_a_dispatcher_is_enriched()
 		{
 			_call.State = (int)CallStates.Pending;
 
-			(await Enrich()).Should().Be(AiDispatchOutcomes.Applied);
+			(await EnrichHeld()).Should().Be(AiDispatchOutcomes.Applied);
 
 			_saved.Single().State.Should().Be((int)CallStates.Pending, "enrichment never dispatches");
+		}
+
+		[Test]
+		public async Task A_plain_email_job_still_enriches_active_calls_only()
+		{
+			// Queued for a live call (the AI email format), the call was made pending before the worker read it: left alone, as before the desk.
+			_call.State = (int)CallStates.Pending;
+			(await Enrich()).Should().Be(AiDispatchOutcomes.CallNotActive);
+
+			(await _service.EnrichAsync(new AiDispatchQueueItem { DepartmentId = DepartmentId, CallId = CallId, Channel = 2 }, CancellationToken.None))
+				.Should().Be(AiDispatchOutcomes.CallNotActive, "group dispatch addresses too");
+			VerifyCallUntouched();
+		}
+
+		private void ReplyWhile(object arguments, Action duringInference) => _llm.Setup(l => l.CompleteAsync(It.IsAny<LlmRequest>(), It.IsAny<CancellationToken>()))
+			.Callback(duringInference)
+			.ReturnsAsync(new LlmResult(null, new[] { new LlmToolCall("t1", AiDispatchPrompt.ToolName, JsonSerializer.Serialize(arguments)) }, 900, 100, "tool_calls"));
+
+		[Test]
+		public async Task A_plain_email_job_whose_call_turns_pending_while_the_model_runs_writes_nothing()
+		{
+			ReplyWhile(new { isDispatch = true, confidence = 0.92, title = "x", callTypeId = 11, priorityId = 21, address = "123 Main St.", contactName = (string)null,
+				contactNumber = (string)null, incidentNumber = (string)null, possibleDuplicateOfCallId = (int?)null, summary = "x" }, () => _call.State = (int)CallStates.Pending);
+
+			(await Enrich()).Should().Be(AiDispatchOutcomes.CallNotActive);
+			VerifyCallUntouched();
+		}
+
+		[Test]
+		public async Task A_related_call_made_pending_gets_no_reciprocal_note()
+		{
+			_call.State = (int)CallStates.Pending;
+			ReplyWhile(new { isDispatch = true, confidence = 0.8, title = (string)null, callTypeId = (int?)null, priorityId = (int?)null, address = (string)null, contactName = (string)null,
+				contactNumber = (string)null, incidentNumber = (string)null, possibleDuplicateOfCallId = 301, summary = "Update on the vehicle accident." },
+				() => _related.State = (int)CallStates.Pending);
+
+			(await EnrichHeld()).Should().Be(AiDispatchOutcomes.Applied, "the held call itself is enriched while it waits");
+
+			_notes.Should().ContainSingle(n => n.CallId == CallId);
+			_notes.Should().NotContain(n => n.CallId == 301, "the duplicate candidates are active calls; one made pending meanwhile is left alone");
 		}
 
 		[Test]
@@ -361,12 +404,31 @@ namespace Resgrid.Tests.AiDispatch
 			_departments.Setup(d => d.GetDepartmentEmailSettingsAsync(DepartmentId)).ReturnsAsync(new DepartmentCallEmail { FormatType = (int)CallEmailTypes.Generic });
 			_call.State = (int)CallStates.Pending;
 
-			(await Enrich()).Should().Be("NotEntitled", "AutoDispatch and Pending modes keep the format rule");
+			(await EnrichHeld()).Should().Be("NotEntitled", "AutoDispatch and Pending modes keep the format rule");
 
 			_desk.EmailCallMode = (int)DispatcherEmailCallModes.EnhancedAi;
-			(await Enrich()).Should().Be(AiDispatchOutcomes.Applied, "Postmark (1) dispatch email in EnhancedAi mode");
-			(await _service.EnrichAsync(new AiDispatchQueueItem { DepartmentId = DepartmentId, CallId = CallId, Channel = 2 }, CancellationToken.None))
+			(await EnrichHeld()).Should().Be(AiDispatchOutcomes.Applied, "Postmark (1) dispatch email held in EnhancedAi mode");
+			(await _service.EnrichAsync(new AiDispatchQueueItem { DepartmentId = DepartmentId, CallId = CallId, Channel = 2, HeldForDispatcher = true }, CancellationToken.None))
 				.Should().Be("NotEntitled", "group dispatch addresses are not covered by the email call mode");
+		}
+
+		[Test]
+		public async Task Neither_desk_option_entitles_the_other_source_or_a_plain_email_job()
+		{
+			_departments.Setup(d => d.GetDepartmentEmailSettingsAsync(DepartmentId)).ReturnsAsync(new DepartmentCallEmail { FormatType = (int)CallEmailTypes.Generic });
+			_desk.TextOverflowMode = (int)DispatcherTextOverflowModes.EnhancedAi;
+
+			(await Enrich()).Should().Be("NotEntitled", "a plain email job queued under the AI format the department has since left");
+			(await EnrichHeld()).Should().Be("NotEntitled", "AI text overflow does not cover held emails");
+
+			_desk.TextOverflowMode = (int)DispatcherTextOverflowModes.PendingQueue;
+			_desk.EmailCallMode = (int)DispatcherEmailCallModes.EnhancedAi;
+			_call.SourceIdentifier = "DQ:item-1";
+			(await Enrich()).Should().Be("NotEntitled", "the EnhancedAi email call mode does not cover the desk's overflowed texts");
+
+			_departments.Setup(d => d.GetDepartmentEmailSettingsAsync(DepartmentId)).ReturnsAsync(new DepartmentCallEmail { FormatType = (int)CallEmailTypes.AI });
+			(await Enrich()).Should().Be("NotEntitled", "nor does the AI email format");
+			_audits.Verify(a => a.TryClaimAsync(It.IsAny<AiDispatchAuditRow>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]
@@ -375,9 +437,10 @@ namespace Resgrid.Tests.AiDispatch
 			_departments.Setup(d => d.GetDepartmentEmailSettingsAsync(DepartmentId)).ReturnsAsync(new DepartmentCallEmail { FormatType = (int)CallEmailTypes.Generic });
 			_call.State = (int)CallStates.Pending;
 			// The desk's routing service queues overflowed-text pending calls on channel 1 (SourceIdentifier "DQ:{itemId}").
+			_call.SourceIdentifier = "DQ:item-1";
 			var text = new AiDispatchQueueItem { DepartmentId = DepartmentId, CallId = CallId, Channel = 1 };
 
-			(await _service.EnrichAsync(text, CancellationToken.None)).Should().Be("NotEntitled", "no AI format and no desk AI mode");
+			(await _service.EnrichAsync(text, CancellationToken.None)).Should().Be("NotEntitled", "no desk AI text overflow");
 
 			_desk.TextOverflowMode = (int)DispatcherTextOverflowModes.EnhancedAi;
 			(await _service.EnrichAsync(text, CancellationToken.None)).Should().Be(AiDispatchOutcomes.Applied, "the desk's AI text overflow is department-wide");

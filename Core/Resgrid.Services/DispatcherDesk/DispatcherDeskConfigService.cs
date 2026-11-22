@@ -11,12 +11,20 @@ namespace Resgrid.Services
 {
 	/// <summary>
 	/// <see cref="DepartmentSettingTypes.DispatcherDeskConfig"/> (setting 128). Read on every routing decision, so it is cached
-	/// (its own key, invalidated here after each save; DepartmentSettingsService's cache switch does not know this key).
+	/// (its own keys; DepartmentSettingsService's cache switch does not know them).
 	/// </summary>
 	public class DispatcherDeskConfigService : IDispatcherDeskConfigService
 	{
-		private const string CacheKey = "DSetDispatcherDeskConfig_{0}";
-		private static readonly TimeSpan CacheLength = TimeSpan.FromDays(1);
+		// The settings are cached under the department's current version and every save gives the department a new one (the
+		// road closure precedent). A read that began before a save and stores what it read after the save stores it under a
+		// version nobody reads again; with one fixed key that late store brought the old settings back for the whole TTL.
+		private const string CacheKey = "DSetDispatcherDeskConfig2_{0}_{1}";
+		private const string VersionKey = "DSetDispatcherDeskConfigVersion1_{0}";
+
+		// Short on purpose: when a save cannot move the version (Redis down at that moment, back later with the old keys), the
+		// old settings are served at most this long after the cache returns. The version key slides while it is in use.
+		private static readonly TimeSpan CacheLength = TimeSpan.FromMinutes(15);
+		private static readonly TimeSpan VersionLength = TimeSpan.FromDays(30);
 
 		private readonly IDepartmentSettingsRepository _departmentSettingsRepository;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
@@ -38,20 +46,40 @@ namespace Resgrid.Services
 				return setting?.Setting ?? string.Empty;
 			}
 
-			string value;
+			string value = null;
+			var read = false;
 			try
 			{
 				if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
-					value = await _cacheProvider.RetrieveAsync<string>(string.Format(CacheKey, departmentId), getSetting, CacheLength);
-				else
-					value = await getSetting();
+				{
+					// The version is read before the row is (see CacheKey). Null means the cache is unavailable.
+					var version = await _cacheProvider.GetOrAddStringAsync(string.Format(VersionKey, departmentId), NewVersion(), VersionLength);
+					if (!string.IsNullOrWhiteSpace(version))
+					{
+						var key = string.Format(CacheKey, departmentId, version);
+						var cached = await _cacheProvider.GetStringAsync(key);
+						if (cached != null)
+						{
+							value = cached;
+							read = true;
+						}
+						else
+						{
+							value = await getSetting();
+							read = true;
+							await _cacheProvider.SetStringAsync(key, value, CacheLength);
+						}
+					}
+				}
 			}
 			catch (Exception ex)
 			{
 				// Routing must never fail because the cache did: read the row directly.
 				Logging.LogException(ex, $"Dispatcher desk config read for department {departmentId}");
-				value = await getSetting();
 			}
+
+			if (!read)
+				value = await getSetting();
 
 			if (!string.IsNullOrWhiteSpace(value))
 			{
@@ -78,17 +106,29 @@ namespace Resgrid.Services
 			await _departmentSettingsService.SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(normalized),
 				DepartmentSettingTypes.DispatcherDeskConfig, cancellationToken);
 
-			// After the write commits, never before (a concurrent reader would re-cache the old value).
-			try
+			// After the write commits: a new version moves every reader to a fresh key (see CacheKey); the old entry ages out.
+			// The save itself has succeeded either way, so a failed move is logged, not reported as a failed save; the short
+			// CacheLength bounds how long the old settings can still be served.
+			if (Config.SystemBehaviorConfig.CacheEnabled)
 			{
-				await _cacheProvider.RemoveAsync(string.Format(CacheKey, departmentId));
-			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex, $"Dispatcher desk config cache invalidation for department {departmentId}");
+				var moved = false;
+				try
+				{
+					moved = await _cacheProvider.SetStringAsync(string.Format(VersionKey, departmentId), NewVersion(), VersionLength);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Dispatcher desk config cache invalidation for department {departmentId}");
+				}
+
+				if (!moved)
+					Logging.LogWarning($"Dispatcher desk config for department {departmentId} was saved, but its cache version could not be moved; " +
+									   $"readers may see the previous settings for up to {CacheLength.TotalMinutes:0} minutes.");
 			}
 
 			return normalized;
 		}
+
+		private static string NewVersion() => Guid.NewGuid().ToString("N");
 	}
 }

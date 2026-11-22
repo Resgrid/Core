@@ -58,6 +58,15 @@ namespace Resgrid.Model.Queue
 		/// </summary>
 		[ProtoMember(10)]
 		public string PlaceholderNameFingerprint { get; set; }
+
+		/// <summary>
+		/// Dispatch email paths (1, 3): the dispatcher desk's email call mode (setting 128) held this emailed call pending for a
+		/// dispatcher, decided at enqueue. Such a job may enrich the call while it waits, and is entitled by the AI email format or the
+		/// EnhancedAi email call mode. False (every other email job, and items queued before the desk) keeps the rule from before the
+		/// desk: active calls only, AI email format only.
+		/// </summary>
+		[ProtoMember(11)]
+		public bool HeldForDispatcher { get; set; }
 	}
 
 	/// <summary>Where an <see cref="AiDispatchQueueItem"/> came from (persisted on the bus; never renumber).</summary>

@@ -102,7 +102,7 @@ namespace Resgrid.Tests.Services
 		{
 			var call = new Call { CallId = 40, DepartmentId = DepartmentId, NatureOfCall = "SMOKE SHOWING", ReportingUserId = "manager", State = (int)CallStates.Pending };
 
-			await _service.OnPendingCallSavedAsync(call, " cad@county.example ", new string('s', 300));
+			(await _service.OnPendingCallSavedAsync(call, " cad@county.example ", new string('s', 300))).Should().BeTrue();
 
 			_routing.Verify(r => r.EnqueueAsync(It.Is<DispatcherEnqueueRequest>(q => q.DepartmentId == DepartmentId && q.Kind == DispatcherQueueItemKinds.Email &&
 				q.CallId == 40 && q.SourceAddress == "cad@county.example" && q.Subject.Length == 250 && q.Body == "SMOKE SHOWING" && q.CreatedByUserId == "manager"),
@@ -116,15 +116,18 @@ namespace Resgrid.Tests.Services
 			var call = new Call { CallId = 41, DepartmentId = DepartmentId, State = (int)CallStates.Pending };
 			_routing.Setup(r => r.EnqueueAsync(It.IsAny<DispatcherEnqueueRequest>(), It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("desk down"));
 
-			await _service.Invoking(s => s.OnPendingCallSavedAsync(call, null, null)).Should().NotThrowAsync();
+			(await _service.OnPendingCallSavedAsync(call, null, null)).Should().BeFalse("the desk hand-off is still owed, so the delivery stays retryable");
 			_events.Verify(e => e.SendMessage(It.IsAny<CallUpdatedEvent>()), Times.Once, "the screens still refresh");
+
+			_routing.Setup(r => r.EnqueueAsync(It.IsAny<DispatcherEnqueueRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(DispatcherRouteResult.NotRouted());
+			(await _service.OnPendingCallSavedAsync(call, null, null)).Should().BeTrue("a desk that does not take emails owes nothing");
 
 			using var cts = new CancellationTokenSource();
 			cts.Cancel();
 			_routing.Setup(r => r.EnqueueAsync(It.IsAny<DispatcherEnqueueRequest>(), It.IsAny<CancellationToken>())).ThrowsAsync(new OperationCanceledException(cts.Token));
 			await _service.Invoking(s => s.OnPendingCallSavedAsync(call, null, null, cts.Token)).Should().ThrowAsync<OperationCanceledException>();
 
-			await _service.Invoking(s => s.OnPendingCallSavedAsync(new Call(), null, null)).Should().NotThrowAsync("an unsaved call is ignored");
+			(await _service.OnPendingCallSavedAsync(new Call(), null, null)).Should().BeTrue("an unsaved call is ignored");
 		}
 	}
 }

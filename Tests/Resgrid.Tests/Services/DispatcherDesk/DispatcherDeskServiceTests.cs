@@ -20,7 +20,7 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 	/// overflow, offers that are declined or expire, breaks as a length with auto return, and desk sign-in rules.
 	/// </summary>
 	[TestFixture]
-	public class DispatcherDeskServiceTests
+	public partial class DispatcherDeskServiceTests
 	{
 		private const int Dept = 7;
 
@@ -37,9 +37,13 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			public readonly Mock<IQueueService> Queue = new Mock<IQueueService>();
 			public readonly Mock<IAiDispatchEnrichmentService> Ai = new Mock<IAiDispatchEnrichmentService>();
 			public readonly Mock<IIntakeConversationService> Intake = new Mock<IIntakeConversationService>();
+			/// <summary>Intake channel of an intake call, by call id (the sweep's chat-app check); a call not listed came from no channel.</summary>
+			public readonly Dictionary<int, IntakeCallSource> IntakeSources = new Dictionary<int, IntakeCallSource>();
 			/// <summary>Intake call screenings (M0326) by call id; a call not listed is unscreened.</summary>
 			public readonly Dictionary<int, IntakeScreenings> Screenings = new Dictionary<int, IntakeScreenings>();
 			public readonly HashSet<string> Supervisors = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			/// <summary>How many of the next call saves throw.</summary>
+			public int FailCallSaves;
 			private int _nextCallId = 5000;
 
 			public readonly DispatcherPresenceService Presence;
@@ -61,6 +65,9 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 				shiftDispatchers.Setup(x => x.GetDutyWindowsAsync(Dept, It.IsAny<DateTime>(), It.IsAny<DateTime>()))
 					.ReturnsAsync((int d, DateTime f, DateTime t) => Duty.Where(x => x.EndUtc > f && x.StartUtc < t).ToList());
 				shiftDispatchers.Setup(x => x.GetSettingsForDepartmentAsync(Dept)).ReturnsAsync(new List<ShiftDispatchSetting>());
+				// The duty shift (3) is a desk shift whose dispatchers plan their own breaks.
+				shiftDispatchers.Setup(x => x.GetSettingsForShiftAsync(It.IsAny<int>()))
+					.ReturnsAsync((int id) => new ShiftDispatchSetting { ShiftId = id, DepartmentId = Dept, IsEnabled = true, AllowSelfScheduledBreaks = true });
 
 				var departments = new Mock<IDepartmentsService>();
 				departments.Setup(x => x.GetDepartmentByIdAsync(Dept, It.IsAny<bool>()))
@@ -90,6 +97,11 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 					Calls.Values.Where(x => x.State == (int)CallStates.Active && x.DispatchOn.HasValue && x.HasBeenDispatched != true).ToList());
 				calls.Setup(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>())).ReturnsAsync((Call c, CancellationToken t) =>
 				{
+					if (FailCallSaves > 0)
+					{
+						FailCallSaves--;
+						throw new InvalidOperationException("The call could not be saved.");
+					}
 					if (c.CallId == 0)
 						c.CallId = ++_nextCallId;
 					Calls[c.CallId] = c;
@@ -130,10 +142,15 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 				screening.Setup(x => x.GetScreeningsAsync(Dept, It.IsAny<IEnumerable<int>>())).ReturnsAsync((int d, IEnumerable<int> ids) =>
 					ids.Where(Screenings.ContainsKey).ToDictionary(id => id, id => Screenings[id]));
 
+				var intakeCalls = new Mock<IIntakeService>();
+				intakeCalls.Setup(x => x.GetCallSourcesAsync(Dept, It.IsAny<IEnumerable<int>>())).ReturnsAsync((int d, IEnumerable<int> ids) =>
+					ids.Where(IntakeSources.ContainsKey).ToDictionary(id => id, id => IntakeSources[id]));
+
 				routing = new DispatcherRoutingService(Store.ItemsRepository, Store.EventsRepository, Store.MessagesRepository, Store.PresencesRepository,
 					Store.BreaksRepository, Presence, configService.Object, notifier.Object, Voice.Object, departments.Object, profiles.Object, Queue.Object,
 					new Lazy<ICallsService>(() => calls.Object), new Lazy<IDispatcherConversationService>(() => conversations),
-					new Lazy<IAiDispatchEnrichmentService>(() => Ai.Object), intake, new Lazy<IIntakeScreeningService>(() => screening.Object))
+					new Lazy<IAiDispatchEnrichmentService>(() => Ai.Object), intake, new Lazy<IIntakeScreeningService>(() => screening.Object),
+					new Lazy<IIntakeService>(() => intakeCalls.Object))
 				{ UtcNow = () => Now };
 
 				Routing = routing;
@@ -459,6 +476,47 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			h.Store.Items.Select(x => x.CallId).Should().BeEquivalentTo(new int?[] { 100, 200 });
 			h.Store.Items.Single(x => x.CallId == 200).Kind.Should().Be((int)DispatcherQueueItemKinds.ScheduledCall);
 			h.Store.Items.Single(x => x.CallId == 200).DueOn.Should().Be(h.Now.AddMinutes(10));
+		}
+
+		[Test]
+		public async Task The_sweep_recovers_chats_and_emails_under_their_own_kind_when_the_desk_takes_no_pending_calls()
+		{
+			var h = new Harness();
+			h.OnDuty("ann");
+			h.SignedIn("ann", DispatcherPresenceStates.Away);
+			h.Config.RoutePendingCalls = false;
+			h.Config.RouteChat = true;
+			h.Config.RouteEmail = true;
+
+			// A WhatsApp intake call and an emailed call whose first hand-off to the desk failed, the desk's own overflow call, and a plain
+			// pending call (which this desk does not take).
+			h.Calls[300] = new Call { CallId = 300, DepartmentId = Dept, State = (int)CallStates.Pending, CallSource = (int)CallSources.Intake, LoggedOn = h.Now.AddHours(-1) };
+			h.IntakeSources[300] = new IntakeCallSource { CallId = 300, ChannelType = (int)IntakeChannelTypes.WhatsApp };
+			h.Calls[301] = new Call { CallId = 301, DepartmentId = Dept, State = (int)CallStates.Pending, CallSource = (int)CallSources.EmailImport, LoggedOn = h.Now.AddHours(-1) };
+			h.Calls[302] = new Call { CallId = 302, DepartmentId = Dept, State = (int)CallStates.Pending, CallSource = (int)CallSources.EmailImport, SourceIdentifier = "DQ:item-1", LoggedOn = h.Now.AddHours(-1) };
+			h.Calls[303] = new Call { CallId = 303, DepartmentId = Dept, State = (int)CallStates.Pending, LoggedOn = h.Now.AddHours(-1) };
+
+			(await h.Routing.SyncCallsAsync(Dept, h.Now)).Should().Be(2);
+			(await h.Routing.SyncCallsAsync(Dept, h.Now)).Should().Be(0, "each call goes on the desk once");
+
+			h.Store.Items.Select(x => x.CallId).Should().BeEquivalentTo(new int?[] { 300, 301 });
+			h.Store.Items.Single(x => x.CallId == 300).Kind.Should().Be((int)DispatcherQueueItemKinds.Chat);
+			h.Store.Items.Single(x => x.CallId == 301).Kind.Should().Be((int)DispatcherQueueItemKinds.Email);
+		}
+
+		[Test]
+		public async Task The_sweep_takes_a_chat_as_a_pending_call_when_chats_are_unticked()
+		{
+			var h = new Harness();
+			h.OnDuty("ann");
+			h.SignedIn("ann", DispatcherPresenceStates.Away);
+			h.Config.RouteChat = false;
+
+			h.Calls[300] = new Call { CallId = 300, DepartmentId = Dept, State = (int)CallStates.Pending, CallSource = (int)CallSources.Intake, LoggedOn = h.Now.AddHours(-1) };
+			h.IntakeSources[300] = new IntakeCallSource { CallId = 300, ChannelType = (int)IntakeChannelTypes.WhatsApp };
+
+			(await h.Routing.SyncCallsAsync(Dept, h.Now)).Should().Be(1);
+			h.Store.Items.Single(x => x.CallId == 300).Kind.Should().Be((int)DispatcherQueueItemKinds.PendingCall);
 		}
 
 		[Test]
@@ -837,6 +895,127 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			h.Item(item.DispatcherQueueItemId).AssignedUserId.Should().BeNull();
 			h.Intake.Verify(x => x.ReleaseDispatcherAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never,
 				"intake already released the thread itself");
+		}
+
+		[Test]
+		public async Task A_connect_from_the_call_page_that_loses_to_a_message_is_retried_while_intake_still_has_that_dispatcher()
+		{
+			var h = new Harness();
+			h.OnDuty("ann");
+			h.SignedIn("ann", DispatcherPresenceStates.Away);
+			var (conversation, call) = h.IntakeThread(320);
+			var item = (await h.Routing.RouteIntakeConversationAsync(conversation, call)).Item;
+			conversation.AssignedUserId = "carol";
+
+			// A participant's message touches the item between the callback's read and its write.
+			h.Store.BeforeStoredItemUpdate = stored => { h.Store.BeforeStoredItemUpdate = null; stored.Version++; };
+			await h.Routing.OnIntakeDispatcherConnectedAsync(conversation, "carol");
+
+			h.Item(item.DispatcherQueueItemId).State.Should().Be((int)DispatcherQueueItemStates.Accepted);
+			h.Item(item.DispatcherQueueItemId).AssignedUserId.Should().Be("carol");
+
+			// The same race after carol stepped away again on intake: the stale connect is not recorded.
+			var (other, otherCall) = h.IntakeThread(321, "ic-2");
+			var second = (await h.Routing.RouteIntakeConversationAsync(other, otherCall)).Item;
+			other.AssignedUserId = null;
+			h.Store.BeforeStoredItemUpdate = stored => { h.Store.BeforeStoredItemUpdate = null; stored.Version++; };
+			await h.Routing.OnIntakeDispatcherConnectedAsync(other, "carol");
+
+			h.Item(second.DispatcherQueueItemId).State.Should().Be((int)DispatcherQueueItemStates.Queued);
+		}
+
+		[Test]
+		public async Task A_closed_thread_never_turns_an_item_a_dispatcher_took_meanwhile_into_a_pending_call()
+		{
+			var h = new Harness();
+			var (conversation, call) = h.IntakeThread(322);
+			var item = (await h.Routing.RouteIntakeConversationAsync(conversation, call)).Item;
+			conversation.State = (int)IntakeConversationStates.Closed;
+
+			// ann takes the item between the close callback's state check and its write.
+			h.Store.BeforeStoredItemUpdate = stored =>
+			{
+				h.Store.BeforeStoredItemUpdate = null;
+				stored.Version++;
+				stored.State = (int)DispatcherQueueItemStates.Accepted;
+				stored.AssignedUserId = "ann";
+			};
+			await h.Routing.OnIntakeConversationClosedAsync(conversation);
+
+			h.Item(item.DispatcherQueueItemId).Kind.Should().Be((int)DispatcherQueueItemKinds.Text, "the dispatcher keeps the item as they took it");
+			h.Item(item.DispatcherQueueItemId).AssignedUserId.Should().Be("ann");
+		}
+
+		[Test]
+		public async Task A_release_that_never_reached_intake_is_finished_by_the_next_dispatchers_accept()
+		{
+			var h = new Harness();
+			h.OnDuty("ann", "bob");
+			h.SignedIn("ann", DispatcherPresenceStates.Away);
+			var (conversation, call) = h.IntakeThread(323);
+			var item = (await h.Routing.RouteIntakeConversationAsync(conversation, call)).Item;
+			(await h.Routing.AcceptAsync(Dept, item.DispatcherQueueItemId, "ann")).Success.Should().BeTrue();
+			conversation.AssignedUserId = "ann";
+
+			h.Now = h.Now.AddMinutes(2);
+			h.Intake.Setup(x => x.ReleaseDispatcherAsync(Dept, "ic-1", "ann", It.IsAny<CancellationToken>())).ThrowsAsync(new TimeoutException("intake store unavailable"));
+			(await h.Routing.ReleaseAsync(Dept, item.DispatcherQueueItemId, "ann")).Success.Should().BeTrue("the desk's own state changed");
+			h.Intake.Verify(x => x.ReleaseDispatcherAsync(Dept, "ic-1", "ann", It.IsAny<CancellationToken>()), Times.Exactly(3), "an idempotent hand-back is retried");
+
+			// Intake still has ann on the thread; bob takes the item from the queue.
+			h.Intake.Setup(x => x.ReleaseDispatcherAsync(Dept, "ic-1", "ann", It.IsAny<CancellationToken>()))
+				.Callback(() => conversation.AssignedUserId = null).ReturnsAsync(IntakeConversationActionResults.Done);
+			h.Intake.SetupSequence(x => x.ConnectDispatcherAsync(Dept, "ic-1", "bob", false, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(IntakeConversationActionResults.HeldByAnotherDispatcher)
+				.ReturnsAsync(IntakeConversationActionResults.Done);
+			h.Now = h.Now.AddMinutes(2);
+			h.SignedIn("bob", DispatcherPresenceStates.Away);
+
+			var taken = await h.Routing.AcceptAsync(Dept, item.DispatcherQueueItemId, "bob");
+
+			taken.Success.Should().BeTrue();
+			h.Item(item.DispatcherQueueItemId).AssignedUserId.Should().Be("bob");
+			h.Intake.Verify(x => x.ReleaseDispatcherAsync(Dept, "ic-1", "ann", It.IsAny<CancellationToken>()), Times.Exactly(4), "the owed release, against ann only");
+			h.Intake.Verify(x => x.ConnectDispatcherAsync(Dept, "ic-1", "bob", false, It.IsAny<CancellationToken>()), Times.Exactly(2));
+		}
+
+		[Test]
+		public async Task A_completion_whose_thread_close_failed_closes_the_thread_on_its_next_message()
+		{
+			var h = new Harness();
+			h.OnDuty("ann");
+			h.SignedIn("ann", DispatcherPresenceStates.Away);
+			var (conversation, call) = h.IntakeThread(324);
+			var item = (await h.Routing.RouteIntakeConversationAsync(conversation, call)).Item;
+			await h.Routing.AcceptAsync(Dept, item.DispatcherQueueItemId, "ann");
+			h.Intake.Setup(x => x.CloseAsync(Dept, "ic-1", It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new TimeoutException("intake store unavailable"));
+
+			(await h.Routing.CompleteAsync(Dept, item.DispatcherQueueItemId, "ann", DispatcherQueueItemOutcomes.CallCreated, null, null, notifyParticipant: true))
+				.Success.Should().BeTrue();
+			h.Intake.Verify(x => x.CloseAsync(Dept, "ic-1", "ann", It.IsAny<string>(), true, It.IsAny<CancellationToken>()), Times.Exactly(3));
+
+			h.Intake.Setup(x => x.CloseAsync(Dept, "ic-1", It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(IntakeConversationActionResults.Done);
+			await h.Routing.OnIntakeParticipantMessageAsync(conversation);
+
+			h.Intake.Verify(x => x.CloseAsync(Dept, "ic-1", "ann", It.Is<string>(r => r.Contains("CallCreated")), false, It.IsAny<CancellationToken>()), Times.Once,
+				"the owed close is finished without a text the dispatcher may not have asked for");
+		}
+
+		[Test]
+		public async Task A_message_on_a_thread_whose_item_ended_because_the_call_went_out_leaves_the_thread_open()
+		{
+			var h = new Harness();
+			var (conversation, call) = h.IntakeThread(325);
+			var item = (await h.Routing.RouteIntakeConversationAsync(conversation, call)).Item;
+			call.State = (int)CallStates.Active;
+			await h.Routing.OnCallChangedAsync(Dept, call.CallId);
+			h.Item(item.DispatcherQueueItemId).IsOpen().Should().BeFalse();
+
+			await h.Routing.OnIntakeParticipantMessageAsync(conversation);
+
+			h.Intake.Verify(x => x.CloseAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]

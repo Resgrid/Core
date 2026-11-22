@@ -17,6 +17,9 @@ namespace Resgrid.Model
 		public const string VoicemailIntro = "No dispatcher is available right now. After the tone, please leave your name, your location, a number to call you back and what you need, then press pound. If this is an emergency, hang up and call your local emergency number.";
 		public const string VoicemailThanks = "Thank you. Your message has been passed to a dispatcher. Goodbye.";
 		public const string VoicemailNotReceived = "We did not receive a message. Goodbye.";
+
+		/// <summary>The recording could not be saved for the dispatchers: the caller must not hear that it was passed on.</summary>
+		public const string VoicemailNotSaved = "Sorry, your message could not be passed to a dispatcher. Please call back. If this is an emergency, hang up and call your local emergency number. Goodbye.";
 		public const string NoDispatcherAvailable = "No dispatcher is available right now. Please call back. If this is an emergency, hang up and call your local emergency number. Goodbye.";
 
 		// To the dispatcher.
@@ -94,6 +97,7 @@ namespace Resgrid.Model
 				VoicemailIntro,
 				VoicemailThanks,
 				VoicemailNotReceived,
+				VoicemailNotSaved,
 				NoDispatcherAvailable,
 				CallerGone,
 				NotWaitingForYou,

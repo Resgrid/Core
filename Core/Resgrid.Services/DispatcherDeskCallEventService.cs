@@ -50,6 +50,9 @@ namespace Resgrid.Services
 			var name = call.Name;
 			var nature = call.NatureOfCall;
 			var reportingUserId = call.ReportingUserId;
+			var callSource = call.CallSource;
+			var sourceIdentifier = call.SourceIdentifier;
+			var contactName = call.ContactName;
 
 			if (deptId <= 0)
 				return Task.CompletedTask;
@@ -64,28 +67,60 @@ namespace Resgrid.Services
 
 				if (waitingPending)
 				{
-					// Duplicate when it is on the desk already (an edit of a pending call, or an emailed call queued as an email).
-					if (config.Routes(DispatcherQueueItemKinds.PendingCall))
+					// Duplicate when it is on the desk already (an edit of a pending call, a chat app's call put there by intake, or an emailed
+					// call queued as an email). Under its own kind, so a chat or an email whose first hand-off failed still reaches a desk that
+					// takes chats or emails but not pending calls.
+					var kind = await WaitingCallKindAsync(scope, config, deptId, callId, callSource, sourceIdentifier);
+					if (kind.HasValue)
 					{
 						await routing.EnqueueAsync(new DispatcherEnqueueRequest
 						{
 							DepartmentId = deptId,
-							Kind = DispatcherQueueItemKinds.PendingCall,
+							Kind = kind.Value,
 							CallId = callId,
+							SourceName = kind.Value == DispatcherQueueItemKinds.Chat ? contactName : null,
 							Subject = name != null && name.Length > 250 ? name.Substring(0, 250) : name,
 							Body = nature,
 							CreatedByUserId = reportingUserId
 						});
-
-						// Already on the desk and now screened (Enhanced AI's reading lands after the call is saved): its offer comes back (M0326).
-						await routing.OnCallChangedAsync(deptId, callId);
 					}
 
+					// Already on the desk (by any of its options) and now screened (Enhanced AI's reading lands after the call is saved): its
+					// offer comes back (M0326). Whether or not the desk still takes new pending calls.
+					await routing.OnCallChangedAsync(deptId, callId);
 					return;
 				}
 
 				await routing.OnCallChangedAsync(deptId, callId);
 			});
+		}
+
+		/// <summary>
+		/// The desk kind a waiting pending call belongs under: a chat app's intake call is a Chat when the desk takes chats, an emailed
+		/// call (not one of the desk's own "DQ:" pending calls) an Email when it takes emails, anything else (and those, when their own
+		/// option is unticked) a PendingCall when it takes pending calls; null when the desk takes none of them.
+		/// </summary>
+		private static async Task<DispatcherQueueItemKinds?> WaitingCallKindAsync(ILifetimeScope scope, DispatcherDeskConfig config, int departmentId, int callId,
+			int callSource, string sourceIdentifier)
+		{
+			if (callSource == (int)CallSources.Intake && config.Routes(DispatcherQueueItemKinds.Chat) && await IsChatCallAsync(scope, departmentId, callId))
+				return DispatcherQueueItemKinds.Chat;
+
+			if (callSource == (int)CallSources.EmailImport && config.Routes(DispatcherQueueItemKinds.Email) &&
+				(sourceIdentifier == null || !sourceIdentifier.StartsWith(AiDispatch.AiDispatchEnrichmentService.DeskCallSourcePrefix, StringComparison.Ordinal)))
+				return DispatcherQueueItemKinds.Email;
+
+			return config.Routes(DispatcherQueueItemKinds.PendingCall) ? DispatcherQueueItemKinds.PendingCall : null;
+		}
+
+		private static async Task<bool> IsChatCallAsync(ILifetimeScope scope, int departmentId, int callId)
+		{
+			var intake = scope.ResolveOptional<IIntakeService>();
+			if (intake == null)
+				return false;
+
+			var sources = await intake.GetCallSourcesAsync(departmentId, new[] { callId });
+			return sources != null && sources.TryGetValue(callId, out var source) && Intake.IntakeService.IsChatChannel((IntakeChannelTypes)source.ChannelType);
 		}
 
 		private async Task RunAsync(Func<ILifetimeScope, Task> action)

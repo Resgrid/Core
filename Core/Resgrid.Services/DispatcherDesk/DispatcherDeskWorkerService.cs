@@ -39,23 +39,35 @@ namespace Resgrid.Services
 			changes += await RunAsync("break timers", () => _breaksService.ProcessBreakTimersAsync(utcNow, cancellationToken));
 			changes += await RunAsync("presence", () => _presenceService.ProcessPresenceAsync(utcNow, cancellationToken));
 
-			// Calls are added only where someone is on the desk to take them.
-			var departments = (await _presencesRepository.GetSignedInAsync() ?? Enumerable.Empty<Model.DispatcherPresence>())
-				.Select(x => x.DepartmentId).Distinct().ToList();
-			foreach (var departmentId in departments)
+			// Calls are added only where someone is on the desk to take them. The lookup is its own part: failing, it skips the
+			// call sweeps but not the timeouts and purge below. Each department's sweep is isolated inside it.
+			changes += await RunAsync("call sweep", async () =>
 			{
-				if (cancellationToken.IsCancellationRequested)
-					break;
+				var swept = 0;
+				var departments = (await _presencesRepository.GetSignedInAsync(cancellationToken) ?? Enumerable.Empty<Model.DispatcherPresence>())
+					.Select(x => x.DepartmentId).Distinct().ToList();
+				foreach (var departmentId in departments)
+				{
+					if (cancellationToken.IsCancellationRequested)
+						break;
 
-				changes += await RunAsync($"call sweep {departmentId}", () => _routingService.SyncCallsAsync(departmentId, utcNow, cancellationToken));
-			}
+					swept += await RunAsync($"call sweep {departmentId}", () => _routingService.SyncCallsAsync(departmentId, utcNow, cancellationToken));
+				}
+
+				return swept;
+			});
 
 			changes += await RunAsync("queue timeouts", () => _routingService.ProcessTimeoutsAsync(utcNow, cancellationToken));
 
 			if (utcNow - _lastPurge > PurgeInterval)
 			{
-				_lastPurge = utcNow;
-				changes += await RunAsync("purge", () => _routingService.PurgeAsync(utcNow, cancellationToken));
+				// The clock moves only on success (zero rows included): a failed or cancelled purge runs again next tick.
+				changes += await RunAsync("purge", async () =>
+				{
+					var purged = await _routingService.PurgeAsync(utcNow, cancellationToken);
+					_lastPurge = utcNow;
+					return purged;
+				});
 			}
 
 			return changes;

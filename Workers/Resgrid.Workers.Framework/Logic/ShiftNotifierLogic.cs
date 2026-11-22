@@ -35,11 +35,23 @@ namespace Resgrid.Workers.Framework.Logic
 					if (item.Day != null)
 						text = $"Shift ({item.Shift.Name}) starts {item.Day.Start.ToShortDateString()} at {item.Day.Start.ToShortTimeString()}";
 
+					var recipients = 0;
+					var delivered = 0;
 					foreach (var userId in item.UserIds.Where(x => !String.IsNullOrWhiteSpace(x)).Distinct(StringComparer.OrdinalIgnoreCase))
 					{
 						UserProfile profile = item.Profiles?.FirstOrDefault(x => String.Equals(x.UserId, userId, StringComparison.OrdinalIgnoreCase));
-						await communicationService.SendNotificationAsync(userId, item.Shift.DepartmentId, text, departmentNumber, department,
-							item.Shift.Name, profile);
+						recipients++;
+						if (await communicationService.SendNotificationDeliveredAsync(userId, item.Shift.DepartmentId, text, departmentNumber, department,
+							item.Shift.Name, profile, false, null))
+							delivered++;
+					}
+
+					// Nothing reached anyone (every channel failed or nobody can be sent to): not done, so the next run tries again.
+					// Once anyone has it the day is done; per-recipient retry would need a record of who was reached.
+					if (recipients > 0 && delivered == 0)
+					{
+						success = false;
+						result = $"No shift reminder was delivered to any of {recipients} recipient(s).";
 					}
 				}
 				else if (ConfigHelper.CanTransmit(item.Shift.DepartmentId))

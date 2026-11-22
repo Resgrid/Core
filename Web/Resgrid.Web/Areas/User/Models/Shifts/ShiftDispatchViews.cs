@@ -46,6 +46,13 @@ namespace Resgrid.Web.Areas.User.Models.Shifts
 		public bool OnRoster { get; set; }
 		public bool IsSupervisor { get; set; }
 
+		/// <summary>
+		/// On the standing roster (and a supervisor) when the editor opened: posted back so the save changes only what this
+		/// editor changed, never a dispatcher someone else added meanwhile.
+		/// </summary>
+		public bool WasOnRoster { get; set; }
+		public bool WasSupervisor { get; set; }
+
 		/// <summary>Still allowed to dispatch; a roster member who lost the permission drops off on the next save.</summary>
 		public bool IsEligible { get; set; } = true;
 	}

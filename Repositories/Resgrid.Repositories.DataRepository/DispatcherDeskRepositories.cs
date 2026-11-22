@@ -170,15 +170,69 @@ namespace Resgrid.Repositories.DataRepository
 				$"AND {Col("ScheduledStartOn")} < {P}Before AND {Col("ScheduledStartOn")} >= {P}After)", parameters);
 		}
 
-		public async Task<bool> TryTransitionAsync(DispatcherBreak updated, int fromState, CancellationToken cancellationToken = default)
+		public Task<IEnumerable<DispatcherBreak>> GetOverdueScheduledAsync(DateTime scheduledBeforeUtc, int limit)
+		{
+			var parameters = new DynamicParameters(new { Scheduled = (int)DispatcherBreakStates.Scheduled, Limit = Math.Max(1, limit) });
+			DispatcherDeskSql.AddTimestamp(parameters, "Before", scheduledBeforeUtc);
+
+			var where = $"WHERE {Col("State")} = {P}Scheduled AND {Col("ScheduledStartOn")} < {P}Before ORDER BY {Col("ScheduledStartOn")}";
+			return QueryAsync<DispatcherBreak>(IsPostgres
+				? $"SELECT * FROM {Tbl("DispatcherBreaks")} {where} LIMIT {P}Limit"
+				: $"SELECT TOP ({P}Limit) * FROM {Tbl("DispatcherBreaks")} {where}", parameters);
+		}
+
+		/// <summary>The state and plan the caller read: "still in this state, still planned for this start and length".</summary>
+		private string ObservedFilter(DynamicParameters parameters, DispatcherBreak observed)
+		{
+			parameters.Add("ObservedState", observed.State);
+			parameters.Add("ObservedDuration", observed.DurationMinutes);
+
+			var filter = $"{Col("State")} = {P}ObservedState AND {Col("DurationMinutes")} = {P}ObservedDuration AND ";
+			if (!observed.ScheduledStartOn.HasValue)
+				return filter + $"{Col("ScheduledStartOn")} IS NULL";
+
+			DispatcherDeskSql.AddTimestamp(parameters, "ObservedStart", observed.ScheduledStartOn);
+			return filter + $"{Col("ScheduledStartOn")} = {P}ObservedStart";
+		}
+
+		public Task<bool> TryTransitionAsync(DispatcherBreak updated, int fromState, CancellationToken cancellationToken = default)
 		{
 			if (updated == null || string.IsNullOrWhiteSpace(updated.DispatcherBreakId))
-				return false;
+				return Task.FromResult(false);
 
+			var parameters = UpdateParameters(updated);
+			parameters.Add("FromState", fromState);
+
+			return UpdateWhereAsync(parameters, $"{Col("State")} = {P}FromState", false, cancellationToken);
+		}
+
+		public Task<bool> TryUpdateObservedAsync(DispatcherBreak updated, DispatcherBreak observed, bool resetPlanAlerts, CancellationToken cancellationToken = default)
+		{
+			if (updated == null || observed == null || string.IsNullOrWhiteSpace(updated.DispatcherBreakId))
+				return Task.FromResult(false);
+
+			var parameters = UpdateParameters(updated);
+			return UpdateWhereAsync(parameters, ObservedFilter(parameters, observed), resetPlanAlerts, cancellationToken);
+		}
+
+		private async Task<bool> UpdateWhereAsync(DynamicParameters parameters, string condition, bool resetPlanAlerts, CancellationToken cancellationToken)
+		{
+			var sql = $"UPDATE {Tbl("DispatcherBreaks")} SET {Col("State")} = {P}State, {Col("BreakType")} = {P}BreakType, " +
+					  $"{Col("DurationMinutes")} = {P}DurationMinutes, {Col("ScheduledStartOn")} = {P}ScheduledStartOn, {Col("StartedOn")} = {P}StartedOn, " +
+					  $"{Col("ExpectedReturnOn")} = {P}ExpectedReturnOn, {Col("EndedOn")} = {P}EndedOn, {Col("EndReason")} = {P}EndReason, " +
+					  $"{Col("EndedByUserId")} = {P}EndedByUserId, {Col("Note")} = {P}Note, {Col("UpdatedByUserId")} = {P}UpdatedByUserId, " +
+					  $"{Col("UpdatedOn")} = {P}UpdatedOn, {Col("ShiftId")} = {P}ShiftId, {Col("ShiftDayId")} = {P}ShiftDayId" +
+					  (resetPlanAlerts ? $", {Col("ReminderSentOn")} = NULL, {Col("DueAlertSentOn")} = NULL" : "") +
+					  $" WHERE {Col("DispatcherBreakId")} = {CaseInsensitive("Id")} AND {condition}";
+
+			return await ExecuteAsync(sql, parameters, cancellationToken) == 1;
+		}
+
+		private static DynamicParameters UpdateParameters(DispatcherBreak updated)
+		{
 			var parameters = new DynamicParameters(new
 			{
 				Id = updated.DispatcherBreakId,
-				FromState = fromState,
 				updated.State,
 				updated.BreakType,
 				updated.DurationMinutes,
@@ -194,28 +248,66 @@ namespace Resgrid.Repositories.DataRepository
 			DispatcherDeskSql.AddTimestamp(parameters, "ExpectedReturnOn", updated.ExpectedReturnOn);
 			DispatcherDeskSql.AddTimestamp(parameters, "EndedOn", updated.EndedOn);
 			DispatcherDeskSql.AddTimestamp(parameters, "UpdatedOn", updated.UpdatedOn);
-
-			var sql = $"UPDATE {Tbl("DispatcherBreaks")} SET {Col("State")} = {P}State, {Col("BreakType")} = {P}BreakType, " +
-					  $"{Col("DurationMinutes")} = {P}DurationMinutes, {Col("ScheduledStartOn")} = {P}ScheduledStartOn, {Col("StartedOn")} = {P}StartedOn, " +
-					  $"{Col("ExpectedReturnOn")} = {P}ExpectedReturnOn, {Col("EndedOn")} = {P}EndedOn, {Col("EndReason")} = {P}EndReason, " +
-					  $"{Col("EndedByUserId")} = {P}EndedByUserId, {Col("Note")} = {P}Note, {Col("UpdatedByUserId")} = {P}UpdatedByUserId, " +
-					  $"{Col("UpdatedOn")} = {P}UpdatedOn, {Col("ShiftId")} = {P}ShiftId, {Col("ShiftDayId")} = {P}ShiftDayId " +
-					  $"WHERE {Col("DispatcherBreakId")} = {CaseInsensitive("Id")} AND {Col("State")} = {P}FromState";
-
-			return await ExecuteAsync(sql, parameters, cancellationToken) == 1;
+			return parameters;
 		}
 
-		public async Task<bool> TryMarkAlertAsync(string dispatcherBreakId, string column, DateTime sentOnUtc, CancellationToken cancellationToken = default)
+		public async Task<bool> TryMarkAlertAsync(DispatcherBreak observed, string column, DateTime sentOnUtc, CancellationToken cancellationToken = default)
 		{
 			if (!AlertColumns.Contains(column))
 				throw new ArgumentOutOfRangeException(nameof(column));
 
-			var parameters = new DynamicParameters(new { Id = dispatcherBreakId });
+			if (observed == null || string.IsNullOrWhiteSpace(observed.DispatcherBreakId))
+				return false;
+
+			var parameters = new DynamicParameters(new { Id = observed.DispatcherBreakId });
 			DispatcherDeskSql.AddTimestamp(parameters, "SentOn", sentOnUtc);
 
 			return await ExecuteAsync(
-				$"UPDATE {Tbl("DispatcherBreaks")} SET {Col(column)} = {P}SentOn WHERE {Col("DispatcherBreakId")} = {CaseInsensitive("Id")} AND {Col(column)} IS NULL",
+				$"UPDATE {Tbl("DispatcherBreaks")} SET {Col(column)} = {P}SentOn WHERE {Col("DispatcherBreakId")} = {CaseInsensitive("Id")} AND {Col(column)} IS NULL " +
+				$"AND {ObservedFilter(parameters, observed)}",
 				parameters, cancellationToken) == 1;
+		}
+
+		/// <summary>How long a break start waits for another start in the same department to finish.</summary>
+		private const int BreakStartLockTimeoutMs = 10000;
+
+		/// <summary>The first key of the PostgreSQL two-key advisory lock for break starts ("DBRK"); the second is the department id.</summary>
+		private const int BreakStartLockSpace = 0x4442524B;
+
+		public async Task LockDepartmentForBreakStartAsync(int departmentId, CancellationToken cancellationToken = default)
+		{
+			if (UnitOfWork?.Transaction == null)
+				throw new InvalidOperationException("Locking a department for a break start needs the unit of work's transaction.");
+
+			var connection = UnitOfWork.Connection;
+			var transaction = UnitOfWork.Transaction;
+
+			if (IsPostgres)
+			{
+				// Transaction-scoped (released at commit or rollback) and polled, so a stuck start cannot hold the next one forever.
+				var waited = System.Diagnostics.Stopwatch.StartNew();
+				while (true)
+				{
+					var commandSeconds = Math.Max(1, (int)Math.Ceiling((BreakStartLockTimeoutMs - waited.ElapsedMilliseconds) / 1000.0));
+					if (await connection.ExecuteScalarAsync<bool>(new Dapper.CommandDefinition("SELECT pg_try_advisory_xact_lock(@Space, @DepartmentId)",
+							new { Space = BreakStartLockSpace, DepartmentId = departmentId }, transaction, commandTimeout: commandSeconds, cancellationToken: cancellationToken)))
+						return;
+
+					var remainingMs = BreakStartLockTimeoutMs - waited.ElapsedMilliseconds;
+					if (remainingMs <= 0)
+						throw new TimeoutException($"Another break start in department {departmentId} is still running.");
+
+					await Task.Delay((int)Math.Min(250, remainingMs), cancellationToken);
+				}
+			}
+
+			// sp_getapplock answers 0 or 1 when granted and a negative code on timeout, cancellation or deadlock.
+			var result = await connection.ExecuteScalarAsync<int>(new Dapper.CommandDefinition(
+				"DECLARE @Result int; EXEC @Result = sp_getapplock @Resource = @Resource, @LockMode = 'Exclusive', @LockOwner = 'Transaction', @LockTimeout = @TimeoutMs; SELECT @Result;",
+				new { Resource = "Resgrid.DispatcherBreakStart.Department." + departmentId.ToString(System.Globalization.CultureInfo.InvariantCulture), TimeoutMs = BreakStartLockTimeoutMs },
+				transaction, cancellationToken: cancellationToken));
+			if (result < 0)
+				throw new TimeoutException($"Another break start in department {departmentId} is still running.");
 		}
 
 		public Task<int> PurgeBeforeAsync(DateTime beforeUtc, CancellationToken cancellationToken = default)
@@ -247,10 +339,80 @@ namespace Resgrid.Repositories.DataRepository
 				$"SELECT * FROM {Tbl("DispatcherPresences")} WHERE {Col("DepartmentId")} = {P}DepartmentId", new { DepartmentId = departmentId });
 		}
 
-		public Task<IEnumerable<DispatcherPresence>> GetSignedInAsync()
+		public async Task<bool> SetLastOfferedOnAsync(string dispatcherPresenceId, DateTime offeredOnUtc, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(dispatcherPresenceId))
+				return false;
+
+			var parameters = new DynamicParameters(new { Id = dispatcherPresenceId });
+			DispatcherDeskSql.AddTimestamp(parameters, "OfferedOn", offeredOnUtc);
+
+			return await ExecuteAsync($"UPDATE {Tbl("DispatcherPresences")} SET {Col("LastOfferedOn")} = {P}OfferedOn " +
+									  $"WHERE {Col("DispatcherPresenceId")} = {CaseInsensitive("Id")}", parameters, cancellationToken) == 1;
+		}
+
+		public Task<IEnumerable<DispatcherPresence>> GetSignedInAsync(CancellationToken cancellationToken = default)
 		{
 			return QueryAsync<DispatcherPresence>(
-				$"SELECT * FROM {Tbl("DispatcherPresences")} WHERE {Col("State")} > {P}Offline", new { Offline = (int)DispatcherPresenceStates.Offline });
+				$"SELECT * FROM {Tbl("DispatcherPresences")} WHERE {Col("State")} > {P}Offline", new { Offline = (int)DispatcherPresenceStates.Offline },
+				cancellationToken);
+		}
+
+		public async Task<bool> TouchAsync(string dispatcherPresenceId, DateTime lastSeenOnUtc, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(dispatcherPresenceId))
+				return false;
+
+			var parameters = new DynamicParameters(new { Id = dispatcherPresenceId, Offline = (int)DispatcherPresenceStates.Offline });
+			DispatcherDeskSql.AddTimestamp(parameters, "LastSeenOn", lastSeenOnUtc);
+
+			return await ExecuteAsync(
+				$"UPDATE {Tbl("DispatcherPresences")} SET {Col("LastSeenOn")} = {P}LastSeenOn " +
+				$"WHERE {Col("DispatcherPresenceId")} = {CaseInsensitive("Id")} AND {Col("State")} > {P}Offline", parameters, cancellationToken) > 0;
+		}
+
+		public async Task<bool> TrySignOffAsync(string dispatcherPresenceId, DateTime? expectedSignedInOn, DateTime nowUtc, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(dispatcherPresenceId))
+				return false;
+
+			var parameters = new DynamicParameters(new { Id = dispatcherPresenceId, Offline = (int)DispatcherPresenceStates.Offline });
+			DispatcherDeskSql.AddTimestamp(parameters, "Now", nowUtc);
+			if (expectedSignedInOn.HasValue)
+				DispatcherDeskSql.AddTimestamp(parameters, "SignedInOn", expectedSignedInOn);
+
+			var session = expectedSignedInOn.HasValue ? $"{Col("SignedInOn")} = {P}SignedInOn" : $"{Col("SignedInOn")} IS NULL";
+
+			return await ExecuteAsync(
+				$"UPDATE {Tbl("DispatcherPresences")} SET {Col("State")} = {P}Offline, {Col("StateChangedOn")} = {P}Now, {Col("ActiveBreakId")} = NULL, " +
+				$"{Col("AwayReason")} = NULL, {Col("MissedOffers")} = 0 " +
+				$"WHERE {Col("DispatcherPresenceId")} = {CaseInsensitive("Id")} AND {Col("State")} > {P}Offline AND {session}", parameters, cancellationToken) > 0;
+		}
+
+		public async Task<bool> TrySetDutyAsync(string dispatcherPresenceId, DateTime? expectedSignedInOn, int dutyMode, int? dutyShiftId, int? dutyShiftDayId,
+			DateTime? dutyEndsOn, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(dispatcherPresenceId))
+				return false;
+
+			var parameters = new DynamicParameters(new
+			{
+				Id = dispatcherPresenceId,
+				Offline = (int)DispatcherPresenceStates.Offline,
+				DutyMode = dutyMode,
+				DutyShiftId = dutyShiftId,
+				DutyShiftDayId = dutyShiftDayId
+			});
+			DispatcherDeskSql.AddTimestamp(parameters, "DutyEndsOn", dutyEndsOn);
+			if (expectedSignedInOn.HasValue)
+				DispatcherDeskSql.AddTimestamp(parameters, "SignedInOn", expectedSignedInOn);
+
+			var session = expectedSignedInOn.HasValue ? $"{Col("SignedInOn")} = {P}SignedInOn" : $"{Col("SignedInOn")} IS NULL";
+
+			return await ExecuteAsync(
+				$"UPDATE {Tbl("DispatcherPresences")} SET {Col("DutyMode")} = {P}DutyMode, {Col("DutyShiftId")} = {P}DutyShiftId, " +
+				$"{Col("DutyShiftDayId")} = {P}DutyShiftDayId, {Col("DutyEndsOn")} = {P}DutyEndsOn " +
+				$"WHERE {Col("DispatcherPresenceId")} = {CaseInsensitive("Id")} AND {Col("State")} > {P}Offline AND {session}", parameters, cancellationToken) > 0;
 		}
 
 		public async Task<bool> TryInsertAsync(DispatcherPresence presence, CancellationToken cancellationToken = default)
@@ -309,6 +471,40 @@ namespace Resgrid.Repositories.DataRepository
 				$"SELECT COUNT(1) FROM {Tbl("DispatcherQueueItems")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("CallId")} = {P}CallId",
 				new { DepartmentId = departmentId, CallId = callId });
 			return count > 0;
+		}
+
+		public async Task<IEnumerable<int>> GetCallIdsOnDeskAsync(int departmentId, IEnumerable<int> callIds)
+		{
+			var found = new List<int>();
+			// SQL Server expands the list into one parameter per id (2100 at most), so large sweeps are read in chunks.
+			foreach (var chunk in InListValue(callIds).Distinct().Chunk(500))
+			{
+				found.AddRange(await QueryAsync<int>(
+					$"SELECT DISTINCT {Col("CallId")} FROM {Tbl("DispatcherQueueItems")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("CallId", "CallIds")}",
+					new { DepartmentId = departmentId, CallIds = chunk }));
+			}
+
+			return found;
+		}
+
+		public async Task<bool> TryInsertAsync(DispatcherQueueItem item, CancellationToken cancellationToken = default)
+		{
+			if (item == null)
+				return false;
+
+			if (string.IsNullOrWhiteSpace(item.DispatcherQueueItemId))
+				item.DispatcherQueueItemId = Guid.NewGuid().ToString();
+
+			try
+			{
+				await InsertAsync(item, cancellationToken, true);
+				return true;
+			}
+			catch (Exception ex) when (IsUniqueViolation(ex))
+			{
+				// UX_DispatcherQueueItems_OpenCall / _OpenReference: another open item has this call or reference.
+				return false;
+			}
 		}
 
 		public Task<DispatcherQueueItem> GetOpenByConversationKeyAsync(int departmentId, string conversationKey, DateTime activeSinceUtc)
@@ -386,8 +582,16 @@ namespace Resgrid.Repositories.DataRepository
 			var sql = $"UPDATE {Tbl("DispatcherQueueItems")} SET " + string.Join(", ", sets.Select(x => $"{Col(x)} = {P}{x}")) +
 					  $", {Col("Version")} = {P}NewVersion WHERE {Col("DispatcherQueueItemId")} = {CaseInsensitive("Id")} AND {Col("Version")} = {P}Expected";
 
-			if (await ExecuteAsync(sql, parameters, cancellationToken) != 1)
+			try
+			{
+				if (await ExecuteAsync(sql, parameters, cancellationToken) != 1)
+					return false;
+			}
+			catch (Exception ex) when (IsUniqueViolation(ex))
+			{
+				// The write would give a second open item the department's call or reference: it loses like a stale version.
 				return false;
+			}
 
 			item.Version = expectedVersion + 1;
 			return true;
@@ -418,11 +622,28 @@ namespace Resgrid.Repositories.DataRepository
 
 			var closed = $"SELECT {Col("DispatcherQueueItemId")} FROM {Tbl("DispatcherQueueItems")} WHERE {Col("State")} >= {P}Completed AND {Col("LastActivityOn")} < {P}Before";
 
-			await ExecuteAsync($"DELETE FROM {Tbl("DispatcherConversationMessages")} WHERE {Col("DispatcherQueueItemId")} IN ({closed})", parameters, cancellationToken);
-			await ExecuteAsync($"DELETE FROM {Tbl("DispatcherQueueEvents")} WHERE {Col("DispatcherQueueItemId")} IN ({closed})", parameters, cancellationToken);
+			// One unit of work: an item never outlives its history (a cancellation after the first delete rolls all three back).
+			var owns = UnitOfWork.Transaction == null;
+			await UnitOfWork.CreateOrGetConnectionAsync(cancellationToken);
+			try
+			{
+				await ExecuteAsync($"DELETE FROM {Tbl("DispatcherConversationMessages")} WHERE {Col("DispatcherQueueItemId")} IN ({closed})", parameters, cancellationToken);
+				await ExecuteAsync($"DELETE FROM {Tbl("DispatcherQueueEvents")} WHERE {Col("DispatcherQueueItemId")} IN ({closed})", parameters, cancellationToken);
 
-			return await ExecuteAsync(
-				$"DELETE FROM {Tbl("DispatcherQueueItems")} WHERE {Col("State")} >= {P}Completed AND {Col("LastActivityOn")} < {P}Before", parameters, cancellationToken);
+				var purged = await ExecuteAsync(
+					$"DELETE FROM {Tbl("DispatcherQueueItems")} WHERE {Col("State")} >= {P}Completed AND {Col("LastActivityOn")} < {P}Before", parameters, cancellationToken);
+
+				if (owns)
+					UnitOfWork.CommitChanges();
+
+				return purged;
+			}
+			catch
+			{
+				if (owns)
+					UnitOfWork.DiscardChanges();
+				throw;
+			}
 		}
 	}
 
@@ -467,6 +688,26 @@ namespace Resgrid.Repositories.DataRepository
 			return QueryFirstOrDefaultAsync<DispatcherConversationMessage>(
 				$"SELECT * FROM {Tbl("DispatcherConversationMessages")} WHERE {Col("ProviderMessageId")} = {CaseInsensitive("Pid")}",
 				new { Pid = providerMessageId });
+		}
+
+		public async Task<bool> TryInsertAsync(DispatcherConversationMessage message, CancellationToken cancellationToken = default)
+		{
+			if (message == null)
+				return false;
+
+			if (string.IsNullOrWhiteSpace(message.DispatcherConversationMessageId))
+				message.DispatcherConversationMessageId = Guid.NewGuid().ToString();
+
+			try
+			{
+				await InsertAsync(message, cancellationToken, true);
+				return true;
+			}
+			catch (Exception ex) when (IsUniqueViolation(ex))
+			{
+				// UX_DispatcherConversationMessages_Provider: another delivery of the same provider message is stored.
+				return false;
+			}
 		}
 	}
 }

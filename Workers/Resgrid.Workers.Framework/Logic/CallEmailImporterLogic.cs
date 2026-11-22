@@ -125,7 +125,7 @@ namespace Resgrid.Workers.Framework.Logic
 									await emailCallService.OnPendingCallSavedAsync(pendingCall, sender, call.Name);
 
 									if (enrich)
-										await QueueImportedCallEnrichmentAsync(scope, _queueService, pendingCall, sender);
+										await QueueImportedCallEnrichmentAsync(scope, _queueService, pendingCall, sender, heldForDispatcher: true);
 								}
 								else if (newCall.Dispatches != null && newCall.Dispatches.Any())
 								{
@@ -185,7 +185,8 @@ namespace Resgrid.Workers.Framework.Logic
 			return new Tuple<bool, string>(success, result);
 		}
 
-		private static async Task QueueImportedCallEnrichmentAsync(ILifetimeScope scope, IQueueService queueService, Call savedCall, string sender)
+		// heldForDispatcher: the dispatcher desk's email call mode held the call pending, so the worker enriches it while it waits.
+		private static async Task QueueImportedCallEnrichmentAsync(ILifetimeScope scope, IQueueService queueService, Call savedCall, string sender, bool heldForDispatcher = false)
 		{
 			if (!Config.AiDispatchConfig.EnrichEnabled || savedCall == null || savedCall.CallId <= 0)
 				return;
@@ -196,7 +197,8 @@ namespace Resgrid.Workers.Framework.Logic
 				await queueService.EnqueueAiDispatchTriageAsync(new AiDispatchQueueItem
 				{
 					DepartmentId = savedCall.DepartmentId, CallId = savedCall.CallId, Channel = 3, QueuedOnUtc = DateTime.UtcNow,
-					SenderNotAllowed = !await aiDispatchAdmin.IsSenderAllowedAsync(savedCall.DepartmentId, sender)
+					SenderNotAllowed = !await aiDispatchAdmin.IsSenderAllowedAsync(savedCall.DepartmentId, sender),
+					HeldForDispatcher = heldForDispatcher
 				});
 			}
 			catch (Exception aiEx)

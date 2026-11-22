@@ -9,6 +9,7 @@ using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 
@@ -38,6 +39,7 @@ namespace Resgrid.Services
 		private readonly Lazy<IShiftStaffingService> _shiftStaffingService;
 		private readonly Lazy<IWorkShiftsService> _workShiftsService;
 		private readonly Lazy<IShiftDispatchersService> _shiftDispatchers;
+		private readonly IUnitOfWork _unitOfWork;
 
 		public ShiftsService(IShiftsRepository shiftsRepository, IShiftPersonRepository shiftPersonRepository,
 			IShiftDaysRepository shiftDaysRepository, IShiftGroupsRepository shiftGroupsRepository,
@@ -47,10 +49,11 @@ namespace Resgrid.Services
 			IDepartmentGroupsService departmentGroupsService, IShiftGroupAssignmentsRepository shiftGroupAssignmentsRepository, IShiftGroupRolesRepository shiftGroupRolesRepositor,
 			IEventAggregator eventAggregator, IDepartmentSettingsService departmentSettingsService, Lazy<ISearchProjectionService> searchProjections = null,
 			Lazy<IShiftStaffingService> shiftStaffingService = null, Lazy<IWorkShiftsService> workShiftsService = null,
-			Lazy<IShiftDispatchersService> shiftDispatchers = null)
+			Lazy<IShiftDispatchersService> shiftDispatchers = null, IUnitOfWork unitOfWork = null)
 		{
 			_searchProjections = searchProjections;
 			_shiftDispatchers = shiftDispatchers;
+			_unitOfWork = unitOfWork;
 			_shiftsRepository = shiftsRepository;
 			_shiftPersonRepository = shiftPersonRepository;
 			_shiftDaysRepository = shiftDaysRepository;
@@ -272,15 +275,34 @@ namespace Resgrid.Services
 			// or offer, and those two foreign keys do not cascade, so the delete would fail.
 			var signups = await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAsync(shift.ShiftId);
 
-			foreach (var signup in signups ?? Enumerable.Empty<ShiftSignup>())
-				await ReleaseTradeReferencesToSignupAsync(signup.ShiftSignupId, cancellationToken);
+			// One transaction: the dispatch roster and settings (M0324) sit beside the shift with no foreign key, so a failed
+			// desk cleanup after a committed shift delete would leave them behind with nothing left for a retry to delete.
+			var owns = _unitOfWork != null && _unitOfWork.Transaction == null;
+			if (_unitOfWork != null)
+				await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
 
-			var deleted = await _shiftsRepository.DeleteAsync(shift, cancellationToken);
+			bool deleted;
+			try
+			{
+				foreach (var signup in signups ?? Enumerable.Empty<ShiftSignup>())
+					await ReleaseTradeReferencesToSignupAsync(signup.ShiftSignupId, cancellationToken);
 
-			// The dispatch roster and settings (M0324) sit beside the shift with no foreign key.
-			if (deleted && _shiftDispatchers != null)
-				await _shiftDispatchers.Value.DeleteForShiftAsync(shift.ShiftId, cancellationToken);
+				deleted = await _shiftsRepository.DeleteAsync(shift, cancellationToken);
 
+				if (deleted && _shiftDispatchers != null)
+					await _shiftDispatchers.Value.DeleteForShiftAsync(shift.ShiftId, cancellationToken);
+
+				if (owns)
+					_unitOfWork.CommitChanges();
+			}
+			catch
+			{
+				if (owns)
+					_unitOfWork.DiscardChanges();
+				throw;
+			}
+
+			// After the commit, outside the transaction (the projection is the search index's copy, not the shift).
 			if (deleted && _searchProjections != null)
 				await _searchProjections.Value.RemoveAsync(shift.DepartmentId, SearchEntityTypes.Shift, shift.ShiftId.ToString(), cancellationToken);
 			return deleted;

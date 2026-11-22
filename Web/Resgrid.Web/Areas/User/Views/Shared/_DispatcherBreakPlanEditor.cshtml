@@ -3,12 +3,13 @@
 @model Resgrid.Web.Areas.User.Models.DispatcherDesk.DispatcherBreakPlanEditorModel
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatcherDesk.DispatcherDesk> desk
 @* Break plan rows (a shift's plan or the department default). Posted as breakPlanType_{n}, breakPlanMinutes_{n} and
-   breakPlanOffset_{n}; DispatcherDeskForms.ReadBreakPlan reads them. Rows are added and removed by
+   breakPlanOffset_{n}; DispatcherDeskForms.ReadBreakPlan reads them (at most MaxBreakPlanRows, which data-max-rows hands the
+   script so it stops adding rows the server would drop). Rows are added and removed by
    resgrid.dispatcherdesk.breakplan.js from the template below. *@
 @{
 	var types = new[] { DispatcherBreakTypes.Break, DispatcherBreakTypes.Meal, DispatcherBreakTypes.Personal, DispatcherBreakTypes.Other };
 }
-<div class="dispatcher-break-plan" id="@Model.Id" data-next-index="@Model.Rows.Count">
+<div class="dispatcher-break-plan" id="@Model.Id" data-next-index="@Model.Rows.Count" data-max-rows="@DispatcherDeskForms.MaxBreakPlanRows">
 	<table class="table table-condensed dispatcher-break-plan-table">
 		<thead>
 			<tr>

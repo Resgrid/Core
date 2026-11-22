@@ -22,6 +22,9 @@ namespace Resgrid.Services
 		private const string LinkedDetail = "Linked to the intake text thread";
 		private const string ConnectedFromCallDetail = "Connected to the text thread from the call";
 
+		/// <summary>Tries of an idempotent intake hand-off (release, close) before it is left to be finished later.</summary>
+		private const int IntakeHandOffAttempts = 3;
+
 		/// <summary>Intake's conversation service, when this build has intake (none before the intake merge: threads never reach the desk then).</summary>
 		private IIntakeConversationService IntakeConversations => _intakeConversations.Value?.FirstOrDefault();
 
@@ -74,8 +77,15 @@ namespace Resgrid.Services
 		public async Task OnIntakeParticipantMessageAsync(IntakeConversation conversation, CancellationToken cancellationToken = default)
 		{
 			var item = await FindIntakeItemAsync(conversation);
-			if (item == null || !item.IsOpen())
+			if (item == null)
 				return;
+
+			if (!item.IsOpen())
+			{
+				// The desk completed the item but intake never heard (its close failed): the thread a dispatcher finished is ended now.
+				await FinishOwedCloseAsync(item, conversation);
+				return;
+			}
 
 			var now = UtcNow();
 			await TouchAsync(item, now, CancellationToken.None);
@@ -94,23 +104,42 @@ namespace Resgrid.Services
 				return;
 
 			var item = await FindIntakeItemAsync(conversation);
-			if (item == null || !item.IsOpen())
-				return;
-
-			// The desk's own accept (and a transfer accepted) already holds the item for this dispatcher.
-			if (item.State == (int)DispatcherQueueItemStates.Accepted && SameUser(item.AssignedUserId, userId))
-				return;
-
 			var now = UtcNow();
-			var previous = item.AssignedUserId;
-			var expected = item.Version;
-			item.State = (int)DispatcherQueueItemStates.Accepted;
-			item.AssignedUserId = userId;
-			item.AcceptedOn = now;
-			item.OfferExpiresOn = null;
-			item.LastActivityOn = now;
+			string previous = null;
+			var recorded = false;
 
-			if (!await _itemsRepository.TryUpdateAsync(item, expected, CancellationToken.None))
+			// A participant's message (or any desk write) can change the item's version between the read and the write: the item is
+			// read again and the connect retried, as long as intake still has this dispatcher on the thread (a newer connect or release wins).
+			for (var attempt = 0; attempt < 3; attempt++)
+			{
+				if (item == null || !item.IsOpen())
+					return;
+
+				// The desk's own accept (and a transfer accepted) already holds the item for this dispatcher.
+				if (item.State == (int)DispatcherQueueItemStates.Accepted && SameUser(item.AssignedUserId, userId))
+					return;
+
+				if (attempt > 0 && !await StillConnectedAsync(conversation, userId))
+					return;
+
+				previous = item.AssignedUserId;
+				var expected = item.Version;
+				item.State = (int)DispatcherQueueItemStates.Accepted;
+				item.AssignedUserId = userId;
+				item.AcceptedOn = now;
+				item.OfferExpiresOn = null;
+				item.LastActivityOn = now;
+
+				if (await _itemsRepository.TryUpdateAsync(item, expected, CancellationToken.None))
+				{
+					recorded = true;
+					break;
+				}
+
+				item = await _itemsRepository.GetItemAsync(item.DispatcherQueueItemId);
+			}
+
+			if (!recorded)
 				return;
 
 			await AddEventAsync(item, DispatcherQueueEventTypes.Accepted, userId, ConnectedFromCallDetail, now, CancellationToken.None);
@@ -157,7 +186,8 @@ namespace Resgrid.Services
 				// taken, it reads as a pending call again (no reply box for a thread that can no longer answer).
 				if (item.State != (int)DispatcherQueueItemStates.Accepted)
 				{
-					for (var attempt = 0; attempt < 3 && item != null && item.IsOpen(); attempt++)
+					// Re-checked on every attempt: a dispatcher who took the item meanwhile keeps it as they took it.
+					for (var attempt = 0; attempt < 3 && item != null && item.IsOpen() && item.State != (int)DispatcherQueueItemStates.Accepted; attempt++)
 					{
 						var expected = item.Version;
 						item.Kind = (int)(call.State == (int)CallStates.Pending ? DispatcherQueueItemKinds.PendingCall : DispatcherQueueItemKinds.ScheduledCall);
@@ -232,6 +262,30 @@ namespace Resgrid.Services
 
 			var conversation = await intake.GetByIdAsync(item.DepartmentId, conversationId);
 			var holder = conversation?.AssignedUserId;
+
+			// A dispatcher the desk released from this item whose release never reached intake (ReleaseIntakeThreadAsync failed) still
+			// holds the thread: the release is finished now, against that dispatcher only (intake releases only while they still hold
+			// it, so a newer connect is never cleared), and the connect tried again.
+			if (!string.IsNullOrWhiteSpace(holder) && !SameUser(holder, userId) && await ReleasedOnDeskSinceAcceptedAsync(item, holder))
+			{
+				try
+				{
+					await intake.ReleaseDispatcherAsync(item.DepartmentId, conversationId, holder, CancellationToken.None);
+					result = await intake.ConnectDispatcherAsync(item.DepartmentId, conversationId, userId, takeOver, CancellationToken.None);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Dispatcher desk: finishing the release of intake thread {conversationId}");
+					return null;
+				}
+
+				if (result != IntakeConversationActionResults.HeldByAnotherDispatcher)
+					return null;
+
+				conversation = await intake.GetByIdAsync(item.DepartmentId, conversationId);
+				holder = conversation?.AssignedUserId;
+			}
+
 			var expected = item.Version;
 
 			if (!string.IsNullOrWhiteSpace(holder) && !SameUser(holder, userId))
@@ -263,13 +317,24 @@ namespace Resgrid.Services
 			if (conversationId == null || intake == null || string.IsNullOrWhiteSpace(userId))
 				return;
 
-			try
+			// Idempotent and conditional on this dispatcher still holding the thread, so a retry never clears a newer assignment. A release
+			// that still fails is finished by the next dispatcher's accept (ConnectIntakeThreadAsync).
+			for (var attempt = 1; ; attempt++)
 			{
-				await intake.ReleaseDispatcherAsync(item.DepartmentId, conversationId, userId, CancellationToken.None);
-			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex, $"Dispatcher desk: releasing intake thread {conversationId}");
+				try
+				{
+					await intake.ReleaseDispatcherAsync(item.DepartmentId, conversationId, userId, CancellationToken.None);
+					return;
+				}
+				catch (Exception ex) when (attempt < IntakeHandOffAttempts)
+				{
+					Logging.LogDebug($"Dispatcher desk: releasing intake thread {conversationId} failed (attempt {attempt}): {ex.Message}");
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Dispatcher desk: releasing intake thread {conversationId}");
+					return;
+				}
 			}
 		}
 
@@ -282,13 +347,77 @@ namespace Resgrid.Services
 			if (conversationId == null || intake == null)
 				return;
 
+			// Idempotent (a closed thread answers Closed). A close that still fails is finished on the thread's next message
+			// (FinishOwedCloseAsync), since the completed item can no longer be completed again.
+			for (var attempt = 1; ; attempt++)
+			{
+				try
+				{
+					await intake.CloseAsync(item.DepartmentId, conversationId, userId, CompletedDetail(outcome), notifyParticipant, CancellationToken.None);
+					return;
+				}
+				catch (Exception ex) when (attempt < IntakeHandOffAttempts)
+				{
+					Logging.LogDebug($"Dispatcher desk: closing intake thread {conversationId} failed (attempt {attempt}): {ex.Message}");
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Dispatcher desk: closing intake thread {conversationId}");
+					return;
+				}
+			}
+		}
+
+		/// <summary>
+		/// A texter wrote to a thread whose desk item a dispatcher completed: the completion's close of the thread never reached intake
+		/// (CloseIntakeThreadAsync failed), so it is finished now, without a text (the dispatcher's notify choice is not kept). Items
+		/// the desk completed for other reasons (the call went out elsewhere: no completing user) leave the thread alone.
+		/// </summary>
+		private async Task FinishOwedCloseAsync(DispatcherQueueItem item, IntakeConversation conversation)
+		{
+			var intake = IntakeConversations;
+			if (intake == null || conversation == null || !conversation.IsOpen || item.State != (int)DispatcherQueueItemStates.Completed ||
+				string.IsNullOrWhiteSpace(item.CompletedByUserId))
+				return;
+
+			var outcome = (DispatcherQueueItemOutcomes)item.Outcome;
 			try
 			{
-				await intake.CloseAsync(item.DepartmentId, conversationId, userId, $"Completed on the dispatcher desk ({outcome})", notifyParticipant, CancellationToken.None);
+				await intake.CloseAsync(item.DepartmentId, conversation.IntakeConversationId, item.CompletedByUserId, CompletedDetail(outcome), false, CancellationToken.None);
 			}
 			catch (Exception ex)
 			{
-				Logging.LogException(ex, $"Dispatcher desk: closing intake thread {conversationId}");
+				Logging.LogException(ex, $"Dispatcher desk: finishing the close of intake thread {conversation.IntakeConversationId}");
+			}
+		}
+
+		private static string CompletedDetail(DispatcherQueueItemOutcomes outcome) => $"Completed on the dispatcher desk ({outcome})";
+
+		/// <summary>The item's history shows the desk released it (a Released after <paramref name="holder"/>'s last Accepted).</summary>
+		private async Task<bool> ReleasedOnDeskSinceAcceptedAsync(DispatcherQueueItem item, string holder)
+		{
+			var events = (await _eventsRepository.GetForItemAsync(item.DispatcherQueueItemId) ?? Enumerable.Empty<DispatcherQueueEvent>()).ToList();
+			var accepted = events.Where(x => x.EventType == (int)DispatcherQueueEventTypes.Accepted && SameUser(x.UserId, holder))
+				.Select(x => (DateTime?)x.OccurredOn).Max();
+			return accepted.HasValue && events.Any(x => x.EventType == (int)DispatcherQueueEventTypes.Released && x.OccurredOn > accepted.Value);
+		}
+
+		/// <summary>Intake still has <paramref name="userId"/> on the thread (read fresh); true when it cannot be read, as the callback said so.</summary>
+		private async Task<bool> StillConnectedAsync(IntakeConversation conversation, string userId)
+		{
+			var intake = IntakeConversations;
+			if (intake == null)
+				return true;
+
+			try
+			{
+				var current = await intake.GetByIdAsync(conversation.DepartmentId, conversation.IntakeConversationId);
+				return current == null || SameUser(current.AssignedUserId, userId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Dispatcher desk: reading intake thread {conversation.IntakeConversationId}");
+				return true;
 			}
 		}
 

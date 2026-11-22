@@ -56,6 +56,11 @@ namespace Resgrid.Providers.Migrations.Migrations
 						"CREATE INDEX [IX_ShiftDispatchers_Shift] ON [ShiftDispatchers] ([ShiftId], [ShiftDayId]);");
 			Execute.Sql("IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_ShiftDispatchers_Department_User' AND object_id = OBJECT_ID('ShiftDispatchers')) " +
 						"CREATE INDEX [IX_ShiftDispatchers_Department_User] ON [ShiftDispatchers] ([DepartmentId], [UserId]);");
+			// One standing row (no day) per shift and dispatcher: two editors adding the same person at once cannot both insert.
+			// Day rows (signups, one-day assignments, exclusions) are outside it. The column collation is case-insensitive, as the
+			// service compares user ids.
+			Execute.Sql("IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'UX_ShiftDispatchers_Standing' AND object_id = OBJECT_ID('ShiftDispatchers')) " +
+						"CREATE UNIQUE INDEX [UX_ShiftDispatchers_Standing] ON [ShiftDispatchers] ([ShiftId], [UserId]) WHERE [ShiftDayId] IS NULL;");
 
 			if (!Schema.Table("DispatcherBreaks").Exists())
 			{
@@ -170,6 +175,12 @@ namespace Resgrid.Providers.Migrations.Migrations
 						"CREATE INDEX [IX_DispatcherQueueItems_External] ON [DispatcherQueueItems] ([ExternalReference]) WHERE [ExternalReference] IS NOT NULL;");
 			Execute.Sql("IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_DispatcherQueueItems_Department_Created' AND object_id = OBJECT_ID('DispatcherQueueItems')) " +
 						"CREATE INDEX [IX_DispatcherQueueItems_Department_Created] ON [DispatcherQueueItems] ([DepartmentId], [CreatedOn]);");
+			// At most one open item per call and per external reference (a call event and the sweep, or a provider retry, racing to
+			// enqueue the same work): the losing insert reads the winner instead. Closed items never block new work.
+			Execute.Sql("IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'UX_DispatcherQueueItems_OpenCall' AND object_id = OBJECT_ID('DispatcherQueueItems')) " +
+						"CREATE UNIQUE INDEX [UX_DispatcherQueueItems_OpenCall] ON [DispatcherQueueItems] ([DepartmentId], [CallId]) WHERE [CallId] IS NOT NULL AND [State] < 3;");
+			Execute.Sql("IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'UX_DispatcherQueueItems_OpenReference' AND object_id = OBJECT_ID('DispatcherQueueItems')) " +
+						"CREATE UNIQUE INDEX [UX_DispatcherQueueItems_OpenReference] ON [DispatcherQueueItems] ([DepartmentId], [ExternalReference]) WHERE [ExternalReference] IS NOT NULL AND [State] < 3;");
 
 			if (!Schema.Table("DispatcherQueueEvents").Exists())
 			{
@@ -207,8 +218,10 @@ namespace Resgrid.Providers.Migrations.Migrations
 
 			Execute.Sql("IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_DispatcherConversationMessages_Item' AND object_id = OBJECT_ID('DispatcherConversationMessages')) " +
 						"CREATE INDEX [IX_DispatcherConversationMessages_Item] ON [DispatcherConversationMessages] ([DispatcherQueueItemId], [CreatedOn]);");
-			Execute.Sql("IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_DispatcherConversationMessages_Provider' AND object_id = OBJECT_ID('DispatcherConversationMessages')) " +
-						"CREATE INDEX [IX_DispatcherConversationMessages_Provider] ON [DispatcherConversationMessages] ([ProviderMessageId]) WHERE [ProviderMessageId] IS NOT NULL;");
+			// Unique: a provider message (Twilio/SignalWire message sid) is stored once, so overlapping deliveries of one text cannot
+			// both land on the thread (DispatcherConversationMessagesRepository.TryInsertAsync).
+			Execute.Sql("IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'UX_DispatcherConversationMessages_Provider' AND object_id = OBJECT_ID('DispatcherConversationMessages')) " +
+						"CREATE UNIQUE INDEX [UX_DispatcherConversationMessages_Provider] ON [DispatcherConversationMessages] ([ProviderMessageId]) WHERE [ProviderMessageId] IS NOT NULL;");
 			Execute.Sql("IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_DispatcherConversationMessages_Department' AND object_id = OBJECT_ID('DispatcherConversationMessages')) " +
 						"CREATE INDEX [IX_DispatcherConversationMessages_Department] ON [DispatcherConversationMessages] ([DepartmentId]);");
 		}

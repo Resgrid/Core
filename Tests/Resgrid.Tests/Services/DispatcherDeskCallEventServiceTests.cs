@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
@@ -28,6 +29,7 @@ namespace Resgrid.Tests.Services
 		private EventAggregator _events;
 		private DispatcherDeskCallEventService _service;
 		private TaskCompletionSource<bool> _routed;
+		private Mock<IIntakeService> _intake;
 
 		[SetUp]
 		public void SetUp()
@@ -42,9 +44,13 @@ namespace Resgrid.Tests.Services
 			_routing.Setup(r => r.OnCallChangedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
 				.Callback(() => _routed.TrySetResult(true)).Returns(Task.CompletedTask);
 
+			_intake = new Mock<IIntakeService>();
+			_intake.Setup(i => i.GetCallSourcesAsync(DepartmentId, It.IsAny<IEnumerable<int>>())).ReturnsAsync(new Dictionary<int, IntakeCallSource>());
+
 			var builder = new ContainerBuilder();
 			builder.RegisterInstance(deskConfig.Object).As<IDispatcherDeskConfigService>();
 			builder.RegisterInstance(_routing.Object).As<IDispatcherRoutingService>();
+			builder.RegisterInstance(_intake.Object).As<IIntakeService>();
 			_container = builder.Build();
 			_events = new EventAggregator();
 			_service = new DispatcherDeskCallEventService(_events, _container);
@@ -89,7 +95,7 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task Departments_without_the_desk_or_without_pending_call_routing_are_left_alone()
+		public async Task Departments_without_the_desk_are_left_alone()
 		{
 			_desk.Enabled = false;
 			await _service.OnCallChangedAsync(DepartmentId, PendingCall());
@@ -97,12 +103,83 @@ namespace Resgrid.Tests.Services
 			closed.State = (int)CallStates.Closed;
 			await _service.OnCallChangedAsync(DepartmentId, closed);
 
-			_desk.Enabled = true;
+			_routing.Verify(r => r.EnqueueAsync(It.IsAny<DispatcherEnqueueRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+			_routing.Verify(r => r.OnCallChangedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task Without_pending_call_routing_a_waiting_call_is_not_added_but_its_existing_items_are_still_reconciled()
+		{
 			_desk.RoutePendingCalls = false;
+
 			await _service.OnCallChangedAsync(DepartmentId, PendingCall());
 
 			_routing.Verify(r => r.EnqueueAsync(It.IsAny<DispatcherEnqueueRequest>(), It.IsAny<CancellationToken>()), Times.Never);
-			_routing.Verify(r => r.OnCallChangedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+			// An intake text the desk took (Texts) and that was screened since: its offer must still come back (M0326).
+			_routing.Verify(r => r.OnCallChangedAsync(DepartmentId, 500, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task A_chat_apps_waiting_call_goes_on_the_desk_as_a_chat_even_without_pending_call_routing()
+		{
+			_desk.RoutePendingCalls = false;
+			var call = PendingCall();
+			call.CallSource = (int)CallSources.Intake;
+			call.ContactName = "Pat (Slack)";
+			_intake.Setup(i => i.GetCallSourcesAsync(DepartmentId, It.IsAny<IEnumerable<int>>())).ReturnsAsync(new Dictionary<int, IntakeCallSource>
+			{
+				[500] = new IntakeCallSource { CallId = 500, ChannelType = (int)IntakeChannelTypes.Slack }
+			});
+
+			await _service.OnCallChangedAsync(DepartmentId, call);
+
+			_routing.Verify(r => r.EnqueueAsync(It.Is<DispatcherEnqueueRequest>(q => q.Kind == DispatcherQueueItemKinds.Chat && q.CallId == 500 &&
+				q.SourceName == "Pat (Slack)" && q.Subject == "Lift assist"), It.IsAny<CancellationToken>()), Times.Once);
+
+			// Chats unticked: it falls back to a pending call, and with neither ticked it is not added.
+			_desk.RouteChat = false;
+			_desk.RoutePendingCalls = true;
+			await _service.OnCallChangedAsync(DepartmentId, call);
+			_routing.Verify(r => r.EnqueueAsync(It.Is<DispatcherEnqueueRequest>(q => q.Kind == DispatcherQueueItemKinds.PendingCall), It.IsAny<CancellationToken>()), Times.Once);
+
+			_desk.RoutePendingCalls = false;
+			await _service.OnCallChangedAsync(DepartmentId, call);
+			_routing.Verify(r => r.EnqueueAsync(It.IsAny<DispatcherEnqueueRequest>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
+		}
+
+		[Test]
+		public async Task An_sms_intake_call_is_not_a_chat()
+		{
+			var call = PendingCall();
+			call.CallSource = (int)CallSources.Intake;
+			_intake.Setup(i => i.GetCallSourcesAsync(DepartmentId, It.IsAny<IEnumerable<int>>())).ReturnsAsync(new Dictionary<int, IntakeCallSource>
+			{
+				[500] = new IntakeCallSource { CallId = 500, ChannelType = (int)IntakeChannelTypes.Sms }
+			});
+
+			await _service.OnCallChangedAsync(DepartmentId, call);
+
+			_routing.Verify(r => r.EnqueueAsync(It.Is<DispatcherEnqueueRequest>(q => q.Kind == DispatcherQueueItemKinds.PendingCall), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task An_emailed_waiting_call_goes_on_the_desk_as_an_email_but_the_desks_own_pending_calls_do_not()
+		{
+			_desk.RoutePendingCalls = false;
+			var emailed = PendingCall();
+			emailed.CallSource = (int)CallSources.EmailImport;
+
+			await _service.OnCallChangedAsync(DepartmentId, emailed);
+
+			_routing.Verify(r => r.EnqueueAsync(It.Is<DispatcherEnqueueRequest>(q => q.Kind == DispatcherQueueItemKinds.Email && q.CallId == 500), It.IsAny<CancellationToken>()), Times.Once);
+
+			// The desk's pending call for an overflowed text is EmailImport too ("DQ:{itemId}"): it is already the item's call, never an email.
+			var overflowed = PendingCall();
+			overflowed.CallSource = (int)CallSources.EmailImport;
+			overflowed.SourceIdentifier = "DQ:item-1";
+			await _service.OnCallChangedAsync(DepartmentId, overflowed);
+
+			_routing.Verify(r => r.EnqueueAsync(It.IsAny<DispatcherEnqueueRequest>(), It.IsAny<CancellationToken>()), Times.Once);
 		}
 
 		[Test]

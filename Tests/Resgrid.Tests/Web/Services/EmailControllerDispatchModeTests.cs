@@ -163,8 +163,8 @@ NARR: SMOKE SHOWING";
 		private async Task<int?> ReceiveAsync(PostmarkInboundMessage email) =>
 			((await _controller.Receive(email, CancellationToken.None)) as IStatusCodeActionResult)?.StatusCode;
 
-		private void VerifyAiQueued(Times times) =>
-			_queue.Verify(q => q.EnqueueAiDispatchTriageAsync(It.Is<AiDispatchQueueItem>(i => i.CallId == _saved[0].CallId && i.Channel == 1), It.IsAny<CancellationToken>()), times);
+		private void VerifyAiQueued(Times times, string because = "") =>
+			_queue.Verify(q => q.EnqueueAiDispatchTriageAsync(It.Is<AiDispatchQueueItem>(i => i.CallId == _saved[0].CallId && i.Channel == 1), It.IsAny<CancellationToken>()), times, because);
 
 		[Test]
 		public async Task Auto_dispatch_sends_the_call_at_once_and_never_touches_the_desk()
@@ -254,6 +254,50 @@ NARR: SMOKE SHOWING";
 			_saved.Should().ContainSingle("the retry finished the first call");
 			_broadcasts.Should().Be(0);
 			_routing.Verify(r => r.EnqueueAsync(It.Is<DispatcherEnqueueRequest>(q => q.CallId == _saved[0].CallId), It.IsAny<CancellationToken>()), Times.Exactly(2));
+		}
+
+		[Test]
+		public async Task A_failed_desk_entry_keeps_the_email_retryable_and_the_retry_puts_it_on_the_desk()
+		{
+			// Only Emails ticked: neither the call-event hand-off nor the desk's sweep (both Pending Calls routing) would add it later.
+			_desk.EmailCallMode = (int)DispatcherEmailCallModes.EnhancedAi;
+			_desk.RoutePendingCalls = false;
+			var id = Guid.NewGuid().ToString();
+			var attempts = 0;
+			_routing.Setup(r => r.EnqueueAsync(It.IsAny<DispatcherEnqueueRequest>(), It.IsAny<CancellationToken>()))
+				.Returns((DispatcherEnqueueRequest request, CancellationToken ct) => ++attempts == 1
+					? throw new TimeoutException("desk store unavailable")
+					: Task.FromResult(DispatcherRouteResult.NotRouted()));
+
+			(await ReceiveAsync(Email(id))).Should().Be(400, "Postmark redelivers");
+			_saved.Should().ContainSingle();
+			_receipts.Find(id).State.Should().Be((int)InboundEmailReceiptStates.Saved);
+			VerifyAiQueued(Times.Once());
+
+			(await ReceiveAsync(Email(id))).Should().Be(200);
+
+			_saved.Should().ContainSingle("the retry finished the first call");
+			_broadcasts.Should().Be(0);
+			_routing.Verify(r => r.EnqueueAsync(It.Is<DispatcherEnqueueRequest>(q => q.CallId == _saved[0].CallId && q.Kind == DispatcherQueueItemKinds.Email),
+				It.IsAny<CancellationToken>()), Times.Exactly(2));
+			VerifyAiQueued(Times.Once(), "the AI step went out on the first delivery");
+			_receipts.Find(id).State.Should().Be((int)InboundEmailReceiptStates.Completed);
+		}
+
+		[Test]
+		public async Task Only_a_held_call_is_queued_for_ai_as_held_for_a_dispatcher()
+		{
+			_desk.EmailCallMode = (int)DispatcherEmailCallModes.EnhancedAi;
+			(await ReceiveAsync(Email())).Should().Be(200);
+			_queue.Verify(q => q.EnqueueAiDispatchTriageAsync(It.Is<AiDispatchQueueItem>(i => i.CallId == _saved[0].CallId && i.HeldForDispatcher),
+				It.IsAny<CancellationToken>()), Times.Once);
+
+			_saved.Clear();
+			_desk.EmailCallMode = (int)DispatcherEmailCallModes.AutoDispatch;
+			_formatType = (int)CallEmailTypes.AI;
+			(await ReceiveAsync(Email())).Should().Be(200);
+			_queue.Verify(q => q.EnqueueAiDispatchTriageAsync(It.Is<AiDispatchQueueItem>(i => i.CallId == _saved[0].CallId && !i.HeldForDispatcher),
+				It.IsAny<CancellationToken>()), Times.Once, "the AI email format's live call keeps the active-call rule");
 		}
 
 		[Test]

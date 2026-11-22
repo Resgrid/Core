@@ -358,6 +358,72 @@ namespace Resgrid.Tests.Web.User
 		}
 
 		[Test]
+		public async Task Planning_your_own_break_needs_current_dispatch_access()
+		{
+			// Shift_View alone, on a self-scheduling shift, without the Dispatch app login any more.
+			SelfSchedulingShift(8, true);
+			M<IShiftDispatchersService>().Setup(x => x.GetDayRosterAsync(DepartmentId, 70)).ReturnsAsync(new List<DispatcherDutyWindow>
+			{
+				new DispatcherDutyWindow { UserId = Me, ShiftId = 8, ShiftDayId = 70 }
+			});
+			M<IDispatcherBreaksService>().Setup(x => x.GetBreakAsync(DepartmentId, "mine"))
+				.ReturnsAsync(new DispatcherBreak { DispatcherBreakId = "mine", DepartmentId = DepartmentId, UserId = Me, ShiftId = 8, State = (int)DispatcherBreakStates.Scheduled });
+
+			var input = new DispatcherBreakEditInput { ShiftDayId = 70, DurationMinutes = 15, Start = "2026-11-20T13:30" };
+			ActionJson(await Build().SaveBreak(input, CancellationToken.None)).Error.Should().Be(nameof(DispatcherDeskErrors.NotPermitted));
+			ActionJson(await Build().CancelBreak("mine", CancellationToken.None)).Error.Should().Be(nameof(DispatcherDeskErrors.NotPermitted));
+
+			M<IDispatcherBreaksService>().Verify(x => x.SaveBreakAsync(It.IsAny<int>(), It.IsAny<DispatcherBreak>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+			M<IDispatcherBreaksService>().Verify(x => x.CancelBreakAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task An_unchanged_start_keeps_the_stored_instant_in_the_repeated_hour()
+		{
+			// 2026-11-01 01:30 happens twice in New York (EDT, then EST). Whichever instant the conversion picks, the stored one is the other.
+			AsSupervisor();
+			var local = new DateTime(2026, 11, 1, 1, 30, 0);
+			var converted = local.DepartmentLocalToUtc(_department);
+			var stored = converted == new DateTime(2026, 11, 1, 5, 30, 0) ? new DateTime(2026, 11, 1, 6, 30, 0, DateTimeKind.Utc) : new DateTime(2026, 11, 1, 5, 30, 0, DateTimeKind.Utc);
+			M<IDispatcherBreaksService>().Setup(x => x.GetBreakAsync(DepartmentId, "dst")).ReturnsAsync(new DispatcherBreak
+			{
+				DispatcherBreakId = "dst", DepartmentId = DepartmentId, UserId = Colleague, ShiftId = 8, State = (int)DispatcherBreakStates.Scheduled, ScheduledStartOn = stored, DurationMinutes = 15
+			});
+			DispatcherBreak saved = null;
+			M<IDispatcherBreaksService>().Setup(x => x.SaveBreakAsync(DepartmentId, It.IsAny<DispatcherBreak>(), Me, It.IsAny<CancellationToken>()))
+				.Callback((int _, DispatcherBreak b, string __, CancellationToken ___) => saved = b)
+				.ReturnsAsync((int _, DispatcherBreak b, string __, CancellationToken ___) => DispatcherDeskResult<DispatcherBreak>.Ok(b));
+
+			ActionJson(await Build().SaveBreak(new DispatcherBreakEditInput { DispatcherBreakId = "dst", DurationMinutes = 15, Start = "2026-11-01T01:30", Note = "note only" },
+				CancellationToken.None)).Success.Should().BeTrue();
+			saved.ScheduledStartOn.Should().Be(stored, "a note-only edit does not move the break by an hour");
+
+			ActionJson(await Build().SaveBreak(new DispatcherBreakEditInput { DispatcherBreakId = "dst", DurationMinutes = 15, Start = "2026-11-01T03:00" }, CancellationToken.None))
+				.Success.Should().BeTrue();
+			saved.ScheduledStartOn.Should().Be(new DateTime(2026, 11, 1, 3, 0, 0).DepartmentLocalToUtc(_department), "a changed start is converted as before");
+		}
+
+		[Test]
+		public async Task Dates_that_cannot_form_a_window_fall_back_to_the_default_range()
+		{
+			AsSupervisor();
+			M<IDispatcherRoutingService>().Setup(x => x.GetStatsAsync(DepartmentId, It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(new DispatcherQueueStats());
+
+			// "to" at the first day there is, with no "from": a week back from it cannot be computed, so today's week is shown.
+			var activity = (await Build().Activity(null, "0001-01-01")).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<DispatcherDeskActivityView>().Subject;
+			DateTime.Parse(activity.To).Year.Should().BeGreaterThan(2000);
+			(await Build().Activity("9999-12-31", null)).Should().BeOfType<ViewResult>();
+
+			// The planner adds a day for the end of a local date: the last day there is cannot have one.
+			(await Build().BreaksData("9999-12-31", null)).Should().BeOfType<JsonResult>();
+			(await Build().Breaks("9999-12-31", null)).Should().BeOfType<ViewResult>();
+			(await Build().BreaksData("0001-01-01", null)).Should().BeOfType<JsonResult>();
+
+			ActionJson(await Build().SaveBreak(new DispatcherBreakEditInput { DurationMinutes = 15, Start = "9999-12-31T23:59" }, CancellationToken.None))
+				.Error.Should().Be(nameof(DispatcherDeskErrors.InvalidInput));
+		}
+
+		[Test]
 		public async Task PlanBreaks_is_for_supervisors_on_the_departments_own_shift_day()
 		{
 			AsDispatcher();

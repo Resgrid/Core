@@ -12,6 +12,7 @@ var resgrid;
             var data = null;
             var skew = 0;
             var loading = false;
+            var reloadQueued = false;
             var pending = null;
             var editing = null;
 
@@ -167,11 +168,15 @@ var resgrid;
             }
 
             function load() {
+                // One GET at a time; a refresh asked for meanwhile (a save, a cancel, a realtime change) runs once it finishes, so the
+                // page never keeps what an earlier GET read before the change.
                 if (loading) {
+                    reloadQueued = true;
                     return;
                 }
 
                 loading = true;
+                reloadQueued = false;
                 var query = { date: options.date };
                 if (options.shiftDayId) {
                     query.shiftDayId = options.shiftDayId;
@@ -185,6 +190,9 @@ var resgrid;
                     $('#breaksAlert').removeClass('alert-success alert-warning').addClass('alert-danger').text(t('PlannerLoadFailed')).show();
                 }).always(function () {
                     loading = false;
+                    if (reloadQueued) {
+                        load();
+                    }
                 });
             }
 

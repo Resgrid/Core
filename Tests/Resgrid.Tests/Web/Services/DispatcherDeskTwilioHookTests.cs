@@ -28,6 +28,7 @@ namespace Resgrid.Tests.Web.Services
 		private const int DepartmentId = 42;
 		private const string DepartmentNumber = "15559990000";
 		private const string Sender = "+15551234567";
+		private const string MasterNumber = "+15550001111";
 
 		private Dictionary<Type, Mock> _mocks;
 		private Mock<IUserProfileService> _profiles;
@@ -38,12 +39,18 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<IDispatcherInboundVoiceHandler> _voiceHandler;
 		private List<InboundMessageEvent> _savedEvents;
 		private string _signalWireKey;
+		private string _twilioMaster;
+		private string _signalWireMaster;
 
 		[SetUp]
 		public void SetUp()
 		{
 			_signalWireKey = global::Resgrid.Config.NumberProviderConfig.SignalWireApiKey;
 			global::Resgrid.Config.NumberProviderConfig.SignalWireApiKey = "";
+			_twilioMaster = global::Resgrid.Config.NumberProviderConfig.TwilioResgridNumber;
+			_signalWireMaster = global::Resgrid.Config.NumberProviderConfig.SignalWireResgridNumber;
+			global::Resgrid.Config.NumberProviderConfig.TwilioResgridNumber = MasterNumber;
+			global::Resgrid.Config.NumberProviderConfig.SignalWireResgridNumber = MasterNumber;
 
 			_mocks = new Dictionary<Type, Mock>();
 			_profiles = Register<IUserProfileService>();
@@ -75,6 +82,8 @@ namespace Resgrid.Tests.Web.Services
 		public void TearDown()
 		{
 			global::Resgrid.Config.NumberProviderConfig.SignalWireApiKey = _signalWireKey;
+			global::Resgrid.Config.NumberProviderConfig.TwilioResgridNumber = _twilioMaster;
+			global::Resgrid.Config.NumberProviderConfig.SignalWireResgridNumber = _signalWireMaster;
 		}
 
 		private Mock<T> Register<T>() where T : class
@@ -168,11 +177,26 @@ namespace Resgrid.Tests.Web.Services
 		public async System.Threading.Tasks.Task Twilio_text_to_the_master_number_asks_the_desk_with_no_department()
 		{
 			var message = Text("Yes, north side");
-			message.To = "+15550001111";
+			message.To = MasterNumber;
+			_textHandler.Setup(x => x.HandleAsync(null, Sender, MasterNumber, "Yes, north side", "SM1", It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
 			await Build<TwilioController>(Get("")).IncomingMessage(message);
 
-			_textHandler.Verify(x => x.HandleAsync(null, Sender, "+15550001111", "Yes, north side", "SM1", It.IsAny<CancellationToken>()), Times.Once);
+			_textHandler.Verify(x => x.HandleAsync(null, Sender, MasterNumber, "Yes, north side", "SM1", It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task Twilio_text_to_an_unmapped_number_never_joins_a_desk_conversation()
+		{
+			// No department owns the texted number and it is not the master number: "no department" must not reach the desk,
+			// which would read it as a master-number reply and join the sender's conversation in any department.
+			var message = Text("Yes, north side");
+			message.To = "+15550002222";
+
+			await Build<TwilioController>(Get("")).IncomingMessage(message);
+
+			_textHandler.Verify(x => x.HandleAsync(It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+				It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]
@@ -257,6 +281,25 @@ namespace Resgrid.Tests.Web.Services
 
 			((Mock<IDepartmentsService>)_mocks[typeof(IDepartmentsService)])
 				.Verify(x => x.GetDepartmentByIdAsync(DepartmentId, It.IsAny<bool>()), Times.Once);
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task SignalWire_text_to_the_master_number_asks_the_desk_with_no_department()
+		{
+			_textHandler.Setup(x => x.HandleAsync(null, "15551234567", "15550001111", "Yes, north side", "SW1", It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+			await Build<SignalWireController>(Get(SignalWireQuery("Yes, north side", MasterNumber))).Receive(CancellationToken.None);
+
+			_textHandler.Verify(x => x.HandleAsync(null, "15551234567", "15550001111", "Yes, north side", "SW1", It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task SignalWire_text_to_an_unmapped_number_never_joins_a_desk_conversation()
+		{
+			await Build<SignalWireController>(Get(SignalWireQuery("Yes, north side", "+15550002222"))).Receive(CancellationToken.None);
+
+			_textHandler.Verify(x => x.HandleAsync(It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+				It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]

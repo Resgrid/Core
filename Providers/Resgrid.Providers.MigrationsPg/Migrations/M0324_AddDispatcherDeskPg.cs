@@ -47,6 +47,8 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 
 			Execute.Sql("CREATE INDEX IF NOT EXISTS ix_shiftdispatchers_shift ON shiftdispatchers (shiftid, shiftdayid);");
 			Execute.Sql("CREATE INDEX IF NOT EXISTS ix_shiftdispatchers_department_user ON shiftdispatchers (departmentid, userid);");
+			// One standing row (no day) per shift and dispatcher; userid is citext, so the match is case-insensitive.
+			Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_shiftdispatchers_standing ON shiftdispatchers (shiftid, userid) WHERE shiftdayid IS NULL;");
 
 			if (!Schema.Table("dispatcherbreaks").Exists())
 			{
@@ -149,6 +151,10 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 			Execute.Sql("CREATE INDEX IF NOT EXISTS ix_dispatcherqueueitems_conversation ON dispatcherqueueitems (conversationkey, lastactivityon) WHERE conversationkey IS NOT NULL;");
 			Execute.Sql("CREATE INDEX IF NOT EXISTS ix_dispatcherqueueitems_external ON dispatcherqueueitems (externalreference) WHERE externalreference IS NOT NULL;");
 			Execute.Sql("CREATE INDEX IF NOT EXISTS ix_dispatcherqueueitems_department_created ON dispatcherqueueitems (departmentid, createdon);");
+			// At most one open item per call and per external reference (a call event and the sweep, or a provider retry, racing to
+			// enqueue the same work): the losing insert reads the winner instead. Closed items never block new work.
+			Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_dispatcherqueueitems_opencall ON dispatcherqueueitems (departmentid, callid) WHERE callid IS NOT NULL AND state < 3;");
+			Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_dispatcherqueueitems_openreference ON dispatcherqueueitems (departmentid, externalreference) WHERE externalreference IS NOT NULL AND state < 3;");
 
 			if (!Schema.Table("dispatcherqueueevents").Exists())
 			{
@@ -183,7 +189,8 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 			}
 
 			Execute.Sql("CREATE INDEX IF NOT EXISTS ix_dispatcherconversationmessages_item ON dispatcherconversationmessages (dispatcherqueueitemid, createdon);");
-			Execute.Sql("CREATE INDEX IF NOT EXISTS ix_dispatcherconversationmessages_provider ON dispatcherconversationmessages (providermessageid) WHERE providermessageid IS NOT NULL;");
+			// Unique: a provider message is stored once (DispatcherConversationMessagesRepository.TryInsertAsync). citext, so case-insensitive.
+			Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_dispatcherconversationmessages_provider ON dispatcherconversationmessages (providermessageid) WHERE providermessageid IS NOT NULL;");
 			Execute.Sql("CREATE INDEX IF NOT EXISTS ix_dispatcherconversationmessages_department ON dispatcherconversationmessages (departmentid);");
 		}
 

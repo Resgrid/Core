@@ -219,6 +219,52 @@ namespace Resgrid.Tests.Repositories
 		}
 
 		[Test]
+		public async Task One_open_item_per_call_and_reference_while_closed_items_never_block_new_work()
+		{
+			const int dept = 91;
+			var first = NewItem(departmentId: dept, callId: 5150);
+			(await Items().TryInsertAsync(first)).Should().BeTrue();
+			(await Items().TryInsertAsync(NewItem(departmentId: dept, callId: 5150))).Should().BeFalse("a second open item for the call loses");
+			(await Items().TryInsertAsync(NewItem(departmentId: dept + 1, callId: 5150))).Should().BeTrue("the key is per department");
+
+			var voice = NewItem(departmentId: dept, reference: "CA-Unique");
+			(await Items().TryInsertAsync(voice)).Should().BeTrue();
+			(await Items().TryInsertAsync(NewItem(departmentId: dept, reference: "ca-unique"))).Should().BeFalse("a provider retry of the same call");
+
+			// Linking a call another open item has loses like a stale version (no exception).
+			var other = NewItem(departmentId: dept);
+			(await Items().TryInsertAsync(other)).Should().BeTrue();
+			other.CallId = 5150;
+			(await Items().TryUpdateAsync(other, 0)).Should().BeFalse();
+
+			// Once the first is closed, the call may come back to the desk.
+			first.State = (int)DispatcherQueueItemStates.Completed;
+			(await Items().TryUpdateAsync(first, 0)).Should().BeTrue();
+			(await Items().TryUpdateAsync(other, 0)).Should().BeTrue();
+			(await Items().TryInsertAsync(NewItem(departmentId: dept, callId: 5150, state: DispatcherQueueItemStates.Completed))).Should().BeTrue();
+
+			(await Items().GetCallIdsOnDeskAsync(dept, new[] { 5150, 5151, 5150 })).Should().Equal(5150);
+			(await Items().GetCallIdsOnDeskAsync(dept, new int[0])).Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task The_offer_stamp_changes_only_the_last_offered_time()
+		{
+			var presence = new DispatcherPresence
+			{
+				DispatcherPresenceId = Guid.NewGuid().ToString(), DepartmentId = 92, UserId = "offer-stamp", State = (int)DispatcherPresenceStates.OnBreak,
+				StateChangedOn = Now, SignedInOn = Now
+			};
+			(await Presences().TryInsertAsync(presence)).Should().BeTrue();
+
+			(await Presences().SetLastOfferedOnAsync(presence.DispatcherPresenceId.ToUpperInvariant(), Now.AddMinutes(3))).Should().BeTrue();
+
+			var read = await Presences().GetForUserAsync(92, "offer-stamp");
+			read.LastOfferedOn.Should().Be(Now.AddMinutes(3));
+			read.State.Should().Be((int)DispatcherPresenceStates.OnBreak);
+		}
+
+		[Test]
 		public async Task Purging_removes_old_closed_items_with_their_history_and_messages_only()
 		{
 			var old = NewItem(departmentId: 90, state: DispatcherQueueItemStates.Completed, created: Now.AddDays(-200));
@@ -263,6 +309,26 @@ namespace Resgrid.Tests.Repositories
 		}
 
 		[Test]
+		public async Task A_provider_message_is_stored_once_and_messages_without_one_are_not_limited()
+		{
+			var item = NewItem();
+			await Items().InsertAsync(item, CancellationToken.None, true);
+
+			DispatcherConversationMessage Message(string providerId, DispatcherMessageDirections direction = DispatcherMessageDirections.Inbound) => new DispatcherConversationMessage
+			{
+				DispatcherConversationMessageId = Guid.NewGuid().ToString(), DepartmentId = Dept, DispatcherQueueItemId = item.DispatcherQueueItemId,
+				Direction = (int)direction, Body = "hello", CreatedOn = Now, ProviderMessageId = providerId
+			};
+
+			(await Messages().TryInsertAsync(Message("SM-dup"))).Should().BeTrue();
+			(await Messages().TryInsertAsync(Message("sm-DUP"))).Should().BeFalse("the provider id is unique regardless of case (UX_DispatcherConversationMessages_Provider)");
+			(await Messages().TryInsertAsync(Message(null, DispatcherMessageDirections.Note))).Should().BeTrue();
+			(await Messages().TryInsertAsync(Message(null, DispatcherMessageDirections.Outbound))).Should().BeTrue("replies and notes carry no provider id");
+
+			(await Messages().GetForItemAsync(item.DispatcherQueueItemId)).Should().HaveCount(3);
+		}
+
+		[Test]
 		public async Task One_presence_row_per_member_and_lookups_ignore_user_id_case()
 		{
 			var presence = new DispatcherPresence
@@ -289,6 +355,63 @@ namespace Resgrid.Tests.Repositories
 		}
 
 		[Test]
+		public async Task Presence_writes_are_conditional_on_the_signed_in_session()
+		{
+			// PR 589: the heartbeat, the duty carry-on and the sign-off each act only on the session they read.
+			var signedIn = Now.AddHours(-2);
+			var presence = new DispatcherPresence
+			{
+				DispatcherPresenceId = Guid.NewGuid().ToString(), DepartmentId = Dept, UserId = "Session-Ann", State = (int)DispatcherPresenceStates.Available,
+				StateChangedOn = signedIn, SignedInOn = signedIn, LastSeenOn = signedIn, AwayReason = "x", MissedOffers = 2
+			};
+			(await Presences().TryInsertAsync(presence)).Should().BeTrue();
+			var stored = await Presences().GetForUserAsync(Dept, "session-ann");
+
+			(await Presences().TouchAsync(presence.DispatcherPresenceId.ToUpperInvariant(), Now)).Should().BeTrue();
+			(await Presences().TrySetDutyAsync(presence.DispatcherPresenceId, stored.SignedInOn.Value.AddSeconds(1), (int)DispatcherDutyModes.Scheduled, 3, 100, Now.AddHours(8)))
+				.Should().BeFalse("another session");
+			(await Presences().TrySetDutyAsync(presence.DispatcherPresenceId, stored.SignedInOn, (int)DispatcherDutyModes.Unscheduled, 3, 100, null)).Should().BeTrue();
+			(await Presences().TrySignOffAsync(presence.DispatcherPresenceId, stored.SignedInOn.Value.AddSeconds(1), Now)).Should().BeFalse("another session");
+
+			var touched = await Presences().GetForUserAsync(Dept, "Session-Ann");
+			touched.LastSeenOn.Should().BeCloseTo(Now, TimeSpan.FromMilliseconds(1));
+			touched.State.Should().Be((int)DispatcherPresenceStates.Available, "the heartbeat writes nothing else");
+			touched.DutyMode.Should().Be((int)DispatcherDutyModes.Unscheduled);
+			touched.DutyEndsOn.Should().BeNull();
+
+			(await Presences().TrySignOffAsync(presence.DispatcherPresenceId, touched.SignedInOn, Now)).Should().BeTrue();
+			(await Presences().TrySignOffAsync(presence.DispatcherPresenceId, touched.SignedInOn, Now)).Should().BeFalse("already signed off");
+			(await Presences().TouchAsync(presence.DispatcherPresenceId, Now.AddMinutes(1))).Should().BeFalse("a heartbeat cannot bring it back");
+			(await Presences().TrySetDutyAsync(presence.DispatcherPresenceId, touched.SignedInOn, (int)DispatcherDutyModes.Scheduled, 3, 100, Now)).Should().BeFalse();
+
+			var off = await Presences().GetForUserAsync(Dept, "Session-Ann");
+			off.State.Should().Be((int)DispatcherPresenceStates.Offline);
+			off.AwayReason.Should().BeNull();
+			off.MissedOffers.Should().Be(0);
+			off.LastSeenOn.Should().BeCloseTo(Now, TimeSpan.FromMilliseconds(1));
+		}
+
+		[Test]
+		public async Task One_standing_row_per_shift_and_dispatcher_whatever_the_case_but_day_rows_are_free()
+		{
+			// PR 589: two editors adding the same dispatcher at once cannot both insert a standing row.
+			ShiftDispatcher Row(string userId, int? shiftDayId) => new ShiftDispatcher
+			{
+				ShiftDispatcherId = Guid.NewGuid().ToString(), DepartmentId = Dept, ShiftId = 4242, ShiftDayId = shiftDayId, UserId = userId,
+				Source = (int)ShiftDispatcherSources.Assigned, Status = (int)ShiftDispatcherStatuses.Active, AddedOn = Now
+			};
+
+			await Dispatchers().InsertAsync(Row("Standing-Ann", null), CancellationToken.None, true);
+
+			Func<Task> second = () => Dispatchers().InsertAsync(Row("standing-ann", null), CancellationToken.None, true);
+			await second.Should().ThrowAsync<Exception>("UX_ShiftDispatchers_Standing");
+
+			await Dispatchers().InsertAsync(Row("standing-ann", 900), CancellationToken.None, true);
+			await Dispatchers().InsertAsync(Row("standing-ann", 900), CancellationToken.None, true);
+			(await Dispatchers().GetByShiftIdAsync(4242)).Should().HaveCount(3);
+		}
+
+		[Test]
 		public async Task Break_transitions_are_conditional_and_alerts_are_stamped_once()
 		{
 			var planned = new DispatcherBreak
@@ -302,9 +425,14 @@ namespace Resgrid.Tests.Repositories
 			(await Breaks().GetForTimersAsync(Now.AddMinutes(30), Now.AddHours(-1))).Should().Contain(x => x.DispatcherBreakId == planned.DispatcherBreakId);
 			(await Breaks().GetForShiftDayAsync(100)).Should().ContainSingle();
 
-			(await Breaks().TryMarkAlertAsync(planned.DispatcherBreakId, "ReminderSentOn", Now)).Should().BeTrue();
-			(await Breaks().TryMarkAlertAsync(planned.DispatcherBreakId, "ReminderSentOn", Now.AddMinutes(1))).Should().BeFalse();
-			Func<Task> injected = () => Breaks().TryMarkAlertAsync(planned.DispatcherBreakId, "Note; DROP TABLE x", Now);
+			var moved = new DispatcherBreak { DispatcherBreakId = planned.DispatcherBreakId, State = planned.State, DurationMinutes = 60, ScheduledStartOn = Now.AddMinutes(25) };
+			(await Breaks().TryMarkAlertAsync(moved, "ReminderSentOn", Now)).Should().BeFalse("the timer read another plan than the one stored");
+			var started = new DispatcherBreak { DispatcherBreakId = planned.DispatcherBreakId, State = (int)DispatcherBreakStates.Active, DurationMinutes = 60, ScheduledStartOn = planned.ScheduledStartOn };
+			(await Breaks().TryMarkAlertAsync(started, "ReminderSentOn", Now)).Should().BeFalse("the stored break is not in the state the timer read");
+
+			(await Breaks().TryMarkAlertAsync(planned, "ReminderSentOn", Now)).Should().BeTrue();
+			(await Breaks().TryMarkAlertAsync(planned, "ReminderSentOn", Now.AddMinutes(1))).Should().BeFalse();
+			Func<Task> injected = () => Breaks().TryMarkAlertAsync(planned, "Note; DROP TABLE x", Now);
 			await injected.Should().ThrowAsync<ArgumentOutOfRangeException>();
 
 			planned.State = (int)DispatcherBreakStates.Active;
@@ -318,6 +446,59 @@ namespace Resgrid.Tests.Repositories
 			active.ReminderSentOn.Should().Be(Now, "the transition leaves the alert stamps alone");
 			(await Breaks().GetForDepartmentInRangeAsync(Dept, Now.AddDays(5), Now.AddDays(6))).Should().Contain(x => x.DispatcherBreakId == planned.DispatcherBreakId,
 				"active breaks are always in range");
+		}
+
+		[Test]
+		public async Task Observed_break_updates_need_the_read_plan_and_reset_reminders_in_the_same_write()
+		{
+			var planned = new DispatcherBreak
+			{
+				DispatcherBreakId = Guid.NewGuid().ToString(), DepartmentId = Dept, UserId = "Obs-Break", BreakType = (int)DispatcherBreakTypes.Break,
+				State = (int)DispatcherBreakStates.Scheduled, ScheduledStartOn = Now.AddMinutes(40).AddTicks(1234560), DurationMinutes = 15, CreatedOn = Now,
+				ReminderSentOn = Now, DueAlertSentOn = Now, ReturnAlertSentOn = Now
+			};
+			await Breaks().InsertAsync(planned, CancellationToken.None, true);
+			var read = await Breaks().GetByIdAsync(planned.DispatcherBreakId);
+			var observed = new DispatcherBreak { DispatcherBreakId = read.DispatcherBreakId, State = read.State, DurationMinutes = read.DurationMinutes, ScheduledStartOn = read.ScheduledStartOn };
+
+			var stale = new DispatcherBreak { DispatcherBreakId = read.DispatcherBreakId, State = read.State, DurationMinutes = 30, ScheduledStartOn = read.ScheduledStartOn };
+			read.ScheduledStartOn = Now.AddHours(2);
+			(await Breaks().TryUpdateObservedAsync(read, stale, true)).Should().BeFalse("the plan read was a 30-minute break");
+
+			(await Breaks().TryUpdateObservedAsync(read, observed, true)).Should().BeTrue("the stored plan is the one read back, to the database's precision");
+			var replanned = await Breaks().GetByIdAsync(planned.DispatcherBreakId);
+			replanned.ScheduledStartOn.Should().Be(Now.AddHours(2));
+			replanned.ReminderSentOn.Should().BeNull();
+			replanned.DueAlertSentOn.Should().BeNull();
+			replanned.ReturnAlertSentOn.Should().Be(Now, "only the plan reminders reset");
+
+			(await Breaks().TryUpdateObservedAsync(read, observed, true)).Should().BeFalse("the plan moved with the first write");
+
+			var ancient = new DispatcherBreak
+			{
+				DispatcherBreakId = Guid.NewGuid().ToString(), DepartmentId = Dept, UserId = "Obs-Break", State = (int)DispatcherBreakStates.Scheduled,
+				ScheduledStartOn = Now.AddDays(-3), DurationMinutes = 15, CreatedOn = Now.AddDays(-3)
+			};
+			await Breaks().InsertAsync(ancient, CancellationToken.None, true);
+			(await Breaks().GetForTimersAsync(Now.AddHours(2), Now.AddHours(-25))).Should().NotContain(x => x.DispatcherBreakId == ancient.DispatcherBreakId);
+			(await Breaks().GetOverdueScheduledAsync(Now.AddHours(-25), 50)).Should().Contain(x => x.DispatcherBreakId == ancient.DispatcherBreakId,
+				"a break the timer window passed by is still found for the catch-up");
+			(await Breaks().GetOverdueScheduledAsync(Now.AddHours(-25), 1)).Should().HaveCount(1);
+		}
+
+		[Test]
+		public async Task Break_start_lock_needs_a_transaction_and_is_taken_inside_one()
+		{
+			var (connections, configuration, queries) = Parts();
+			Func<Task> outside = () => Breaks().LockDepartmentForBreakStartAsync(Dept);
+			await outside.Should().ThrowAsync<InvalidOperationException>();
+
+			using var unitOfWork = new Resgrid.Repositories.DataRepository.Transactions.UnitOfWork(connections);
+			var repository = new DispatcherBreaksRepository(connections, configuration, unitOfWork, queries);
+			await unitOfWork.CreateOrGetConnectionAsync();
+			await repository.LockDepartmentForBreakStartAsync(Dept);
+			await repository.LockDepartmentForBreakStartAsync(Dept);
+			unitOfWork.CommitChanges();
 		}
 
 		[Test]

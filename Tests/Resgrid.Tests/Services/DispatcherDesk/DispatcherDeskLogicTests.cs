@@ -234,11 +234,29 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			var plan = new List<DispatcherBreakPlanEntry> { new DispatcherBreakPlanEntry { DurationMinutes = 30, TargetOffsetMinutes = 240 } };
 			var existing = new[] { ("ann", start.AddMinutes(240), start.AddMinutes(270)) };
 
-			// Two on duty (ann already has her break), one must stay: bob cannot overlap ann.
-			var placed = DispatcherBreakPlanner.Plan(dispatchers, plan, existing, 1);
+			// Two on duty (ann already has her break), one must stay: bob cannot overlap ann. The service passes the minimum less
+			// those on duty who are not being planned (1 − 1 = 0), so the one planned dispatcher may be on break alone.
+			var placed = DispatcherBreakPlanner.Plan(dispatchers, plan, existing, 0);
 
 			placed.Should().ContainSingle();
 			placed[0].StartUtc.Should().Be(start.AddMinutes(270));
+			placed[0].BreaksMinimum.Should().BeFalse();
+		}
+
+		[Test]
+		public void Planner_flags_every_break_when_the_minimum_leaves_nobody_free_to_go()
+		{
+			// Two on duty and both must stay available: any break at all goes below the minimum. Breaks are still placed, apart.
+			var start = new DateTime(2026, 11, 19, 12, 0, 0, DateTimeKind.Utc);
+			var dispatchers = new[] { "ann", "bob" }
+				.Select(x => new DispatcherDutyWindow { UserId = x, ShiftId = 3, ShiftDayId = 100, StartUtc = start, EndUtc = start.AddHours(12) }).ToList();
+			var plan = new List<DispatcherBreakPlanEntry> { new DispatcherBreakPlanEntry { BreakType = (int)DispatcherBreakTypes.Meal, DurationMinutes = 30, TargetOffsetMinutes = 300 } };
+
+			var placed = DispatcherBreakPlanner.Plan(dispatchers, plan, Enumerable.Empty<(string, DateTime, DateTime)>(), 2);
+
+			placed.Should().HaveCount(2);
+			placed.Should().OnlyContain(x => x.BreaksMinimum, "no placement keeps two of two on the desk");
+			(placed[0].StartUtc < placed[1].StartUtc.AddMinutes(30) && placed[1].StartUtc < placed[0].StartUtc.AddMinutes(30)).Should().BeFalse();
 		}
 
 		[Test]

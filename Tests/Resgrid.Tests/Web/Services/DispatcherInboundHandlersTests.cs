@@ -269,10 +269,14 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<IDepartmentsService> _departments;
 		private Mock<ICallsService> _calls;
 		private Mock<IEventAggregator> _events;
+		private global::Resgrid.Tests.Services.DispatcherDesk.InMemoryDispatcherDeskStore _store;
 		private Call _saved;
+		private int _saves;
 
 		private DispatcherDeskPendingCalls PendingCalls()
 		{
+			_saves = 0;
+			_saved = null;
 			_departments = new Mock<IDepartmentsService>();
 			_departments.Setup(x => x.GetDepartmentByIdAsync(DepartmentId, It.IsAny<bool>()))
 				.ReturnsAsync(new Department { DepartmentId = DepartmentId, ManagingUserId = "admin-1", TimeZone = "UTC" });
@@ -282,19 +286,40 @@ namespace Resgrid.Tests.Web.Services
 			_calls.Setup(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((Call c, CancellationToken _) =>
 				{
-					c.CallId = 501;
-					c.Number = "26-501";
+					_saves++;
+					c.CallId = 500 + _saves;
+					c.Number = "26-" + c.CallId;
 					_saved = c;
 					return c;
 				});
 
 			_events = new Mock<IEventAggregator>();
+			_store = new global::Resgrid.Tests.Services.DispatcherDesk.InMemoryDispatcherDeskStore();
 
-			return new DispatcherDeskPendingCalls(_departments.Object, _calls.Object, _routing.Object, _events.Object);
+			// As the routing service: the stored item takes the call and waits in the queue again.
+			_routing.Setup(x => x.MarkOverflowedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.Returns((DispatcherQueueItem i, string note, CancellationToken _) => LinkInStore(i, note));
+
+			return new DispatcherDeskPendingCalls(_departments.Object, _calls.Object, _routing.Object, _store.ItemsRepository, _events.Object);
 		}
 
-		private static DispatcherQueueItem OverflowedVoiceItem() =>
-			Item((int)DispatcherQueueItemKinds.Voice, (int)DispatcherQueueItemStates.Overflowed);
+		private async System.Threading.Tasks.Task LinkInStore(DispatcherQueueItem item, string note)
+		{
+			var current = await _store.ItemsRepository.GetItemAsync(item.DispatcherQueueItemId);
+			var expected = current.Version;
+			current.CallId ??= item.CallId;
+			current.OverflowNote = note;
+			current.State = (int)DispatcherQueueItemStates.Queued;
+			await _store.ItemsRepository.TryUpdateAsync(current, expected);
+		}
+
+		private DispatcherQueueItem OverflowedVoiceItem()
+		{
+			var item = Item((int)DispatcherQueueItemKinds.Voice, (int)DispatcherQueueItemStates.Overflowed);
+			item.OverflowNote = "No dispatcher could take the call: voicemail";
+			_store?.Items.Add(Clone(item));
+			return item;
+		}
 
 		[Test]
 		public async System.Threading.Tasks.Task Pending_call_from_a_voicemail_carries_the_recording_and_becomes_the_voice_item()
@@ -302,13 +327,16 @@ namespace Resgrid.Tests.Web.Services
 			var sequence = new List<string>();
 			var pendingCalls = PendingCalls();
 			_routing.Setup(x => x.MarkOverflowedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-				.Callback(() => sequence.Add("linked")).Returns(System.Threading.Tasks.Task.CompletedTask);
+				.Callback(() => sequence.Add("linked"))
+				.Returns((DispatcherQueueItem i, string note, CancellationToken _) => LinkInStore(i, note));
 			_events.Setup(x => x.SendMessage(It.IsAny<CallUpdatedEvent>())).Callback(() => sequence.Add("announced"));
 			var item = OverflowedVoiceItem();
 
-			var call = await pendingCalls.FromVoicemailAsync(item, Sender, "https://api.twilio.com/rec/RE1", 23, "RE1");
+			var result = await pendingCalls.FromVoicemailAsync(item, Sender, "https://api.twilio.com/rec/RE1", 23, "RE1");
 
-			call.Should().NotBeNull();
+			result.Outcome.Should().Be(DispatcherVoicemailOutcomes.Saved);
+			result.Durable.Should().BeTrue();
+			result.Call.Should().NotBeNull();
 			_saved.State.Should().Be((int)CallStates.Pending);
 			_saved.DispatchOn.Should().BeNull();
 			_saved.HasBeenDispatched.Should().BeNull();
@@ -325,6 +353,7 @@ namespace Resgrid.Tests.Web.Services
 			_routing.Verify(x => x.EnqueueAsync(It.IsAny<DispatcherEnqueueRequest>(), It.IsAny<CancellationToken>()), Times.Never);
 			_routing.Verify(x => x.LinkCallAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
 			_routing.Verify(x => x.RouteDepartmentAsync(DepartmentId, It.IsAny<CancellationToken>()), Times.Once);
+			_store.Items.Single().CallId.Should().Be(501);
 
 			// Announced after the link, so the desk's call listener finds the call already on the desk (Duplicate).
 			sequence.Should().Equal("linked", "announced");
@@ -337,21 +366,86 @@ namespace Resgrid.Tests.Web.Services
 			var item = OverflowedVoiceItem();
 			item.CallId = 9;
 
-			(await pendingCalls.FromVoicemailAsync(item, Sender, "https://api.twilio.com/rec/RE1", 23, "RE1")).Should().BeNull();
+			(await pendingCalls.FromVoicemailAsync(item, Sender, "https://api.twilio.com/rec/RE1", 23, "RE1")).Outcome
+				.Should().Be(DispatcherVoicemailOutcomes.AlreadyTaken);
 
 			_calls.Verify(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]
-		public async System.Threading.Tasks.Task Voicemail_call_is_kept_when_the_desk_cannot_link_it()
+		public async System.Threading.Tasks.Task Voicemail_whose_item_is_already_claimed_saves_no_second_call()
+		{
+			var pendingCalls = PendingCalls();
+			var first = OverflowedVoiceItem();
+			var second = Clone(first);
+
+			// Two overlapping requests read the same snapshot (no CallId): the first claims and saves, the second finds the claim.
+			(await pendingCalls.FromVoicemailAsync(first, Sender, "https://api.twilio.com/rec/RE1", 23, "RE1")).Outcome.Should().Be(DispatcherVoicemailOutcomes.Saved);
+			var repeat = await pendingCalls.FromVoicemailAsync(second, Sender, "https://api.twilio.com/rec/RE1", 23, "RE1");
+
+			repeat.Outcome.Should().Be(DispatcherVoicemailOutcomes.AlreadyTaken);
+			repeat.Durable.Should().BeTrue();
+			_saves.Should().Be(1);
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task Voicemail_claim_survives_a_failed_link_so_a_repeat_saves_nothing()
 		{
 			var pendingCalls = PendingCalls();
 			_routing.Setup(x => x.MarkOverflowedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
 				.ThrowsAsync(new InvalidOperationException("desk down"));
+			var item = OverflowedVoiceItem();
 
-			(await pendingCalls.FromVoicemailAsync(OverflowedVoiceItem(), Sender, "https://api.twilio.com/rec/RE1", null, "RE1")).Should().NotBeNull();
+			var result = await pendingCalls.FromVoicemailAsync(item, Sender, "https://api.twilio.com/rec/RE1", null, "RE1");
+
+			// The call is kept (and announced) although the desk could not link it; the claim on the item names the recording.
+			result.Outcome.Should().Be(DispatcherVoicemailOutcomes.Saved);
 			_events.Verify(x => x.SendMessage(It.IsAny<CallUpdatedEvent>()), Times.Once);
+			_routing.Verify(x => x.MarkOverflowedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+				Times.Exactly(DispatcherDeskPendingCalls.WriteAttempts));
+			_store.Items.Single().OverflowNote.Should().Be("Voicemail recording RE1: https://api.twilio.com/rec/RE1");
+
+			(await pendingCalls.FromVoicemailAsync(Clone(item), Sender, "https://api.twilio.com/rec/RE1", null, "RE1")).Outcome
+				.Should().Be(DispatcherVoicemailOutcomes.AlreadyTaken);
+			_saves.Should().Be(1);
 		}
+
+		[Test]
+		public async System.Threading.Tasks.Task Voicemail_link_is_retried_when_another_webhook_changed_the_item()
+		{
+			var pendingCalls = PendingCalls();
+			var attempts = 0;
+			_routing.Setup(x => x.MarkOverflowedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.Returns((DispatcherQueueItem i, string note, CancellationToken _) =>
+					// The first attempt loses its conditional write quietly (a status callback touched the item), as the routing service does.
+					++attempts == 1 ? System.Threading.Tasks.Task.CompletedTask : LinkInStore(i, note));
+			var item = OverflowedVoiceItem();
+
+			(await pendingCalls.FromVoicemailAsync(item, Sender, "https://api.twilio.com/rec/RE1", 12, "RE1")).Outcome.Should().Be(DispatcherVoicemailOutcomes.Saved);
+
+			attempts.Should().Be(2);
+			_store.Items.Single().CallId.Should().Be(501);
+			_routing.Verify(x => x.RouteDepartmentAsync(DepartmentId, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task Voicemail_whose_save_fails_is_not_durable()
+		{
+			var pendingCalls = PendingCalls();
+			_calls.Setup(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>())).ReturnsAsync((Call)null);
+
+			var result = await pendingCalls.FromVoicemailAsync(OverflowedVoiceItem(), Sender, "https://api.twilio.com/rec/RE1", 12, "RE1");
+
+			result.Outcome.Should().Be(DispatcherVoicemailOutcomes.NotSaved);
+			result.Durable.Should().BeFalse();
+			_events.Verify(x => x.SendMessage(It.IsAny<CallUpdatedEvent>()), Times.Never);
+		}
+
+		private static DispatcherQueueItem Clone(DispatcherQueueItem item) => new DispatcherQueueItem
+		{
+			DispatcherQueueItemId = item.DispatcherQueueItemId, DepartmentId = item.DepartmentId, Kind = item.Kind, State = item.State,
+			ExternalReference = item.ExternalReference, CallId = item.CallId, OverflowNote = item.OverflowNote, Version = item.Version
+		};
 
 		#endregion Pending calls
 

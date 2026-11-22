@@ -97,46 +97,94 @@ namespace Resgrid.Services
 			return DispatcherDeskResult<DispatcherDeskMember>.Ok(await GetMemberAsync(departmentId, userId, now));
 		}
 
-		public async Task<DispatcherDeskResult<bool>> SignOffAsync(int departmentId, string userId, string byUserId, CancellationToken cancellationToken = default)
+		public Task<DispatcherDeskResult<bool>> SignOffAsync(int departmentId, string userId, string byUserId, CancellationToken cancellationToken = default) =>
+			SignOffCoreAsync(departmentId, userId, byUserId, null, cancellationToken);
+
+		/// <summary>
+		/// Signs the dispatcher off and hands back the work they hold. With <paramref name="evaluated"/> (the sweep), only the
+		/// session the caller looked at is signed off: a dispatcher who signed in again meanwhile keeps the new session. A
+		/// dispatcher already signed off who still holds work (a release failed last time) gets that work handed back again.
+		/// </summary>
+		private async Task<DispatcherDeskResult<bool>> SignOffCoreAsync(int departmentId, string userId, string byUserId, DispatcherPresence evaluated,
+			CancellationToken cancellationToken)
 		{
 			var presence = await _presencesRepository.GetForUserAsync(departmentId, userId);
-			if (presence == null || !presence.IsSignedIn())
+			if (presence == null)
+				return DispatcherDeskResult<bool>.Ok(false);
+
+			if (evaluated != null && (presence.SignedInOn != evaluated.SignedInOn || presence.DutyEndsOn != evaluated.DutyEndsOn))
 				return DispatcherDeskResult<bool>.Ok(false);
 
 			var now = UtcNow();
-			var held = (await _itemsRepository.GetOpenForDepartmentAsync(departmentId) ?? Enumerable.Empty<DispatcherQueueItem>())
-				.Where(x => string.Equals(x.AssignedUserId, userId, StringComparison.OrdinalIgnoreCase) &&
-							(x.State == (int)DispatcherQueueItemStates.Accepted || x.State == (int)DispatcherQueueItemStates.Offered))
-				.ToList();
+			var signedOff = false;
 
-			var activeBreak = await _breaksRepository.GetActiveForUserAsync(departmentId, userId);
-			if (activeBreak != null)
+			if (presence.IsSignedIn())
 			{
-				activeBreak.State = (int)DispatcherBreakStates.Completed;
-				activeBreak.EndedOn = now;
-				activeBreak.EndReason = (int)DispatcherBreakEndReasons.SignedOff;
-				activeBreak.EndedByUserId = byUserId;
-				activeBreak.UpdatedByUserId = byUserId;
-				activeBreak.UpdatedOn = now;
-				await _breaksRepository.TryTransitionAsync(activeBreak, (int)DispatcherBreakStates.Active, cancellationToken);
+				// Conditional on the session: a sign-in (or another sign-off) since the read above wins, never this write.
+				signedOff = await _presencesRepository.TrySignOffAsync(presence.DispatcherPresenceId, presence.SignedInOn, now, cancellationToken);
+				if (!signedOff)
+					return DispatcherDeskResult<bool>.Ok(false);
+
+				var activeBreak = await _breaksRepository.GetActiveForUserAsync(departmentId, userId);
+				if (activeBreak != null)
+				{
+					activeBreak.State = (int)DispatcherBreakStates.Completed;
+					activeBreak.EndedOn = now;
+					activeBreak.EndReason = (int)DispatcherBreakEndReasons.SignedOff;
+					activeBreak.EndedByUserId = byUserId;
+					activeBreak.UpdatedByUserId = byUserId;
+					activeBreak.UpdatedOn = now;
+					await _breaksRepository.TryTransitionAsync(activeBreak, (int)DispatcherBreakStates.Active, cancellationToken);
+				}
 			}
 
-			presence.State = (int)DispatcherPresenceStates.Offline;
-			presence.StateChangedOn = now;
-			presence.ActiveBreakId = null;
-			presence.AwayReason = null;
-			presence.MissedOffers = 0;
-			await _presencesRepository.SaveOrUpdateAsync(presence, cancellationToken, true);
-
 			// Offline first, so held and offered work handed back goes to someone else, never straight back to this dispatcher.
+			var held = await GetHeldAsync(departmentId, userId);
+			if (!signedOff && held.Count == 0)
+				return DispatcherDeskResult<bool>.Ok(false);
+
+			var stillHeld = await HandBackAsync(departmentId, userId, held, cancellationToken);
+			if (stillHeld > 0)
+				return DispatcherDeskResult<bool>.Fail(DispatcherDeskErrors.HoldingWork,
+					$"Signed off, but {stillHeld} item(s) could not be handed back. Sign off again to retry.");
+
+			return DispatcherDeskResult<bool>.Ok(true);
+		}
+
+		/// <summary>
+		/// Hands back work a signed-off dispatcher still holds: each item on its own, so one failing never keeps the rest. Returns
+		/// how many are still held afterwards (logged; the next sign-off or the worker's sweep retries them).
+		/// </summary>
+		private async Task<int> HandBackAsync(int departmentId, string userId, List<DispatcherQueueItem> held, CancellationToken cancellationToken)
+		{
 			foreach (var item in held)
-				await _routingService.Value.ReleaseAsync(departmentId, item.DispatcherQueueItemId, userId, cancellationToken);
+			{
+				try
+				{
+					await _routingService.Value.ReleaseAsync(departmentId, item.DispatcherQueueItemId, userId, cancellationToken);
+				}
+				catch (Exception ex) when (!(ex is OperationCanceledException && cancellationToken.IsCancellationRequested))
+				{
+					// The rest are still handed back; the check below reports what is left.
+					Logging.LogException(ex, $"Dispatcher sign-off release of {item.DispatcherQueueItemId} for {userId} in {departmentId}");
+				}
+			}
 
 			await _notifier.PublishDeskChangedAsync(departmentId, userId);
 			await RouteAsync(departmentId, cancellationToken);
 
-			return DispatcherDeskResult<bool>.Ok(true);
+			var stillHeld = held.Count == 0 ? 0 : (await GetHeldAsync(departmentId, userId)).Count;
+			if (stillHeld > 0)
+				Logging.LogError($"Dispatcher {userId} in {departmentId} is signed off but still holds {stillHeld} desk item(s); the next sign-off or desk sweep retries.");
+
+			return stillHeld;
 		}
+
+		private async Task<List<DispatcherQueueItem>> GetHeldAsync(int departmentId, string userId) =>
+			(await _itemsRepository.GetOpenForDepartmentAsync(departmentId) ?? Enumerable.Empty<DispatcherQueueItem>())
+			.Where(x => string.Equals(x.AssignedUserId, userId, StringComparison.OrdinalIgnoreCase) &&
+						(x.State == (int)DispatcherQueueItemStates.Accepted || x.State == (int)DispatcherQueueItemStates.Offered))
+			.ToList();
 
 		public async Task HeartbeatAsync(int departmentId, string userId, CancellationToken cancellationToken = default)
 		{
@@ -144,8 +192,9 @@ namespace Resgrid.Services
 			if (presence == null || !presence.IsSignedIn())
 				return;
 
-			presence.LastSeenOn = UtcNow();
-			await _presencesRepository.SaveOrUpdateAsync(presence, cancellationToken, true);
+			// LastSeenOn alone, and only while still signed in: saving the whole row read above would write the signed-in state
+			// back over a sign-off committed in between.
+			await _presencesRepository.TouchAsync(presence.DispatcherPresenceId, UtcNow(), cancellationToken);
 		}
 
 		public async Task<DispatcherDeskResult<DispatcherDeskMember>> SetAvailableAsync(int departmentId, string userId, string byUserId,
@@ -284,8 +333,19 @@ namespace Resgrid.Services
 			var exclude = new HashSet<string>(excludeUserIds ?? Enumerable.Empty<string>(), StringComparer.OrdinalIgnoreCase);
 			var desk = await GetDeskAsync(departmentId, utcNow);
 
-			return DispatcherRoutingPolicy.Order(desk.Members.Where(x => !exclude.Contains(x.UserId) &&
-				DispatcherRoutingPolicy.IsRoutable(x, utcNow, config.EffectiveHeartbeatTimeoutMinutes())));
+			var routable = desk.Members.Where(x => !exclude.Contains(x.UserId) &&
+				DispatcherRoutingPolicy.IsRoutable(x, utcNow, config.EffectiveHeartbeatTimeoutMinutes())).ToList();
+
+			// Sign-in checked membership and the Dispatch login; either can be taken away while the session lasts, and work must
+			// never be offered to someone who lost them (the worker's sweep then signs them off).
+			var eligible = new List<DispatcherDeskMember>();
+			foreach (var member in routable)
+			{
+				if (await _shiftDispatchersService.IsEligibleDispatcherAsync(departmentId, member.UserId))
+					eligible.Add(member);
+			}
+
+			return DispatcherRoutingPolicy.Order(eligible);
 		}
 
 		public async Task<List<string>> GetSupervisorUserIdsAsync(int departmentId, DateTime utcNow)
@@ -340,7 +400,7 @@ namespace Resgrid.Services
 		public async Task<int> ProcessPresenceAsync(DateTime utcNow, CancellationToken cancellationToken = default)
 		{
 			var changed = 0;
-			foreach (var presence in (await _presencesRepository.GetSignedInAsync() ?? Enumerable.Empty<DispatcherPresence>()).ToList())
+			foreach (var presence in (await _presencesRepository.GetSignedInAsync(cancellationToken) ?? Enumerable.Empty<DispatcherPresence>()).ToList())
 			{
 				if (cancellationToken.IsCancellationRequested)
 					break;
@@ -355,6 +415,14 @@ namespace Resgrid.Services
 						continue;
 					}
 
+					// Membership or the Dispatch login taken away since sign-in: the session ends and its work goes back.
+					if (!await _shiftDispatchersService.IsEligibleDispatcherAsync(presence.DepartmentId, presence.UserId))
+					{
+						if ((await SignOffCoreAsync(presence.DepartmentId, presence.UserId, null, presence, cancellationToken)).Value)
+							changed++;
+						continue;
+					}
+
 					if (!presence.DutyEndsOn.HasValue || presence.DutyEndsOn.Value > utcNow)
 						continue;
 
@@ -364,10 +432,8 @@ namespace Resgrid.Services
 						var next = await _shiftDispatchersService.GetDutyForUserAsync(presence.DepartmentId, presence.UserId, utcNow);
 						if (next != null)
 						{
-							presence.DutyShiftId = next.ShiftId;
-							presence.DutyShiftDayId = next.ShiftDayId;
-							presence.DutyEndsOn = next.EndUtc;
-							await _presencesRepository.SaveOrUpdateAsync(presence, cancellationToken, true);
+							await _presencesRepository.TrySetDutyAsync(presence.DispatcherPresenceId, presence.SignedInOn, (int)DispatcherDutyModes.Scheduled,
+								next.ShiftId, next.ShiftDayId, next.EndUtc, cancellationToken);
 							continue;
 						}
 
@@ -377,19 +443,61 @@ namespace Resgrid.Services
 						// Without a shift the dispatcher can stay on only when the department does not require one.
 						if (!config.RequireShift)
 						{
-							presence.DutyMode = (int)DispatcherDutyModes.Unscheduled;
-							presence.DutyEndsOn = null;
-							await _presencesRepository.SaveOrUpdateAsync(presence, cancellationToken, true);
+							await _presencesRepository.TrySetDutyAsync(presence.DispatcherPresenceId, presence.SignedInOn, (int)DispatcherDutyModes.Unscheduled,
+								presence.DutyShiftId, presence.DutyShiftDayId, null, cancellationToken);
 							continue;
 						}
 					}
 
-					await SignOffAsync(presence.DepartmentId, presence.UserId, null, cancellationToken);
-					changed++;
+					// Only the session evaluated here: a dispatcher who signed in again since the read above keeps the new one.
+					if ((await SignOffCoreAsync(presence.DepartmentId, presence.UserId, null, presence, cancellationToken)).Value)
+						changed++;
 				}
-				catch (Exception ex)
+				catch (Exception ex) when (!(ex is OperationCanceledException && cancellationToken.IsCancellationRequested))
 				{
 					Logging.LogException(ex, $"Dispatcher presence sweep for {presence.UserId} in {presence.DepartmentId}");
+				}
+			}
+
+			changed += await HandBackFromSignedOffAsync(cancellationToken);
+
+			return changed;
+		}
+
+		/// <summary>
+		/// Work still held by a dispatcher who is not signed in: a sign-off whose hand-back failed part way, or an accept that
+		/// committed just after the sign-off released the dispatcher's work. It goes back to the queue.
+		/// </summary>
+		private async Task<int> HandBackFromSignedOffAsync(CancellationToken cancellationToken)
+		{
+			var changed = 0;
+			foreach (var departmentId in (await _itemsRepository.GetDepartmentsWithOpenItemsAsync() ?? Enumerable.Empty<int>()).Distinct().ToList())
+			{
+				if (cancellationToken.IsCancellationRequested)
+					break;
+
+				try
+				{
+					var held = (await _itemsRepository.GetOpenForDepartmentAsync(departmentId) ?? Enumerable.Empty<DispatcherQueueItem>())
+						.Where(x => !string.IsNullOrWhiteSpace(x.AssignedUserId) &&
+									(x.State == (int)DispatcherQueueItemStates.Accepted || x.State == (int)DispatcherQueueItemStates.Offered))
+						.ToList();
+					if (held.Count == 0)
+						continue;
+
+					var signedIn = new HashSet<string>((await _presencesRepository.GetByDepartmentIdAsync(departmentId) ?? Enumerable.Empty<DispatcherPresence>())
+						.Where(x => x.IsSignedIn()).Select(x => x.UserId), StringComparer.OrdinalIgnoreCase);
+
+					foreach (var holder in held.Where(x => !signedIn.Contains(x.AssignedUserId)).GroupBy(x => x.AssignedUserId, StringComparer.OrdinalIgnoreCase))
+					{
+						var items = holder.ToList();
+						if (await HandBackAsync(departmentId, holder.Key, items, cancellationToken) < items.Count)
+							changed++;
+					}
+				}
+				catch (Exception ex) when (!(ex is OperationCanceledException && cancellationToken.IsCancellationRequested))
+				{
+					Logging.LogException(ex, $"Dispatcher desk hand-back sweep in {departmentId}");
 				}
 			}
 
@@ -415,7 +523,10 @@ namespace Resgrid.Services
 			var unscheduledDuty = signedIn && presence.DutyMode == (int)DispatcherDutyModes.Unscheduled &&
 								  (config.AllowUnscheduledDuty || !config.RequireShift) &&
 								  (!presence.DutyEndsOn.HasValue || presence.DutyEndsOn.Value > utcNow);
-			var isOnDuty = window != null || unscheduledDuty || signedIn && !config.RequireShift;
+			// The no-shift fallback covers a scheduled session whose shift window has gone (the department does not require one).
+			// An unscheduled session is on duty only by the rule above, so an explicit duty end that has passed ends it.
+			var isOnDuty = window != null || unscheduledDuty ||
+						   signedIn && !config.RequireShift && presence.DutyMode != (int)DispatcherDutyModes.Unscheduled;
 
 			profiles.TryGetValue(userId, out var profile);
 
@@ -482,14 +593,18 @@ namespace Resgrid.Services
 			return kind == "phone" || kind == "tablet" || kind == "desktop" ? kind : null;
 		}
 
-		/// <summary>E.164-ish: digits with a leading +; ten digits are taken as North American. Null when not a phone number.</summary>
+		/// <summary>
+		/// E.164-ish: digits with a leading +. Bare ten digits (no +) are taken as North American; a number written with + keeps
+		/// its own country code. Null when not a phone number.
+		/// </summary>
 		public static string NormalizePhone(string number)
 		{
 			if (string.IsNullOrWhiteSpace(number))
 				return null;
 
+			var international = number.TrimStart().StartsWith("+", StringComparison.Ordinal);
 			var digits = new string(number.Where(char.IsDigit).ToArray());
-			if (digits.Length == 10)
+			if (digits.Length == 10 && !international)
 				digits = "1" + digits;
 
 			return digits.Length < 8 || digits.Length > 15 ? null : "+" + digits;

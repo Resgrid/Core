@@ -363,6 +363,20 @@ namespace Resgrid.Tests.Web.Services
 			data.Events.Last().OccurredOn.Should().Be("2026-11-19T16:02:00Z");
 		}
 
+		[TestCase(DispatcherQueueItemKinds.Text, "+15551234567", true)]
+		[TestCase(DispatcherQueueItemKinds.Chat, "700001122", false)]
+		[TestCase(DispatcherQueueItemKinds.Chat, "+15551234567", false)]
+		[TestCase(DispatcherQueueItemKinds.Email, "pat@example.com", false)]
+		public async Task Call_back_is_offered_only_for_a_text_or_phone_sender(DispatcherQueueItemKinds kind, string sender, bool canCallBack)
+		{
+			// A chat's sender is the chat app's user id (a Telegram id is all digits), never a number to ring.
+			var item = Item("item", kind);
+			item.SourceAddress = sender;
+			Detail(item);
+
+			Value(await Controller().GetItem("item")).Data.CanConnectVoice.Should().Be(canCallBack);
+		}
+
 		[Test]
 		public void Unread_messages_are_the_inbound_ones_since_the_last_reply()
 		{
@@ -641,9 +655,9 @@ namespace Resgrid.Tests.Web.Services
 
 		#region Shift day rosters
 
-		private void ShiftDay(int departmentId = DepartmentId, ShiftAssignmentTypes type = ShiftAssignmentTypes.Signup)
+		private void ShiftDay(int departmentId = DepartmentId, ShiftAssignmentTypes type = ShiftAssignmentTypes.Signup, DateTime? day = null)
 		{
-			_shifts.Setup(x => x.GetShiftDayByIdAsync(50)).ReturnsAsync(new ShiftDay { ShiftDayId = 50, ShiftId = 5 });
+			_shifts.Setup(x => x.GetShiftDayByIdAsync(50)).ReturnsAsync(new ShiftDay { ShiftDayId = 50, ShiftId = 5, Day = day ?? DateTime.UtcNow.Date.AddDays(3) });
 			_shifts.Setup(x => x.GetShiftByIdAsync(5)).ReturnsAsync(new Shift { ShiftId = 5, DepartmentId = departmentId, Name = "A Shift", Color = "#123456", AssignmentType = (int)type });
 		}
 
@@ -715,11 +729,12 @@ namespace Resgrid.Tests.Web.Services
 			{
 				new DispatcherDutyWindow { UserId = Me, ShiftDispatcherId = "sd-1", Source = (int)ShiftDispatcherSources.Signup, IsPending = true }
 			});
-			_shiftDispatchers.Setup(x => x.RemoveFromDayAsync(DepartmentId, 50, Me, Me, null, It.IsAny<CancellationToken>())).ReturnsAsync(DispatcherDeskResult<bool>.Ok(true));
+			_shiftDispatchers.Setup(x => x.RemoveFromDayAsync(DepartmentId, 50, Me, Me, null, (int)ShiftDispatcherSources.Signup, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(DispatcherDeskResult<bool>.Ok(true));
 
 			Value(await Controller().WithdrawFromDay(new ShiftDayDispatcherInput { ShiftDayId = 50, UserId = Other }, CancellationToken.None)).Success.Should().BeTrue();
-			_shiftDispatchers.Verify(x => x.RemoveFromDayAsync(DepartmentId, 50, Me, Me, null, It.IsAny<CancellationToken>()), Times.Once,
-				"withdrawing is always the caller's own row, whatever UserId says");
+			_shiftDispatchers.Verify(x => x.RemoveFromDayAsync(DepartmentId, 50, Me, Me, null, (int)ShiftDispatcherSources.Signup, It.IsAny<CancellationToken>()), Times.Once,
+				"withdrawing is always the caller's own row, whatever UserId says, and only while it is still a sign-up");
 		}
 
 		[Test]
@@ -775,6 +790,143 @@ namespace Resgrid.Tests.Web.Services
 			Value(await Controller().GetShiftDispatchers(5, 50)).Data.CanSignup.Should().BeFalse();
 		}
 
+		[Test]
+		public async Task Signup_is_not_offered_once_the_shift_day_is_over()
+		{
+			// PR #589: SignupForDayAsync refuses an ended day, so the flag must not advertise it.
+			ShiftDay(day: DateTime.UtcNow.Date.AddDays(-2));
+			_shiftDispatchers.Setup(x => x.GetSettingsForShiftAsync(5)).ReturnsAsync(new ShiftDispatchSetting { ShiftId = 5, DepartmentId = DepartmentId, IsEnabled = true });
+			_shiftDispatchers.Setup(x => x.IsEligibleDispatcherAsync(DepartmentId, Me)).ReturnsAsync(true);
+			_shiftDispatchers.Setup(x => x.GetDayRosterAsync(DepartmentId, 50)).ReturnsAsync(new List<DispatcherDutyWindow>());
+
+			Value(await Controller().GetShiftDispatchers(5, 50)).Data.CanSignup.Should().BeFalse();
+
+			ShiftDay(day: DateTime.UtcNow.Date.AddDays(2));
+			Value(await Controller().GetShiftDispatchers(5, 50)).Data.CanSignup.Should().BeTrue();
+		}
+
 		#endregion Shift day rosters
+
+		#region PR 589 review
+
+		[TestCase("2026-11-19T16:00:00Z")]
+		[TestCase("2026-11-19T16:00:00.000Z")]
+		[TestCase("2026-11-19T11:00:00-05:00")]
+		[TestCase("2026-11-19T16:00:00")]
+		[TestCase("2026-11-19T16:00")]
+		public void An_instant_is_a_full_iso_date_and_time(string value)
+		{
+			DispatcherDeskController.TryParseInstant(value, out var utc).Should().BeTrue();
+			utc.Should().Be(new DateTime(2026, 11, 19, 16, 0, 0, DateTimeKind.Utc));
+			utc.Kind.Should().Be(DateTimeKind.Utc);
+		}
+
+		[TestCase("09:00")]
+		[TestCase("16:00:00Z")]
+		[TestCase("2026-11-19")]
+		[TestCase("tomorrow")]
+		[TestCase("19/11/2026 16:00")]
+		[TestCase("")]
+		[TestCase(null)]
+		public void A_time_without_its_date_is_not_an_instant(string value)
+		{
+			// A bare time would take today's date from the server clock (a 09:00 to 10:00 coverage window passed validation).
+			DispatcherDeskController.TryParseInstant(value, out _).Should().BeFalse();
+		}
+
+		[Test]
+		public async Task Coverage_refuses_times_without_dates()
+		{
+			(await Controller().GetCoverage("09:00", "10:00", null)).Result.Should().BeOfType<BadRequestResult>();
+			_breaks.Verify(x => x.GetCoverageAsync(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
+		public async Task A_sent_reply_stays_a_success_when_the_refresh_reads_fail()
+		{
+			// The reply is already out: an error here would make the app send it again.
+			_presence.Setup(x => x.GetMemberAsync(DepartmentId, Me, It.IsAny<DateTime>())).ThrowsAsync(new InvalidOperationException("presence read failed"));
+			_routing.Setup(x => x.GetItemDetailAsync(DepartmentId, "text", It.IsAny<string>())).ThrowsAsync(new InvalidOperationException("detail read failed"));
+			_conversation.Setup(x => x.SendReplyAsync(DepartmentId, "text", Me, "On our way", It.IsAny<CancellationToken>()))
+				.ReturnsAsync(DispatcherDeskResult<DispatcherConversationMessage>.Ok(new DispatcherConversationMessage
+				{
+					DispatcherConversationMessageId = "m1",
+					Direction = (int)DispatcherMessageDirections.Outbound,
+					Body = "On our way",
+					UserId = Me,
+					CreatedOn = new DateTime(2026, 11, 19, 16, 10, 0, DateTimeKind.Utc)
+				}));
+
+			var action = Value(await Controller().SendMessage(new DispatcherMessageInput { ItemId = "text", Body = "On our way" }, CancellationToken.None));
+
+			action.Success.Should().BeTrue();
+			action.Message.DispatcherConversationMessageId.Should().Be("m1");
+			action.Me.Should().BeNull();
+			action.Item.Should().BeNull();
+			_conversation.Verify(x => x.SendReplyAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task An_item_action_keeps_its_result_when_the_item_refresh_fails()
+		{
+			var held = Item("i1", DispatcherQueueItemKinds.PendingCall);
+			var item = Item("i1", DispatcherQueueItemKinds.PendingCall, DispatcherQueueItemStates.Queued, assignedUserId: null);
+			_routing.Setup(x => x.ReleaseAsync(DepartmentId, "i1", Me, It.IsAny<CancellationToken>())).ReturnsAsync(DispatcherDeskResult<DispatcherQueueItem>.Ok(item));
+			// The holder check reads the item first; the refresh after the release fails.
+			_routing.SetupSequence(x => x.GetItemDetailAsync(DepartmentId, "i1", It.IsAny<string>()))
+				.ReturnsAsync(new DispatcherQueueItemDetail { Item = held })
+				.ThrowsAsync(new InvalidOperationException("detail read failed"));
+
+			var action = Value(await Controller().ReleaseItem(new DispatcherItemInput { ItemId = "i1" }, CancellationToken.None));
+
+			action.Success.Should().BeTrue();
+			action.Item.DispatcherQueueItemId.Should().Be("i1", "the item as the release returned it");
+		}
+
+		[Test]
+		public async Task A_revoked_dispatcher_can_still_take_their_device_off_desk_pushes()
+		{
+			NotADispatcher();
+			_push.Setup(x => x.UnregisterDeviceAsync(DepartmentId, Me, 2, "fcm-token", It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+			var result = await Controller().UnregisterDevice(new DispatcherDeviceInput { Platform = 2, Token = "fcm-token" }, CancellationToken.None);
+
+			StatusOf(result).Should().Be(StatusCodes.Status200OK);
+			Value(result).Success.Should().BeTrue();
+			_push.Verify(x => x.UnregisterDeviceAsync(DepartmentId, Me, 2, "fcm-token", It.IsAny<CancellationToken>()), Times.Once);
+
+			// Registering stays for dispatchers.
+			StatusOf(await Controller().RegisterDevice(new DispatcherDeviceInput { Platform = 2, Token = "fcm-token" }, CancellationToken.None))
+				.Should().Be(StatusCodes.Status403Forbidden);
+		}
+
+		[Test]
+		public async Task A_queue_row_takes_its_call_link_and_fields_from_the_same_read()
+		{
+			// The list read had no call; LinkCall set one before the detail read: the row shows the linked call, not a null CallId beside its fields.
+			var listed = Item("text", DispatcherQueueItemKinds.Text);
+			var linked = Item("text", DispatcherQueueItemKinds.Text);
+			linked.CallId = 77;
+			_routing.Setup(x => x.GetItemDetailAsync(DepartmentId, "text", It.IsAny<string>())).ReturnsAsync(new DispatcherQueueItemDetail
+			{
+				Item = linked,
+				Call = new Call { CallId = 77, DepartmentId = DepartmentId, Number = "26-77", Name = "Linked call", Priority = 1 }
+			});
+
+			// A second item finished between the two reads: it is no longer open work.
+			var finished = Item("done", DispatcherQueueItemKinds.Text, DispatcherQueueItemStates.Queued, assignedUserId: null);
+			var closed = Item("done", DispatcherQueueItemKinds.Text, DispatcherQueueItemStates.Completed, assignedUserId: null);
+			_routing.Setup(x => x.GetItemDetailAsync(DepartmentId, "done", It.IsAny<string>())).ReturnsAsync(new DispatcherQueueItemDetail { Item = closed });
+			_routing.Setup(x => x.GetOpenItemsAsync(DepartmentId)).ReturnsAsync(new List<DispatcherQueueItem> { listed, finished });
+
+			var rows = Value(await Controller().GetQueue()).Data;
+
+			rows.Select(x => x.DispatcherQueueItemId).Should().Equal(new[] { "text" });
+			rows.Single().CallId.Should().Be(77);
+			rows.Single().CallNumber.Should().Be("26-77");
+			_calls.Verify(x => x.GetCallByIdAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		#endregion PR 589 review
 	}
 }

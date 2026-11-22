@@ -63,12 +63,9 @@ namespace Resgrid.Services
 			if (item == null || string.IsNullOrWhiteSpace(body))
 				return null;
 
-			if (!string.IsNullOrWhiteSpace(providerMessageId))
-			{
-				var existing = await _messagesRepository.GetByProviderMessageIdAsync(providerMessageId);
-				if (existing != null)
-					return existing;
-			}
+			// A provider redelivery stores nothing (null): the caller then announces nothing either.
+			if (!string.IsNullOrWhiteSpace(providerMessageId) && await _messagesRepository.GetByProviderMessageIdAsync(Truncate(providerMessageId, 128)) != null)
+				return null;
 
 			var message = new DispatcherConversationMessage
 			{
@@ -84,8 +81,8 @@ namespace Resgrid.Services
 				DeliveryState = (int)DispatcherMessageDeliveryStates.Received
 			};
 
-			await _messagesRepository.InsertAsync(message, cancellationToken, true);
-			return message;
+			// The provider message id is unique in the table: of two overlapping deliveries of one message only one row is stored.
+			return await _messagesRepository.TryInsertAsync(message, cancellationToken) ? message : null;
 		}
 
 		public async Task<DispatcherDeskResult<DispatcherConversationMessage>> SendReplyAsync(int departmentId, string dispatcherQueueItemId, string userId, string body,
@@ -114,9 +111,18 @@ namespace Resgrid.Services
 
 			var message = await SendAsync(item, body.Trim(), userId, cancellationToken);
 
-			await AddEventAsync(item, DispatcherQueueEventTypes.MessageSent, userId, message.DeliveryState == (int)DispatcherMessageDeliveryStates.Failed ? "Failed" : null, cancellationToken);
-			await TouchAsync(item, cancellationToken);
-			await _notifier.PublishQueueChangedAsync(departmentId, item.DispatcherQueueItemId);
+			// Once the provider has the reply, the answer must say so even if the dispatcher's request goes away: a refusal here
+			// would invite a resend of a text that already went out.
+			await AddEventAsync(item, DispatcherQueueEventTypes.MessageSent, userId, message.DeliveryState == (int)DispatcherMessageDeliveryStates.Failed ? "Failed" : null, CancellationToken.None);
+			try
+			{
+				await TouchAsync(item, CancellationToken.None);
+				await _notifier.PublishQueueChangedAsync(departmentId, item.DispatcherQueueItemId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Dispatcher desk: activity after the reply on {item.DispatcherQueueItemId}");
+			}
 
 			return message.DeliveryState == (int)DispatcherMessageDeliveryStates.Failed
 				? DispatcherDeskResult<DispatcherConversationMessage>.Fail(DispatcherDeskErrors.ChannelUnavailable, message.Error)
@@ -179,6 +185,15 @@ namespace Resgrid.Services
 			if (item == null || item.DepartmentId != departmentId)
 				return DispatcherDeskResult<DispatcherConversationMessage>.Fail(DispatcherDeskErrors.ItemNotFound);
 
+			// A note goes on the conversation the dispatcher is working, as a reply does: the holder's open item, or any open item
+			// for a supervisor. A finished conversation's history is not added to.
+			if (!item.IsOpen())
+				return DispatcherDeskResult<DispatcherConversationMessage>.Fail(DispatcherDeskErrors.ItemNotAvailable);
+
+			var holder = item.State == (int)DispatcherQueueItemStates.Accepted && string.Equals(item.AssignedUserId, userId, StringComparison.OrdinalIgnoreCase);
+			if (!holder && !await _presenceService.CanSuperviseAsync(departmentId, userId))
+				return DispatcherDeskResult<DispatcherConversationMessage>.Fail(DispatcherDeskErrors.NotAssignedToYou);
+
 			var message = new DispatcherConversationMessage
 			{
 				DispatcherConversationMessageId = Guid.NewGuid().ToString(),
@@ -238,6 +253,12 @@ namespace Resgrid.Services
 				DeliveryState = (int)DispatcherMessageDeliveryStates.Queued
 			};
 
+			// Recorded before anything is sent: a reply the provider takes is never lost to a failed write afterwards, and one whose
+			// result is unknown (the process stopped) stays on the thread as Queued instead of vanishing. Nothing is sent when this
+			// write fails.
+			message.FromAddress = item.Kind == (int)DispatcherQueueItemKinds.Email ? Config.OutboundEmailServerConfig.FromMail : null;
+			await _messagesRepository.InsertAsync(message, cancellationToken, true);
+
 			try
 			{
 				bool sent;
@@ -272,7 +293,17 @@ namespace Resgrid.Services
 				message.Error = "The message could not be sent.";
 			}
 
-			await _messagesRepository.InsertAsync(message, cancellationToken, true);
+			try
+			{
+				// The provider's answer is recorded whatever became of the dispatcher's request.
+				await _messagesRepository.UpdateAsync(message, CancellationToken.None, true);
+			}
+			catch (Exception ex)
+			{
+				// The reply went (or failed) all the same: the thread shows it Queued until it is read again; the caller still gets the result.
+				Logging.LogException(ex, $"Dispatcher desk reply on {item.DispatcherQueueItemId}: the delivery result could not be recorded.");
+			}
+
 			return message;
 		}
 

@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
+using Npgsql;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -29,11 +32,13 @@ namespace Resgrid.Services
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IDispatchAccessService _dispatchAccessService;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IUnitOfWork _unitOfWork;
 
 		public ShiftDispatchersService(IShiftDispatchSettingsRepository settingsRepository, IShiftDispatchersRepository dispatchersRepository,
 			IDispatcherBreaksRepository breaksRepository, IShiftsService shiftsService, IDepartmentsService departmentsService,
-			IDispatchAccessService dispatchAccessService, IEventAggregator eventAggregator)
+			IDispatchAccessService dispatchAccessService, IEventAggregator eventAggregator, IUnitOfWork unitOfWork = null)
 		{
+			_unitOfWork = unitOfWork;
 			_settingsRepository = settingsRepository;
 			_dispatchersRepository = dispatchersRepository;
 			_breaksRepository = breaksRepository;
@@ -90,27 +95,133 @@ namespace Resgrid.Services
 		public async Task<List<ShiftDispatcher>> GetRosterForShiftAsync(int shiftId) =>
 			(await _dispatchersRepository.GetByShiftIdAsync(shiftId) ?? Enumerable.Empty<ShiftDispatcher>()).ToList();
 
-		public async Task<DispatcherDeskResult<List<ShiftDispatcher>>> SetStandingRosterAsync(int departmentId, int shiftId,
+		public Task<DispatcherDeskResult<List<ShiftDispatcher>>> SetStandingRosterAsync(int departmentId, int shiftId,
 			IEnumerable<(string UserId, bool IsSupervisor)> dispatchers, string byUserId, CancellationToken cancellationToken = default)
+		{
+			var wanted = Distinct(dispatchers);
+			return SaveStandingRosterAsync(departmentId, shiftId, wanted.Select(x => x.UserId), (stored, eligible) => wanted, byUserId, cancellationToken);
+		}
+
+		public Task<DispatcherDeskResult<List<ShiftDispatcher>>> UpdateStandingRosterAsync(int departmentId, int shiftId,
+			IEnumerable<(string UserId, bool IsSupervisor)> previous, IEnumerable<(string UserId, bool IsSupervisor)> wanted, string byUserId,
+			CancellationToken cancellationToken = default)
+		{
+			var was = Distinct(previous);
+			var now = Distinct(wanted);
+			return SaveStandingRosterAsync(departmentId, shiftId, now.Select(x => x.UserId),
+				(stored, eligible) => MergeStandingRoster(stored, was, now, eligible), byUserId, cancellationToken);
+		}
+
+		/// <summary>
+		/// The standing roster after an editor's changes (see <see cref="UpdateStandingRosterAsync"/>): the stored rows, less the
+		/// people the editor took off and the ones not shown who can no longer dispatch, plus the people it put on; supervisor
+		/// flags as the editor set them where it changed them, as stored otherwise.
+		/// </summary>
+		internal static List<(string UserId, bool IsSupervisor)> MergeStandingRoster(IEnumerable<ShiftDispatcher> stored,
+			List<(string UserId, bool IsSupervisor)> previous, List<(string UserId, bool IsSupervisor)> wanted, Func<string, bool> isEligible)
+		{
+			var was = previous.ToDictionary(x => x.UserId, x => x.IsSupervisor, StringComparer.OrdinalIgnoreCase);
+			var now = wanted.ToDictionary(x => x.UserId, x => x.IsSupervisor, StringComparer.OrdinalIgnoreCase);
+			var result = new List<(string UserId, bool IsSupervisor)>();
+
+			foreach (var row in stored.Where(x => !x.ShiftDayId.HasValue && x.IsActive()))
+			{
+				if (result.Any(x => string.Equals(x.UserId, row.UserId, StringComparison.OrdinalIgnoreCase)))
+					continue;
+
+				if (now.TryGetValue(row.UserId, out var supervisor))
+				{
+					// Kept by the editor: its flag only where it changed it (someone else may have changed it since).
+					var changed = !was.TryGetValue(row.UserId, out var before) || before != supervisor;
+					result.Add((row.UserId, changed ? supervisor : row.IsSupervisor));
+				}
+				else if (was.ContainsKey(row.UserId))
+				{
+					// Taken off by the editor.
+				}
+				else if (isEligible(row.UserId))
+				{
+					// Not on the editor's page (added since, or not shown): stays.
+					result.Add((row.UserId, row.IsSupervisor));
+				}
+			}
+
+			foreach (var person in wanted.Where(x => !result.Any(r => string.Equals(r.UserId, x.UserId, StringComparison.OrdinalIgnoreCase)) &&
+													 !was.ContainsKey(x.UserId)))
+				result.Add(person);
+
+			return result;
+		}
+
+		/// <summary>
+		/// Writes the standing roster <paramref name="desiredFrom"/> builds from the stored rows, in one transaction: a failed
+		/// write leaves the roster as it was, and the roster event goes out after the commit. Two editors saving the same new
+		/// dispatcher at once meet the standing-roster unique index; the loser rereads and saves again.
+		/// </summary>
+		private async Task<DispatcherDeskResult<List<ShiftDispatcher>>> SaveStandingRosterAsync(int departmentId, int shiftId, IEnumerable<string> requested,
+			Func<List<ShiftDispatcher>, Func<string, bool>, List<(string UserId, bool IsSupervisor)>> desiredFrom, string byUserId,
+			CancellationToken cancellationToken)
 		{
 			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
 			if (shift == null || shift.DepartmentId != departmentId)
 				return DispatcherDeskResult<List<ShiftDispatcher>>.Fail(DispatcherDeskErrors.ShiftNotFound);
 
-			var wanted = (dispatchers ?? Enumerable.Empty<(string UserId, bool IsSupervisor)>())
-				.Where(x => !string.IsNullOrWhiteSpace(x.UserId))
-				.GroupBy(x => x.UserId, StringComparer.OrdinalIgnoreCase)
-				.Select(g => (UserId: g.Key, IsSupervisor: g.Any(x => x.IsSupervisor)))
-				.ToList();
+			// Eligibility is read before the transaction opens (it reads other tables through the same unit of work).
+			var before = await GetStandingRowsAsync(shiftId);
+			var eligible = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+			foreach (var userId in before.Select(x => x.UserId).Concat(requested ?? Enumerable.Empty<string>()).Distinct(StringComparer.OrdinalIgnoreCase))
+				eligible[userId] = await IsEligibleDispatcherAsync(departmentId, userId);
 
-			foreach (var person in wanted)
+			// Someone added by another editor since the read above was checked when they were added.
+			bool isEligible(string userId) => !eligible.TryGetValue(userId, out var allowed) || allowed;
+
+			for (var attempt = 1; ; attempt++)
 			{
-				if (!await IsEligibleDispatcherAsync(departmentId, person.UserId))
-					return DispatcherDeskResult<List<ShiftDispatcher>>.Fail(DispatcherDeskErrors.NotADispatcher, person.UserId);
-			}
+				var owns = _unitOfWork != null && _unitOfWork.Transaction == null;
+				if (_unitOfWork != null)
+					await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
 
-			var existing = (await _dispatchersRepository.GetByShiftIdAsync(shiftId) ?? Enumerable.Empty<ShiftDispatcher>())
-				.Where(x => !x.ShiftDayId.HasValue).ToList();
+				try
+				{
+					var existing = await GetStandingRowsAsync(shiftId);
+					var wanted = desiredFrom(existing, isEligible);
+
+					// Only people joining are checked: someone already on the roster who lost the permission is kept when the
+					// caller keeps them (the editor shows them; sign-in and routing refuse them).
+					var refused = wanted.FirstOrDefault(x => !existing.Any(e => string.Equals(e.UserId, x.UserId, StringComparison.OrdinalIgnoreCase)) &&
+															 !isEligible(x.UserId));
+					if (refused.UserId != null)
+					{
+						if (owns)
+							_unitOfWork.DiscardChanges();
+						return DispatcherDeskResult<List<ShiftDispatcher>>.Fail(DispatcherDeskErrors.NotADispatcher, refused.UserId);
+					}
+
+					var result = await WriteStandingRosterAsync(departmentId, shiftId, existing, wanted, byUserId, cancellationToken);
+
+					if (owns)
+						_unitOfWork.CommitChanges();
+
+					await PublishDeskChangedAsync(departmentId);
+					return DispatcherDeskResult<List<ShiftDispatcher>>.Ok(result);
+				}
+				catch (Exception ex) when (attempt == 1 && (owns || _unitOfWork == null) && IsUniqueViolation(ex))
+				{
+					if (owns)
+						_unitOfWork.DiscardChanges();
+				}
+				catch
+				{
+					if (owns)
+						_unitOfWork.DiscardChanges();
+					throw;
+				}
+			}
+		}
+
+		private async Task<List<ShiftDispatcher>> WriteStandingRosterAsync(int departmentId, int shiftId, List<ShiftDispatcher> existing,
+			List<(string UserId, bool IsSupervisor)> wanted, string byUserId, CancellationToken cancellationToken)
+		{
 			var now = UtcNow();
 
 			foreach (var row in existing.Where(x => !wanted.Any(w => string.Equals(w.UserId, x.UserId, StringComparison.OrdinalIgnoreCase))))
@@ -148,8 +259,31 @@ namespace Resgrid.Services
 				}
 			}
 
-			await PublishDeskChangedAsync(departmentId);
-			return DispatcherDeskResult<List<ShiftDispatcher>>.Ok(result);
+			return result;
+		}
+
+		private async Task<List<ShiftDispatcher>> GetStandingRowsAsync(int shiftId) =>
+			(await _dispatchersRepository.GetByShiftIdAsync(shiftId) ?? Enumerable.Empty<ShiftDispatcher>()).Where(x => !x.ShiftDayId.HasValue).ToList();
+
+		private static List<(string UserId, bool IsSupervisor)> Distinct(IEnumerable<(string UserId, bool IsSupervisor)> people) =>
+			(people ?? Enumerable.Empty<(string UserId, bool IsSupervisor)>())
+			.Where(x => !string.IsNullOrWhiteSpace(x.UserId))
+			.GroupBy(x => x.UserId, StringComparer.OrdinalIgnoreCase)
+			.Select(g => (UserId: g.Key, IsSupervisor: g.Any(x => x.IsSupervisor)))
+			.ToList();
+
+		private static bool IsUniqueViolation(Exception ex)
+		{
+			for (var current = ex; current != null; current = current.InnerException)
+			{
+				if (current is PostgresException postgres)
+					return postgres.SqlState == "23505";
+
+				if (current is SqlException sql)
+					return sql.Number == 2601 || sql.Number == 2627;
+			}
+
+			return false;
 		}
 
 		public async Task<DispatcherDeskResult<ShiftDispatcher>> AssignToDayAsync(int departmentId, int shiftDayId, string userId, bool isSupervisor,
@@ -191,6 +325,10 @@ namespace Resgrid.Services
 			if (error != DispatcherDeskErrors.None)
 				return DispatcherDeskResult<ShiftDispatcher>.Fail(error);
 
+			// Only a Signup shift takes self-signups; an Assigned shift's roster is the shift manager's.
+			if (day.AssignmentType != (int)ShiftAssignmentTypes.Signup)
+				return DispatcherDeskResult<ShiftDispatcher>.Fail(DispatcherDeskErrors.NotPermitted);
+
 			if (!await IsEligibleDispatcherAsync(departmentId, userId))
 				return DispatcherDeskResult<ShiftDispatcher>.Fail(DispatcherDeskErrors.NotADispatcher);
 
@@ -225,8 +363,12 @@ namespace Resgrid.Services
 			return DispatcherDeskResult<ShiftDispatcher>.Ok(saved);
 		}
 
+		public Task<DispatcherDeskResult<bool>> RemoveFromDayAsync(int departmentId, int shiftDayId, string userId, string byUserId, string note,
+			CancellationToken cancellationToken = default) =>
+			RemoveFromDayAsync(departmentId, shiftDayId, userId, byUserId, note, null, cancellationToken);
+
 		public async Task<DispatcherDeskResult<bool>> RemoveFromDayAsync(int departmentId, int shiftDayId, string userId, string byUserId, string note,
-			CancellationToken cancellationToken = default)
+			int? requiredSource, CancellationToken cancellationToken = default)
 		{
 			var (day, _, error) = await LoadDayAsync(departmentId, shiftDayId, requireEnabled: false);
 			if (error != DispatcherDeskErrors.None)
@@ -234,6 +376,12 @@ namespace Resgrid.Services
 
 			var now = UtcNow();
 			var row = await GetDayRowAsync(day, userId);
+
+			// A withdrawal checked the row's source on a roster read earlier; the row written here must still be that kind (a
+			// manager may have turned the signup into an assignment since).
+			if (requiredSource.HasValue && (row == null || row.Source != requiredSource.Value))
+				return DispatcherDeskResult<bool>.Fail(DispatcherDeskErrors.NotPermitted);
+
 			if (row == null)
 			{
 				var standing = (await _dispatchersRepository.GetByShiftIdAsync(day.ShiftId) ?? Enumerable.Empty<ShiftDispatcher>())

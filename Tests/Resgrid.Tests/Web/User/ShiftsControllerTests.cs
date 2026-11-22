@@ -1080,7 +1080,8 @@ namespace Resgrid.Tests.Web.User
 			_shifts.Setup(x => x.GetShiftDayByIdAsync(70)).ReturnsAsync(new ShiftDay { ShiftDayId = 70, ShiftId = 5 });
 			var roster = new List<DispatcherDutyWindow> { new DispatcherDutyWindow { UserId = Me, Source = (int)ShiftDispatcherSources.Assigned } };
 			_dispatchers.Setup(x => x.GetDayRosterAsync(DepartmentId, 70)).ReturnsAsync(() => roster);
-			_dispatchers.Setup(x => x.RemoveFromDayAsync(DepartmentId, 70, Me, Me, null, It.IsAny<CancellationToken>())).ReturnsAsync(DispatcherDeskResult<bool>.Ok(true));
+			_dispatchers.Setup(x => x.RemoveFromDayAsync(DepartmentId, 70, Me, Me, null, (int)ShiftDispatcherSources.Signup, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(DispatcherDeskResult<bool>.Ok(true));
 
 			await _controller.DispatcherWithdraw(70, CancellationToken.None);
 			Message.Should().Be("Error.NotPermitted", "a standing roster member is taken off a day by a shift manager");
@@ -1089,7 +1090,8 @@ namespace Resgrid.Tests.Web.User
 			await _controller.DispatcherWithdraw(70, CancellationToken.None);
 
 			Message.Should().Be("DispatcherWithdrawn");
-			_dispatchers.Verify(x => x.RemoveFromDayAsync(DepartmentId, 70, Me, Me, null, It.IsAny<CancellationToken>()), Times.Once);
+			_dispatchers.Verify(x => x.RemoveFromDayAsync(DepartmentId, 70, Me, Me, null, (int)ShiftDispatcherSources.Signup, It.IsAny<CancellationToken>()), Times.Once,
+				"the withdrawal asks the service to recheck that the row is still a sign-up");
 		}
 
 		[Test]
@@ -1188,6 +1190,85 @@ namespace Resgrid.Tests.Web.User
 			var model = (await _controller.OnDuty()).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<OnDutyView>().Subject;
 
 			model.Dispatch.Should().BeNull();
+		}
+
+		[Test]
+		public async Task OnDuty_shows_waiting_work_when_nobody_is_on_the_desk()
+		{
+			// PR 589: the block used to vanish with no members, hiding the "waiting in queue" label exactly when it matters.
+			_presence.Setup(x => x.GetDeskAsync(DepartmentId, It.IsAny<DateTime>())).ReturnsAsync(new DispatcherDeskSnapshot
+			{
+				Enabled = true,
+				Members = new List<DispatcherDeskMember>(),
+				Queue = new List<DispatcherQueueItem> { new DispatcherQueueItem { State = (int)DispatcherQueueItemStates.Queued } }
+			});
+
+			var model = (await _controller.OnDuty()).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<OnDutyView>().Subject;
+
+			model.Dispatch.Should().NotBeNull();
+			model.Dispatch.QueueCount.Should().Be(1);
+			model.Dispatch.Dispatchers.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task OnDuty_leaves_the_desk_block_out_with_no_dispatchers_and_no_work()
+		{
+			_presence.Setup(x => x.GetDeskAsync(DepartmentId, It.IsAny<DateTime>())).ReturnsAsync(new DispatcherDeskSnapshot
+			{
+				Enabled = true,
+				Members = new List<DispatcherDeskMember>(),
+				Queue = new List<DispatcherQueueItem>()
+			});
+
+			var model = (await _controller.OnDuty()).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<OnDutyView>().Subject;
+
+			model.Dispatch.Should().BeNull();
+		}
+
+		[Test]
+		public async Task Index_shows_the_desk_menu_and_activity_to_an_on_duty_desk_supervisor_without_the_dispatch_login()
+		{
+			// PR 589: the Activity action admits CanSuperviseAsync callers; the menu hid it behind the Dispatch login.
+			_scope = ShiftManagementScope.None();
+			_shifts.Setup(x => x.GetAllShiftsByDepartmentAsync(DepartmentId)).ReturnsAsync(new List<Shift>());
+			_dispatchAccess.Setup(x => x.CanUseDispatchAsync(DepartmentId, Me)).ReturnsAsync(false);
+			_presence.Setup(x => x.CanSuperviseAsync(DepartmentId, Me)).ReturnsAsync(true);
+
+			var model = (await _controller.Index()).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<ShiftsIndexModel>().Subject;
+
+			model.ShowDispatcherActivity.Should().BeTrue();
+			model.ShowDispatcherDesk.Should().BeTrue("the board and the planner admit desk supervisors too");
+			model.ShowDispatcherDeskSettings.Should().BeFalse();
+		}
+
+		[Test]
+		public async Task EditShiftDetails_applies_only_the_editors_roster_changes()
+		{
+			// PR 589: a form opened before another manager added someone must not take them off by submitting its old roster.
+			var shift = SetupShift(5, DepartmentId, 10);
+			shift.AssignmentType = (int)ShiftAssignmentTypes.Assigned;
+			_shifts.Setup(x => x.UpdateShiftAsync(shift, It.IsAny<CancellationToken>())).ReturnsAsync(shift);
+			_events.Setup(x => x.SendMessage(It.IsAny<ShiftUpdatedEvent>()));
+			CaptureSavedSettings();
+			List<(string UserId, bool IsSupervisor)> previous = null, wanted = null;
+			_dispatchers.Setup(x => x.UpdateStandingRosterAsync(DepartmentId, 5, It.IsAny<IEnumerable<(string UserId, bool IsSupervisor)>>(),
+					It.IsAny<IEnumerable<(string UserId, bool IsSupervisor)>>(), Me, It.IsAny<CancellationToken>()))
+				.Callback((int _, int __, IEnumerable<(string UserId, bool IsSupervisor)> before, IEnumerable<(string UserId, bool IsSupervisor)> after, string ___, CancellationToken ____) =>
+				{
+					previous = before.ToList();
+					wanted = after.ToList();
+				})
+				.ReturnsAsync(DispatcherDeskResult<List<ShiftDispatcher>>.Ok(new List<ShiftDispatcher>()));
+
+			var model = new EditShiftView { Shift = new Shift { ShiftId = 5 }, Dispatch = new ShiftDispatchSectionView { IsEnabled = true } };
+			var form = DispatchForm(("dispatchRosterEdit", "1"), ("dispatchRosterWas", new StringValues(new[] { Colleague, Other })), ("dispatchSupervisorWas", Other),
+				("dispatchRoster", Colleague), ("dispatchSupervisor", Colleague));
+
+			(await _controller.EditShiftDetails(model, form, CancellationToken.None)).Should().BeOfType<RedirectToActionResult>();
+
+			previous.Should().BeEquivalentTo(new[] { (Colleague, false), (Other, true) });
+			wanted.Should().BeEquivalentTo(new[] { (Colleague, true) });
+			_dispatchers.Verify(x => x.SetStandingRosterAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<IEnumerable<(string, bool)>>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		#endregion Dispatchers on duty

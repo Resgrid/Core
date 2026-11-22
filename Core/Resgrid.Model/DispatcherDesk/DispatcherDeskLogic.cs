@@ -228,7 +228,11 @@ namespace Resgrid.Model
 
 		/// <param name="dispatchers">The day's approved duty windows (one per dispatcher).</param>
 		/// <param name="existing">Breaks already on the day (Scheduled / Active / Completed) that the plan must work around.</param>
-		/// <param name="minimumAvailable">Dispatchers that must stay available; the number who may be on break at once is on duty − minimum (at least 1).</param>
+		/// <param name="minimumAvailable">
+		/// Dispatchers that must stay available; the number who may be on break at once is on duty − minimum. When that is zero or less,
+		/// no break keeps the minimum: breaks are still placed (as far apart as the day allows) and every one is flagged
+		/// <see cref="PlannedBreak.BreaksMinimum"/>.
+		/// </param>
 		/// <param name="notBeforeUtc">
 		/// No break before this instant (planning part-way through a shift): a target already past is placed from here on,
 		/// staggered like the rest, instead of being dropped.
@@ -241,7 +245,7 @@ namespace Resgrid.Model
 				return result;
 
 			var occupied = (existing ?? Enumerable.Empty<(string, DateTime, DateTime)>()).ToList();
-			var allowedAtOnce = Math.Max(1, dispatchers.Count - Math.Max(0, minimumAvailable));
+			var allowedAtOnce = dispatchers.Count - Math.Max(0, minimumAvailable);
 			var ordered = dispatchers.OrderBy(x => x.StartUtc).ThenBy(x => x.UserId, StringComparer.OrdinalIgnoreCase).ToList();
 
 			for (var index = 0; index < plan.Count; index++)
@@ -306,7 +310,11 @@ namespace Resgrid.Model
 			var clear = Nearest(userId, target, duration, Max(earliest, target - drift), Min(latest, target + drift), occupied,
 				(start, end) => MaxConcurrent(occupied, start, end) == 0);
 			if (clear.HasValue)
+			{
+				// Nobody else on break, yet with the minimum at (or above) everyone on duty even a lone break goes below it.
+				breaksMinimum = allowedAtOnce <= 0;
 				return clear;
+			}
 
 			// Then the nearest time that keeps the minimum on the desk (breaks may overlap).
 			var withinMinimum = Nearest(userId, target, duration, earliest, latest, occupied, (start, end) => MaxConcurrent(occupied, start, end) < allowedAtOnce);
@@ -450,6 +458,12 @@ namespace Resgrid.Model
 				default: return 150;
 			}
 		}
+
+		/// <summary>
+		/// The kinds whose sender is a phone number the desk can ring back: texts and phone calls. A chat's sender is the chat app's user
+		/// id (Telegram and Discord ids are all digits and would pass for a phone number) and an email's is an address.
+		/// </summary>
+		public static bool CanCallBack(DispatcherQueueItemKinds kind) => kind == DispatcherQueueItemKinds.Text || kind == DispatcherQueueItemKinds.Voice;
 
 		/// <summary>Kind + normalized sender, for joining follow-up messages to the open conversation.</summary>
 		/// <summary>The <see cref="DispatcherQueueItem.ExternalReference"/> that links an item to an intake text thread.</summary>

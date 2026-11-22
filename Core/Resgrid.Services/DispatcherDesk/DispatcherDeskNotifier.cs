@@ -83,9 +83,9 @@ namespace Resgrid.Services
 				return;
 
 			var kind = BreakName(dispatcherBreak.BreakType);
-			var supervisors = (supervisorUserIds ?? Enumerable.Empty<string>()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
 
-			if (supervisors.Count == 0)
+			// Null is the dispatcher's own alert; a list (even an empty one: no supervisor resolved) is the supervisors' alert only.
+			if (supervisorUserIds == null)
 			{
 				// To the dispatcher: always delivered, even on break (it is what ends the break).
 				var title = autoReturned ? "You're available again" : $"Your {kind} is over";
@@ -96,6 +96,10 @@ namespace Resgrid.Services
 					honourBreak: false, cancellationToken);
 				return;
 			}
+
+			var supervisors = supervisorUserIds.Where(x => !string.IsNullOrWhiteSpace(x)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+			if (supervisors.Count == 0)
+				return;
 
 			var overdue = dispatcherBreak.ExpectedReturnOn.HasValue
 				? Math.Max(1, (int)Math.Round((DateTime.UtcNow - dispatcherBreak.ExpectedReturnOn.Value).TotalMinutes))

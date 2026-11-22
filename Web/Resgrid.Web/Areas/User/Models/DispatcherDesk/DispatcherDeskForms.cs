@@ -106,10 +106,11 @@ namespace Resgrid.Web.Areas.User.Models.DispatcherDesk
 				return roster;
 
 			var supervisors = new HashSet<string>(Split(form[SupervisorField]), StringComparer.OrdinalIgnoreCase);
+			var added = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
 			foreach (var userId in Split(form[RosterField]).Concat(supervisors))
 			{
-				if (roster.Any(x => String.Equals(x.UserId, userId, StringComparison.OrdinalIgnoreCase)))
+				if (!added.Add(userId))
 					continue;
 
 				roster.Add((userId, supervisors.Contains(userId)));

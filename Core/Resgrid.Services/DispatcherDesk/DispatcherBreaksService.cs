@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -27,6 +28,9 @@ namespace Resgrid.Services
 		/// <summary>A planned break this far past its start, never taken, is missed whatever the duty says.</summary>
 		public const int MissedAfterHours = 24;
 
+		/// <summary>Scheduled breaks past the timer window (the worker was down) marked missed per pass.</summary>
+		public const int MissedCatchUpBatch = 200;
+
 		private readonly IDispatcherBreaksRepository _breaksRepository;
 		private readonly IDispatcherPresencesRepository _presencesRepository;
 		private readonly IDispatcherQueueItemsRepository _itemsRepository;
@@ -35,10 +39,16 @@ namespace Resgrid.Services
 		private readonly IDispatcherDeskConfigService _configService;
 		private readonly IDispatcherDeskNotifier _notifier;
 		private readonly Lazy<IDispatcherRoutingService> _routingService;
+		private readonly IUnitOfWork _unitOfWork;
 
+		/// <param name="unitOfWork">
+		/// Optional: with it, a break start runs its coverage check and commit under a department lock, and a re-plan of the shift day
+		/// commits its cancellations and new breaks together. Without it (tests) the writes run one by one.
+		/// </param>
 		public DispatcherBreaksService(IDispatcherBreaksRepository breaksRepository, IDispatcherPresencesRepository presencesRepository,
 			IDispatcherQueueItemsRepository itemsRepository, IShiftDispatchersService shiftDispatchersService, IDispatcherPresenceService presenceService,
-			IDispatcherDeskConfigService configService, IDispatcherDeskNotifier notifier, Lazy<IDispatcherRoutingService> routingService)
+			IDispatcherDeskConfigService configService, IDispatcherDeskNotifier notifier, Lazy<IDispatcherRoutingService> routingService,
+			IUnitOfWork unitOfWork = null)
 		{
 			_breaksRepository = breaksRepository;
 			_presencesRepository = presencesRepository;
@@ -48,6 +58,7 @@ namespace Resgrid.Services
 			_configService = configService;
 			_notifier = notifier;
 			_routingService = routingService;
+			_unitOfWork = unitOfWork;
 		}
 
 		public Func<DateTime> UtcNow { get; set; } = () => DateTime.UtcNow;
@@ -85,6 +96,7 @@ namespace Resgrid.Services
 			var end = start.AddMinutes(dispatcherBreak.DurationMinutes);
 
 			DispatcherBreak row;
+			DispatcherBreak observed = null;
 			if (!string.IsNullOrWhiteSpace(dispatcherBreak.DispatcherBreakId))
 			{
 				row = await GetBreakAsync(departmentId, dispatcherBreak.DispatcherBreakId);
@@ -93,6 +105,8 @@ namespace Resgrid.Services
 
 				if (row.State != (int)DispatcherBreakStates.Scheduled || !string.Equals(row.UserId, dispatcherBreak.UserId, StringComparison.OrdinalIgnoreCase))
 					return Fail(DispatcherDeskErrors.BreakNotStartable);
+
+				observed = PlanOf(row);
 			}
 			else
 			{
@@ -115,7 +129,18 @@ namespace Resgrid.Services
 				? windows.FirstOrDefault(x => x.ShiftDayId == dispatcherBreak.ShiftDayId.Value)
 				: windows.FirstOrDefault(x => x.StartUtc <= start && x.EndUtc > start) ?? windows.FirstOrDefault(x => x.StartUtc < end && x.EndUtc > start);
 
-			if (window == null || start < window.StartUtc || end > window.EndUtc)
+			var outsideDuty = window == null || start < window.StartUtc || end > window.EndUtc;
+
+			// A dispatcher planning their own break (not a supervisor) may only place it inside an approved duty window on a shift that
+			// allows self-scheduled breaks: the shift the break is moved into decides, not the one it was first planned on.
+			if (!await _presenceService.CanSuperviseAsync(departmentId, byUserId))
+			{
+				if (!string.Equals(byUserId, dispatcherBreak.UserId, StringComparison.OrdinalIgnoreCase) || outsideDuty ||
+					!await AllowsSelfScheduledBreaksAsync(departmentId, window.ShiftId))
+					return Fail(DispatcherDeskErrors.NotPermitted);
+			}
+
+			if (outsideDuty)
 				warnings.Add(new DispatcherDeskWarning { Kind = DispatcherDeskWarningKinds.OutsideDuty, StartUtc = start, EndUtc = end, UserIds = { dispatcherBreak.UserId } });
 
 			var own = (await _breaksRepository.GetForDepartmentInRangeAsync(departmentId, start.AddDays(-1), end.AddDays(1)) ?? Enumerable.Empty<DispatcherBreak>())
@@ -145,14 +170,10 @@ namespace Resgrid.Services
 				row.DispatcherBreakId = Guid.NewGuid().ToString();
 				await _breaksRepository.InsertAsync(row, cancellationToken, true);
 			}
-			else if (!await _breaksRepository.TryTransitionAsync(row, (int)DispatcherBreakStates.Scheduled, cancellationToken))
+			else if (!await _breaksRepository.TryUpdateObservedAsync(row, observed, resetPlanAlerts: true, cancellationToken))
 			{
+				// One conditional write (plan + reminder reset): a break started, cancelled or re-planned since it was read is left alone.
 				return Fail(DispatcherDeskErrors.BreakNotStartable);
-			}
-			else
-			{
-				// TryTransition writes the plan; the alert stamps reset through a plain save (rare path).
-				await _breaksRepository.SaveOrUpdateAsync(row, cancellationToken, true);
 			}
 
 			var coverage = await GetCoverageAsync(departmentId, start, end, 5);
@@ -202,17 +223,12 @@ namespace Resgrid.Services
 			var now = UtcNow();
 			var existing = await GetBreaksForShiftDayAsync(departmentId, shiftDayId);
 
-			if (replace)
-			{
-				foreach (var planned in existing.Where(x => x.State == (int)DispatcherBreakStates.Scheduled && x.ScheduledStartOn > now).ToList())
-				{
-					planned.State = (int)DispatcherBreakStates.Cancelled;
-					planned.UpdatedByUserId = byUserId;
-					planned.UpdatedOn = now;
-					if (await _breaksRepository.TryTransitionAsync(planned, (int)DispatcherBreakStates.Scheduled, cancellationToken))
-						existing.Remove(planned);
-				}
-			}
+			// With replace, the breaks still to come are cancelled; the replacement is worked out first and committed with the
+			// cancellations, so a failed insert never leaves the day with the old plan cancelled and the new one missing.
+			var superseded = replace
+				? existing.Where(x => x.State == (int)DispatcherBreakStates.Scheduled && x.ScheduledStartOn > now).ToList()
+				: new List<DispatcherBreak>();
+			existing = existing.Except(superseded).ToList();
 
 			var kept = existing.Where(x => x.State == (int)DispatcherBreakStates.Scheduled || x.State == (int)DispatcherBreakStates.Active ||
 										   x.State == (int)DispatcherBreakStates.Completed).ToList();
@@ -254,7 +270,6 @@ namespace Resgrid.Services
 					UpdatedOn = now
 				};
 
-				await _breaksRepository.InsertAsync(row, cancellationToken, true);
 				created.Add(row);
 
 				if (entry.BreaksMinimum)
@@ -268,8 +283,75 @@ namespace Resgrid.Services
 					});
 			}
 
+			var committed = await InTransactionAsync(async () =>
+			{
+				foreach (var planned in superseded)
+				{
+					var observed = PlanOf(planned);
+					planned.State = (int)DispatcherBreakStates.Cancelled;
+					planned.UpdatedByUserId = byUserId;
+					planned.UpdatedOn = now;
+
+					// A break started, moved or cancelled since it was read: the replacement was worked out around the old one, so stop.
+					if (!await _breaksRepository.TryUpdateObservedAsync(planned, observed, resetPlanAlerts: false, cancellationToken))
+						throw new BreakPlanChangedException();
+				}
+
+				foreach (var row in created)
+					await _breaksRepository.InsertAsync(row, cancellationToken, true);
+
+				return true;
+			}, cancellationToken, catchPlanChanged: true);
+
+			if (!committed)
+				return DispatcherDeskResult<List<DispatcherBreak>>.Fail(DispatcherDeskErrors.BreakNotStartable, "The day's breaks changed while planning; plan again.");
+
 			await _notifier.PublishDeskChangedAsync(departmentId);
 			return DispatcherDeskResult<List<DispatcherBreak>>.Ok(created, warnings);
+		}
+
+		/// <summary>A break the re-plan was about to cancel changed under it; the whole re-plan is rolled back.</summary>
+		private sealed class BreakPlanChangedException : Exception { }
+
+		/// <summary>
+		/// Runs <paramref name="work"/> in the unit of work's transaction (joining the caller's, or owning one). Without a unit of work
+		/// (tests) it just runs. With <paramref name="catchPlanChanged"/> a <see cref="BreakPlanChangedException"/> rolls back an owned
+		/// transaction and answers false.
+		/// </summary>
+		private async Task<bool> InTransactionAsync(Func<Task<bool>> work, CancellationToken cancellationToken, bool catchPlanChanged = false)
+		{
+			try
+			{
+				return await InTransactionAsync<bool>(work, cancellationToken);
+			}
+			catch (BreakPlanChangedException) when (catchPlanChanged)
+			{
+				return false;
+			}
+		}
+
+		private async Task<T> InTransactionAsync<T>(Func<Task<T>> work, CancellationToken cancellationToken)
+		{
+			if (_unitOfWork == null)
+				return await work();
+
+			var owns = _unitOfWork.Transaction == null;
+			await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
+			try
+			{
+				var result = await work();
+				if (owns)
+					_unitOfWork.CommitChanges();
+
+				return result;
+			}
+			catch
+			{
+				if (owns)
+					_unitOfWork.DiscardChanges();
+
+				throw;
+			}
 		}
 
 		public async Task<DispatcherDeskResult<DispatcherBreak>> StartBreakAsync(int departmentId, string userId, string dispatcherBreakId, int? breakType,
@@ -279,12 +361,79 @@ namespace Resgrid.Services
 			if (bySupervisor && !await _presenceService.CanSuperviseAsync(departmentId, byUserId))
 				return Fail(DispatcherDeskErrors.NotPermitted);
 
+			// The coverage decision and the commit of the break run under a department lock, so two dispatchers starting a break at once
+			// cannot both pass the minimum against the same desk snapshot.
+			(DispatcherDeskResult<DispatcherBreak> Result, List<DispatcherQueueItem> HandBack) started;
+			try
+			{
+				started = await InTransactionAsync(async () =>
+				{
+					if (_unitOfWork != null)
+						await _breaksRepository.LockDepartmentForBreakStartAsync(departmentId, cancellationToken);
+
+					return await StartBreakUnderLockAsync(departmentId, userId, dispatcherBreakId, breakType, durationMinutes, returnWork, byUserId,
+						bySupervisor, cancellationToken);
+				}, cancellationToken);
+			}
+			catch (TimeoutException)
+			{
+				return Fail(DispatcherDeskErrors.BreakNotStartable, "Another break is being started on the desk; try again.");
+			}
+
+			var result = started.Result;
+			if (!result.Success)
+				return result;
+
+			// Only now that the dispatcher is on break: work handed back is offered to someone else, never straight back to them.
+			var held = started.HandBack.Count(x => x.State == (int)DispatcherQueueItemStates.Accepted);
+			var failed = await HandBackAsync(departmentId, userId, started.HandBack, cancellationToken);
+
+			// "Went back to the queue" only once it all did; anything still held is handed back by the break timer.
+			if (held > 0 && failed == 0)
+				result.Warnings.Add(new DispatcherDeskWarning { Kind = DispatcherDeskWarningKinds.WorkReturnedToQueue, UserIds = { userId }, Available = held });
+
+			await _notifier.PublishDeskChangedAsync(departmentId, userId);
+			return result;
+		}
+
+		/// <summary>Returns the dispatcher's work to the queue, one item at a time; answers how many could not be released.</summary>
+		private async Task<int> HandBackAsync(int departmentId, string userId, IEnumerable<DispatcherQueueItem> items, CancellationToken cancellationToken)
+		{
+			var failed = 0;
+			foreach (var item in items ?? Enumerable.Empty<DispatcherQueueItem>())
+			{
+				try
+				{
+					var released = await _routingService.Value.ReleaseAsync(departmentId, item.DispatcherQueueItemId, userId, cancellationToken);
+
+					// Refused because it is no longer theirs (finished, taken over) is not work they still hold.
+					if (released != null && !released.Success && released.Error != DispatcherDeskErrors.ItemNotFound &&
+						released.Error != DispatcherDeskErrors.ItemNotAvailable && released.Error != DispatcherDeskErrors.NotAssignedToYou)
+						failed++;
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Returning dispatcher work {item.DispatcherQueueItemId} to the queue for a break");
+					failed++;
+				}
+			}
+
+			return failed;
+		}
+
+		private async Task<(DispatcherDeskResult<DispatcherBreak> Result, List<DispatcherQueueItem> HandBack)> StartBreakUnderLockAsync(int departmentId,
+			string userId, string dispatcherBreakId, int? breakType, int? durationMinutes, bool returnWork, string byUserId, bool bySupervisor,
+			CancellationToken cancellationToken)
+		{
+			var nothing = new List<DispatcherQueueItem>();
+			(DispatcherDeskResult<DispatcherBreak>, List<DispatcherQueueItem>) Refuse(DispatcherDeskErrors error, string message = null) => (Fail(error, message), nothing);
+
 			var presence = await _presencesRepository.GetForUserAsync(departmentId, userId);
 			if (presence == null || !presence.IsSignedIn())
-				return Fail(DispatcherDeskErrors.NotSignedIn);
+				return Refuse(DispatcherDeskErrors.NotSignedIn);
 
 			if (presence.State == (int)DispatcherPresenceStates.OnBreak || await _breaksRepository.GetActiveForUserAsync(departmentId, userId) != null)
-				return Fail(DispatcherDeskErrors.AlreadyOnBreak);
+				return Refuse(DispatcherDeskErrors.AlreadyOnBreak);
 
 			var now = UtcNow();
 			DispatcherBreak row;
@@ -292,10 +441,10 @@ namespace Resgrid.Services
 			{
 				row = await GetBreakAsync(departmentId, dispatcherBreakId);
 				if (row == null || !string.Equals(row.UserId, userId, StringComparison.OrdinalIgnoreCase))
-					return Fail(DispatcherDeskErrors.BreakNotFound);
+					return Refuse(DispatcherDeskErrors.BreakNotFound);
 
 				if (row.State != (int)DispatcherBreakStates.Scheduled)
-					return Fail(DispatcherDeskErrors.BreakNotStartable);
+					return Refuse(DispatcherDeskErrors.BreakNotStartable);
 
 				if (durationMinutes.HasValue && durationMinutes.Value > 0 && durationMinutes.Value <= MaxBreakMinutes)
 					row.DurationMinutes = durationMinutes.Value;
@@ -304,7 +453,7 @@ namespace Resgrid.Services
 			{
 				var minutes = durationMinutes ?? DefaultAdHocMinutes;
 				if (minutes <= 0 || minutes > MaxBreakMinutes)
-					return Fail(DispatcherDeskErrors.InvalidInput);
+					return Refuse(DispatcherDeskErrors.InvalidInput);
 
 				row = new DispatcherBreak
 				{
@@ -327,7 +476,7 @@ namespace Resgrid.Services
 				.Where(x => string.Equals(x.AssignedUserId, userId, StringComparison.OrdinalIgnoreCase)).ToList();
 			var held = mine.Where(x => x.State == (int)DispatcherQueueItemStates.Accepted).ToList();
 			if (held.Count > 0 && !returnWork)
-				return Fail(DispatcherDeskErrors.HoldingWork, held.Count.ToString());
+				return Refuse(DispatcherDeskErrors.HoldingWork, held.Count.ToString());
 
 			// Coverage: the dispatcher stops counting as available.
 			var config = await _configService.GetConfigAsync(departmentId);
@@ -352,13 +501,10 @@ namespace Resgrid.Services
 
 				var supervisorOverride = bySupervisor || await _presenceService.CanSuperviseAsync(departmentId, byUserId);
 				if (config.PreventBreakBelowMinimum && !supervisorOverride)
-					return DispatcherDeskResult<DispatcherBreak>.Fail(DispatcherDeskErrors.CoverageTooLow, null, new List<DispatcherDeskWarning> { warning });
+					return (DispatcherDeskResult<DispatcherBreak>.Fail(DispatcherDeskErrors.CoverageTooLow, null, new List<DispatcherDeskWarning> { warning }), nothing);
 
 				warnings.Add(warning);
 			}
-
-			if (held.Count > 0)
-				warnings.Add(new DispatcherDeskWarning { Kind = DispatcherDeskWarningKinds.WorkReturnedToQueue, UserIds = { userId }, Available = held.Count });
 
 			if (row.ScheduledStartOn.HasValue)
 			{
@@ -385,7 +531,7 @@ namespace Resgrid.Services
 			}
 			else if (!await _breaksRepository.TryTransitionAsync(row, (int)DispatcherBreakStates.Scheduled, cancellationToken))
 			{
-				return Fail(DispatcherDeskErrors.BreakNotStartable);
+				return Refuse(DispatcherDeskErrors.BreakNotStartable);
 			}
 
 			presence.State = (int)DispatcherPresenceStates.OnBreak;
@@ -394,16 +540,19 @@ namespace Resgrid.Services
 			presence.AwayReason = null;
 			await _presencesRepository.SaveOrUpdateAsync(presence, cancellationToken, true);
 
-			// Only now that the dispatcher is on break: work handed back is offered to someone else, never straight back to them.
-			foreach (var item in mine)
-				await _routingService.Value.ReleaseAsync(departmentId, item.DispatcherQueueItemId, userId, cancellationToken);
-
-			await _notifier.PublishDeskChangedAsync(departmentId, userId);
-			return DispatcherDeskResult<DispatcherBreak>.Ok(row, warnings);
+			return (DispatcherDeskResult<DispatcherBreak>.Ok(row, warnings), mine);
 		}
 
-		public async Task<DispatcherDeskResult<DispatcherBreak>> EndBreakAsync(int departmentId, string userId, string byUserId, DispatcherBreakEndReasons reason,
-			CancellationToken cancellationToken = default)
+		public Task<DispatcherDeskResult<DispatcherBreak>> EndBreakAsync(int departmentId, string userId, string byUserId, DispatcherBreakEndReasons reason,
+			CancellationToken cancellationToken = default) =>
+			EndBreakAsync(departmentId, userId, byUserId, reason, null, cancellationToken);
+
+		/// <param name="expectedBreakId">
+		/// The break the caller evaluated (the auto-return timer): only that break is ended, and only while it is still active. A
+		/// dispatcher who came back and started another break in the meantime keeps the new one.
+		/// </param>
+		private async Task<DispatcherDeskResult<DispatcherBreak>> EndBreakAsync(int departmentId, string userId, string byUserId, DispatcherBreakEndReasons reason,
+			string expectedBreakId, CancellationToken cancellationToken)
 		{
 			if (reason == DispatcherBreakEndReasons.Supervisor && !await _presenceService.CanSuperviseAsync(departmentId, byUserId))
 				return Fail(DispatcherDeskErrors.NotPermitted);
@@ -412,10 +561,26 @@ namespace Resgrid.Services
 				!await _presenceService.CanSuperviseAsync(departmentId, byUserId))
 				return Fail(DispatcherDeskErrors.NotPermitted);
 
-			var row = await _breaksRepository.GetActiveForUserAsync(departmentId, userId);
+			DispatcherBreak row;
+			if (expectedBreakId != null)
+			{
+				row = await GetBreakAsync(departmentId, expectedBreakId);
+				if (row == null || row.State != (int)DispatcherBreakStates.Active || !string.Equals(row.UserId, userId, StringComparison.OrdinalIgnoreCase))
+					return Fail(DispatcherDeskErrors.NotOnBreak);
+			}
+			else
+			{
+				row = await _breaksRepository.GetActiveForUserAsync(departmentId, userId);
+			}
+
 			var presence = await _presencesRepository.GetForUserAsync(departmentId, userId);
 			if (row == null && (presence == null || presence.State != (int)DispatcherPresenceStates.OnBreak))
 				return Fail(DispatcherDeskErrors.NotOnBreak);
+
+			// The presence follows the evaluated break only while it is that break the dispatcher is on.
+			if (expectedBreakId != null && presence != null && !string.IsNullOrWhiteSpace(presence.ActiveBreakId) &&
+				!string.Equals(presence.ActiveBreakId, expectedBreakId, StringComparison.OrdinalIgnoreCase))
+				presence = null;
 
 			var now = UtcNow();
 			if (row != null)
@@ -495,16 +660,13 @@ namespace Resgrid.Services
 
 		public async Task<int> ProcessBreakTimersAsync(DateTime utcNow, CancellationToken cancellationToken = default)
 		{
-			var configs = new Dictionary<int, DispatcherDeskConfig>();
-			async Task<DispatcherDeskConfig> configFor(int departmentId)
-			{
-				if (!configs.TryGetValue(departmentId, out var config))
-					configs[departmentId] = config = await _configService.GetConfigAsync(departmentId);
-				return config;
-			}
-
+			var run = new TimerRun(this);
 			var changes = 0;
 			var rows = (await _breaksRepository.GetForTimersAsync(utcNow.AddMinutes(120), utcNow.AddHours(-MissedAfterHours - 1)) ?? Enumerable.Empty<DispatcherBreak>()).ToList();
+
+			// Catch-up: planned breaks the timer window has already passed by (the worker was down for a day) are still marked missed.
+			var overdue = await _breaksRepository.GetOverdueScheduledAsync(utcNow.AddHours(-MissedAfterHours - 1), MissedCatchUpBatch) ?? Enumerable.Empty<DispatcherBreak>();
+			rows.AddRange(overdue.Where(x => !rows.Any(r => string.Equals(r.DispatcherBreakId, x.DispatcherBreakId, StringComparison.OrdinalIgnoreCase))).ToList());
 
 			foreach (var row in rows)
 			{
@@ -513,11 +675,11 @@ namespace Resgrid.Services
 
 				try
 				{
-					var config = await configFor(row.DepartmentId);
+					var config = await run.ConfigAsync(row.DepartmentId);
 					if (row.State == (int)DispatcherBreakStates.Scheduled)
-						changes += await ProcessScheduledAsync(row, config, utcNow, cancellationToken);
+						changes += await ProcessScheduledAsync(row, config, run, utcNow, cancellationToken);
 					else if (row.State == (int)DispatcherBreakStates.Active)
-						changes += await ProcessActiveAsync(row, config, utcNow, cancellationToken);
+						changes += await ProcessActiveAsync(row, config, run, utcNow, cancellationToken);
 				}
 				catch (Exception ex)
 				{
@@ -528,11 +690,53 @@ namespace Resgrid.Services
 			return changes;
 		}
 
-		private async Task<int> ProcessScheduledAsync(DispatcherBreak row, DispatcherDeskConfig config, DateTime now, CancellationToken cancellationToken)
+		/// <summary>Per-pass lookups shared by every break the timer looks at.</summary>
+		private sealed class TimerRun
+		{
+			private readonly DispatcherBreaksService _service;
+			private readonly Dictionary<int, DispatcherDeskConfig> _configs = new Dictionary<int, DispatcherDeskConfig>();
+			private readonly Dictionary<int, bool> _shiftsOnDesk = new Dictionary<int, bool>();
+			private readonly Dictionary<int, List<DispatcherQueueItem>> _openItems = new Dictionary<int, List<DispatcherQueueItem>>();
+
+			public TimerRun(DispatcherBreaksService service) { _service = service; }
+
+			public async Task<DispatcherDeskConfig> ConfigAsync(int departmentId)
+			{
+				if (!_configs.TryGetValue(departmentId, out var config))
+					_configs[departmentId] = config = await _service._configService.GetConfigAsync(departmentId);
+				return config;
+			}
+
+			/// <summary>
+			/// Whether the break's shift still has its desk settings. Breaks are only planned on desk shifts (duty windows come from
+			/// enabled settings), and deleting a shift deletes them, so a shift-linked plan without them belongs to a deleted shift.
+			/// </summary>
+			public async Task<bool> ShiftOnDeskAsync(int departmentId, int shiftId)
+			{
+				if (!_shiftsOnDesk.TryGetValue(shiftId, out var onDesk))
+				{
+					var settings = await _service._shiftDispatchersService.GetSettingsForShiftAsync(shiftId);
+					_shiftsOnDesk[shiftId] = onDesk = settings != null && settings.DepartmentId == departmentId;
+				}
+
+				return onDesk;
+			}
+
+			public async Task<List<DispatcherQueueItem>> OpenItemsAsync(int departmentId)
+			{
+				if (!_openItems.TryGetValue(departmentId, out var items))
+					_openItems[departmentId] = items = (await _service._itemsRepository.GetOpenForDepartmentAsync(departmentId) ?? Enumerable.Empty<DispatcherQueueItem>()).ToList();
+				return items;
+			}
+		}
+
+		private async Task<int> ProcessScheduledAsync(DispatcherBreak row, DispatcherDeskConfig config, TimerRun run, DateTime now, CancellationToken cancellationToken)
 		{
 			if (!row.ScheduledStartOn.HasValue)
 				return 0;
 
+			// Every write below is conditional on the plan this pass read: a break moved, started or cancelled since is left alone.
+			var observed = PlanOf(row);
 			var start = row.ScheduledStartOn.Value;
 			var presence = await _presencesRepository.GetForUserAsync(row.DepartmentId, row.UserId);
 			var signedIn = presence != null && presence.IsSignedIn();
@@ -542,7 +746,7 @@ namespace Resgrid.Services
 			{
 				row.State = (int)DispatcherBreakStates.Missed;
 				row.UpdatedOn = now;
-				if (await _breaksRepository.TryTransitionAsync(row, (int)DispatcherBreakStates.Scheduled, cancellationToken))
+				if (await _breaksRepository.TryUpdateObservedAsync(row, observed, resetPlanAlerts: false, cancellationToken))
 				{
 					await _notifier.PublishDeskChangedAsync(row.DepartmentId, row.UserId);
 					return 1;
@@ -554,10 +758,14 @@ namespace Resgrid.Services
 			if (!config.Enabled || !signedIn)
 				return 0;
 
+			// A plan left over from a deleted shift reminds nobody (the row stays for the record and is marked missed later).
+			if (row.ShiftId.HasValue && !await run.ShiftOnDeskAsync(row.DepartmentId, row.ShiftId.Value))
+				return 0;
+
 			var reminder = config.EffectiveBreakReminderMinutes();
 			if (reminder > 0 && !row.ReminderSentOn.HasValue && start > now && start <= now.AddMinutes(reminder))
 			{
-				if (await _breaksRepository.TryMarkAlertAsync(row.DispatcherBreakId, "ReminderSentOn", now, cancellationToken))
+				if (await _breaksRepository.TryMarkAlertAsync(observed, nameof(DispatcherBreak.ReminderSentOn), now, cancellationToken))
 				{
 					await _notifier.NotifyBreakReminderAsync(row, due: false, cancellationToken);
 					return 1;
@@ -566,7 +774,7 @@ namespace Resgrid.Services
 
 			if (!row.DueAlertSentOn.HasValue && start <= now && start > now.AddMinutes(-60))
 			{
-				if (await _breaksRepository.TryMarkAlertAsync(row.DispatcherBreakId, "DueAlertSentOn", now, cancellationToken))
+				if (await _breaksRepository.TryMarkAlertAsync(observed, nameof(DispatcherBreak.DueAlertSentOn), now, cancellationToken))
 				{
 					await _notifier.NotifyBreakReminderAsync(row, due: true, cancellationToken);
 					await _notifier.PublishDeskChangedAsync(row.DepartmentId, row.UserId);
@@ -577,15 +785,18 @@ namespace Resgrid.Services
 			return 0;
 		}
 
-		private async Task<int> ProcessActiveAsync(DispatcherBreak row, DispatcherDeskConfig config, DateTime now, CancellationToken cancellationToken)
+		private async Task<int> ProcessActiveAsync(DispatcherBreak row, DispatcherDeskConfig config, TimerRun run, DateTime now, CancellationToken cancellationToken)
 		{
+			var changes = await HandBackLeftoverWorkAsync(row, run, cancellationToken);
+
 			var due = row.ExpectedReturnOn ?? row.StartedOn?.AddMinutes(row.DurationMinutes);
 			if (!due.HasValue || due.Value > now)
-				return 0;
+				return changes;
 
-			var changes = 0;
+			// The alert stamps are conditional on the break still being the active one this pass read (not ended since).
+			var observed = PlanOf(row);
 
-			if (!row.ReturnAlertSentOn.HasValue && await _breaksRepository.TryMarkAlertAsync(row.DispatcherBreakId, "ReturnAlertSentOn", now, cancellationToken))
+			if (!row.ReturnAlertSentOn.HasValue && await _breaksRepository.TryMarkAlertAsync(observed, nameof(DispatcherBreak.ReturnAlertSentOn), now, cancellationToken))
 			{
 				await _notifier.NotifyBreakOverAsync(row, null, autoReturned: false, cancellationToken);
 				await _notifier.PublishDeskChangedAsync(row.DepartmentId, row.UserId);
@@ -595,12 +806,13 @@ namespace Resgrid.Services
 			var autoReturn = config.EffectiveAutoReturnAfterMinutes();
 			if (autoReturn > 0 && now >= due.Value.AddMinutes(autoReturn))
 			{
-				var ended = await EndBreakAsync(row.DepartmentId, row.UserId, null, DispatcherBreakEndReasons.AutoReturn, cancellationToken);
+				// This break, not whichever the dispatcher is on by now.
+				var ended = await EndBreakAsync(row.DepartmentId, row.UserId, null, DispatcherBreakEndReasons.AutoReturn, row.DispatcherBreakId, cancellationToken);
 				if (ended.Success)
 				{
 					await _notifier.NotifyBreakOverAsync(row, null, autoReturned: true, cancellationToken);
 					if (config.NotifySupervisorsOnOverdueBreak)
-						await _notifier.NotifyBreakOverAsync(row, await _presenceService.GetSupervisorUserIdsAsync(row.DepartmentId, now), autoReturned: true, cancellationToken);
+						await NotifySupervisorsAsync(row, autoReturned: true, now, cancellationToken);
 					changes++;
 				}
 
@@ -610,15 +822,64 @@ namespace Resgrid.Services
 			var grace = autoReturn > 0 ? Math.Min(OverdueGraceMinutes, autoReturn) : OverdueGraceMinutes;
 			if (config.NotifySupervisorsOnOverdueBreak && !row.OverdueAlertSentOn.HasValue && now >= due.Value.AddMinutes(grace) && (autoReturn == 0 || grace < autoReturn))
 			{
-				if (await _breaksRepository.TryMarkAlertAsync(row.DispatcherBreakId, "OverdueAlertSentOn", now, cancellationToken))
+				if (await _breaksRepository.TryMarkAlertAsync(observed, nameof(DispatcherBreak.OverdueAlertSentOn), now, cancellationToken))
 				{
-					await _notifier.NotifyBreakOverAsync(row, await _presenceService.GetSupervisorUserIdsAsync(row.DepartmentId, now), autoReturned: false, cancellationToken);
+					await NotifySupervisorsAsync(row, autoReturned: false, now, cancellationToken);
 					await _notifier.PublishDeskChangedAsync(row.DepartmentId, row.UserId);
 					changes++;
 				}
 			}
 
 			return changes;
+		}
+
+		/// <summary>Supervisors only: with nobody to tell, nothing is sent (the dispatcher has their own alert).</summary>
+		private async Task NotifySupervisorsAsync(DispatcherBreak row, bool autoReturned, DateTime now, CancellationToken cancellationToken)
+		{
+			var supervisors = await _presenceService.GetSupervisorUserIdsAsync(row.DepartmentId, now);
+			if (supervisors != null && supervisors.Count > 0)
+				await _notifier.NotifyBreakOverAsync(row, supervisors, autoReturned, cancellationToken);
+		}
+
+		/// <summary>
+		/// Work the dispatcher still holds while on this break (a hand-back at the start of the break that failed) goes back to the
+		/// queue. A dispatcher on break cannot accept work, so anything they hold is left over.
+		/// </summary>
+		private async Task<int> HandBackLeftoverWorkAsync(DispatcherBreak row, TimerRun run, CancellationToken cancellationToken)
+		{
+			var leftover = (await run.OpenItemsAsync(row.DepartmentId))
+				.Where(x => x.State == (int)DispatcherQueueItemStates.Accepted && string.Equals(x.AssignedUserId, row.UserId, StringComparison.OrdinalIgnoreCase))
+				.ToList();
+			if (leftover.Count == 0)
+				return 0;
+
+			// Still on this break right now (not back and holding new work).
+			var presence = await _presencesRepository.GetForUserAsync(row.DepartmentId, row.UserId);
+			if (presence == null || presence.State != (int)DispatcherPresenceStates.OnBreak ||
+				!string.IsNullOrWhiteSpace(presence.ActiveBreakId) && !string.Equals(presence.ActiveBreakId, row.DispatcherBreakId, StringComparison.OrdinalIgnoreCase))
+				return 0;
+
+			var failed = await HandBackAsync(row.DepartmentId, row.UserId, leftover, cancellationToken);
+			if (failed == leftover.Count)
+				return 0;
+
+			await _notifier.PublishDeskChangedAsync(row.DepartmentId, row.UserId);
+			return leftover.Count - failed;
+		}
+
+		/// <summary>The state and plan a write is conditional on (see <see cref="IDispatcherBreaksRepository.TryUpdateObservedAsync"/>).</summary>
+		private static DispatcherBreak PlanOf(DispatcherBreak row) => new DispatcherBreak
+		{
+			DispatcherBreakId = row.DispatcherBreakId,
+			State = row.State,
+			DurationMinutes = row.DurationMinutes,
+			ScheduledStartOn = row.ScheduledStartOn
+		};
+
+		private async Task<bool> AllowsSelfScheduledBreaksAsync(int departmentId, int shiftId)
+		{
+			var settings = await _shiftDispatchersService.GetSettingsForShiftAsync(shiftId);
+			return settings != null && settings.DepartmentId == departmentId && settings.IsEnabled && settings.AllowSelfScheduledBreaks;
 		}
 
 		private static DispatcherDeskResult<DispatcherBreak> Fail(DispatcherDeskErrors error, string message = null) =>

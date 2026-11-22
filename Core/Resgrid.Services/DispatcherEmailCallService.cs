@@ -75,15 +75,17 @@ namespace Resgrid.Services
 			}
 		}
 
-		public async Task OnPendingCallSavedAsync(Call savedCall, string sender, string subject, CancellationToken cancellationToken = default)
+		public async Task<bool> OnPendingCallSavedAsync(Call savedCall, string sender, string subject, CancellationToken cancellationToken = default)
 		{
 			if (savedCall == null || savedCall.CallId <= 0)
-				return;
+				return true;
 
+			var onDesk = true;
 			try
 			{
-				// NotRouted (desk off, or it does not take emails) and Duplicate are both fine: the call waits in Pending Calls either way,
-				// and the desk's own sweep adds pending calls it missed.
+				// NotRouted (desk off, or it does not take emails) and Duplicate are both done: the call waits in Pending Calls either way.
+				// A failure is owed: with only Emails ticked, neither the call-event hand-off nor the desk's sweep (both Pending Calls
+				// routing) would ever add it, so the caller keeps the delivery retryable.
 				await _dispatcherRoutingService.EnqueueAsync(new DispatcherEnqueueRequest
 				{
 					DepartmentId = savedCall.DepartmentId,
@@ -101,6 +103,7 @@ namespace Resgrid.Services
 			}
 			catch (Exception ex)
 			{
+				onDesk = false;
 				Logging.LogException(ex, $"Pending emailed call {savedCall.CallId} could not be put on the dispatcher desk.");
 			}
 
@@ -113,6 +116,8 @@ namespace Resgrid.Services
 			{
 				Logging.LogException(ex);
 			}
+
+			return onDesk;
 		}
 
 		private static string Truncate(string value, int maxLength)

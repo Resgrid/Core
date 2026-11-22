@@ -11,6 +11,10 @@ var resgrid;
             var skew = 0;
             var loading = false;
             var pending = null;
+            // The alert shows either a failed board load or an action's answer: a good load clears only its own failure.
+            var alertIsLoadFailure = false;
+            // Actions in flight, by the item or dispatcher they act on: a second click waits for the first answer.
+            var busy = {};
 
             var STATE_CLASS = { 0: 'label-default', 1: 'label-primary', 2: 'label-warning', 3: 'label-default', 4: 'label-info' };
             var STATE_KEY = { 0: 'Offline', 1: 'Available', 2: 'Busy', 3: 'Away', 4: 'OnBreak' };
@@ -199,10 +203,14 @@ var resgrid;
                 $.ajax({ url: options.boardUrl, type: 'GET', dataType: 'json', cache: false }).done(function (result) {
                     data = result;
                     skew = (result && result.ServerNowMs ? result.ServerNowMs : Date.now()) - Date.now();
-                    $('#deskBoardAlert').hide();
+                    if (alertIsLoadFailure) {
+                        $('#deskBoardAlert').hide();
+                        alertIsLoadFailure = false;
+                    }
                     render();
                 }).fail(function () {
                     $('#deskBoardAlert').removeClass('alert-warning alert-success').addClass('alert-danger').text(t('BoardLoadFailed')).show();
+                    alertIsLoadFailure = true;
                 }).always(function () {
                     loading = false;
                 });
@@ -219,12 +227,29 @@ var resgrid;
                 }, 750);
             }
 
+            function showActionResult(result) {
+                alertIsLoadFailure = false;
+                dispatcherdesk.common.showResult('#deskBoardAlert', result, t('ActionFailed'));
+            }
+
             function act(url, payload) {
+                var key = payload && payload.itemId ? 'item:' + payload.itemId : (payload && payload.userId ? 'user:' + payload.userId : null);
+                if (key && busy[key]) {
+                    return;
+                }
+                if (key) {
+                    busy[key] = true;
+                }
+
                 dispatcherdesk.common.post(url, payload).done(function (result) {
-                    dispatcherdesk.common.showResult('#deskBoardAlert', result, t('ActionFailed'));
+                    showActionResult(result);
                     load();
                 }).fail(function () {
-                    dispatcherdesk.common.showResult('#deskBoardAlert', null, t('ActionFailed'));
+                    showActionResult(null);
+                }).always(function () {
+                    if (key) {
+                        delete busy[key];
+                    }
                 });
             }
 
@@ -237,7 +262,7 @@ var resgrid;
                 });
 
                 if (select.children().length === 0) {
-                    dispatcherdesk.common.showResult('#deskBoardAlert', { Success: false, Message: t('NoTransferTargets'), Warnings: [] });
+                    showActionResult({ Success: false, Message: t('NoTransferTargets'), Warnings: [] });
                     return;
                 }
 

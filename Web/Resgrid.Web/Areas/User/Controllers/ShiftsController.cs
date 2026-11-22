@@ -102,11 +102,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var authority = await GetTradeAuthorityAsync(scope);
 			model.HasApprovals = authority.HasApprovals;
 			model.ShowDispatcherDeskSettings = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
-			model.ShowDispatcherDesk = model.ShowDispatcherDeskSettings || scope.IsSupervisor ||
+			// The Activity report's own rule (DispatcherDeskController.Activity): department admins and desk supervisors, an
+			// on-duty desk supervisor without the Dispatch login included.
+			model.ShowDispatcherActivity = model.ShowDispatcherDeskSettings || await _dispatcherPresenceService.CanSuperviseAsync(DepartmentId, UserId);
+			// The board and the break planner's rule (DispatcherDeskController.DeskAccess.CanView), which admits desk supervisors too.
+			model.ShowDispatcherDesk = model.ShowDispatcherActivity || scope.IsSupervisor ||
 			                           await _dispatchAccessService.CanUseDispatchAsync(DepartmentId, UserId);
-			// The Activity report's own rule (DispatcherDeskController.Activity): department admins and desk supervisors.
-			model.ShowDispatcherActivity = model.ShowDispatcherDesk &&
-			                               (model.ShowDispatcherDeskSettings || await _dispatcherPresenceService.CanSuperviseAsync(DepartmentId, UserId));
 
 			if (authority.HasApprovals)
 			{
@@ -733,7 +734,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("ViewShift", new { shiftDayId });
 			}
 
-			var result = await _shiftDispatchersService.RemoveFromDayAsync(DepartmentId, shiftDayId, UserId, UserId, null, cancellationToken);
+			// The source is rechecked inside the remove so a row a manager re-assigned after the read above is not withdrawn.
+			var result = await _shiftDispatchersService.RemoveFromDayAsync(DepartmentId, shiftDayId, UserId, UserId, null,
+				(int)ShiftDispatcherSources.Signup, cancellationToken);
 
 			if (result != null && result.Success)
 				SetMessage(_deskLocalizer["DispatcherWithdrawn"]);
@@ -3109,12 +3112,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!showStandingRoster)
 				return section;
 
-			// Who is on the standing roster now: the posted choices on a re-render, otherwise the stored rows with no day.
+			// Who is on the standing roster now: the posted choices on a re-render, otherwise the stored rows with no day. What
+			// was on it when the editor first opened travels with the form (see ShiftDispatcherCandidate.WasOnRoster).
 			var current = new List<(string UserId, bool IsSupervisor)>();
+			var was = new List<(string UserId, bool IsSupervisor)>();
 
 			if (form != null)
 			{
 				current = DispatcherDeskForms.ReadStandingRoster(form);
+				was = ReadPreviousStandingRoster(form) ?? new List<(string UserId, bool IsSupervisor)>();
 			}
 			else if (shift != null)
 			{
@@ -3122,19 +3128,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 					.Where(x => x != null && !x.ShiftDayId.HasValue && x.IsActive())
 					.Select(x => (x.UserId, x.IsSupervisor))
 					.ToList();
+				was = current.ToList();
 			}
 
 			var names = await GetNamesAsync();
 			var selectable = new HashSet<string>((await _departmentService.GetSelectablePersonnelNamesAsync(DepartmentId) ?? new List<PersonName>())
 				.Where(x => x != null).Select(x => x.UserId), StringComparer.OrdinalIgnoreCase);
-			var eligible = (await _dispatchAccessService.GetDispatchUserIdsAsync(DepartmentId) ?? new List<string>())
-				.Where(x => !String.IsNullOrWhiteSpace(x) && selectable.Contains(x))
-				.Distinct(StringComparer.OrdinalIgnoreCase)
-				.ToList();
+			var dispatchers = new HashSet<string>((await _dispatchAccessService.GetDispatchUserIdsAsync(DepartmentId) ?? new List<string>())
+				.Where(x => !String.IsNullOrWhiteSpace(x)), StringComparer.OrdinalIgnoreCase);
 
-			foreach (var userId in eligible.Concat(current.Select(x => x.UserId)).Distinct(StringComparer.OrdinalIgnoreCase))
+			// New picks come from the selectable people with the Dispatch login. Someone already on the roster stays editable while
+			// they still have the login, even when they are no longer selectable (hidden from lists): only a lost login takes
+			// them off on save, as the badge says.
+			var pickable = dispatchers.Where(x => selectable.Contains(x)).ToList();
+
+			foreach (var userId in pickable.Concat(current.Select(x => x.UserId)).Concat(was.Select(x => x.UserId)).Distinct(StringComparer.OrdinalIgnoreCase))
 			{
 				var onRoster = current.FirstOrDefault(x => SameUser(x.UserId, userId));
+				var before = was.FirstOrDefault(x => SameUser(x.UserId, userId));
 
 				section.Candidates.Add(new ShiftDispatcherCandidate
 				{
@@ -3142,7 +3153,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Name = NameFor(names, userId),
 					OnRoster = onRoster.UserId != null,
 					IsSupervisor = onRoster.UserId != null && onRoster.IsSupervisor,
-					IsEligible = eligible.Any(x => SameUser(x, userId))
+					WasOnRoster = before.UserId != null,
+					WasSupervisor = before.UserId != null && before.IsSupervisor,
+					IsEligible = dispatchers.Contains(userId)
 				});
 			}
 
@@ -3187,10 +3200,40 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (shift.AssignmentType != (int)ShiftAssignmentTypes.Assigned || !posted.IsEnabled)
 				return;
 
-			var roster = await _shiftDispatchersService.SetStandingRosterAsync(DepartmentId, shift.ShiftId, DispatcherDeskForms.ReadStandingRoster(form), UserId, cancellationToken);
+			// The editor's changes against the roster as it is now (another manager may have added someone since this page opened,
+			// and dispatchers it could not show stay); a form without the opening roster (an older page) replaces it as before.
+			var previous = ReadPreviousStandingRoster(form);
+			var roster = previous != null
+				? await _shiftDispatchersService.UpdateStandingRosterAsync(DepartmentId, shift.ShiftId, previous, DispatcherDeskForms.ReadStandingRoster(form), UserId, cancellationToken)
+				: await _shiftDispatchersService.SetStandingRosterAsync(DepartmentId, shift.ShiftId, DispatcherDeskForms.ReadStandingRoster(form), UserId, cancellationToken);
 
 			if (roster == null || !roster.Success)
 				SetDeskError(roster);
+		}
+
+		internal const string RosterEditField = "dispatchRosterEdit";
+		internal const string RosterWasField = "dispatchRosterWas";
+		internal const string SupervisorWasField = "dispatchSupervisorWas";
+
+		/// <summary>
+		/// The standing roster as the editor showed it when it opened (posted back by the section), or null for a form that does
+		/// not carry it.
+		/// </summary>
+		internal static List<(string UserId, bool IsSupervisor)> ReadPreviousStandingRoster(IFormCollection form)
+		{
+			if (form == null || !String.Equals(form[RosterEditField], "1", StringComparison.Ordinal))
+				return null;
+
+			static IEnumerable<string> values(StringValues raw) => raw
+				.SelectMany(x => (x ?? String.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+				.Where(x => !String.IsNullOrWhiteSpace(x));
+
+			var supervisors = new HashSet<string>(values(form[SupervisorWasField]), StringComparer.OrdinalIgnoreCase);
+
+			return values(form[RosterWasField]).Concat(supervisors)
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.Select(x => (x, supervisors.Contains(x)))
+				.ToList();
 		}
 
 		/// <summary>The day page's "Dispatchers on duty" block; null when the shift takes no dispatchers.</summary>
@@ -3279,7 +3322,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var now = DateTime.UtcNow;
 				var snapshot = await _dispatcherPresenceService.GetDeskAsync(DepartmentId, now);
 
-				if (snapshot == null || snapshot.Members == null || !snapshot.Members.Any(x => x != null))
+				if (snapshot == null)
+					return null;
+
+				var queueCount = snapshot.Queue?.Count(x => x != null && x.State == (int)DispatcherQueueItemStates.Queued) ?? 0;
+
+				// Work waiting with nobody on the desk is exactly what this block must show; only an empty desk with an empty
+				// queue has nothing to say.
+				if ((snapshot.Members == null || !snapshot.Members.Any(x => x != null)) && queueCount == 0)
 					return null;
 
 				var view = new OnDutyDispatchersView
@@ -3288,10 +3338,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					MinimumAvailable = snapshot.MinimumAvailable,
 					AvailableCount = snapshot.AvailableCount,
 					BelowMinimum = snapshot.BelowMinimum,
-					QueueCount = snapshot.Queue?.Count(x => x != null && x.State == (int)DispatcherQueueItemStates.Queued) ?? 0
+					QueueCount = queueCount
 				};
 
-				foreach (var member in snapshot.Members.Where(x => x != null).OrderBy(x => x.DisplayState == DispatcherDisplayStates.Offline).ThenBy(x => x.Name ?? lookups.NameFor(x.UserId)))
+				foreach (var member in (snapshot.Members ?? new List<DispatcherDeskMember>()).Where(x => x != null).OrderBy(x => x.DisplayState == DispatcherDisplayStates.Offline).ThenBy(x => x.Name ?? lookups.NameFor(x.UserId)))
 				{
 					var row = new OnDutyDispatcherView
 					{

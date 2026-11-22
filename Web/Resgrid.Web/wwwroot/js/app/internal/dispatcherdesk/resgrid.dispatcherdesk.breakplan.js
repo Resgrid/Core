@@ -8,14 +8,27 @@ var resgrid;
             // (_ShiftDispatchSection): add / remove plan rows, show the details only while dispatchers are on, keep the
             // standing roster filter and the supervisor box in step. Buttons render disabled and are enabled here, so a
             // click before this script ran does nothing rather than failing.
+            // The server reads at most data-max-rows rows (DispatcherDeskForms.MaxBreakPlanRows); adding stops there.
+            function maxRows(editor) {
+                var max = parseInt(editor.attr('data-max-rows'), 10);
+                return isNaN(max) || max <= 0 ? null : max;
+            }
+
+            function rowCount(editor) {
+                return editor.find('tbody tr.dispatcher-break-plan-row').length;
+            }
+
             function updateEmpty(editor) {
-                var rows = editor.find('tbody tr.dispatcher-break-plan-row').length;
+                var rows = rowCount(editor);
+                var max = maxRows(editor);
                 editor.find('.dispatcher-break-plan-empty').toggle(rows === 0);
+                editor.find('.dispatcher-break-plan-add').prop('disabled', max !== null && rows >= max);
             }
 
             function addRow(editor) {
                 var template = editor.find('template.dispatcher-break-plan-template')[0];
-                if (!template) {
+                var max = maxRows(editor);
+                if (!template || (max !== null && rowCount(editor) >= max)) {
                     return;
                 }
 

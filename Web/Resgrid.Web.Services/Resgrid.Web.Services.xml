@@ -53,6 +53,12 @@
         <member name="F:Resgrid.Web.Services.Controllers.DispatcherVoiceController.CallBackRingSeconds">
             <summary>Seconds a call back rings the caller.</summary>
         </member>
+        <member name="F:Resgrid.Web.Services.Controllers.DispatcherVoiceController.TranscriptionLinkChecks">
+            <summary>How often a transcription that arrived before its voicemail call was linked re-reads the item (within Twilio's 15 s).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.DispatcherVoiceController.TranscriptionLinkCheckInterval">
+            <summary>The pause between those re-reads (tests set zero).</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.Hold(System.String)">
             <summary>
             The held caller's wait URL, re-requested by Twilio each time its TwiML ends: a hold prompt and a pause, or
@@ -75,7 +81,9 @@
         <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.Voicemail(System.String)">
             <summary>
             The voicemail's record action: the message becomes a pending call (recording in its notes) and the overflowed voice item
-            becomes that call, waiting in the queue again for a dispatcher (Call back works from it). A repeat does nothing more.
+            becomes that call, waiting in the queue again for a dispatcher (Call back works from it). A repeat does nothing more. The
+            caller hears that the message was passed on only once it is held as a pending call; otherwise they are asked to call back,
+            and the recording is kept in the item's history for the dispatchers.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.VoicemailTranscription(System.String)">
@@ -111,15 +119,17 @@
         <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.CallBackEnded(System.String,System.String)">
             <summary>How the call back to the caller ended (Twilio's DialCallStatus).</summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.Status(System.String,System.String,System.String)">
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.Status(System.String,System.String,System.String,System.Nullable{System.Int64})">
             <summary>
             Status callback of a leg the desk placed (<see cref="T:Resgrid.Model.DispatcherVoiceRoutes.Legs"/>; the voice service sends
             <c>leg=dispatcher</c> for both). A dispatcher's phone that was busy, did not answer or failed, or that hung up before
             connecting, returns the item to the queue only while a held caller is still waiting for it (Answer); a call back leg
-            (an abandoned caller, or a text item) only records what happened and the dispatcher keeps the item.
+            (an abandoned caller, or a text item) only records what happened and the dispatcher keeps the item. <paramref name="attempt"/>
+            (UTC ticks the voice service took before placing the leg) ties the callback to its ring: a late status of an earlier ring,
+            once the dispatcher has been rung again, only records what happened, so it cannot return the item while the newer leg rings.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.LeaveHoldAsync(Resgrid.Model.DispatcherQueueItem)">
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.LeaveHoldAsync(Resgrid.Model.DispatcherQueueItem,System.Boolean)">
             <summary>The decision of <see cref="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.Hold(System.String)"/>: whether the held caller must leave the queue for the overflow handling now.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.CallerItemAsync(System.String)">
@@ -136,6 +146,22 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.ConnectedSinceLastAttempt(System.Collections.Generic.IEnumerable{Resgrid.Model.DispatcherQueueEvent},System.String)">
             <summary>The dispatcher was bridged to the caller after the desk last rang them.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.AttemptStartedOn(System.Nullable{System.Int64})">
+            <summary>The ring attempt's start from the status callback's <c>attempt</c> (UTC ticks); null for a leg placed without one.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.NewerAttemptStarted(System.Collections.Generic.IEnumerable{Resgrid.Model.DispatcherQueueEvent},System.String,System.DateTime)">
+            <summary>
+            The dispatcher was rung again after the attempt that started at <paramref name="attemptStartedOn"/>: every placed leg records
+            one VoiceConnecting for its dispatcher after it is placed, so a second one since then belongs to a later ring.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.TryMarkOverflowedAsync(Resgrid.Model.DispatcherQueueItem,System.String)">
+            <summary>
+            <see cref="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.MarkOverflowedAsync(Resgrid.Model.DispatcherQueueItem,System.String)"/> only while the item still has the version and state the caller read: false when another
+            write (a dispatcher accepting the caller) got there first. A failed write is logged and counts as overflowed, as before, so
+            a caller is never left on hold because the desk store is unreachable.
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.DepartmentNumberAsync(Resgrid.Model.DispatcherQueueItem)">
             <summary>The caller id for a call back: the number the caller called, else the department's number, else the master number.</summary>
@@ -179,6 +205,13 @@
             that never went out, once, instead of creating a second call. A call someone has since closed or deleted is not paged.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.DeskHandOffOwedAsync(Resgrid.Model.InboundEmailReceiptClaim,System.Boolean)">
+            <summary>
+            A held emailed call is saved but could not be put on the dispatcher desk: only that step is still owed (the AI step, when
+            queued, is recorded done), and the claim goes back with a 400 so Postmark redelivers and the resume retries the desk entry.
+            With only Emails ticked nothing else would ever add it (the call-event hand-off and the desk's sweep take pending calls).
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.EmailController.ResumeMessageAsync(Resgrid.Model.InboundEmailReceiptClaim,System.Int32,System.Threading.CancellationToken)">
             <summary>Sends a group message an earlier delivery of the same email saved and then failed to send.</summary>
         </member>
@@ -190,10 +223,12 @@
             stations and break the scoping the caller asked for by emailing that address.
             </param>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.EmailController.QueueAiDispatchEnrichmentAsync(Resgrid.Model.Call,System.Int32,System.String,System.Threading.CancellationToken)">
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.QueueAiDispatchEnrichmentAsync(Resgrid.Model.Call,System.Int32,System.String,System.Threading.CancellationToken,System.Boolean)">
             <summary>
             AI dispatch, Enrich mode: the call above is already saved and its broadcast queued exactly as for GenericTemplate.
             Enrichment runs afterwards on the worker, so a disabled host or a failed enqueue never touches the dispatch itself.
+            <paramref name="heldForDispatcher"/>: the dispatcher desk's email call mode held the call pending (the worker enriches it while
+            it waits, under that mode's entitlement); otherwise the job keeps the active-call, AI-format rule.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.EmailController.ReceiveIntakeEmailAsync(PostmarkDotNet.PostmarkInboundMessage,System.String,System.Threading.CancellationToken)">
@@ -231,6 +266,12 @@
             Enforced only when a signing token is configured so unconfigured installs aren't broken;
             the URL is reconstructed from ResgridApiBaseUrl to match what SignalWire signed (mirrors
             the Twilio middleware's BaseUrlOverride behind the reverse proxy).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.SignalWireController.IsMasterNumber(System.String)">
+            <summary>
+            The text was sent to the SignalWire master Resgrid number (digits compared, as the master-number branch of
+            <see cref="M:Resgrid.Web.Services.Controllers.SignalWireController.Receive(System.Threading.CancellationToken)"/> does).
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.SignalWireController.BuildTextToCallAsync(Resgrid.Model.Department,Resgrid.Model.TextMessage,System.Collections.Generic.List{Resgrid.Model.Identity.IdentityUser})">
@@ -2895,10 +2936,13 @@
             <summary>
             The dispatcher desk ("Dispatchers on duty", M0324): signing in to the desk from the Dispatch app, the work routed to on-duty
             dispatchers (pending and scheduled calls, texts, phone calls, emails, chats), their breaks and the coverage timeline, and the
-            dispatch rosters of shift days. Everything but the shift roster reads and changes is for people allowed to work dispatch
+            dispatch rosters of shift days. Everything but the shift roster reads and changes (and taking the caller's own device off
+            desk pushes) is for people allowed to work dispatch
             (the Dispatch app login permission, 403 otherwise); acting for another dispatcher (their breaks, work they hold) and the
             activity numbers are for desk supervisors, shift managers and department admins. Every POST answers a
-            <see cref="T:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskActionResult"/>: a refusal is Success false with the DispatcherDeskErrors name, never an HTTP error.
+            <see cref="T:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskActionResult"/>: a business-rule refusal is HTTP 200 with Success false and the DispatcherDeskErrors
+            name. Authorization is the exception: a POST by a caller without the Dispatch app login permission gets 403 whose body is that
+            result with the NotADispatcher error, and a GET the caller may not read answers 403 with no body.
             </summary>
         </member>
         <member name="F:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.MaxWindowDays">
@@ -2973,7 +3017,11 @@
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.UnregisterDevice(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeviceInput,System.Threading.CancellationToken)">
-            <summary>Takes this device's push token off the desk subscriber (signing out of the Dispatch app).</summary>
+            <summary>
+            Takes this device's push token off the desk subscriber (signing out of the Dispatch app). Open to a caller who may no
+            longer dispatch too: it only ever removes the caller's own token, and a revoked dispatcher's device must be able to stop
+            desk pushes.
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.AcceptItem(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherItemInput,System.Threading.CancellationToken)">
             <summary>Takes an item: one offered to the caller, or one waiting in the shared queue.</summary>
@@ -3051,7 +3099,13 @@
             <summary>ISO-8601 UTC, or null.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.TryParseInstant(System.String,System.DateTime@)">
-            <summary>An ISO-8601 instant (zone-less = UTC) as UTC; false for anything else or outside years 1900 to 9000.</summary>
+            <summary>
+            An ISO-8601 date and time (zone-less = UTC) as UTC; false for anything else or outside years 1900 to 9000. A time alone
+            ("09:00") is refused: it would take today's date from the server clock (the RecurringCalls rule).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.StartsWithIsoDateAndTime(System.String)">
+            <summary>"yyyy-MM-ddTHH:mm" at the start (seconds, fraction and zone may follow).</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.UnreadCount(System.Collections.Generic.IEnumerable{Resgrid.Model.DispatcherConversationMessage})">
             <summary>Messages received since the holder last replied (desk notes never count).</summary>
@@ -3063,7 +3117,7 @@
             <summary>An intake text thread takes replies from the dispatcher holding the item while it is open and the texter has not opted out.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.CanConnectVoice(Resgrid.Model.DispatcherQueueItem,System.Collections.Generic.IEnumerable{Resgrid.Model.DispatcherQueueEvent})">
-            <summary>Answer (a held caller is waiting) or Call back (the item has a phone number to ring back).</summary>
+            <summary>Answer (a held caller is waiting) or Call back (a text or phone call with a phone number to ring back).</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.ToDutyData(Resgrid.Model.DispatcherDutyWindow)">
             <summary>A duty window as the v4 model.</summary>
@@ -3078,7 +3132,13 @@
             <summary>403 with a desk body, so the app reads it as the NotADispatcher refusal.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.ActionResultAsync``1(Resgrid.Model.DispatcherDeskResult{``0})">
-            <summary>The action's outcome with the caller's refreshed desk member.</summary>
+            <summary>
+            The action's outcome with the caller's refreshed desk member. The outcome is already committed (a reply may be sent), so a
+            failed refresh read leaves Me unset rather than failing the request: a client that saw an error would repeat the action.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.RefreshedItemDataAsync(Resgrid.Model.DispatcherQueueItem)">
+            <summary>The item as it is after the action, or as the action returned it when the refresh read fails (supplemental, like Me).</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.CheckHolderOrSupervisorAsync(System.String)">
             <summary>Null when the caller holds (or was offered) the item or may supervise; otherwise why it is refused.</summary>
@@ -3091,6 +3151,9 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.DepartmentShiftDayAsync(System.Int32)">
             <summary>The shift day and its shift, when both are the department's.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.IsShiftDayOverAsync(Resgrid.Model.ShiftDay,Resgrid.Model.Shift)">
+            <summary>The shift day has ended in department-local time (the boundary ShiftDispatchersService.SignupForDayAsync refuses at).</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.CanManageShiftRosterAsync(Resgrid.Model.Shift)">
             <summary>The dispatch roster is the whole shift's (no group), so it takes the whole shift's management scope.</summary>
@@ -22512,7 +22575,44 @@
             Saves the voicemail as a <see cref="F:Resgrid.Model.CallStates.Pending"/> call (nobody paged, recording in its notes) and makes the
             overflowed voice item that call: its CallId is set and <see cref="M:Resgrid.Model.Services.IDispatcherRoutingService.MarkOverflowedAsync(Resgrid.Model.DispatcherQueueItem,System.String,System.Threading.CancellationToken)"/> puts it
             back in the queue, so it waits for a dispatcher as the voicemail call with the caller's number (Call back works from it).
-            No second desk item is made. Null when the item already has a call or nothing could be saved.
+            No second desk item is made, and an item gets at most one voicemail call: the item is claimed (its recording noted on it)
+            before the call is saved, and a repeat finds the claim or the linked call and saves nothing.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Twilio.DispatcherVoicemailOutcomes">
+            <summary>What became of a voicemail (<see cref="M:Resgrid.Web.Services.Twilio.IDispatcherDeskPendingCalls.FromVoicemailAsync(Resgrid.Model.DispatcherQueueItem,System.String,System.String,System.Nullable{System.Int32},System.String,System.Threading.CancellationToken)"/>).</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Twilio.DispatcherVoicemailOutcomes.Saved">
+            <summary>Saved now as a pending call (<see cref="P:Resgrid.Web.Services.Twilio.DispatcherVoicemailResult.Call"/>).</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Twilio.DispatcherVoicemailOutcomes.AlreadyTaken">
+            <summary>The item's voicemail was already taken: it has its call, or another request claimed it.</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Twilio.DispatcherVoicemailOutcomes.NotSaved">
+            <summary>Nothing was saved (no item or recording, or the save failed): the caller must not be told it was passed on.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Twilio.DispatcherVoicemailResult.Call">
+            <summary>The call saved now; null unless <see cref="P:Resgrid.Web.Services.Twilio.DispatcherVoicemailResult.Outcome"/> is Saved.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Twilio.DispatcherVoicemailResult.Durable">
+            <summary>The voicemail is held somewhere a dispatcher will find it (a pending call).</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.VoicemailClaimPrefix">
+            <summary>The start of the item's overflow note while its voicemail is being made a call (the claim).</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.WriteAttempts">
+            <summary>Conditional writes tried before giving up (a webhook touching the item bumps its version).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.ClaimNote(System.String,System.String)">
+            <summary>The claim written on the item: the recording, so a voicemail whose save failed can still be found on the item.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.ClaimAsync(System.String,System.String)">
+            <summary>Saved = this request holds the claim now; AlreadyTaken = the item has its call or another request's claim.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.LinkAsync(Resgrid.Model.DispatcherQueueItem,Resgrid.Model.Call)">
+            <summary>
+            Links the saved call to the voice item, checked by reading the item back: MarkOverflowedAsync gives up quietly when another
+            webhook changed the item meanwhile, so each attempt starts from the stored row. False when the item still is not the call.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Twilio.IDispatcherInboundTextHandler">

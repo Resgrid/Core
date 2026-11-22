@@ -343,7 +343,9 @@ namespace Resgrid.Web.Services.Controllers
 					messageEvent.CustomerId = departmentId.Value.ToString();
 
 				// Dispatcher desk (plan D9): no profile, to a department number whose desk takes texts (or a reply to a desk conversation).
-				if (userProfile == null && await _dispatcherInboundTextHandler.HandleAsync(departmentId,
+				// No department means "the master number" to the handler, which then joins the sender's open conversation in ANY
+				// department: only a text that really was sent to the master number may do that, never one to an unmapped number.
+				if (userProfile == null && (departmentId.HasValue || IsMasterNumber(request.To)) && await _dispatcherInboundTextHandler.HandleAsync(departmentId,
 					request.From, request.To, request.Body, request.MessageSid, HttpContext?.RequestAborted ?? CancellationToken.None))
 				{
 					messageEvent.Processed = true;

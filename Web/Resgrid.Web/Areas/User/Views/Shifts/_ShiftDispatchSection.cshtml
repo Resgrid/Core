@@ -65,6 +65,8 @@
 				<label class="col-sm-2 control-label">@desk["StandingRosterLabel"]</label>
 				<div class="col-sm-10">
 					<p class="help-block m-t-none">@desk["StandingRosterHelp"]</p>
+					@* The roster as this page opened it: the save applies only what changes here (ShiftsController.ReadPreviousStandingRoster). *@
+					<input type="hidden" name="dispatchRosterEdit" value="1" />
 					@if (!Model.Candidates.Any())
 					{
 						<p class="text-muted">@desk["NoEligibleDispatchers"]</p>
@@ -96,6 +98,14 @@
 											{
 												<td>
 													<input type="checkbox" name="dispatchRoster" value="@candidate.UserId" class="shift-dispatch-onroster" checked="@candidate.OnRoster" aria-label="@desk["OnRosterColumn"]: @candidate.Name" />
+													@if (candidate.WasOnRoster)
+													{
+														<input type="hidden" name="dispatchRosterWas" value="@candidate.UserId" />
+													}
+													@if (candidate.WasSupervisor)
+													{
+														<input type="hidden" name="dispatchSupervisorWas" value="@candidate.UserId" />
+													}
 												</td>
 												<td>
 													<input type="checkbox" name="dispatchSupervisor" value="@candidate.UserId" class="shift-dispatch-supervisor" checked="@candidate.IsSupervisor" aria-label="@desk["DeskSupervisorColumn"]: @candidate.Name" />

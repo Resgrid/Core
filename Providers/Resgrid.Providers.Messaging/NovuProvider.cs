@@ -398,7 +398,33 @@ namespace Resgrid.Providers.Messaging
 			}
 		}
 
-		private async Task<bool> UpdateSubscriberFcm(string id, string token, string fcmId)
+		/// <summary>
+		/// The native credential writes replace the channel's token list, as <see cref="ChangeChannelTokens"/> does after reading it,
+		/// so they take the same per-subscriber lock: a native token removal that read the list must not write it back over a
+		/// registration that completed in between.
+		/// </summary>
+		private async Task<bool> WithSubscriberChannelLock(string subscriberId, Func<Task<bool>> write)
+		{
+			var subscriberLock = SubscriberChannelLocks.GetOrAdd(subscriberId, _ => new SemaphoreSlim(1, 1));
+			await subscriberLock.WaitAsync();
+
+			try
+			{
+				return await write();
+			}
+			finally
+			{
+				subscriberLock.Release();
+			}
+		}
+
+		private Task<bool> UpdateSubscriberFcm(string id, string token, string fcmId) =>
+			WithSubscriberChannelLock(id, () => WriteSubscriberFcm(id, token, fcmId));
+
+		private Task<bool> UpdateSubscriberApns(string id, string token, string apnsId, string fcmId) =>
+			WithSubscriberChannelLock(id, () => WriteSubscriberApns(id, token, apnsId, fcmId));
+
+		private async Task<bool> WriteSubscriberFcm(string id, string token, string fcmId)
 		{
 			try
 			{
@@ -446,7 +472,7 @@ namespace Resgrid.Providers.Messaging
 			}
 		}
 
-		private async Task<bool> UpdateSubscriberApns(string id, string token, string apnsId, string fcmId)
+		private async Task<bool> WriteSubscriberApns(string id, string token, string apnsId, string fcmId)
 		{
 			try
 			{

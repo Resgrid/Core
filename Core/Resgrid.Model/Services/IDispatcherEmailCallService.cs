@@ -25,8 +25,10 @@ namespace Resgrid.Model.Services
 
 		/// <summary>
 		/// A pending emailed call was saved: puts it on the dispatcher desk as an email (NotRouted is fine, the call still waits in
-		/// Pending Calls) and refreshes dispatcher screens (CallUpdatedEvent, as v4 SaveCall does for a pending call). Never throws.
+		/// Pending Calls) and refreshes dispatcher screens (CallUpdatedEvent, as v4 SaveCall does for a pending call). Never throws
+		/// except for a cancelled request. False when the desk hand-off failed and is still owed (the desk takes emails, but the
+		/// email could not be put on it): the caller keeps the delivery retryable (Postmark receipt) instead of completing it.
 		/// </summary>
-		Task OnPendingCallSavedAsync(Call savedCall, string sender, string subject, CancellationToken cancellationToken = default);
+		Task<bool> OnPendingCallSavedAsync(Call savedCall, string sender, string subject, CancellationToken cancellationToken = default);
 	}
 }

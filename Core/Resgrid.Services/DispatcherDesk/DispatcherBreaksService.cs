@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -91,6 +92,41 @@ namespace Resgrid.Services
 				dispatcherBreak.DurationMinutes <= 0 || dispatcherBreak.DurationMinutes > MaxBreakMinutes)
 				return Fail(DispatcherDeskErrors.InvalidInput);
 
+			// The duty and overlap checks and the write run under the department's break lock (the one roster removals, day plans and
+			// break starts take): a removal from the day committed first is seen here (a dispatcher taken off the day can no longer place
+			// their own break on it), and a removal that waits for this save cancels the break it saved.
+			DispatcherDeskResult<DispatcherBreak> saved;
+			try
+			{
+				saved = await InTransactionAsync(async () =>
+				{
+					if (_unitOfWork != null)
+						await _breaksRepository.LockDepartmentForBreakStartAsync(departmentId, cancellationToken);
+
+					return await SaveBreakUnderLockAsync(departmentId, dispatcherBreak, byUserId, cancellationToken);
+				}, cancellationToken);
+			}
+			catch (TimeoutException)
+			{
+				return Fail(DispatcherDeskErrors.BreakNotStartable, "Another break is being planned or started on the desk; try again.");
+			}
+
+			if (!saved.Success)
+				return saved;
+
+			var start = saved.Value.ScheduledStartOn.Value;
+			var end = start.AddMinutes(saved.Value.DurationMinutes);
+			var coverage = await GetCoverageAsync(departmentId, start, end, 5);
+			saved.Warnings.AddRange(coverage.Warnings.Where(x => x.Kind != DispatcherDeskWarningKinds.BreaksOverlap ||
+																 x.UserIds.Contains(dispatcherBreak.UserId, StringComparer.OrdinalIgnoreCase)));
+
+			await _notifier.PublishDeskChangedAsync(departmentId, dispatcherBreak.UserId);
+			return saved;
+		}
+
+		private async Task<DispatcherDeskResult<DispatcherBreak>> SaveBreakUnderLockAsync(int departmentId, DispatcherBreak dispatcherBreak, string byUserId,
+			CancellationToken cancellationToken)
+		{
 			var now = UtcNow();
 			var start = DateTime.SpecifyKind(dispatcherBreak.ScheduledStartOn.Value, DateTimeKind.Utc);
 			var end = start.AddMinutes(dispatcherBreak.DurationMinutes);
@@ -176,11 +212,6 @@ namespace Resgrid.Services
 				return Fail(DispatcherDeskErrors.BreakNotStartable);
 			}
 
-			var coverage = await GetCoverageAsync(departmentId, start, end, 5);
-			warnings.AddRange(coverage.Warnings.Where(x => x.Kind != DispatcherDeskWarningKinds.BreaksOverlap ||
-														   x.UserIds.Contains(dispatcherBreak.UserId, StringComparer.OrdinalIgnoreCase)));
-
-			await _notifier.PublishDeskChangedAsync(departmentId, dispatcherBreak.UserId);
 			return DispatcherDeskResult<DispatcherBreak>.Ok(row, warnings);
 		}
 
@@ -631,21 +662,32 @@ namespace Resgrid.Services
 				presence = null;
 
 			var now = UtcNow();
-			if (row != null)
+
+			// The break's end and the dispatcher's return from it commit together: a presence write that throws rolls the end back, so the
+			// break stays active for the timer (auto return) or the dispatcher to end again, never completed with the session still on it.
+			var ended = await InTransactionAsync(async () =>
 			{
-				row.State = (int)DispatcherBreakStates.Completed;
-				row.EndedOn = now;
-				row.EndReason = (int)reason;
-				row.EndedByUserId = byUserId;
-				row.UpdatedByUserId = byUserId;
-				row.UpdatedOn = now;
+				if (row != null)
+				{
+					row.State = (int)DispatcherBreakStates.Completed;
+					row.EndedOn = now;
+					row.EndReason = (int)reason;
+					row.EndedByUserId = byUserId;
+					row.UpdatedByUserId = byUserId;
+					row.UpdatedOn = now;
 
-				if (!await _breaksRepository.TryTransitionAsync(row, (int)DispatcherBreakStates.Active, cancellationToken))
-					return Fail(DispatcherDeskErrors.NotOnBreak);
-			}
+					if (!await _breaksRepository.TryTransitionAsync(row, (int)DispatcherBreakStates.Active, cancellationToken))
+						return false;
+				}
 
-			if (presence != null && presence.IsSignedIn())
-				await ReturnPresenceFromBreakAsync(presence, row?.DispatcherBreakId ?? presence.ActiveBreakId, byUserId, userId, now, cancellationToken);
+				if (presence != null && presence.IsSignedIn())
+					await ReturnPresenceFromBreakAsync(presence, row?.DispatcherBreakId ?? presence.ActiveBreakId, byUserId, userId, now, cancellationToken);
+
+				return true;
+			}, cancellationToken);
+
+			if (!ended)
+				return Fail(DispatcherDeskErrors.NotOnBreak);
 
 			await _notifier.PublishDeskChangedAsync(departmentId, userId);
 
@@ -665,7 +707,7 @@ namespace Resgrid.Services
 		/// Back from the break that just ended: the return-from-break fields alone, and only while the row is still the session, state and
 		/// break read (a sign-off or a later break committed meanwhile keeps its own state). A refused write is read again: a sign-in
 		/// refresh that kept the dispatcher on this same break (a new SignedInOn) is retried; signed off, or on another break, by now is
-		/// left as it is.
+		/// left as it is. Runs in the break end's transaction: a write that throws is not caught here, so the end is rolled back with it.
 		/// </summary>
 		private async Task ReturnPresenceFromBreakAsync(DispatcherPresence presence, string endedBreakId, string byUserId, string userId, DateTime now,
 			CancellationToken cancellationToken)
@@ -726,7 +768,11 @@ namespace Resgrid.Services
 		{
 			var run = new TimerRun(this);
 			var changes = 0;
-			var rows = (await _breaksRepository.GetForTimersAsync(utcNow.AddMinutes(120), utcNow.AddHours(-MissedAfterHours - 1)) ?? Enumerable.Empty<DispatcherBreak>()).ToList();
+
+			// Claims an earlier pass could not give back are given back first, so this pass can send those alerts again.
+			await RetryDeferredGiveBacksAsync(utcNow);
+
+			var rows =(await _breaksRepository.GetForTimersAsync(utcNow.AddMinutes(120), utcNow.AddHours(-MissedAfterHours - 1)) ?? Enumerable.Empty<DispatcherBreak>()).ToList();
 
 			// Catch-up: planned breaks the timer window has already passed by (the worker was down for a day) are still marked missed.
 			var overdue = await _breaksRepository.GetOverdueScheduledAsync(utcNow.AddHours(-MissedAfterHours - 1), MissedCatchUpBatch) ?? Enumerable.Empty<DispatcherBreak>();
@@ -878,7 +924,7 @@ namespace Resgrid.Services
 			{
 				// The claim is given back whatever happens to the pass's own token: the next pass must be able to retry. A failed give-back
 				// is tried again (a stamp left set would skip the alert for good); an accepted alert never gets here, so nothing sent is cleared.
-				await GiveBackAlertClaimAsync(row, column, stampUtc);
+				await GiveBackAlertClaimAsync(row, column, stampUtc, dueSinceUtc.AddMinutes(AlertRetryMinutes));
 			}
 			else
 			{
@@ -888,10 +934,19 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		/// <summary>How many times an alert claim's give-back is written before the claim is left set (logged).</summary>
+		/// <summary>How many times an alert claim's give-back is written before it is left for the next pass (logged).</summary>
 		private const int AlertGiveBackAttempts = 3;
 
-		private async Task GiveBackAlertClaimAsync(DispatcherBreak row, string column, DateTime stampUtc)
+		/// <summary>
+		/// Alert claims whose give-back failed on every attempt (storage unavailable), by break and column: the stamp they gave back
+		/// and until when the alert may still be retried. The next timer pass in this process gives them back before it reads the
+		/// breaks, so a short outage does not leave an undelivered alert skipped for the rest of its retry window. Process-wide (each
+		/// pass runs in its own scope); a restart in between leaves the claim set, the alert then counting as tried.
+		/// </summary>
+		private static readonly ConcurrentDictionary<(string BreakId, string Column), (DateTime StampUtc, DateTime RetryUntilUtc)> DeferredGiveBacks =
+			new ConcurrentDictionary<(string BreakId, string Column), (DateTime StampUtc, DateTime RetryUntilUtc)>();
+
+		private async Task GiveBackAlertClaimAsync(DispatcherBreak row, string column, DateTime stampUtc, DateTime retryUntilUtc)
 		{
 			for (var attempt = 1; attempt <= AlertGiveBackAttempts; attempt++)
 			{
@@ -907,7 +962,32 @@ namespace Resgrid.Services
 				}
 			}
 
-			Logging.LogError($"Dispatcher break alert {column} for {row.DispatcherBreakId} was not delivered and its claim could not be given back; it is not retried.");
+			DeferredGiveBacks[(row.DispatcherBreakId, column)] = (stampUtc, retryUntilUtc);
+			Logging.LogError($"Dispatcher break alert {column} for {row.DispatcherBreakId} was not delivered and its claim could not be given back yet; the next break timer pass tries again.");
+		}
+
+		/// <summary>
+		/// Gives back the claims left over by an earlier pass (see <see cref="DeferredGiveBacks"/>) while their alert may still be retried.
+		/// One that fails again stays for the next pass; one whose window has closed, or whose break is gone, is dropped.
+		/// </summary>
+		private async Task RetryDeferredGiveBacksAsync(DateTime now)
+		{
+			foreach (var deferred in DeferredGiveBacks.ToArray())
+			{
+				try
+				{
+					if (now < deferred.Value.RetryUntilUtc && await _breaksRepository.GetByIdAsync(deferred.Key.BreakId) != null)
+						await _breaksRepository.TryClearAlertAsync(deferred.Key.BreakId, deferred.Key.Column, deferred.Value.StampUtc, CancellationToken.None);
+					else
+						Logging.LogError($"Dispatcher break alert {deferred.Key.Column} for {deferred.Key.BreakId}: its claim was not given back within the retry window; it is not retried.");
+
+					DeferredGiveBacks.TryRemove(deferred);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Dispatcher break alert {deferred.Key.Column} for {deferred.Key.BreakId}: giving the claim back on a later pass");
+				}
+			}
 		}
 
 		private async Task<int> ProcessActiveAsync(DispatcherBreak row, DispatcherDeskConfig config, TimerRun run, DateTime now, CancellationToken cancellationToken)
@@ -916,7 +996,13 @@ namespace Resgrid.Services
 			// sign-off's break whose close failed after the session had ended. It is closed as ended by that sign-off.
 			var presence = await _presencesRepository.GetForUserAsync(row.DepartmentId, row.UserId);
 			if (presence == null || !presence.IsSignedIn())
-				return await CloseSignedOffBreakAsync(row, presence, now, cancellationToken) ? 1 : 0;
+				return await CloseSignedOffBreakAsync(row, presence?.StateChangedOn, now, cancellationToken) ? 1 : 0;
+
+			// Likewise one that began before the dispatcher's current session and that the session is not on: a sign-in went ahead
+			// without it (its close failed), so it is an earlier session's break. It was over by the time this session began at the
+			// latest, and is closed as ended by that sign-off: no alerts or auto return are sent to the new session for it.
+			if (IsEarlierSessionsBreak(row, presence))
+				return await CloseSignedOffBreakAsync(row, presence.SignedInOn, now, cancellationToken) ? 1 : 0;
 
 			var changes = await HandBackLeftoverWorkAsync(row, run, cancellationToken);
 
@@ -970,12 +1056,26 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>
-		/// Closes an active break whose dispatcher is signed off (see <see cref="ProcessActiveAsync"/>), as ended by the sign-off: at the
-		/// session's sign-off time when that is known and after the start, otherwise now. Conditional on the break still being active.
+		/// Whether an active break belongs to a session before the dispatcher's signed-in one: the session is not on it (not on break,
+		/// or on another break) and it began before the session did. Breaks start only signed in and a sign-in either carries the
+		/// break it finds (on break) or closes it, so such a break is left over from a sign-in whose close failed. A break begun in
+		/// this session is never taken for one.
 		/// </summary>
-		private async Task<bool> CloseSignedOffBreakAsync(DispatcherBreak row, DispatcherPresence presence, DateTime now, CancellationToken cancellationToken)
+		private static bool IsEarlierSessionsBreak(DispatcherBreak row, DispatcherPresence presence)
 		{
-			var signedOffOn = presence?.StateChangedOn;
+			var onThisBreak = presence.State == (int)DispatcherPresenceStates.OnBreak &&
+							  (string.IsNullOrWhiteSpace(presence.ActiveBreakId) || string.Equals(presence.ActiveBreakId, row.DispatcherBreakId, StringComparison.OrdinalIgnoreCase));
+
+			return !onThisBreak && row.StartedOn.HasValue && presence.SignedInOn.HasValue && row.StartedOn.Value < presence.SignedInOn.Value;
+		}
+
+		/// <summary>
+		/// Closes an active break whose session is over (see <see cref="ProcessActiveAsync"/>), as ended by the sign-off: at
+		/// <paramref name="signedOffOn"/> (the session's sign-off, or the start of the session after it) when that is known and after
+		/// the start, otherwise now. Conditional on the break still being active.
+		/// </summary>
+		private async Task<bool> CloseSignedOffBreakAsync(DispatcherBreak row, DateTime? signedOffOn, DateTime now, CancellationToken cancellationToken)
+		{
 			row.State = (int)DispatcherBreakStates.Completed;
 			row.EndedOn = signedOffOn.HasValue && row.StartedOn.HasValue && signedOffOn.Value >= row.StartedOn.Value && signedOffOn.Value <= now ? signedOffOn.Value : now;
 			row.EndReason = (int)DispatcherBreakEndReasons.SignedOff;

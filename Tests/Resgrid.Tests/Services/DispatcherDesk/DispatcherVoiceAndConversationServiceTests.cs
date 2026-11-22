@@ -87,8 +87,58 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 				var item = _store.Items.Single();
 				item.State = (int)DispatcherQueueItemStates.Accepted;
 				item.AssignedUserId = Me;
-				return DispatcherDeskResult<DispatcherQueueItem>.Ok(item);
+				// As the routing service: every accept stamps its own time (finer than either store keeps).
+				item.AcceptedOn = _now.AddTicks(1234);
+				return DispatcherDeskResult<DispatcherQueueItem>.Ok(Copy(item));
 			});
+
+		private static DispatcherQueueItem Copy(DispatcherQueueItem item) => new DispatcherQueueItem
+		{
+			DispatcherQueueItemId = item.DispatcherQueueItemId, DepartmentId = item.DepartmentId, Kind = item.Kind, State = item.State,
+			AssignedUserId = item.AssignedUserId, AcceptedOn = item.AcceptedOn, SourceAddress = item.SourceAddress, TargetAddress = item.TargetAddress,
+			ExternalReference = item.ExternalReference, CreatedOn = item.CreatedOn, LastActivityOn = item.LastActivityOn, Version = item.Version
+		};
+
+		[Test]
+		public async Task Answer_the_provider_refuses_keeps_work_the_dispatcher_took_again_while_the_dial_was_outstanding()
+		{
+			AddItem(DispatcherQueueItemKinds.Voice, DispatcherQueueItemStates.Offered, Me);
+			AcceptTakesIt();
+			ReleaseObservedReturns();
+			_voiceProvider.Setup(x => x.PlaceCallAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(),
+				It.IsAny<CancellationToken>())).ReturnsAsync(() =>
+				{
+					// While the provider was asked, the dispatcher returned the item and took it again (from the desk, no ring): the same
+					// holder, a new acceptance, and no VoiceConnecting since this dial started.
+					_store.Items.Single().AcceptedOn = _now.AddSeconds(4);
+					return null;
+				});
+
+			(await Voice().ConnectAsync(Dept, ItemId, Me, "+15557770000")).Error.Should().Be(DispatcherDeskErrors.ChannelUnavailable);
+
+			_routing.Verify(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>()), Times.Never,
+				"the work the dispatcher took again is not the failed dial's to give back");
+		}
+
+		[Test]
+		public async Task Answer_the_provider_refuses_gives_back_its_acceptance_read_back_to_the_microsecond()
+		{
+			AddItem(DispatcherQueueItemKinds.Voice, DispatcherQueueItemStates.Offered, Me);
+			AcceptTakesIt();
+			ReleaseObservedReturns();
+			_voiceProvider.Setup(x => x.PlaceCallAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(),
+				It.IsAny<CancellationToken>())).ReturnsAsync(() =>
+				{
+					// PostgreSQL keeps microseconds: the stored acceptance reads back without the last tick digits.
+					var stored = _store.Items.Single();
+					stored.AcceptedOn = new DateTime(stored.AcceptedOn.Value.Ticks / 10 * 10, DateTimeKind.Utc);
+					return null;
+				});
+
+			await Voice().ConnectAsync(Dept, ItemId, Me, "+15557770000");
+
+			_routing.Verify(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>()), Times.Once);
+		}
 
 		[Test]
 		public async Task Answer_with_no_number_to_call_from_leaves_the_work_where_it_was()

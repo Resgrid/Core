@@ -791,5 +791,170 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			h.Pushes.Count(x => x.Kind == "reminder").Should().Be(2);
 			h.Stored(planned.DispatcherBreakId).ReminderSentOn.Should().Be(h.Now.AddMinutes(1));
 		}
+
+		// ------------------------------------------------------------------ PR 589 round 4
+
+		/// <summary>Plays the unit of work's rollback on the in-memory store: the break goes back to the row it was before the write.</summary>
+		private static void RollsBackBreakOnDiscard(Harness h, string dispatcherBreakId)
+		{
+			var before = h.Stored(dispatcherBreakId);
+			h.UnitOfWork.Setup(x => x.DiscardChanges()).Callback(() =>
+			{
+				var index = h.Store.Breaks.FindIndex(x => x.DispatcherBreakId == dispatcherBreakId);
+				h.Store.Breaks[index] = before;
+			});
+		}
+
+		[Test]
+		public async Task A_break_end_whose_presence_write_throws_is_rolled_back_with_it()
+		{
+			var h = new Harness(withUnitOfWork: true);
+			var presence = h.SignedIn("ann", DispatcherPresenceStates.OnBreak);
+			var active = h.Active("ann", h.Now.AddMinutes(-10));
+			presence.ActiveBreakId = active.DispatcherBreakId;
+			RollsBackBreakOnDiscard(h, active.DispatcherBreakId);
+			h.Store.BeforePresenceWrite = _ => throw new InvalidOperationException("presence write failed");
+
+			Func<Task> end = () => h.Breaks.EndBreakAsync(Dept, "ann", "ann", DispatcherBreakEndReasons.Returned);
+
+			await end.Should().ThrowAsync<InvalidOperationException>();
+			h.UnitOfWork.Verify(x => x.DiscardChanges(), Times.Once, "the break's end rolls back with the failed return");
+			h.UnitOfWork.Verify(x => x.CommitChanges(), Times.Never);
+			h.Stored(active.DispatcherBreakId).State.Should().Be((int)DispatcherBreakStates.Active, "left for the dispatcher or the timer to end again");
+
+			h.Store.BeforePresenceWrite = null;
+			(await h.Breaks.EndBreakAsync(Dept, "ann", "ann", DispatcherBreakEndReasons.Returned)).Success.Should().BeTrue();
+			h.Stored(active.DispatcherBreakId).State.Should().Be((int)DispatcherBreakStates.Completed);
+			h.Store.Presences.Single(x => x.UserId == "ann").State.Should().Be((int)DispatcherPresenceStates.Available);
+			h.UnitOfWork.Verify(x => x.CommitChanges(), Times.Once);
+		}
+
+		[Test]
+		public async Task An_auto_return_whose_presence_write_threw_is_retried_by_the_next_pass()
+		{
+			var h = new Harness(withUnitOfWork: true);
+			h.Config.AutoReturnAfterMinutes = 5;
+			var presence = h.SignedIn("ann", DispatcherPresenceStates.OnBreak);
+			var active = h.Active("ann", h.Now.AddMinutes(-30));
+			presence.ActiveBreakId = active.DispatcherBreakId;
+			RollsBackBreakOnDiscard(h, active.DispatcherBreakId);
+			h.Store.BeforePresenceWrite = _ =>
+			{
+				h.Store.BeforePresenceWrite = null;
+				throw new InvalidOperationException("presence write failed");
+			};
+
+			await h.Breaks.ProcessBreakTimersAsync(h.Now);
+
+			h.Stored(active.DispatcherBreakId).State.Should().Be((int)DispatcherBreakStates.Active, "the timer still selects it");
+			h.Store.Presences.Single(x => x.UserId == "ann").State.Should().Be((int)DispatcherPresenceStates.OnBreak);
+			h.Pushes.Should().NotContain(x => x.Kind == "auto-returned");
+
+			await h.Breaks.ProcessBreakTimersAsync(h.Now.AddMinutes(1));
+
+			h.Stored(active.DispatcherBreakId).State.Should().Be((int)DispatcherBreakStates.Completed);
+			h.Stored(active.DispatcherBreakId).EndReason.Should().Be((int)DispatcherBreakEndReasons.AutoReturn);
+			h.Store.Presences.Single(x => x.UserId == "ann").State.Should().Be((int)DispatcherPresenceStates.Available);
+			h.Pushes.Count(x => x.Kind == "auto-returned").Should().Be(1);
+		}
+
+		[Test]
+		public async Task A_break_left_over_from_an_earlier_session_is_closed_by_the_timer_without_alerts()
+		{
+			var h = new Harness();
+			h.Config.AutoReturnAfterMinutes = 5;
+			h.Config.NotifySupervisorsOnOverdueBreak = true;
+			h.SupervisorsOnDuty.Add("sup");
+			// Signed in a minute ago without the break (its close failed); the break began in the session before.
+			h.SignedIn("ann").SignedInOn = h.Now.AddMinutes(-1);
+			var leftOver = h.Active("ann", h.Now.AddMinutes(-40));
+
+			(await h.Breaks.ProcessBreakTimersAsync(h.Now)).Should().Be(1);
+
+			var closed = h.Stored(leftOver.DispatcherBreakId);
+			closed.State.Should().Be((int)DispatcherBreakStates.Completed);
+			closed.EndReason.Should().Be((int)DispatcherBreakEndReasons.SignedOff);
+			closed.EndedOn.Should().Be(h.Now.AddMinutes(-1), "over by the time the new session began");
+			h.Pushes.Should().BeEmpty("the new session is not told an earlier session's break is over");
+			h.Store.Presences.Single(x => x.UserId == "ann").State.Should().Be((int)DispatcherPresenceStates.Available);
+		}
+
+		[Test]
+		public async Task A_break_begun_in_the_current_session_is_not_taken_for_a_left_over_one()
+		{
+			var h = new Harness();
+			h.SignedIn("ann").SignedInOn = h.Now.AddHours(-2);
+			var active = h.Active("ann", h.Now.AddMinutes(-30));
+
+			await h.Breaks.ProcessBreakTimersAsync(h.Now);
+
+			h.Stored(active.DispatcherBreakId).State.Should().Be((int)DispatcherBreakStates.Active);
+			h.Pushes.Should().Contain(x => x.Kind == "break-over");
+		}
+
+		[Test]
+		public async Task An_undelivered_alert_whose_claim_give_back_keeps_failing_is_given_back_by_the_next_pass()
+		{
+			var h = new Harness();
+			h.SignedIn("ann");
+			var planned = h.Planned("ann", h.Now.AddMinutes(10), shiftId: null);
+			h.Delivers = false;
+			h.Store.FailingAlertClears = 3;
+
+			await h.Breaks.ProcessBreakTimersAsync(h.Now);
+
+			h.Stored(planned.DispatcherBreakId).ReminderSentOn.Should().Be(h.Now, "storage refused every give-back in that pass");
+
+			h.Delivers = true;
+			await h.Breaks.ProcessBreakTimersAsync(h.Now.AddMinutes(1));
+
+			h.Pushes.Count(x => x.Kind == "reminder").Should().Be(2, "storage is back: the claim is given back and the reminder sent again");
+			h.Stored(planned.DispatcherBreakId).ReminderSentOn.Should().Be(h.Now.AddMinutes(1));
+
+			await h.Breaks.ProcessBreakTimersAsync(h.Now.AddMinutes(2));
+			h.Pushes.Count(x => x.Kind == "reminder").Should().Be(2, "a delivered reminder is never sent again");
+		}
+
+		[Test]
+		public async Task A_claim_still_not_given_back_when_its_retry_window_closes_is_left_as_tried()
+		{
+			var h = new Harness();
+			h.SignedIn("ann");
+			var planned = h.Planned("ann", h.Now.AddMinutes(10), shiftId: null);
+			h.Delivers = false;
+			h.Store.FailingAlertClears = 3;
+
+			await h.Breaks.ProcessBreakTimersAsync(h.Now);
+
+			// The reminder fell due 5 minutes ago (15 before the start); its 15-minute retry window has closed by the next pass.
+			h.Delivers = true;
+			await h.Breaks.ProcessBreakTimersAsync(h.Now.AddMinutes(11));
+
+			h.Pushes.Count(x => x.Kind == "reminder").Should().Be(1);
+			h.Stored(planned.DispatcherBreakId).ReminderSentOn.Should().Be(h.Now);
+		}
+
+		[Test]
+		public async Task A_dispatcher_taken_off_the_day_while_their_break_save_waited_for_the_lock_cannot_place_it()
+		{
+			var h = new Harness(withUnitOfWork: true);
+			h.OnDuty("ann");
+			h.SignedIn("ann");
+			h.Store.WhileWaitingForBreakLock = _ => h.Duty.Clear();
+
+			var saved = await h.Breaks.SaveBreakAsync(Dept, new DispatcherBreak { UserId = "ann", ScheduledStartOn = h.Now.AddHours(1), DurationMinutes = 15 }, "ann");
+
+			saved.Error.Should().Be(DispatcherDeskErrors.NotPermitted, "the duty check reads the roster the removal committed");
+			h.Store.Breaks.Should().BeEmpty();
+			h.Store.BreakStartLocks.Should().Equal(new[] { Dept });
+
+			h.Supervisors.Add("sup");
+			var bySupervisor = await h.Breaks.SaveBreakAsync(Dept, new DispatcherBreak { UserId = "ann", ScheduledStartOn = h.Now.AddHours(1), DurationMinutes = 15 }, "sup");
+
+			bySupervisor.Success.Should().BeTrue("a supervisor may still plan outside duty");
+			bySupervisor.Warnings.Should().Contain(x => x.Kind == DispatcherDeskWarningKinds.OutsideDuty);
+			h.Store.Breaks.Should().ContainSingle();
+			h.UnitOfWork.Verify(x => x.CommitChanges(), Times.Exactly(2));
+		}
 	}
 }

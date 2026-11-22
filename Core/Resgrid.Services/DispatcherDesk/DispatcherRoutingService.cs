@@ -1368,10 +1368,17 @@ namespace Resgrid.Services
 				if (linked == OverflowLinkResults.Lost)
 				{
 					// This pass stalled past the stranded-claim window: the worker gave its claim back and another pass overflowed the item
-					// (or linked another call). That pass's call is the item's; this one is the duplicate and is taken back.
-					await DiscardDuplicateOverflowCallAsync(item, call);
+					// (or linked another call). With another call linked, that call is the item's and this one is the duplicate, taken back.
+					// While the newer claim has no call yet this one is left alone: that pass may have found it by its "DQ:" source and be
+					// linking it right now, and whichever call it links, it takes the others back itself (DiscardOtherOverflowCallsAsync).
+					if (item.CallId.HasValue && item.CallId.Value != call.CallId)
+						await DiscardDuplicateOverflowCallAsync(item, call);
 					return OverflowResults.Skipped;
 				}
+
+				// A retried overflow (an earlier claim was given back) links one call; any other an earlier pass saved for the item is a duplicate.
+				if (retried && linked == OverflowLinkResults.Linked)
+					await DiscardOtherOverflowCallsAsync(item, item.CallId ?? call.CallId);
 
 				if (linked == OverflowLinkResults.NotLinked)
 				{
@@ -1528,7 +1535,10 @@ namespace Resgrid.Services
 		/// The pending call an earlier overflow of <paramref name="item"/> saved (SourceIdentifier "DQ:{itemId}"), or null. Logged after
 		/// the item was created, so the search is bounded to that window.
 		/// </summary>
-		private async Task<Call> FindOverflowCallAsync(DispatcherQueueItem item)
+		private async Task<Call> FindOverflowCallAsync(DispatcherQueueItem item) => (await FindOverflowCallsAsync(item)).FirstOrDefault();
+
+		/// <summary>Every pending call overflows of <paramref name="item"/> saved and nobody deleted, oldest first.</summary>
+		private async Task<List<Call>> FindOverflowCallsAsync(DispatcherQueueItem item)
 		{
 			var sourceIdentifier = AiDispatch.AiDispatchEnrichmentService.DeskCallSourcePrefix + item.DispatcherQueueItemId;
 			var calls = await _callsService.Value.GetAllCallsByDepartmentDateRangeAsync(item.DepartmentId, item.CreatedOn.AddMinutes(-1), UtcNow().AddMinutes(1));
@@ -1537,7 +1547,25 @@ namespace Resgrid.Services
 				.Where(x => x != null && !x.IsDeleted && x.DepartmentId == item.DepartmentId &&
 							string.Equals(x.SourceIdentifier, sourceIdentifier, StringComparison.OrdinalIgnoreCase))
 				.OrderBy(x => x.CallId)
-				.FirstOrDefault();
+				.ToList();
+		}
+
+		/// <summary>
+		/// The item's overflow call is linked (<paramref name="keptCallId"/>): the other pending calls overflows of the same item saved are
+		/// duplicates, left by passes that lost their claim while a newer pass had none linked yet, and are taken back. A call a dispatcher
+		/// has already taken out of Pending Calls is left as it is.
+		/// </summary>
+		private async Task DiscardOtherOverflowCallsAsync(DispatcherQueueItem item, int keptCallId)
+		{
+			try
+			{
+				foreach (var other in (await FindOverflowCallsAsync(item)).Where(x => x.CallId != keptCallId && x.State == (int)CallStates.Pending))
+					await DiscardDuplicateOverflowCallAsync(item, other);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Dispatcher queue overflow for item {item.DispatcherQueueItemId}: duplicate pending calls could not be looked up");
+			}
 		}
 
 		/// <summary>How long a text overflow's claim may stand with no call linked before the worker treats it as stranded.</summary>
@@ -1549,7 +1577,8 @@ namespace Resgrid.Services
 		/// (found by "DQ:{itemId}") is linked now; with none saved the claim is given back so the next pass makes the call. That includes
 		/// an item a dispatcher was offered or took while its overflow call was being saved: the call is linked to it as it stands (holder
 		/// and state kept), and with no call the stale claim is only cleared (an item someone has never overflows again). Voice items are
-		/// not included: a held caller's claim is the Overflowed state, and the voicemail path links its own call.
+		/// not included: a held caller's claim is the Overflowed state, the voicemail path links its own call, and a voicemail whose
+		/// request stopped is recovered by <see cref="IDispatcherDeskPendingCalls.RecoverExpiredVoicemailClaimsAsync"/> (worker 82).
 		/// </summary>
 		internal static bool IsStrandedOverflowClaim(DispatcherQueueItem item, DateTime now) =>
 			item.IsOpen() && !item.CallId.HasValue && item.OverflowedOn.HasValue &&
@@ -1570,8 +1599,12 @@ namespace Resgrid.Services
 					return true;
 				}
 
-				return await LinkOverflowCallAsync(item, call, claimedOn,
-					$"Linked to pending call {call.Number ?? call.CallId.ToString()} that an earlier overflow saved.", cancellationToken) == OverflowLinkResults.Linked;
+				if (await LinkOverflowCallAsync(item, call, claimedOn,
+					$"Linked to pending call {call.Number ?? call.CallId.ToString()} that an earlier overflow saved.", cancellationToken) != OverflowLinkResults.Linked)
+					return false;
+
+				await DiscardOtherOverflowCallsAsync(item, item.CallId ?? call.CallId);
+				return true;
 			}
 			catch (Exception ex)
 			{

@@ -11,6 +11,7 @@ using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.NumberProvider;
+using Resgrid.Services;
 using Resgrid.Web.Services.Twilio;
 
 namespace Resgrid.Tests.Web.Services
@@ -303,7 +304,7 @@ namespace Resgrid.Tests.Web.Services
 			_routing.Setup(x => x.MarkOverflowedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
 				.Returns((DispatcherQueueItem i, string note, CancellationToken _) => LinkInStore(i, note));
 
-			return new DispatcherDeskPendingCalls(_departments.Object, _calls.Object, _routing.Object, _store.ItemsRepository, _events.Object)
+			return new DispatcherDeskPendingCalls(_departments.Object, _calls.Object, _routing.Object, _store.ItemsRepository, _store.EventsRepository, _events.Object)
 			{
 				ClaimCheckInterval = TimeSpan.Zero
 			};
@@ -662,7 +663,7 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
-		public async System.Threading.Tasks.Task Voicemail_takeover_with_the_lookup_down_saves_nothing_and_leaves_the_claim_as_it_was()
+		public async System.Threading.Tasks.Task Voicemail_takeover_with_the_lookup_down_saves_nothing_leaves_the_claim_as_it_was_and_is_unconfirmed()
 		{
 			var pendingCalls = PendingCalls();
 			var item = OverflowedVoiceItem();
@@ -674,9 +675,144 @@ namespace Resgrid.Tests.Web.Services
 
 			var result = await pendingCalls.FromVoicemailAsync(item, Sender, "https://api.twilio.com/rec/RE1", 12, "RE1");
 
-			result.Outcome.Should().Be(DispatcherVoicemailOutcomes.NotSaved);
+			// The stopped request may have saved the call: the failed lookup proves nothing, so this is no definite "not saved".
+			result.Outcome.Should().Be(DispatcherVoicemailOutcomes.Unconfirmed);
+			result.Durable.Should().BeFalse();
 			_saves.Should().Be(0);
 			_store.Items.Single().OverflowNote.Should().Be(expired);
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task Voicemail_claim_is_stamped_when_it_is_written_not_when_the_request_started()
+		{
+			var pendingCalls = PendingCalls();
+			var clock = new DateTime(2026, 11, 22, 18, 0, 0, DateTimeKind.Utc);
+			pendingCalls.UtcNow = () => clock;
+			var item = OverflowedVoiceItem();
+			var stored = _store.Items.Single();
+			stored.OverflowNote = DispatcherDeskPendingCalls.ClaimNote("RE1", "https://api.twilio.com/rec/RE1", clock);
+
+			// The live claim's request gives it back while this one waits on it; time passes before this request claims.
+			var looks = 0;
+			_calls.Setup(x => x.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(() =>
+			{
+				if (++looks == 1)
+				{
+					stored.OverflowNote = "No dispatcher could take the call: voicemail";
+					clock = clock.AddSeconds(3);
+				}
+
+				return _saved == null ? new List<Call>() : new List<Call> { _saved };
+			});
+			string claimAtSave = null;
+			_calls.Setup(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>())).ReturnsAsync((Call c, CancellationToken _) =>
+			{
+				claimAtSave = _store.Items.Single().OverflowNote;
+				_saves++;
+				c.CallId = 501;
+				_saved = c;
+				return c;
+			});
+
+			(await pendingCalls.FromVoicemailAsync(item, Sender, "https://api.twilio.com/rec/RE1", 12, "RE1")).Outcome.Should().Be(DispatcherVoicemailOutcomes.Saved);
+
+			DispatcherDeskPendingCalls.ClaimedOn(new DispatcherQueueItem { OverflowNote = claimAtSave }).Should().Be(clock,
+				"a claim must not expire early by the time this request waited before writing it");
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task Voicemail_whose_claim_is_taken_over_before_its_save_saves_nothing()
+		{
+			var pendingCalls = PendingCalls();
+			var item = OverflowedVoiceItem();
+			var other = DispatcherDeskPendingCalls.ClaimNote("RE1", "https://api.twilio.com/rec/RE1", DateTime.UtcNow.AddSeconds(1));
+			// This request stalls while it prepares the call; its claim expires and another request takes it over meanwhile.
+			_calls.Setup(x => x.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(() =>
+			{
+				_store.Items.Single().OverflowNote = other;
+				return new List<DepartmentCallPriority>();
+			});
+
+			var result = await pendingCalls.FromVoicemailAsync(item, Sender, "https://api.twilio.com/rec/RE1", 12, "RE1");
+
+			result.Outcome.Should().Be(DispatcherVoicemailOutcomes.InProgress);
+			_saves.Should().Be(0, "the request that took the claim over saves the voicemail's one call");
+			_store.Items.Single().OverflowNote.Should().Be(other);
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task Voicemail_whose_item_became_its_voicemail_call_before_its_save_saves_nothing()
+		{
+			var pendingCalls = PendingCalls();
+			var item = OverflowedVoiceItem();
+			_calls.Setup(x => x.GetCallByIdAsync(777, It.IsAny<bool>())).ReturnsAsync(new Call
+			{
+				CallId = 777, Number = "26-777", DepartmentId = DepartmentId, CallSource = (int)CallSources.AudioImport, SourceIdentifier = "DQ:item-1"
+			});
+			// A request that took the claim over saved and linked the voicemail's call while this one stalled.
+			_calls.Setup(x => x.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(() =>
+			{
+				_store.Items.Single().CallId = 777;
+				return new List<DepartmentCallPriority>();
+			});
+
+			var result = await pendingCalls.FromVoicemailAsync(item, Sender, "https://api.twilio.com/rec/RE1", 12, "RE1");
+
+			result.Outcome.Should().Be(DispatcherVoicemailOutcomes.AlreadyTaken);
+			result.Durable.Should().BeTrue();
+			_saves.Should().Be(0);
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task Voicemail_whose_item_became_another_call_before_its_save_still_saves_the_recording()
+		{
+			var pendingCalls = PendingCalls();
+			var item = OverflowedVoiceItem();
+			_calls.Setup(x => x.GetCallByIdAsync(888, It.IsAny<bool>()))
+				.ReturnsAsync(new Call { CallId = 888, DepartmentId = DepartmentId, CallSource = (int)CallSources.User });
+			_calls.Setup(x => x.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(() =>
+			{
+				_store.Items.Single().CallId = 888;
+				return new List<DepartmentCallPriority>();
+			});
+
+			var result = await pendingCalls.FromVoicemailAsync(item, Sender, "https://api.twilio.com/rec/RE1", 12, "RE1");
+
+			result.Outcome.Should().Be(DispatcherVoicemailOutcomes.Saved);
+			_saves.Should().Be(1, "a call that is not the voicemail never stands in for the recording");
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task Voicemail_second_call_delete_is_tried_again_after_a_blip()
+		{
+			var pendingCalls = PendingCalls();
+			var item = OverflowedVoiceItem();
+			var other = new Call { CallId = 777, Number = "26-777", DepartmentId = DepartmentId, CallSource = (int)CallSources.AudioImport, SourceIdentifier = "DQ:item-1" };
+			_calls.Setup(x => x.GetCallByIdAsync(777, It.IsAny<bool>())).ReturnsAsync(other);
+			var saves = new List<Call>();
+			_calls.Setup(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>())).ReturnsAsync((Call c, CancellationToken _) =>
+			{
+				saves.Add(c);
+				if (saves.Count == 1)
+				{
+					// Another request took the claim over, saved and linked its own call while this one was saving.
+					c.CallId = 501;
+					_store.Items.Single().CallId = 777;
+				}
+				else if (saves.Count == 2)
+				{
+					throw new InvalidOperationException("db blip");
+				}
+
+				return c;
+			});
+
+			var result = await pendingCalls.FromVoicemailAsync(item, Sender, "https://api.twilio.com/rec/RE1", 12, "RE1");
+
+			result.Outcome.Should().Be(DispatcherVoicemailOutcomes.AlreadyTaken);
+			saves.Should().HaveCount(3);
+			saves[2].IsDeleted.Should().BeTrue("no later request comes back for the second call, so its delete is tried again");
+			_events.Verify(x => x.SendMessage(It.IsAny<CallUpdatedEvent>()), Times.Never);
 		}
 
 		[Test]
@@ -771,6 +907,159 @@ namespace Resgrid.Tests.Web.Services
 			DispatcherDeskPendingCalls.ClaimExpired(new DispatcherQueueItem { OverflowNote = "Voicemail recording RE1: https://api.twilio.com/rec/RE1" }, now)
 				.Should().BeTrue();
 			DispatcherDeskPendingCalls.ClaimExpired(new DispatcherQueueItem { OverflowNote = "No dispatcher free: voicemail" }, now).Should().BeFalse();
+		}
+
+		[Test]
+		public void Voicemail_claim_notes_give_back_their_recording()
+		{
+			var now = new DateTime(2026, 11, 22, 18, 0, 0, DateTimeKind.Utc);
+
+			DispatcherDeskPendingCalls.TryReadClaim(DispatcherDeskPendingCalls.ClaimNote("RE1", "https://api.twilio.com/rec/RE1", now), out var sid, out var url)
+				.Should().BeTrue();
+			sid.Should().Be("RE1");
+			url.Should().Be("https://api.twilio.com/rec/RE1");
+
+			DispatcherDeskPendingCalls.TryReadClaim(DispatcherDeskPendingCalls.ClaimNote(null, "https://api.twilio.com/rec/RE2", now), out sid, out url).Should().BeTrue();
+			sid.Should().BeNull("a recording with no id is noted as \"(no id)\"");
+			url.Should().Be("https://api.twilio.com/rec/RE2");
+
+			// A claim written before claims carried a time.
+			DispatcherDeskPendingCalls.TryReadClaim("Voicemail recording RE3: https://api.twilio.com/rec/RE3", out sid, out url).Should().BeTrue();
+			sid.Should().Be("RE3");
+			url.Should().Be("https://api.twilio.com/rec/RE3");
+
+			DispatcherDeskPendingCalls.TryReadClaim("No dispatcher free: voicemail", out _, out _).Should().BeFalse();
+			DispatcherDeskPendingCalls.TryReadClaim("Voicemail recording RE4 (claimed 2026-11-22T18:00:00.0000000Z): ", out _, out _).Should().BeFalse();
+		}
+
+		/// <summary>The stored item as a voicemail request that claimed it and then stopped (or could not confirm its save) leaves it.</summary>
+		private DispatcherQueueItem StrandedVoicemailItem(DateTime claimedOn, string recordingUrl = "https://api.twilio.com/rec/RE1")
+		{
+			OverflowedVoiceItem();
+			var stored = _store.Items.Single();
+			stored.CreatedOn = DateTime.UtcNow.AddMinutes(-30);
+			stored.SourceAddress = Sender;
+			stored.OverflowNote = DispatcherDeskPendingCalls.ClaimNote("RE1", recordingUrl, claimedOn);
+			if (stored.OverflowNote.Length > 250)
+				stored.OverflowNote = stored.OverflowNote.Substring(0, 250);
+			return stored;
+		}
+
+		private static DateTime ExpiredClaimTime() => DateTime.UtcNow.AddMinutes(-DispatcherDeskPendingCalls.ClaimExpiryMinutes - 1);
+
+		[Test]
+		public async System.Threading.Tasks.Task Worker_recovers_a_stranded_voicemail_by_saving_its_pending_call()
+		{
+			var pendingCalls = PendingCalls();
+			StrandedVoicemailItem(ExpiredClaimTime());
+
+			var recovered = await pendingCalls.RecoverExpiredVoicemailClaimsAsync(DateTime.UtcNow, DateTime.UtcNow.AddDays(-2));
+
+			recovered.Should().Be(1);
+			_saves.Should().Be(1);
+			_saved.State.Should().Be((int)CallStates.Pending);
+			_saved.SourceIdentifier.Should().Be("DQ:item-1");
+			_saved.ContactNumber.Should().Be(Sender, "the caller's number comes from the item");
+			_saved.Notes.Should().Contain("https://api.twilio.com/rec/RE1");
+			_store.Items.Single().CallId.Should().Be(501);
+			_store.Items.Single().State.Should().Be((int)DispatcherQueueItemStates.Queued, "the voicemail call waits for a dispatcher");
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task Worker_recovery_links_the_call_a_stopped_voicemail_request_saved_instead_of_saving_another()
+		{
+			var pendingCalls = PendingCalls();
+			StrandedVoicemailItem(ExpiredClaimTime());
+			_saved = new Call
+			{
+				CallId = 444, Number = "26-444", DepartmentId = DepartmentId, CallSource = (int)CallSources.AudioImport, SourceIdentifier = "DQ:item-1",
+				State = (int)CallStates.Pending
+			};
+
+			var recovered = await pendingCalls.RecoverExpiredVoicemailClaimsAsync(DateTime.UtcNow, DateTime.UtcNow.AddDays(-2));
+
+			recovered.Should().Be(1);
+			_saves.Should().Be(0);
+			_store.Items.Single().CallId.Should().Be(444);
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task Worker_recovery_leaves_a_live_voicemail_claim_to_its_request()
+		{
+			var pendingCalls = PendingCalls();
+			var stored = StrandedVoicemailItem(DateTime.UtcNow.AddMinutes(-1));
+			var note = stored.OverflowNote;
+
+			var recovered = await pendingCalls.RecoverExpiredVoicemailClaimsAsync(DateTime.UtcNow, DateTime.UtcNow.AddDays(-2));
+
+			recovered.Should().Be(0);
+			_saves.Should().Be(0);
+			_store.Items.Single().OverflowNote.Should().Be(note);
+			_store.Items.Single().CallId.Should().BeNull();
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task Worker_recovery_looks_only_at_recent_overflowed_voice_items_with_a_claim_and_no_call()
+		{
+			var pendingCalls = PendingCalls();
+			var stored = StrandedVoicemailItem(ExpiredClaimTime());
+
+			// Older than the window.
+			stored.CreatedOn = DateTime.UtcNow.AddDays(-3);
+			(await pendingCalls.RecoverExpiredVoicemailClaimsAsync(DateTime.UtcNow, DateTime.UtcNow.AddDays(-2))).Should().Be(0);
+
+			// Back in the queue (a dispatcher can still answer it): not a stranded voicemail.
+			stored.CreatedOn = DateTime.UtcNow.AddMinutes(-30);
+			stored.State = (int)DispatcherQueueItemStates.Queued;
+			(await pendingCalls.RecoverExpiredVoicemailClaimsAsync(DateTime.UtcNow, DateTime.UtcNow.AddDays(-2))).Should().Be(0);
+
+			// An overflow with no voicemail claim (the caller hung up before recording).
+			stored.State = (int)DispatcherQueueItemStates.Overflowed;
+			stored.OverflowNote = "No dispatcher free: voicemail";
+			(await pendingCalls.RecoverExpiredVoicemailClaimsAsync(DateTime.UtcNow, DateTime.UtcNow.AddDays(-2))).Should().Be(0);
+
+			_saves.Should().Be(0);
+			_store.Items.Single().CallId.Should().BeNull();
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task Worker_recovery_with_the_call_lookup_down_saves_nothing_and_keeps_the_claim_for_its_next_pass()
+		{
+			var pendingCalls = PendingCalls();
+			var stored = StrandedVoicemailItem(ExpiredClaimTime());
+			var note = stored.OverflowNote;
+			_calls.Setup(x => x.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+				.ThrowsAsync(new InvalidOperationException("database down"));
+
+			var recovered = await pendingCalls.RecoverExpiredVoicemailClaimsAsync(DateTime.UtcNow, DateTime.UtcNow.AddDays(-2));
+
+			recovered.Should().Be(0);
+			_saves.Should().Be(0, "the stopped request may have saved the call");
+			_store.Items.Single().OverflowNote.Should().Be(note, "the expired claim is put back as it was, for the next pass");
+
+			// Storage is back: the next pass finishes it.
+			_calls.Setup(x => x.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+				.ReturnsAsync(() => _saved == null ? new List<Call>() : new List<Call> { _saved });
+			(await pendingCalls.RecoverExpiredVoicemailClaimsAsync(DateTime.UtcNow, DateTime.UtcNow.AddDays(-2))).Should().Be(1);
+			_saves.Should().Be(1);
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task Worker_recovery_takes_the_whole_recording_url_from_history_when_the_claim_note_was_cut()
+		{
+			var pendingCalls = PendingCalls();
+			var url = "https://api.twilio.com/2010-04-01/Accounts/AC" + new string('a', 32) + "/Recordings/RE" + new string('b', 32) + "?" + new string('c', 120);
+			var stored = StrandedVoicemailItem(ExpiredClaimTime(), url);
+			stored.OverflowNote.Length.Should().Be(250, "the claim note is cut at 250 characters");
+			_store.Events.Add(new DispatcherQueueEvent
+			{
+				DispatcherQueueEventId = "ev-1", DepartmentId = DepartmentId, DispatcherQueueItemId = "item-1", OccurredOn = DateTime.UtcNow.AddMinutes(-20),
+				EventType = (int)DispatcherQueueEventTypes.VoiceEnded, Detail = $"The voicemail's call may have been saved; that could not be confirmed. Recording: {url}"
+			});
+
+			(await pendingCalls.RecoverExpiredVoicemailClaimsAsync(DateTime.UtcNow, DateTime.UtcNow.AddDays(-2))).Should().Be(1);
+
+			_saved.Notes.Should().Contain(url);
 		}
 
 		private static DispatcherQueueItem Clone(DispatcherQueueItem item) => new DispatcherQueueItem

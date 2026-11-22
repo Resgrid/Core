@@ -104,6 +104,13 @@ namespace Resgrid.Tests.Web.Services
 		[TestCase("100 Main St, Whitehorse, Yukon", "100 Main St, Whitehorse")]
 		[TestCase("20 Water St, Charlottetown, Prince Edward Island", "20 Water St, Charlottetown")]
 		[TestCase("300 Portage Ave, Winnipeg, MB, Canada", "300 Portage Ave, Winnipeg")]
+		[TestCase("123 Main St, Vancouver, BC V6B 1A1, Canada", "123 Main St, Vancouver")]
+		[TestCase("123 Main St, Vancouver, British Columbia V6B 1A1", "123 Main St, Vancouver")]
+		[TestCase("123 Main St, Vancouver, British Columbia V6B1A1", "123 Main St, Vancouver")]
+		[TestCase("123 Main St, Vancouver, BC V6B1A1", "123 Main St, Vancouver")]
+		[TestCase("123 Main St, Vancouver, V6B 1A1", "123 Main St, Vancouver")]
+		[TestCase("123 Main St, Springfield, Illinois 62701-1234", "123 Main St, Springfield")]
+		[TestCase("123 Main St, Springfield, New York 10001", "123 Main St, Springfield")]
 		public void trim_address_should_drop_trailing_state_zip_and_country(string input, string expected)
 		{
 			DispatchVoicePromptBuilder.TrimAddressForSpeech(input).Should().Be(expected);
@@ -113,6 +120,8 @@ namespace Resgrid.Tests.Web.Services
 		[TestCase("At the bottom of Bucks Canyon")]
 		[TestCase("123 Main St, Springfield")]
 		[TestCase("Main St and 5th Ave")]
+		[TestCase("Unit 4, 12345 Ranch Rd")]
+		[TestCase("123 Main St, Lot A1B 2C3")]
 		public void trim_address_should_leave_freeform_locations_untouched(string input)
 		{
 			DispatchVoicePromptBuilder.TrimAddressForSpeech(input).Should().Be(input);

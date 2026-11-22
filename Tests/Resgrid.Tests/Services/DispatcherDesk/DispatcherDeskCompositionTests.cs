@@ -25,7 +25,7 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			typeof(IDispatcherDeskConfigService), typeof(IShiftDispatchersService), typeof(IDispatcherDeskNotifier), typeof(IDispatcherPresenceService),
 			typeof(IDispatcherRoutingService), typeof(IDispatcherBreaksService), typeof(IDispatcherConversationService), typeof(IDispatcherVoiceService),
 			typeof(IDispatcherDeskWorkerService), typeof(IDispatcherDeskPushProvider), typeof(IDispatcherVoiceProvider), typeof(IShiftsService),
-			typeof(IIntakeConversationRouter)
+			typeof(IIntakeConversationRouter), typeof(IDispatcherDeskPendingCalls)
 		};
 
 		[Test]

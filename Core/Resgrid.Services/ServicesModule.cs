@@ -463,6 +463,8 @@ namespace Resgrid.Services
 			builder.RegisterType<DispatcherBreaksService>().As<IDispatcherBreaksService>().InstancePerLifetimeScope();
 			builder.RegisterType<DispatcherConversationService>().As<IDispatcherConversationService>().InstancePerLifetimeScope();
 			builder.RegisterType<DispatcherVoiceService>().As<IDispatcherVoiceService>().InstancePerLifetimeScope();
+			// The voicemail's pending call: the voice webhook saves it, worker 82 recovers one whose request stopped.
+			builder.RegisterType<DispatcherDeskPendingCalls>().As<IDispatcherDeskPendingCalls>().InstancePerLifetimeScope();
 			builder.RegisterType<DispatcherDeskWorkerService>().As<IDispatcherDeskWorkerService>().InstancePerLifetimeScope();
 			// Intake text threads reach the desk through this router (intake resolves every IIntakeConversationRouter; none = no desk).
 			builder.RegisterType<DispatcherIntakeConversationRouter>().As<IIntakeConversationRouter>().InstancePerLifetimeScope();

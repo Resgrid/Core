@@ -165,9 +165,10 @@ namespace Resgrid.Model.Repositories
 
 		/// <summary>
 		/// The sign-in write: the session columns of <paramref name="updated"/> (State, ActiveBreakId, StateChangedOn, SignedInOn,
-		/// LastSeenOn, the duty columns, MissedOffers, AwayReason, DeviceKind, CallbackNumber), written only while the row still has the
-		/// state, session (SignedInOn) and active break <paramref name="observed"/> read. A sign-in, break or sign-off committed since
-		/// keeps its own state; the caller reads the row again. False when the row changed.
+		/// LastSeenOn, the duty columns, MissedOffers, AwayReason, DeviceKind, and CallbackNumber only when it is not null: a sign-in
+		/// that supplies no number keeps the stored one), written only while the row still has the state, session (SignedInOn) and
+		/// active break <paramref name="observed"/> read. A sign-in, break or sign-off committed since keeps its own state; the caller
+		/// reads the row again. False when the row changed.
 		/// </summary>
 		Task<bool> TrySignInAsync(DispatcherPresence updated, DispatcherPresence observed, CancellationToken cancellationToken = default);
 	}
@@ -218,6 +219,13 @@ namespace Resgrid.Model.Repositories
 
 		/// <summary>Items created in [fromUtc, toUtc) (reports).</summary>
 		Task<IEnumerable<DispatcherQueueItem>> GetCreatedInRangeAsync(int departmentId, DateTime fromUtc, DateTime toUtc);
+
+		/// <summary>
+		/// Overflowed voice items, in every department, created since <paramref name="createdSinceUtc"/> that carry a voicemail claim
+		/// (an overflow note starting "Voicemail recording ") and no call: voicemails whose request stopped or could not confirm its
+		/// save (worker recovery). Oldest first.
+		/// </summary>
+		Task<IEnumerable<DispatcherQueueItem>> GetUnlinkedVoicemailClaimsAsync(DateTime createdSinceUtc);
 
 		/// <summary>Removes closed items (completed, overflowed, cancelled) last touched before the cutoff, with their events and messages.</summary>
 		Task<int> PurgeClosedBeforeAsync(DateTime beforeUtc, CancellationToken cancellationToken = default);

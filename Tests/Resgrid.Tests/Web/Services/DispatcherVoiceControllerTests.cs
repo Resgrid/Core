@@ -11,6 +11,7 @@ using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
+using Resgrid.Services;
 using Resgrid.Web.Services.Controllers;
 using Resgrid.Web.Services.Twilio;
 using Twilio.TwiML;

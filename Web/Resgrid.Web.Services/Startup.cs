@@ -747,8 +747,7 @@ namespace Resgrid.Web.ServicesCore
 			// Flag evaluation counts are buffered per process; this host writes its own to FeatureFlagUsages.
 			services.AddHostedService<Resgrid.Web.Services.Middleware.FeatureToggleUsageFlushService>();
 			services.AddScoped<ITwilioVoiceResponseService, TwilioVoiceResponseService>();
-			// Dispatcher desk (M0324): unknown callers and texters to a department number, and the pending calls their overflow makes.
-			services.AddScoped<IDispatcherDeskPendingCalls, DispatcherDeskPendingCalls>();
+			// Dispatcher desk (M0324): unknown callers and texters to a department number (the voicemail's pending call is ServicesModule's).
 			services.AddScoped<IDispatcherInboundVoiceHandler, DispatcherInboundVoiceHandler>();
 			services.AddScoped<IDispatcherInboundTextHandler, DispatcherInboundTextHandler>();
 			this.Services = services;

@@ -196,6 +196,12 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			public Task<IEnumerable<DispatcherQueueItem>> GetCreatedInRangeAsync(int departmentId, DateTime fromUtc, DateTime toUtc) =>
 				Task.FromResult<IEnumerable<DispatcherQueueItem>>(List.Where(x => x.DepartmentId == departmentId && x.CreatedOn >= fromUtc && x.CreatedOn < toUtc).Select(Clone).ToList());
 
+			public Task<IEnumerable<DispatcherQueueItem>> GetUnlinkedVoicemailClaimsAsync(DateTime createdSinceUtc) =>
+				Task.FromResult<IEnumerable<DispatcherQueueItem>>(List.Where(x => x.State == (int)DispatcherQueueItemStates.Overflowed &&
+					x.Kind == (int)DispatcherQueueItemKinds.Voice && !x.CallId.HasValue && x.CreatedOn >= createdSinceUtc &&
+					x.OverflowNote != null && x.OverflowNote.StartsWith("Voicemail recording ", StringComparison.Ordinal))
+					.OrderBy(x => x.CreatedOn).Select(Clone).ToList());
+
 			public Task<int> PurgeClosedBeforeAsync(DateTime beforeUtc, CancellationToken cancellationToken = default) =>
 				Task.FromResult(List.RemoveAll(x => x.State >= (int)DispatcherQueueItemStates.Completed && x.LastActivityOn < beforeUtc));
 		}
@@ -345,7 +351,8 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 				row.MissedOffers = updated.MissedOffers;
 				row.AwayReason = updated.AwayReason;
 				row.DeviceKind = updated.DeviceKind;
-				row.CallbackNumber = updated.CallbackNumber;
+				if (updated.CallbackNumber != null)
+					row.CallbackNumber = updated.CallbackNumber;
 				return Task.FromResult(true);
 			}
 		}

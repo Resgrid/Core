@@ -14,76 +14,13 @@ using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
-namespace Resgrid.Web.Services.Twilio
+namespace Resgrid.Services
 {
 	/// <summary>
-	/// The pending call a voicemail left on the desk becomes (plan D8 voice overflow). Text and chat overflow is the routing
-	/// service's own (it makes the pending call from the conversation), so only the voicemail, which exists only on this webhook,
-	/// is made here.
+	/// The voicemail side of the desk's pending calls (<see cref="IDispatcherDeskPendingCalls"/>): the voice webhook saves a voicemail
+	/// through it, and worker 82 finishes the voicemails whose request stopped or could not confirm its save. Lives in Services, not
+	/// Web.Services, so the worker can run the same claim rules as the webhook.
 	/// </summary>
-	public interface IDispatcherDeskPendingCalls
-	{
-		/// <summary>
-		/// Saves the voicemail as a <see cref="CallStates.Pending"/> call (nobody paged, recording in its notes) and makes the
-		/// overflowed voice item that call: its CallId is set and <see cref="IDispatcherRoutingService.MarkOverflowedAsync"/> puts it
-		/// back in the queue, so it waits for a dispatcher as the voicemail call with the caller's number (Call back works from it).
-		/// No second desk item is made, and an item gets at most one voicemail call: the item is claimed (its recording noted on it)
-		/// before the call is saved, and a repeat finds the claim or the linked call and saves nothing. A repeat that finds the claim
-		/// finishes the claim's work: a call the claim saved but could not link (found by its "DQ:{itemId}" source, in any state) is
-		/// linked now, and a claim given back by a request that failed before saving is taken again. A claim older than
-		/// <see cref="DispatcherDeskPendingCalls.ClaimExpiryMinutes"/> (its request stopped) is taken over: the call that request may have
-		/// saved is looked for first, and of two calls saved for one item the one linked first stays and the other is deleted.
-		/// </summary>
-		Task<DispatcherVoicemailResult> FromVoicemailAsync(DispatcherQueueItem item, string from, string recordingUrl, int? durationSeconds, string recordingSid,
-			CancellationToken cancellationToken = default);
-	}
-
-	/// <summary>What became of a voicemail (<see cref="IDispatcherDeskPendingCalls.FromVoicemailAsync"/>).</summary>
-	public enum DispatcherVoicemailOutcomes
-	{
-		/// <summary>Saved now as a pending call (<see cref="DispatcherVoicemailResult.Call"/>).</summary>
-		Saved = 1,
-
-		/// <summary>The item's voicemail is already a saved call: linked to the item, or saved by another request and linked now.</summary>
-		AlreadyTaken = 2,
-
-		/// <summary>Nothing was saved (no item or recording, or the save failed): the caller must not be told it was passed on.</summary>
-		NotSaved = 3,
-
-		/// <summary>
-		/// Another request holds the item's claim and has not saved a call yet (it may still be saving, or have stopped): nothing is held
-		/// for certain, so the caller must not be told it was passed on.
-		/// </summary>
-		InProgress = 4,
-
-		/// <summary>
-		/// The save failed and whether it stored the call could not be checked: the claim stays on the item (a repeat finds the call, or
-		/// once the claim expires looks for it before saving), and the caller must not be told it was passed on.
-		/// </summary>
-		Unconfirmed = 5
-	}
-
-	/// <summary>The outcome of a voicemail; made only by <see cref="Of"/>, so an outcome and its call cannot drift apart.</summary>
-	public sealed class DispatcherVoicemailResult
-	{
-		private DispatcherVoicemailResult(DispatcherVoicemailOutcomes outcome, Call call)
-		{
-			Outcome = outcome;
-			Call = call;
-		}
-
-		public DispatcherVoicemailOutcomes Outcome { get; }
-
-		/// <summary>The call saved now; null unless <see cref="Outcome"/> is Saved.</summary>
-		public Call Call { get; }
-
-		/// <summary>The voicemail is held somewhere a dispatcher will find it (a saved pending call).</summary>
-		public bool Durable => Outcome == DispatcherVoicemailOutcomes.Saved || Outcome == DispatcherVoicemailOutcomes.AlreadyTaken;
-
-		public static DispatcherVoicemailResult Of(DispatcherVoicemailOutcomes outcome, Call call = null) =>
-			new DispatcherVoicemailResult(outcome, outcome == DispatcherVoicemailOutcomes.Saved ? call : null);
-	}
-
 	public class DispatcherDeskPendingCalls : IDispatcherDeskPendingCalls
 	{
 		/// <summary>The start of the item's overflow note while its voicemail is being made a call (the claim).</summary>
@@ -118,15 +55,17 @@ namespace Resgrid.Web.Services.Twilio
 		private readonly ICallsService _callsService;
 		private readonly IDispatcherRoutingService _dispatcherRoutingService;
 		private readonly IDispatcherQueueItemsRepository _itemsRepository;
+		private readonly IDispatcherQueueEventsRepository _eventsRepository;
 		private readonly IEventAggregator _eventAggregator;
 
 		public DispatcherDeskPendingCalls(IDepartmentsService departmentsService, ICallsService callsService, IDispatcherRoutingService dispatcherRoutingService,
-			IDispatcherQueueItemsRepository itemsRepository, IEventAggregator eventAggregator)
+			IDispatcherQueueItemsRepository itemsRepository, IDispatcherQueueEventsRepository eventsRepository, IEventAggregator eventAggregator)
 		{
 			_departmentsService = departmentsService;
 			_callsService = callsService;
 			_dispatcherRoutingService = dispatcherRoutingService;
 			_itemsRepository = itemsRepository;
+			_eventsRepository = eventsRepository;
 			_eventAggregator = eventAggregator;
 		}
 
@@ -172,6 +111,123 @@ namespace Resgrid.Web.Services.Twilio
 			return !claimedOn.HasValue || claimedOn.Value <= now.AddMinutes(-ClaimExpiryMinutes);
 		}
 
+		/// <summary>
+		/// The recording a claim note names (<see cref="ClaimNote"/>, or the older note with no time): its id (null for "(no id)") and
+		/// URL. False when the note is no claim or names no URL. The URL may be cut short when the note was (250 characters).
+		/// </summary>
+		public static bool TryReadClaim(string note, out string recordingSid, out string recordingUrl)
+		{
+			recordingSid = null;
+			recordingUrl = null;
+			if (note == null || !note.StartsWith(VoicemailClaimPrefix, StringComparison.Ordinal))
+				return false;
+
+			var rest = note.Substring(VoicemailClaimPrefix.Length);
+			string sid;
+			int urlStart;
+			var stamp = rest.IndexOf(" (claimed ", StringComparison.Ordinal);
+			if (stamp >= 0)
+			{
+				var close = rest.IndexOf("): ", stamp, StringComparison.Ordinal);
+				if (close < 0)
+					return false;
+
+				sid = rest.Substring(0, stamp);
+				urlStart = close + 3;
+			}
+			else
+			{
+				var colon = rest.IndexOf(": ", StringComparison.Ordinal);
+				if (colon < 0)
+					return false;
+
+				sid = rest.Substring(0, colon);
+				urlStart = colon + 2;
+			}
+
+			recordingUrl = rest.Substring(urlStart).Trim();
+			recordingSid = string.IsNullOrWhiteSpace(sid) || sid.Trim() == "(no id)" ? null : sid.Trim();
+			return recordingUrl.Length > 0;
+		}
+
+		public async Task<int> RecoverExpiredVoicemailClaimsAsync(DateTime utcNow, DateTime createdSinceUtc, CancellationToken cancellationToken = default)
+		{
+			var items = (await _itemsRepository.GetUnlinkedVoicemailClaimsAsync(createdSinceUtc) ?? Enumerable.Empty<DispatcherQueueItem>()).ToList();
+			var recovered = 0;
+
+			foreach (var item in items)
+			{
+				if (cancellationToken.IsCancellationRequested)
+					break;
+
+				// A live claim is its request's (it may still be saving); only one whose request stopped is finished here.
+				if (item.Kind != (int)DispatcherQueueItemKinds.Voice || item.State != (int)DispatcherQueueItemStates.Overflowed || !ClaimExpired(item, utcNow))
+					continue;
+
+				try
+				{
+					if (!TryReadClaim(item.OverflowNote, out var recordingSid, out var recordingUrl))
+					{
+						Logging.LogError($"Dispatcher desk: the voicemail claim on item {item.DispatcherQueueItemId} names no recording; it cannot be recovered.");
+						continue;
+					}
+
+					recordingUrl = await FullRecordingUrlAsync(item, recordingUrl);
+
+					// The same rules as a repeat of the voicemail: the expired claim is taken over, a call already saved under "DQ:{itemId}"
+					// is linked, otherwise the pending call is saved from the recording; a lookup that fails leaves the claim for the next pass.
+					var result = await FromVoicemailAsync(item, item.SourceAddress, recordingUrl, null, recordingSid, CancellationToken.None);
+					if (result != null && result.Durable)
+					{
+						recovered++;
+						Logging.LogInfo($"[Dispatcher desk] Voice item {item.DispatcherQueueItemId}: its stranded voicemail was recovered ({result.Outcome}).");
+					}
+					else
+					{
+						Logging.LogInfo($"[Dispatcher desk] Voice item {item.DispatcherQueueItemId}: its stranded voicemail was not recovered this pass ({result?.Outcome}).");
+					}
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Dispatcher desk: the stranded voicemail of item {item.DispatcherQueueItemId} could not be recovered.");
+				}
+			}
+
+			return recovered;
+		}
+
+		/// <summary>
+		/// The recording URL in full: a note cut at 250 characters may have cut it, and the item's history keeps it whole when the
+		/// voicemail request got far enough to record it ("... Recording: {url}"). The note's URL otherwise.
+		/// </summary>
+		private async Task<string> FullRecordingUrlAsync(DispatcherQueueItem item, string fromNote)
+		{
+			if (item.OverflowNote == null || item.OverflowNote.Length < 250)
+				return fromNote;
+
+			try
+			{
+				const string marker = "Recording: ";
+				var events = await _eventsRepository.GetForItemAsync(item.DispatcherQueueItemId) ?? Enumerable.Empty<DispatcherQueueEvent>();
+				foreach (var note in events.Where(x => x?.Detail != null).Select(x => x.Detail))
+				{
+					var at = note.IndexOf(marker, StringComparison.Ordinal);
+					if (at < 0)
+						continue;
+
+					var url = note.Substring(at + marker.Length).Trim();
+					if (url.Length > fromNote.Length && url.StartsWith(fromNote, StringComparison.Ordinal))
+						return url;
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Dispatcher desk: the history of voice item {item.DispatcherQueueItemId} could not be read for its recording.");
+			}
+
+			return fromNote;
+		}
+
 		public async Task<DispatcherVoicemailResult> FromVoicemailAsync(DispatcherQueueItem item, string from, string recordingUrl, int? durationSeconds, string recordingSid,
 			CancellationToken cancellationToken = default)
 		{
@@ -188,11 +244,13 @@ namespace Resgrid.Web.Services.Twilio
 			// Claim the item before the save: of two requests for the same voicemail only one saves a call, and the claim (which
 			// names the recording) stays on the item if the link below fails, so a repeat never saves a second call. A repeat that
 			// finds the claim finishes its work instead (links the call it saved), and takes the claim again when its request gave it
-			// back without saving.
-			var note = ClaimNote(recordingSid, recordingUrl, UtcNow());
+			// back without saving. Each round stamps its claim when it writes it (a round that waited on another request's claim must not
+			// write an older time, which would let the claim expire early), and the note of the round that claimed is the one given back.
+			string note = null;
 			ClaimResult claim = null;
 			for (var round = 0; round < 2; round++)
 			{
+				note = ClaimNote(recordingSid, recordingUrl, UtcNow());
 				claim = await ClaimAsync(item.DispatcherQueueItemId, note);
 				if (claim.Outcome != ClaimOutcomes.ClaimedByAnother)
 					break;
@@ -220,9 +278,10 @@ namespace Resgrid.Web.Services.Twilio
 				var earlier = await FindVoicemailCallAsync(item);
 				if (!earlier.Known)
 				{
-					// Saving now could make a second call. The claim goes back as it was, for a repeat to look again.
+					// Saving now could make a second call. The claim goes back as it was, for a repeat to look again. Whether the stopped
+					// request saved the call is not known, so this is no definite "not saved".
 					await ReleaseClaimAsync(item.DispatcherQueueItemId, note, claim.PreviousNote);
-					return DispatcherVoicemailResult.Of(DispatcherVoicemailOutcomes.NotSaved);
+					return DispatcherVoicemailResult.Of(DispatcherVoicemailOutcomes.Unconfirmed);
 				}
 
 				if (earlier.Call != null)
@@ -244,6 +303,10 @@ namespace Resgrid.Web.Services.Twilio
 				await ReleaseClaimAsync(item.DispatcherQueueItemId, note, claim.PreviousNote);
 				return DispatcherVoicemailResult.Of(DispatcherVoicemailOutcomes.NotSaved);
 			}
+
+			var overtaken = await OvertakenBeforeSaveAsync(item, note);
+			if (overtaken != null)
+				return overtaken;
 
 			Call saved;
 			try
@@ -370,28 +433,84 @@ namespace Resgrid.Web.Services.Twilio
 		/// </summary>
 		private async Task<bool> DiscardSecondCallAsync(DispatcherQueueItem item, Call saved, int linkedCallId)
 		{
+			Call linked;
 			try
 			{
-				var linked = await _callsService.GetCallByIdAsync(linkedCallId);
-				if (linked == null || linked.IsDeleted || !IsVoicemailCallOf(linked, item))
-				{
-					Logging.LogError($"Dispatcher desk: voice item {item.DispatcherQueueItemId} is call {linkedCallId}; voicemail call {saved.CallId} waits as its own pending call.");
-					return false;
-				}
-
-				saved.IsDeleted = true;
-				saved.DeletedOn = UtcNow();
-				saved.DeletedByUserId = SystemUserId;
-				saved.DeletedReason = $"A second call for the same voicemail: desk item {item.DispatcherQueueItemId} already is call {linked.Number ?? linked.CallId.ToString()}.";
-				await _callsService.SaveCallAsync(saved, CancellationToken.None);
-				Logging.LogInfo($"[Dispatcher desk] Voicemail call {saved.CallId} deleted: item {item.DispatcherQueueItemId} already is voicemail call {linked.CallId}.");
-				return true;
+				linked = await _callsService.GetCallByIdAsync(linkedCallId);
 			}
 			catch (Exception ex)
 			{
-				Logging.LogException(ex, $"Dispatcher desk: second voicemail call {saved.CallId} of item {item.DispatcherQueueItemId} could not be deleted.");
+				Logging.LogException(ex, $"Dispatcher desk: call {linkedCallId} of voice item {item.DispatcherQueueItemId} could not be read; voicemail call {saved.CallId} is kept.");
 				return false;
 			}
+
+			if (linked == null || linked.IsDeleted || !IsVoicemailCallOf(linked, item))
+			{
+				Logging.LogError($"Dispatcher desk: voice item {item.DispatcherQueueItemId} is call {linkedCallId}; voicemail call {saved.CallId} waits as its own pending call.");
+				return false;
+			}
+
+			saved.IsDeleted = true;
+			saved.DeletedOn = UtcNow();
+			saved.DeletedByUserId = SystemUserId;
+			saved.DeletedReason = $"A second call for the same voicemail: desk item {item.DispatcherQueueItemId} already is call {linked.Number ?? linked.CallId.ToString()}.";
+
+			// No later request comes back for this call (a repeat finds the item linked and stops), so a blip is tried again here.
+			for (var attempt = 0; attempt < WriteAttempts; attempt++)
+			{
+				try
+				{
+					await _callsService.SaveCallAsync(saved, CancellationToken.None);
+					Logging.LogInfo($"[Dispatcher desk] Voicemail call {saved.CallId} deleted: item {item.DispatcherQueueItemId} already is voicemail call {linked.CallId}.");
+					return true;
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Dispatcher desk: second voicemail call {saved.CallId} of item {item.DispatcherQueueItemId} could not be deleted (attempt {attempt + 1}).");
+				}
+			}
+
+			Logging.LogError($"Dispatcher desk: voicemail call {saved.CallId} is a second pending call for item {item.DispatcherQueueItemId}, which is voicemail call {linked.CallId}; it could not be deleted and must be removed by hand.");
+			return false;
+		}
+
+		/// <summary>
+		/// The item as it is just before the save (preparing the call may have stalled past the claim's life): a request that took the
+		/// claim over holds it now (<see cref="DispatcherVoicemailOutcomes.InProgress"/>), or the item already is its voicemail call
+		/// (<see cref="DispatcherVoicemailOutcomes.AlreadyTaken"/>); either way this request saves nothing, so one voicemail does not wait
+		/// as two pending calls. Null to save: the item still holds this claim, is gone, is some other call, or could not be read (the
+		/// recording is never dropped on a doubt; a second call saved then is deleted when it is linked).
+		/// </summary>
+		private async Task<DispatcherVoicemailResult> OvertakenBeforeSaveAsync(DispatcherQueueItem item, string note)
+		{
+			try
+			{
+				var current = await _itemsRepository.GetItemAsync(item.DispatcherQueueItemId);
+				if (current == null)
+					return null;
+
+				if (current.CallId.HasValue)
+				{
+					var linked = await _callsService.GetCallByIdAsync(current.CallId.Value);
+					if (linked == null || linked.IsDeleted || !IsVoicemailCallOf(linked, item))
+						return null;
+
+					Logging.LogInfo($"[Dispatcher desk] Voice item {item.DispatcherQueueItemId} became voicemail call {linked.CallId} before this request saved; nothing more is saved.");
+					return DispatcherVoicemailResult.Of(DispatcherVoicemailOutcomes.AlreadyTaken);
+				}
+
+				if (IsClaimed(current) && !string.Equals(current.OverflowNote, Truncate(note), StringComparison.Ordinal))
+				{
+					Logging.LogInfo($"[Dispatcher desk] Voice item {item.DispatcherQueueItemId}: the voicemail claim was taken over before this request saved; nothing is saved.");
+					return DispatcherVoicemailResult.Of(DispatcherVoicemailOutcomes.InProgress);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Dispatcher desk: voice item {item.DispatcherQueueItemId} could not be read before its voicemail call was saved.");
+			}
+
+			return null;
 		}
 
 		private static string SourceOf(DispatcherQueueItem item) => "DQ:" + item.DispatcherQueueItemId;

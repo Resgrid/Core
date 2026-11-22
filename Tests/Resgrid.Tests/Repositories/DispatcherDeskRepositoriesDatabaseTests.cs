@@ -195,6 +195,35 @@ namespace Resgrid.Tests.Repositories
 		}
 
 		[Test]
+		public async Task Stranded_voicemail_claims_are_the_recent_overflowed_voice_items_with_a_claim_and_no_call()
+		{
+			const int dept = 77;
+			DispatcherQueueItem Voice(DispatcherQueueItemStates state, string note, int? callId = null, DateTime? created = null)
+			{
+				var item = NewItem(departmentId: dept, callId: callId, state: state, created: created);
+				item.Kind = (int)DispatcherQueueItemKinds.Voice;
+				item.OverflowNote = note;
+				return item;
+			}
+
+			var claim = "Voicemail recording RE1 (claimed 2026-11-22T18:00:00.0000000Z): https://api.twilio.com/rec/RE1";
+			var stranded = Voice(DispatcherQueueItemStates.Overflowed, claim, created: Now.AddHours(-1));
+			var linked = Voice(DispatcherQueueItemStates.Overflowed, claim, callId: 9001);
+			var tooOld = Voice(DispatcherQueueItemStates.Overflowed, claim, created: Now.AddDays(-3));
+			var noClaim = Voice(DispatcherQueueItemStates.Overflowed, "No dispatcher free: voicemail");
+			var queued = Voice(DispatcherQueueItemStates.Queued, claim);
+			var text = NewItem(departmentId: dept, state: DispatcherQueueItemStates.Overflowed);
+			text.OverflowNote = claim;
+			foreach (var item in new[] { stranded, linked, tooOld, noClaim, queued, text })
+				await Items().InsertAsync(item, CancellationToken.None, true);
+
+			var found = (await Items().GetUnlinkedVoicemailClaimsAsync(Now.AddDays(-2))).Where(x => x.DepartmentId == dept).ToList();
+
+			found.Select(x => x.DispatcherQueueItemId).Should().BeEquivalentTo(new[] { stranded.DispatcherQueueItemId });
+			found.Single().OverflowNote.Should().Be(claim);
+		}
+
+		[Test]
 		public async Task Open_item_lookups_by_call_conversation_and_reference()
 		{
 			var forCall = NewItem(callId: 4321);
@@ -490,6 +519,16 @@ namespace Resgrid.Tests.Repositories
 			(await Presences().TrySignInAsync(onBreak, otherBreak)).Should().BeFalse("another break was read");
 			var sameBreak = new DispatcherPresence { DispatcherPresenceId = onBreak.DispatcherPresenceId, State = onBreak.State, SignedInOn = onBreak.SignedInOn, ActiveBreakId = "break-cat" };
 			(await Presences().TrySignInAsync(onBreak, sameBreak)).Should().BeTrue();
+
+			// PR 589 round 4: a sign-in that supplies no callback number leaves the stored one alone (one saved since its read stands).
+			var refresh = await Presences().GetForUserAsync(Dept, "signin-cat");
+			var refreshRead = await Presences().GetForUserAsync(Dept, "signin-cat");
+			refresh.CallbackNumber = null;
+			refresh.SignedInOn = Now.AddMinutes(1);
+			(await Presences().TrySignInAsync(refresh, refreshRead)).Should().BeTrue();
+			var kept = await Presences().GetForUserAsync(Dept, "signin-cat");
+			kept.CallbackNumber.Should().Be("+15555550199");
+			kept.SignedInOn.Should().BeCloseTo(Now.AddMinutes(1), TimeSpan.FromMilliseconds(1));
 		}
 
 		[Test]

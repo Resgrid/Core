@@ -23,6 +23,9 @@ namespace Resgrid.Tests.Mocks
 
 		public void Seed(InboundEmailReceipt receipt) => _receipts.Add(receipt);
 
+		/// <summary>How many of the next finished-step writes throw (the receipt store failing between a step and its checkpoint).</summary>
+		public int FailCompleteSteps { get; set; }
+
 		public Task<bool> TryInsertAsync(InboundEmailReceipt receipt, CancellationToken cancellationToken = default)
 		{
 			if (Find(receipt.ProviderMessageId) != null)
@@ -75,6 +78,12 @@ namespace Resgrid.Tests.Mocks
 
 		public Task<bool> CompleteStepsAsync(string receiptId, int steps, CancellationToken cancellationToken = default)
 		{
+			if (FailCompleteSteps > 0)
+			{
+				FailCompleteSteps--;
+				throw new TimeoutException("The receipt store is unavailable.");
+			}
+
 			var receipt = Get(receiptId);
 			if (receipt == null || receipt.State != (int)InboundEmailReceiptStates.Saved)
 				return Task.FromResult(false);

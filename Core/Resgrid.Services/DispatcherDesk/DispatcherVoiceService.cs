@@ -151,7 +151,7 @@ namespace Resgrid.Services
 				// TwiML refuses an item the dispatcher no longer holds, or takes it again from the queue on "press 1". Work the
 				// dispatcher already held stays theirs.
 				if (acquiredNow)
-					await ReleaseAfterFailedDialAsync(departmentId, item.DispatcherQueueItemId, userId, attemptStartedOn);
+					await ReleaseAfterFailedDialAsync(departmentId, item.DispatcherQueueItemId, userId, attemptStartedOn, item.AcceptedOn);
 
 				return DispatcherDeskResult<DispatcherQueueItem>.Fail(DispatcherDeskErrors.ChannelUnavailable, "The call to your phone could not be placed.");
 			}
@@ -171,9 +171,12 @@ namespace Resgrid.Services
 		/// dispatcher, so one since this attempt started means the item is in use; it stays theirs. The row is read before its history
 		/// and the release is fenced on that row's Version, so a VoiceConnecting recorded after the read (it touches the item) makes the
 		/// release fail and the next pass sees it. A failed read or write is tried again, so a blip does not leave the item held by a
-		/// dispatcher with no leg (they can still release it from the desk when every pass fails).
+		/// dispatcher with no leg (they can still release it from the desk when every pass fails). The acceptance this dial made
+		/// (<paramref name="acceptedOn"/>, set by every accept and by nothing else that touches the item) is compared on every pass: one
+		/// made meanwhile (the dispatcher returned the item and took it again while the provider was being asked) is not this dial's to
+		/// give back, though the holder is the same.
 		/// </remarks>
-		private async Task ReleaseAfterFailedDialAsync(int departmentId, string itemId, string userId, DateTime attemptStartedOn)
+		private async Task ReleaseAfterFailedDialAsync(int departmentId, string itemId, string userId, DateTime attemptStartedOn, DateTime? acceptedOn)
 		{
 			for (var attempt = 0; attempt < FailedDialReleaseAttempts; attempt++)
 			{
@@ -184,6 +187,12 @@ namespace Resgrid.Services
 					if (row == null || !row.IsOpen() || !string.Equals(row.AssignedUserId, userId, StringComparison.OrdinalIgnoreCase) ||
 						(row.State != (int)DispatcherQueueItemStates.Accepted && row.State != (int)DispatcherQueueItemStates.Offered))
 						return;
+
+					if (acceptedOn.HasValue && (!row.AcceptedOn.HasValue || !SameAcceptance(row.AcceptedOn.Value, acceptedOn.Value)))
+					{
+						Logging.LogInfo($"[Dispatcher desk] Item {itemId} kept after a failed dial: it was taken again since this dial took it.");
+						return;
+					}
 
 					if (DialPlacedSince(detail.Events, userId, attemptStartedOn))
 					{
@@ -212,6 +221,14 @@ namespace Resgrid.Services
 
 			Logging.LogError($"[Dispatcher desk] Item {itemId} is still held by its dispatcher after a failed dial; it was not returned.");
 		}
+
+		/// <summary>
+		/// One acceptance read back from the store: SQL Server keeps every tick, PostgreSQL microseconds, so the stamps are compared to the
+		/// millisecond (as the routing service compares overflow claims). A later accept is a return and a new accept later: far more
+		/// than a millisecond.
+		/// </summary>
+		internal static bool SameAcceptance(DateTime stored, DateTime acceptedOn) =>
+			Math.Abs((stored - acceptedOn).Ticks) < TimeSpan.TicksPerMillisecond;
 
 		/// <summary>A leg of <paramref name="userId"/> was placed on the item at or after <paramref name="sinceUtc"/> (its VoiceConnecting entry).</summary>
 		internal static bool DialPlacedSince(System.Collections.Generic.IEnumerable<DispatcherQueueEvent> events, string userId, DateTime sinceUtc)

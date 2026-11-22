@@ -103,62 +103,48 @@ namespace Resgrid.Services
 			if (string.IsNullOrWhiteSpace(userId))
 				return;
 
-			var item = await FindIntakeItemAsync(conversation);
-			var now = UtcNow();
-			string previous = null;
-			var recorded = false;
-
-			// A participant's message (or any desk write) can change the item's version between the read and the write: the item is
-			// read again and the connect retried, as long as intake still has this dispatcher on the thread (a newer connect or release wins).
-			// The desk item names intake's holder only: on a version race the expected version comes from a row that may already show a
-			// newer dispatcher, so the version check alone cannot refuse a stale connect.
-			for (var attempt = 0; attempt < 3; attempt++)
-			{
-				if (item == null || !item.IsOpen())
-					return;
-
-				// The desk's own accept (and a transfer accepted) already holds the item for this dispatcher.
-				if (item.State == (int)DispatcherQueueItemStates.Accepted && SameUser(item.AssignedUserId, userId))
-					return;
-
-				// Intake raises this after its own connect commits, but a newer connect (a takeover) can commit and reach the desk first
-				// while this callback waited on the introduction text: the desk follows intake's current holder, so it is checked before
-				// every write, the first one included.
-				if (!await StillConnectedAsync(conversation, userId))
-					return;
-
-				previous = item.AssignedUserId;
-				var expected = item.Version;
-				item.State = (int)DispatcherQueueItemStates.Accepted;
-				item.AssignedUserId = userId;
-				item.AcceptedOn = now;
-				item.OfferExpiresOn = null;
-				item.LastActivityOn = now;
-
-				if (await _itemsRepository.TryUpdateAsync(item, expected, CancellationToken.None))
-				{
-					recorded = true;
-					break;
-				}
-
-				item = await _itemsRepository.GetItemAsync(item.DispatcherQueueItemId);
-			}
-
-			if (!recorded)
+			var connect = await RecordIntakeConnectAsync(conversation, await FindIntakeItemAsync(conversation), userId);
+			if (connect.Outcome != IntakeConnectOutcomes.Recorded)
 				return;
 
-			await AddEventAsync(item, DispatcherQueueEventTypes.Accepted, userId, ConnectedFromCallDetail, now, CancellationToken.None);
+			var item = connect.Item;
+			var previous = connect.Previous;
+			await AddEventAsync(item, DispatcherQueueEventTypes.Accepted, userId, ConnectedFromCallDetail, item.AcceptedOn ?? UtcNow(), CancellationToken.None);
 
 			// The holder check above and this write are not one step: intake can release the thread in between, and its release callback
 			// (run after its commit) then found the item still queued and left it. Read intake again now the accept is stored: when it no
-			// longer has this dispatcher, the accept goes back exactly as written (version-checked, so a release callback or a newer
-			// connect that already moved the item wins), and a release that commits after this read finds the accept and returns it itself.
-			if (!await StillConnectedAsync(conversation, userId) &&
-				await ReturnToQueueAsync(item, userId, addToDeclined: false, UtcNow(), CancellationToken.None))
+			// longer has this dispatcher, the accept goes back (only that accept: a release callback, a newer connect or a desk accept that
+			// already moved the item wins), and a release that commits after this read finds the accept and returns it itself.
+			for (var round = 0; round < IntakeConnectRounds; round++)
 			{
+				if (!await ReturnUnconnectedIntakeAcceptAsync(conversation, item, userId, item.AcceptedOn))
+					break;
+
+				var releasedOn = item.LastActivityOn;
+
+				// Intake can connect the same dispatcher again between the read and the return: that connect's own callback may have found
+				// this accept, left it as it stood, and finished before the return was written, so nobody would put the item back with
+				// them. Intake is read once more after the return: still connected, the item is taken back for the new connect (and checked
+				// again, as intake may have let go of the thread once more). An accept someone else wrote meanwhile is theirs to keep.
+				if (round + 1 < IntakeConnectRounds && await ConnectedNowAsync(conversation, userId))
+				{
+					var again = await RecordIntakeConnectAsync(conversation, item, userId);
+					item = again.Item ?? item;
+					if (again.Outcome == IntakeConnectOutcomes.Recorded)
+						continue;
+
+					if (again.Outcome == IntakeConnectOutcomes.AlreadyHeld)
+						break;
+				}
+
 				await AddEventAsync(item, DispatcherQueueEventTypes.Released, userId, "Intake released the text thread before the desk recorded the connect",
-					item.LastActivityOn, CancellationToken.None);
-				await AfterReturnAsync(item, item.LastActivityOn, CancellationToken.None);
+					releasedOn, CancellationToken.None);
+
+				// Offered on, or overflowed, only while it still waits as the return left it.
+				if (item.IsOpen() && item.State == (int)DispatcherQueueItemStates.Queued)
+					await AfterReturnAsync(item, releasedOn, CancellationToken.None);
+				else
+					await PublishAsync(item);
 
 				if (!string.IsNullOrWhiteSpace(previous) && !SameUser(previous, userId))
 					await _notifier.PublishDeskChangedAsync(item.DepartmentId, previous);
@@ -424,6 +410,110 @@ namespace Resgrid.Services
 			var accepted = events.Where(x => x.EventType == (int)DispatcherQueueEventTypes.Accepted && SameUser(x.UserId, holder))
 				.Select(x => (DateTime?)x.OccurredOn).Max();
 			return accepted.HasValue && events.Any(x => x.EventType == (int)DispatcherQueueEventTypes.Released && x.OccurredOn > accepted.Value);
+		}
+
+		/// <summary>How many times one connect callback puts its accept back and takes it again for a reconnect of the same dispatcher.</summary>
+		private const int IntakeConnectRounds = 3;
+
+		private enum IntakeConnectOutcomes
+		{
+			/// <summary>This callback wrote the accept.</summary>
+			Recorded,
+
+			/// <summary>The item already is this dispatcher's (the desk's own accept, a transfer, or the callback of another connect).</summary>
+			AlreadyHeld,
+
+			/// <summary>Intake no longer has this dispatcher on the thread, the item is closed or gone, or every write lost a race.</summary>
+			NotRecorded
+		}
+
+		/// <summary>
+		/// Records intake's connect of <paramref name="userId"/> on the desk item: Accepted for them. A participant's message (or any desk
+		/// write) can change the item's version between the read and the write: the item is read again and the connect retried, as long as
+		/// intake still has this dispatcher on the thread (a newer connect or release wins). The desk item names intake's holder only: on a
+		/// version race the expected version comes from a row that may already show a newer dispatcher, so the version check alone cannot
+		/// refuse a stale connect.
+		/// </summary>
+		private async Task<(IntakeConnectOutcomes Outcome, DispatcherQueueItem Item, string Previous)> RecordIntakeConnectAsync(IntakeConversation conversation,
+			DispatcherQueueItem item, string userId)
+		{
+			var now = UtcNow();
+
+			for (var attempt = 0; attempt < 3; attempt++)
+			{
+				if (item == null || !item.IsOpen())
+					return (IntakeConnectOutcomes.NotRecorded, item, null);
+
+				// The desk's own accept (and a transfer accepted) already holds the item for this dispatcher.
+				if (item.State == (int)DispatcherQueueItemStates.Accepted && SameUser(item.AssignedUserId, userId))
+					return (IntakeConnectOutcomes.AlreadyHeld, item, null);
+
+				// Intake raises this after its own connect commits, but a newer connect (a takeover) can commit and reach the desk first
+				// while this callback waited on the introduction text: the desk follows intake's current holder, so it is checked before
+				// every write, the first one included.
+				if (!await StillConnectedAsync(conversation, userId))
+					return (IntakeConnectOutcomes.NotRecorded, item, null);
+
+				var previous = item.AssignedUserId;
+				var expected = item.Version;
+				item.State = (int)DispatcherQueueItemStates.Accepted;
+				item.AssignedUserId = userId;
+				item.AcceptedOn = now;
+				item.OfferExpiresOn = null;
+				item.LastActivityOn = now;
+
+				if (await _itemsRepository.TryUpdateAsync(item, expected, CancellationToken.None))
+					return (IntakeConnectOutcomes.Recorded, item, previous);
+
+				item = await _itemsRepository.GetItemAsync(item.DispatcherQueueItemId);
+			}
+
+			return (IntakeConnectOutcomes.NotRecorded, item, null);
+		}
+
+		/// <summary>
+		/// Puts the accept a connect callback wrote (<paramref name="acceptedOn"/>) back in the queue when intake no longer has
+		/// <paramref name="userId"/> on the thread. Only that accept: a desk write that only touched the item (a participant's message)
+		/// is read through and the return tried again, while a newer accept (the desk's own, or another connect's), a transfer or a close
+		/// stops it, as does intake having the dispatcher again. True when the return was written (<paramref name="item"/> is the row
+		/// as written; otherwise as last read).
+		/// </summary>
+		private async Task<bool> ReturnUnconnectedIntakeAcceptAsync(IntakeConversation conversation, DispatcherQueueItem item, string userId, DateTime? acceptedOn)
+		{
+			for (var attempt = 0; attempt < 3; attempt++)
+			{
+				if (item == null || !item.IsOpen() || item.State != (int)DispatcherQueueItemStates.Accepted || !SameUser(item.AssignedUserId, userId) ||
+					!acceptedOn.HasValue || !item.AcceptedOn.HasValue || !SameStamp(item.AcceptedOn.Value, acceptedOn.Value))
+					return false;
+
+				if (await StillConnectedAsync(conversation, userId))
+					return false;
+
+				// A failed return refreshes the item from its row (ReturnToQueueAsync), so the checks above judge the row as it now is.
+				if (await ReturnToQueueAsync(item, userId, addToDeclined: false, UtcNow(), CancellationToken.None))
+					return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>Intake has <paramref name="userId"/> on the thread right now (read fresh); false when it cannot be read.</summary>
+		private async Task<bool> ConnectedNowAsync(IntakeConversation conversation, string userId)
+		{
+			var intake = IntakeConversations;
+			if (intake == null)
+				return false;
+
+			try
+			{
+				var current = await intake.GetByIdAsync(conversation.DepartmentId, conversation.IntakeConversationId);
+				return current != null && current.IsOpen && SameUser(current.AssignedUserId, userId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Dispatcher desk: reading intake thread {conversation.IntakeConversationId}");
+				return false;
+			}
 		}
 
 		/// <summary>Intake still has <paramref name="userId"/> on the thread (read fresh); true when it cannot be read, as the callback said so.</summary>

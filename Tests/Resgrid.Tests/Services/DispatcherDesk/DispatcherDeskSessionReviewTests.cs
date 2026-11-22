@@ -493,6 +493,50 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			(await _presence.SignInAsync(Dept, "ann", new DispatcherSignInRequest())).Success.Should().BeTrue();
 
 			_store.Presences.Single().State.Should().Be((int)DispatcherPresenceStates.Available);
+
+			// PR 589 round 4: and the break is not left active behind the new session (it would block her next break).
+			var closed = _store.Breaks.Single();
+			closed.State.Should().Be((int)DispatcherBreakStates.Completed, "closed once the sign-in committed over the signed-off row");
+			closed.EndReason.Should().Be((int)DispatcherBreakEndReasons.SignedOff);
+			closed.EndedOn.Should().Be(Now);
+		}
+
+		[Test]
+		public async Task A_left_over_break_whose_close_fails_after_sign_in_still_signs_in()
+		{
+			_store.AddPresence(Dept, "ann", DispatcherPresenceStates.Offline, Now.AddMinutes(-30)).StateChangedOn = Now.AddMinutes(-20);
+			_store.Breaks.Add(new DispatcherBreak
+			{
+				DispatcherBreakId = "b-odd", DepartmentId = Dept, UserId = "ann", State = (int)DispatcherBreakStates.Active, DurationMinutes = 15,
+				StartedOn = Now.AddMinutes(-2), CreatedOn = Now.AddMinutes(-2)
+			});
+			_store.BeforeBreakWrite = _ => throw new InvalidOperationException("break close failed");
+
+			(await _presence.SignInAsync(Dept, "ann", new DispatcherSignInRequest())).Success.Should().BeTrue();
+
+			_store.Presences.Single().State.Should().Be((int)DispatcherPresenceStates.Available);
+			_store.Breaks.Single().State.Should().Be((int)DispatcherBreakStates.Active, "left for the break timer, which closes an earlier session's break");
+		}
+
+		[Test]
+		public async Task A_sign_in_without_a_callback_number_keeps_one_saved_meanwhile()
+		{
+			var presence = _store.AddPresence(Dept, "ann", DispatcherPresenceStates.Offline, Now.AddMinutes(-30));
+			presence.CallbackNumber = "+15555550100";
+
+			// The dispatcher saves a new callback number between the sign-in's read and its write.
+			_store.BeforePresenceWrite = _ =>
+			{
+				_store.BeforePresenceWrite = null;
+				_store.Presences.Single().CallbackNumber = "+15555550177";
+			};
+
+			(await _presence.SignInAsync(Dept, "ann", new DispatcherSignInRequest())).Success.Should().BeTrue();
+
+			_store.Presences.Single().CallbackNumber.Should().Be("+15555550177", "the number read before the sign-in is not written back");
+
+			(await _presence.SignInAsync(Dept, "ann", new DispatcherSignInRequest { CallbackNumber = "+1 555 555 0188" })).Success.Should().BeTrue();
+			_store.Presences.Single().CallbackNumber.Should().Be("+15555550188", "a number the sign-in supplies is saved");
 		}
 
 		[Test]
@@ -645,7 +689,7 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			presences.Setup(x => x.GetSignedInAsync(It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("database down"));
 			var routing = new Mock<IDispatcherRoutingService>();
 			var worker = new DispatcherDeskWorkerService(new Mock<IDispatcherBreaksService>().Object, new Mock<IDispatcherPresenceService>().Object, routing.Object,
-				presences.Object);
+				presences.Object, new Mock<IDispatcherDeskPendingCalls>().Object);
 
 			await worker.TickAsync(NextWorkerTime());
 
@@ -665,7 +709,7 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 				.ReturnsAsync(0)
 				.ReturnsAsync(0);
 			var worker = new DispatcherDeskWorkerService(new Mock<IDispatcherBreaksService>().Object, new Mock<IDispatcherPresenceService>().Object, routing.Object,
-				presences.Object);
+				presences.Object, new Mock<IDispatcherDeskPendingCalls>().Object);
 
 			var start = NextWorkerTime();
 			await worker.TickAsync(start);
@@ -674,6 +718,27 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 
 			routing.Verify(x => x.PurgeAsync(It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Exactly(2),
 				"the failed purge is retried at once; the successful one (no rows) waits the hour");
+		}
+
+		[Test]
+		public async Task Each_tick_recovers_stranded_voicemails_from_the_recovery_window_and_a_failure_there_stops_nothing_else()
+		{
+			var presences = new Mock<IDispatcherPresencesRepository>();
+			presences.Setup(x => x.GetSignedInAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<DispatcherPresence>());
+			var routing = new Mock<IDispatcherRoutingService>();
+			var pendingCalls = new Mock<IDispatcherDeskPendingCalls>();
+			pendingCalls.Setup(x => x.RecoverExpiredVoicemailClaimsAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new InvalidOperationException("database down"));
+			var worker = new DispatcherDeskWorkerService(new Mock<IDispatcherBreaksService>().Object, new Mock<IDispatcherPresenceService>().Object, routing.Object,
+				presences.Object, pendingCalls.Object);
+
+			var now = NextWorkerTime();
+			await worker.TickAsync(now);
+
+			pendingCalls.Verify(x => x.RecoverExpiredVoicemailClaimsAsync(now, now - DispatcherDeskWorkerService.VoicemailRecoveryWindow, It.IsAny<CancellationToken>()),
+				Times.Once);
+			routing.Verify(x => x.ProcessTimeoutsAsync(now, It.IsAny<CancellationToken>()), Times.Once);
+			routing.Verify(x => x.PurgeAsync(now, It.IsAny<CancellationToken>()), Times.Once, "the purge after the recovery still runs");
 		}
 
 		// ------------------------------------------------------------------ shift delete

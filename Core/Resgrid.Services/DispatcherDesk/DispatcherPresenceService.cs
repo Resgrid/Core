@@ -92,7 +92,8 @@ namespace Resgrid.Services
 		/// </summary>
 		/// <param name="lastAttempt">
 		/// A break that still cannot be closed on the last attempt is not a race (its start is after the row's sign-off time, e.g. clocks
-		/// apart): the sign-in goes ahead without it, still conditional on the row as read, rather than refusing every sign-in.
+		/// apart): the sign-in goes ahead without it, still conditional on the row as read, rather than refusing every sign-in, and the
+		/// break is closed once that sign-in has committed (the break timer closes it if that fails).
 		/// </param>
 		private async Task<bool> TrySignInOnceAsync(int departmentId, string userId, DispatcherSignInRequest request, DispatcherDutyWindow duty, bool unscheduled,
 			DateTime now, bool lastAttempt, CancellationToken cancellationToken)
@@ -111,10 +112,18 @@ namespace Resgrid.Services
 			// ends them, so one still active on a signed-off row is left over from a sign-off whose close failed: it ends now, as ended
 			// by that sign-off, instead of putting the new session on break. A close refused (the break began after that sign-off: a
 			// sign-in in between started it) means the row read is stale: read again rather than sign in over that session.
+			DispatcherBreak leftOver = null;
 			if (activeBreak != null && !presence.IsSignedIn())
 			{
-				if (!await CloseSignedOffBreakAsync(activeBreak, presence.StateChangedOn, userId, now, cancellationToken) && !lastAttempt)
-					return false;
+				if (!await CloseSignedOffBreakAsync(activeBreak, presence.StateChangedOn, userId, now, cancellationToken))
+				{
+					if (!lastAttempt)
+						return false;
+
+					// Closed after the sign-in below commits, not before: that write succeeds only over the signed-off row read here, so
+					// no session is on the break by then (a sign-in that loses to another session never ends that session's break).
+					leftOver = activeBreak;
+				}
 
 				activeBreak = null;
 			}
@@ -133,12 +142,36 @@ namespace Resgrid.Services
 			presence.AwayReason = request.StartAway ? "Signed in away" : null;
 			presence.DeviceKind = NormalizeDeviceKind(request.DeviceKind) ?? presence.DeviceKind;
 
-			var callback = NormalizePhone(request.CallbackNumber);
-			if (callback != null)
-				presence.CallbackNumber = callback;
+			// Only a number the sign-in supplies is written (null keeps the stored one): the number read above is not written back over
+			// one the dispatcher saved in the meantime.
+			presence.CallbackNumber = NormalizePhone(request.CallbackNumber);
 
 			// Conditional on the row as read (like sign-off): a sign-in, a break started or a sign-off committed since wins.
-			return await _presencesRepository.TrySignInAsync(presence, observed, cancellationToken);
+			if (!await _presencesRepository.TrySignInAsync(presence, observed, cancellationToken))
+				return false;
+
+			if (leftOver != null)
+				await CloseLeftOverBreakAsync(leftOver, userId, now, cancellationToken);
+
+			return true;
+		}
+
+		/// <summary>
+		/// Ends a break left over from a session already over that the sign-in went ahead without (see <c>lastAttempt</c> above): as ended
+		/// by that sign-off, at the sign-in (or at the break's start when that is later, clocks apart), conditional on it still being
+		/// active. A failure is logged; the break timer closes such a break later.
+		/// </summary>
+		private async Task CloseLeftOverBreakAsync(DispatcherBreak leftOver, string byUserId, DateTime now, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var endedOn = leftOver.StartedOn.HasValue && leftOver.StartedOn.Value > now ? leftOver.StartedOn.Value : now;
+				await CloseBreakAsSignedOffAsync(leftOver, endedOn, byUserId, now, cancellationToken);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException && cancellationToken.IsCancellationRequested))
+			{
+				Logging.LogException(ex, $"Dispatcher sign-in of {leftOver.UserId} in {leftOver.DepartmentId}: the left-over break could not be closed yet (closed later by the break timer)");
+			}
 		}
 
 		public Task<DispatcherDeskResult<bool>> SignOffAsync(int departmentId, string userId, string byUserId, CancellationToken cancellationToken = default) =>
@@ -208,8 +241,15 @@ namespace Resgrid.Services
 			if (activeBreak.StartedOn.HasValue && signedOffOn.HasValue && activeBreak.StartedOn.Value > signedOffOn.Value)
 				return false;
 
+			return await CloseBreakAsSignedOffAsync(activeBreak, signedOffOn.HasValue && signedOffOn.Value <= now ? signedOffOn.Value : now, byUserId, now,
+				cancellationToken);
+		}
+
+		private async Task<bool> CloseBreakAsSignedOffAsync(DispatcherBreak activeBreak, DateTime endedOn, string byUserId, DateTime now,
+			CancellationToken cancellationToken)
+		{
 			activeBreak.State = (int)DispatcherBreakStates.Completed;
-			activeBreak.EndedOn = signedOffOn.HasValue && signedOffOn.Value <= now ? signedOffOn.Value : now;
+			activeBreak.EndedOn = endedOn;
 			activeBreak.EndReason = (int)DispatcherBreakEndReasons.SignedOff;
 			activeBreak.EndedByUserId = byUserId;
 			activeBreak.UpdatedByUserId = byUserId;

@@ -536,13 +536,20 @@ namespace Resgrid.Repositories.DataRepository
 				updated.MissedOffers,
 				updated.AwayReason,
 				updated.DeviceKind,
-				updated.CallbackNumber,
 				ObservedState = observed.State
 			});
 			DispatcherDeskSql.AddTimestamp(parameters, "StateChangedOn", updated.StateChangedOn);
 			DispatcherDeskSql.AddTimestamp(parameters, "SignedInOn", updated.SignedInOn);
 			DispatcherDeskSql.AddTimestamp(parameters, "LastSeenOn", updated.LastSeenOn);
 			DispatcherDeskSql.AddTimestamp(parameters, "DutyEndsOn", updated.DutyEndsOn);
+
+			// A sign-in that supplies no callback number leaves the stored one alone (one saved since the row was read stands).
+			var callbackNumber = "";
+			if (updated.CallbackNumber != null)
+			{
+				parameters.Add("CallbackNumber", updated.CallbackNumber);
+				callbackNumber = $", {Col("CallbackNumber")} = {P}CallbackNumber";
+			}
 
 			string activeBreak;
 			if (string.IsNullOrWhiteSpace(observed.ActiveBreakId))
@@ -560,7 +567,7 @@ namespace Resgrid.Repositories.DataRepository
 				$"{Col("StateChangedOn")} = {P}StateChangedOn, {Col("SignedInOn")} = {P}SignedInOn, {Col("LastSeenOn")} = {P}LastSeenOn, " +
 				$"{Col("DutyMode")} = {P}DutyMode, {Col("DutyShiftId")} = {P}DutyShiftId, {Col("DutyShiftDayId")} = {P}DutyShiftDayId, " +
 				$"{Col("DutyEndsOn")} = {P}DutyEndsOn, {Col("MissedOffers")} = {P}MissedOffers, {Col("AwayReason")} = {P}AwayReason, " +
-				$"{Col("DeviceKind")} = {P}DeviceKind, {Col("CallbackNumber")} = {P}CallbackNumber " +
+				$"{Col("DeviceKind")} = {P}DeviceKind{callbackNumber} " +
 				$"WHERE {Col("DispatcherPresenceId")} = {CaseInsensitive("Id")} AND {Col("State")} = {P}ObservedState " +
 				$"AND {NullableTimestampEquals("SignedInOn", "ObservedSignedInOn", observed.SignedInOn, parameters)} AND {activeBreak}",
 				parameters, cancellationToken) > 0;
@@ -790,6 +797,23 @@ namespace Resgrid.Repositories.DataRepository
 			return QueryAsync<DispatcherQueueItem>(
 				$"SELECT * FROM {Tbl("DispatcherQueueItems")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("CreatedOn")} >= {P}From " +
 				$"AND {Col("CreatedOn")} < {P}To ORDER BY {Col("CreatedOn")}", parameters);
+		}
+
+		public Task<IEnumerable<DispatcherQueueItem>> GetUnlinkedVoicemailClaimsAsync(DateTime createdSinceUtc)
+		{
+			// The claim prefix is DispatcherDeskPendingCalls.VoicemailClaimPrefix ("Voicemail recording "): no LIKE wildcard in it.
+			var parameters = new DynamicParameters(new
+			{
+				Overflowed = (int)DispatcherQueueItemStates.Overflowed,
+				Voice = (int)DispatcherQueueItemKinds.Voice,
+				ClaimPrefix = "Voicemail recording %"
+			});
+			DispatcherDeskSql.AddTimestamp(parameters, "Since", createdSinceUtc);
+
+			return QueryAsync<DispatcherQueueItem>(
+				$"SELECT * FROM {Tbl("DispatcherQueueItems")} WHERE {Col("State")} = {P}Overflowed AND {Col("Kind")} = {P}Voice " +
+				$"AND {Col("CallId")} IS NULL AND {Col("CreatedOn")} >= {P}Since AND {Col("OverflowNote")} LIKE {P}ClaimPrefix " +
+				$"ORDER BY {Col("CreatedOn")}", parameters);
 		}
 
 		public async Task<int> PurgeClosedBeforeAsync(DateTime beforeUtc, CancellationToken cancellationToken = default)

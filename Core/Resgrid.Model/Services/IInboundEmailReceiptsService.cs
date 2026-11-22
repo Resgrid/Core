@@ -23,8 +23,11 @@ namespace Resgrid.Model.Services
 		/// <summary>Records the call or message the delivery saved and the steps it still owes, before those steps run.</summary>
 		Task MarkSavedAsync(InboundEmailReceiptClaim claim, int entityId, InboundEmailPendingSteps pendingSteps);
 
-		/// <summary>Records that a pending step finished, so a retry does not repeat it.</summary>
-		Task CompleteStepAsync(InboundEmailReceiptClaim claim, InboundEmailPendingSteps step);
+		/// <summary>
+		/// Records that a pending step finished, so a retry does not repeat it. True when the receipt now records it; false when the
+		/// write failed (logged) or the delivery is untracked, so a caller about to ask for a redelivery knows the step would run again.
+		/// </summary>
+		Task<bool> CompleteStepAsync(InboundEmailReceiptClaim claim, InboundEmailPendingSteps step);
 
 		Task MarkCompletedAsync(InboundEmailReceiptClaim claim);
 

@@ -438,7 +438,7 @@ namespace Resgrid.Web.Services.Controllers
 										return await DeskHandOffOwedAsync(receipt, aiQueued);
 
 									if (enrich && !aiQueued)
-										return await AiEnrichmentOwedAsync(receipt, pendingSteps);
+										return await AiEnrichmentOwedAsync(receipt, pendingSteps, pagedNow: !holdAsPending);
 
 									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 									return Ok(savedCall);
@@ -683,7 +683,7 @@ namespace Resgrid.Web.Services.Controllers
 
 									if (pendingSteps.HasFlag(InboundEmailPendingSteps.AiEnrichment) &&
 										!await QueueAiDispatchEnrichmentAsync(savedCall, 2, message.FromFull?.Email, cancellationToken))
-										return await AiEnrichmentOwedAsync(receipt, pendingSteps);
+										return await AiEnrichmentOwedAsync(receipt, pendingSteps, pagedNow: pendingSteps.HasFlag(InboundEmailPendingSteps.CallBroadcast));
 
 									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 									return Ok(savedCall);
@@ -838,24 +838,30 @@ namespace Resgrid.Web.Services.Controllers
 
 			// A pending call (email call mode Pending / EnhancedAi) is never paged here: only its desk entry and screen refresh are owed.
 			var onDesk = true;
+			var paged = false;
 			if (call.State == (int)CallStates.Pending)
 			{
 				if (receipt.Has(InboundEmailPendingSteps.CallAddedEvent))
 					onDesk = await _dispatcherEmailCallService.OnPendingCallSavedAsync(call, message.FromFull?.Email, message.Subject, cancellationToken);
 			}
 			else if (receipt.Has(InboundEmailPendingSteps.CallBroadcast))
+			{
 				await QueueCallBroadcastAsync(call, cancellationToken, allowRunCardEnrichment);
+				paged = true;
+			}
 
-			// The original delivery recorded the desk step only for a call its email call mode held for a dispatcher.
+			// Held for a dispatcher: the original delivery recorded the desk step only for a call its email call mode held, and a call
+			// still pending was held (the email call mode is the only path here that saves one). The pending state counts as well because
+			// the desk step is recorded done once the desk entry went out, so an AI job owed after that keeps its held entitlement.
 			var enrich = receipt.Has(InboundEmailPendingSteps.AiEnrichment);
 			var aiQueued = enrich && await QueueAiDispatchEnrichmentAsync(call, aiChannel, message.FromFull?.Email, cancellationToken,
-				heldForDispatcher: receipt.Has(InboundEmailPendingSteps.CallAddedEvent));
+				heldForDispatcher: receipt.Has(InboundEmailPendingSteps.CallAddedEvent) || call.State == (int)CallStates.Pending);
 
 			if (!onDesk)
 				return await DeskHandOffOwedAsync(receipt, aiQueued);
 
 			if (enrich && !aiQueued)
-				return await AiEnrichmentOwedAsync(receipt, InboundEmailPendingSteps.CallBroadcast | InboundEmailPendingSteps.CallAddedEvent);
+				return await AiEnrichmentOwedAsync(receipt, InboundEmailPendingSteps.CallBroadcast | InboundEmailPendingSteps.CallAddedEvent, paged);
 
 			await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 			return Ok(call);
@@ -866,11 +872,26 @@ namespace Resgrid.Web.Services.Controllers
 		/// could not be queued: only that step stays owed, and the claim goes back with a 400 so Postmark redelivers and the resume queues
 		/// the job (finding the saved call, so no second call is made and nobody is paged again).
 		/// </summary>
-		private async Task<ActionResult> AiEnrichmentOwedAsync(InboundEmailReceiptClaim receipt, InboundEmailPendingSteps done)
+		/// <param name="pagedNow">
+		/// This request queued the call's page. If the receipt cannot record that, a redelivery would page the call again, so the AI job
+		/// is given up instead (logged; a dispatcher reads the call without it) and the delivery answered as done. A desk entry that could
+		/// not be recorded is still retried: the desk takes a call it already has once. An untracked delivery (the receipt store was
+		/// unavailable at the claim) is never sent back either: its redelivery would save and page a second call.
+		/// </param>
+		private async Task<ActionResult> AiEnrichmentOwedAsync(InboundEmailReceiptClaim receipt, InboundEmailPendingSteps done, bool pagedNow)
 		{
 			done &= ~InboundEmailPendingSteps.AiEnrichment;
-			if (done != InboundEmailPendingSteps.None)
-				await _inboundEmailReceiptsService.CompleteStepAsync(receipt, done);
+			var tracked = receipt != null && receipt.IsTracked;
+			var recorded = tracked && (done == InboundEmailPendingSteps.None || await _inboundEmailReceiptsService.CompleteStepAsync(receipt, done));
+
+			if (!recorded && (pagedNow || !tracked))
+			{
+				Logging.LogError(tracked
+					? $"Inbound email receipt {receipt.ReceiptId}: the call was paged but that could not be recorded, so its AI enrichment is not retried (a retry would page it again)."
+					: "Inbound email: the AI enrichment of an untracked delivery is not retried (a retry would save and page a second call).");
+				await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+				return Ok();
+			}
 
 			await _inboundEmailReceiptsService.ReleaseAsync(receipt);
 			return BadRequest();

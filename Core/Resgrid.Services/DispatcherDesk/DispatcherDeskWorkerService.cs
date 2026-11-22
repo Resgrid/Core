@@ -10,26 +10,32 @@ namespace Resgrid.Services
 {
 	/// <summary>
 	/// Worker 82 (every minute): the desk's clock. Break reminders, "due now", "break over", overdue alerts and auto return;
-	/// sign-off at the end of duty; expired offers, overflow, escalation; pending and scheduled calls added to the desk; the
-	/// 180-day purge once an hour. Each part is isolated so one failing never stops the others.
+	/// sign-off at the end of duty; expired offers, overflow, escalation; pending and scheduled calls added to the desk; voicemails
+	/// whose request stopped before they became a call; the 180-day purge once an hour. Each part is isolated so one failing never
+	/// stops the others.
 	/// </summary>
 	public class DispatcherDeskWorkerService : IDispatcherDeskWorkerService
 	{
 		private static readonly TimeSpan PurgeInterval = TimeSpan.FromHours(1);
+
+		/// <summary>How far back stranded voicemail claims are recovered (an older one is left in the item's history).</summary>
+		public static readonly TimeSpan VoicemailRecoveryWindow = TimeSpan.FromDays(2);
 		private static DateTime _lastPurge = DateTime.MinValue;
 
 		private readonly IDispatcherBreaksService _breaksService;
 		private readonly IDispatcherPresenceService _presenceService;
 		private readonly IDispatcherRoutingService _routingService;
 		private readonly IDispatcherPresencesRepository _presencesRepository;
+		private readonly IDispatcherDeskPendingCalls _pendingCalls;
 
 		public DispatcherDeskWorkerService(IDispatcherBreaksService breaksService, IDispatcherPresenceService presenceService,
-			IDispatcherRoutingService routingService, IDispatcherPresencesRepository presencesRepository)
+			IDispatcherRoutingService routingService, IDispatcherPresencesRepository presencesRepository, IDispatcherDeskPendingCalls pendingCalls)
 		{
 			_breaksService = breaksService;
 			_presenceService = presenceService;
 			_routingService = routingService;
 			_presencesRepository = presencesRepository;
+			_pendingCalls = pendingCalls;
 		}
 
 		public async Task<int> TickAsync(DateTime utcNow, CancellationToken cancellationToken = default)
@@ -58,6 +64,11 @@ namespace Resgrid.Services
 			});
 
 			changes += await RunAsync("queue timeouts", () => _routingService.ProcessTimeoutsAsync(utcNow, cancellationToken));
+
+			// A voicemail's record action comes once: when its request stopped (or could not confirm its save) after claiming the item,
+			// nothing else ever finishes it. Overflowed items are closed, so the queue timeouts above never see them.
+			changes += await RunAsync("voicemail recovery",
+				() => _pendingCalls.RecoverExpiredVoicemailClaimsAsync(utcNow, utcNow - VoicemailRecoveryWindow, cancellationToken));
 
 			if (utcNow - _lastPurge > PurgeInterval)
 			{

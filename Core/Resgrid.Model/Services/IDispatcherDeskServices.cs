@@ -112,7 +112,8 @@ namespace Resgrid.Model.Services
 
 		/// <summary>
 		/// Plans (or, with an id, re-plans) a break. Refuses overlapping the same dispatcher's own breaks; warns (never refuses)
-		/// when other dispatchers' breaks overlap or coverage drops below the minimum.
+		/// when other dispatchers' breaks overlap or coverage drops below the minimum. The duty and overlap checks and the write run
+		/// under the department's break lock (as roster removals, day plans and break starts do); BreakNotStartable when it times out.
 		/// </summary>
 		Task<DispatcherDeskResult<DispatcherBreak>> SaveBreakAsync(int departmentId, DispatcherBreak dispatcherBreak, string byUserId,
 			CancellationToken cancellationToken = default);
@@ -136,14 +137,20 @@ namespace Resgrid.Model.Services
 		Task<DispatcherDeskResult<DispatcherBreak>> StartBreakAsync(int departmentId, string userId, string dispatcherBreakId, int? breakType,
 			int? durationMinutes, bool returnWork, string byUserId, CancellationToken cancellationToken = default);
 
-		/// <summary>Ends the user's active break and makes them Available.</summary>
+		/// <summary>
+		/// Ends the user's active break and makes them Available, in one transaction: a failed return to Available rolls the end back
+		/// (the break stays active and the call throws).
+		/// </summary>
 		Task<DispatcherDeskResult<DispatcherBreak>> EndBreakAsync(int departmentId, string userId, string byUserId, DispatcherBreakEndReasons reason,
 			CancellationToken cancellationToken = default);
 
 		/// <summary>Who is on duty and on break across the period, in slots, with coverage and overlap warnings.</summary>
 		Task<DispatcherCoverage> GetCoverageAsync(int departmentId, DateTime fromUtc, DateTime toUtc, int slotMinutes = 5);
 
-		/// <summary>Worker: reminders, due alerts, return alerts, auto return, overdue alerts, missed breaks.</summary>
+		/// <summary>
+		/// Worker: reminders, due alerts, return alerts, auto return, overdue alerts, missed breaks; closes active breaks left over
+		/// from a session that is over (signed off, or a later session not on them).
+		/// </summary>
 		Task<int> ProcessBreakTimersAsync(DateTime utcNow, CancellationToken cancellationToken = default);
 	}
 

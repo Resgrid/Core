@@ -358,6 +358,68 @@ NARR: SMOKE SHOWING";
 		}
 
 		[Test]
+		public async Task A_paged_call_whose_page_cannot_be_recorded_is_not_sent_back_to_be_paged_again()
+		{
+			_formatType = (int)CallEmailTypes.AI;
+			var id = Guid.NewGuid().ToString();
+			_queue.Setup(q => q.EnqueueAiDispatchTriageAsync(It.IsAny<AiDispatchQueueItem>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new TimeoutException("bus unavailable"));
+			_receipts.FailCompleteSteps = 1;
+
+			(await ReceiveAsync(Email(id))).Should().Be(200, "a redelivery would find the page still owed and send it again");
+			_broadcasts.Should().Be(1);
+			_receipts.Find(id).State.Should().Be((int)InboundEmailReceiptStates.Completed, "the AI job is given up, not the page repeated");
+
+			(await ReceiveAsync(Email(id))).Should().Be(200);
+
+			_saved.Should().ContainSingle();
+			_broadcasts.Should().Be(1, "the call is paged once");
+		}
+
+		[Test]
+		public async Task A_desk_entry_whose_checkpoint_cannot_be_recorded_still_retries_the_ai_job()
+		{
+			_desk.EmailCallMode = (int)DispatcherEmailCallModes.EnhancedAi;
+			var id = Guid.NewGuid().ToString();
+			var aiAttempts = 0;
+			_queue.Setup(q => q.EnqueueAiDispatchTriageAsync(It.IsAny<AiDispatchQueueItem>(), It.IsAny<CancellationToken>()))
+				.Returns((AiDispatchQueueItem item, CancellationToken ct) => ++aiAttempts == 1
+					? throw new TimeoutException("bus unavailable")
+					: Task.FromResult(true));
+			_receipts.FailCompleteSteps = 1;
+
+			(await ReceiveAsync(Email(id))).Should().Be(400, "nobody was paged, and the desk takes a call it already has once");
+
+			(await ReceiveAsync(Email(id))).Should().Be(200);
+
+			_saved.Should().ContainSingle();
+			aiAttempts.Should().Be(2);
+			_broadcasts.Should().Be(0);
+			_receipts.Find(id).State.Should().Be((int)InboundEmailReceiptStates.Completed);
+		}
+
+		[Test]
+		public async Task An_ai_retry_after_the_desk_entry_went_out_keeps_the_call_held_for_a_dispatcher()
+		{
+			_desk.EmailCallMode = (int)DispatcherEmailCallModes.EnhancedAi;
+			var id = Guid.NewGuid().ToString();
+			var jobs = new List<AiDispatchQueueItem>();
+			_queue.Setup(q => q.EnqueueAiDispatchTriageAsync(It.IsAny<AiDispatchQueueItem>(), It.IsAny<CancellationToken>()))
+				.Returns((AiDispatchQueueItem item, CancellationToken ct) =>
+				{
+					jobs.Add(item);
+					return jobs.Count == 1 ? throw new TimeoutException("bus unavailable") : Task.FromResult(true);
+				});
+
+			(await ReceiveAsync(Email(id))).Should().Be(400);
+			(await ReceiveAsync(Email(id))).Should().Be(200);
+
+			jobs.Should().HaveCount(2);
+			jobs.Should().OnlyContain(j => j.HeldForDispatcher,
+				"a non-AI email format is entitled to enrichment only as a held call, and the desk step was already recorded done");
+		}
+
+		[Test]
 		public async Task Only_a_held_call_is_queued_for_ai_as_held_for_a_dispatcher()
 		{
 			_desk.EmailCallMode = (int)DispatcherEmailCallModes.EnhancedAi;

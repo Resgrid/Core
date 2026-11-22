@@ -8097,4 +8097,154 @@
   <data name="FeatureSetup.intake-spam-screening" xml:space="preserve">
     <value>في بلاغ استقبال معلق، اختر رفض كرسالة مزعجة واترك حظر المرسل أيضًا محددًا؛ يُلغى البلاغ ولا يُبلَّغ أحد. يظهر المرسلون المحظورون في صفحة قنوات الاستقبال، حيث يرفع خيار رفع الحظر الحظر قبل موعده. ينطبق الحد بالساعة على قنوات الرسائل النصية والصوت وWhatsApp التي ليس لها مرسلون مسموح لهم، ولا ينطبق أبدًا على قنوات البريد الإلكتروني أو المحادثة أو webhook.</value>
   </data>
+  <data name="Area.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="AreaPurpose.relay" xml:space="preserve">
+    <value>تطبيق مرافق مفتوح المصدر يربط Resgrid برسائل البريد الإلكتروني الواردة من CAD وأنظمة الاستدعاء، وأجهزة المسح، وأجهزة الراديو ثنائية الاتجاه، وأجهزة راديو push-to-talk العاملة عبر LTE.</value>
+  </data>
+  <data name="AreaValue.relay" xml:space="preserve">
+    <value>أدخِل إلى Resgrid البلاغات والرسائل وحركة الراديو من الأنظمة التي لديك بالفعل، دون استبدالها.</value>
+  </data>
+  <data name="AreaExample.relay" xml:space="preserve">
+    <value>يرسل نظام CAD في المقاطعة كل عملية إرسال بالبريد الإلكتروني إلى الـ relay، فينشئ البلاغ مع إرفاق بطاقة الاستجابة، بينما يتيح راديو المحطة الموصول بقناة صوتية لمستخدمي التطبيق التحدث مع الطواقم على الراديو.</value>
+  </data>
+  <data name="ModuleAdoption.relay" xml:space="preserve">
+    <value>ثبّت Relay على حاسوب تابع للقسم: تطبيق سطح المكتب لنظام Windows، أو دون واجهة على Windows أو Linux أو macOS أو Docker. لا يحتاج الإرسال عبر البريد الإلكتروني إلى إضافة؛ أما جسر الراديو والمسجّل والتنبيه بالنغمات فتحتاج إلى إضافة Push-to-Talk وقناة صوتية. يكمّل Relay أنظمة الراديو والاستدعاء لديك؛ ولا يحل محلها.</value>
+  </data>
+  <data name="Feature.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay" xml:space="preserve">
+    <value>ثبّت Relay وشغّله، واختر أوضاعه، واربطه بقسمك.</value>
+  </data>
+  <data name="FeatureValue.relay" xml:space="preserve">
+    <value>يشغّل تطبيق سطح المكتب لنظام Windows عدة أوضاع جنبًا إلى جنب مع لوحة معلومات مباشرة؛ ويشغّل المضيف دون واجهة وضعًا واحدًا لكل عملية على خادم أو في Docker.</value>
+  </data>
+  <data name="FeatureExample.relay" xml:space="preserve">
+    <value>يثبّت قسمٌ تطبيق سطح المكتب على حاسوب المحطة، ويسجّل الدخول إليه بحساب عضو مخصص، ويفعّل التشغيل التلقائي للإرسال عبر البريد الإلكتروني وجسر الراديو.</value>
+  </data>
+  <data name="FeatureSetup.relay" xml:space="preserve">
+    <value>أضف حساب عضو يسجّل الـ relay الدخول به، ثم ثبّت Relay واربطه برمز التحديث (refresh token) الخاص بهذا الحساب. يتطلب جسر الراديو والمسجّل والتنبيه بالنغمات رمز المستخدم هذا؛ ويمكن للإرسال عبر البريد الإلكتروني واكتشاف النغمات استخدام بيانات اعتماد العميل أيضًا. شغّل «Test connection» قبل بدء أي وضع.</value>
+  </data>
+  <data name="Feature.relay-smtp-dispatch" xml:space="preserve">
+    <value>الإرسال عبر البريد الإلكتروني باستخدام Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay-smtp-dispatch" xml:space="preserve">
+    <value>يحوّل خادم البريد المدمج في Relay رسائل الإرسال الواردة من أنظمة CAD أو لوحات الإنذار أو بوابات الاستدعاء إلى بلاغات ورسائل مجموعات في Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-smtp-dispatch" xml:space="preserve">
+    <value>الرسالة إلى رمز الإرسال الخاص بالقسم تستدعي القسم كله، ورمز الإرسال الخاص بمجموعة يرسل تلك المجموعة، ورمز رسائلها يرسل إليها رسالة. تُضاف المرفقات إلى البلاغ، ولا تنشئ الرسالة المعاد تسليمها بلاغًا ثانيًا أبدًا.</value>
+  </data>
+  <data name="FeatureExample.relay-smtp-dispatch" xml:space="preserve">
+    <value>يرسل نظام CAD في المقاطعة كل مهمة للمحطة 5 إلى رمز الإرسال الخاص بتلك المجموعة على نطاق الإرسال الخاص بالمقاطعة، فينشئ الـ relay البلاغ مع إرفاق بطاقة الاستجابة بصيغة PDF.</value>
+  </data>
+  <data name="FeatureSetup.relay-smtp-dispatch" xml:space="preserve">
+    <value>اعثر على عنوان الإرسال الخاص بالقسم في إعدادات البلاغات، وعلى عنواني الإرسال والرسائل لكل مجموعة في المجموعات. وجّه بريد نطاقات الإرسال لديك إلى Relay وأدرج هذه النطاقات في إعدادات SMTP الخاصة به. يحتاج حساب الـ relay إلى صلاحية إنشاء البلاغات، وإلى صلاحية إضافة بيانات البلاغ من أجل المرفقات.</value>
+  </data>
+  <data name="Feature.relay-tone-detect" xml:space="preserve">
+    <value>نغمات الاستدعاء إلى بلاغات</value>
+  </data>
+  <data name="FeaturePurpose.relay-tone-detect" xml:space="preserve">
+    <value>على Windows، يستمع Relay إلى جهاز مسح أو راديو عبر بطاقة صوت لاكتشاف نداءات النغمتين والنغمة الواحدة، وينشئ بلاغًا في Resgrid مع الصوت المسجّل لعملية الإرسال.</value>
+  </data>
+  <data name="FeatureValue.relay-tone-detect" xml:space="preserve">
+    <value>يتلقى الأعضاء الاستدعاء في تطبيق Responder مع إرفاق صوت المرسِل، حتى عندما يكون نداء الراديو هو الإرسال الوحيد.</value>
+  </data>
+  <data name="FeatureExample.relay-tone-detect" xml:space="preserve">
+    <value>يلتقط جهاز المسح لدى فرقة متطوعين نداء النغمتين الخاص بها، فينشئ الـ relay بلاغًا لمجموعة تلك المحطة مع إرفاق صوت الإرسال.</value>
+  </data>
+  <data name="FeatureSetup.relay-tone-detect" xml:space="preserve">
+    <value>في المجموعات، دوّن رمز الإرسال لكل مجموعة تستدعيها بالنغمات: يرسل watcher المجموعة تلك المجموعة، ويستدعي watcher القسم الجميع. أدخل نغمات كل watcher في Relay. يحتاج حساب الـ relay إلى صلاحيتي إنشاء البلاغات وإضافة بيانات البلاغ.</value>
+  </data>
+  <data name="Feature.relay-radio-bridge" xml:space="preserve">
+    <value>جسر الراديو</value>
+  </data>
+  <data name="FeaturePurpose.relay-radio-bridge" xml:space="preserve">
+    <value>على Windows، يربط Relay جهاز راديو ثنائي الاتجاه موصولًا بالكابل بقناة push-to-talk في Resgrid في الاتجاهين.</value>
+  </data>
+  <data name="FeatureValue.relay-radio-bridge" xml:space="preserve">
+    <value>يسمع الطواقم على الراديو والأعضاء في تطبيقات Responder وUnit وDispatch بعضهم بعضًا، ويمكن لنغمة طوارئ على الراديو أن تنشئ بلاغًا.</value>
+  </data>
+  <data name="FeatureExample.relay-radio-bridge" xml:space="preserve">
+    <value>يربط فريق بحث وإنقاذ جهاز الراديو الأساسي VHF الخاص به بقناة الفريق، فيتحدث الباحثون الذين يحملون أجهزة لاسلكية محمولة مع الباحثين الذين يحملون هواتف.</value>
+  </data>
+  <data name="FeatureSetup.relay-radio-bridge" xml:space="preserve">
+    <value>يتطلب إضافة Push-to-Talk وقناة صوتية ورمز التحديث الخاص بالـ relay. فعّل إرسال الراديو عبر واجهة PTT من نوع CM108 USB أو تسلسلية، واضبط كاتم الضوضاء باستخدام «Tune»، وتحقق من التوصيلات وتأخير بدء الإرسال باستخدام «Test transmit».</value>
+  </data>
+  <data name="Feature.relay-lte-donor-radios" xml:space="preserve">
+    <value>أجهزة راديو مانحة push-to-talk عبر LTE</value>
+  </data>
+  <data name="FeaturePurpose.relay-lte-donor-radios" xml:space="preserve">
+    <value>يضم مجموعة تحدث push-to-talk خلوية (PoC)، مثل Rapid Radios أو Diga-Talk+، إلى قناة صوتية في Resgrid عبر أحد أجهزتها الموصول بالكابل بالـ relay.</value>
+  </data>
+  <data name="FeatureValue.relay-lte-donor-radios" xml:space="preserve">
+    <value>يتشارك مستخدمو أجهزة PoC ومستخدمو تطبيقات Resgrid محادثة واحدة، رغم أن خدمات PoC هذه لا توفر واجهة برمجة تطبيقات أو بوابة للصوت الخارجي.</value>
+  </data>
+  <data name="FeatureExample.relay-lte-donor-radios" xml:space="preserve">
+    <value>يوصل فريق أمن جهاز Diga-Talk+ مثبتًا في مركبة بالـ relay، فيسمع الحراس الذين يحملون أجهزة PoC والمشرفون في تطبيقات Resgrid بعضهم بعضًا.</value>
+  </data>
+  <data name="FeatureSetup.relay-lte-donor-radios" xml:space="preserve">
+    <value>طبّق ملف تعريف الراديو، وفعّل إرساله بخط PTT فعلي بدلًا من VOX، وأوقف خاصية VOX والأصوات التنبيهية فيه، وأبقه موصولًا بمصدر طاقة خارجي. يشغل الراديو المانح جهازًا واحدًا في حساب PoC ويربط مجموعة التحدث المضبوط عليها. يتطلب إضافة Push-to-Talk وقناة صوتية.</value>
+  </data>
+  <data name="Feature.relay-recorder" xml:space="preserve">
+    <value>مسجّل القنوات</value>
+  </data>
+  <data name="FeaturePurpose.relay-recorder" xml:space="preserve">
+    <value>يسجّل كل إرسال على قناة push-to-talk واحدة أو على جميعها في ملفات صوتية، مع سجل يوضح من تحدث وعلى أي قناة ومتى ولأي مدة.</value>
+  </data>
+  <data name="FeatureValue.relay-recorder" xml:space="preserve">
+    <value>يحتفظ بحركة الصوت لأغراض الامتثال ومراجعة ما بعد الحدث، على قرص محلي أو في تخزين متوافق مع S3.</value>
+  </data>
+  <data name="FeatureExample.relay-recorder" xml:space="preserve">
+    <value>تسجّل وكالة لإدارة الطوارئ جميع القنوات أثناء تمرين على فيضان، وتراجع سجل الإرسال في اجتماع مراجعة ما بعد التمرين.</value>
+  </data>
+  <data name="FeatureSetup.relay-recorder" xml:space="preserve">
+    <value>يتطلب إضافة Push-to-Talk وقناة صوتية ورمز التحديث الخاص بالـ relay. تشغل كل قناة مسجّلة مقعدًا صوتيًا. تحتوي التسجيلات على حركة صوتية تشغيلية: خزّنها واحمِها واحذفها وفق سياسة السجلات لديك.</value>
+  </data>
+  <data name="Feature.relay-dispatch-tone-out" xml:space="preserve">
+    <value>التنبيه بالنغمات عبر push-to-talk</value>
+  </data>
+  <data name="FeaturePurpose.relay-dispatch-tone-out" xml:space="preserve">
+    <value>يعلن كل بلاغ جديد في Resgrid على قناة push-to-talk: نغمات تنبيه، ثم يُقرأ البلاغ بصوت عالٍ بواسطة خدمة تحويل النص إلى كلام في Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-dispatch-tone-out" xml:space="preserve">
+    <value>تسمع الطواقم التي تتابع قناة ما عمليات الإرسال كما تسمعها على الراديو، بصياغة Resgrid نفسها وبأسماء أولويات البلاغات لديك.</value>
+  </data>
+  <data name="FeatureExample.relay-dispatch-tone-out" xml:space="preserve">
+    <value>يتابع فريق الاستجابة للطوارئ في مصنع قناته، ويُعلَن كل بلاغ جديد بتنبيه بنغمة عالية-منخفضة يليه اسم البلاغ وطبيعته وعنوانه وأولويته.</value>
+  </data>
+  <data name="FeatureSetup.relay-dispatch-tone-out" xml:space="preserve">
+    <value>يتطلب إضافة Push-to-Talk وقناة صوتية ورمز التحديث الخاص بالـ relay. لا تُعلَن البلاغات المفتوحة بالفعل عند بدء تشغيل الـ relay، وتُعلَن البلاغات المجدولة عند إرسالها.</value>
+  </data>
+  <data name="Rule.relay-dispatch-code" xml:space="preserve">
+    <value>لا يوجد رمز بريد إلكتروني للإرسال خاص بالقسم</value>
+  </data>
+  <data name="RuleWhy.relay-dispatch-code" xml:space="preserve">
+    <value>لا يملك القسم رمز بريد إلكتروني للإرسال، لذا لا يمكن للرسائل المرسلة إلى عنوان الإرسال الخاص به إنشاء بلاغ، سواء استقبلها Resgrid أو relay.</value>
+  </data>
+  <data name="RuleNext.relay-dispatch-code" xml:space="preserve">
+    <value>تحقق من عنوان الإرسال في إعدادات البلاغات. إذا لم يظهر أي عنوان، فاطلب من دعم Resgrid، أو من مسؤول تثبيت Resgrid لديك، تعيين رمز إرسال.</value>
+  </data>
+  <data name="Rule.relay-group-email-codes" xml:space="preserve">
+    <value>مجموعات بلا رمز بريد إلكتروني للإرسال أو للرسائل</value>
+  </data>
+  <data name="RuleWhy.relay-group-email-codes" xml:space="preserve">
+    <value>مجموعة واحدة أو أكثر ليس لها رمز بريد إلكتروني للإرسال أو للرسائل، لذا لا تصل الرسائل المرسلة إلى عناوين هذه المجموعات إلى أحد، لا عبر Resgrid ولا عبر relay. قد تفتقر المجموعات المضافة خارج محرر المجموعات، مثلًا عبر الاستيراد، إلى الرموز.</value>
+  </data>
+  <data name="RuleNext.relay-group-email-codes" xml:space="preserve">
+    <value>في المجموعات، حدد كل مجموعة لا يحتوي عنوان الإرسال أو الرسائل الخاص بها على رمز قبل @، وافتح تحرير واحفظ؛ يؤدي الحفظ إلى تعيين الرموز الناقصة.</value>
+  </data>
+  <data name="Rule.relay-voice-channel" xml:space="preserve">
+    <value>لا توجد قناة صوتية في Push-to-Talk</value>
+  </data>
+  <data name="RuleWhy.relay-voice-channel" xml:space="preserve">
+    <value>لدى القسم Push-to-Talk ولكن دون قناة صوتية دائمة، لذا لا تجد تطبيقات Resgrid، ولا جسر الراديو والمسجّل والتنبيه بالنغمات في الـ relay، قناة للانضمام إليها.</value>
+  </data>
+  <data name="RuleNext.relay-voice-channel" xml:space="preserve">
+    <value>افتح صفحة القنوات الصوتية، وأنشئ قناة، وأضف الأعضاء الذين يستخدمونها.</value>
+  </data>
+  <data name="SetupEvidence.relay-voice" xml:space="preserve">
+    <value>يتم التحقق من توفر Push-to-Talk ومن القنوات الصوتية الدائمة. لا يرى Resgrid ما إذا كان الـ relay مثبتًا أو متصلًا أو ينقل الصوت؛ تحقق من ذلك في لوحة معلومات الـ relay نفسه.</value>
+  </data>
 </root>

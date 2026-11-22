@@ -432,11 +432,10 @@ namespace Resgrid.Web.Services.Controllers
 									else
 										await QueueCallBroadcastAsync(savedCall, cancellationToken);
 
-									if (enrich)
-										await QueueAiDispatchEnrichmentAsync(savedCall, 1, message.FromFull?.Email, cancellationToken, heldForDispatcher: holdAsPending);
+									var aiQueued = enrich && await QueueAiDispatchEnrichmentAsync(savedCall, 1, message.FromFull?.Email, cancellationToken, heldForDispatcher: holdAsPending);
 
 									if (!onDesk)
-										return await DeskHandOffOwedAsync(receipt, enrich);
+										return await DeskHandOffOwedAsync(receipt, aiQueued);
 
 									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 									return Ok(savedCall);
@@ -845,21 +844,20 @@ namespace Resgrid.Web.Services.Controllers
 
 			// The original delivery recorded the desk step only for a call its email call mode held for a dispatcher.
 			var enrich = receipt.Has(InboundEmailPendingSteps.AiEnrichment);
-			if (enrich)
-				await QueueAiDispatchEnrichmentAsync(call, aiChannel, message.FromFull?.Email, cancellationToken,
-					heldForDispatcher: receipt.Has(InboundEmailPendingSteps.CallAddedEvent));
+			var aiQueued = enrich && await QueueAiDispatchEnrichmentAsync(call, aiChannel, message.FromFull?.Email, cancellationToken,
+				heldForDispatcher: receipt.Has(InboundEmailPendingSteps.CallAddedEvent));
 
 			if (!onDesk)
-				return await DeskHandOffOwedAsync(receipt, enrich);
+				return await DeskHandOffOwedAsync(receipt, aiQueued);
 
 			await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 			return Ok(call);
 		}
 
 		/// <summary>
-		/// A held emailed call is saved but could not be put on the dispatcher desk: only that step is still owed (the AI step, when
-		/// queued, is recorded done), and the claim goes back with a 400 so Postmark redelivers and the resume retries the desk entry.
-		/// With only Emails ticked nothing else would ever add it (the call-event hand-off and the desk's sweep take pending calls).
+		/// A held emailed call is saved but could not be put on the dispatcher desk: that step is still owed (the AI step is recorded
+		/// done only when its job was actually queued, so a failed AI enqueue is retried with it), and the claim goes back with a 400 so
+		/// Postmark redelivers and the resume retries the desk entry at once instead of waiting for the desk worker's sweep.
 		/// </summary>
 		private async Task<ActionResult> DeskHandOffOwedAsync(InboundEmailReceiptClaim receipt, bool aiQueued)
 		{
@@ -943,10 +941,14 @@ namespace Resgrid.Web.Services.Controllers
 		/// <paramref name="heldForDispatcher"/>: the dispatcher desk's email call mode held the call pending (the worker enriches it while
 		/// it waits, under that mode's entitlement); otherwise the job keeps the active-call, AI-format rule.
 		/// </summary>
-		private async Task QueueAiDispatchEnrichmentAsync(Call savedCall, int channel, string sender, CancellationToken cancellationToken, bool heldForDispatcher = false)
+		/// <returns>
+		/// True when the job was queued or is not wanted (AI dispatch off on this host, no call): the step is done. False when queueing
+		/// it failed (logged), so a delivery that is retried anyway can keep the step owed.
+		/// </returns>
+		private async Task<bool> QueueAiDispatchEnrichmentAsync(Call savedCall, int channel, string sender, CancellationToken cancellationToken, bool heldForDispatcher = false)
 		{
 			if (!Config.AiDispatchConfig.EnrichEnabled || savedCall == null || savedCall.CallId <= 0)
-				return;
+				return true;
 
 			try
 			{
@@ -957,10 +959,12 @@ namespace Resgrid.Web.Services.Controllers
 					SenderNotAllowed = !await _aiDispatchAdminService.IsSenderAllowedAsync(savedCall.DepartmentId, sender),
 					HeldForDispatcher = heldForDispatcher
 				}, cancellationToken);
+				return true;
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
+				return false;
 			}
 		}
 

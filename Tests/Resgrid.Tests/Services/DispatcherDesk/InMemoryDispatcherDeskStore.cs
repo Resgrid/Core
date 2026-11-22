@@ -26,6 +26,9 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 		/// <summary>Departments whose break start took the department lock, in order.</summary>
 		public List<int> BreakStartLocks { get; } = new List<int>();
 
+		/// <summary>Runs before each conditional presence write (duty, back from break): a concurrent writer acting between a read and the write.</summary>
+		public Action<DispatcherPresence> BeforePresenceWrite { get; set; }
+
 		/// <summary>
 		/// Runs on the stored row just before each conditional item update is checked, so a test can play a concurrent writer (bump the
 		/// stored Version, change its state) between a service's read and its write.
@@ -160,6 +163,10 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			public Task<DispatcherQueueItem> GetByExternalReferenceAsync(string reference) =>
 				Task.FromResult(Clone(List.Where(x => string.Equals(x.ExternalReference, reference, StringComparison.OrdinalIgnoreCase)).OrderByDescending(x => x.CreatedOn).FirstOrDefault()));
 
+			public Task<DispatcherQueueItem> GetOpenByExternalReferenceAsync(int departmentId, string reference) =>
+				Task.FromResult(Clone(List.Where(x => x.DepartmentId == departmentId && x.State < (int)DispatcherQueueItemStates.Completed &&
+					string.Equals(x.ExternalReference, reference, StringComparison.OrdinalIgnoreCase)).OrderByDescending(x => x.CreatedOn).FirstOrDefault()));
+
 			public Task<bool> TryUpdateAsync(DispatcherQueueItem item, int expectedVersion, CancellationToken cancellationToken = default)
 			{
 				Store.BeforeItemUpdate?.Invoke(item);
@@ -274,17 +281,37 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 				return Task.FromResult(true);
 			}
 
-			public Task<bool> TrySetDutyAsync(string id, DateTime? expectedSignedInOn, int dutyMode, int? dutyShiftId, int? dutyShiftDayId, DateTime? dutyEndsOn,
+			public Task<bool> TrySetDutyAsync(DispatcherPresence observed, int dutyMode, int? dutyShiftId, int? dutyShiftDayId, DateTime? dutyEndsOn,
 				CancellationToken cancellationToken = default)
 			{
-				var row = List.FirstOrDefault(x => string.Equals(x.DispatcherPresenceId, id, StringComparison.OrdinalIgnoreCase));
-				if (row == null || row.State == (int)DispatcherPresenceStates.Offline || row.SignedInOn != expectedSignedInOn)
+				Store.BeforePresenceWrite?.Invoke(observed);
+				var row = List.FirstOrDefault(x => string.Equals(x.DispatcherPresenceId, observed?.DispatcherPresenceId, StringComparison.OrdinalIgnoreCase));
+				if (row == null || row.State == (int)DispatcherPresenceStates.Offline || row.SignedInOn != observed.SignedInOn ||
+					row.DutyMode != observed.DutyMode || row.DutyShiftId != observed.DutyShiftId || row.DutyShiftDayId != observed.DutyShiftDayId ||
+					row.DutyEndsOn != observed.DutyEndsOn)
 					return Task.FromResult(false);
 
 				row.DutyMode = dutyMode;
 				row.DutyShiftId = dutyShiftId;
 				row.DutyShiftDayId = dutyShiftDayId;
 				row.DutyEndsOn = dutyEndsOn;
+				return Task.FromResult(true);
+			}
+
+			public Task<bool> TryReturnFromBreakAsync(DispatcherPresence observed, DateTime nowUtc, DateTime? lastSeenOnUtc, CancellationToken cancellationToken = default)
+			{
+				Store.BeforePresenceWrite?.Invoke(observed);
+				var row = List.FirstOrDefault(x => string.Equals(x.DispatcherPresenceId, observed?.DispatcherPresenceId, StringComparison.OrdinalIgnoreCase));
+				if (row == null || row.State == (int)DispatcherPresenceStates.Offline || row.State != observed.State || row.SignedInOn != observed.SignedInOn ||
+					!string.Equals(row.ActiveBreakId ?? string.Empty, observed.ActiveBreakId ?? string.Empty, StringComparison.OrdinalIgnoreCase))
+					return Task.FromResult(false);
+
+				row.State = (int)DispatcherPresenceStates.Available;
+				row.ActiveBreakId = null;
+				row.StateChangedOn = nowUtc;
+				row.MissedOffers = 0;
+				if (lastSeenOnUtc.HasValue)
+					row.LastSeenOn = lastSeenOnUtc;
 				return Task.FromResult(true);
 			}
 		}
@@ -368,6 +395,20 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 					return Task.FromResult(false);
 
 				property.SetValue(row, sentOnUtc);
+				return Task.FromResult(true);
+			}
+
+			public Task<bool> TryClearAlertAsync(string id, string column, DateTime sentOnUtc, CancellationToken cancellationToken = default)
+			{
+				if (!AlertColumns.Contains(column))
+					throw new ArgumentOutOfRangeException(nameof(column));
+
+				var row = List.FirstOrDefault(x => string.Equals(x.DispatcherBreakId, id, StringComparison.OrdinalIgnoreCase));
+				var property = typeof(DispatcherBreak).GetProperty(column);
+				if (row == null || !Equals(property.GetValue(row), (DateTime?)sentOnUtc))
+					return Task.FromResult(false);
+
+				property.SetValue(row, null);
 				return Task.FromResult(true);
 			}
 

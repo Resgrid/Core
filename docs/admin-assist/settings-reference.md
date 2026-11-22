@@ -4254,3 +4254,38 @@ Intake spam screening Keep spam and robocalls out of Pending Calls: dismiss an i
 ## Private Inbound Dispatch Number
 
 Private Inbound Dispatch Number The Private Inbound Dispatch Number add-on: your department's own phone number for taking calls by text and by voice. Members and the public reach your department directly instead of through the shared Resgrid number. The managing member buys the add-on on the Private Inbound Dispatch Number page or its billing page, and a department admin then provisions a local number. Sold only with an active paid entity plan, and bought or cancelled by the managing member. Billed monthly per department, even on an annual plan. When the add-on ends, the number stops taking texts and calls and is released after a grace period unless the add-on is renewed.
+
+<a id="relay"></a>
+## Resgrid Relay
+
+Resgrid Relay Install and run Relay, choose its modes and connect it to your department. The Windows desktop app runs several modes side by side with a live dashboard; the headless host runs one mode per process on a server or in Docker. A department installs the desktop app on its station PC, signs it in with a dedicated member account and turns on Auto-start for email dispatch and the radio bridge. Add a member account for the relay to sign in as, then install Relay and connect it with that account's refresh token. The radio bridge, recorder and tone-out require this user token; email dispatch and tone detection can also use client credentials. Run Test connection before starting a mode.
+
+<a id="relay-smtp-dispatch"></a>
+## Email dispatch through Relay
+
+Email dispatch through Relay Relay's built-in mail server turns dispatch email from CAD, alarm panels or paging gateways into Resgrid calls and group messages. Mail to the department dispatch code pages the department, a group's dispatch code dispatches that group and a group's message code sends it a message. Attachments go onto the call, and a redelivered message never creates a second call. The county CAD sends each Station 5 run to that group's dispatch code at the county's dispatch domain, and the relay creates the call with the run card PDF attached. Find the department dispatch address on Call Settings and each group's dispatch and message addresses on Groups. Point your dispatch domains' mail at Relay and list those domains in its SMTP settings. The relay's account needs the Create calls permission, and Add Call Data for attachments.
+
+<a id="relay-tone-detect"></a>
+## Paging tones to calls
+
+Paging tones to calls On Windows, Relay listens to a scanner or radio through a sound card for two-tone and single-tone pages and creates a Resgrid call with the recorded dispatch audio. Members get the page in the Responder app with the dispatcher's audio attached, even when the radio page is the only dispatch. A volunteer company's scanner hears its two-tone page, and the relay creates a call for that station's group with the dispatch audio attached. On Groups, note the dispatch code of each group you tone out: a group watcher dispatches that group, and a department watcher pages everyone. Enter each watcher's tones in Relay. The relay's account needs Create calls and Add Call Data.
+
+<a id="relay-radio-bridge"></a>
+## Radio bridge
+
+Radio bridge On Windows, Relay bridges a cabled two-way radio to a Resgrid push-to-talk channel in both directions. Crews on the radio and members in the Responder, Unit and Dispatch apps hear each other, and an emergency tone on the radio can create a call. A SAR team bridges its VHF base radio to the team channel, so searchers with handhelds and searchers with phones talk to each other. Needs the Push-to-Talk add-on, a voice channel and the relay's refresh token. Key the radio through a CM108 USB or serial PTT interface, set the squelch with Tune and check the wiring and key-up delay with Test transmit.
+
+<a id="relay-lte-donor-radios"></a>
+## LTE push-to-talk donor radios
+
+LTE push-to-talk donor radios Joins a cellular push-to-talk (PoC) talk group, such as Rapid Radios or Diga-Talk+, to a Resgrid voice channel through one of its radios cabled to the relay. PoC radio users and Resgrid app users share one conversation, although these PoC services offer no API or gateway for outside audio. A security team cables one Diga-Talk+ mobile to the relay, so guards on PoC radios and supervisors in the Resgrid apps hear each other. Apply the radio's profile, key it with a hard PTT line rather than VOX, turn off its own VOX and beeps, and keep it on external power. The donor radio uses one radio on the PoC account and bridges the talk group it is set to. Needs the Push-to-Talk add-on and a voice channel.
+
+<a id="relay-recorder"></a>
+## Channel recorder
+
+Channel recorder Records every transmission on one or all push-to-talk channels as audio files, with a log of who spoke, on which channel, when and for how long. Keeps voice traffic for compliance and after-action review, on local disk or S3-compatible storage. An emergency management agency records every channel during a flood exercise and reviews the transmission log at the after-action meeting. Needs the Push-to-Talk add-on, a voice channel and the relay's refresh token. Each recorded channel occupies a voice seat. Recordings contain operational voice traffic: store, protect and prune them under your records policy.
+
+<a id="relay-dispatch-tone-out"></a>
+## Tone-out on push-to-talk
+
+Tone-out on push-to-talk Announces each new Resgrid call on a push-to-talk channel: alert tones, then the call read aloud by Resgrid's text-to-speech. Crews who monitor a channel hear dispatches the way they would on the radio, in Resgrid's own wording with your call priority names. A plant's emergency response team monitors its channel, and each new call is toned out with a hi-lo alert followed by the call name, nature, address and priority. Needs the Push-to-Talk add-on, a voice channel and the relay's refresh token. Calls already open when the relay starts are not announced, and scheduled calls are announced when they are dispatched.

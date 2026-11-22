@@ -8097,4 +8097,154 @@
   <data name="FeatureSetup.intake-spam-screening" xml:space="preserve">
     <value>Sur un appel reçu en attente, choisissez Écarter comme spam et laissez Bloquer aussi l'expéditeur coché ; l'appel est annulé et personne n'est averti. Les expéditeurs bloqués sont listés sur la page Canaux d'entrée, où Débloquer lève un blocage plus tôt. La limite horaire s'applique aux canaux SMS, vocaux et WhatsApp sans expéditeurs autorisés, jamais aux canaux courriel, discussion ou webhook.</value>
   </data>
+  <data name="Area.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="AreaPurpose.relay" xml:space="preserve">
+    <value>Une application compagnon open source qui relie à Resgrid les e-mails de CAD et de radiomessagerie, les scanners, les radios bidirectionnelles et les radios push-to-talk LTE.</value>
+  </data>
+  <data name="AreaValue.relay" xml:space="preserve">
+    <value>Faites entrer dans Resgrid les appels, les messages et le trafic radio des systèmes que vous avez déjà, sans les remplacer.</value>
+  </data>
+  <data name="AreaExample.relay" xml:space="preserve">
+    <value>Le CAD du comté envoie chaque régulation par e-mail au relais, qui crée l’appel avec sa fiche d’intervention jointe, tandis qu’une radio de caserne reliée à un canal vocal permet aux utilisateurs de l’application de parler avec les équipes à la radio.</value>
+  </data>
+  <data name="ModuleAdoption.relay" xml:space="preserve">
+    <value>Installez Relay sur un ordinateur du département : l’application de bureau Windows, ou sans interface sous Windows, Linux, macOS ou Docker. La régulation par e-mail ne nécessite aucun module complémentaire ; le pont radio, l’enregistreur et l’alerte par tonalités nécessitent le module complémentaire Push-to-Talk et un canal vocal. Relay complète vos systèmes radio et de radiomessagerie ; il ne les remplace pas.</value>
+  </data>
+  <data name="Feature.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay" xml:space="preserve">
+    <value>Installez et exécutez Relay, choisissez ses modes et connectez-le à votre département.</value>
+  </data>
+  <data name="FeatureValue.relay" xml:space="preserve">
+    <value>L’application de bureau Windows exécute plusieurs modes côte à côte avec un tableau de bord en direct ; l’hôte sans interface exécute un mode par processus sur un serveur ou dans Docker.</value>
+  </data>
+  <data name="FeatureExample.relay" xml:space="preserve">
+    <value>Un département installe l’application de bureau sur le PC de la caserne, la connecte avec un compte membre dédié et active le démarrage automatique de la régulation par e-mail et du pont radio.</value>
+  </data>
+  <data name="FeatureSetup.relay" xml:space="preserve">
+    <value>Ajoutez un compte membre avec lequel le relais se connecte, puis installez Relay et connectez-le avec le jeton d’actualisation de ce compte. Le pont radio, l’enregistreur et l’alerte par tonalités exigent ce jeton utilisateur ; la régulation par e-mail et la détection de tonalités peuvent aussi utiliser des identifiants client. Lancez « Test connection » avant de démarrer un mode.</value>
+  </data>
+  <data name="Feature.relay-smtp-dispatch" xml:space="preserve">
+    <value>Régulation par e-mail via Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay-smtp-dispatch" xml:space="preserve">
+    <value>Le serveur de messagerie intégré de Relay transforme les e-mails de régulation des CAD, centrales d’alarme ou passerelles de radiomessagerie en appels et messages de groupe Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-smtp-dispatch" xml:space="preserve">
+    <value>Un e-mail au code de régulation du département alerte tout le département, le code de régulation d’un groupe engage ce groupe et son code de message lui envoie un message. Les pièces jointes sont ajoutées à l’appel, et un message livré à nouveau ne crée jamais de second appel.</value>
+  </data>
+  <data name="FeatureExample.relay-smtp-dispatch" xml:space="preserve">
+    <value>Le CAD du comté envoie chaque intervention de la caserne 5 au code de régulation de ce groupe sur le domaine de régulation du comté, et le relais crée l’appel avec la fiche d’intervention PDF jointe.</value>
+  </data>
+  <data name="FeatureSetup.relay-smtp-dispatch" xml:space="preserve">
+    <value>Trouvez l’adresse de régulation du département dans Paramètres des appels et les adresses de régulation et de message de chaque groupe dans Groupes. Dirigez le courrier de vos domaines de régulation vers Relay et indiquez ces domaines dans ses paramètres SMTP. Le compte du relais a besoin de l’autorisation Créer des appels et, pour les pièces jointes, Ajouter des données d’appel.</value>
+  </data>
+  <data name="Feature.relay-tone-detect" xml:space="preserve">
+    <value>Tonalités d’alerte vers appels</value>
+  </data>
+  <data name="FeaturePurpose.relay-tone-detect" xml:space="preserve">
+    <value>Sous Windows, Relay écoute un scanner ou une radio via une carte son pour détecter les alertes à deux tons et à un ton, et crée un appel Resgrid avec l’audio de régulation enregistré.</value>
+  </data>
+  <data name="FeatureValue.relay-tone-detect" xml:space="preserve">
+    <value>Les membres reçoivent l’alerte dans l’application Responder avec l’audio du régulateur joint, même quand l’alerte radio est la seule régulation.</value>
+  </data>
+  <data name="FeatureExample.relay-tone-detect" xml:space="preserve">
+    <value>Le scanner d’une compagnie de volontaires entend son alerte à deux tons, et le relais crée un appel pour le groupe de cette caserne avec l’audio de régulation joint.</value>
+  </data>
+  <data name="FeatureSetup.relay-tone-detect" xml:space="preserve">
+    <value>Dans Groupes, notez le code de régulation de chaque groupe que vous alertez par tonalités : un watcher de groupe engage ce groupe et un watcher de département alerte tout le monde. Saisissez les tonalités de chaque watcher dans Relay. Le compte du relais a besoin de Créer des appels et d’Ajouter des données d’appel.</value>
+  </data>
+  <data name="Feature.relay-radio-bridge" xml:space="preserve">
+    <value>Pont radio</value>
+  </data>
+  <data name="FeaturePurpose.relay-radio-bridge" xml:space="preserve">
+    <value>Sous Windows, Relay relie une radio bidirectionnelle câblée à un canal push-to-talk Resgrid dans les deux sens.</value>
+  </data>
+  <data name="FeatureValue.relay-radio-bridge" xml:space="preserve">
+    <value>Les équipes à la radio et les membres dans les applications Responder, Unit et Dispatch s’entendent mutuellement, et une tonalité d’urgence à la radio peut créer un appel.</value>
+  </data>
+  <data name="FeatureExample.relay-radio-bridge" xml:space="preserve">
+    <value>Une équipe de recherche et sauvetage relie sa radio de base VHF au canal de l’équipe, pour que les chercheurs équipés de portatifs et ceux équipés de téléphones se parlent.</value>
+  </data>
+  <data name="FeatureSetup.relay-radio-bridge" xml:space="preserve">
+    <value>Nécessite le module complémentaire Push-to-Talk, un canal vocal et le jeton d’actualisation du relais. Déclenchez l’émission de la radio via une interface PTT USB CM108 ou série, réglez le squelch avec « Tune » et vérifiez le câblage et le délai d’émission avec « Test transmit ».</value>
+  </data>
+  <data name="Feature.relay-lte-donor-radios" xml:space="preserve">
+    <value>Radios donneuses push-to-talk LTE</value>
+  </data>
+  <data name="FeaturePurpose.relay-lte-donor-radios" xml:space="preserve">
+    <value>Relie un groupe de conversation push-to-talk cellulaire (PoC), comme Rapid Radios ou Diga-Talk+, à un canal vocal Resgrid grâce à l’une de ses radios câblée au relais.</value>
+  </data>
+  <data name="FeatureValue.relay-lte-donor-radios" xml:space="preserve">
+    <value>Les utilisateurs de radios PoC et des applications Resgrid partagent une même conversation, bien que ces services PoC n’offrent ni API ni passerelle pour un audio externe.</value>
+  </data>
+  <data name="FeatureExample.relay-lte-donor-radios" xml:space="preserve">
+    <value>Une équipe de sécurité câble un poste mobile Diga-Talk+ au relais, afin que les agents sur radios PoC et les superviseurs dans les applications Resgrid s’entendent.</value>
+  </data>
+  <data name="FeatureSetup.relay-lte-donor-radios" xml:space="preserve">
+    <value>Appliquez le profil de la radio, déclenchez-la par une vraie ligne PTT plutôt que par VOX, désactivez son propre VOX et ses bips et gardez-la sur alimentation externe. La radio donneuse occupe une radio du compte PoC et relie le groupe de conversation sur lequel elle est réglée. Nécessite le module complémentaire Push-to-Talk et un canal vocal.</value>
+  </data>
+  <data name="Feature.relay-recorder" xml:space="preserve">
+    <value>Enregistreur de canaux</value>
+  </data>
+  <data name="FeaturePurpose.relay-recorder" xml:space="preserve">
+    <value>Enregistre chaque transmission sur un ou tous les canaux push-to-talk sous forme de fichiers audio, avec un journal indiquant qui a parlé, sur quel canal, quand et pendant combien de temps.</value>
+  </data>
+  <data name="FeatureValue.relay-recorder" xml:space="preserve">
+    <value>Conserve le trafic vocal pour la conformité et les retours d’expérience, sur disque local ou sur un stockage compatible S3.</value>
+  </data>
+  <data name="FeatureExample.relay-recorder" xml:space="preserve">
+    <value>Une agence de gestion des urgences enregistre tous les canaux pendant un exercice d’inondation et examine le journal des transmissions lors du retour d’expérience.</value>
+  </data>
+  <data name="FeatureSetup.relay-recorder" xml:space="preserve">
+    <value>Nécessite le module complémentaire Push-to-Talk, un canal vocal et le jeton d’actualisation du relais. Chaque canal enregistré occupe une place vocale. Les enregistrements contiennent du trafic vocal opérationnel : stockez-les, protégez-les et purgez-les selon votre politique d’archivage.</value>
+  </data>
+  <data name="Feature.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Alerte par tonalités sur push-to-talk</value>
+  </data>
+  <data name="FeaturePurpose.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Annonce chaque nouvel appel Resgrid sur un canal push-to-talk : des tonalités d’alerte, puis l’appel lu à voix haute par la synthèse vocale de Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Les équipes qui écoutent un canal entendent les régulations comme à la radio, dans la formulation de Resgrid et avec vos noms de priorités d’appel.</value>
+  </data>
+  <data name="FeatureExample.relay-dispatch-tone-out" xml:space="preserve">
+    <value>L’équipe d’intervention d’un site industriel écoute son canal, et chaque nouvel appel est annoncé par une alerte deux tons suivie du nom, de la nature, de l’adresse et de la priorité de l’appel.</value>
+  </data>
+  <data name="FeatureSetup.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Nécessite le module complémentaire Push-to-Talk, un canal vocal et le jeton d’actualisation du relais. Les appels déjà ouverts au démarrage du relais ne sont pas annoncés, et les appels planifiés sont annoncés au moment de leur régulation.</value>
+  </data>
+  <data name="Rule.relay-dispatch-code" xml:space="preserve">
+    <value>Aucun code d’e-mail de régulation du département</value>
+  </data>
+  <data name="RuleWhy.relay-dispatch-code" xml:space="preserve">
+    <value>Le département n’a pas de code d’e-mail de régulation : un e-mail envoyé à son adresse de régulation ne peut donc pas créer d’appel, qu’il soit reçu par Resgrid ou par un relais.</value>
+  </data>
+  <data name="RuleNext.relay-dispatch-code" xml:space="preserve">
+    <value>Vérifiez l’adresse de régulation dans Paramètres des appels. Si aucune n’apparaît, demandez au support Resgrid, ou à l’administrateur de votre installation Resgrid, d’attribuer un code de régulation.</value>
+  </data>
+  <data name="Rule.relay-group-email-codes" xml:space="preserve">
+    <value>Groupes sans code d’e-mail de régulation ou de message</value>
+  </data>
+  <data name="RuleWhy.relay-group-email-codes" xml:space="preserve">
+    <value>Un ou plusieurs groupes n’ont pas de code d’e-mail de régulation ou de message : les e-mails envoyés à ces adresses de groupe n’atteignent donc personne, ni via Resgrid ni via un relais. Les groupes créés hors de l’éditeur de groupes, par exemple par une importation, peuvent ne pas avoir de codes.</value>
+  </data>
+  <data name="RuleNext.relay-group-email-codes" xml:space="preserve">
+    <value>Dans Groupes, repérez chaque groupe dont l’adresse de régulation ou de message n’a pas de code avant le @, ouvrez Modifier et enregistrez ; l’enregistrement attribue les codes manquants.</value>
+  </data>
+  <data name="Rule.relay-voice-channel" xml:space="preserve">
+    <value>Push-to-Talk sans canal vocal</value>
+  </data>
+  <data name="RuleWhy.relay-voice-channel" xml:space="preserve">
+    <value>Le département dispose de Push-to-Talk mais d’aucun canal vocal permanent : les applications Resgrid ainsi que le pont radio, l’enregistreur et l’alerte par tonalités d’un relais n’ont donc aucun canal à rejoindre.</value>
+  </data>
+  <data name="RuleNext.relay-voice-channel" xml:space="preserve">
+    <value>Ouvrez la page des canaux vocaux, créez un canal et ajoutez les membres qui l’utilisent.</value>
+  </data>
+  <data name="SetupEvidence.relay-voice" xml:space="preserve">
+    <value>La disponibilité de Push-to-Talk et les canaux vocaux permanents sont vérifiés. Resgrid ne voit pas si un relais est installé, connecté ou s’il transmet de l’audio ; vérifiez-le sur le tableau de bord du relais.</value>
+  </data>
 </root>

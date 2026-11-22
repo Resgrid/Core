@@ -72,6 +72,15 @@ namespace Resgrid.Services
 			var presence = await GetOrCreateAsync(departmentId, userId, now, cancellationToken);
 			var activeBreak = await _breaksRepository.GetActiveForUserAsync(departmentId, userId);
 
+			// A break carries on only into a sign-in that refreshes a session already on it. Breaks start only signed in and sign-off
+			// ends them, so one still active on a signed-off row is left over from a sign-off whose close failed: it ends now, as ended
+			// by that sign-off, instead of putting the new session on break.
+			if (activeBreak != null && !presence.IsSignedIn())
+			{
+				await CloseSignedOffBreakAsync(activeBreak, presence.StateChangedOn, userId, now, cancellationToken);
+				activeBreak = null;
+			}
+
 			presence.State = activeBreak != null ? (int)DispatcherPresenceStates.OnBreak
 				: request.StartAway ? (int)DispatcherPresenceStates.Away : (int)DispatcherPresenceStates.Available;
 			presence.ActiveBreakId = activeBreak?.DispatcherBreakId;
@@ -124,19 +133,13 @@ namespace Resgrid.Services
 				signedOff = await _presencesRepository.TrySignOffAsync(presence.DispatcherPresenceId, presence.SignedInOn, now, cancellationToken);
 				if (!signedOff)
 					return DispatcherDeskResult<bool>.Ok(false);
-
-				var activeBreak = await _breaksRepository.GetActiveForUserAsync(departmentId, userId);
-				if (activeBreak != null)
-				{
-					activeBreak.State = (int)DispatcherBreakStates.Completed;
-					activeBreak.EndedOn = now;
-					activeBreak.EndReason = (int)DispatcherBreakEndReasons.SignedOff;
-					activeBreak.EndedByUserId = byUserId;
-					activeBreak.UpdatedByUserId = byUserId;
-					activeBreak.UpdatedOn = now;
-					await _breaksRepository.TryTransitionAsync(activeBreak, (int)DispatcherBreakStates.Active, cancellationToken);
-				}
 			}
+
+			// The session's break ends with it. Also on a row already signed off: a sign-off whose break close failed is finished by
+			// signing off again (and otherwise by the next sign-in or the break timer), never by putting the next session on break.
+			var activeBreak = await _breaksRepository.GetActiveForUserAsync(departmentId, userId);
+			if (activeBreak != null)
+				await CloseSignedOffBreakAsync(activeBreak, signedOff ? now : presence.StateChangedOn, byUserId, now, cancellationToken);
 
 			// Offline first, so held and offered work handed back goes to someone else, never straight back to this dispatcher.
 			var held = await GetHeldAsync(departmentId, userId);
@@ -152,16 +155,44 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>
-		/// Hands back work a signed-off dispatcher still holds: each item on its own, so one failing never keeps the rest. Returns
-		/// how many are still held afterwards (logged; the next sign-off or the worker's sweep retries them).
+		/// Ends a break as ended by the session's sign-off at <paramref name="signedOffOn"/> (now when unknown), conditional on it still
+		/// being active. A break started after that sign-off belongs to a later session and is left alone.
+		/// </summary>
+		private async Task<bool> CloseSignedOffBreakAsync(DispatcherBreak activeBreak, DateTime? signedOffOn, string byUserId, DateTime now,
+			CancellationToken cancellationToken)
+		{
+			if (activeBreak.StartedOn.HasValue && signedOffOn.HasValue && activeBreak.StartedOn.Value > signedOffOn.Value)
+				return false;
+
+			activeBreak.State = (int)DispatcherBreakStates.Completed;
+			activeBreak.EndedOn = signedOffOn.HasValue && signedOffOn.Value <= now ? signedOffOn.Value : now;
+			activeBreak.EndReason = (int)DispatcherBreakEndReasons.SignedOff;
+			activeBreak.EndedByUserId = byUserId;
+			activeBreak.UpdatedByUserId = byUserId;
+			activeBreak.UpdatedOn = now;
+			return await _breaksRepository.TryTransitionAsync(activeBreak, (int)DispatcherBreakStates.Active, cancellationToken);
+		}
+
+		/// <summary>
+		/// Hands back work a signed-off dispatcher still holds: each item on its own, so one failing never keeps the rest, and each
+		/// only as the assignment read here (a version-fenced release: work the dispatcher accepted again after signing back in, or that
+		/// has moved to someone else, is left alone). A dispatcher signed in again by now keeps their work. Returns how many of the read
+		/// assignments are still held afterwards (logged; the next sign-off or the worker's sweep retries them).
 		/// </summary>
 		private async Task<int> HandBackAsync(int departmentId, string userId, List<DispatcherQueueItem> held, CancellationToken cancellationToken)
 		{
+			if (held.Count == 0)
+				return 0;
+
+			var current = await _presencesRepository.GetForUserAsync(departmentId, userId);
+			if (current != null && current.IsSignedIn())
+				return 0;
+
 			foreach (var item in held)
 			{
 				try
 				{
-					await _routingService.Value.ReleaseAsync(departmentId, item.DispatcherQueueItemId, userId, cancellationToken);
+					await _routingService.Value.ReleaseObservedAsync(item, cancellationToken);
 				}
 				catch (Exception ex) when (!(ex is OperationCanceledException && cancellationToken.IsCancellationRequested))
 				{
@@ -173,7 +204,10 @@ namespace Resgrid.Services
 			await _notifier.PublishDeskChangedAsync(departmentId, userId);
 			await RouteAsync(departmentId, cancellationToken);
 
-			var stillHeld = held.Count == 0 ? 0 : (await GetHeldAsync(departmentId, userId)).Count;
+			// Still held as read (same Version): an assignment that changed since is someone else's now, or theirs again.
+			var observed = held.ToDictionary(x => x.DispatcherQueueItemId, x => x.Version, StringComparer.OrdinalIgnoreCase);
+			var stillHeld = (await GetHeldAsync(departmentId, userId))
+				.Count(x => observed.TryGetValue(x.DispatcherQueueItemId, out var version) && version == x.Version);
 			if (stillHeld > 0)
 				Logging.LogError($"Dispatcher {userId} in {departmentId} is signed off but still holds {stillHeld} desk item(s); the next sign-off or desk sweep retries.");
 
@@ -429,11 +463,13 @@ namespace Resgrid.Services
 					if (presence.DutyMode == (int)DispatcherDutyModes.Scheduled)
 					{
 						// A back-to-back shift day carries the dispatcher on.
+						// Both duty writes are conditional on the session and the duty read above: another worker that moved the duty on
+						// meanwhile keeps its value.
 						var next = await _shiftDispatchersService.GetDutyForUserAsync(presence.DepartmentId, presence.UserId, utcNow);
 						if (next != null)
 						{
-							await _presencesRepository.TrySetDutyAsync(presence.DispatcherPresenceId, presence.SignedInOn, (int)DispatcherDutyModes.Scheduled,
-								next.ShiftId, next.ShiftDayId, next.EndUtc, cancellationToken);
+							await _presencesRepository.TrySetDutyAsync(presence, (int)DispatcherDutyModes.Scheduled, next.ShiftId, next.ShiftDayId, next.EndUtc,
+								cancellationToken);
 							continue;
 						}
 
@@ -443,8 +479,8 @@ namespace Resgrid.Services
 						// Without a shift the dispatcher can stay on only when the department does not require one.
 						if (!config.RequireShift)
 						{
-							await _presencesRepository.TrySetDutyAsync(presence.DispatcherPresenceId, presence.SignedInOn, (int)DispatcherDutyModes.Unscheduled,
-								presence.DutyShiftId, presence.DutyShiftDayId, null, cancellationToken);
+							await _presencesRepository.TrySetDutyAsync(presence, (int)DispatcherDutyModes.Unscheduled, presence.DutyShiftId, presence.DutyShiftDayId,
+								null, cancellationToken);
 							continue;
 						}
 					}

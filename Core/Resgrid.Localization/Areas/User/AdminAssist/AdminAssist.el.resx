@@ -8097,4 +8097,154 @@
   <data name="FeatureSetup.intake-spam-screening" xml:space="preserve">
     <value>Σε μια εκκρεμή εισερχόμενη κλήση, επιλέξτε Απόρριψη ως ανεπιθύμητο και αφήστε επιλεγμένο το Αποκλεισμός και του αποστολέα· η κλήση ακυρώνεται και κανείς δεν ειδοποιείται. Οι αποκλεισμένοι αποστολείς εμφανίζονται στη σελίδα Κανάλια εισερχομένων, όπου η Άρση αποκλεισμού αίρει έναν αποκλεισμό νωρίτερα. Το ωριαίο όριο ισχύει για κανάλια SMS, φωνής και WhatsApp χωρίς επιτρεπόμενους αποστολείς, ποτέ για κανάλια email, συνομιλίας ή webhook.</value>
   </data>
+  <data name="Area.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="AreaPurpose.relay" xml:space="preserve">
+    <value>Μια συνοδευτική εφαρμογή ανοιχτού κώδικα που συνδέει με το Resgrid τα email του CAD και της ειδοποίησης, τους σαρωτές, τους πομποδέκτες και τους ασυρμάτους push-to-talk LTE.</value>
+  </data>
+  <data name="AreaValue.relay" xml:space="preserve">
+    <value>Φέρτε στο Resgrid κλήσεις, μηνύματα και ασύρματη κίνηση από τα συστήματα που ήδη έχετε, χωρίς να τα αντικαταστήσετε.</value>
+  </data>
+  <data name="AreaExample.relay" xml:space="preserve">
+    <value>Το CAD της κομητείας στέλνει κάθε αποστολή με email στο relay, που δημιουργεί την κλήση με συνημμένη την κάρτα επέμβασης, ενώ ένας ασύρματος σταθμού συνδεδεμένος με κανάλι φωνής επιτρέπει στους χρήστες της εφαρμογής να μιλούν με τα πληρώματα στον ασύρματο.</value>
+  </data>
+  <data name="ModuleAdoption.relay" xml:space="preserve">
+    <value>Εγκαταστήστε το Relay σε έναν υπολογιστή του τμήματος: την εφαρμογή επιφάνειας εργασίας για Windows ή χωρίς διεπαφή σε Windows, Linux, macOS ή Docker. Η αποστολή μέσω email δεν απαιτεί πρόσθετο· η γέφυρα ασυρμάτου, η καταγραφή και η ηχητική ειδοποίηση απαιτούν το πρόσθετο Push-to-Talk και ένα κανάλι φωνής. Το Relay συμπληρώνει τα δικά σας συστήματα ασυρμάτου και ειδοποίησης· δεν τα αντικαθιστά.</value>
+  </data>
+  <data name="Feature.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay" xml:space="preserve">
+    <value>Εγκαταστήστε και εκτελέστε το Relay, επιλέξτε τις λειτουργίες του και συνδέστε το με το τμήμα σας.</value>
+  </data>
+  <data name="FeatureValue.relay" xml:space="preserve">
+    <value>Η εφαρμογή επιφάνειας εργασίας για Windows εκτελεί πολλές λειτουργίες ταυτόχρονα με ζωντανό πίνακα ελέγχου· ο κεντρικός υπολογιστής χωρίς διεπαφή εκτελεί μία λειτουργία ανά διεργασία σε διακομιστή ή σε Docker.</value>
+  </data>
+  <data name="FeatureExample.relay" xml:space="preserve">
+    <value>Ένα τμήμα εγκαθιστά την εφαρμογή επιφάνειας εργασίας στον υπολογιστή του σταθμού, τη συνδέει με έναν αποκλειστικό λογαριασμό μέλους και ενεργοποιεί την αυτόματη εκκίνηση για την αποστολή μέσω email και τη γέφυρα ασυρμάτου.</value>
+  </data>
+  <data name="FeatureSetup.relay" xml:space="preserve">
+    <value>Προσθέστε έναν λογαριασμό μέλους με τον οποίο θα συνδέεται το relay, έπειτα εγκαταστήστε το Relay και συνδέστε το με το διακριτικό ανανέωσης (refresh token) αυτού του λογαριασμού. Η γέφυρα ασυρμάτου, η καταγραφή και η ηχητική ειδοποίηση απαιτούν αυτό το διακριτικό χρήστη· η αποστολή μέσω email και η ανίχνευση τόνων μπορούν να χρησιμοποιούν και διαπιστευτήρια πελάτη. Εκτελέστε το «Test connection» πριν ξεκινήσετε μια λειτουργία.</value>
+  </data>
+  <data name="Feature.relay-smtp-dispatch" xml:space="preserve">
+    <value>Αποστολή μέσω email με το Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay-smtp-dispatch" xml:space="preserve">
+    <value>Ο ενσωματωμένος διακομιστής αλληλογραφίας του Relay μετατρέπει τα email αποστολής από CAD, πίνακες συναγερμού ή πύλες ειδοποίησης σε κλήσεις και ομαδικά μηνύματα του Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-smtp-dispatch" xml:space="preserve">
+    <value>Ένα email στον κωδικό αποστολής του τμήματος ειδοποιεί όλο το τμήμα, ο κωδικός αποστολής μιας ομάδας κινητοποιεί αυτή την ομάδα και ο κωδικός μηνυμάτων της τής στέλνει μήνυμα. Τα συνημμένα προστίθενται στην κλήση και ένα μήνυμα που παραδίδεται ξανά δεν δημιουργεί ποτέ δεύτερη κλήση.</value>
+  </data>
+  <data name="FeatureExample.relay-smtp-dispatch" xml:space="preserve">
+    <value>Το CAD της κομητείας στέλνει κάθε συμβάν του Σταθμού 5 στον κωδικό αποστολής αυτής της ομάδας στον τομέα αποστολής της κομητείας, και το relay δημιουργεί την κλήση με συνημμένη την κάρτα επέμβασης σε PDF.</value>
+  </data>
+  <data name="FeatureSetup.relay-smtp-dispatch" xml:space="preserve">
+    <value>Βρείτε τη διεύθυνση αποστολής του τμήματος στις Ρυθμίσεις κλήσεων και τις διευθύνσεις αποστολής και μηνυμάτων κάθε ομάδας στις Ομάδες. Κατευθύνετε την αλληλογραφία των τομέων αποστολής σας στο Relay και καταχωρίστε αυτούς τους τομείς στις ρυθμίσεις SMTP του. Ο λογαριασμός του relay χρειάζεται το δικαίωμα Δημιουργία κλήσεων και, για τα συνημμένα, Προσθήκη δεδομένων κλήσης.</value>
+  </data>
+  <data name="Feature.relay-tone-detect" xml:space="preserve">
+    <value>Τόνοι ειδοποίησης σε κλήσεις</value>
+  </data>
+  <data name="FeaturePurpose.relay-tone-detect" xml:space="preserve">
+    <value>Στα Windows, το Relay ακούει έναν σαρωτή ή ασύρματο μέσω κάρτας ήχου για ειδοποιήσεις δύο τόνων και ενός τόνου και δημιουργεί κλήση στο Resgrid με τον καταγεγραμμένο ήχο της αποστολής.</value>
+  </data>
+  <data name="FeatureValue.relay-tone-detect" xml:space="preserve">
+    <value>Τα μέλη λαμβάνουν την ειδοποίηση στην εφαρμογή Responder με συνημμένο τον ήχο του χειριστή, ακόμη κι όταν η ειδοποίηση από τον ασύρματο είναι η μόνη αποστολή.</value>
+  </data>
+  <data name="FeatureExample.relay-tone-detect" xml:space="preserve">
+    <value>Ο σαρωτής μιας εθελοντικής ομάδας ακούει την ειδοποίηση δύο τόνων της, και το relay δημιουργεί κλήση για την ομάδα αυτού του σταθμού με συνημμένο τον ήχο της αποστολής.</value>
+  </data>
+  <data name="FeatureSetup.relay-tone-detect" xml:space="preserve">
+    <value>Στις Ομάδες, σημειώστε τον κωδικό αποστολής κάθε ομάδας που ειδοποιείτε με τόνους: ένας watcher ομάδας κινητοποιεί αυτή την ομάδα και ένας watcher τμήματος ειδοποιεί όλους. Καταχωρίστε τους τόνους κάθε watcher στο Relay. Ο λογαριασμός του relay χρειάζεται Δημιουργία κλήσεων και Προσθήκη δεδομένων κλήσης.</value>
+  </data>
+  <data name="Feature.relay-radio-bridge" xml:space="preserve">
+    <value>Γέφυρα ασυρμάτου</value>
+  </data>
+  <data name="FeaturePurpose.relay-radio-bridge" xml:space="preserve">
+    <value>Στα Windows, το Relay γεφυρώνει έναν καλωδιωμένο πομποδέκτη με ένα κανάλι push-to-talk του Resgrid και προς τις δύο κατευθύνσεις.</value>
+  </data>
+  <data name="FeatureValue.relay-radio-bridge" xml:space="preserve">
+    <value>Τα πληρώματα στον ασύρματο και τα μέλη στις εφαρμογές Responder, Unit και Dispatch ακούν ο ένας τον άλλον, και ένας τόνος έκτακτης ανάγκης στον ασύρματο μπορεί να δημιουργήσει κλήση.</value>
+  </data>
+  <data name="FeatureExample.relay-radio-bridge" xml:space="preserve">
+    <value>Μια ομάδα έρευνας και διάσωσης γεφυρώνει τον σταθμό βάσης VHF με το κανάλι της ομάδας, ώστε όσοι έχουν φορητούς ασυρμάτους και όσοι έχουν τηλέφωνα να μιλούν μεταξύ τους.</value>
+  </data>
+  <data name="FeatureSetup.relay-radio-bridge" xml:space="preserve">
+    <value>Απαιτεί το πρόσθετο Push-to-Talk, ένα κανάλι φωνής και το διακριτικό ανανέωσης του relay. Ενεργοποιήστε την εκπομπή του ασυρμάτου μέσω διεπαφής PTT CM108 USB ή σειριακής, ρυθμίστε το squelch με το «Tune» και ελέγξτε την καλωδίωση και την καθυστέρηση εκπομπής με το «Test transmit».</value>
+  </data>
+  <data name="Feature.relay-lte-donor-radios" xml:space="preserve">
+    <value>Ασύρματοι-δότες push-to-talk LTE</value>
+  </data>
+  <data name="FeaturePurpose.relay-lte-donor-radios" xml:space="preserve">
+    <value>Συνδέει μια ομάδα συνομιλίας κινητού push-to-talk (PoC), όπως Rapid Radios ή Diga-Talk+, με ένα κανάλι φωνής του Resgrid μέσω ενός από τους ασυρμάτους της που είναι καλωδιωμένος στο relay.</value>
+  </data>
+  <data name="FeatureValue.relay-lte-donor-radios" xml:space="preserve">
+    <value>Οι χρήστες ασυρμάτων PoC και οι χρήστες των εφαρμογών Resgrid μοιράζονται μία συνομιλία, παρότι αυτές οι υπηρεσίες PoC δεν προσφέρουν API ή πύλη για εξωτερικό ήχο.</value>
+  </data>
+  <data name="FeatureExample.relay-lte-donor-radios" xml:space="preserve">
+    <value>Μια ομάδα ασφαλείας συνδέει με καλώδιο έναν σταθμό οχήματος Diga-Talk+ στο relay, ώστε οι φύλακες με ασυρμάτους PoC και οι επόπτες στις εφαρμογές Resgrid να ακούν ο ένας τον άλλον.</value>
+  </data>
+  <data name="FeatureSetup.relay-lte-donor-radios" xml:space="preserve">
+    <value>Εφαρμόστε το προφίλ του ασυρμάτου, ενεργοποιήστε την εκπομπή του με φυσική γραμμή PTT αντί για VOX, απενεργοποιήστε το δικό του VOX και τους ήχους του και κρατήστε τον σε εξωτερική τροφοδοσία. Ο ασύρματος-δότης καταλαμβάνει έναν ασύρματο στον λογαριασμό PoC και γεφυρώνει την ομάδα συνομιλίας στην οποία είναι ρυθμισμένος. Απαιτεί το πρόσθετο Push-to-Talk και ένα κανάλι φωνής.</value>
+  </data>
+  <data name="Feature.relay-recorder" xml:space="preserve">
+    <value>Καταγραφή καναλιών</value>
+  </data>
+  <data name="FeaturePurpose.relay-recorder" xml:space="preserve">
+    <value>Καταγράφει κάθε εκπομπή σε ένα ή σε όλα τα κανάλια push-to-talk ως αρχεία ήχου, με αρχείο καταγραφής για το ποιος μίλησε, σε ποιο κανάλι, πότε και για πόσο.</value>
+  </data>
+  <data name="FeatureValue.relay-recorder" xml:space="preserve">
+    <value>Διατηρεί τη φωνητική κίνηση για συμμόρφωση και ανασκόπηση μετά τη δράση, σε τοπικό δίσκο ή σε αποθηκευτικό χώρο συμβατό με S3.</value>
+  </data>
+  <data name="FeatureExample.relay-recorder" xml:space="preserve">
+    <value>Μια υπηρεσία διαχείρισης εκτάκτων αναγκών καταγράφει όλα τα κανάλια κατά τη διάρκεια άσκησης πλημμύρας και εξετάζει το αρχείο εκπομπών στη σύσκεψη απολογισμού.</value>
+  </data>
+  <data name="FeatureSetup.relay-recorder" xml:space="preserve">
+    <value>Απαιτεί το πρόσθετο Push-to-Talk, ένα κανάλι φωνής και το διακριτικό ανανέωσης του relay. Κάθε καταγραφόμενο κανάλι καταλαμβάνει μία θέση φωνής. Οι καταγραφές περιέχουν επιχειρησιακή φωνητική κίνηση: αποθηκεύστε τις, προστατέψτε τις και διαγράψτε τις σύμφωνα με την πολιτική αρχείων του τμήματος.</value>
+  </data>
+  <data name="Feature.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Ηχητική ειδοποίηση μέσω push-to-talk</value>
+  </data>
+  <data name="FeaturePurpose.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Ανακοινώνει κάθε νέα κλήση του Resgrid σε ένα κανάλι push-to-talk: τόνους ειδοποίησης και έπειτα την κλήση, που εκφωνείται από τη σύνθεση ομιλίας του Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Τα πληρώματα που παρακολουθούν ένα κανάλι ακούν τις αποστολές όπως θα τις άκουγαν στον ασύρματο, με τη διατύπωση του Resgrid και τα ονόματα προτεραιοτήτων κλήσεων του τμήματος.</value>
+  </data>
+  <data name="FeatureExample.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Η ομάδα αντιμετώπισης εκτάκτων αναγκών ενός εργοστασίου παρακολουθεί το κανάλι της, και κάθε νέα κλήση ανακοινώνεται με ειδοποίηση υψηλού-χαμηλού τόνου, ακολουθούμενη από το όνομα, τη φύση, τη διεύθυνση και την προτεραιότητα της κλήσης.</value>
+  </data>
+  <data name="FeatureSetup.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Απαιτεί το πρόσθετο Push-to-Talk, ένα κανάλι φωνής και το διακριτικό ανανέωσης του relay. Οι κλήσεις που είναι ήδη ανοιχτές όταν ξεκινά το relay δεν ανακοινώνονται, και οι προγραμματισμένες κλήσεις ανακοινώνονται όταν αποστέλλονται.</value>
+  </data>
+  <data name="Rule.relay-dispatch-code" xml:space="preserve">
+    <value>Το τμήμα δεν έχει κωδικό email αποστολής</value>
+  </data>
+  <data name="RuleWhy.relay-dispatch-code" xml:space="preserve">
+    <value>Το τμήμα δεν έχει κωδικό email αποστολής, οπότε ένα email στη διεύθυνση αποστολής του δεν μπορεί να δημιουργήσει κλήση, είτε το λαμβάνει το Resgrid είτε ένα relay.</value>
+  </data>
+  <data name="RuleNext.relay-dispatch-code" xml:space="preserve">
+    <value>Ελέγξτε τη διεύθυνση αποστολής στις Ρυθμίσεις κλήσεων. Αν δεν εμφανίζεται καμία, ζητήστε από την υποστήριξη του Resgrid ή από τον διαχειριστή της εγκατάστασης Resgrid να εκχωρήσει κωδικό αποστολής.</value>
+  </data>
+  <data name="Rule.relay-group-email-codes" xml:space="preserve">
+    <value>Ομάδες χωρίς κωδικό email αποστολής ή μηνυμάτων</value>
+  </data>
+  <data name="RuleWhy.relay-group-email-codes" xml:space="preserve">
+    <value>Μία ή περισσότερες ομάδες δεν έχουν κωδικό email αποστολής ή μηνυμάτων, οπότε τα email προς αυτές τις διευθύνσεις ομάδων δεν φτάνουν σε κανέναν, ούτε μέσω του Resgrid ούτε μέσω ενός relay. Ομάδες που προστέθηκαν εκτός του επεξεργαστή ομάδων, για παράδειγμα με εισαγωγή, μπορεί να μην έχουν κωδικούς.</value>
+  </data>
+  <data name="RuleNext.relay-group-email-codes" xml:space="preserve">
+    <value>Στις Ομάδες, εντοπίστε κάθε ομάδα της οποίας η διεύθυνση αποστολής ή μηνυμάτων δεν έχει κωδικό πριν από το @, ανοίξτε την Επεξεργασία και αποθηκεύστε· η αποθήκευση εκχωρεί τους κωδικούς που λείπουν.</value>
+  </data>
+  <data name="Rule.relay-voice-channel" xml:space="preserve">
+    <value>Το Push-to-Talk δεν έχει κανάλι φωνής</value>
+  </data>
+  <data name="RuleWhy.relay-voice-channel" xml:space="preserve">
+    <value>Το τμήμα έχει Push-to-Talk αλλά κανένα μόνιμο κανάλι φωνής, οπότε οι εφαρμογές Resgrid και η γέφυρα ασυρμάτου, η καταγραφή και η ηχητική ειδοποίηση ενός relay δεν έχουν κανάλι για να συνδεθούν.</value>
+  </data>
+  <data name="RuleNext.relay-voice-channel" xml:space="preserve">
+    <value>Ανοίξτε τη σελίδα των καναλιών φωνής, δημιουργήστε ένα κανάλι και προσθέστε τα μέλη που το χρησιμοποιούν.</value>
+  </data>
+  <data name="SetupEvidence.relay-voice" xml:space="preserve">
+    <value>Ελέγχονται η διαθεσιμότητα του Push-to-Talk και τα μόνιμα κανάλια φωνής. Το Resgrid δεν βλέπει αν ένα relay είναι εγκατεστημένο, συνδεδεμένο ή αν μεταδίδει ήχο· ελέγξτε το στον πίνακα ελέγχου του ίδιου του relay.</value>
+  </data>
 </root>

@@ -414,9 +414,7 @@ namespace Resgrid.Services.AiDispatch
 		public static string IntakeSource(int channel, Call call)
 		{
 			// Intake lines are public (M0326): the reading that the message reports no incident labels the call for the dispatcher.
-			var state = (call?.State == (int)CallStates.Pending
-				? " The call is pending: a dispatcher reviews it and nobody has been dispatched yet."
-				: " A dispatcher has dispatched the call.") + IntakeScreeningHint;
+			var state = CallStateText(call) + IntakeScreeningHint;
 			switch (channel)
 			{
 				case AiDispatchChannels.IntakeVoice:
@@ -442,10 +440,34 @@ namespace Resgrid.Services.AiDispatch
 			}
 		}
 
+		/// <summary>
+		/// The trusted source for a job, from the job's own source and the call as loaded: the dispatcher desk's pending call for an
+		/// overflowed text or chat and an emailed call the desk's email call mode held are pending calls a dispatcher reviews (not
+		/// dispatched automatically, and the desk's one is no email); every other job keeps <see cref="IntakeSource"/>.
+		/// </summary>
+		public static string JobSource(AiDispatchQueueItem item, Call call)
+		{
+			if (item == null)
+				return null;
+
+			if (IsDeskTextOverflow(item, call))
+				return "the text or chat messages a member of the public sent to the department's dispatch desk when no dispatcher was free, " +
+					"oldest first, one per line." + CallStateText(call);
+
+			if (item.HeldForDispatcher && !AiDispatchChannels.IsIntake(item.Channel))
+				return "a dispatch email (CAD page or text) the department received; the call was created from it and held for a dispatcher." +
+					CallStateText(call);
+
+			return IntakeSource(item.Channel, call);
+		}
+
+		private static string CallStateText(Call call) => call?.State == (int)CallStates.Pending
+			? " The call is pending: a dispatcher reviews it and nobody has been dispatched yet."
+			: " A dispatcher has dispatched the call.";
+
 		private async Task<AiDispatchContext> BuildContextAsync(Call call, AiDispatchQueueItem item, CancellationToken cancellationToken)
 		{
 			var departmentId = call.DepartmentId;
-			var channel = item.Channel;
 			var maxCharacters = Math.Clamp(AiDispatchConfig.MaxMessageCharacters, 200, 12000);
 			string transcript = null;
 			if (AiDispatchChannels.IsConversationRefresh(item) && _conversations != null)
@@ -473,7 +495,7 @@ namespace Resgrid.Services.AiDispatch
 			// A conversation refresh reads what the texter said across the whole thread; the call's own name and nature otherwise.
 			return transcript != null
 				? new AiDispatchContext(AiDispatchPrompt.MessageText(null, transcript, maxCharacters), types, priorities, candidates) { Source = IntakeSource(AiDispatchChannels.IntakeConversation, call) }
-				: new AiDispatchContext(AiDispatchPrompt.MessageText(call.Name, call.NatureOfCall, maxCharacters), types, priorities, candidates) { Source = IntakeSource(channel, call) };
+				: new AiDispatchContext(AiDispatchPrompt.MessageText(call.Name, call.NatureOfCall, maxCharacters), types, priorities, candidates) { Source = JobSource(item, call) };
 		}
 
 		private sealed record Admission(AiUsageReservation Reservation, string Outcome);

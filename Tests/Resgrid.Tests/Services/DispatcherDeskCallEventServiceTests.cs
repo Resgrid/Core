@@ -183,6 +183,25 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task A_waiting_call_is_still_reconciled_when_its_intake_channel_cannot_be_read_or_the_enqueue_fails()
+		{
+			var call = PendingCall();
+			call.CallSource = (int)CallSources.Intake;
+			_intake.Setup(i => i.GetCallSourcesAsync(DepartmentId, It.IsAny<IEnumerable<int>>())).ThrowsAsync(new InvalidOperationException("intake down"));
+
+			await _service.OnCallChangedAsync(DepartmentId, call);
+
+			// The screened call's offer still comes back even though its kind could not be decided (the sweep adds it later).
+			_routing.Verify(r => r.OnCallChangedAsync(DepartmentId, 500, It.IsAny<CancellationToken>()), Times.Once);
+			_routing.Verify(r => r.EnqueueAsync(It.IsAny<DispatcherEnqueueRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+
+			_routing.Setup(r => r.EnqueueAsync(It.IsAny<DispatcherEnqueueRequest>(), It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("insert failed"));
+			await _service.OnCallChangedAsync(DepartmentId, PendingCall());
+
+			_routing.Verify(r => r.OnCallChangedAsync(DepartmentId, 500, It.IsAny<CancellationToken>()), Times.Exactly(2));
+		}
+
+		[Test]
 		public async Task A_desk_failure_never_reaches_the_publisher()
 		{
 			_routing.Setup(r => r.OnCallChangedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("desk down"));

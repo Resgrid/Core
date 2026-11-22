@@ -110,6 +110,8 @@ namespace Resgrid.Services
 
 			// A participant's message (or any desk write) can change the item's version between the read and the write: the item is
 			// read again and the connect retried, as long as intake still has this dispatcher on the thread (a newer connect or release wins).
+			// The desk item names intake's holder only: on a version race the expected version comes from a row that may already show a
+			// newer dispatcher, so the version check alone cannot refuse a stale connect.
 			for (var attempt = 0; attempt < 3; attempt++)
 			{
 				if (item == null || !item.IsOpen())
@@ -119,7 +121,10 @@ namespace Resgrid.Services
 				if (item.State == (int)DispatcherQueueItemStates.Accepted && SameUser(item.AssignedUserId, userId))
 					return;
 
-				if (attempt > 0 && !await StillConnectedAsync(conversation, userId))
+				// Intake raises this after its own connect commits, but a newer connect (a takeover) can commit and reach the desk first
+				// while this callback waited on the introduction text: the desk follows intake's current holder, so it is checked before
+				// every write, the first one included.
+				if (!await StillConnectedAsync(conversation, userId))
 					return;
 
 				previous = item.AssignedUserId;

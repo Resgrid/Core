@@ -1,0 +1,383 @@
+{
+  "Version": "2026.09.25.2",
+  "Areas": [
+    {
+      "Id": "relay",
+      "LabelKey": "Area.relay",
+      "PurposeKey": "AreaPurpose.relay",
+      "Order": 23,
+      "Archetypes": [],
+      "Tier": "Optional",
+      "Addon": null,
+      "Global": false,
+      "ValueKey": "AreaValue.relay",
+      "ExampleKey": "AreaExample.relay",
+      "AdoptionKey": "ModuleAdoption.relay",
+      "MinimumMinutes": 30,
+      "MaximumMinutes": 120,
+      "DocsPath": "/apps/relay/"
+    }
+  ],
+  "Settings": [],
+  "Capabilities": [
+    {
+      "Id": "relay",
+      "AreaId": "relay",
+      "LabelKey": "Feature.relay",
+      "PurposeKey": "FeaturePurpose.relay",
+      "ValueKey": "FeatureValue.relay",
+      "ExampleKey": "FeatureExample.relay",
+      "AdoptionKey": "FeatureSetup.relay",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Personnel",
+        "Action": "AddPerson"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [
+        "relay-dispatch-code",
+        "relay-group-email-codes",
+        "relay-voice-channel"
+      ],
+      "Prominence": "Key",
+      "DocsPath": "/apps/relay/install/"
+    },
+    {
+      "Id": "relay-smtp-dispatch",
+      "AreaId": "relay",
+      "LabelKey": "Feature.relay-smtp-dispatch",
+      "PurposeKey": "FeaturePurpose.relay-smtp-dispatch",
+      "ValueKey": "FeatureValue.relay-smtp-dispatch",
+      "ExampleKey": "FeatureExample.relay-smtp-dispatch",
+      "AdoptionKey": "FeatureSetup.relay-smtp-dispatch",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "setting.InternalDispatchEmail",
+        "permission.CreateCall",
+        "permission.AddCallData"
+      ],
+      "RuleIds": [
+        "relay-dispatch-code",
+        "relay-group-email-codes"
+      ],
+      "Prominence": "Detail",
+      "DocsPath": "/apps/relay/smtp-dispatch/"
+    },
+    {
+      "Id": "relay-tone-detect",
+      "AreaId": "relay",
+      "LabelKey": "Feature.relay-tone-detect",
+      "PurposeKey": "FeaturePurpose.relay-tone-detect",
+      "ValueKey": "FeatureValue.relay-tone-detect",
+      "ExampleKey": "FeatureExample.relay-tone-detect",
+      "AdoptionKey": "FeatureSetup.relay-tone-detect",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Groups",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.CreateCall",
+        "permission.AddCallData"
+      ],
+      "RuleIds": [
+        "relay-group-email-codes"
+      ],
+      "Prominence": "Detail",
+      "DocsPath": "/apps/relay/tone-detect/"
+    },
+    {
+      "Id": "relay-radio-bridge",
+      "AreaId": "relay",
+      "LabelKey": "Feature.relay-radio-bridge",
+      "PurposeKey": "FeaturePurpose.relay-radio-bridge",
+      "ValueKey": "FeatureValue.relay-radio-bridge",
+      "ExampleKey": "FeatureExample.relay-radio-bridge",
+      "AdoptionKey": "FeatureSetup.relay-radio-bridge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Voice",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "PTT"
+        }
+      ],
+      "SettingIds": [
+        "permission.CreateCall"
+      ],
+      "RuleIds": [
+        "relay-voice-channel"
+      ],
+      "Setup": {
+        "EvidenceId": "voiceChannelCount",
+        "Minimum": 1,
+        "RuleIds": [
+          "relay-voice-channel"
+        ],
+        "GuidanceKey": "SetupEvidence.relay-voice"
+      },
+      "Prominence": "Detail",
+      "DocsPath": "/apps/relay/radio-bridge/"
+    },
+    {
+      "Id": "relay-lte-donor-radios",
+      "AreaId": "relay",
+      "LabelKey": "Feature.relay-lte-donor-radios",
+      "PurposeKey": "FeaturePurpose.relay-lte-donor-radios",
+      "ValueKey": "FeatureValue.relay-lte-donor-radios",
+      "ExampleKey": "FeatureExample.relay-lte-donor-radios",
+      "AdoptionKey": "FeatureSetup.relay-lte-donor-radios",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Voice",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "PTT"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [
+        "relay-voice-channel"
+      ],
+      "Setup": {
+        "EvidenceId": "voiceChannelCount",
+        "Minimum": 1,
+        "RuleIds": [
+          "relay-voice-channel"
+        ],
+        "GuidanceKey": "SetupEvidence.relay-voice"
+      },
+      "Prominence": "Detail",
+      "DocsPath": "/apps/relay/lte-donor-radios/"
+    },
+    {
+      "Id": "relay-recorder",
+      "AreaId": "relay",
+      "LabelKey": "Feature.relay-recorder",
+      "PurposeKey": "FeaturePurpose.relay-recorder",
+      "ValueKey": "FeatureValue.relay-recorder",
+      "ExampleKey": "FeatureExample.relay-recorder",
+      "AdoptionKey": "FeatureSetup.relay-recorder",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Voice",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "PTT"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [
+        "relay-voice-channel"
+      ],
+      "Setup": {
+        "EvidenceId": "voiceChannelCount",
+        "Minimum": 1,
+        "RuleIds": [
+          "relay-voice-channel"
+        ],
+        "GuidanceKey": "SetupEvidence.relay-voice"
+      },
+      "Prominence": "Detail",
+      "DocsPath": "/apps/relay/recorder/"
+    },
+    {
+      "Id": "relay-dispatch-tone-out",
+      "AreaId": "relay",
+      "LabelKey": "Feature.relay-dispatch-tone-out",
+      "PurposeKey": "FeaturePurpose.relay-dispatch-tone-out",
+      "ValueKey": "FeatureValue.relay-dispatch-tone-out",
+      "ExampleKey": "FeatureExample.relay-dispatch-tone-out",
+      "AdoptionKey": "FeatureSetup.relay-dispatch-tone-out",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Voice",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "PTT"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [
+        "relay-voice-channel"
+      ],
+      "Setup": {
+        "EvidenceId": "voiceChannelCount",
+        "Minimum": 1,
+        "RuleIds": [
+          "relay-voice-channel"
+        ],
+        "GuidanceKey": "SetupEvidence.relay-voice"
+      },
+      "Prominence": "Detail",
+      "DocsPath": "/apps/relay/dispatch-tone-out/"
+    }
+  ],
+  "Rules": [
+    {
+      "Id": "relay-dispatch-code",
+      "AreaId": "relay",
+      "Severity": "Warning",
+      "TitleKey": "Rule.relay-dispatch-code",
+      "ExplanationKey": "RuleWhy.relay-dispatch-code",
+      "NextActionKey": "RuleNext.relay-dispatch-code",
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "dispatchEmailCodePresent",
+          "Comparison": "IsFalse",
+          "Number": null
+        }
+      ]
+    },
+    {
+      "Id": "relay-group-email-codes",
+      "AreaId": "relay",
+      "Severity": "Warning",
+      "TitleKey": "Rule.relay-group-email-codes",
+      "ExplanationKey": "RuleWhy.relay-group-email-codes",
+      "NextActionKey": "RuleNext.relay-group-email-codes",
+      "Location": {
+        "Controller": "Groups",
+        "Action": "Index"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "groupsWithoutEmailCodes",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    },
+    {
+      "Id": "relay-voice-channel",
+      "AreaId": "relay",
+      "Severity": "Warning",
+      "TitleKey": "Rule.relay-voice-channel",
+      "ExplanationKey": "RuleWhy.relay-voice-channel",
+      "NextActionKey": "RuleNext.relay-voice-channel",
+      "Location": {
+        "Controller": "Voice",
+        "Action": "Index"
+      },
+      "AppliesWhen": [
+        {
+          "EvidenceId": "pttAvailable",
+          "Comparison": "IsTrue",
+          "Number": null
+        }
+      ],
+      "FailsWhen": [
+        {
+          "EvidenceId": "voiceChannelCount",
+          "Comparison": "Less",
+          "Number": 1
+        }
+      ]
+    }
+  ],
+  "Packs": [],
+  "Articles": [
+    {
+      "Id": "relay",
+      "Locale": "en",
+      "TitleKey": "Feature.relay",
+      "Body": "Resgrid Relay Install and run Relay, choose its modes and connect it to your department. The Windows desktop app runs several modes side by side with a live dashboard; the headless host runs one mode per process on a server or in Docker. A department installs the desktop app on its station PC, signs it in with a dedicated member account and turns on Auto-start for email dispatch and the radio bridge. Add a member account for the relay to sign in as, then install Relay and connect it with that account's refresh token. The radio bridge, recorder and tone-out require this user token; email dispatch and tone detection can also use client credentials. Run Test connection before starting a mode.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "relay",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-22T00:00:00Z"
+    },
+    {
+      "Id": "relay-smtp-dispatch",
+      "Locale": "en",
+      "TitleKey": "Feature.relay-smtp-dispatch",
+      "Body": "Email dispatch through Relay Relay's built-in mail server turns dispatch email from CAD, alarm panels or paging gateways into Resgrid calls and group messages. Mail to the department dispatch code pages the department, a group's dispatch code dispatches that group and a group's message code sends it a message. Attachments go onto the call, and a redelivered message never creates a second call. The county CAD sends each Station 5 run to that group's dispatch code at the county's dispatch domain, and the relay creates the call with the run card PDF attached. Find the department dispatch address on Call Settings and each group's dispatch and message addresses on Groups. Point your dispatch domains' mail at Relay and list those domains in its SMTP settings. The relay's account needs the Create calls permission, and Add Call Data for attachments.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "relay-smtp-dispatch",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-22T00:00:00Z"
+    },
+    {
+      "Id": "relay-tone-detect",
+      "Locale": "en",
+      "TitleKey": "Feature.relay-tone-detect",
+      "Body": "Paging tones to calls On Windows, Relay listens to a scanner or radio through a sound card for two-tone and single-tone pages and creates a Resgrid call with the recorded dispatch audio. Members get the page in the Responder app with the dispatcher's audio attached, even when the radio page is the only dispatch. A volunteer company's scanner hears its two-tone page, and the relay creates a call for that station's group with the dispatch audio attached. On Groups, note the dispatch code of each group you tone out: a group watcher dispatches that group, and a department watcher pages everyone. Enter each watcher's tones in Relay. The relay's account needs Create calls and Add Call Data.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "relay-tone-detect",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-22T00:00:00Z"
+    },
+    {
+      "Id": "relay-radio-bridge",
+      "Locale": "en",
+      "TitleKey": "Feature.relay-radio-bridge",
+      "Body": "Radio bridge On Windows, Relay bridges a cabled two-way radio to a Resgrid push-to-talk channel in both directions. Crews on the radio and members in the Responder, Unit and Dispatch apps hear each other, and an emergency tone on the radio can create a call. A SAR team bridges its VHF base radio to the team channel, so searchers with handhelds and searchers with phones talk to each other. Needs the Push-to-Talk add-on, a voice channel and the relay's refresh token. Key the radio through a CM108 USB or serial PTT interface, set the squelch with Tune and check the wiring and key-up delay with Test transmit.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "relay-radio-bridge",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-22T00:00:00Z"
+    },
+    {
+      "Id": "relay-lte-donor-radios",
+      "Locale": "en",
+      "TitleKey": "Feature.relay-lte-donor-radios",
+      "Body": "LTE push-to-talk donor radios Joins a cellular push-to-talk (PoC) talk group, such as Rapid Radios or Diga-Talk+, to a Resgrid voice channel through one of its radios cabled to the relay. PoC radio users and Resgrid app users share one conversation, although these PoC services offer no API or gateway for outside audio. A security team cables one Diga-Talk+ mobile to the relay, so guards on PoC radios and supervisors in the Resgrid apps hear each other. Apply the radio's profile, key it with a hard PTT line rather than VOX, turn off its own VOX and beeps, and keep it on external power. The donor radio uses one radio on the PoC account and bridges the talk group it is set to. Needs the Push-to-Talk add-on and a voice channel.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "relay-lte-donor-radios",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-22T00:00:00Z"
+    },
+    {
+      "Id": "relay-recorder",
+      "Locale": "en",
+      "TitleKey": "Feature.relay-recorder",
+      "Body": "Channel recorder Records every transmission on one or all push-to-talk channels as audio files, with a log of who spoke, on which channel, when and for how long. Keeps voice traffic for compliance and after-action review, on local disk or S3-compatible storage. An emergency management agency records every channel during a flood exercise and reviews the transmission log at the after-action meeting. Needs the Push-to-Talk add-on, a voice channel and the relay's refresh token. Each recorded channel occupies a voice seat. Recordings contain operational voice traffic: store, protect and prune them under your records policy.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "relay-recorder",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-22T00:00:00Z"
+    },
+    {
+      "Id": "relay-dispatch-tone-out",
+      "Locale": "en",
+      "TitleKey": "Feature.relay-dispatch-tone-out",
+      "Body": "Tone-out on push-to-talk Announces each new Resgrid call on a push-to-talk channel: alert tones, then the call read aloud by Resgrid's text-to-speech. Crews who monitor a channel hear dispatches the way they would on the radio, in Resgrid's own wording with your call priority names. A plant's emergency response team monitors its channel, and each new call is toned out with a hi-lo alert followed by the call name, nature, address and priority. Needs the Push-to-Talk add-on, a voice channel and the relay's refresh token. Calls already open when the relay starts are not announced, and scheduled calls are announced when they are dispatched.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "relay-dispatch-tone-out",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-22T00:00:00Z"
+    }
+  ]
+}

@@ -8097,4 +8097,154 @@
   <data name="FeatureSetup.intake-spam-screening" xml:space="preserve">
     <value>Su una chiamata in ricezione in attesa, scegli Scarta come spam e lascia spuntato Blocca anche il mittente; la chiamata viene annullata e nessuno viene avvisato. I mittenti bloccati sono elencati nella pagina Canali di ricezione, dove Sblocca toglie un blocco in anticipo. Il limite orario vale per i canali SMS, voce e WhatsApp senza mittenti consentiti, mai per i canali e-mail, chat o webhook.</value>
   </data>
+  <data name="Area.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="AreaPurpose.relay" xml:space="preserve">
+    <value>Un'app complementare open source che collega a Resgrid le e-mail di CAD e di paging, gli scanner, le radio ricetrasmittenti e le radio push-to-talk LTE.</value>
+  </data>
+  <data name="AreaValue.relay" xml:space="preserve">
+    <value>Porta in Resgrid chiamate, messaggi e traffico radio dai sistemi che hai già, senza sostituirli.</value>
+  </data>
+  <data name="AreaExample.relay" xml:space="preserve">
+    <value>Il CAD della contea invia ogni dispaccio via e-mail al relay, che crea la chiamata con la scheda di intervento allegata, mentre una radio della stazione collegata a un canale vocale permette agli utenti dell'app di parlare con le squadre alla radio.</value>
+  </data>
+  <data name="ModuleAdoption.relay" xml:space="preserve">
+    <value>Installa Relay su un computer del dipartimento: l'app desktop per Windows, oppure senza interfaccia su Windows, Linux, macOS o Docker. Il dispaccio via e-mail non richiede componenti aggiuntivi; il ponte radio, il registratore e l'allerta a toni richiedono il componente aggiuntivo Push-to-Talk e un canale vocale. Relay integra i tuoi sistemi radio e di paging; non li sostituisce.</value>
+  </data>
+  <data name="Feature.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay" xml:space="preserve">
+    <value>Installa ed esegui Relay, scegli le sue modalità e collegalo al tuo dipartimento.</value>
+  </data>
+  <data name="FeatureValue.relay" xml:space="preserve">
+    <value>L'app desktop per Windows esegue più modalità affiancate con una dashboard in tempo reale; l'host senza interfaccia esegue una modalità per processo su un server o in Docker.</value>
+  </data>
+  <data name="FeatureExample.relay" xml:space="preserve">
+    <value>Un dipartimento installa l'app desktop sul PC della stazione, la collega con un account membro dedicato e attiva l'avvio automatico del dispaccio via e-mail e del ponte radio.</value>
+  </data>
+  <data name="FeatureSetup.relay" xml:space="preserve">
+    <value>Aggiungi un account membro con cui il relay accede, quindi installa Relay e collegalo con il token di aggiornamento di quell'account. Il ponte radio, il registratore e l'allerta a toni richiedono questo token utente; il dispaccio via e-mail e il rilevamento dei toni possono usare anche le credenziali client. Esegui «Test connection» prima di avviare una modalità.</value>
+  </data>
+  <data name="Feature.relay-smtp-dispatch" xml:space="preserve">
+    <value>Dispaccio via e-mail con Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay-smtp-dispatch" xml:space="preserve">
+    <value>Il server di posta integrato di Relay trasforma le e-mail di dispaccio di CAD, centrali d'allarme o gateway di paging in chiamate e messaggi di gruppo Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-smtp-dispatch" xml:space="preserve">
+    <value>Un'e-mail al codice di dispaccio del dipartimento allerta l'intero dipartimento, il codice di dispaccio di un gruppo invia quel gruppo e il suo codice messaggi gli invia un messaggio. Gli allegati vengono aggiunti alla chiamata e un messaggio recapitato di nuovo non crea mai una seconda chiamata.</value>
+  </data>
+  <data name="FeatureExample.relay-smtp-dispatch" xml:space="preserve">
+    <value>Il CAD della contea invia ogni intervento della Stazione 5 al codice di dispaccio di quel gruppo sul dominio di dispaccio della contea, e il relay crea la chiamata con la scheda di intervento in PDF allegata.</value>
+  </data>
+  <data name="FeatureSetup.relay-smtp-dispatch" xml:space="preserve">
+    <value>Trova l'indirizzo di dispaccio del dipartimento in Impostazioni chiamate e gli indirizzi di dispaccio e dei messaggi di ogni gruppo in Gruppi. Indirizza la posta dei tuoi domini di dispaccio a Relay ed elenca quei domini nelle sue impostazioni SMTP. L'account del relay ha bisogno dell'autorizzazione Crea chiamate e, per gli allegati, di Aggiungi dati chiamata.</value>
+  </data>
+  <data name="Feature.relay-tone-detect" xml:space="preserve">
+    <value>Toni di allerta in chiamate</value>
+  </data>
+  <data name="FeaturePurpose.relay-tone-detect" xml:space="preserve">
+    <value>Su Windows, Relay ascolta uno scanner o una radio tramite una scheda audio per rilevare le allerte bitonali e monotonali e crea una chiamata Resgrid con l'audio del dispaccio registrato.</value>
+  </data>
+  <data name="FeatureValue.relay-tone-detect" xml:space="preserve">
+    <value>I membri ricevono l'allerta nell'app Responder con l'audio dell'operatore allegato, anche quando l'allerta radio è l'unico dispaccio.</value>
+  </data>
+  <data name="FeatureExample.relay-tone-detect" xml:space="preserve">
+    <value>Lo scanner di una squadra di volontari sente la sua allerta bitonale e il relay crea una chiamata per il gruppo di quella stazione con l'audio del dispaccio allegato.</value>
+  </data>
+  <data name="FeatureSetup.relay-tone-detect" xml:space="preserve">
+    <value>In Gruppi, annota il codice di dispaccio di ogni gruppo che allerti a toni: un watcher di gruppo invia quel gruppo e un watcher di dipartimento allerta tutti. Inserisci i toni di ogni watcher in Relay. L'account del relay ha bisogno di Crea chiamate e Aggiungi dati chiamata.</value>
+  </data>
+  <data name="Feature.relay-radio-bridge" xml:space="preserve">
+    <value>Ponte radio</value>
+  </data>
+  <data name="FeaturePurpose.relay-radio-bridge" xml:space="preserve">
+    <value>Su Windows, Relay collega una radio ricetrasmittente cablata a un canale push-to-talk Resgrid in entrambe le direzioni.</value>
+  </data>
+  <data name="FeatureValue.relay-radio-bridge" xml:space="preserve">
+    <value>Le squadre alla radio e i membri nelle app Responder, Unit e Dispatch si sentono a vicenda, e un tono di emergenza alla radio può creare una chiamata.</value>
+  </data>
+  <data name="FeatureExample.relay-radio-bridge" xml:space="preserve">
+    <value>Una squadra SAR collega la sua radio base VHF al canale della squadra, così i soccorritori con i portatili e quelli con i telefoni parlano tra loro.</value>
+  </data>
+  <data name="FeatureSetup.relay-radio-bridge" xml:space="preserve">
+    <value>Richiede il componente aggiuntivo Push-to-Talk, un canale vocale e il token di aggiornamento del relay. Attiva la trasmissione della radio tramite un'interfaccia PTT USB CM108 o seriale, regola lo squelch con «Tune» e verifica cablaggio e ritardo di trasmissione con «Test transmit».</value>
+  </data>
+  <data name="Feature.relay-lte-donor-radios" xml:space="preserve">
+    <value>Radio donatrici push-to-talk LTE</value>
+  </data>
+  <data name="FeaturePurpose.relay-lte-donor-radios" xml:space="preserve">
+    <value>Unisce un gruppo di conversazione push-to-talk cellulare (PoC), come Rapid Radios o Diga-Talk+, a un canale vocale Resgrid tramite una delle sue radio cablata al relay.</value>
+  </data>
+  <data name="FeatureValue.relay-lte-donor-radios" xml:space="preserve">
+    <value>Gli utenti delle radio PoC e delle app Resgrid condividono un'unica conversazione, anche se questi servizi PoC non offrono API né gateway per l'audio esterno.</value>
+  </data>
+  <data name="FeatureExample.relay-lte-donor-radios" xml:space="preserve">
+    <value>Una squadra di sicurezza collega una veicolare Diga-Talk+ al relay, così le guardie con radio PoC e i supervisori nelle app Resgrid si sentono a vicenda.</value>
+  </data>
+  <data name="FeatureSetup.relay-lte-donor-radios" xml:space="preserve">
+    <value>Applica il profilo della radio, attivala con una linea PTT fisica anziché con il VOX, disattiva il suo VOX e i suoi bip e tienila su alimentazione esterna. La radio donatrice occupa una radio dell'account PoC e collega il gruppo di conversazione su cui è impostata. Richiede il componente aggiuntivo Push-to-Talk e un canale vocale.</value>
+  </data>
+  <data name="Feature.relay-recorder" xml:space="preserve">
+    <value>Registratore dei canali</value>
+  </data>
+  <data name="FeaturePurpose.relay-recorder" xml:space="preserve">
+    <value>Registra ogni trasmissione su uno o su tutti i canali push-to-talk come file audio, con un registro di chi ha parlato, su quale canale, quando e per quanto tempo.</value>
+  </data>
+  <data name="FeatureValue.relay-recorder" xml:space="preserve">
+    <value>Conserva il traffico vocale per la conformità e l'analisi post-intervento, su disco locale o su storage compatibile S3.</value>
+  </data>
+  <data name="FeatureExample.relay-recorder" xml:space="preserve">
+    <value>Un'agenzia di gestione delle emergenze registra tutti i canali durante un'esercitazione alluvionale e rivede il registro delle trasmissioni nella riunione di debriefing.</value>
+  </data>
+  <data name="FeatureSetup.relay-recorder" xml:space="preserve">
+    <value>Richiede il componente aggiuntivo Push-to-Talk, un canale vocale e il token di aggiornamento del relay. Ogni canale registrato occupa un posto vocale. Le registrazioni contengono traffico vocale operativo: archiviale, proteggile ed eliminale secondo la tua politica di conservazione dei registri.</value>
+  </data>
+  <data name="Feature.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Allerta a toni su push-to-talk</value>
+  </data>
+  <data name="FeaturePurpose.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Annuncia ogni nuova chiamata Resgrid su un canale push-to-talk: toni di allerta, poi la chiamata letta ad alta voce dalla sintesi vocale di Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Le squadre che ascoltano un canale sentono i dispacci come alla radio, con la formulazione di Resgrid e i nomi delle tue priorità di chiamata.</value>
+  </data>
+  <data name="FeatureExample.relay-dispatch-tone-out" xml:space="preserve">
+    <value>La squadra di emergenza di uno stabilimento ascolta il suo canale, e ogni nuova chiamata viene annunciata con un'allerta alto-basso seguita da nome, natura, indirizzo e priorità della chiamata.</value>
+  </data>
+  <data name="FeatureSetup.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Richiede il componente aggiuntivo Push-to-Talk, un canale vocale e il token di aggiornamento del relay. Le chiamate già aperte all'avvio del relay non vengono annunciate e le chiamate programmate vengono annunciate quando sono inviate.</value>
+  </data>
+  <data name="Rule.relay-dispatch-code" xml:space="preserve">
+    <value>Nessun codice e-mail di dispaccio del dipartimento</value>
+  </data>
+  <data name="RuleWhy.relay-dispatch-code" xml:space="preserve">
+    <value>Il dipartimento non ha un codice e-mail di dispaccio, quindi un'e-mail al suo indirizzo di dispaccio non può creare una chiamata, sia che la riceva Resgrid sia un relay.</value>
+  </data>
+  <data name="RuleNext.relay-dispatch-code" xml:space="preserve">
+    <value>Controlla l'indirizzo di dispaccio in Impostazioni chiamate. Se non ne compare nessuno, chiedi al supporto Resgrid, o all'amministratore della tua installazione Resgrid, di assegnare un codice di dispaccio.</value>
+  </data>
+  <data name="Rule.relay-group-email-codes" xml:space="preserve">
+    <value>Gruppi senza codice e-mail di dispaccio o dei messaggi</value>
+  </data>
+  <data name="RuleWhy.relay-group-email-codes" xml:space="preserve">
+    <value>Uno o più gruppi non hanno un codice e-mail di dispaccio o dei messaggi, quindi le e-mail a quegli indirizzi di gruppo non raggiungono nessuno, né tramite Resgrid né tramite un relay. I gruppi creati fuori dall'editor dei gruppi, ad esempio con un'importazione, possono essere privi di codici.</value>
+  </data>
+  <data name="RuleNext.relay-group-email-codes" xml:space="preserve">
+    <value>In Gruppi, individua ogni gruppo il cui indirizzo di dispaccio o dei messaggi non ha un codice prima della @, apri Modifica e salva; il salvataggio assegna i codici mancanti.</value>
+  </data>
+  <data name="Rule.relay-voice-channel" xml:space="preserve">
+    <value>Push-to-Talk senza canale vocale</value>
+  </data>
+  <data name="RuleWhy.relay-voice-channel" xml:space="preserve">
+    <value>Il dipartimento ha Push-to-Talk ma nessun canale vocale permanente, quindi le app Resgrid e il ponte radio, il registratore e l'allerta a toni di un relay non hanno un canale a cui unirsi.</value>
+  </data>
+  <data name="RuleNext.relay-voice-channel" xml:space="preserve">
+    <value>Apri la pagina dei canali vocali, crea un canale e aggiungi i membri che lo usano.</value>
+  </data>
+  <data name="SetupEvidence.relay-voice" xml:space="preserve">
+    <value>Vengono verificati la disponibilità di Push-to-Talk e i canali vocali permanenti. Resgrid non osserva se un relay è installato, connesso o trasmette audio; verificalo nella dashboard del relay stesso.</value>
+  </data>
 </root>

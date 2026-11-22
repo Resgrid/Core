@@ -195,6 +195,7 @@ namespace Resgrid.Web.Services.Controllers
 
 			// An item that already is its voicemail call (a repeat of this request) has nothing more to save.
 			var durable = item?.CallId != null;
+			var inProgress = false;
 			if (item != null && !item.CallId.HasValue && !string.IsNullOrWhiteSpace(recordingUrl))
 			{
 				try
@@ -204,6 +205,7 @@ namespace Resgrid.Web.Services.Controllers
 					var result = await _pendingCalls.FromVoicemailAsync(item, item.SourceAddress ?? DeskPhoneNumbers.ToE164(Field("From")), recordingUrl,
 						ParseInt(Field("RecordingDuration")), Field("RecordingSid"));
 					durable = result != null && result.Durable;
+					inProgress = result?.Outcome == DispatcherVoicemailOutcomes.InProgress;
 				}
 				catch (Exception ex)
 				{
@@ -211,7 +213,9 @@ namespace Resgrid.Web.Services.Controllers
 				}
 
 				if (!durable)
-					await RecordVoiceEventAsync(item, DispatcherQueueEventTypes.VoiceEnded, null, $"The voicemail could not be saved as a call. Recording: {recordingUrl}");
+					await RecordVoiceEventAsync(item, DispatcherQueueEventTypes.VoiceEnded, null, inProgress
+						? $"The voicemail was still being saved by another request. Recording: {recordingUrl}"
+						: $"The voicemail could not be saved as a call. Recording: {recordingUrl}");
 			}
 			else if (item == null && !string.IsNullOrWhiteSpace(recordingUrl))
 			{
@@ -249,13 +253,20 @@ namespace Resgrid.Web.Services.Controllers
 				item = await AnyItemAsync(item.DispatcherQueueItemId) ?? item;
 			}
 
+			var transcript = $"Voicemail transcription (automatic): {text.Trim()}";
+
 			if (!item.CallId.HasValue)
 			{
 				// Still no call (its save failed, or it could not be linked): the transcript stays with the item's history rather than
-				// being dropped.
-				Logging.LogInfo($"[Dispatcher desk] Voicemail transcription for item {itemId} arrived before its pending call was linked; kept on the item.");
-				await RecordVoiceEventAsync(item, DispatcherQueueEventTypes.VoiceEnded, null, $"Voicemail transcription (automatic): {text.Trim()}");
-				return Twiml(new VoiceResponse());
+				// being dropped. Acknowledged only once that history entry is stored.
+				if (await RecordStoredVoiceEventAsync(item, transcript))
+				{
+					Logging.LogInfo($"[Dispatcher desk] Voicemail transcription for item {itemId} arrived before its pending call was linked; kept on the item.");
+					return Twiml(new VoiceResponse());
+				}
+
+				Logging.LogError($"[Dispatcher desk] Voicemail transcription for item {itemId} could not be stored (no call linked, history write failed).");
+				return StatusCode(StatusCodes.Status500InternalServerError);
 			}
 
 			try
@@ -265,16 +276,22 @@ namespace Resgrid.Web.Services.Controllers
 				{
 					CallId = item.CallId.Value,
 					UserId = department?.ManagingUserId,
-					Note = $"Voicemail transcription (automatic): {text.Trim()}",
+					Note = transcript,
 					Timestamp = DateTime.UtcNow
 				}, CancellationToken.None);
+
+				return Twiml(new VoiceResponse());
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex, $"Dispatcher desk: the voicemail transcription for call {item.CallId} could not be saved.");
 			}
 
-			return Twiml(new VoiceResponse());
+			// The call note failed: the item's history keeps the transcript instead, or the request is not acknowledged.
+			if (await RecordStoredVoiceEventAsync(item, transcript))
+				return Twiml(new VoiceResponse());
+
+			return StatusCode(StatusCodes.Status500InternalServerError);
 		}
 
 		/// <summary>
@@ -525,12 +542,12 @@ namespace Resgrid.Web.Services.Controllers
 					superseded ? $"Dispatcher's phone: {status} (an earlier ring)" : $"Dispatcher's phone: {status}");
 
 				if (answerLeg)
-					await ReleaseIfHeldAsync(item, userId, null);
+					await ReleaseIfStillThisRingAsync(item, userId, null, attemptStartedOn);
 			}
 			else if (answerLeg && !ConnectedSinceLastAttempt(events, userId))
 			{
 				// Answered, then hung up without connecting (pressing 1 records the bridge; another key already released it).
-				await ReleaseIfHeldAsync(item, userId, "Dispatcher hung up before connecting");
+				await ReleaseIfStillThisRingAsync(item, userId, "Dispatcher hung up before connecting", attemptStartedOn);
 			}
 			else
 			{
@@ -733,19 +750,44 @@ namespace Resgrid.Web.Services.Controllers
 				await ReleaseAsync(fresh, userId, detail);
 		}
 
+		/// <summary>
+		/// <see cref="ReleaseIfHeldAsync"/> for a status callback of the ring that started at <paramref name="attemptStartedOn"/>: the
+		/// item's history is read again just before the release, so a ring of the same dispatcher placed while this callback was
+		/// being handled (after its first look at the history) keeps the item instead of losing it to the earlier ring's status.
+		/// </summary>
+		private async System.Threading.Tasks.Task ReleaseIfStillThisRingAsync(DispatcherQueueItem item, string userId, string detail, DateTime? attemptStartedOn)
+		{
+			if (attemptStartedOn.HasValue)
+			{
+				var events = (await _dispatcherRoutingService.GetItemDetailAsync(item.DepartmentId, item.DispatcherQueueItemId))?.Events;
+				if (NewerAttemptStarted(events, userId, attemptStartedOn.Value))
+				{
+					Logging.LogInfo($"[Dispatcher desk] Status of an earlier ring for item {item.DispatcherQueueItemId}; the newer ring keeps it.");
+					return;
+				}
+			}
+
+			await ReleaseIfHeldAsync(item, userId, detail);
+		}
+
+		/// <summary>
+		/// Overflows a held caller's item for the voicemail, never over a voicemail claim: each write is fenced on the row as read, and
+		/// an item that is claimed for its voicemail (or no longer open) is left as it is. An unfenced write here could replace the
+		/// claim note of a voicemail still being saved, and a repeat of that voicemail would then save a second call.
+		/// </summary>
 		private async System.Threading.Tasks.Task MarkOverflowedAsync(DispatcherQueueItem item, string note)
 		{
-			if (item == null || !item.IsOpen())
-				return;
+			for (var attempt = 0; attempt < DispatcherDeskPendingCalls.WriteAttempts; attempt++)
+			{
+				if (item == null || !item.IsOpen() || (DispatcherDeskPendingCalls.IsClaimed(item) && !item.CallId.HasValue))
+					return;
 
-			try
-			{
-				await _dispatcherRoutingService.MarkOverflowedAsync(item, note, CancellationToken.None);
+				// TryMarkOverflowedAsync refreshes the item from the stored row when the fence fails, so the next pass judges that row.
+				if (await TryMarkOverflowedAsync(item, note))
+					return;
 			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
-			}
+
+			Logging.LogInfo($"[Dispatcher desk] Voice item {item?.DispatcherQueueItemId} kept changing; not marked overflowed.");
 		}
 
 		/// <summary>
@@ -766,6 +808,28 @@ namespace Resgrid.Web.Services.Controllers
 			{
 				Logging.LogException(ex);
 				return true;
+			}
+		}
+
+		/// <summary>
+		/// Adds a caller-leg VoiceEnded entry to the item's history and reports whether it is stored (read back: the routing service's
+		/// history write logs and swallows its own failures).
+		/// </summary>
+		private async Task<bool> RecordStoredVoiceEventAsync(DispatcherQueueItem item, string detail)
+		{
+			await RecordVoiceEventAsync(item, DispatcherQueueEventTypes.VoiceEnded, null, detail);
+
+			try
+			{
+				var stored = detail != null && detail.Length > 500 ? detail.Substring(0, 500) : detail;
+				var events = (await _dispatcherRoutingService.GetItemDetailAsync(item.DepartmentId, item.DispatcherQueueItemId))?.Events;
+				return events != null && events.Any(x => x != null && x.EventType == (int)DispatcherQueueEventTypes.VoiceEnded &&
+														 string.Equals(x.Detail, stored, StringComparison.Ordinal));
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Dispatcher desk: the history of item {item.DispatcherQueueItemId} could not be read back.");
+				return false;
 			}
 		}
 

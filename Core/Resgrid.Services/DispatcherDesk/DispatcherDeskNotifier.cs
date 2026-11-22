@@ -63,24 +63,24 @@ namespace Resgrid.Services
 				PushSoundTypes.ModernDeskMessage, honourBreak: true, cancellationToken);
 		}
 
-		public async Task NotifyBreakReminderAsync(DispatcherBreak dispatcherBreak, bool due, CancellationToken cancellationToken = default)
+		public async Task<bool> NotifyBreakReminderAsync(DispatcherBreak dispatcherBreak, bool due, CancellationToken cancellationToken = default)
 		{
 			if (dispatcherBreak == null)
-				return;
+				return true;
 
 			var kind = BreakName(dispatcherBreak.BreakType);
 			var title = due ? $"Your {kind} is due now" : $"Your {kind} starts soon";
 			var body = $"{dispatcherBreak.DurationMinutes} minutes. Take it from the desk when you're ready; you're due back {dispatcherBreak.DurationMinutes} minutes after you start.";
 
-			await SendAsync(dispatcherBreak.DepartmentId, dispatcherBreak.UserId, title, body, BreakCode(dispatcherBreak), PushSoundTypes.ModernBreakReminder,
+			return await SendAsync(dispatcherBreak.DepartmentId, dispatcherBreak.UserId, title, body, BreakCode(dispatcherBreak), PushSoundTypes.ModernBreakReminder,
 				honourBreak: true, cancellationToken);
 		}
 
-		public async Task NotifyBreakOverAsync(DispatcherBreak dispatcherBreak, IEnumerable<string> supervisorUserIds, bool autoReturned,
+		public async Task<bool> NotifyBreakOverAsync(DispatcherBreak dispatcherBreak, IEnumerable<string> supervisorUserIds, bool autoReturned,
 			CancellationToken cancellationToken = default)
 		{
 			if (dispatcherBreak == null)
-				return;
+				return true;
 
 			var kind = BreakName(dispatcherBreak.BreakType);
 
@@ -92,14 +92,14 @@ namespace Resgrid.Services
 				var body = autoReturned
 					? "You were not back in time, so the desk made you available. Routed work will reach you again."
 					: "Tap \"I'm back\" on the desk to take work again.";
-				await SendAsync(dispatcherBreak.DepartmentId, dispatcherBreak.UserId, title, body, BreakCode(dispatcherBreak), PushSoundTypes.ModernBreakOver,
+				return await SendAsync(dispatcherBreak.DepartmentId, dispatcherBreak.UserId, title, body, BreakCode(dispatcherBreak), PushSoundTypes.ModernBreakOver,
 					honourBreak: false, cancellationToken);
-				return;
 			}
 
-			var supervisors = supervisorUserIds.Where(x => !string.IsNullOrWhiteSpace(x)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+			var supervisors = supervisorUserIds.Where(x => !string.IsNullOrWhiteSpace(x) && !string.Equals(x, dispatcherBreak.UserId, StringComparison.OrdinalIgnoreCase))
+				.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
 			if (supervisors.Count == 0)
-				return;
+				return true;
 
 			var overdue = dispatcherBreak.ExpectedReturnOn.HasValue
 				? Math.Max(1, (int)Math.Round((DateTime.UtcNow - dispatcherBreak.ExpectedReturnOn.Value).TotalMinutes))
@@ -107,9 +107,13 @@ namespace Resgrid.Services
 			var supervisorTitle = autoReturned ? "A dispatcher was returned from break" : "A dispatcher is overdue from break";
 			var supervisorBody = autoReturned ? $"Made available {overdue} min after their {kind} ran out." : $"Their {kind} ran out {overdue} min ago.";
 
-			foreach (var supervisor in supervisors.Where(x => !string.Equals(x, dispatcherBreak.UserId, StringComparison.OrdinalIgnoreCase)))
-				await SendAsync(dispatcherBreak.DepartmentId, supervisor, supervisorTitle, supervisorBody, BreakCode(dispatcherBreak), PushSoundTypes.ModernBreakOver,
-					honourBreak: true, cancellationToken);
+			// Reaching one supervisor is enough: the alert is not sent again to those it did reach.
+			var reached = false;
+			foreach (var supervisor in supervisors)
+				reached |= await SendAsync(dispatcherBreak.DepartmentId, supervisor, supervisorTitle, supervisorBody, BreakCode(dispatcherBreak),
+					PushSoundTypes.ModernBreakOver, honourBreak: true, cancellationToken);
+
+			return reached;
 		}
 
 		public async Task PublishDeskChangedAsync(int departmentId, string userId = null)
@@ -171,19 +175,24 @@ namespace Resgrid.Services
 			}
 		}
 
-		private async Task SendAsync(int departmentId, string userId, string title, string body, string eventCode, PushSoundTypes sound, bool honourBreak,
+		/// <summary>
+		/// True when the push was accepted for delivery or deliberately held back (on a break that suppresses alerts); false when it
+		/// could not be sent (refused, failed, or the caller gave up). Never throws.
+		/// </summary>
+		private async Task<bool> SendAsync(int departmentId, string userId, string title, string body, string eventCode, PushSoundTypes sound, bool honourBreak,
 			CancellationToken cancellationToken)
 		{
 			try
 			{
 				if (honourBreak && await IsOnSuppressedBreakAsync(departmentId, userId))
-					return;
+					return true;
 
-				await _pushProvider.SendAsync(departmentId, userId, Truncate(title, 120), Truncate(body, 240), eventCode, sound, cancellationToken);
+				return await _pushProvider.SendAsync(departmentId, userId, Truncate(title, 120), Truncate(body, 240), eventCode, sound, cancellationToken);
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex, $"Dispatcher desk push {eventCode} to {userId}");
+				return false;
 			}
 		}
 

@@ -8097,4 +8097,154 @@
   <data name="FeatureSetup.intake-spam-screening" xml:space="preserve">
     <value>Wählen Sie bei einem ausstehenden Eingangseinsatz Als Spam verwerfen und lassen Sie Absender zusätzlich sperren angehakt; der Einsatz wird abgebrochen, und niemand wird benachrichtigt. Gesperrte Absender stehen auf der Seite Eingangskanäle, wo Entsperren eine Sperre vorzeitig aufhebt. Das Stundenlimit gilt für SMS-, Sprach- und WhatsApp-Kanäle ohne zugelassene Absender, nie für E-Mail-, Chat- oder Webhook-Kanäle.</value>
   </data>
+  <data name="Area.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="AreaPurpose.relay" xml:space="preserve">
+    <value>Eine Open-Source-Begleit-App, die CAD- und Alarmierungs-E-Mails, Scanner, Funkgeräte und LTE-Push-to-Talk-Funkgeräte mit Resgrid verbindet.</value>
+  </data>
+  <data name="AreaValue.relay" xml:space="preserve">
+    <value>Übernehmen Sie Einsätze, Nachrichten und Funkverkehr aus Ihren vorhandenen Systemen in Resgrid, ohne diese zu ersetzen.</value>
+  </data>
+  <data name="AreaExample.relay" xml:space="preserve">
+    <value>Das Einsatzleitsystem des Landkreises sendet jede Alarmierung per E-Mail an das Relay, das den Einsatz samt Einsatzkarte anlegt, während ein an einen Sprachkanal angebundenes Wachenfunkgerät App-Nutzer mit den Kräften am Funk sprechen lässt.</value>
+  </data>
+  <data name="ModuleAdoption.relay" xml:space="preserve">
+    <value>Installieren Sie Relay auf einem Rechner der Abteilung: als Windows-Desktop-App oder ohne Oberfläche unter Windows, Linux, macOS oder Docker. Die E-Mail-Alarmierung braucht keine Erweiterung; Funkbrücke, Aufzeichnung und Tonalarmierung benötigen die Erweiterung Push-to-Talk und einen Sprachkanal. Relay ergänzt Ihre Funk- und Alarmierungssysteme, ersetzt sie jedoch nicht.</value>
+  </data>
+  <data name="Feature.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay" xml:space="preserve">
+    <value>Installieren und betreiben Sie Relay, wählen Sie seine Modi und verbinden Sie es mit Ihrer Abteilung.</value>
+  </data>
+  <data name="FeatureValue.relay" xml:space="preserve">
+    <value>Die Windows-Desktop-App betreibt mehrere Modi nebeneinander mit einem Live-Dashboard; der Host ohne Oberfläche betreibt einen Modus pro Prozess auf einem Server oder in Docker.</value>
+  </data>
+  <data name="FeatureExample.relay" xml:space="preserve">
+    <value>Eine Abteilung installiert die Desktop-App auf dem Wachen-PC, meldet sie mit einem eigenen Mitgliedskonto an und aktiviert den automatischen Start für E-Mail-Alarmierung und Funkbrücke.</value>
+  </data>
+  <data name="FeatureSetup.relay" xml:space="preserve">
+    <value>Legen Sie ein Mitgliedskonto an, mit dem sich das Relay anmeldet, installieren Sie dann Relay und verbinden Sie es mit dem Refresh-Token dieses Kontos. Funkbrücke, Aufzeichnung und Tonalarmierung erfordern dieses Benutzer-Token; E-Mail-Alarmierung und Tonerkennung können auch Client-Anmeldedaten verwenden. Führen Sie „Test connection“ aus, bevor Sie einen Modus starten.</value>
+  </data>
+  <data name="Feature.relay-smtp-dispatch" xml:space="preserve">
+    <value>E-Mail-Alarmierung über Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay-smtp-dispatch" xml:space="preserve">
+    <value>Der integrierte Mailserver von Relay macht aus Alarmierungs-E-Mails von Einsatzleitsystemen, Brandmeldeanlagen oder Paging-Gateways Resgrid-Einsätze und Gruppennachrichten.</value>
+  </data>
+  <data name="FeatureValue.relay-smtp-dispatch" xml:space="preserve">
+    <value>Eine E-Mail an den Alarmierungscode der Abteilung alarmiert die gesamte Abteilung, der Alarmierungscode einer Gruppe alarmiert diese Gruppe und ihr Nachrichtencode sendet ihr eine Nachricht. Anhänge landen am Einsatz, und eine erneut zugestellte E-Mail erzeugt nie einen zweiten Einsatz.</value>
+  </data>
+  <data name="FeatureExample.relay-smtp-dispatch" xml:space="preserve">
+    <value>Das Einsatzleitsystem des Landkreises sendet jeden Einsatz für Wache 5 an den Alarmierungscode dieser Gruppe unter der Alarmierungsdomäne des Landkreises, und das Relay legt den Einsatz mit der Einsatzkarte als PDF an.</value>
+  </data>
+  <data name="FeatureSetup.relay-smtp-dispatch" xml:space="preserve">
+    <value>Die Alarmierungsadresse der Abteilung finden Sie unter Einsatzeinstellungen, die Alarmierungs- und Nachrichtenadressen jeder Gruppe unter Gruppen. Leiten Sie die E-Mails Ihrer Alarmierungsdomänen an Relay und tragen Sie diese Domänen in seinen SMTP-Einstellungen ein. Das Konto des Relays benötigt die Berechtigung „Einsätze erstellen“ und für Anhänge „Einsatzdaten hinzufügen“.</value>
+  </data>
+  <data name="Feature.relay-tone-detect" xml:space="preserve">
+    <value>Alarmierungstöne zu Einsätzen</value>
+  </data>
+  <data name="FeaturePurpose.relay-tone-detect" xml:space="preserve">
+    <value>Unter Windows hört Relay über eine Soundkarte einen Scanner oder ein Funkgerät auf Zweiton- und Einzeltonalarmierungen ab und legt einen Resgrid-Einsatz mit der aufgezeichneten Alarmierungsdurchsage an.</value>
+  </data>
+  <data name="FeatureValue.relay-tone-detect" xml:space="preserve">
+    <value>Mitglieder erhalten die Alarmierung in der Responder-App mit der Durchsage der Leitstelle im Anhang, auch wenn die Funkalarmierung die einzige Alarmierung ist.</value>
+  </data>
+  <data name="FeatureExample.relay-tone-detect" xml:space="preserve">
+    <value>Der Scanner einer freiwilligen Feuerwehr hört ihren Zweitonalarm, und das Relay legt einen Einsatz für die Gruppe dieser Wache mit der Durchsage im Anhang an.</value>
+  </data>
+  <data name="FeatureSetup.relay-tone-detect" xml:space="preserve">
+    <value>Notieren Sie unter Gruppen den Alarmierungscode jeder Gruppe, die Sie per Ton alarmieren: Ein Gruppen-Watcher alarmiert diese Gruppe, ein Abteilungs-Watcher alarmiert alle. Hinterlegen Sie die Töne jedes Watchers in Relay. Das Konto des Relays benötigt „Einsätze erstellen“ und „Einsatzdaten hinzufügen“.</value>
+  </data>
+  <data name="Feature.relay-radio-bridge" xml:space="preserve">
+    <value>Funkbrücke</value>
+  </data>
+  <data name="FeaturePurpose.relay-radio-bridge" xml:space="preserve">
+    <value>Unter Windows verbindet Relay ein per Kabel angeschlossenes Funkgerät in beide Richtungen mit einem Resgrid-Push-to-Talk-Kanal.</value>
+  </data>
+  <data name="FeatureValue.relay-radio-bridge" xml:space="preserve">
+    <value>Kräfte am Funk und Mitglieder in den Apps Responder, Unit und Dispatch hören sich gegenseitig, und ein Notruf-Ton auf dem Funk kann einen Einsatz anlegen.</value>
+  </data>
+  <data name="FeatureExample.relay-radio-bridge" xml:space="preserve">
+    <value>Ein Such- und Rettungsteam verbindet sein VHF-Basisfunkgerät mit dem Teamkanal, sodass Suchkräfte mit Handfunkgeräten und Suchkräfte mit Smartphones miteinander sprechen.</value>
+  </data>
+  <data name="FeatureSetup.relay-radio-bridge" xml:space="preserve">
+    <value>Erfordert die Erweiterung Push-to-Talk, einen Sprachkanal und das Refresh-Token des Relays. Tasten Sie das Funkgerät über eine CM108-USB- oder serielle PTT-Schnittstelle, stellen Sie die Rauschsperre mit „Tune“ ein und prüfen Sie Verkabelung und Tastverzögerung mit „Test transmit“.</value>
+  </data>
+  <data name="Feature.relay-lte-donor-radios" xml:space="preserve">
+    <value>LTE-Push-to-Talk-Spenderfunkgeräte</value>
+  </data>
+  <data name="FeaturePurpose.relay-lte-donor-radios" xml:space="preserve">
+    <value>Verbindet eine Mobilfunk-Push-to-Talk-Sprechgruppe (PoC), etwa von Rapid Radios oder Diga-Talk+, über eines ihrer an das Relay angeschlossenen Funkgeräte mit einem Resgrid-Sprachkanal.</value>
+  </data>
+  <data name="FeatureValue.relay-lte-donor-radios" xml:space="preserve">
+    <value>PoC-Funknutzer und Nutzer der Resgrid-Apps führen ein gemeinsames Gespräch, obwohl diese PoC-Dienste keine API und kein Gateway für fremde Audiosignale anbieten.</value>
+  </data>
+  <data name="FeatureExample.relay-lte-donor-radios" xml:space="preserve">
+    <value>Ein Sicherheitsdienst schließt ein Diga-Talk+-Fahrzeuggerät an das Relay an, sodass Wachleute mit PoC-Funkgeräten und Vorgesetzte in den Resgrid-Apps sich gegenseitig hören.</value>
+  </data>
+  <data name="FeatureSetup.relay-lte-donor-radios" xml:space="preserve">
+    <value>Wenden Sie das Profil des Funkgeräts an, tasten Sie es über eine feste PTT-Leitung statt per VOX, schalten Sie seine eigene VOX und seine Signaltöne ab und betreiben Sie es mit externer Stromversorgung. Das Spenderfunkgerät belegt ein Gerät im PoC-Konto und verbindet die eingestellte Sprechgruppe. Erfordert die Erweiterung Push-to-Talk und einen Sprachkanal.</value>
+  </data>
+  <data name="Feature.relay-recorder" xml:space="preserve">
+    <value>Kanalaufzeichnung</value>
+  </data>
+  <data name="FeaturePurpose.relay-recorder" xml:space="preserve">
+    <value>Zeichnet jede Übertragung auf einem oder allen Push-to-Talk-Kanälen als Audiodatei auf, mit einem Protokoll, wer wann auf welchem Kanal wie lange gesprochen hat.</value>
+  </data>
+  <data name="FeatureValue.relay-recorder" xml:space="preserve">
+    <value>Bewahrt den Sprechfunkverkehr für Nachweispflichten und Einsatznachbesprechungen auf, auf einem lokalen Datenträger oder in S3-kompatiblem Speicher.</value>
+  </data>
+  <data name="FeatureExample.relay-recorder" xml:space="preserve">
+    <value>Eine Katastrophenschutzbehörde zeichnet während einer Hochwasserübung alle Kanäle auf und wertet das Übertragungsprotokoll in der Nachbesprechung aus.</value>
+  </data>
+  <data name="FeatureSetup.relay-recorder" xml:space="preserve">
+    <value>Erfordert die Erweiterung Push-to-Talk, einen Sprachkanal und das Refresh-Token des Relays. Jeder aufgezeichnete Kanal belegt einen Sprachplatz. Aufnahmen enthalten einsatzbezogenen Sprechfunkverkehr: Speichern, schützen und löschen Sie sie gemäß Ihren Aufbewahrungsrichtlinien.</value>
+  </data>
+  <data name="Feature.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Tonalarmierung über Push-to-Talk</value>
+  </data>
+  <data name="FeaturePurpose.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Kündigt jeden neuen Resgrid-Einsatz auf einem Push-to-Talk-Kanal an: zuerst Alarmtöne, dann liest die Sprachausgabe von Resgrid den Einsatz vor.</value>
+  </data>
+  <data name="FeatureValue.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Kräfte, die einen Kanal mithören, hören Alarmierungen wie über Funk, im Wortlaut von Resgrid und mit Ihren Bezeichnungen der Einsatzprioritäten.</value>
+  </data>
+  <data name="FeatureExample.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Die Werkfeuerwehr eines Industriebetriebs hört ihren Kanal mit, und jeder neue Einsatz wird mit einem Hoch-Tief-Ton und anschließend Einsatzname, Art, Adresse und Priorität alarmiert.</value>
+  </data>
+  <data name="FeatureSetup.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Erfordert die Erweiterung Push-to-Talk, einen Sprachkanal und das Refresh-Token des Relays. Einsätze, die beim Start des Relays bereits offen sind, werden nicht angekündigt; geplante Einsätze werden angekündigt, sobald sie alarmiert werden.</value>
+  </data>
+  <data name="Rule.relay-dispatch-code" xml:space="preserve">
+    <value>Kein Alarmierungs-E-Mail-Code der Abteilung</value>
+  </data>
+  <data name="RuleWhy.relay-dispatch-code" xml:space="preserve">
+    <value>Die Abteilung hat keinen Alarmierungs-E-Mail-Code, daher kann eine E-Mail an ihre Alarmierungsadresse keinen Einsatz anlegen, ob Resgrid oder ein Relay sie empfängt.</value>
+  </data>
+  <data name="RuleNext.relay-dispatch-code" xml:space="preserve">
+    <value>Prüfen Sie die Alarmierungsadresse unter Einsatzeinstellungen. Wird keine angezeigt, bitten Sie den Resgrid-Support oder den Administrator Ihrer Resgrid-Installation, einen Alarmierungscode zuzuweisen.</value>
+  </data>
+  <data name="Rule.relay-group-email-codes" xml:space="preserve">
+    <value>Gruppen ohne Alarmierungs- oder Nachrichten-E-Mail-Code</value>
+  </data>
+  <data name="RuleWhy.relay-group-email-codes" xml:space="preserve">
+    <value>Mindestens eine Gruppe hat keinen Alarmierungs- oder Nachrichten-E-Mail-Code, daher erreichen E-Mails an diese Gruppenadressen niemanden, weder über Resgrid noch über ein Relay. Gruppen, die außerhalb des Gruppeneditors angelegt wurden, etwa durch einen Import, können ohne Codes sein.</value>
+  </data>
+  <data name="RuleNext.relay-group-email-codes" xml:space="preserve">
+    <value>Suchen Sie unter Gruppen jede Gruppe, deren Alarmierungs- oder Nachrichtenadresse vor dem @ keinen Code hat, öffnen Sie „Bearbeiten“ und speichern Sie; beim Speichern werden die fehlenden Codes vergeben.</value>
+  </data>
+  <data name="Rule.relay-voice-channel" xml:space="preserve">
+    <value>Push-to-Talk ohne Sprachkanal</value>
+  </data>
+  <data name="RuleWhy.relay-voice-channel" xml:space="preserve">
+    <value>Die Abteilung hat Push-to-Talk, aber keinen dauerhaften Sprachkanal, daher haben die Resgrid-Apps sowie Funkbrücke, Aufzeichnung und Tonalarmierung eines Relays keinen Kanal, dem sie beitreten können.</value>
+  </data>
+  <data name="RuleNext.relay-voice-channel" xml:space="preserve">
+    <value>Öffnen Sie die Seite der Sprachkanäle, legen Sie einen Kanal an und fügen Sie die Mitglieder hinzu, die ihn nutzen.</value>
+  </data>
+  <data name="SetupEvidence.relay-voice" xml:space="preserve">
+    <value>Geprüft werden die Verfügbarkeit von Push-to-Talk und dauerhafte Sprachkanäle. Ob ein Relay installiert oder verbunden ist oder Audio überträgt, sieht Resgrid nicht; prüfen Sie das im Dashboard des Relays.</value>
+  </data>
 </root>

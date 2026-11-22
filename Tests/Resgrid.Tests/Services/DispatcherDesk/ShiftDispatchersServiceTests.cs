@@ -65,6 +65,10 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			rowsRepo.Setup(x => x.DeleteAsync(It.IsAny<ShiftDispatcher>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((ShiftDispatcher row, CancellationToken c) => _rows.Remove(row));
 			rowsRepo.Setup(x => x.GetByIdAsync(It.IsAny<object>())).ReturnsAsync((object id) => _rows.FirstOrDefault(x => x.ShiftDispatcherId == (string)id));
+			// Rows are shared instances here, so the conditional write only answers whether the stored source still matched.
+			rowsRepo.Setup(x => x.TryUpdateReviewWithSourceAsync(It.IsAny<ShiftDispatcher>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((ShiftDispatcher row, int source, CancellationToken c) =>
+					_rows.Any(x => x.ShiftDispatcherId == row.ShiftDispatcherId && x.Source == source));
 
 			var breaksRepo = new Mock<IDispatcherBreaksRepository>();
 			breaksRepo.Setup(x => x.GetForShiftDayAsync(100)).ReturnsAsync(() => _breaks.ToList());
@@ -246,6 +250,34 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 
 			(await _service.RemoveFromDayAsync(Dept, 100, "ann", "ann", null, (int)ShiftDispatcherSources.Signup)).Value.Should().BeTrue();
 			_rows.Single().Status.Should().Be((int)ShiftDispatcherStatuses.Denied);
+			_rowsRepo.Verify(x => x.TryUpdateReviewWithSourceAsync(It.IsAny<ShiftDispatcher>(), (int)ShiftDispatcherSources.Signup, It.IsAny<CancellationToken>()), Times.Once,
+				"the withdrawal writes only while the row is still a signup");
+			_rowsRepo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<ShiftDispatcher>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once,
+				"only the signup itself was a full-row save; the withdrawal is the conditional write");
+		}
+
+		[Test]
+		public async Task A_withdrawal_that_loses_to_a_manager_turning_the_signup_into_an_assignment_cancels_no_breaks()
+		{
+			_breaks.Add(new DispatcherBreak { DispatcherBreakId = "b1", UserId = "ann", ShiftDayId = 100, State = (int)DispatcherBreakStates.Scheduled });
+			(await _service.SignupForDayAsync(Dept, 100, "ann")).Success.Should().BeTrue();
+			// The manager's change commits between the withdrawal's read (still a signup) and its write.
+			_rowsRepo.Setup(x => x.TryUpdateReviewWithSourceAsync(It.IsAny<ShiftDispatcher>(), It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+
+			var result = await _service.RemoveFromDayAsync(Dept, 100, "ann", "ann", null, (int)ShiftDispatcherSources.Signup);
+
+			result.Error.Should().Be(DispatcherDeskErrors.NotPermitted);
+			_breaks.Single().State.Should().Be((int)DispatcherBreakStates.Scheduled, "no break is cancelled for a withdrawal that did not happen");
+		}
+
+		[Test]
+		public async Task A_manager_removal_still_writes_the_day_row_unconditionally()
+		{
+			Standing("bob");
+
+			(await _service.RemoveFromDayAsync(Dept, 100, "bob", "boss", "Sick")).Value.Should().BeTrue();
+
+			_rowsRepo.Verify(x => x.TryUpdateReviewWithSourceAsync(It.IsAny<ShiftDispatcher>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]

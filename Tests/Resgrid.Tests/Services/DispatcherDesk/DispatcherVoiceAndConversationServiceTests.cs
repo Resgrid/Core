@@ -125,6 +125,53 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 		}
 
 		[Test]
+		public async Task Answer_the_provider_refuses_keeps_work_another_ring_of_the_same_dispatcher_placed_meanwhile()
+		{
+			AddItem(DispatcherQueueItemKinds.Voice, DispatcherQueueItemStates.Offered, Me);
+			AcceptTakesIt();
+			// A second tap (another device) found the item already theirs and placed its leg while this attempt's dial was failing.
+			_routing.Setup(x => x.GetItemDetailAsync(Dept, ItemId, It.IsAny<string>())).ReturnsAsync(() => new DispatcherQueueItemDetail
+			{
+				Item = _store.Items.Single(),
+				Events = new List<DispatcherQueueEvent>
+				{
+					new DispatcherQueueEvent { EventType = (int)DispatcherQueueEventTypes.VoiceConnecting, UserId = Me, OccurredOn = _now.AddSeconds(2) }
+				}
+			});
+			_voiceProvider.Setup(x => x.PlaceCallAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(),
+				It.IsAny<CancellationToken>())).ReturnsAsync((string)null);
+
+			(await Voice().ConnectAsync(Dept, ItemId, Me, "+15557770000")).Error.Should().Be(DispatcherDeskErrors.ChannelUnavailable);
+
+			_routing.Verify(x => x.ReleaseAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never,
+				"the other ring's live call keeps the work");
+		}
+
+		[Test]
+		public async Task Answer_the_provider_refuses_still_gives_back_work_when_only_an_older_ring_is_in_its_history()
+		{
+			AddItem(DispatcherQueueItemKinds.Voice, DispatcherQueueItemStates.Offered, Me);
+			AcceptTakesIt();
+			_routing.Setup(x => x.GetItemDetailAsync(Dept, ItemId, It.IsAny<string>())).ReturnsAsync(() => new DispatcherQueueItemDetail
+			{
+				Item = _store.Items.Single(),
+				Events = new List<DispatcherQueueEvent>
+				{
+					new DispatcherQueueEvent { EventType = (int)DispatcherQueueEventTypes.VoiceConnecting, UserId = Me, OccurredOn = _now.AddMinutes(-5) },
+					new DispatcherQueueEvent { EventType = (int)DispatcherQueueEventTypes.VoiceConnecting, UserId = "bob", OccurredOn = _now.AddSeconds(2) }
+				}
+			});
+			_routing.Setup(x => x.ReleaseAsync(Dept, ItemId, Me, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(() => DispatcherDeskResult<DispatcherQueueItem>.Ok(_store.Items.Single()));
+			_voiceProvider.Setup(x => x.PlaceCallAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(),
+				It.IsAny<CancellationToken>())).ReturnsAsync((string)null);
+
+			await Voice().ConnectAsync(Dept, ItemId, Me, "+15557770000");
+
+			_routing.Verify(x => x.ReleaseAsync(Dept, ItemId, Me, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
 		public async Task Answer_the_provider_refuses_keeps_work_the_dispatcher_already_held()
 		{
 			AddItem(DispatcherQueueItemKinds.Voice, DispatcherQueueItemStates.Accepted, Me);
@@ -270,6 +317,33 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			var result = await Conversations(messages.Object).SendReplyAsync(Dept, ItemId, Me, "On our way");
 
 			result.Success.Should().BeTrue("the text went out; a refusal would invite a second send");
+			_texts.Verify(x => x.SendTextMessage(It.IsAny<string>(), "On our way", It.IsAny<string>(), It.IsAny<MobileCarriers>(), Dept,
+				It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>()), Times.Once);
+		}
+
+		[Test]
+		public async Task A_reply_s_delivery_result_is_written_again_on_its_own_when_the_first_write_fails()
+		{
+			AddItem(DispatcherQueueItemKinds.Text, DispatcherQueueItemStates.Accepted, Me);
+			var messages = new Mock<IDispatcherConversationMessagesRepository>();
+			messages.Setup(x => x.InsertAsync(It.IsAny<DispatcherConversationMessage>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((DispatcherConversationMessage m, CancellationToken c, bool f) => m);
+			var written = new List<int>();
+			var attempts = 0;
+			messages.Setup(x => x.UpdateAsync(It.IsAny<DispatcherConversationMessage>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.Returns((DispatcherConversationMessage m, CancellationToken c, bool f) =>
+				{
+					written.Add(m.DeliveryState);
+					if (++attempts == 1)
+						throw new InvalidOperationException("db blip");
+					return Task.FromResult(m);
+				});
+
+			var result = await Conversations(messages.Object).SendReplyAsync(Dept, ItemId, Me, "On our way");
+
+			result.Success.Should().BeTrue();
+			written.Should().Equal(new[] { (int)DispatcherMessageDeliveryStates.Sent, (int)DispatcherMessageDeliveryStates.Sent },
+				"the provider's answer is written again; the text is never sent again for it");
 			_texts.Verify(x => x.SendTextMessage(It.IsAny<string>(), "On our way", It.IsAny<string>(), It.IsAny<MobileCarriers>(), Dept,
 				It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>()), Times.Once);
 		}

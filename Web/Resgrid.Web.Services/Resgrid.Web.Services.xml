@@ -156,11 +156,31 @@
             one VoiceConnecting for its dispatcher after it is placed, so a second one since then belongs to a later ring.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.ReleaseIfStillThisRingAsync(Resgrid.Model.DispatcherQueueItem,System.String,System.String,System.Nullable{System.DateTime})">
+            <summary>
+            <see cref="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.ReleaseIfHeldAsync(Resgrid.Model.DispatcherQueueItem,System.String,System.String)"/> for a status callback of the ring that started at <paramref name="attemptStartedOn"/>: the
+            item's history is read again just before the release, so a ring of the same dispatcher placed while this callback was
+            being handled (after its first look at the history) keeps the item instead of losing it to the earlier ring's status.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.MarkOverflowedAsync(Resgrid.Model.DispatcherQueueItem,System.String)">
+            <summary>
+            Overflows a held caller's item for the voicemail, never over a voicemail claim: each write is fenced on the row as read, and
+            an item that is claimed for its voicemail (or no longer open) is left as it is. An unfenced write here could replace the
+            claim note of a voicemail still being saved, and a repeat of that voicemail would then save a second call.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.TryMarkOverflowedAsync(Resgrid.Model.DispatcherQueueItem,System.String)">
             <summary>
             <see cref="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.MarkOverflowedAsync(Resgrid.Model.DispatcherQueueItem,System.String)"/> only while the item still has the version and state the caller read: false when another
             write (a dispatcher accepting the caller) got there first. A failed write is logged and counts as overflowed, as before, so
             a caller is never left on hold because the desk store is unreachable.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.RecordStoredVoiceEventAsync(Resgrid.Model.DispatcherQueueItem,System.String)">
+            <summary>
+            Adds a caller-leg VoiceEnded entry to the item's history and reports whether it is stored (read back: the routing service's
+            history write logs and swallows its own failures).
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.DepartmentNumberAsync(Resgrid.Model.DispatcherQueueItem)">
@@ -207,9 +227,9 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.EmailController.DeskHandOffOwedAsync(Resgrid.Model.InboundEmailReceiptClaim,System.Boolean)">
             <summary>
-            A held emailed call is saved but could not be put on the dispatcher desk: only that step is still owed (the AI step, when
-            queued, is recorded done), and the claim goes back with a 400 so Postmark redelivers and the resume retries the desk entry.
-            With only Emails ticked nothing else would ever add it (the call-event hand-off and the desk's sweep take pending calls).
+            A held emailed call is saved but could not be put on the dispatcher desk: that step is still owed (the AI step is recorded
+            done only when its job was actually queued, so a failed AI enqueue is retried with it), and the claim goes back with a 400 so
+            Postmark redelivers and the resume retries the desk entry at once instead of waiting for the desk worker's sweep.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.EmailController.ResumeMessageAsync(Resgrid.Model.InboundEmailReceiptClaim,System.Int32,System.Threading.CancellationToken)">
@@ -230,6 +250,10 @@
             <paramref name="heldForDispatcher"/>: the dispatcher desk's email call mode held the call pending (the worker enriches it while
             it waits, under that mode's entitlement); otherwise the job keeps the active-call, AI-format rule.
             </summary>
+            <returns>
+            True when the job was queued or is not wanted (AI dispatch off on this host, no call): the step is done. False when queueing
+            it failed (logged), so a delivery that is retried anyway can keep the step owed.
+            </returns>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.EmailController.ReceiveIntakeEmailAsync(PostmarkDotNet.PostmarkInboundMessage,System.String,System.Threading.CancellationToken)">
             <summary>
@@ -22576,7 +22600,9 @@
             overflowed voice item that call: its CallId is set and <see cref="M:Resgrid.Model.Services.IDispatcherRoutingService.MarkOverflowedAsync(Resgrid.Model.DispatcherQueueItem,System.String,System.Threading.CancellationToken)"/> puts it
             back in the queue, so it waits for a dispatcher as the voicemail call with the caller's number (Call back works from it).
             No second desk item is made, and an item gets at most one voicemail call: the item is claimed (its recording noted on it)
-            before the call is saved, and a repeat finds the claim or the linked call and saves nothing.
+            before the call is saved, and a repeat finds the claim or the linked call and saves nothing. A repeat that finds the claim
+            finishes the claim's work: a call the claim saved but could not link (found by its "DQ:{itemId}" source) is linked now, and a
+            claim given back by a request that failed before saving is taken again.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Twilio.DispatcherVoicemailOutcomes">
@@ -22586,16 +22612,25 @@
             <summary>Saved now as a pending call (<see cref="P:Resgrid.Web.Services.Twilio.DispatcherVoicemailResult.Call"/>).</summary>
         </member>
         <member name="F:Resgrid.Web.Services.Twilio.DispatcherVoicemailOutcomes.AlreadyTaken">
-            <summary>The item's voicemail was already taken: it has its call, or another request claimed it.</summary>
+            <summary>The item's voicemail is already a saved call: linked to the item, or saved by another request and linked now.</summary>
         </member>
         <member name="F:Resgrid.Web.Services.Twilio.DispatcherVoicemailOutcomes.NotSaved">
             <summary>Nothing was saved (no item or recording, or the save failed): the caller must not be told it was passed on.</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Twilio.DispatcherVoicemailOutcomes.InProgress">
+            <summary>
+            Another request holds the item's claim and has not saved a call yet (it may still be saving, or have stopped): nothing is held
+            for certain, so the caller must not be told it was passed on.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Twilio.DispatcherVoicemailResult">
+            <summary>The outcome of a voicemail; made only by <see cref="M:Resgrid.Web.Services.Twilio.DispatcherVoicemailResult.Of(Resgrid.Web.Services.Twilio.DispatcherVoicemailOutcomes,Resgrid.Model.Call)"/>, so an outcome and its call cannot drift apart.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Twilio.DispatcherVoicemailResult.Call">
             <summary>The call saved now; null unless <see cref="P:Resgrid.Web.Services.Twilio.DispatcherVoicemailResult.Outcome"/> is Saved.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Twilio.DispatcherVoicemailResult.Durable">
-            <summary>The voicemail is held somewhere a dispatcher will find it (a pending call).</summary>
+            <summary>The voicemail is held somewhere a dispatcher will find it (a saved pending call).</summary>
         </member>
         <member name="F:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.VoicemailClaimPrefix">
             <summary>The start of the item's overflow note while its voicemail is being made a call (the claim).</summary>
@@ -22603,11 +22638,52 @@
         <member name="F:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.WriteAttempts">
             <summary>Conditional writes tried before giving up (a webhook touching the item bumps its version).</summary>
         </member>
+        <member name="F:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.ClaimChecks">
+            <summary>
+            How many times a repeat that finds another request's claim looks again for that request's call before answering
+            <see cref="F:Resgrid.Web.Services.Twilio.DispatcherVoicemailOutcomes.InProgress"/> (the claim's request may still be saving).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.ClaimCheckInterval">
+            <summary>The wait between those looks (tests set it to zero).</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.ClaimNote(System.String,System.String)">
             <summary>The claim written on the item: the recording, so a voicemail whose save failed can still be found on the item.</summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.ClaimAsync(System.String,System.String)">
-            <summary>Saved = this request holds the claim now; AlreadyTaken = the item has its call or another request's claim.</summary>
+        <member name="M:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.FinishAsync(Resgrid.Model.DispatcherQueueItem,Resgrid.Model.Call)">
+            <summary>
+            The voice item becomes the voicemail call and waits in the queue again (MarkOverflowedAsync reopens an overflowed item that
+            has a call), then dispatcher screens refresh. Linked before the call is announced, so the desk's call listener finds it on the
+            desk already. Neither the routing pass nor the announcement can undo the save, so their failures are only logged.
+            </summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.ClaimOutcomes.Claimed">
+            <summary>This request holds the claim now.</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.ClaimOutcomes.Linked">
+            <summary>The item already is its call.</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.ClaimOutcomes.ClaimedByAnother">
+            <summary>Another request holds the claim and the item has no call yet.</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.ClaimOutcomes.Failed">
+            <summary>No item, or it kept changing: nothing claimed.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.ClaimResult.PreviousNote">
+            <summary>The overflow note the claim replaced, put back if the claim is given back.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.ResumeClaimAsync(Resgrid.Model.DispatcherQueueItem)">
+            <summary>
+            A repeat that found another request's claim. The item is linked: done. A call that request saved (it could not link it, or
+            is still linking): linked here. The claim was given back (that request failed before saving): null, so the caller claims
+            again. Otherwise the claim's request may still be saving: looked at again a few times, then <see cref="F:Resgrid.Web.Services.Twilio.DispatcherVoicemailOutcomes.InProgress"/>.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.FindVoicemailCallAsync(Resgrid.Model.DispatcherQueueItem)">
+            <summary>The pending call this item's voicemail was saved as (its source is "DQ:{itemId}"), if any.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.ReleaseClaimAsync(System.String,System.String,System.String)">
+            <summary>Gives the claim back (the overflow note it replaced returns) while the item still holds this claim and no call.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Twilio.DispatcherDeskPendingCalls.LinkAsync(Resgrid.Model.DispatcherQueueItem,Resgrid.Model.Call)">
             <summary>

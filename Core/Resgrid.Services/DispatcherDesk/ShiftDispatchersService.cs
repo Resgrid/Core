@@ -407,7 +407,18 @@ namespace Resgrid.Services
 			row.ReviewedByUserId = byUserId;
 			row.ReviewedOn = now;
 			row.Note = Truncate(note, 500);
-			await _dispatchersRepository.SaveOrUpdateAsync(row, cancellationToken, true);
+
+			if (requiredSource.HasValue)
+			{
+				// The withdrawal's write is conditional on the source checked above: a manager who turned the signup into an assignment
+				// between that read and this write keeps the row, and the dispatcher's planned breaks are not cancelled.
+				if (!await _dispatchersRepository.TryUpdateReviewWithSourceAsync(row, requiredSource.Value, cancellationToken))
+					return DispatcherDeskResult<bool>.Fail(DispatcherDeskErrors.NotPermitted);
+			}
+			else
+			{
+				await _dispatchersRepository.SaveOrUpdateAsync(row, cancellationToken, true);
+			}
 
 			foreach (var planned in (await _breaksRepository.GetForShiftDayAsync(shiftDayId) ?? Enumerable.Empty<DispatcherBreak>())
 				.Where(x => string.Equals(x.UserId, userId, StringComparison.OrdinalIgnoreCase) && x.State == (int)DispatcherBreakStates.Scheduled))

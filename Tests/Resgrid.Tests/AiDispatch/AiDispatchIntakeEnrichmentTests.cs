@@ -301,6 +301,29 @@ namespace Resgrid.Tests.AiDispatch
 		}
 
 		[Test]
+		public void calls_the_desk_holds_pending_are_described_as_waiting_for_a_dispatcher_not_dispatched_automatically()
+		{
+			var pending = new Call { State = (int)CallStates.Pending, SourceIdentifier = "DQ:item-1" };
+
+			// The desk's pending call for an overflowed text or chat (channel 1, "DQ:"): messages to the desk, not a dispatch email.
+			var overflow = AiDispatchEnrichmentService.JobSource(new AiDispatchQueueItem { Channel = AiDispatchChannels.PostmarkEmail }, pending);
+			overflow.Should().Contain("dispatch desk").And.Contain("nobody has been dispatched yet");
+			overflow.Should().NotContain("dispatched automatically").And.NotContain("email");
+
+			// An emailed call the email call mode held for a dispatcher.
+			var held = AiDispatchEnrichmentService.JobSource(new AiDispatchQueueItem { Channel = AiDispatchChannels.ImapImport, HeldForDispatcher = true },
+				new Call { State = (int)CallStates.Pending });
+			held.Should().Contain("held for a dispatcher").And.Contain("nobody has been dispatched yet");
+			held.Should().NotContain("dispatched automatically");
+
+			// A dispatch email job keeps its description; intake jobs keep theirs.
+			AiDispatchEnrichmentService.JobSource(new AiDispatchQueueItem { Channel = AiDispatchChannels.PostmarkEmail }, new Call { State = (int)CallStates.Active })
+				.Should().Be(AiDispatchEnrichmentService.IntakeSource(AiDispatchChannels.PostmarkEmail, new Call { State = (int)CallStates.Active }));
+			AiDispatchEnrichmentService.JobSource(new AiDispatchQueueItem { Channel = AiDispatchChannels.IntakeSms }, pending)
+				.Should().Be(AiDispatchEnrichmentService.IntakeSource(AiDispatchChannels.IntakeSms, pending));
+		}
+
+		[Test]
 		public async Task a_rename_made_before_the_worker_read_the_call_is_kept()
 		{
 			var savedKey = AiConfig.AuditHmacKey;

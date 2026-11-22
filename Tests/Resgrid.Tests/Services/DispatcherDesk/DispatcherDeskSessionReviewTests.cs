@@ -76,6 +76,22 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 					item.Version++;
 					return DispatcherDeskResult<DispatcherQueueItem>.Ok(item);
 				});
+			// The desk's own hand-back: version-fenced like the real one (an item changed since the read is left alone).
+			_routing.Setup(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((DispatcherQueueItem observed, CancellationToken c) =>
+				{
+					if (_releaseFails(observed.DispatcherQueueItemId))
+						throw new InvalidOperationException("release failed");
+
+					var item = _store.Items.Single(x => x.DispatcherQueueItemId == observed.DispatcherQueueItemId);
+					if (item.Version != observed.Version)
+						return DispatcherDeskResult<DispatcherQueueItem>.Fail(DispatcherDeskErrors.ItemNotAvailable);
+
+					item.State = (int)DispatcherQueueItemStates.Queued;
+					item.AssignedUserId = null;
+					item.Version++;
+					return DispatcherDeskResult<DispatcherQueueItem>.Ok(item);
+				});
 
 			_presence = new DispatcherPresenceService(_store.PresencesRepository, _store.BreaksRepository, _store.ItemsRepository, shiftDispatchers.Object,
 				_configService.Object, departments.Object, profiles.Object, new Mock<IAuthorizationService>().Object, new Mock<IDispatcherDeskNotifier>().Object,
@@ -199,6 +215,7 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 
 			_store.Presences.Single().State.Should().Be((int)DispatcherPresenceStates.Available, "the new session is not the one the sweep evaluated");
 			_routing.Verify(x => x.ReleaseAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+			_routing.Verify(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]
@@ -279,6 +296,129 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			(await _presence.ProcessPresenceAsync(Now)).Should().Be(1);
 
 			_store.Items.Single().State.Should().Be((int)DispatcherQueueItemStates.Queued);
+		}
+
+		// ------------------------------------------------------------------ PR 589 round 2
+
+		[Test]
+		public async Task The_hand_back_releases_only_the_assignment_it_read()
+		{
+			_store.AddPresence(Dept, "cat", DispatcherPresenceStates.Offline, Now);
+			var item = Held("c1", "cat");
+			item.Version = 4;
+
+			// Cat signs in again and accepts the same item again after the sweep read it (a new assignment: the Version moves on).
+			_routing.Setup(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((DispatcherQueueItem observed, CancellationToken c) =>
+				{
+					var stored = _store.Items.Single(x => x.DispatcherQueueItemId == observed.DispatcherQueueItemId);
+					stored.Version++;
+					return stored.Version - 1 == observed.Version
+						? DispatcherDeskResult<DispatcherQueueItem>.Fail(DispatcherDeskErrors.ItemNotAvailable)
+						: DispatcherDeskResult<DispatcherQueueItem>.Ok(stored);
+				});
+
+			await _presence.ProcessPresenceAsync(Now);
+
+			_routing.Verify(x => x.ReleaseObservedAsync(It.Is<DispatcherQueueItem>(i => i.DispatcherQueueItemId == "c1" && i.Version == 4), It.IsAny<CancellationToken>()),
+				Times.Once, "the release names the assignment as it was read");
+			_routing.Verify(x => x.ReleaseAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never,
+				"the holder's own release would pass for whatever the item has become");
+			_store.Items.Single().AssignedUserId.Should().Be("cat", "her new assignment is not handed back");
+		}
+
+		[Test]
+		public async Task A_sign_in_after_a_sign_off_whose_break_close_failed_does_not_resume_the_old_break()
+		{
+			var presence = _store.AddPresence(Dept, "ann", DispatcherPresenceStates.Offline, Now.AddMinutes(-30));
+			presence.StateChangedOn = Now.AddMinutes(-20);
+			var leftover = new DispatcherBreak
+			{
+				DispatcherBreakId = "b-old", DepartmentId = Dept, UserId = "ann", State = (int)DispatcherBreakStates.Active, DurationMinutes = 15,
+				StartedOn = Now.AddMinutes(-25), ExpectedReturnOn = Now.AddMinutes(-10), CreatedOn = Now.AddMinutes(-25)
+			};
+			_store.Breaks.Add(leftover);
+
+			var signedIn = await _presence.SignInAsync(Dept, "ann", new DispatcherSignInRequest());
+
+			signedIn.Success.Should().BeTrue();
+			_store.Presences.Single().State.Should().Be((int)DispatcherPresenceStates.Available, "the new session is not put on the old break");
+			_store.Presences.Single().ActiveBreakId.Should().BeNull();
+			var closed = _store.Breaks.Single();
+			closed.State.Should().Be((int)DispatcherBreakStates.Completed);
+			closed.EndReason.Should().Be((int)DispatcherBreakEndReasons.SignedOff);
+			closed.EndedOn.Should().Be(Now.AddMinutes(-20), "it ended with the session that signed off");
+		}
+
+		[Test]
+		public async Task A_sign_in_that_refreshes_a_session_on_break_keeps_the_break()
+		{
+			var presence = _store.AddPresence(Dept, "ann", DispatcherPresenceStates.OnBreak, Now.AddMinutes(-30));
+			presence.ActiveBreakId = "b-now";
+			_store.Breaks.Add(new DispatcherBreak
+			{
+				DispatcherBreakId = "b-now", DepartmentId = Dept, UserId = "ann", State = (int)DispatcherBreakStates.Active, DurationMinutes = 15,
+				StartedOn = Now.AddMinutes(-5), ExpectedReturnOn = Now.AddMinutes(10), CreatedOn = Now.AddMinutes(-5)
+			});
+
+			(await _presence.SignInAsync(Dept, "ann", new DispatcherSignInRequest())).Success.Should().BeTrue();
+
+			_store.Presences.Single().State.Should().Be((int)DispatcherPresenceStates.OnBreak);
+			_store.Breaks.Single().State.Should().Be((int)DispatcherBreakStates.Active);
+		}
+
+		[Test]
+		public async Task Signing_off_again_closes_a_break_the_first_sign_off_left_open_but_never_a_later_sessions_break()
+		{
+			var presence = _store.AddPresence(Dept, "ann", DispatcherPresenceStates.Offline, Now.AddMinutes(-30));
+			presence.StateChangedOn = Now.AddMinutes(-20);
+			_store.Breaks.Add(new DispatcherBreak
+			{
+				DispatcherBreakId = "b-old", DepartmentId = Dept, UserId = "ann", State = (int)DispatcherBreakStates.Active, DurationMinutes = 15,
+				StartedOn = Now.AddMinutes(-25), CreatedOn = Now.AddMinutes(-25)
+			});
+
+			await _presence.SignOffAsync(Dept, "ann", "ann");
+
+			_store.Breaks.Single().State.Should().Be((int)DispatcherBreakStates.Completed);
+
+			// A break started after that sign-off (a later session's) is not this sign-off's to close.
+			_store.Breaks.Add(new DispatcherBreak
+			{
+				DispatcherBreakId = "b-new", DepartmentId = Dept, UserId = "ann", State = (int)DispatcherBreakStates.Active, DurationMinutes = 15,
+				StartedOn = Now.AddMinutes(-1), CreatedOn = Now.AddMinutes(-1)
+			});
+			await _presence.SignOffAsync(Dept, "ann", "ann");
+
+			_store.Breaks.Single(x => x.DispatcherBreakId == "b-new").State.Should().Be((int)DispatcherBreakStates.Active);
+		}
+
+		[Test]
+		public async Task The_sweep_never_writes_over_a_duty_another_worker_moved_on()
+		{
+			var presence = _store.AddPresence(Dept, "ann", DispatcherPresenceStates.Available, Now.AddHours(-12));
+			presence.DutyMode = (int)DispatcherDutyModes.Scheduled;
+			presence.DutyShiftId = 3;
+			presence.DutyShiftDayId = 100;
+			presence.DutyEndsOn = Now.AddMinutes(-1);
+			_config.SignOffAtShiftEnd = true;
+			_config.RequireShift = false;
+
+			// Another worker process carried her on to the next shift day between this sweep's read and its write.
+			_store.BeforePresenceWrite = _ =>
+			{
+				_store.BeforePresenceWrite = null;
+				var stored = _store.Presences.Single();
+				stored.DutyShiftDayId = 101;
+				stored.DutyEndsOn = Now.AddHours(8);
+			};
+
+			await _presence.ProcessPresenceAsync(Now);
+
+			var after = _store.Presences.Single();
+			after.DutyMode.Should().Be((int)DispatcherDutyModes.Scheduled, "the stale 'unscheduled, no end' write does not land");
+			after.DutyShiftDayId.Should().Be(101);
+			after.DutyEndsOn.Should().Be(Now.AddHours(8));
 		}
 
 		// ------------------------------------------------------------------ desk settings cache

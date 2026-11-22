@@ -10,6 +10,7 @@ using Resgrid.Model;
 using Resgrid.Model.AiDispatch;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 using Resgrid.Services;
 
@@ -44,6 +45,10 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			public readonly HashSet<string> Supervisors = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			/// <summary>How many of the next call saves throw.</summary>
 			public int FailCallSaves;
+			/// <summary>How many of the next call saves commit the call and then throw (a failure in the save's follow-up work).</summary>
+			public int FailAfterCallSaves;
+			/// <summary>The routing service's unit of work (a transaction only in name: the in-memory store does not roll back).</summary>
+			public readonly Mock<IUnitOfWork> UnitOfWork = new Mock<IUnitOfWork>();
 			private int _nextCallId = 5000;
 
 			public readonly DispatcherPresenceService Presence;
@@ -84,10 +89,10 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 				notifier.Setup(x => x.NotifyOfferAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
 					.Callback((DispatcherQueueItem i, string u, CancellationToken c) => Pushes.Add(("offer", u, "DQ:" + i.DispatcherQueueItemId))).Returns(Task.CompletedTask);
 				notifier.Setup(x => x.NotifyBreakReminderAsync(It.IsAny<DispatcherBreak>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-					.Callback((DispatcherBreak b, bool due, CancellationToken c) => Pushes.Add((due ? "due" : "reminder", b.UserId, "DB:" + b.DispatcherBreakId))).Returns(Task.CompletedTask);
+					.Callback((DispatcherBreak b, bool due, CancellationToken c) => Pushes.Add((due ? "due" : "reminder", b.UserId, "DB:" + b.DispatcherBreakId))).ReturnsAsync(true);
 				notifier.Setup(x => x.NotifyBreakOverAsync(It.IsAny<DispatcherBreak>(), It.IsAny<IEnumerable<string>>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
 					.Callback((DispatcherBreak b, IEnumerable<string> s, bool auto, CancellationToken c) =>
-						Pushes.Add((s == null ? (auto ? "auto-returned" : "break-over") : "supervisors", b.UserId, "DB:" + b.DispatcherBreakId))).Returns(Task.CompletedTask);
+						Pushes.Add((s == null ? (auto ? "auto-returned" : "break-over") : "supervisors", b.UserId, "DB:" + b.DispatcherBreakId))).ReturnsAsync(true);
 
 				var calls = new Mock<ICallsService>();
 				calls.Setup(x => x.GetCallByIdAsync(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync((int id, bool b) => Calls.TryGetValue(id, out var c) ? c : null);
@@ -105,8 +110,15 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 					if (c.CallId == 0)
 						c.CallId = ++_nextCallId;
 					Calls[c.CallId] = c;
+					if (FailAfterCallSaves > 0)
+					{
+						FailAfterCallSaves--;
+						throw new InvalidOperationException("The call was saved but its follow-up work failed.");
+					}
 					return c;
 				});
+				calls.Setup(x => x.GetAllCallsByDepartmentDateRangeAsync(Dept, It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+					.ReturnsAsync((int d, DateTime from, DateTime to) => Calls.Values.Where(x => x.LoggedOn >= from && x.LoggedOn <= to).ToList());
 
 				Texts.Setup(x => x.SendTextMessage(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MobileCarriers>(), It.IsAny<int>(),
 					It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>())).ReturnsAsync(true);
@@ -150,7 +162,7 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 					Store.BreaksRepository, Presence, configService.Object, notifier.Object, Voice.Object, departments.Object, profiles.Object, Queue.Object,
 					new Lazy<ICallsService>(() => calls.Object), new Lazy<IDispatcherConversationService>(() => conversations),
 					new Lazy<IAiDispatchEnrichmentService>(() => Ai.Object), intake, new Lazy<IIntakeScreeningService>(() => screening.Object),
-					new Lazy<IIntakeService>(() => intakeCalls.Object))
+					new Lazy<IIntakeService>(() => intakeCalls.Object), UnitOfWork.Object)
 				{ UtcNow = () => Now };
 
 				Routing = routing;
@@ -884,11 +896,14 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			var item = (await h.Routing.RouteIntakeConversationAsync(conversation, call)).Item;
 			h.Item(item.DispatcherQueueItemId).State.Should().Be((int)DispatcherQueueItemStates.Queued);
 
+			// Intake raises the callback after its own connect committed: the thread is carol's.
+			conversation.AssignedUserId = "carol";
 			await h.Routing.OnIntakeDispatcherConnectedAsync(conversation, "carol");
 
 			h.Item(item.DispatcherQueueItemId).State.Should().Be((int)DispatcherQueueItemStates.Accepted);
 			h.Item(item.DispatcherQueueItemId).AssignedUserId.Should().Be("carol");
 
+			conversation.AssignedUserId = null;
 			await h.Routing.OnIntakeDispatcherReleasedAsync(conversation, "carol");
 
 			h.Item(item.DispatcherQueueItemId).State.Should().Be((int)DispatcherQueueItemStates.Queued);

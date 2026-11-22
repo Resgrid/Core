@@ -221,6 +221,39 @@ namespace Resgrid.Services
 				return DispatcherDeskResult<List<DispatcherBreak>>.Fail(DispatcherDeskErrors.InvalidInput, "No break plan.");
 
 			var now = UtcNow();
+			var minimum = settings != null && settings.MinimumOnDesk > 0 ? settings.MinimumOnDesk : config.EffectiveMinimumAvailable();
+
+			// The day's breaks are read and the new plan inserted under the department's break lock (the one break starts take), so two
+			// editors planning the same day at once cannot both plan against "nothing planned yet": the second waits and plans against
+			// what the first committed.
+			(List<DispatcherBreak> Created, List<DispatcherDeskWarning> Warnings) planned;
+			try
+			{
+				planned = await InTransactionAsync(async () =>
+				{
+					if (_unitOfWork != null)
+						await _breaksRepository.LockDepartmentForBreakStartAsync(departmentId, cancellationToken);
+
+					return await PlanDayUnderLockAsync(departmentId, shiftDayId, replace, byUserId, roster, plan, minimum, now, cancellationToken);
+				}, cancellationToken);
+			}
+			catch (BreakPlanChangedException)
+			{
+				return DispatcherDeskResult<List<DispatcherBreak>>.Fail(DispatcherDeskErrors.BreakNotStartable, "The day's breaks changed while planning; plan again.");
+			}
+			catch (TimeoutException)
+			{
+				return DispatcherDeskResult<List<DispatcherBreak>>.Fail(DispatcherDeskErrors.BreakNotStartable, "Another break is being planned or started on the desk; try again.");
+			}
+
+			await _notifier.PublishDeskChangedAsync(departmentId);
+			return DispatcherDeskResult<List<DispatcherBreak>>.Ok(planned.Created, planned.Warnings);
+		}
+
+		private async Task<(List<DispatcherBreak> Created, List<DispatcherDeskWarning> Warnings)> PlanDayUnderLockAsync(int departmentId, int shiftDayId,
+			bool replace, string byUserId, List<DispatcherDutyWindow> roster, List<DispatcherBreakPlanEntry> plan, int minimum, DateTime now,
+			CancellationToken cancellationToken)
+		{
 			var existing = await GetBreaksForShiftDayAsync(departmentId, shiftDayId);
 
 			// With replace, the breaks still to come are cancelled; the replacement is worked out first and committed with the
@@ -238,7 +271,6 @@ namespace Resgrid.Services
 				.Where(x => replace || !kept.Any(b => string.Equals(b.UserId, x.UserId, StringComparison.OrdinalIgnoreCase)))
 				.ToList();
 
-			var minimum = settings != null && settings.MinimumOnDesk > 0 ? settings.MinimumOnDesk : config.EffectiveMinimumAvailable();
 			var occupied = kept.Select(x => (Break: x, Window: x.CoverageWindow(now))).Where(x => x.Window.HasValue)
 				.Select(x => (x.Break.UserId, x.Window.Value.Start, x.Window.Value.End)).ToList();
 
@@ -283,53 +315,32 @@ namespace Resgrid.Services
 					});
 			}
 
-			var committed = await InTransactionAsync(async () =>
+			// In the caller's transaction (under the department lock): the cancellations and the new breaks commit together.
+			foreach (var replaced in superseded)
 			{
-				foreach (var planned in superseded)
-				{
-					var observed = PlanOf(planned);
-					planned.State = (int)DispatcherBreakStates.Cancelled;
-					planned.UpdatedByUserId = byUserId;
-					planned.UpdatedOn = now;
+				var observed = PlanOf(replaced);
+				replaced.State = (int)DispatcherBreakStates.Cancelled;
+				replaced.UpdatedByUserId = byUserId;
+				replaced.UpdatedOn = now;
 
-					// A break started, moved or cancelled since it was read: the replacement was worked out around the old one, so stop.
-					if (!await _breaksRepository.TryUpdateObservedAsync(planned, observed, resetPlanAlerts: false, cancellationToken))
-						throw new BreakPlanChangedException();
-				}
+				// A break started, moved or cancelled since it was read: the replacement was worked out around the old one, so stop.
+				if (!await _breaksRepository.TryUpdateObservedAsync(replaced, observed, resetPlanAlerts: false, cancellationToken))
+					throw new BreakPlanChangedException();
+			}
 
-				foreach (var row in created)
-					await _breaksRepository.InsertAsync(row, cancellationToken, true);
+			foreach (var row in created)
+				await _breaksRepository.InsertAsync(row, cancellationToken, true);
 
-				return true;
-			}, cancellationToken, catchPlanChanged: true);
-
-			if (!committed)
-				return DispatcherDeskResult<List<DispatcherBreak>>.Fail(DispatcherDeskErrors.BreakNotStartable, "The day's breaks changed while planning; plan again.");
-
-			await _notifier.PublishDeskChangedAsync(departmentId);
-			return DispatcherDeskResult<List<DispatcherBreak>>.Ok(created, warnings);
+			return (created, warnings);
 		}
 
 		/// <summary>A break the re-plan was about to cancel changed under it; the whole re-plan is rolled back.</summary>
 		private sealed class BreakPlanChangedException : Exception { }
 
 		/// <summary>
-		/// Runs <paramref name="work"/> in the unit of work's transaction (joining the caller's, or owning one). Without a unit of work
-		/// (tests) it just runs. With <paramref name="catchPlanChanged"/> a <see cref="BreakPlanChangedException"/> rolls back an owned
-		/// transaction and answers false.
+		/// Runs <paramref name="work"/> in the unit of work's transaction (joining the caller's, or owning one): an exception rolls an
+		/// owned transaction back and is rethrown. Without a unit of work (tests) it just runs.
 		/// </summary>
-		private async Task<bool> InTransactionAsync(Func<Task<bool>> work, CancellationToken cancellationToken, bool catchPlanChanged = false)
-		{
-			try
-			{
-				return await InTransactionAsync<bool>(work, cancellationToken);
-			}
-			catch (BreakPlanChangedException) when (catchPlanChanged)
-			{
-				return false;
-			}
-		}
-
 		private async Task<T> InTransactionAsync<T>(Func<Task<T>> work, CancellationToken cancellationToken)
 		{
 			if (_unitOfWork == null)
@@ -406,9 +417,11 @@ namespace Resgrid.Services
 				{
 					var released = await _routingService.Value.ReleaseAsync(departmentId, item.DispatcherQueueItemId, userId, cancellationToken);
 
-					// Refused because it is no longer theirs (finished, taken over) is not work they still hold.
+					// Refused because it is no longer theirs (finished, taken over) is not work they still hold. A lost version race
+					// (ItemNotAvailable) proves nothing by itself: the item is checked, and still held by them counts as not handed back.
 					if (released != null && !released.Success && released.Error != DispatcherDeskErrors.ItemNotFound &&
-						released.Error != DispatcherDeskErrors.ItemNotAvailable && released.Error != DispatcherDeskErrors.NotAssignedToYou)
+						released.Error != DispatcherDeskErrors.NotAssignedToYou &&
+						(released.Error != DispatcherDeskErrors.ItemNotAvailable || await StillHeldByAsync(item.DispatcherQueueItemId, userId)))
 						failed++;
 				}
 				catch (Exception ex)
@@ -419,6 +432,13 @@ namespace Resgrid.Services
 			}
 
 			return failed;
+		}
+
+		private async Task<bool> StillHeldByAsync(string dispatcherQueueItemId, string userId)
+		{
+			var current = await _itemsRepository.GetItemAsync(dispatcherQueueItemId);
+			return current != null && current.State == (int)DispatcherQueueItemStates.Accepted &&
+				   string.Equals(current.AssignedUserId, userId, StringComparison.OrdinalIgnoreCase);
 		}
 
 		private async Task<(DispatcherDeskResult<DispatcherBreak> Result, List<DispatcherQueueItem> HandBack)> StartBreakUnderLockAsync(int departmentId,
@@ -437,6 +457,7 @@ namespace Resgrid.Services
 
 			var now = UtcNow();
 			DispatcherBreak row;
+			DispatcherBreak observed = null;
 			if (!string.IsNullOrWhiteSpace(dispatcherBreakId))
 			{
 				row = await GetBreakAsync(departmentId, dispatcherBreakId);
@@ -445,6 +466,9 @@ namespace Resgrid.Services
 
 				if (row.State != (int)DispatcherBreakStates.Scheduled)
 					return Refuse(DispatcherDeskErrors.BreakNotStartable);
+
+				// The plan as read: a supervisor's edit (length, start) saved after this read is not written over by the start.
+				observed = PlanOf(row);
 
 				if (durationMinutes.HasValue && durationMinutes.Value > 0 && durationMinutes.Value <= MaxBreakMinutes)
 					row.DurationMinutes = durationMinutes.Value;
@@ -529,8 +553,9 @@ namespace Resgrid.Services
 				row.DispatcherBreakId = Guid.NewGuid().ToString();
 				await _breaksRepository.InsertAsync(row, cancellationToken, true);
 			}
-			else if (!await _breaksRepository.TryTransitionAsync(row, (int)DispatcherBreakStates.Scheduled, cancellationToken))
+			else if (!await _breaksRepository.TryUpdateObservedAsync(row, observed, resetPlanAlerts: false, cancellationToken))
 			{
+				// Started, cancelled or re-planned since the read: the edited plan is reloaded before it is started.
 				return Refuse(DispatcherDeskErrors.BreakNotStartable);
 			}
 
@@ -598,13 +623,10 @@ namespace Resgrid.Services
 
 			if (presence != null && presence.IsSignedIn())
 			{
-				presence.State = (int)DispatcherPresenceStates.Available;
-				presence.ActiveBreakId = null;
-				presence.StateChangedOn = now;
-				presence.MissedOffers = 0;
-				if (string.Equals(byUserId, userId, StringComparison.OrdinalIgnoreCase))
-					presence.LastSeenOn = now;
-				await _presencesRepository.SaveOrUpdateAsync(presence, cancellationToken, true);
+				// Only the return-from-break fields, and only while the row is still the session, state and break read above: a sign-off
+				// (or a later break) committed meanwhile keeps its own state instead of being written over as Available.
+				var self = string.Equals(byUserId, userId, StringComparison.OrdinalIgnoreCase);
+				await _presencesRepository.TryReturnFromBreakAsync(presence, now, self ? now : (DateTime?)null, cancellationToken);
 			}
 
 			await _notifier.PublishDeskChangedAsync(departmentId, userId);
@@ -765,18 +787,18 @@ namespace Resgrid.Services
 			var reminder = config.EffectiveBreakReminderMinutes();
 			if (reminder > 0 && !row.ReminderSentOn.HasValue && start > now && start <= now.AddMinutes(reminder))
 			{
-				if (await _breaksRepository.TryMarkAlertAsync(observed, nameof(DispatcherBreak.ReminderSentOn), now, cancellationToken))
-				{
-					await _notifier.NotifyBreakReminderAsync(row, due: false, cancellationToken);
+				if (await _breaksRepository.TryMarkAlertAsync(observed, nameof(DispatcherBreak.ReminderSentOn), now, cancellationToken) &&
+					await DeliverClaimedAlertAsync(row, nameof(DispatcherBreak.ReminderSentOn), now, start.AddMinutes(-reminder),
+						() => _notifier.NotifyBreakReminderAsync(row, due: false, cancellationToken)))
 					return 1;
-				}
 			}
 
 			if (!row.DueAlertSentOn.HasValue && start <= now && start > now.AddMinutes(-60))
 			{
-				if (await _breaksRepository.TryMarkAlertAsync(observed, nameof(DispatcherBreak.DueAlertSentOn), now, cancellationToken))
+				if (await _breaksRepository.TryMarkAlertAsync(observed, nameof(DispatcherBreak.DueAlertSentOn), now, cancellationToken) &&
+					await DeliverClaimedAlertAsync(row, nameof(DispatcherBreak.DueAlertSentOn), now, start,
+						() => _notifier.NotifyBreakReminderAsync(row, due: true, cancellationToken)))
 				{
-					await _notifier.NotifyBreakReminderAsync(row, due: true, cancellationToken);
 					await _notifier.PublishDeskChangedAsync(row.DepartmentId, row.UserId);
 					return 1;
 				}
@@ -785,8 +807,52 @@ namespace Resgrid.Services
 			return 0;
 		}
 
+		/// <summary>How long after an alert fell due a claim whose push was not accepted is given back for the next pass to send again.</summary>
+		public const int AlertRetryMinutes = 15;
+
+		/// <summary>
+		/// Sends an alert this pass has claimed (its stamp column is set). A delivery that did not accept it (no push sent: the provider
+		/// refused, failed or the pass was cancelled) gives the claim back so a later pass sends it again, for up to
+		/// <see cref="AlertRetryMinutes"/> after <paramref name="dueSinceUtc"/>; after that the alert is left as tried. An accepted one keeps
+		/// its stamp and is never sent again.
+		/// </summary>
+		private async Task<bool> DeliverClaimedAlertAsync(DispatcherBreak row, string column, DateTime stampUtc, DateTime dueSinceUtc, Func<Task<bool>> send)
+		{
+			bool delivered;
+			try
+			{
+				delivered = await send();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Dispatcher break alert {column} for {row.DispatcherBreakId}");
+				delivered = false;
+			}
+
+			if (delivered)
+				return true;
+
+			if (stampUtc < dueSinceUtc.AddMinutes(AlertRetryMinutes))
+			{
+				// The claim is given back whatever happens to the pass's own token: the next pass must be able to retry.
+				await _breaksRepository.TryClearAlertAsync(row.DispatcherBreakId, column, stampUtc, CancellationToken.None);
+			}
+			else
+			{
+				Logging.LogError($"Dispatcher break alert {column} for {row.DispatcherBreakId} was not delivered within {AlertRetryMinutes} minutes; not retried.");
+			}
+
+			return false;
+		}
+
 		private async Task<int> ProcessActiveAsync(DispatcherBreak row, DispatcherDeskConfig config, TimerRun run, DateTime now, CancellationToken cancellationToken)
 		{
+			// Breaks start only in a signed-in session and sign-off ends them; one still active while its dispatcher is signed off is a
+			// sign-off's break whose close failed after the session had ended. It is closed as ended by that sign-off.
+			var presence = await _presencesRepository.GetForUserAsync(row.DepartmentId, row.UserId);
+			if (presence == null || !presence.IsSignedIn())
+				return await CloseSignedOffBreakAsync(row, presence, now, cancellationToken) ? 1 : 0;
+
 			var changes = await HandBackLeftoverWorkAsync(row, run, cancellationToken);
 
 			var due = row.ExpectedReturnOn ?? row.StartedOn?.AddMinutes(row.DurationMinutes);
@@ -796,9 +862,10 @@ namespace Resgrid.Services
 			// The alert stamps are conditional on the break still being the active one this pass read (not ended since).
 			var observed = PlanOf(row);
 
-			if (!row.ReturnAlertSentOn.HasValue && await _breaksRepository.TryMarkAlertAsync(observed, nameof(DispatcherBreak.ReturnAlertSentOn), now, cancellationToken))
+			if (!row.ReturnAlertSentOn.HasValue && await _breaksRepository.TryMarkAlertAsync(observed, nameof(DispatcherBreak.ReturnAlertSentOn), now, cancellationToken) &&
+				await DeliverClaimedAlertAsync(row, nameof(DispatcherBreak.ReturnAlertSentOn), now, due.Value,
+					() => _notifier.NotifyBreakOverAsync(row, null, autoReturned: false, cancellationToken)))
 			{
-				await _notifier.NotifyBreakOverAsync(row, null, autoReturned: false, cancellationToken);
 				await _notifier.PublishDeskChangedAsync(row.DepartmentId, row.UserId);
 				changes++;
 			}
@@ -822,9 +889,10 @@ namespace Resgrid.Services
 			var grace = autoReturn > 0 ? Math.Min(OverdueGraceMinutes, autoReturn) : OverdueGraceMinutes;
 			if (config.NotifySupervisorsOnOverdueBreak && !row.OverdueAlertSentOn.HasValue && now >= due.Value.AddMinutes(grace) && (autoReturn == 0 || grace < autoReturn))
 			{
-				if (await _breaksRepository.TryMarkAlertAsync(observed, nameof(DispatcherBreak.OverdueAlertSentOn), now, cancellationToken))
+				if (await _breaksRepository.TryMarkAlertAsync(observed, nameof(DispatcherBreak.OverdueAlertSentOn), now, cancellationToken) &&
+					await DeliverClaimedAlertAsync(row, nameof(DispatcherBreak.OverdueAlertSentOn), now, due.Value.AddMinutes(grace),
+						() => NotifySupervisorsAsync(row, autoReturned: false, now, cancellationToken)))
 				{
-					await NotifySupervisorsAsync(row, autoReturned: false, now, cancellationToken);
 					await _notifier.PublishDeskChangedAsync(row.DepartmentId, row.UserId);
 					changes++;
 				}
@@ -833,12 +901,36 @@ namespace Resgrid.Services
 			return changes;
 		}
 
-		/// <summary>Supervisors only: with nobody to tell, nothing is sent (the dispatcher has their own alert).</summary>
-		private async Task NotifySupervisorsAsync(DispatcherBreak row, bool autoReturned, DateTime now, CancellationToken cancellationToken)
+		/// <summary>
+		/// Closes an active break whose dispatcher is signed off (see <see cref="ProcessActiveAsync"/>), as ended by the sign-off: at the
+		/// session's sign-off time when that is known and after the start, otherwise now. Conditional on the break still being active.
+		/// </summary>
+		private async Task<bool> CloseSignedOffBreakAsync(DispatcherBreak row, DispatcherPresence presence, DateTime now, CancellationToken cancellationToken)
+		{
+			var signedOffOn = presence?.StateChangedOn;
+			row.State = (int)DispatcherBreakStates.Completed;
+			row.EndedOn = signedOffOn.HasValue && row.StartedOn.HasValue && signedOffOn.Value >= row.StartedOn.Value && signedOffOn.Value <= now ? signedOffOn.Value : now;
+			row.EndReason = (int)DispatcherBreakEndReasons.SignedOff;
+			row.UpdatedOn = now;
+
+			if (!await _breaksRepository.TryTransitionAsync(row, (int)DispatcherBreakStates.Active, cancellationToken))
+				return false;
+
+			await _notifier.PublishDeskChangedAsync(row.DepartmentId, row.UserId);
+			return true;
+		}
+
+		/// <summary>
+		/// Supervisors only: with nobody to tell, nothing is sent (the dispatcher has their own alert) and the alert counts as handled.
+		/// True when it reached at least one supervisor (or there was nobody to tell).
+		/// </summary>
+		private async Task<bool> NotifySupervisorsAsync(DispatcherBreak row, bool autoReturned, DateTime now, CancellationToken cancellationToken)
 		{
 			var supervisors = await _presenceService.GetSupervisorUserIdsAsync(row.DepartmentId, now);
-			if (supervisors != null && supervisors.Count > 0)
-				await _notifier.NotifyBreakOverAsync(row, supervisors, autoReturned, cancellationToken);
+			if (supervisors == null || supervisors.Count == 0)
+				return true;
+
+			return await _notifier.NotifyBreakOverAsync(row, supervisors, autoReturned, cancellationToken);
 		}
 
 		/// <summary>

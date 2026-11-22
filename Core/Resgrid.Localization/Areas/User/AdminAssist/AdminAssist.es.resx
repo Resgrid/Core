@@ -8097,4 +8097,154 @@
   <data name="FeatureSetup.intake-spam-screening" xml:space="preserve">
     <value>En una llamada de entrada pendiente, elija Descartar como spam y deje marcado Bloquear también al remitente; la llamada se cancela y no se avisa a nadie. Los remitentes bloqueados aparecen en la página Canales de entrada, donde Desbloquear levanta un bloqueo antes de tiempo. El límite por hora se aplica a los canales de texto, voz y WhatsApp sin remitentes permitidos, nunca a los de correo, chat o webhook.</value>
   </data>
+  <data name="Area.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="AreaPurpose.relay" xml:space="preserve">
+    <value>Una aplicación complementaria de código abierto que conecta con Resgrid el correo de CAD y de aviso, los escáneres, las radios bidireccionales y las radios push-to-talk LTE.</value>
+  </data>
+  <data name="AreaValue.relay" xml:space="preserve">
+    <value>Lleve a Resgrid las llamadas, los mensajes y el tráfico de radio de los sistemas que ya tiene, sin reemplazarlos.</value>
+  </data>
+  <data name="AreaExample.relay" xml:space="preserve">
+    <value>El CAD del condado envía cada despacho por correo al relay, que crea la llamada con su tarjeta de respuesta adjunta, mientras una radio de la estación enlazada a un canal de voz permite a los usuarios de la aplicación hablar con las dotaciones en la radio.</value>
+  </data>
+  <data name="ModuleAdoption.relay" xml:space="preserve">
+    <value>Instale Relay en un equipo del departamento: la aplicación de escritorio para Windows, o sin interfaz en Windows, Linux, macOS o Docker. El despacho por correo no requiere complementos; el puente de radio, la grabadora y el tono de alerta requieren el complemento Push-to-Talk y un canal de voz. Relay complementa sus sistemas de radio y de aviso; no los reemplaza.</value>
+  </data>
+  <data name="Feature.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay" xml:space="preserve">
+    <value>Instale y ejecute Relay, elija sus modos y conéctelo a su departamento.</value>
+  </data>
+  <data name="FeatureValue.relay" xml:space="preserve">
+    <value>La aplicación de escritorio para Windows ejecuta varios modos a la vez con un panel en vivo; el host sin interfaz ejecuta un modo por proceso en un servidor o en Docker.</value>
+  </data>
+  <data name="FeatureExample.relay" xml:space="preserve">
+    <value>Un departamento instala la aplicación de escritorio en el PC de la estación, la conecta con una cuenta de miembro dedicada y activa el inicio automático del despacho por correo y del puente de radio.</value>
+  </data>
+  <data name="FeatureSetup.relay" xml:space="preserve">
+    <value>Agregue una cuenta de miembro con la que inicie sesión el relay; luego instale Relay y conéctelo con el token de actualización de esa cuenta. El puente de radio, la grabadora y el tono de alerta requieren este token de usuario; el despacho por correo y la detección de tonos también pueden usar credenciales de cliente. Ejecute «Test connection» antes de iniciar un modo.</value>
+  </data>
+  <data name="Feature.relay-smtp-dispatch" xml:space="preserve">
+    <value>Despacho por correo con Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay-smtp-dispatch" xml:space="preserve">
+    <value>El servidor de correo integrado de Relay convierte el correo de despacho de sistemas CAD, centrales de alarma o pasarelas de aviso en llamadas y mensajes de grupo de Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-smtp-dispatch" xml:space="preserve">
+    <value>El correo al código de despacho del departamento alerta a todo el departamento, el código de despacho de un grupo despacha a ese grupo y su código de mensajes le envía un mensaje. Los adjuntos se agregan a la llamada y un mensaje entregado de nuevo nunca crea una segunda llamada.</value>
+  </data>
+  <data name="FeatureExample.relay-smtp-dispatch" xml:space="preserve">
+    <value>El CAD del condado envía cada salida de la Estación 5 al código de despacho de ese grupo en el dominio de despacho del condado, y el relay crea la llamada con la tarjeta de respuesta en PDF adjunta.</value>
+  </data>
+  <data name="FeatureSetup.relay-smtp-dispatch" xml:space="preserve">
+    <value>Encuentre la dirección de despacho del departamento en Configuración de llamadas y las direcciones de despacho y de mensajes de cada grupo en Grupos. Dirija el correo de sus dominios de despacho a Relay e indique esos dominios en su configuración SMTP. La cuenta del relay necesita el permiso Crear llamadas y, para los adjuntos, Agregar datos de llamada.</value>
+  </data>
+  <data name="Feature.relay-tone-detect" xml:space="preserve">
+    <value>Tonos de aviso a llamadas</value>
+  </data>
+  <data name="FeaturePurpose.relay-tone-detect" xml:space="preserve">
+    <value>En Windows, Relay escucha un escáner o una radio a través de una tarjeta de sonido para detectar avisos de dos tonos y de un tono, y crea una llamada de Resgrid con el audio del despacho grabado.</value>
+  </data>
+  <data name="FeatureValue.relay-tone-detect" xml:space="preserve">
+    <value>Los miembros reciben el aviso en la aplicación Responder con el audio del despachador adjunto, incluso cuando el aviso por radio es el único despacho.</value>
+  </data>
+  <data name="FeatureExample.relay-tone-detect" xml:space="preserve">
+    <value>El escáner de una compañía de voluntarios oye su aviso de dos tonos y el relay crea una llamada para el grupo de esa estación con el audio del despacho adjunto.</value>
+  </data>
+  <data name="FeatureSetup.relay-tone-detect" xml:space="preserve">
+    <value>En Grupos, anote el código de despacho de cada grupo que avise por tonos: un watcher de grupo despacha a ese grupo y un watcher de departamento alerta a todos. Configure los tonos de cada watcher en Relay. La cuenta del relay necesita Crear llamadas y Agregar datos de llamada.</value>
+  </data>
+  <data name="Feature.relay-radio-bridge" xml:space="preserve">
+    <value>Puente de radio</value>
+  </data>
+  <data name="FeaturePurpose.relay-radio-bridge" xml:space="preserve">
+    <value>En Windows, Relay enlaza una radio bidireccional conectada por cable con un canal push-to-talk de Resgrid en ambos sentidos.</value>
+  </data>
+  <data name="FeatureValue.relay-radio-bridge" xml:space="preserve">
+    <value>Las dotaciones en la radio y los miembros en las aplicaciones Responder, Unit y Dispatch se escuchan entre sí, y un tono de emergencia en la radio puede crear una llamada.</value>
+  </data>
+  <data name="FeatureExample.relay-radio-bridge" xml:space="preserve">
+    <value>Un equipo de búsqueda y rescate enlaza su radio base VHF con el canal del equipo, para que los rastreadores con portátiles y los rastreadores con teléfonos hablen entre sí.</value>
+  </data>
+  <data name="FeatureSetup.relay-radio-bridge" xml:space="preserve">
+    <value>Requiere el complemento Push-to-Talk, un canal de voz y el token de actualización del relay. Active la transmisión de la radio con una interfaz PTT USB CM108 o serie, ajuste el silenciador con «Tune» y compruebe el cableado y el retardo de transmisión con «Test transmit».</value>
+  </data>
+  <data name="Feature.relay-lte-donor-radios" xml:space="preserve">
+    <value>Radios donantes push-to-talk LTE</value>
+  </data>
+  <data name="FeaturePurpose.relay-lte-donor-radios" xml:space="preserve">
+    <value>Une un grupo de conversación push-to-talk celular (PoC), como Rapid Radios o Diga-Talk+, a un canal de voz de Resgrid mediante una de sus radios conectada por cable al relay.</value>
+  </data>
+  <data name="FeatureValue.relay-lte-donor-radios" xml:space="preserve">
+    <value>Los usuarios de radios PoC y de las aplicaciones de Resgrid comparten una misma conversación, aunque estos servicios PoC no ofrecen una API ni una pasarela para audio externo.</value>
+  </data>
+  <data name="FeatureExample.relay-lte-donor-radios" xml:space="preserve">
+    <value>Un equipo de seguridad conecta un equipo móvil Diga-Talk+ al relay, de modo que los vigilantes con radios PoC y los supervisores en las aplicaciones de Resgrid se escuchan entre sí.</value>
+  </data>
+  <data name="FeatureSetup.relay-lte-donor-radios" xml:space="preserve">
+    <value>Aplique el perfil de la radio, actívela con una línea PTT física en lugar de VOX, desactive su propio VOX y sus pitidos y manténgala con alimentación externa. La radio donante ocupa una radio de la cuenta PoC y enlaza el grupo de conversación en el que esté configurada. Requiere el complemento Push-to-Talk y un canal de voz.</value>
+  </data>
+  <data name="Feature.relay-recorder" xml:space="preserve">
+    <value>Grabadora de canales</value>
+  </data>
+  <data name="FeaturePurpose.relay-recorder" xml:space="preserve">
+    <value>Graba cada transmisión de uno o de todos los canales push-to-talk como archivos de audio, con un registro de quién habló, en qué canal, cuándo y durante cuánto tiempo.</value>
+  </data>
+  <data name="FeatureValue.relay-recorder" xml:space="preserve">
+    <value>Conserva el tráfico de voz para el cumplimiento normativo y la revisión posterior, en disco local o en almacenamiento compatible con S3.</value>
+  </data>
+  <data name="FeatureExample.relay-recorder" xml:space="preserve">
+    <value>Una agencia de gestión de emergencias graba todos los canales durante un simulacro de inundación y revisa el registro de transmisiones en la reunión de evaluación posterior.</value>
+  </data>
+  <data name="FeatureSetup.relay-recorder" xml:space="preserve">
+    <value>Requiere el complemento Push-to-Talk, un canal de voz y el token de actualización del relay. Cada canal grabado ocupa un puesto de voz. Las grabaciones contienen tráfico de voz operativo: almacénelas, protéjalas y depúrelas según su política de registros.</value>
+  </data>
+  <data name="Feature.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Tono de alerta en push-to-talk</value>
+  </data>
+  <data name="FeaturePurpose.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Anuncia cada nueva llamada de Resgrid en un canal push-to-talk: tonos de alerta y luego la llamada leída en voz alta por la conversión de texto a voz de Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Las dotaciones que escuchan un canal oyen los despachos como lo harían por radio, con la redacción propia de Resgrid y los nombres de sus prioridades de llamada.</value>
+  </data>
+  <data name="FeatureExample.relay-dispatch-tone-out" xml:space="preserve">
+    <value>El equipo de respuesta a emergencias de una planta escucha su canal, y cada nueva llamada se anuncia con una alerta de tono alto-bajo seguida del nombre, la naturaleza, la dirección y la prioridad de la llamada.</value>
+  </data>
+  <data name="FeatureSetup.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Requiere el complemento Push-to-Talk, un canal de voz y el token de actualización del relay. Las llamadas ya abiertas cuando se inicia el relay no se anuncian, y las llamadas programadas se anuncian cuando se despachan.</value>
+  </data>
+  <data name="Rule.relay-dispatch-code" xml:space="preserve">
+    <value>El departamento no tiene código de correo de despacho</value>
+  </data>
+  <data name="RuleWhy.relay-dispatch-code" xml:space="preserve">
+    <value>El departamento no tiene código de correo de despacho, por lo que el correo a su dirección de despacho no puede crear una llamada, tanto si lo recibe Resgrid como un relay.</value>
+  </data>
+  <data name="RuleNext.relay-dispatch-code" xml:space="preserve">
+    <value>Compruebe la dirección de despacho en Configuración de llamadas. Si no aparece ninguna, pida al soporte de Resgrid, o al administrador de su instalación de Resgrid, que asigne un código de despacho.</value>
+  </data>
+  <data name="Rule.relay-group-email-codes" xml:space="preserve">
+    <value>Grupos sin código de correo de despacho o de mensajes</value>
+  </data>
+  <data name="RuleWhy.relay-group-email-codes" xml:space="preserve">
+    <value>Uno o más grupos no tienen código de correo de despacho o de mensajes, por lo que el correo a esas direcciones de grupo no llega a nadie, ni a través de Resgrid ni de un relay. Los grupos creados fuera del editor de grupos, por ejemplo mediante una importación, pueden carecer de códigos.</value>
+  </data>
+  <data name="RuleNext.relay-group-email-codes" xml:space="preserve">
+    <value>En Grupos, busque cada grupo cuya dirección de despacho o de mensajes no tenga código antes de la @, abra Editar y guárdelo; al guardar se asignan los códigos que faltan.</value>
+  </data>
+  <data name="Rule.relay-voice-channel" xml:space="preserve">
+    <value>Push-to-Talk sin canal de voz</value>
+  </data>
+  <data name="RuleWhy.relay-voice-channel" xml:space="preserve">
+    <value>El departamento tiene Push-to-Talk pero ningún canal de voz permanente, por lo que las aplicaciones de Resgrid y el puente de radio, la grabadora y el tono de alerta de un relay no tienen ningún canal al que unirse.</value>
+  </data>
+  <data name="RuleNext.relay-voice-channel" xml:space="preserve">
+    <value>Abra la página de canales de voz, cree un canal y agregue a los miembros que lo usan.</value>
+  </data>
+  <data name="SetupEvidence.relay-voice" xml:space="preserve">
+    <value>Se comprueban la disponibilidad de Push-to-Talk y los canales de voz permanentes. Resgrid no observa si un relay está instalado, conectado o transmitiendo audio; compruébelo en el panel del propio relay.</value>
+  </data>
 </root>

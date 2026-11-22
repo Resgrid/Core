@@ -106,6 +106,27 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			return ExecuteAsync($"DELETE FROM {Tbl("ShiftDispatchers")} WHERE {Col("ShiftId")} = {P}ShiftId", new { ShiftId = shiftId }, cancellationToken);
 		}
+
+		public async Task<bool> TryUpdateReviewWithSourceAsync(ShiftDispatcher row, int expectedSource, CancellationToken cancellationToken = default)
+		{
+			if (row == null || string.IsNullOrWhiteSpace(row.ShiftDispatcherId))
+				return false;
+
+			var parameters = new DynamicParameters(new
+			{
+				Id = row.ShiftDispatcherId,
+				row.Status,
+				row.ReviewedByUserId,
+				row.Note,
+				ExpectedSource = expectedSource
+			});
+			DispatcherDeskSql.AddTimestamp(parameters, "ReviewedOn", row.ReviewedOn);
+
+			return await ExecuteAsync(
+				$"UPDATE {Tbl("ShiftDispatchers")} SET {Col("Status")} = {P}Status, {Col("ReviewedByUserId")} = {P}ReviewedByUserId, " +
+				$"{Col("ReviewedOn")} = {P}ReviewedOn, {Col("Note")} = {P}Note " +
+				$"WHERE {Col("ShiftDispatcherId")} = {CaseInsensitive("Id")} AND {Col("Source")} = {P}ExpectedSource", parameters, cancellationToken) == 1;
+		}
 	}
 
 	public class DispatcherBreaksRepository : RmsRepositoryBase<DispatcherBreak>, IDispatcherBreaksRepository
@@ -260,13 +281,35 @@ namespace Resgrid.Repositories.DataRepository
 				return false;
 
 			var parameters = new DynamicParameters(new { Id = observed.DispatcherBreakId });
-			DispatcherDeskSql.AddTimestamp(parameters, "SentOn", sentOnUtc);
+			DispatcherDeskSql.AddTimestamp(parameters, "SentOn", AlertStamp(sentOnUtc));
 
 			return await ExecuteAsync(
 				$"UPDATE {Tbl("DispatcherBreaks")} SET {Col(column)} = {P}SentOn WHERE {Col("DispatcherBreakId")} = {CaseInsensitive("Id")} AND {Col(column)} IS NULL " +
 				$"AND {ObservedFilter(parameters, observed)}",
 				parameters, cancellationToken) == 1;
 		}
+
+		public async Task<bool> TryClearAlertAsync(string dispatcherBreakId, string column, DateTime sentOnUtc, CancellationToken cancellationToken = default)
+		{
+			if (!AlertColumns.Contains(column))
+				throw new ArgumentOutOfRangeException(nameof(column));
+
+			if (string.IsNullOrWhiteSpace(dispatcherBreakId))
+				return false;
+
+			var parameters = new DynamicParameters(new { Id = dispatcherBreakId });
+			DispatcherDeskSql.AddTimestamp(parameters, "SentOn", AlertStamp(sentOnUtc));
+
+			return await ExecuteAsync(
+				$"UPDATE {Tbl("DispatcherBreaks")} SET {Col(column)} = NULL WHERE {Col("DispatcherBreakId")} = {CaseInsensitive("Id")} AND {Col(column)} = {P}SentOn",
+				parameters, cancellationToken) == 1;
+		}
+
+		/// <summary>
+		/// An alert claim's stamp, whole milliseconds: PostgreSQL keeps microseconds, so a stamp with finer ticks would never compare
+		/// equal to its own stored value when the claim is given back.
+		/// </summary>
+		private static DateTime AlertStamp(DateTime value) => new DateTime(value.Ticks - value.Ticks % TimeSpan.TicksPerMillisecond, value.Kind);
 
 		/// <summary>How long a break start waits for another start in the same department to finish.</summary>
 		private const int BreakStartLockTimeoutMs = 10000;
@@ -389,30 +432,87 @@ namespace Resgrid.Repositories.DataRepository
 				$"WHERE {Col("DispatcherPresenceId")} = {CaseInsensitive("Id")} AND {Col("State")} > {P}Offline AND {session}", parameters, cancellationToken) > 0;
 		}
 
-		public async Task<bool> TrySetDutyAsync(string dispatcherPresenceId, DateTime? expectedSignedInOn, int dutyMode, int? dutyShiftId, int? dutyShiftDayId,
-			DateTime? dutyEndsOn, CancellationToken cancellationToken = default)
+		public async Task<bool> TrySetDutyAsync(DispatcherPresence observed, int dutyMode, int? dutyShiftId, int? dutyShiftDayId, DateTime? dutyEndsOn,
+			CancellationToken cancellationToken = default)
 		{
-			if (string.IsNullOrWhiteSpace(dispatcherPresenceId))
+			if (observed == null || string.IsNullOrWhiteSpace(observed.DispatcherPresenceId))
 				return false;
 
 			var parameters = new DynamicParameters(new
 			{
-				Id = dispatcherPresenceId,
+				Id = observed.DispatcherPresenceId,
 				Offline = (int)DispatcherPresenceStates.Offline,
 				DutyMode = dutyMode,
 				DutyShiftId = dutyShiftId,
-				DutyShiftDayId = dutyShiftDayId
+				DutyShiftDayId = dutyShiftDayId,
+				ObservedDutyMode = observed.DutyMode
 			});
 			DispatcherDeskSql.AddTimestamp(parameters, "DutyEndsOn", dutyEndsOn);
-			if (expectedSignedInOn.HasValue)
-				DispatcherDeskSql.AddTimestamp(parameters, "SignedInOn", expectedSignedInOn);
 
-			var session = expectedSignedInOn.HasValue ? $"{Col("SignedInOn")} = {P}SignedInOn" : $"{Col("SignedInOn")} IS NULL";
+			// The session and the duty the caller evaluated, nullable columns compared with IS NULL.
+			var condition = $"{Col("State")} > {P}Offline AND {NullableTimestampEquals("SignedInOn", "ObservedSignedInOn", observed.SignedInOn, parameters)} " +
+							$"AND {Col("DutyMode")} = {P}ObservedDutyMode " +
+							$"AND {NullableIntEquals("DutyShiftId", "ObservedDutyShiftId", observed.DutyShiftId, parameters)} " +
+							$"AND {NullableIntEquals("DutyShiftDayId", "ObservedDutyShiftDayId", observed.DutyShiftDayId, parameters)} " +
+							$"AND {NullableTimestampEquals("DutyEndsOn", "ObservedDutyEndsOn", observed.DutyEndsOn, parameters)}";
 
 			return await ExecuteAsync(
 				$"UPDATE {Tbl("DispatcherPresences")} SET {Col("DutyMode")} = {P}DutyMode, {Col("DutyShiftId")} = {P}DutyShiftId, " +
 				$"{Col("DutyShiftDayId")} = {P}DutyShiftDayId, {Col("DutyEndsOn")} = {P}DutyEndsOn " +
-				$"WHERE {Col("DispatcherPresenceId")} = {CaseInsensitive("Id")} AND {Col("State")} > {P}Offline AND {session}", parameters, cancellationToken) > 0;
+				$"WHERE {Col("DispatcherPresenceId")} = {CaseInsensitive("Id")} AND {condition}", parameters, cancellationToken) > 0;
+		}
+
+		public async Task<bool> TryReturnFromBreakAsync(DispatcherPresence observed, DateTime nowUtc, DateTime? lastSeenOnUtc, CancellationToken cancellationToken = default)
+		{
+			if (observed == null || string.IsNullOrWhiteSpace(observed.DispatcherPresenceId))
+				return false;
+
+			var parameters = new DynamicParameters(new
+			{
+				Id = observed.DispatcherPresenceId,
+				Offline = (int)DispatcherPresenceStates.Offline,
+				Available = (int)DispatcherPresenceStates.Available,
+				ObservedState = observed.State
+			});
+			DispatcherDeskSql.AddTimestamp(parameters, "Now", nowUtc);
+			if (lastSeenOnUtc.HasValue)
+				DispatcherDeskSql.AddTimestamp(parameters, "LastSeenOn", lastSeenOnUtc);
+
+			string activeBreak;
+			if (string.IsNullOrWhiteSpace(observed.ActiveBreakId))
+			{
+				activeBreak = $"{Col("ActiveBreakId")} IS NULL";
+			}
+			else
+			{
+				parameters.Add("ObservedBreakId", observed.ActiveBreakId);
+				activeBreak = $"{Col("ActiveBreakId")} = {CaseInsensitive("ObservedBreakId")}";
+			}
+
+			return await ExecuteAsync(
+				$"UPDATE {Tbl("DispatcherPresences")} SET {Col("State")} = {P}Available, {Col("ActiveBreakId")} = NULL, {Col("StateChangedOn")} = {P}Now, " +
+				$"{Col("MissedOffers")} = 0" + (lastSeenOnUtc.HasValue ? $", {Col("LastSeenOn")} = {P}LastSeenOn" : "") +
+				$" WHERE {Col("DispatcherPresenceId")} = {CaseInsensitive("Id")} AND {Col("State")} > {P}Offline AND {Col("State")} = {P}ObservedState " +
+				$"AND {NullableTimestampEquals("SignedInOn", "ObservedSignedInOn", observed.SignedInOn, parameters)} AND {activeBreak}",
+				parameters, cancellationToken) > 0;
+		}
+
+		private string NullableTimestampEquals(string column, string parameter, DateTime? value, DynamicParameters parameters)
+		{
+			if (!value.HasValue)
+				return $"{Col(column)} IS NULL";
+
+			DispatcherDeskSql.AddTimestamp(parameters, parameter, value);
+			return $"{Col(column)} = {P}{parameter}";
+		}
+
+		private string NullableIntEquals(string column, string parameter, int? value, DynamicParameters parameters)
+		{
+			if (!value.HasValue)
+				return $"{Col(column)} IS NULL";
+
+			parameters.Add(parameter, value.Value);
+			return $"{Col(column)} = {P}{parameter}";
 		}
 
 		public async Task<bool> TryInsertAsync(DispatcherPresence presence, CancellationToken cancellationToken = default)
@@ -532,6 +632,14 @@ namespace Resgrid.Repositories.DataRepository
 			return QueryFirstOrDefaultAsync<DispatcherQueueItem>(
 				$"SELECT * FROM {Tbl("DispatcherQueueItems")} WHERE {Col("ExternalReference")} = {CaseInsensitive("Ref")} ORDER BY {Col("CreatedOn")} DESC",
 				new { Ref = externalReference });
+		}
+
+		public Task<DispatcherQueueItem> GetOpenByExternalReferenceAsync(int departmentId, string externalReference)
+		{
+			return QueryFirstOrDefaultAsync<DispatcherQueueItem>(
+				$"SELECT * FROM {Tbl("DispatcherQueueItems")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("ExternalReference")} = {CaseInsensitive("Ref")} " +
+				$"AND {Col("State")} < {P}Completed ORDER BY {Col("CreatedOn")} DESC",
+				new { DepartmentId = departmentId, Ref = externalReference, Completed = (int)DispatcherQueueItemStates.Completed });
 		}
 
 		public async Task<bool> TryUpdateAsync(DispatcherQueueItem item, int expectedVersion, CancellationToken cancellationToken = default)

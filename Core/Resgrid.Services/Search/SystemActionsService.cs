@@ -152,9 +152,11 @@ namespace Resgrid.Services.Search
 				case SystemActionAccessRules.DispatcherDesk:
 					if (_dispatchAccess != null && await _dispatchAccess.Value.CanUseDispatchAsync(principal.DepartmentId, principal.UserId))
 						return true;
-					if (_authorization != null && (await _authorization.Value.GetShiftManagementScopeAsync(principal.UserId, principal.DepartmentId))?.IsSupervisor == true)
+					// The desk supervisor check first: a failing shift-scope lookup must not hide the desk from an on-duty desk
+					// supervisor the desk page itself admits (CanSuperviseAsync swallows its own scope failure).
+					if (_dispatcherPresence != null && await _dispatcherPresence.Value.CanSuperviseAsync(principal.DepartmentId, principal.UserId))
 						return true;
-					return _dispatcherPresence != null && await _dispatcherPresence.Value.CanSuperviseAsync(principal.DepartmentId, principal.UserId);
+					return _authorization != null && (await _authorization.Value.GetShiftManagementScopeAsync(principal.UserId, principal.DepartmentId))?.IsSupervisor == true;
 
 				default:
 					return false; // an unknown rule fails closed

@@ -293,18 +293,34 @@ namespace Resgrid.Services
 				message.Error = "The message could not be sent.";
 			}
 
-			try
-			{
-				// The provider's answer is recorded whatever became of the dispatcher's request.
-				await _messagesRepository.UpdateAsync(message, CancellationToken.None, true);
-			}
-			catch (Exception ex)
-			{
-				// The reply went (or failed) all the same: the thread shows it Queued until it is read again; the caller still gets the result.
-				Logging.LogException(ex, $"Dispatcher desk reply on {item.DispatcherQueueItemId}: the delivery result could not be recorded.");
-			}
+			// The provider's answer is recorded whatever became of the dispatcher's request, retried on its own (never by sending again):
+			// a reply the provider took must not stay Queued on the thread because one write failed.
+			await RecordDeliveryAsync(message, item.DispatcherQueueItemId);
 
 			return message;
+		}
+
+		/// <summary>Writes attempted for a reply's delivery result before it is left as stored (Queued).</summary>
+		public const int DeliveryWriteAttempts = 3;
+
+		private async Task RecordDeliveryAsync(DispatcherConversationMessage message, string itemId)
+		{
+			for (var attempt = 0; attempt < DeliveryWriteAttempts; attempt++)
+			{
+				try
+				{
+					await _messagesRepository.UpdateAsync(message, CancellationToken.None, true);
+					return;
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Dispatcher desk reply on {itemId}: the delivery result could not be recorded (attempt {attempt + 1}).");
+				}
+			}
+
+			// The reply went (or failed) all the same and the caller still gets the result; the thread keeps showing it as stored before
+			// the send until the message is written again.
+			Logging.LogError($"Dispatcher desk reply {message.DispatcherConversationMessageId} on {itemId}: delivery {(DispatcherMessageDeliveryStates)message.DeliveryState} was not recorded.");
 		}
 
 		private async Task TouchAsync(DispatcherQueueItem item, CancellationToken cancellationToken)

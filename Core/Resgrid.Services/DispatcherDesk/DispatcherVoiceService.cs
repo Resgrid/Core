@@ -151,7 +151,7 @@ namespace Resgrid.Services
 				// TwiML refuses an item the dispatcher no longer holds, or takes it again from the queue on "press 1". Work the
 				// dispatcher already held stays theirs.
 				if (acquiredNow)
-					await ReleaseAfterFailedDialAsync(departmentId, item.DispatcherQueueItemId, userId);
+					await ReleaseAfterFailedDialAsync(departmentId, item.DispatcherQueueItemId, userId, attemptStartedOn);
 
 				return DispatcherDeskResult<DispatcherQueueItem>.Fail(DispatcherDeskErrors.ChannelUnavailable, "The call to your phone could not be placed.");
 			}
@@ -162,10 +162,20 @@ namespace Resgrid.Services
 			return DispatcherDeskResult<DispatcherQueueItem>.Ok(item);
 		}
 
-		private async Task ReleaseAfterFailedDialAsync(int departmentId, string itemId, string userId)
+		private async Task ReleaseAfterFailedDialAsync(int departmentId, string itemId, string userId, DateTime attemptStartedOn)
 		{
 			try
 			{
+				// Another dial of the same dispatcher (a second tap, another device) may have placed its leg on the item this attempt
+				// took meanwhile: the release would hand that live call's work to someone else. Every placed leg records a
+				// VoiceConnecting for its dispatcher, so one since this attempt started means the item is in use; it stays theirs.
+				var detail = await _routingService.GetItemDetailAsync(departmentId, itemId);
+				if (DialPlacedSince(detail?.Events, userId, attemptStartedOn))
+				{
+					Logging.LogInfo($"[Dispatcher desk] Item {itemId} kept after a failed dial: another ring of the same dispatcher is placed.");
+					return;
+				}
+
 				// The dispatcher's request may be gone; the item must not stay held either way.
 				var released = await _routingService.ReleaseAsync(departmentId, itemId, userId, CancellationToken.None);
 				if (released == null || !released.Success)
@@ -175,6 +185,22 @@ namespace Resgrid.Services
 			{
 				Logging.LogException(ex, $"Dispatcher desk: item {itemId} could not be returned after a failed dial.");
 			}
+		}
+
+		/// <summary>A leg of <paramref name="userId"/> was placed on the item at or after <paramref name="sinceUtc"/> (its VoiceConnecting entry).</summary>
+		internal static bool DialPlacedSince(System.Collections.Generic.IEnumerable<DispatcherQueueEvent> events, string userId, DateTime sinceUtc)
+		{
+			if (events == null)
+				return false;
+
+			foreach (var x in events)
+			{
+				if (x != null && x.EventType == (int)DispatcherQueueEventTypes.VoiceConnecting && x.OccurredOn >= sinceUtc &&
+					string.Equals(x.UserId, userId, StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+
+			return false;
 		}
 
 		/// <summary>The last four digits only, for the item history.</summary>

@@ -259,7 +259,7 @@ NARR: SMOKE SHOWING";
 		[Test]
 		public async Task A_failed_desk_entry_keeps_the_email_retryable_and_the_retry_puts_it_on_the_desk()
 		{
-			// Only Emails ticked: neither the call-event hand-off nor the desk's sweep (both Pending Calls routing) would add it later.
+			// Only Emails ticked: the desk's sweep would add it later too; the redelivery puts it there at once.
 			_desk.EmailCallMode = (int)DispatcherEmailCallModes.EnhancedAi;
 			_desk.RoutePendingCalls = false;
 			var id = Guid.NewGuid().ToString();
@@ -281,6 +281,32 @@ NARR: SMOKE SHOWING";
 			_routing.Verify(r => r.EnqueueAsync(It.Is<DispatcherEnqueueRequest>(q => q.CallId == _saved[0].CallId && q.Kind == DispatcherQueueItemKinds.Email),
 				It.IsAny<CancellationToken>()), Times.Exactly(2));
 			VerifyAiQueued(Times.Once(), "the AI step went out on the first delivery");
+			_receipts.Find(id).State.Should().Be((int)InboundEmailReceiptStates.Completed);
+		}
+
+		[Test]
+		public async Task A_failed_desk_entry_keeps_a_failed_ai_enqueue_owed_so_the_retry_queues_it()
+		{
+			_desk.EmailCallMode = (int)DispatcherEmailCallModes.EnhancedAi;
+			var id = Guid.NewGuid().ToString();
+			var deskAttempts = 0;
+			_routing.Setup(r => r.EnqueueAsync(It.IsAny<DispatcherEnqueueRequest>(), It.IsAny<CancellationToken>()))
+				.Returns((DispatcherEnqueueRequest request, CancellationToken ct) => ++deskAttempts == 1
+					? throw new TimeoutException("desk store unavailable")
+					: Task.FromResult(DispatcherRouteResult.NotRouted()));
+			var aiAttempts = 0;
+			_queue.Setup(q => q.EnqueueAiDispatchTriageAsync(It.IsAny<AiDispatchQueueItem>(), It.IsAny<CancellationToken>()))
+				.Returns((AiDispatchQueueItem item, CancellationToken ct) => ++aiAttempts == 1
+					? throw new TimeoutException("bus unavailable")
+					: Task.FromResult(true));
+
+			(await ReceiveAsync(Email(id))).Should().Be(400, "Postmark redelivers");
+			((InboundEmailPendingSteps)_receipts.Find(id).PendingSteps).Should().HaveFlag(InboundEmailPendingSteps.AiEnrichment, "the AI job never went out");
+
+			(await ReceiveAsync(Email(id))).Should().Be(200);
+
+			_saved.Should().ContainSingle();
+			aiAttempts.Should().Be(2, "the redelivery queued the AI job the first delivery could not");
 			_receipts.Find(id).State.Should().Be((int)InboundEmailReceiptStates.Completed);
 		}
 

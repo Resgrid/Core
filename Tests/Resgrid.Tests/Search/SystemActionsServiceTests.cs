@@ -167,6 +167,26 @@ namespace Resgrid.Tests.Search
 		}
 
 		[Test]
+		public async Task An_on_duty_desk_supervisor_keeps_the_desk_entries_when_the_shift_scope_lookup_fails()
+		{
+			// PR #589 round 2: the desk page admits them through CanSuperviseAsync alone, so a failing scope lookup must not hide it.
+			_claims.Add("Shift:View");
+			var access = new Mock<IDispatchAccessService>();
+			var presence = new Mock<IDispatcherPresenceService>();
+			presence.Setup(p => p.CanSuperviseAsync(7, "u1")).ReturnsAsync(true);
+			var authorization = new Mock<IAuthorizationService>();
+			authorization.Setup(a => a.GetShiftManagementScopeAsync("u1", 7)).ThrowsAsync(new System.InvalidOperationException("scope lookup failed"));
+			var service = new SystemActionsService(_flags.Object, _cutover.Object, new System.Lazy<IDispatchAccessService>(() => access.Object),
+				new System.Lazy<IDispatcherPresenceService>(() => presence.Object), new System.Lazy<IAuthorizationService>(() => authorization.Object));
+
+			var keys = (await service.ListAsync(Principal())).Select(h => h.Key).ToList();
+
+			keys.Should().Contain(new[] { "dispatcher-desk", "dispatcher-breaks", "dispatcher-desk-activity" });
+			authorization.Verify(a => a.GetShiftManagementScopeAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never,
+				"the supervisor check already answered");
+		}
+
+		[Test]
 		public void Within_one_edit_is_symmetric_and_bounded()
 		{
 			SystemActionsService.WithinOneEdit("personel", "personnel").Should().BeTrue();

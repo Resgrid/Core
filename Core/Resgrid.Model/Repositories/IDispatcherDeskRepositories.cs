@@ -46,6 +46,13 @@ namespace Resgrid.Model.Repositories
 		Task<ShiftDayTimesRow> GetShiftDayTimesByIdAsync(int shiftDayId);
 
 		Task<int> DeleteByShiftIdAsync(int shiftId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Writes the row's review columns (Status, ReviewedByUserId, ReviewedOn, Note) only while its stored Source is still
+		/// <paramref name="expectedSource"/>: a withdrawal checked against a signup row never denies a row a manager has since turned
+		/// into an assignment. False when the row changed (or is gone).
+		/// </summary>
+		Task<bool> TryUpdateReviewWithSourceAsync(ShiftDispatcher row, int expectedSource, CancellationToken cancellationToken = default);
 	}
 
 	public interface IDispatcherBreaksRepository : IRepository<DispatcherBreak>
@@ -88,8 +95,16 @@ namespace Resgrid.Model.Repositories
 		Task<bool> TryMarkAlertAsync(DispatcherBreak observed, string column, DateTime sentOnUtc, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Serializes break starts in one department (the coverage check and the start commit) for the rest of the unit of work's
-		/// transaction. Needs the transaction; throws <see cref="TimeoutException"/> when another start holds it too long.
+		/// Gives back an alert claim (<see cref="TryMarkAlertAsync"/>) whose push delivery did not accept the alert: the column is cleared
+		/// only while it still holds this claim's <paramref name="sentOnUtc"/>, so a later pass can send it again and a claim taken since
+		/// (a re-plan reset the stamp and another pass claimed it) is left alone.
+		/// </summary>
+		Task<bool> TryClearAlertAsync(string dispatcherBreakId, string column, DateTime sentOnUtc, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Serializes break starts and day plans in one department (the coverage check and the start commit; the read of a shift
+		/// day's breaks and the new plan's inserts) for the rest of the unit of work's transaction. Needs the transaction; throws
+		/// <see cref="TimeoutException"/> when another start or plan holds it too long.
 		/// </summary>
 		Task LockDepartmentForBreakStartAsync(int departmentId, CancellationToken cancellationToken = default);
 
@@ -128,10 +143,18 @@ namespace Resgrid.Model.Repositories
 
 		/// <summary>
 		/// Moves the session's duty on (the next shift day, or unscheduled with no end), writing the duty columns alone and only
-		/// while the row is still the signed-in session that began at <paramref name="expectedSignedInOn"/>.
+		/// while the row is still the signed-in session <paramref name="observed"/> read (same SignedInOn) with the duty the caller
+		/// evaluated (DutyMode, DutyShiftId, DutyShiftDayId, DutyEndsOn): another process that moved the duty on since wins.
 		/// </summary>
-		Task<bool> TrySetDutyAsync(string dispatcherPresenceId, DateTime? expectedSignedInOn, int dutyMode, int? dutyShiftId, int? dutyShiftDayId,
-			DateTime? dutyEndsOn, CancellationToken cancellationToken = default);
+		Task<bool> TrySetDutyAsync(DispatcherPresence observed, int dutyMode, int? dutyShiftId, int? dutyShiftDayId, DateTime? dutyEndsOn,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Back from a break: Available, no active break, no missed offers (and LastSeenOn when given), written alone and only while the
+		/// row still has the state, session (SignedInOn) and active break <paramref name="observed"/> read. A sign-off or another
+		/// break committed since keeps its own state. False when the row changed.
+		/// </summary>
+		Task<bool> TryReturnFromBreakAsync(DispatcherPresence observed, DateTime nowUtc, DateTime? lastSeenOnUtc, CancellationToken cancellationToken = default);
 	}
 
 	public interface IDispatcherQueueItemsRepository : IRepository<DispatcherQueueItem>
@@ -162,6 +185,12 @@ namespace Resgrid.Model.Repositories
 		Task<DispatcherQueueItem> GetOpenByConversationKeyAnyDepartmentAsync(string conversationKey, DateTime activeSinceUtc);
 
 		Task<DispatcherQueueItem> GetByExternalReferenceAsync(string externalReference);
+
+		/// <summary>
+		/// The open item in <paramref name="departmentId"/> with this external reference: the row the unique open-reference index
+		/// (department, reference, open states) lets win an insert race, whatever other departments or closed items share the reference.
+		/// </summary>
+		Task<DispatcherQueueItem> GetOpenByExternalReferenceAsync(int departmentId, string externalReference);
 
 		/// <summary>
 		/// Writes every column of <paramref name="item"/> only if its stored Version still equals <paramref name="expectedVersion"/>; bumps Version.

@@ -37,6 +37,7 @@ namespace Resgrid.Services
 			builder.RegisterType<AdminAssist.ReadinessEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.StaffingEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.SetupInventoryEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.VoiceEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.AdminAssistAskService>().As<Resgrid.Model.AdminAssist.IAdminAssistAskService>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.AdminAssistPlanService>().As<Resgrid.Model.AdminAssist.IAdminAssistPlans>().As<Resgrid.Model.AdminAssist.IAdminAssistPlanQueries>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.AdminAssistPlanProtection>().As<Resgrid.Model.AdminAssist.IAdminAssistPlanProtection>().InstancePerLifetimeScope();

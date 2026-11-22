@@ -245,6 +245,15 @@ namespace Resgrid.Tests.Repositories
 
 			(await Items().GetCallIdsOnDeskAsync(dept, new[] { 5150, 5151, 5150 })).Should().Equal(5150);
 			(await Items().GetCallIdsOnDeskAsync(dept, new int[0])).Should().BeEmpty();
+
+			// The insert race's winner lookup is scoped like the index: this department's open row, whatever another department or a
+			// closed row holds under the same reference (newer ones included).
+			var elsewhere = NewItem(departmentId: dept + 1, reference: "CA-Unique", created: Now.AddMinutes(1));
+			(await Items().TryInsertAsync(elsewhere)).Should().BeTrue();
+			(await Items().GetOpenByExternalReferenceAsync(dept, "ca-UNIQUE"))?.DispatcherQueueItemId.Should().Be(voice.DispatcherQueueItemId);
+			voice.State = (int)DispatcherQueueItemStates.Completed;
+			(await Items().TryUpdateAsync(voice, 0)).Should().BeTrue();
+			(await Items().GetOpenByExternalReferenceAsync(dept, "CA-Unique")).Should().BeNull("its only row is closed now");
 		}
 
 		[Test]
@@ -368,9 +377,10 @@ namespace Resgrid.Tests.Repositories
 			var stored = await Presences().GetForUserAsync(Dept, "session-ann");
 
 			(await Presences().TouchAsync(presence.DispatcherPresenceId.ToUpperInvariant(), Now)).Should().BeTrue();
-			(await Presences().TrySetDutyAsync(presence.DispatcherPresenceId, stored.SignedInOn.Value.AddSeconds(1), (int)DispatcherDutyModes.Scheduled, 3, 100, Now.AddHours(8)))
-				.Should().BeFalse("another session");
-			(await Presences().TrySetDutyAsync(presence.DispatcherPresenceId, stored.SignedInOn, (int)DispatcherDutyModes.Unscheduled, 3, 100, null)).Should().BeTrue();
+			var otherSession = await Presences().GetForUserAsync(Dept, "session-ann");
+			otherSession.SignedInOn = stored.SignedInOn.Value.AddSeconds(1);
+			(await Presences().TrySetDutyAsync(otherSession, (int)DispatcherDutyModes.Scheduled, 3, 100, Now.AddHours(8))).Should().BeFalse("another session");
+			(await Presences().TrySetDutyAsync(stored, (int)DispatcherDutyModes.Unscheduled, 3, 100, null)).Should().BeTrue();
 			(await Presences().TrySignOffAsync(presence.DispatcherPresenceId, stored.SignedInOn.Value.AddSeconds(1), Now)).Should().BeFalse("another session");
 
 			var touched = await Presences().GetForUserAsync(Dept, "Session-Ann");
@@ -382,13 +392,79 @@ namespace Resgrid.Tests.Repositories
 			(await Presences().TrySignOffAsync(presence.DispatcherPresenceId, touched.SignedInOn, Now)).Should().BeTrue();
 			(await Presences().TrySignOffAsync(presence.DispatcherPresenceId, touched.SignedInOn, Now)).Should().BeFalse("already signed off");
 			(await Presences().TouchAsync(presence.DispatcherPresenceId, Now.AddMinutes(1))).Should().BeFalse("a heartbeat cannot bring it back");
-			(await Presences().TrySetDutyAsync(presence.DispatcherPresenceId, touched.SignedInOn, (int)DispatcherDutyModes.Scheduled, 3, 100, Now)).Should().BeFalse();
+			(await Presences().TrySetDutyAsync(touched, (int)DispatcherDutyModes.Scheduled, 3, 100, Now)).Should().BeFalse();
 
 			var off = await Presences().GetForUserAsync(Dept, "Session-Ann");
 			off.State.Should().Be((int)DispatcherPresenceStates.Offline);
 			off.AwayReason.Should().BeNull();
 			off.MissedOffers.Should().Be(0);
 			off.LastSeenOn.Should().BeCloseTo(Now, TimeSpan.FromMilliseconds(1));
+		}
+
+		[Test]
+		public async Task The_duty_carry_on_and_the_return_from_break_write_only_what_the_caller_read()
+		{
+			// PR 589 round 2: a duty another worker moved on, and a sign-off or later break, win over a stale write.
+			var signedIn = Now.AddHours(-3);
+			var presence = new DispatcherPresence
+			{
+				DispatcherPresenceId = Guid.NewGuid().ToString(), DepartmentId = Dept, UserId = "Duty-Bob", State = (int)DispatcherPresenceStates.OnBreak,
+				StateChangedOn = signedIn, SignedInOn = signedIn, LastSeenOn = signedIn, DutyMode = (int)DispatcherDutyModes.Scheduled, DutyShiftId = 3,
+				DutyShiftDayId = 100, DutyEndsOn = Now.AddMinutes(-1), ActiveBreakId = "Break-One", MissedOffers = 2
+			};
+			(await Presences().TryInsertAsync(presence)).Should().BeTrue();
+			var evaluated = await Presences().GetForUserAsync(Dept, "duty-bob");
+
+			// Another worker carries the session on to the next shift day first.
+			(await Presences().TrySetDutyAsync(evaluated, (int)DispatcherDutyModes.Scheduled, 3, 101, Now.AddHours(8))).Should().BeTrue();
+			(await Presences().TrySetDutyAsync(evaluated, (int)DispatcherDutyModes.Unscheduled, 3, 100, null)).Should().BeFalse("the duty changed since it was read");
+
+			var carried = await Presences().GetForUserAsync(Dept, "Duty-Bob");
+			carried.DutyShiftDayId.Should().Be(101);
+			carried.DutyEndsOn.Should().BeCloseTo(Now.AddHours(8), TimeSpan.FromMilliseconds(1));
+
+			// Back from a break other than the one on the row: nothing written.
+			var otherBreak = await Presences().GetForUserAsync(Dept, "Duty-Bob");
+			otherBreak.ActiveBreakId = "Break-Two";
+			(await Presences().TryReturnFromBreakAsync(otherBreak, Now, Now)).Should().BeFalse("a later break is not ended by an older one's return");
+
+			(await Presences().TryReturnFromBreakAsync(carried, Now, null)).Should().BeTrue();
+			var back = await Presences().GetForUserAsync(Dept, "Duty-Bob");
+			back.State.Should().Be((int)DispatcherPresenceStates.Available);
+			back.ActiveBreakId.Should().BeNull();
+			back.MissedOffers.Should().Be(0);
+			back.LastSeenOn.Should().BeCloseTo(signedIn, TimeSpan.FromMilliseconds(1), "LastSeenOn moves only for the dispatcher's own return");
+
+			// A sign-off committed after the read keeps the row offline.
+			(await Presences().TrySignOffAsync(back.DispatcherPresenceId, back.SignedInOn, Now)).Should().BeTrue();
+			(await Presences().TryReturnFromBreakAsync(back, Now, Now)).Should().BeFalse("signed off since the read");
+			(await Presences().GetForUserAsync(Dept, "Duty-Bob")).State.Should().Be((int)DispatcherPresenceStates.Offline);
+		}
+
+		[Test]
+		public async Task A_withdrawal_write_needs_the_source_it_checked()
+		{
+			var row = new ShiftDispatcher
+			{
+				// A shift of its own: the fixture's database is shared by the tests, and shift 3's roster is counted elsewhere.
+				ShiftDispatcherId = Guid.NewGuid().ToString(), DepartmentId = Dept, ShiftId = 77, ShiftDayId = 7700, UserId = "Signup-Cat",
+				Source = (int)ShiftDispatcherSources.Assigned, Status = (int)ShiftDispatcherStatuses.Active, AddedOn = Now
+			};
+			await Dispatchers().InsertAsync(row, CancellationToken.None, true);
+
+			row.Status = (int)ShiftDispatcherStatuses.Denied;
+			row.ReviewedByUserId = "Signup-Cat";
+			row.ReviewedOn = Now;
+			row.Note = "Withdrawn";
+			(await Dispatchers().TryUpdateReviewWithSourceAsync(row, (int)ShiftDispatcherSources.Signup)).Should().BeFalse("a manager's assignment now");
+			(await Dispatchers().GetByShiftIdAsync(77)).Single(x => x.ShiftDispatcherId == row.ShiftDispatcherId).Status
+				.Should().Be((int)ShiftDispatcherStatuses.Active);
+
+			(await Dispatchers().TryUpdateReviewWithSourceAsync(row, (int)ShiftDispatcherSources.Assigned)).Should().BeTrue();
+			var stored = (await Dispatchers().GetByShiftIdAsync(77)).Single(x => x.ShiftDispatcherId == row.ShiftDispatcherId);
+			stored.Status.Should().Be((int)ShiftDispatcherStatuses.Denied);
+			stored.Note.Should().Be("Withdrawn");
+			stored.ReviewedOn.Should().BeCloseTo(Now, TimeSpan.FromMilliseconds(1));
 		}
 
 		[Test]
@@ -429,6 +505,16 @@ namespace Resgrid.Tests.Repositories
 			(await Breaks().TryMarkAlertAsync(moved, "ReminderSentOn", Now)).Should().BeFalse("the timer read another plan than the one stored");
 			var started = new DispatcherBreak { DispatcherBreakId = planned.DispatcherBreakId, State = (int)DispatcherBreakStates.Active, DurationMinutes = 60, ScheduledStartOn = planned.ScheduledStartOn };
 			(await Breaks().TryMarkAlertAsync(started, "ReminderSentOn", Now)).Should().BeFalse("the stored break is not in the state the timer read");
+
+			// PR 589 round 2: a claim whose push was not accepted is given back, only by the claim that set it (sub-millisecond ticks
+			// included: PostgreSQL keeps microseconds).
+			var claim = Now.AddTicks(1234);
+			(await Breaks().TryMarkAlertAsync(planned, "DueAlertSentOn", claim)).Should().BeTrue();
+			(await Breaks().TryClearAlertAsync(planned.DispatcherBreakId, "DueAlertSentOn", claim.AddMinutes(1))).Should().BeFalse("another claim's stamp");
+			(await Breaks().TryClearAlertAsync(planned.DispatcherBreakId.ToUpperInvariant(), "DueAlertSentOn", claim)).Should().BeTrue();
+			(await Breaks().TryMarkAlertAsync(planned, "DueAlertSentOn", Now)).Should().BeTrue("the next pass claims it again");
+			Func<Task> injectedClear = () => Breaks().TryClearAlertAsync(planned.DispatcherBreakId, "Note; DROP TABLE x", Now);
+			await injectedClear.Should().ThrowAsync<ArgumentOutOfRangeException>();
 
 			(await Breaks().TryMarkAlertAsync(planned, "ReminderSentOn", Now)).Should().BeTrue();
 			(await Breaks().TryMarkAlertAsync(planned, "ReminderSentOn", Now.AddMinutes(1))).Should().BeFalse();

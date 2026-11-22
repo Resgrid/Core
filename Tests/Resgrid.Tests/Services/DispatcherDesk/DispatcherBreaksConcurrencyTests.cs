@@ -39,6 +39,8 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			public readonly Mock<IDispatcherRoutingService> Routing = new Mock<IDispatcherRoutingService>();
 			public readonly Mock<IDispatcherPresenceService> Presence = new Mock<IDispatcherPresenceService>();
 			public DispatcherDeskSnapshot Desk = new DispatcherDeskSnapshot();
+			/// <summary>Whether the desk push accepts the break alerts (false: the provider refused or failed).</summary>
+			public bool Delivers = true;
 			public Mock<IUnitOfWork> UnitOfWork;
 			public DispatcherBreaksService Breaks;
 
@@ -61,11 +63,12 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 
 				var notifier = new Mock<IDispatcherDeskNotifier>();
 				notifier.Setup(x => x.NotifyBreakReminderAsync(It.IsAny<DispatcherBreak>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-					.Callback((DispatcherBreak b, bool due, CancellationToken c) => Pushes.Add((due ? "due" : "reminder", b.UserId, b.DispatcherBreakId))).Returns(Task.CompletedTask);
+					.Callback((DispatcherBreak b, bool due, CancellationToken c) => Pushes.Add((due ? "due" : "reminder", b.UserId, b.DispatcherBreakId)))
+					.ReturnsAsync(() => Delivers);
 				notifier.Setup(x => x.NotifyBreakOverAsync(It.IsAny<DispatcherBreak>(), It.IsAny<IEnumerable<string>>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
 					.Callback((DispatcherBreak b, IEnumerable<string> s, bool auto, CancellationToken c) =>
 						Pushes.Add((s == null ? (auto ? "auto-returned" : "break-over") : "supervisors:" + string.Join(",", s), b.UserId, b.DispatcherBreakId)))
-					.Returns(Task.CompletedTask);
+					.ReturnsAsync(() => Delivers);
 
 				Routing.Setup(x => x.RouteDepartmentAsync(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(0);
 
@@ -433,6 +436,195 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			h.SignedIn("bob", DispatcherPresenceStates.OnBreak).ActiveBreakId = later.DispatcherBreakId;
 			await h.Breaks.ProcessBreakTimersAsync(h.Now);
 			h.Pushes.Should().Contain(x => x.Kind == "supervisors:sup" && x.UserId == "bob");
+		}
+
+		// ------------------------------------------------------------------ PR 589 round 2
+
+		[Test]
+		public async Task Auto_return_never_writes_a_signed_off_dispatcher_back_as_available()
+		{
+			var h = new Harness();
+			h.Config.AutoReturnAfterMinutes = 5;
+			var presence = h.SignedIn("ann", DispatcherPresenceStates.OnBreak);
+			var active = h.Active("ann", h.Now.AddMinutes(-30));
+			presence.ActiveBreakId = active.DispatcherBreakId;
+
+			// She signs off after auto return read her presence and before it writes it back.
+			h.Store.BeforePresenceWrite = _ =>
+			{
+				h.Store.BeforePresenceWrite = null;
+				var stored = h.Store.Presences.Single(x => x.UserId == "ann");
+				stored.State = (int)DispatcherPresenceStates.Offline;
+				stored.ActiveBreakId = null;
+			};
+
+			await h.Breaks.ProcessBreakTimersAsync(h.Now);
+
+			h.Stored(active.DispatcherBreakId).State.Should().Be((int)DispatcherBreakStates.Completed);
+			h.Store.Presences.Single(x => x.UserId == "ann").State.Should().Be((int)DispatcherPresenceStates.Offline, "the sign-off wins over the stale copy");
+		}
+
+		[Test]
+		public async Task A_break_still_active_after_its_dispatcher_signed_off_is_closed_by_the_timer()
+		{
+			var h = new Harness();
+			var presence = h.SignedIn("ann", DispatcherPresenceStates.Offline);
+			presence.StateChangedOn = h.Now.AddMinutes(-3);
+			var active = h.Active("ann", h.Now.AddMinutes(-10));
+
+			(await h.Breaks.ProcessBreakTimersAsync(h.Now)).Should().Be(1);
+
+			var closed = h.Stored(active.DispatcherBreakId);
+			closed.State.Should().Be((int)DispatcherBreakStates.Completed);
+			closed.EndReason.Should().Be((int)DispatcherBreakEndReasons.SignedOff);
+			closed.EndedOn.Should().Be(h.Now.AddMinutes(-3), "it ended with the session");
+			h.Pushes.Should().BeEmpty("nobody is told a signed-off dispatcher's break is over");
+		}
+
+		[Test]
+		public async Task A_reminder_the_push_did_not_accept_is_sent_again_by_the_next_pass_and_never_after_it_is_delivered()
+		{
+			var h = new Harness();
+			h.SignedIn("ann");
+			var planned = h.Planned("ann", h.Now.AddMinutes(10), shiftId: null);
+			h.Delivers = false;
+
+			await h.Breaks.ProcessBreakTimersAsync(h.Now);
+
+			h.Pushes.Should().ContainSingle(x => x.Kind == "reminder");
+			h.Stored(planned.DispatcherBreakId).ReminderSentOn.Should().BeNull("the claim is given back for the next pass");
+
+			h.Delivers = true;
+			await h.Breaks.ProcessBreakTimersAsync(h.Now.AddMinutes(1));
+			await h.Breaks.ProcessBreakTimersAsync(h.Now.AddMinutes(2));
+
+			h.Pushes.Count(x => x.Kind == "reminder").Should().Be(2, "sent again once, then never after it was accepted");
+			h.Stored(planned.DispatcherBreakId).ReminderSentOn.Should().Be(h.Now.AddMinutes(1));
+		}
+
+		[Test]
+		public async Task An_alert_the_push_keeps_refusing_is_given_up_after_the_retry_window()
+		{
+			var h = new Harness();
+			var presence = h.SignedIn("ann", DispatcherPresenceStates.OnBreak);
+			var active = h.Active("ann", h.Now.AddMinutes(-60), 15);
+			presence.ActiveBreakId = active.DispatcherBreakId;
+			h.Delivers = false;
+
+			// Due 45 minutes ago: past the retry window, so the failed claim stays (logged) instead of being retried every pass.
+			await h.Breaks.ProcessBreakTimersAsync(h.Now);
+
+			h.Pushes.Should().ContainSingle(x => x.Kind == "break-over");
+			h.Stored(active.DispatcherBreakId).ReturnAlertSentOn.Should().Be(h.Now);
+
+			await h.Breaks.ProcessBreakTimersAsync(h.Now.AddMinutes(1));
+			h.Pushes.Count(x => x.Kind == "break-over").Should().Be(1);
+		}
+
+		[Test]
+		public async Task A_supervisor_alert_that_reached_nobody_is_sent_again()
+		{
+			var h = new Harness();
+			h.Config.NotifySupervisorsOnOverdueBreak = true;
+			h.SupervisorsOnDuty.Add("sup");
+			var presence = h.SignedIn("ann", DispatcherPresenceStates.OnBreak);
+			var active = h.Active("ann", h.Now.AddMinutes(-21), 15);
+			presence.ActiveBreakId = active.DispatcherBreakId;
+			h.Delivers = false;
+
+			await h.Breaks.ProcessBreakTimersAsync(h.Now);
+
+			var stored = h.Stored(active.DispatcherBreakId);
+			stored.ReturnAlertSentOn.Should().BeNull("her own alert is retried");
+			stored.OverdueAlertSentOn.Should().BeNull("the supervisors' alert is retried");
+
+			h.Delivers = true;
+			await h.Breaks.ProcessBreakTimersAsync(h.Now.AddMinutes(1));
+
+			h.Pushes.Count(x => x.Kind == "supervisors:sup").Should().Be(2);
+			h.Stored(active.DispatcherBreakId).OverdueAlertSentOn.Should().NotBeNull();
+		}
+
+		[Test]
+		public async Task Planning_a_day_reads_its_breaks_under_the_department_lock()
+		{
+			var h = new Harness(withUnitOfWork: true);
+			h.OnDuty("ann");
+			h.Settings[3].SetBreakPlan(new[] { new DispatcherBreakPlanEntry { BreakType = (int)DispatcherBreakTypes.Break, DurationMinutes = 15 } });
+
+			var first = await h.Breaks.PlanBreaksAsync(Dept, 100, false, "sup");
+
+			first.Success.Should().BeTrue();
+			first.Value.Should().NotBeEmpty();
+			h.Store.BreakStartLocks.Should().Equal(new[] { Dept }, "the day's breaks are read and the plan inserted under the lock");
+
+			// A second editor planning the same day, serialized behind the first, plans against what it committed: nothing twice.
+			var second = await h.Breaks.PlanBreaksAsync(Dept, 100, false, "sup2");
+
+			second.Success.Should().BeTrue();
+			second.Value.Should().BeEmpty("ann already has the day's plan");
+			h.Store.Breaks.Count(x => x.UserId == "ann" && x.State == (int)DispatcherBreakStates.Scheduled).Should().Be(first.Value.Count);
+			h.Store.BreakStartLocks.Should().Equal(new[] { Dept, Dept });
+			h.UnitOfWork.Verify(x => x.CommitChanges(), Times.Exactly(2));
+		}
+
+		[Test]
+		public async Task A_break_re_planned_after_the_start_read_it_is_not_started_with_the_old_plan()
+		{
+			var h = new Harness();
+			h.OnDuty("ann");
+			h.SignedIn("ann");
+			var planned = h.Planned("ann", h.Now, 15);
+
+			// A supervisor makes it a 30 minute break between the start's read and its write.
+			h.BeforeNextWrite(_ => h.Stored(planned.DispatcherBreakId).DurationMinutes = 30);
+
+			var started = await h.Breaks.StartBreakAsync(Dept, "ann", planned.DispatcherBreakId, null, null, false, "ann");
+
+			started.Error.Should().Be(DispatcherDeskErrors.BreakNotStartable, "the edited plan is reloaded before it starts");
+			var stored = h.Stored(planned.DispatcherBreakId);
+			stored.State.Should().Be((int)DispatcherBreakStates.Scheduled);
+			stored.DurationMinutes.Should().Be(30, "the supervisor's edit stands");
+
+			(await h.Breaks.StartBreakAsync(Dept, "ann", planned.DispatcherBreakId, null, null, false, "ann")).Success.Should().BeTrue();
+			h.Stored(planned.DispatcherBreakId).ExpectedReturnOn.Should().Be(h.Now.AddMinutes(30));
+		}
+
+		[Test]
+		public async Task A_hand_back_that_loses_a_version_race_while_still_held_is_not_reported_as_returned()
+		{
+			var h = new Harness();
+			h.OnDuty("ann");
+			h.SignedIn("ann");
+			h.Held("i-1", "ann");
+			h.Routing.Setup(x => x.ReleaseAsync(Dept, "i-1", "ann", It.IsAny<CancellationToken>()))
+				.ReturnsAsync(DispatcherDeskResult<DispatcherQueueItem>.Fail(DispatcherDeskErrors.ItemNotAvailable));
+
+			var started = await h.Breaks.StartBreakAsync(Dept, "ann", null, null, 15, true, "ann");
+
+			started.Success.Should().BeTrue();
+			started.Warnings.Should().NotContain(x => x.Kind == DispatcherDeskWarningKinds.WorkReturnedToQueue, "the item is still hers");
+		}
+
+		[Test]
+		public async Task A_hand_back_that_loses_a_version_race_to_another_holder_counts_as_returned()
+		{
+			var h = new Harness();
+			h.OnDuty("ann");
+			h.SignedIn("ann");
+			h.Held("i-1", "ann");
+			h.Routing.Setup(x => x.ReleaseAsync(Dept, "i-1", "ann", It.IsAny<CancellationToken>()))
+				.ReturnsAsync(() =>
+				{
+					// A supervisor moved it to bob between the hand-back's read and its write.
+					var item = h.Store.Items.Single();
+					item.AssignedUserId = "bob";
+					return DispatcherDeskResult<DispatcherQueueItem>.Fail(DispatcherDeskErrors.ItemNotAvailable);
+				});
+
+			var started = await h.Breaks.StartBreakAsync(Dept, "ann", null, null, 15, true, "ann");
+
+			started.Warnings.Should().Contain(x => x.Kind == DispatcherDeskWarningKinds.WorkReturnedToQueue, "it is no longer work she holds");
 		}
 	}
 }

@@ -69,20 +69,28 @@ namespace Resgrid.Services
 				{
 					// Duplicate when it is on the desk already (an edit of a pending call, a chat app's call put there by intake, or an emailed
 					// call queued as an email). Under its own kind, so a chat or an email whose first hand-off failed still reaches a desk that
-					// takes chats or emails but not pending calls.
-					var kind = await WaitingCallKindAsync(scope, config, deptId, callId, callSource, sourceIdentifier);
-					if (kind.HasValue)
+					// takes chats or emails but not pending calls. A failure here (the intake channel read, the insert) is left to the desk
+					// worker's sweep and never stops the reconcile below from withdrawing an offer the change made stale.
+					try
 					{
-						await routing.EnqueueAsync(new DispatcherEnqueueRequest
+						var kind = await WaitingCallKindAsync(scope, config, deptId, callId, callSource, sourceIdentifier);
+						if (kind.HasValue)
 						{
-							DepartmentId = deptId,
-							Kind = kind.Value,
-							CallId = callId,
-							SourceName = kind.Value == DispatcherQueueItemKinds.Chat ? contactName : null,
-							Subject = name != null && name.Length > 250 ? name.Substring(0, 250) : name,
-							Body = nature,
-							CreatedByUserId = reportingUserId
-						});
+							await routing.EnqueueAsync(new DispatcherEnqueueRequest
+							{
+								DepartmentId = deptId,
+								Kind = kind.Value,
+								CallId = callId,
+								SourceName = kind.Value == DispatcherQueueItemKinds.Chat ? contactName : null,
+								Subject = name != null && name.Length > 250 ? name.Substring(0, 250) : name,
+								Body = nature,
+								CreatedByUserId = reportingUserId
+							});
+						}
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex, $"The dispatcher desk could not take waiting call {callId}; the desk sweep tries again.");
 					}
 
 					// Already on the desk (by any of its options) and now screened (Enhanced AI's reading lands after the call is saved): its

@@ -447,7 +447,8 @@
         "units",
         "mapping",
         "checklists",
-        "maintenance"
+        "maintenance",
+        "relay"
       ],
       "RuleIds": [
         "shift-auto-without-dispatch",
@@ -560,7 +561,8 @@
         "maintenance",
         "units",
         "mapping",
-        "calls"
+        "calls",
+        "relay"
       ],
       "RuleIds": [
         "shift-auto-without-dispatch",
@@ -604,7 +606,8 @@
         "training",
         "knowledge",
         "inventory",
-        "calls"
+        "calls",
+        "relay"
       ],
       "RuleIds": [
         "shift-auto-without-dispatch",
@@ -675,7 +678,8 @@
         "checklists",
         "maintenance",
         "knowledge",
-        "communication"
+        "communication",
+        "relay"
       ],
       "RuleIds": [
         "notification-channels",
@@ -711,7 +715,8 @@
         "calls",
         "checklists",
         "maintenance",
-        "records"
+        "records",
+        "relay"
       ],
       "RuleIds": [
         "shift-auto-without-dispatch",

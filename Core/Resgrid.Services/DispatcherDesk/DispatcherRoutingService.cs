@@ -11,6 +11,7 @@ using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -50,6 +51,7 @@ namespace Resgrid.Services
 		private readonly Lazy<IEnumerable<IIntakeConversationService>> _intakeConversations;
 		private readonly Lazy<IIntakeScreeningService> _screening;
 		private readonly Lazy<IIntakeService> _intakeService;
+		private readonly IUnitOfWork _unitOfWork;
 
 		public DispatcherRoutingService(IDispatcherQueueItemsRepository itemsRepository, IDispatcherQueueEventsRepository eventsRepository,
 			IDispatcherConversationMessagesRepository messagesRepository, IDispatcherPresencesRepository presencesRepository,
@@ -58,10 +60,11 @@ namespace Resgrid.Services
 			IUserProfileService userProfileService, IQueueService queueService, Lazy<ICallsService> callsService,
 			Lazy<IDispatcherConversationService> conversationService, Lazy<IAiDispatchEnrichmentService> aiDispatchEnrichmentService,
 			Lazy<IEnumerable<IIntakeConversationService>> intakeConversations = null, Lazy<IIntakeScreeningService> screening = null,
-			Lazy<IIntakeService> intakeService = null)
+			Lazy<IIntakeService> intakeService = null, IUnitOfWork unitOfWork = null)
 		{
 			_screening = screening;
 			_intakeService = intakeService;
+			_unitOfWork = unitOfWork;
 			_itemsRepository = itemsRepository;
 			_eventsRepository = eventsRepository;
 			_messagesRepository = messagesRepository;
@@ -182,10 +185,7 @@ namespace Resgrid.Services
 				// A phone caller is still on the inbound webhook: its handler answers with the overflow TwiML itself, so the live
 				// call is not redirected here (that would race the webhook's own answer).
 				if (item.Kind == (int)DispatcherQueueItemKinds.Voice)
-				{
-					await MarkOverflowedAsync(item, "No dispatcher was free.", cancellationToken);
-					return new DispatcherRouteResult { Outcome = DispatcherRouteOutcomes.Overflow, Item = item };
-				}
+					return await OverflowInboundCallerAsync(item, cancellationToken);
 
 				var overflow = await OverflowAsync(item, config, now, "No dispatcher was free.", cancellationToken);
 				if (overflow == OverflowResults.Converted)
@@ -203,6 +203,36 @@ namespace Resgrid.Services
 			}
 
 			await AcknowledgeAsync(item, config, cancellationToken);
+			return new DispatcherRouteResult { Outcome = DispatcherRouteOutcomes.Queued, Item = item };
+		}
+
+		/// <summary>
+		/// A new phone caller nobody can take: the item is closed as Overflowed only from the queued snapshot just published (a fenced
+		/// write), so a dispatcher who is offered or takes the caller in between keeps them and the webhook holds the caller for that
+		/// dispatcher instead of answering with the overflow. A caller still waiting with nobody (something else only touched the item)
+		/// is judged again on the item as it is now.
+		/// </summary>
+		private async Task<DispatcherRouteResult> OverflowInboundCallerAsync(DispatcherQueueItem item, CancellationToken cancellationToken)
+		{
+			for (var attempt = 0; attempt < 3; attempt++)
+			{
+				if (await MarkOverflowedCoreAsync(item, "No dispatcher was free.", requireQueued: true, copyBack: true, cancellationToken, fenced: true))
+					return new DispatcherRouteResult { Outcome = DispatcherRouteOutcomes.Overflow, Item = item };
+
+				// The fenced write copied the row as it is now into item (when it could be read).
+				if (item.State == (int)DispatcherQueueItemStates.Overflowed)
+					return new DispatcherRouteResult { Outcome = DispatcherRouteOutcomes.Overflow, Item = item };
+
+				if (!item.IsOpen() || item.State != (int)DispatcherQueueItemStates.Queued || !string.IsNullOrWhiteSpace(item.AssignedUserId) || item.CallId.HasValue)
+					return new DispatcherRouteResult
+					{
+						Outcome = item.State == (int)DispatcherQueueItemStates.Offered ? DispatcherRouteOutcomes.Offered : DispatcherRouteOutcomes.Queued,
+						Item = item,
+						UserId = item.AssignedUserId
+					};
+			}
+
+			// Still waiting after repeated touches: the caller holds, and the hold loop's own overflow takes them on its next check.
 			return new DispatcherRouteResult { Outcome = DispatcherRouteOutcomes.Queued, Item = item };
 		}
 
@@ -412,6 +442,40 @@ namespace Resgrid.Services
 			return DispatcherDeskResult<DispatcherQueueItem>.Ok(item);
 		}
 
+		public async Task<DispatcherDeskResult<DispatcherQueueItem>> ReleaseObservedAsync(DispatcherQueueItem observed, CancellationToken cancellationToken = default)
+		{
+			if (observed == null || string.IsNullOrWhiteSpace(observed.DispatcherQueueItemId))
+				return Fail(DispatcherDeskErrors.ItemNotFound);
+
+			var wasOffered = observed.State == (int)DispatcherQueueItemStates.Offered;
+			var wasHeld = observed.State == (int)DispatcherQueueItemStates.Accepted;
+			if (!wasOffered && !wasHeld || string.IsNullOrWhiteSpace(observed.AssignedUserId))
+				return Fail(DispatcherDeskErrors.ItemNotAvailable);
+
+			// The stored row, only while it is still the assignment the caller read (any accept, release or transfer bumps the
+			// Version); the write below is fenced on that same Version, so nothing committed after the read is undone.
+			var item = await _itemsRepository.GetItemAsync(observed.DispatcherQueueItemId);
+			if (item == null || item.DepartmentId != observed.DepartmentId)
+				return Fail(DispatcherDeskErrors.ItemNotFound);
+
+			if (item.Version != observed.Version)
+				return Fail(DispatcherDeskErrors.ItemNotAvailable);
+
+			var now = UtcNow();
+			var previous = item.AssignedUserId;
+			if (!await ReturnToQueueAsync(item, previous, addToDeclined: wasOffered, now, cancellationToken))
+				return Fail(DispatcherDeskErrors.ItemNotAvailable);
+
+			if (wasHeld)
+				await ReleaseIntakeThreadAsync(item, previous, cancellationToken);
+
+			await AddEventAsync(item, DispatcherQueueEventTypes.Released, previous, null, now, cancellationToken);
+			await AfterReturnAsync(item, now, cancellationToken);
+			await _notifier.PublishDeskChangedAsync(item.DepartmentId, previous);
+
+			return DispatcherDeskResult<DispatcherQueueItem>.Ok(item);
+		}
+
 		public async Task<DispatcherDeskResult<DispatcherQueueItem>> TransferAsync(int departmentId, string dispatcherQueueItemId, string userId, string toUserId,
 			string note, CancellationToken cancellationToken = default)
 		{
@@ -534,15 +598,28 @@ namespace Resgrid.Services
 			if (others.Any(x => x.State == (int)DispatcherQueueItemStates.Accepted || IsConversation((DispatcherQueueItemKinds)x.Kind)))
 				return Fail(DispatcherDeskErrors.InvalidInput, "That call is already on the desk as another item.");
 
-			foreach (var other in others)
-				await CompleteAsCoveredAsync(other, "Covered by the desk item the call was linked to", now, cancellationToken);
-
+			// Closing the call's own item and linking this one commit together: the open-item index needs the other closed before the
+			// link, and a link that loses to a concurrent write (a message touching this item) must not leave the call's item closed with
+			// nothing linked (the sweep counts closed items as on the desk and would never bring the call back).
 			var expected = item.Version;
-			item.CallId = callId;
-			item.LastActivityOn = now;
+			var linked = await InTransactionAsync(async () =>
+			{
+				foreach (var other in others)
+				{
+					if (!await CoverAsync(other, now, cancellationToken))
+						return false;
+				}
 
-			if (!await _itemsRepository.TryUpdateAsync(item, expected, cancellationToken))
+				item.CallId = callId;
+				item.LastActivityOn = now;
+				return await _itemsRepository.TryUpdateAsync(item, expected, cancellationToken);
+			}, cancellationToken);
+
+			if (!linked)
 				return Fail(DispatcherDeskErrors.ItemNotAvailable);
+
+			foreach (var other in others)
+				await AnnounceCoveredAsync(other, "Covered by the desk item the call was linked to", now, cancellationToken);
 
 			await PublishAsync(item);
 			return DispatcherDeskResult<DispatcherQueueItem>.Ok(item);
@@ -551,22 +628,71 @@ namespace Resgrid.Services
 		/// <summary>Completes an open item another item now stands for (Outcome Duplicate); false when it changed meanwhile.</summary>
 		private async Task<bool> CompleteAsCoveredAsync(DispatcherQueueItem other, string detail, DateTime now, CancellationToken cancellationToken)
 		{
+			if (!await CoverAsync(other, now, cancellationToken))
+				return false;
+
+			await AnnounceCoveredAsync(other, detail, now, cancellationToken);
+			return true;
+		}
+
+		/// <summary>The write of <see cref="CompleteAsCoveredAsync"/>: version-checked, nothing announced.</summary>
+		private async Task<bool> CoverAsync(DispatcherQueueItem other, DateTime now, CancellationToken cancellationToken)
+		{
 			var expected = other.Version;
-			var offeredTo = other.AssignedUserId;
 			other.State = (int)DispatcherQueueItemStates.Completed;
 			other.Outcome = (int)DispatcherQueueItemOutcomes.Duplicate;
 			other.CompletedOn = now;
 			other.OfferExpiresOn = null;
 			other.LastActivityOn = now;
 
-			if (!await _itemsRepository.TryUpdateAsync(other, expected, cancellationToken))
-				return false;
+			return await _itemsRepository.TryUpdateAsync(other, expected, cancellationToken);
+		}
 
+		/// <summary>History and screens for an item <see cref="CoverAsync"/> completed (after its write committed).</summary>
+		private async Task AnnounceCoveredAsync(DispatcherQueueItem other, string detail, DateTime now, CancellationToken cancellationToken)
+		{
 			await AddEventAsync(other, DispatcherQueueEventTypes.Completed, null, detail, now, cancellationToken);
 			await PublishAsync(other);
-			if (!string.IsNullOrWhiteSpace(offeredTo))
-				await _notifier.PublishDeskChangedAsync(other.DepartmentId, offeredTo);
-			return true;
+			if (!string.IsNullOrWhiteSpace(other.AssignedUserId))
+				await _notifier.PublishDeskChangedAsync(other.DepartmentId, other.AssignedUserId);
+		}
+
+		/// <summary>
+		/// Runs <paramref name="work"/> in one transaction (joining a caller's): committed when it returns true, rolled back when it returns
+		/// false or throws. Without a unit of work (unit tests) the writes run as they come.
+		/// </summary>
+		private async Task<bool> InTransactionAsync(Func<Task<bool>> work, CancellationToken cancellationToken)
+		{
+			if (_unitOfWork == null)
+				return await work();
+
+			var owns = _unitOfWork.Transaction == null;
+			await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
+			try
+			{
+				var done = await work();
+				if (owns)
+				{
+					if (done)
+						_unitOfWork.CommitChanges();
+					else
+						_unitOfWork.DiscardChanges();
+				}
+				else if (!done)
+				{
+					// A caller's transaction: nothing here can undo part of it, so the refusal dooms it (the caller rolls back).
+					throw new InvalidOperationException("The desk item changed while the call was being linked.");
+				}
+
+				return done;
+			}
+			catch
+			{
+				if (owns)
+					_unitOfWork.DiscardChanges();
+
+				throw;
+			}
 		}
 
 		// ---------------------------------------------------------------- reads
@@ -856,6 +982,12 @@ namespace Resgrid.Services
 			foreach (var waiting in items.Where(x => x.State == (int)DispatcherQueueItemStates.Queued && NeedsOverflow(x, config, now)))
 			{
 				if (await OverflowAsync(waiting, config, now, "Nobody took it.", cancellationToken) != OverflowResults.Skipped)
+					changes++;
+			}
+
+			foreach (var stranded in items.Where(x => IsStrandedOverflowClaim(x, now)))
+			{
+				if (await RecoverStrandedOverflowAsync(stranded, cancellationToken))
 					changes++;
 			}
 
@@ -1203,6 +1335,9 @@ namespace Resgrid.Services
 				if (item.Kind == (int)DispatcherQueueItemKinds.Voice)
 					return await OverflowVoiceAsync(item, now, reason, cancellationToken);
 
+				// An earlier overflow of this item was given back (its note stays): its save may have committed the call before failing.
+				var retried = item.OverflowNote != null;
+
 				// The claim stamps OverflowedOn while the item stays Queued (a dispatcher may still take the text); NeedsOverflow is false
 				// for it from then on, so no other pass saves a second pending call for the same message.
 				if (!await TryClaimAsync(item, now, Truncate(reason + " Saving it as a pending call.", 250), DispatcherQueueItemStates.Queued, cancellationToken))
@@ -1211,7 +1346,8 @@ namespace Resgrid.Services
 				Call call;
 				try
 				{
-					call = await CreatePendingCallAsync(item, cancellationToken);
+					// The call an earlier attempt saved (SaveCallAsync committed, then failed in its follow-up work) is linked, not saved twice.
+					call = (retried ? await FindOverflowCallAsync(item) : null) ?? await CreatePendingCallAsync(item, cancellationToken);
 				}
 				catch (Exception ex)
 				{
@@ -1231,8 +1367,9 @@ namespace Resgrid.Services
 				if (!await MarkOverflowedCoreAsync(item, reason + $" Saved as pending call {call.Number ?? call.CallId.ToString()}" + (useAi ? "; Enhanced AI is filling it in." : "."),
 						requireQueued: false, copyBack: true, cancellationToken))
 				{
-					// The call exists (dispatchers see it with the pending calls) but the item could not be linked to it.
-					Logging.LogError($"Dispatcher queue overflow for item {item.DispatcherQueueItemId}: pending call {call.CallId} was saved but could not be linked to the item.");
+					// The call exists (dispatchers see it with the pending calls) but the item could not be linked to it. The claim stays, so
+					// no second call is saved; the worker links the two later (RecoverStrandedOverflowAsync finds the call by its "DQ:" source).
+					Logging.LogError($"Dispatcher queue overflow for item {item.DispatcherQueueItemId}: pending call {call.CallId} was saved but could not be linked to the item yet.");
 				}
 
 				if (useAi)
@@ -1299,6 +1436,9 @@ namespace Resgrid.Services
 			}
 
 			// Reopen only what this claim closed: the voicemail (or the hold loop's own overflow) may have moved the item on since.
+			// OverflowedOn deliberately stays: a refused redirect is most often a call that already ended (the provider cannot tell us
+			// which), so the worker does not retry the redirect every pass. A caller who is still on hold is covered by the hold loop,
+			// whose own overflow (DispatcherVoiceController.Hold, a fenced TryMarkOverflowedAsync) does not depend on the stamp.
 			for (var attempt = 0; attempt < 3; attempt++)
 			{
 				var current = await _itemsRepository.GetItemAsync(item.DispatcherQueueItemId);
@@ -1371,6 +1511,58 @@ namespace Resgrid.Services
 			}
 		}
 
+		/// <summary>
+		/// The pending call an earlier overflow of <paramref name="item"/> saved (SourceIdentifier "DQ:{itemId}"), or null. Logged after
+		/// the item was created, so the search is bounded to that window.
+		/// </summary>
+		private async Task<Call> FindOverflowCallAsync(DispatcherQueueItem item)
+		{
+			var sourceIdentifier = AiDispatch.AiDispatchEnrichmentService.DeskCallSourcePrefix + item.DispatcherQueueItemId;
+			var calls = await _callsService.Value.GetAllCallsByDepartmentDateRangeAsync(item.DepartmentId, item.CreatedOn.AddMinutes(-1), UtcNow().AddMinutes(1));
+
+			return (calls ?? new List<Call>())
+				.Where(x => x != null && !x.IsDeleted && x.DepartmentId == item.DepartmentId &&
+							string.Equals(x.SourceIdentifier, sourceIdentifier, StringComparison.OrdinalIgnoreCase))
+				.OrderBy(x => x.CallId)
+				.FirstOrDefault();
+		}
+
+		/// <summary>How long a text overflow's claim may stand with no call linked before the worker treats it as stranded.</summary>
+		public const int StrandedOverflowClaimMinutes = 5;
+
+		/// <summary>
+		/// A text, chat or other conversation whose overflow claim (OverflowedOn) has stood for <see cref="StrandedOverflowClaimMinutes"/>
+		/// with no call linked: the overflow's link write lost every retry, or the host stopped between the save and the link. Its call
+		/// (found by "DQ:{itemId}") is linked now; with none saved the claim is given back so the next pass makes the call. Voice items
+		/// are not included: a held caller's claim is the Overflowed state, and the voicemail path links its own call.
+		/// </summary>
+		internal static bool IsStrandedOverflowClaim(DispatcherQueueItem item, DateTime now) =>
+			item.State == (int)DispatcherQueueItemStates.Queued && !item.CallId.HasValue && item.OverflowedOn.HasValue &&
+			item.OverflowedOn.Value <= now.AddMinutes(-StrandedOverflowClaimMinutes) &&
+			(item.Kind == (int)DispatcherQueueItemKinds.Text || item.Kind == (int)DispatcherQueueItemKinds.Chat || item.Kind == (int)DispatcherQueueItemKinds.Other);
+
+		private async Task<bool> RecoverStrandedOverflowAsync(DispatcherQueueItem item, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var call = await FindOverflowCallAsync(item);
+				if (call == null)
+				{
+					await ReleaseClaimAsync(item, "The earlier overflow left no pending call; trying again.", cancellationToken);
+					return true;
+				}
+
+				item.CallId = call.CallId;
+				return await MarkOverflowedCoreAsync(item, $"Linked to pending call {call.Number ?? call.CallId.ToString()} that an earlier overflow saved.",
+					requireQueued: false, copyBack: true, cancellationToken);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Dispatcher queue overflow recovery for item {item.DispatcherQueueItemId}");
+				return false;
+			}
+		}
+
 		/// <summary>The pending call a text or chat conversation becomes when no dispatcher can take it (nobody dispatched yet).</summary>
 		private async Task<Call> CreatePendingCallAsync(DispatcherQueueItem item, CancellationToken cancellationToken)
 		{
@@ -1399,7 +1591,7 @@ namespace Resgrid.Services
 				LoggedOn = now,
 				State = (int)CallStates.Pending,
 				CallSource = (int)CallSources.EmailImport,
-				SourceIdentifier = "DQ:" + item.DispatcherQueueItemId,
+				SourceIdentifier = AiDispatch.AiDispatchEnrichmentService.DeskCallSourcePrefix + item.DispatcherQueueItemId,
 				ContactName = item.SourceName,
 				ContactNumber = item.Kind == (int)DispatcherQueueItemKinds.Text ? item.SourceAddress : null,
 				Dispatches = new Collection<CallDispatch>()
@@ -1489,9 +1681,9 @@ namespace Resgrid.Services
 
 			if (!string.IsNullOrWhiteSpace(item.ExternalReference))
 			{
-				var byReference = await _itemsRepository.GetByExternalReferenceAsync(item.ExternalReference);
-				if (byReference != null && byReference.DepartmentId == item.DepartmentId && byReference.IsOpen() &&
-					byReference.DispatcherQueueItemId != item.DispatcherQueueItemId)
+				// Scoped as the unique index is (department, reference, open): a newer row elsewhere must not hide this department's winner.
+				var byReference = await _itemsRepository.GetOpenByExternalReferenceAsync(item.DepartmentId, item.ExternalReference);
+				if (byReference != null && byReference.DispatcherQueueItemId != item.DispatcherQueueItemId)
 					return byReference;
 			}
 
@@ -1513,12 +1705,18 @@ namespace Resgrid.Services
 			return owner != null && owner.DepartmentId == call.DepartmentId && owner.IsOpen() ? owner : null;
 		}
 
-		/// <summary>A call item is offered only while its call still waits for the kind it is queued as.</summary>
+		/// <summary>
+		/// A call item is offered only while its call still waits for the kind it is queued as. A chat app's call and an emailed call are
+		/// put on the desk as their pending calls (intake, the email call mode, the call event and the sweep), so they need the call
+		/// still pending too.
+		/// </summary>
 		internal static bool IsEligibleFor(DispatcherQueueItemKinds kind, Call call)
 		{
 			switch (kind)
 			{
 				case DispatcherQueueItemKinds.PendingCall:
+				case DispatcherQueueItemKinds.Chat:
+				case DispatcherQueueItemKinds.Email:
 					return !call.IsDeleted && call.State == (int)CallStates.Pending;
 				case DispatcherQueueItemKinds.ScheduledCall:
 					return !call.IsDeleted && call.State == (int)CallStates.Active && call.DispatchOn.HasValue && call.HasBeenDispatched != true;

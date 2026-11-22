@@ -220,6 +220,14 @@ namespace Resgrid.Model.Services
 		Task<DispatcherDeskResult<DispatcherQueueItem>> ReleaseAsync(int departmentId, string dispatcherQueueItemId, string userId,
 			CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// The desk's own hand-back of work a signed-off dispatcher holds (sign-off, the worker's sweep): puts back exactly the assignment
+		/// the caller read, written only while the item still has the <paramref name="observed"/> Version. An item its holder accepted
+		/// again after signing back in, or that has moved to someone else since, is left alone (ItemNotAvailable). No permission check:
+		/// it is never an action a member asked for.
+		/// </summary>
+		Task<DispatcherDeskResult<DispatcherQueueItem>> ReleaseObservedAsync(DispatcherQueueItem observed, CancellationToken cancellationToken = default);
+
 		/// <summary>Hands an item to another on-duty dispatcher (as an offer they accept), by its holder or a supervisor.</summary>
 		Task<DispatcherDeskResult<DispatcherQueueItem>> TransferAsync(int departmentId, string dispatcherQueueItemId, string userId, string toUserId,
 			string note, CancellationToken cancellationToken = default);
@@ -364,14 +372,18 @@ namespace Resgrid.Model.Services
 
 		Task NotifyMessageAsync(DispatcherQueueItem item, string userId, string preview, CancellationToken cancellationToken = default);
 
-		/// <summary>Break coming up (<paramref name="due"/> false) or due now (true).</summary>
-		Task NotifyBreakReminderAsync(DispatcherBreak dispatcherBreak, bool due, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// Break coming up (<paramref name="due"/> false) or due now (true). True when the push was accepted for delivery, or deliberately
+		/// held back (the dispatcher is on a break that suppresses alerts); false when it could not be sent (the break timer retries).
+		/// </summary>
+		Task<bool> NotifyBreakReminderAsync(DispatcherBreak dispatcherBreak, bool due, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Break over: to the dispatcher when <paramref name="supervisorUserIds"/> is null; otherwise to those supervisors only (the
-		/// dispatcher is overdue / was auto-returned), and to nobody when the list is empty.
+		/// dispatcher is overdue / was auto-returned), and to nobody when the list is empty. True when it reached the dispatcher (or at
+		/// least one supervisor, or there was nobody to tell); false when nothing could be sent.
 		/// </summary>
-		Task NotifyBreakOverAsync(DispatcherBreak dispatcherBreak, IEnumerable<string> supervisorUserIds, bool autoReturned, CancellationToken cancellationToken = default);
+		Task<bool> NotifyBreakOverAsync(DispatcherBreak dispatcherBreak, IEnumerable<string> supervisorUserIds, bool autoReturned, CancellationToken cancellationToken = default);
 
 		/// <summary>Desk board changed (presence, breaks, roster): EventingTypes 19.</summary>
 		Task PublishDeskChangedAsync(int departmentId, string userId = null);

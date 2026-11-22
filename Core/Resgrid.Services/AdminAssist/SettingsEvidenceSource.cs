@@ -38,7 +38,9 @@ namespace Resgrid.Services.AdminAssist
 		{
 			["textSourcePresent"] = DepartmentSettingTypes.TextToCallSourceNumbers,
 			["mapTokenPresent"] = DepartmentSettingTypes.MappingMapboxAccessToken,
-			["mapStylePresent"] = DepartmentSettingTypes.MappingMapboxStyleUrl
+			["mapStylePresent"] = DepartmentSettingTypes.MappingMapboxStyleUrl,
+			// The department dispatch email code (the local part of its dispatch address); only its presence leaves the source.
+			["dispatchEmailCodePresent"] = DepartmentSettingTypes.InternalDispatchEmail
 		};
 		/// <summary>True when New Call Form Fields hides every dispatch list (personnel, groups, roles and units).</summary>
 		public const string NewCallDispatchListsHiddenId = "newCallDispatchListsHidden";

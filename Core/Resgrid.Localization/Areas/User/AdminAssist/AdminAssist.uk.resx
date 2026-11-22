@@ -8097,4 +8097,154 @@
   <data name="FeatureSetup.intake-spam-screening" xml:space="preserve">
     <value>В очікуваному виклику з каналу виберіть «Відхилити як спам» і залиште позначку «Також заблокувати відправника»; виклик скасовується, і нікого не сповіщають. Заблоковані відправники перелічені на сторінці «Канали надходження», де «Розблокувати» достроково знімає блокування. Погодинний ліміт діє для SMS-, голосових і WhatsApp-каналів без дозволених відправників і ніколи — для каналів електронної пошти, чату чи вебхуків.</value>
   </data>
+  <data name="Area.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="AreaPurpose.relay" xml:space="preserve">
+    <value>Супровідний застосунок із відкритим кодом, що з’єднує з Resgrid електронну пошту CAD і пейджингу, сканери, двосторонні радіостанції та радіостанції LTE push-to-talk.</value>
+  </data>
+  <data name="AreaValue.relay" xml:space="preserve">
+    <value>Переносьте в Resgrid виклики, повідомлення й радіообмін із систем, які у вас уже є, не замінюючи їх.</value>
+  </data>
+  <data name="AreaExample.relay" xml:space="preserve">
+    <value>CAD округу надсилає кожну диспетчеризацію електронною поштою на relay, який створює виклик із прикріпленою картою виїзду, а радіостанція станції, з’єднана з голосовим каналом, дає змогу користувачам застосунку розмовляти з екіпажами в ефірі.</value>
+  </data>
+  <data name="ModuleAdoption.relay" xml:space="preserve">
+    <value>Установіть Relay на комп’ютер підрозділу: настільний застосунок для Windows або без інтерфейсу у Windows, Linux, macOS чи Docker. Диспетчеризація електронною поштою не потребує доповнень; радіоміст, записувач і тональне оповіщення потребують доповнення Push-to-Talk і голосового каналу. Relay доповнює ваші радіосистеми та системи пейджингу, а не замінює їх.</value>
+  </data>
+  <data name="Feature.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay" xml:space="preserve">
+    <value>Установіть і запустіть Relay, виберіть його режими та під’єднайте його до свого підрозділу.</value>
+  </data>
+  <data name="FeatureValue.relay" xml:space="preserve">
+    <value>Настільний застосунок для Windows запускає кілька режимів одночасно з живою панеллю моніторингу; хост без інтерфейсу запускає один режим на процес на сервері або в Docker.</value>
+  </data>
+  <data name="FeatureExample.relay" xml:space="preserve">
+    <value>Підрозділ установлює настільний застосунок на комп’ютер станції, входить у нього окремим обліковим записом учасника та вмикає автозапуск диспетчеризації електронною поштою і радіомосту.</value>
+  </data>
+  <data name="FeatureSetup.relay" xml:space="preserve">
+    <value>Додайте обліковий запис учасника, під яким входитиме relay, потім установіть Relay і під’єднайте його за допомогою токена оновлення цього облікового запису. Радіоміст, записувач і тональне оповіщення потребують цього токена користувача; диспетчеризація електронною поштою та виявлення тонів можуть також використовувати облікові дані клієнта. Перед запуском режиму виконайте «Test connection».</value>
+  </data>
+  <data name="Feature.relay-smtp-dispatch" xml:space="preserve">
+    <value>Диспетчеризація електронною поштою через Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay-smtp-dispatch" xml:space="preserve">
+    <value>Вбудований поштовий сервер Relay перетворює листи диспетчеризації від CAD, пультів сигналізації або шлюзів пейджингу на виклики й групові повідомлення Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-smtp-dispatch" xml:space="preserve">
+    <value>Лист на диспетчерський код підрозділу оповіщає весь підрозділ, диспетчерський код групи направляє цю групу, а її код повідомлень надсилає їй повідомлення. Вкладення додаються до виклику, а повторно доставлений лист ніколи не створює другого виклику.</value>
+  </data>
+  <data name="FeatureExample.relay-smtp-dispatch" xml:space="preserve">
+    <value>CAD округу надсилає кожен виїзд Станції 5 на диспетчерський код цієї групи в диспетчерському домені округу, і relay створює виклик із прикріпленою картою виїзду у форматі PDF.</value>
+  </data>
+  <data name="FeatureSetup.relay-smtp-dispatch" xml:space="preserve">
+    <value>Диспетчерську адресу підрозділу знайдіть у налаштуваннях викликів, а диспетчерські адреси й адреси повідомлень кожної групи — у розділі «Групи». Спрямуйте пошту своїх диспетчерських доменів на Relay і вкажіть ці домени в його налаштуваннях SMTP. Обліковий запис relay потребує дозволу «Створення викликів», а для вкладень — «Додавання даних виклику».</value>
+  </data>
+  <data name="Feature.relay-tone-detect" xml:space="preserve">
+    <value>Тони оповіщення у виклики</value>
+  </data>
+  <data name="FeaturePurpose.relay-tone-detect" xml:space="preserve">
+    <value>У Windows Relay слухає сканер або радіостанцію через звукову карту, виявляє двотональні й однотональні оповіщення та створює виклик Resgrid із записаним аудіо диспетчеризації.</value>
+  </data>
+  <data name="FeatureValue.relay-tone-detect" xml:space="preserve">
+    <value>Учасники отримують оповіщення в застосунку Responder із прикріпленим аудіо диспетчера, навіть коли оповіщення по радіо — єдина диспетчеризація.</value>
+  </data>
+  <data name="FeatureExample.relay-tone-detect" xml:space="preserve">
+    <value>Сканер добровольчої команди чує її двотональне оповіщення, і relay створює виклик для групи цієї станції з прикріпленим аудіо диспетчеризації.</value>
+  </data>
+  <data name="FeatureSetup.relay-tone-detect" xml:space="preserve">
+    <value>У розділі «Групи» запишіть диспетчерський код кожної групи, яку ви оповіщаєте тонами: watcher групи направляє цю групу, а watcher підрозділу оповіщає всіх. Укажіть тони кожного watcher у Relay. Обліковий запис relay потребує дозволів «Створення викликів» і «Додавання даних виклику».</value>
+  </data>
+  <data name="Feature.relay-radio-bridge" xml:space="preserve">
+    <value>Радіоміст</value>
+  </data>
+  <data name="FeaturePurpose.relay-radio-bridge" xml:space="preserve">
+    <value>У Windows Relay з’єднує під’єднану кабелем двосторонню радіостанцію з каналом push-to-talk Resgrid в обох напрямках.</value>
+  </data>
+  <data name="FeatureValue.relay-radio-bridge" xml:space="preserve">
+    <value>Екіпажі в ефірі та учасники в застосунках Responder, Unit і Dispatch чують одне одного, а аварійний тон у радіоефірі може створити виклик.</value>
+  </data>
+  <data name="FeatureExample.relay-radio-bridge" xml:space="preserve">
+    <value>Пошуково-рятувальна команда з’єднує свою базову радіостанцію VHF із каналом команди, тож рятувальники з портативними раціями й рятувальники з телефонами розмовляють між собою.</value>
+  </data>
+  <data name="FeatureSetup.relay-radio-bridge" xml:space="preserve">
+    <value>Потребує доповнення Push-to-Talk, голосового каналу й токена оновлення relay. Вмикайте передавання радіостанції через інтерфейс PTT CM108 USB або послідовний, налаштуйте шумоподавлення кнопкою «Tune» і перевірте підключення та затримку передавання кнопкою «Test transmit».</value>
+  </data>
+  <data name="Feature.relay-lte-donor-radios" xml:space="preserve">
+    <value>Донорні радіостанції LTE push-to-talk</value>
+  </data>
+  <data name="FeaturePurpose.relay-lte-donor-radios" xml:space="preserve">
+    <value>Приєднує стільникову групу розмови push-to-talk (PoC), як-от Rapid Radios або Diga-Talk+, до голосового каналу Resgrid через одну з її радіостанцій, під’єднану кабелем до relay.</value>
+  </data>
+  <data name="FeatureValue.relay-lte-donor-radios" xml:space="preserve">
+    <value>Користувачі радіостанцій PoC і застосунків Resgrid ведуть одну спільну розмову, хоча ці сервіси PoC не надають API чи шлюзу для зовнішнього аудіо.</value>
+  </data>
+  <data name="FeatureExample.relay-lte-donor-radios" xml:space="preserve">
+    <value>Команда охорони під’єднує одну автомобільну радіостанцію Diga-Talk+ до relay, тож охоронці з радіостанціями PoC і керівники в застосунках Resgrid чують одне одного.</value>
+  </data>
+  <data name="FeatureSetup.relay-lte-donor-radios" xml:space="preserve">
+    <value>Застосуйте профіль радіостанції, вмикайте її передавання фізичною лінією PTT, а не VOX, вимкніть її власний VOX і звукові сигнали та живіть її від зовнішнього джерела. Донорна радіостанція займає одну радіостанцію в обліковому записі PoC і з’єднує ту групу розмови, на яку її налаштовано. Потребує доповнення Push-to-Talk і голосового каналу.</value>
+  </data>
+  <data name="Feature.relay-recorder" xml:space="preserve">
+    <value>Записувач каналів</value>
+  </data>
+  <data name="FeaturePurpose.relay-recorder" xml:space="preserve">
+    <value>Записує кожне передавання на одному або всіх каналах push-to-talk як аудіофайли з журналом того, хто говорив, на якому каналі, коли й як довго.</value>
+  </data>
+  <data name="FeatureValue.relay-recorder" xml:space="preserve">
+    <value>Зберігає голосовий обмін для дотримання вимог і розбору після події — на локальному диску або в S3-сумісному сховищі.</value>
+  </data>
+  <data name="FeatureExample.relay-recorder" xml:space="preserve">
+    <value>Агенція з управління надзвичайними ситуаціями записує всі канали під час навчань із протидії повені та переглядає журнал передавань на нараді за підсумками.</value>
+  </data>
+  <data name="FeatureSetup.relay-recorder" xml:space="preserve">
+    <value>Потребує доповнення Push-to-Talk, голосового каналу й токена оновлення relay. Кожен записуваний канал займає одне голосове місце. Записи містять оперативний голосовий обмін: зберігайте, захищайте й видаляйте їх відповідно до своєї політики ведення записів.</value>
+  </data>
+  <data name="Feature.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Тональне оповіщення через push-to-talk</value>
+  </data>
+  <data name="FeaturePurpose.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Оголошує кожен новий виклик Resgrid у каналі push-to-talk: спершу тони оповіщення, потім виклик, зачитаний синтезом мовлення Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Екіпажі, які слухають канал, чують диспетчеризацію так, як в ефірі, у формулюваннях Resgrid і з назвами пріоритетів викликів вашого підрозділу.</value>
+  </data>
+  <data name="FeatureExample.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Аварійно-рятувальна команда підприємства слухає свій канал, і кожен новий виклик оголошується сигналом «високий-низький», після якого звучать назва, характер, адреса й пріоритет виклику.</value>
+  </data>
+  <data name="FeatureSetup.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Потребує доповнення Push-to-Talk, голосового каналу й токена оновлення relay. Виклики, уже відкриті на момент запуску relay, не оголошуються, а заплановані виклики оголошуються, коли їх диспетчеризують.</value>
+  </data>
+  <data name="Rule.relay-dispatch-code" xml:space="preserve">
+    <value>У підрозділу немає диспетчерського коду електронної пошти</value>
+  </data>
+  <data name="RuleWhy.relay-dispatch-code" xml:space="preserve">
+    <value>У підрозділу немає диспетчерського коду електронної пошти, тому лист на його диспетчерську адресу не може створити виклик — незалежно від того, чи отримує його Resgrid, чи relay.</value>
+  </data>
+  <data name="RuleNext.relay-dispatch-code" xml:space="preserve">
+    <value>Перевірте диспетчерську адресу в налаштуваннях викликів. Якщо її не показано, попросіть службу підтримки Resgrid або адміністратора вашої інсталяції Resgrid призначити диспетчерський код.</value>
+  </data>
+  <data name="Rule.relay-group-email-codes" xml:space="preserve">
+    <value>Групи без диспетчерського коду або коду повідомлень електронної пошти</value>
+  </data>
+  <data name="RuleWhy.relay-group-email-codes" xml:space="preserve">
+    <value>Щонайменше одна група не має диспетчерського коду або коду повідомлень електронної пошти, тому листи на адреси цих груп нікому не надходять — ні через Resgrid, ні через relay. Групи, додані поза редактором груп, наприклад через імпорт, можуть не мати кодів.</value>
+  </data>
+  <data name="RuleNext.relay-group-email-codes" xml:space="preserve">
+    <value>У розділі «Групи» знайдіть кожну групу, у диспетчерській адресі чи адресі повідомлень якої немає коду перед @, відкрийте «Редагувати» і збережіть; під час збереження відсутні коди буде призначено.</value>
+  </data>
+  <data name="Rule.relay-voice-channel" xml:space="preserve">
+    <value>Push-to-Talk без голосового каналу</value>
+  </data>
+  <data name="RuleWhy.relay-voice-channel" xml:space="preserve">
+    <value>Підрозділ має Push-to-Talk, але не має постійного голосового каналу, тому застосункам Resgrid, а також радіомосту, записувачу й тональному оповіщенню relay немає до якого каналу приєднатися.</value>
+  </data>
+  <data name="RuleNext.relay-voice-channel" xml:space="preserve">
+    <value>Відкрийте сторінку голосових каналів, створіть канал і додайте учасників, які ним користуватимуться.</value>
+  </data>
+  <data name="SetupEvidence.relay-voice" xml:space="preserve">
+    <value>Перевіряються доступність Push-to-Talk і постійні голосові канали. Resgrid не бачить, чи relay установлено, чи він під’єднаний і чи передає аудіо; перевірте це на панелі самого relay.</value>
+  </data>
 </root>

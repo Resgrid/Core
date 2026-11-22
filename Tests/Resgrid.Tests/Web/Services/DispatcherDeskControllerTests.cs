@@ -578,6 +578,21 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
+		public async Task A_stored_break_is_answered_as_stored_when_naming_its_dispatcher_fails()
+		{
+			_breaks.Setup(x => x.StartBreakAsync(DepartmentId, Me, null, (int)DispatcherBreakTypes.Meal, 30, true, Me, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(DispatcherDeskResult<DispatcherBreak>.Ok(new DispatcherBreak { DispatcherBreakId = "b9", UserId = Me, State = (int)DispatcherBreakStates.Active, DurationMinutes = 30 }));
+			_profiles.Setup(x => x.GetAllProfilesForDepartmentAsync(DepartmentId, It.IsAny<bool>())).ThrowsAsync(new InvalidOperationException("profile cache down"));
+
+			var started = Value(await Controller().StartBreak(new DispatcherStartBreakInput { BreakType = (int)DispatcherBreakTypes.Meal, DurationMinutes = 30, ReturnWork = true },
+				CancellationToken.None));
+
+			started.Success.Should().BeTrue("the break is already stored; an error would make the app start it again");
+			started.Break.DispatcherBreakId.Should().Be("b9");
+			started.Break.UserName.Should().BeNull();
+		}
+
+		[Test]
 		public async Task Planning_your_own_break_needs_a_shift_that_allows_it()
 		{
 			Supervisor(false);

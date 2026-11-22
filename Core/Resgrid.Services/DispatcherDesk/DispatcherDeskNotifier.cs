@@ -24,14 +24,16 @@ namespace Resgrid.Services
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IDispatcherDeskConfigService _configService;
 		private readonly IDispatcherPresencesRepository _presencesRepository;
+		private readonly IDispatchAccessService _dispatchAccessService;
 
 		public DispatcherDeskNotifier(IDispatcherDeskPushProvider pushProvider, IEventAggregator eventAggregator, IDispatcherDeskConfigService configService,
-			IDispatcherPresencesRepository presencesRepository)
+			IDispatcherPresencesRepository presencesRepository, IDispatchAccessService dispatchAccessService)
 		{
 			_pushProvider = pushProvider;
 			_eventAggregator = eventAggregator;
 			_configService = configService;
 			_presencesRepository = presencesRepository;
+			_dispatchAccessService = dispatchAccessService;
 		}
 
 		public async Task NotifyOfferAsync(DispatcherQueueItem item, string userId, CancellationToken cancellationToken = default)
@@ -57,6 +59,19 @@ namespace Resgrid.Services
 		{
 			if (item == null || string.IsNullOrWhiteSpace(userId))
 				return;
+
+			// The preview carries the sender's words: only to a holder who may still use Dispatch now. One who lost the permission but
+			// still holds the item (until the desk sweep signs them off) gets nothing; a failed check sends nothing either.
+			try
+			{
+				if (!await _dispatchAccessService.CanUseDispatchAsync(item.DepartmentId, userId))
+					return;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Dispatcher desk message push {ItemCode(item)}: checking {userId}'s dispatch access");
+				return;
+			}
 
 			var from = string.IsNullOrWhiteSpace(item.SourceName) ? item.SourceAddress : item.SourceName;
 			await SendAsync(item.DepartmentId, userId, $"New message from {from}", Truncate(preview, 160), ItemCode(item),
@@ -107,13 +122,20 @@ namespace Resgrid.Services
 			var supervisorTitle = autoReturned ? "A dispatcher was returned from break" : "A dispatcher is overdue from break";
 			var supervisorBody = autoReturned ? $"Made available {overdue} min after their {kind} ran out." : $"Their {kind} ran out {overdue} min ago.";
 
-			// Reaching one supervisor is enough: the alert is not sent again to those it did reach.
-			var reached = false;
+			// Reaching one supervisor is enough: the alert is not sent again to those it did reach. A supervisor whose own break holds
+			// desk alerts back is not reached: with others failing it is sent again later; with every supervisor held back there is
+			// nobody who can be told, and the alert counts as handled (like no supervisor at all).
+			var accepted = false;
+			var attempted = false;
 			foreach (var supervisor in supervisors)
-				reached |= await SendAsync(dispatcherBreak.DepartmentId, supervisor, supervisorTitle, supervisorBody, BreakCode(dispatcherBreak),
+			{
+				var outcome = await SendCoreAsync(dispatcherBreak.DepartmentId, supervisor, supervisorTitle, supervisorBody, BreakCode(dispatcherBreak),
 					PushSoundTypes.ModernBreakOver, honourBreak: true, cancellationToken);
+				attempted |= outcome != PushOutcomes.HeldBack;
+				accepted |= outcome == PushOutcomes.Accepted;
+			}
 
-			return reached;
+			return accepted || !attempted;
 		}
 
 		public async Task PublishDeskChangedAsync(int departmentId, string userId = null)
@@ -180,19 +202,37 @@ namespace Resgrid.Services
 		/// could not be sent (refused, failed, or the caller gave up). Never throws.
 		/// </summary>
 		private async Task<bool> SendAsync(int departmentId, string userId, string title, string body, string eventCode, PushSoundTypes sound, bool honourBreak,
-			CancellationToken cancellationToken)
+			CancellationToken cancellationToken) =>
+			await SendCoreAsync(departmentId, userId, title, body, eventCode, sound, honourBreak, cancellationToken) != PushOutcomes.Failed;
+
+		private enum PushOutcomes
+		{
+			/// <summary>The provider accepted the push for delivery.</summary>
+			Accepted,
+
+			/// <summary>Deliberately not sent: the recipient is on a break that holds desk alerts back.</summary>
+			HeldBack,
+
+			/// <summary>Could not be sent (refused, failed, or the caller gave up).</summary>
+			Failed
+		}
+
+		private async Task<PushOutcomes> SendCoreAsync(int departmentId, string userId, string title, string body, string eventCode, PushSoundTypes sound,
+			bool honourBreak, CancellationToken cancellationToken)
 		{
 			try
 			{
 				if (honourBreak && await IsOnSuppressedBreakAsync(departmentId, userId))
-					return true;
+					return PushOutcomes.HeldBack;
 
-				return await _pushProvider.SendAsync(departmentId, userId, Truncate(title, 120), Truncate(body, 240), eventCode, sound, cancellationToken);
+				return await _pushProvider.SendAsync(departmentId, userId, Truncate(title, 120), Truncate(body, 240), eventCode, sound, cancellationToken)
+					? PushOutcomes.Accepted
+					: PushOutcomes.Failed;
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex, $"Dispatcher desk push {eventCode} to {userId}");
-				return false;
+				return PushOutcomes.Failed;
 			}
 		}
 

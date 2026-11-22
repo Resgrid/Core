@@ -88,6 +88,13 @@ namespace Resgrid.Model.Repositories
 		Task<bool> TryUpdateObservedAsync(DispatcherBreak updated, DispatcherBreak observed, bool resetPlanAlerts, CancellationToken cancellationToken = default);
 
 		/// <summary>
+		/// Starts a planned break: writes the start columns alone (State, DurationMinutes, StartedOn, ExpectedReturnOn, UpdatedByUserId,
+		/// UpdatedOn), and only while the stored break still has the <paramref name="observed"/> state and plan. The rest of the plan
+		/// (type, note, shift and shift day) stays as stored, so an edit saved after the start read the break is not written back.
+		/// </summary>
+		Task<bool> TryStartObservedAsync(DispatcherBreak started, DispatcherBreak observed, CancellationToken cancellationToken = default);
+
+		/// <summary>
 		/// Stamps one alert column (ReminderSentOn, DueAlertSentOn, ReturnAlertSentOn, OverdueAlertSentOn) if still null and the break
 		/// still has the <paramref name="observed"/> state and plan (planned start and length): a break started, ended or re-planned
 		/// since the timer read it is not alerted on.
@@ -155,6 +162,14 @@ namespace Resgrid.Model.Repositories
 		/// break committed since keeps its own state. False when the row changed.
 		/// </summary>
 		Task<bool> TryReturnFromBreakAsync(DispatcherPresence observed, DateTime nowUtc, DateTime? lastSeenOnUtc, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// The sign-in write: the session columns of <paramref name="updated"/> (State, ActiveBreakId, StateChangedOn, SignedInOn,
+		/// LastSeenOn, the duty columns, MissedOffers, AwayReason, DeviceKind, CallbackNumber), written only while the row still has the
+		/// state, session (SignedInOn) and active break <paramref name="observed"/> read. A sign-in, break or sign-off committed since
+		/// keeps its own state; the caller reads the row again. False when the row changed.
+		/// </summary>
+		Task<bool> TrySignInAsync(DispatcherPresence updated, DispatcherPresence observed, CancellationToken cancellationToken = default);
 	}
 
 	public interface IDispatcherQueueItemsRepository : IRepository<DispatcherQueueItem>

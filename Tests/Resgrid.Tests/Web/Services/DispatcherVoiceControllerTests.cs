@@ -75,6 +75,8 @@ namespace Resgrid.Tests.Web.Services
 				});
 			_routing.Setup(x => x.ReleaseAsync(DepartmentId, ItemId, DispatcherId, It.IsAny<CancellationToken>()))
 				.ReturnsAsync(() => DispatcherDeskResult<DispatcherQueueItem>.Ok(_item));
+			_routing.Setup(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(() => DispatcherDeskResult<DispatcherQueueItem>.Ok(_item));
 			_routing.Setup(x => x.TryMarkOverflowedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
 			_voice = new Mock<IDispatcherVoiceService>();
@@ -325,7 +327,7 @@ namespace Resgrid.Tests.Web.Services
 		{
 			// A late overflow request for an item whose voicemail is being saved (claimed, no call yet).
 			_item.State = (int)DispatcherQueueItemStates.Queued;
-			_item.OverflowNote = DispatcherDeskPendingCalls.ClaimNote("RE1", "https://api.twilio.com/rec/RE1");
+			_item.OverflowNote = DispatcherDeskPendingCalls.ClaimNote("RE1", "https://api.twilio.com/rec/RE1", DateTime.UtcNow);
 
 			Content(await Controller(("CallSid", CallerSid)).Overflow(ItemId)).Should().Contain("<Record");
 
@@ -341,7 +343,7 @@ namespace Resgrid.Tests.Web.Services
 				.Callback((DispatcherQueueItem i, string n, CancellationToken c) =>
 				{
 					i.State = (int)DispatcherQueueItemStates.Overflowed;
-					i.OverflowNote = DispatcherDeskPendingCalls.ClaimNote("RE1", "https://api.twilio.com/rec/RE1");
+					i.OverflowNote = DispatcherDeskPendingCalls.ClaimNote("RE1", "https://api.twilio.com/rec/RE1", DateTime.UtcNow);
 				})
 				.ReturnsAsync(false);
 
@@ -441,6 +443,20 @@ namespace Resgrid.Tests.Web.Services
 				"The voicemail was still being saved by another request. Recording: https://api.twilio.com/rec/RE1", Times.Once());
 		}
 
+		[Test]
+		public async System.Threading.Tasks.Task Voicemail_whose_save_could_not_be_confirmed_is_not_acknowledged()
+		{
+			_item.State = (int)DispatcherQueueItemStates.Overflowed;
+			_pendingCalls.Setup(x => x.FromVoicemailAsync(_item, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(DispatcherVoicemailResult.Of(DispatcherVoicemailOutcomes.Unconfirmed));
+
+			var content = Content(await Controller(("CallSid", CallerSid), ("RecordingUrl", "https://api.twilio.com/rec/RE1"), ("RecordingSid", "RE1")).Voicemail(ItemId));
+
+			content.Should().Contain(Prompt(DispatcherDeskVoicePrompts.VoicemailNotSaved));
+			VerifyVoiceEvent(DispatcherQueueEventTypes.VoiceEnded, null,
+				"The voicemail's call may have been saved; that could not be confirmed. Recording: https://api.twilio.com/rec/RE1", Times.Once());
+		}
+
 		/// <summary>The routing service's history write, as stored: the entry lands in <see cref="_events"/> unless <paramref name="fails"/>.</summary>
 		private void StoreVoiceEvents(bool fails = false)
 		{
@@ -488,6 +504,58 @@ namespace Resgrid.Tests.Web.Services
 			_calls.Verify(x => x.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()), Times.Never);
 			VerifyVoiceEvent(DispatcherQueueEventTypes.VoiceEnded, null, "Voicemail transcription (automatic): Smoke on Main", Times.Once());
 			_items.Verify(x => x.GetItemAsync(ItemId), Times.Exactly(1 + DispatcherVoiceController.TranscriptionLinkChecks));
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task VoicemailTranscription_too_long_for_one_history_entry_is_kept_whole_in_parts()
+		{
+			_item.CallId = null;
+			StoreVoiceEvents();
+			var text = string.Concat(Enumerable.Range(0, 120).Select(i => $"word{i} ")) + "end of message";
+
+			var controller = Controller(("CallSid", CallerSid), ("TranscriptionText", text), ("TranscriptionStatus", "completed"));
+			controller.TranscriptionLinkCheckInterval = TimeSpan.Zero;
+			var result = await controller.VoicemailTranscription(ItemId);
+
+			result.Should().BeOfType<ContentResult>("every part is stored");
+			var parts = _events.Where(x => x.Detail.StartsWith("Voicemail transcription (automatic, part ")).Select(x => x.Detail).ToList();
+			parts.Should().HaveCountGreaterThan(1);
+			parts.Should().OnlyContain(x => x.Length <= DispatcherVoiceController.HistoryDetailLength);
+			string.Concat(parts.Select(x => x.Substring(x.IndexOf("): ", StringComparison.Ordinal) + 3))).Should().Be(text.Trim());
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task VoicemailTranscription_kept_in_parts_is_not_acknowledged_when_one_part_is_missing()
+		{
+			_item.CallId = null;
+			_routing.Setup(x => x.RecordVoiceEventAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<DispatcherQueueEventTypes>(), It.IsAny<string>(), It.IsAny<string>(),
+					It.IsAny<CancellationToken>()))
+				.Callback((DispatcherQueueItem i, DispatcherQueueEventTypes t, string u, string d, CancellationToken c) =>
+				{
+					// The second part's write is lost (the history write logs and swallows its failures).
+					if (!d.Contains("part 2 of"))
+						_events.Add(new DispatcherQueueEvent { EventType = (int)t, UserId = u, Detail = d, OccurredOn = DateTime.UtcNow });
+				})
+				.Returns(System.Threading.Tasks.Task.CompletedTask);
+
+			var controller = Controller(("CallSid", CallerSid), ("TranscriptionText", new string('a', 1200)), ("TranscriptionStatus", "completed"));
+			controller.TranscriptionLinkCheckInterval = TimeSpan.Zero;
+
+			(await controller.VoicemailTranscription(ItemId)).Should().BeOfType<StatusCodeResult>().Which.StatusCode.Should().Be(500);
+		}
+
+		[Test]
+		public void Transcript_entries_fit_the_history_and_never_split_a_surrogate_pair()
+		{
+			DispatcherVoiceController.TranscriptEntries(" short ").Should().Equal(new[] { "Voicemail transcription (automatic): short" });
+
+			var text = new string('a', DispatcherVoiceController.TranscriptPartLength - 1) + char.ConvertFromUtf32(0x1F525) + new string('b', 600);
+			var entries = DispatcherVoiceController.TranscriptEntries(text);
+
+			entries.Should().OnlyContain(x => x.Length <= DispatcherVoiceController.HistoryDetailLength);
+			entries.Should().OnlyContain(x => !char.IsHighSurrogate(x[x.Length - 1]));
+			string.Concat(entries.Select(x => x.Substring(x.IndexOf("): ", StringComparison.Ordinal) + 3))).Should().Be(text);
+			entries[0].Should().StartWith($"Voicemail transcription (automatic, part 1 of {entries.Count}): ");
 		}
 
 		[Test]
@@ -721,11 +789,39 @@ namespace Resgrid.Tests.Web.Services
 
 			VerifyVoiceEvent(DispatcherQueueEventTypes.VoiceEnded, DispatcherId, "Dispatcher's phone: no-answer (an earlier ring)", Times.Once());
 			_routing.Verify(x => x.ReleaseAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+			_routing.Verify(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>()), Times.Never);
 
-			// The newer ring's own terminal status still returns the item.
+			// The newer ring's own terminal status still returns the item, fenced on the row it read.
 			await Controller(("CallStatus", "no-answer")).Status(ItemId, DispatcherId, DispatcherVoiceRoutes.Legs.Dispatcher, second.Ticks);
 
-			_routing.Verify(x => x.ReleaseAsync(DepartmentId, ItemId, DispatcherId, It.IsAny<CancellationToken>()), Times.Once);
+			_routing.Verify(x => x.ReleaseObservedAsync(It.Is<DispatcherQueueItem>(i => i.DispatcherQueueItemId == ItemId && i.Version == 3), It.IsAny<CancellationToken>()),
+				Times.Once);
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task Status_release_that_lost_to_a_newer_ring_written_after_its_read_keeps_the_item()
+		{
+			_item.State = (int)DispatcherQueueItemStates.Accepted;
+			var first = DateTime.UtcNow.AddSeconds(-40);
+			_events.Add(new DispatcherQueueEvent { EventType = (int)DispatcherQueueEventTypes.VoiceConnecting, UserId = DispatcherId, OccurredOn = first.AddSeconds(1) });
+
+			// The newer ring's VoiceConnecting lands after this callback read the row and its history: its touch moved the Version, so
+			// the fenced release fails, and the next look sees the newer ring.
+			_routing.Setup(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>())).ReturnsAsync(() =>
+			{
+				_events.Add(new DispatcherQueueEvent { EventType = (int)DispatcherQueueEventTypes.VoiceConnecting, UserId = DispatcherId, OccurredOn = DateTime.UtcNow });
+				_item = new DispatcherQueueItem
+				{
+					DispatcherQueueItemId = ItemId, DepartmentId = DepartmentId, Kind = _item.Kind, State = _item.State, AssignedUserId = DispatcherId,
+					ExternalReference = CallerSid, CreatedOn = _item.CreatedOn, Version = 4
+				};
+				return DispatcherDeskResult<DispatcherQueueItem>.Fail(DispatcherDeskErrors.ItemNotAvailable);
+			});
+
+			await Controller(("CallStatus", "no-answer")).Status(ItemId, DispatcherId, DispatcherVoiceRoutes.Legs.Dispatcher, first.Ticks);
+
+			_routing.Verify(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>()), Times.Once);
+			_routing.Verify(x => x.ReleaseAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]
@@ -747,6 +843,8 @@ namespace Resgrid.Tests.Web.Services
 			await Controller(("CallStatus", "no-answer")).Status(ItemId, DispatcherId, DispatcherVoiceRoutes.Legs.Dispatcher, first.Ticks);
 
 			_routing.Verify(x => x.ReleaseAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never,
+				"the newer ring keeps the item");
+			_routing.Verify(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>()), Times.Never,
 				"the newer ring keeps the item");
 		}
 

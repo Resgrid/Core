@@ -421,6 +421,141 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			after.DutyEndsOn.Should().Be(Now.AddHours(8));
 		}
 
+		// ------------------------------------------------------------------ PR 589 round 3
+
+		[Test]
+		public async Task A_sign_in_that_loses_to_another_sessions_break_reads_again_and_keeps_that_break()
+		{
+			var presence = _store.AddPresence(Dept, "ann", DispatcherPresenceStates.Offline, Now.AddMinutes(-30));
+			presence.StateChangedOn = Now.AddMinutes(-20);
+
+			// Between this sign-in's read and its write, another sign-in commits and starts a break.
+			_store.BeforePresenceWrite = _ =>
+			{
+				_store.BeforePresenceWrite = null;
+				var stored = _store.Presences.Single();
+				stored.State = (int)DispatcherPresenceStates.OnBreak;
+				stored.SignedInOn = Now.AddMinutes(-1);
+				stored.ActiveBreakId = "b-new";
+				_store.Breaks.Add(new DispatcherBreak
+				{
+					DispatcherBreakId = "b-new", DepartmentId = Dept, UserId = "ann", State = (int)DispatcherBreakStates.Active, DurationMinutes = 15,
+					StartedOn = Now.AddSeconds(-30), ExpectedReturnOn = Now.AddMinutes(15), CreatedOn = Now.AddSeconds(-30)
+				});
+			};
+
+			(await _presence.SignInAsync(Dept, "ann", new DispatcherSignInRequest())).Success.Should().BeTrue();
+
+			var after = _store.Presences.Single();
+			after.State.Should().Be((int)DispatcherPresenceStates.OnBreak, "the stale Offline read is not written over the newer session");
+			after.ActiveBreakId.Should().Be("b-new");
+			_store.Breaks.Single().State.Should().Be((int)DispatcherBreakStates.Active);
+		}
+
+		[Test]
+		public async Task A_sign_in_whose_break_close_is_refused_reads_again_instead_of_clearing_the_break()
+		{
+			// Read as signed off; by the time the break is read, another session has signed in and started it (after that sign-off).
+			_store.AddPresence(Dept, "ann", DispatcherPresenceStates.Offline, Now.AddMinutes(-30)).StateChangedOn = Now.AddMinutes(-20);
+			_store.Breaks.Add(new DispatcherBreak
+			{
+				DispatcherBreakId = "b-new", DepartmentId = Dept, UserId = "ann", State = (int)DispatcherBreakStates.Active, DurationMinutes = 15,
+				StartedOn = Now.AddMinutes(-2), ExpectedReturnOn = Now.AddMinutes(13), CreatedOn = Now.AddMinutes(-2)
+			});
+			_store.BeforeActiveBreakRead = _ =>
+			{
+				_store.BeforeActiveBreakRead = null;
+				var stored = _store.Presences.Single();
+				stored.State = (int)DispatcherPresenceStates.OnBreak;
+				stored.SignedInOn = Now.AddMinutes(-3);
+				stored.ActiveBreakId = "b-new";
+			};
+
+			(await _presence.SignInAsync(Dept, "ann", new DispatcherSignInRequest())).Success.Should().BeTrue();
+
+			var after = _store.Presences.Single();
+			after.State.Should().Be((int)DispatcherPresenceStates.OnBreak, "the newer session's break is kept, not cleared from the stale read");
+			after.ActiveBreakId.Should().Be("b-new");
+			_store.Breaks.Single().State.Should().Be((int)DispatcherBreakStates.Active);
+		}
+
+		[Test]
+		public async Task A_break_that_can_never_be_closed_as_signed_off_does_not_lock_the_dispatcher_out()
+		{
+			// The break's start is after the row's sign-off time and nothing else changes (clocks apart): not a race.
+			_store.AddPresence(Dept, "ann", DispatcherPresenceStates.Offline, Now.AddMinutes(-30)).StateChangedOn = Now.AddMinutes(-20);
+			_store.Breaks.Add(new DispatcherBreak
+			{
+				DispatcherBreakId = "b-odd", DepartmentId = Dept, UserId = "ann", State = (int)DispatcherBreakStates.Active, DurationMinutes = 15,
+				StartedOn = Now.AddMinutes(-2), CreatedOn = Now.AddMinutes(-2)
+			});
+
+			(await _presence.SignInAsync(Dept, "ann", new DispatcherSignInRequest())).Success.Should().BeTrue();
+
+			_store.Presences.Single().State.Should().Be((int)DispatcherPresenceStates.Available);
+		}
+
+		[Test]
+		public async Task A_sign_off_whose_break_close_fails_still_hands_back_the_work()
+		{
+			var presence = _store.AddPresence(Dept, "ann", DispatcherPresenceStates.OnBreak, Now.AddMinutes(-30));
+			presence.ActiveBreakId = "b-1";
+			_store.Breaks.Add(new DispatcherBreak
+			{
+				DispatcherBreakId = "b-1", DepartmentId = Dept, UserId = "ann", State = (int)DispatcherBreakStates.Active, DurationMinutes = 15,
+				StartedOn = Now.AddMinutes(-5), ExpectedReturnOn = Now.AddMinutes(10), CreatedOn = Now.AddMinutes(-5)
+			});
+			Held("x", "ann");
+			_store.BeforeBreakWrite = _ => throw new InvalidOperationException("break close failed");
+
+			var signedOff = await _presence.SignOffAsync(Dept, "ann", "ann");
+
+			signedOff.Success.Should().BeTrue();
+			_store.Presences.Single().State.Should().Be((int)DispatcherPresenceStates.Offline);
+			_store.Items.Single().State.Should().Be((int)DispatcherQueueItemStates.Queued, "the failed close does not keep the work");
+			_store.Breaks.Single().State.Should().Be((int)DispatcherBreakStates.Active, "left for the next sign-off, sign-in or the break timer to close");
+		}
+
+		[Test]
+		public async Task A_sign_off_that_could_not_hand_back_an_item_touched_meanwhile_reports_it_still_held()
+		{
+			_store.AddPresence(Dept, "ann", DispatcherPresenceStates.Available, Now.AddMinutes(-30));
+			Held("x", "ann");
+
+			// A participant message touches the item (new Version, same holder) after sign-off read it: the fenced release refuses.
+			_routing.Setup(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((DispatcherQueueItem observed, CancellationToken c) =>
+				{
+					_store.Items.Single().Version++;
+					return DispatcherDeskResult<DispatcherQueueItem>.Fail(DispatcherDeskErrors.ItemNotAvailable);
+				});
+
+			var signedOff = await _presence.SignOffAsync(Dept, "ann", "ann");
+
+			signedOff.Error.Should().Be(DispatcherDeskErrors.HoldingWork, "she is signed off and still holds the item: the caller retries");
+			_store.Items.Single().AssignedUserId.Should().Be("ann");
+		}
+
+		[Test]
+		public async Task A_dispatcher_signed_in_again_during_the_hand_back_keeps_their_work_and_holds_none_back()
+		{
+			_store.AddPresence(Dept, "ann", DispatcherPresenceStates.Available, Now.AddMinutes(-30));
+			Held("x", "ann");
+
+			// She signs in again and takes the item back while the hand-back runs.
+			_routing.Setup(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((DispatcherQueueItem observed, CancellationToken c) =>
+				{
+					var stored = _store.Presences.Single();
+					stored.State = (int)DispatcherPresenceStates.Available;
+					stored.SignedInOn = Now;
+					_store.Items.Single().Version++;
+					return DispatcherDeskResult<DispatcherQueueItem>.Fail(DispatcherDeskErrors.ItemNotAvailable);
+				});
+
+			(await _presence.SignOffAsync(Dept, "ann", "ann")).Success.Should().BeTrue("work held by a dispatcher back on the desk is theirs");
+		}
+
 		// ------------------------------------------------------------------ desk settings cache
 
 		[Test]

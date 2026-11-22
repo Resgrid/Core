@@ -236,6 +236,29 @@ namespace Resgrid.Repositories.DataRepository
 			return UpdateWhereAsync(parameters, ObservedFilter(parameters, observed), resetPlanAlerts, cancellationToken);
 		}
 
+		public async Task<bool> TryStartObservedAsync(DispatcherBreak started, DispatcherBreak observed, CancellationToken cancellationToken = default)
+		{
+			if (started == null || observed == null || string.IsNullOrWhiteSpace(started.DispatcherBreakId))
+				return false;
+
+			var parameters = new DynamicParameters(new
+			{
+				Id = started.DispatcherBreakId,
+				started.State,
+				started.DurationMinutes,
+				started.UpdatedByUserId
+			});
+			DispatcherDeskSql.AddTimestamp(parameters, "StartedOn", started.StartedOn);
+			DispatcherDeskSql.AddTimestamp(parameters, "ExpectedReturnOn", started.ExpectedReturnOn);
+			DispatcherDeskSql.AddTimestamp(parameters, "UpdatedOn", started.UpdatedOn);
+
+			return await ExecuteAsync(
+				$"UPDATE {Tbl("DispatcherBreaks")} SET {Col("State")} = {P}State, {Col("DurationMinutes")} = {P}DurationMinutes, " +
+				$"{Col("StartedOn")} = {P}StartedOn, {Col("ExpectedReturnOn")} = {P}ExpectedReturnOn, {Col("UpdatedByUserId")} = {P}UpdatedByUserId, " +
+				$"{Col("UpdatedOn")} = {P}UpdatedOn WHERE {Col("DispatcherBreakId")} = {CaseInsensitive("Id")} AND {ObservedFilter(parameters, observed)}",
+				parameters, cancellationToken) == 1;
+		}
+
 		private async Task<bool> UpdateWhereAsync(DynamicParameters parameters, string condition, bool resetPlanAlerts, CancellationToken cancellationToken)
 		{
 			var sql = $"UPDATE {Tbl("DispatcherBreaks")} SET {Col("State")} = {P}State, {Col("BreakType")} = {P}BreakType, " +
@@ -493,6 +516,52 @@ namespace Resgrid.Repositories.DataRepository
 				$"UPDATE {Tbl("DispatcherPresences")} SET {Col("State")} = {P}Available, {Col("ActiveBreakId")} = NULL, {Col("StateChangedOn")} = {P}Now, " +
 				$"{Col("MissedOffers")} = 0" + (lastSeenOnUtc.HasValue ? $", {Col("LastSeenOn")} = {P}LastSeenOn" : "") +
 				$" WHERE {Col("DispatcherPresenceId")} = {CaseInsensitive("Id")} AND {Col("State")} > {P}Offline AND {Col("State")} = {P}ObservedState " +
+				$"AND {NullableTimestampEquals("SignedInOn", "ObservedSignedInOn", observed.SignedInOn, parameters)} AND {activeBreak}",
+				parameters, cancellationToken) > 0;
+		}
+
+		public async Task<bool> TrySignInAsync(DispatcherPresence updated, DispatcherPresence observed, CancellationToken cancellationToken = default)
+		{
+			if (updated == null || observed == null || string.IsNullOrWhiteSpace(updated.DispatcherPresenceId))
+				return false;
+
+			var parameters = new DynamicParameters(new
+			{
+				Id = updated.DispatcherPresenceId,
+				updated.State,
+				updated.ActiveBreakId,
+				updated.DutyMode,
+				updated.DutyShiftId,
+				updated.DutyShiftDayId,
+				updated.MissedOffers,
+				updated.AwayReason,
+				updated.DeviceKind,
+				updated.CallbackNumber,
+				ObservedState = observed.State
+			});
+			DispatcherDeskSql.AddTimestamp(parameters, "StateChangedOn", updated.StateChangedOn);
+			DispatcherDeskSql.AddTimestamp(parameters, "SignedInOn", updated.SignedInOn);
+			DispatcherDeskSql.AddTimestamp(parameters, "LastSeenOn", updated.LastSeenOn);
+			DispatcherDeskSql.AddTimestamp(parameters, "DutyEndsOn", updated.DutyEndsOn);
+
+			string activeBreak;
+			if (string.IsNullOrWhiteSpace(observed.ActiveBreakId))
+			{
+				activeBreak = $"{Col("ActiveBreakId")} IS NULL";
+			}
+			else
+			{
+				parameters.Add("ObservedBreakId", observed.ActiveBreakId);
+				activeBreak = $"{Col("ActiveBreakId")} = {CaseInsensitive("ObservedBreakId")}";
+			}
+
+			return await ExecuteAsync(
+				$"UPDATE {Tbl("DispatcherPresences")} SET {Col("State")} = {P}State, {Col("ActiveBreakId")} = {P}ActiveBreakId, " +
+				$"{Col("StateChangedOn")} = {P}StateChangedOn, {Col("SignedInOn")} = {P}SignedInOn, {Col("LastSeenOn")} = {P}LastSeenOn, " +
+				$"{Col("DutyMode")} = {P}DutyMode, {Col("DutyShiftId")} = {P}DutyShiftId, {Col("DutyShiftDayId")} = {P}DutyShiftDayId, " +
+				$"{Col("DutyEndsOn")} = {P}DutyEndsOn, {Col("MissedOffers")} = {P}MissedOffers, {Col("AwayReason")} = {P}AwayReason, " +
+				$"{Col("DeviceKind")} = {P}DeviceKind, {Col("CallbackNumber")} = {P}CallbackNumber " +
+				$"WHERE {Col("DispatcherPresenceId")} = {CaseInsensitive("Id")} AND {Col("State")} = {P}ObservedState " +
 				$"AND {NullableTimestampEquals("SignedInOn", "ObservedSignedInOn", observed.SignedInOn, parameters)} AND {activeBreak}",
 				parameters, cancellationToken) > 0;
 		}

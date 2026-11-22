@@ -110,8 +110,7 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 		{
 			AddItem(DispatcherQueueItemKinds.Voice, DispatcherQueueItemStates.Offered, Me);
 			AcceptTakesIt();
-			_routing.Setup(x => x.ReleaseAsync(Dept, ItemId, Me, It.IsAny<CancellationToken>()))
-				.ReturnsAsync(() => DispatcherDeskResult<DispatcherQueueItem>.Ok(_store.Items.Single()));
+			ReleaseObservedReturns();
 			_voiceProvider.Setup(x => x.PlaceCallAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(),
 				It.IsAny<CancellationToken>())).ReturnsAsync((string)null);
 
@@ -119,7 +118,8 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 
 			result.Error.Should().Be(DispatcherDeskErrors.ChannelUnavailable);
 			_routing.Verify(x => x.AcceptAsync(Dept, ItemId, Me, It.IsAny<CancellationToken>()), Times.Once);
-			_routing.Verify(x => x.ReleaseAsync(Dept, ItemId, Me, It.IsAny<CancellationToken>()), Times.Once);
+			_routing.Verify(x => x.ReleaseObservedAsync(It.Is<DispatcherQueueItem>(i => i.DispatcherQueueItemId == ItemId && i.AssignedUserId == Me),
+				It.IsAny<CancellationToken>()), Times.Once);
 			_routing.Verify(x => x.RecordVoiceEventAsync(It.IsAny<DispatcherQueueItem>(), DispatcherQueueEventTypes.VoiceConnecting, It.IsAny<string>(),
 				It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
@@ -143,7 +143,7 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 
 			(await Voice().ConnectAsync(Dept, ItemId, Me, "+15557770000")).Error.Should().Be(DispatcherDeskErrors.ChannelUnavailable);
 
-			_routing.Verify(x => x.ReleaseAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never,
+			_routing.Verify(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>()), Times.Never,
 				"the other ring's live call keeps the work");
 		}
 
@@ -161,15 +161,65 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 					new DispatcherQueueEvent { EventType = (int)DispatcherQueueEventTypes.VoiceConnecting, UserId = "bob", OccurredOn = _now.AddSeconds(2) }
 				}
 			});
-			_routing.Setup(x => x.ReleaseAsync(Dept, ItemId, Me, It.IsAny<CancellationToken>()))
-				.ReturnsAsync(() => DispatcherDeskResult<DispatcherQueueItem>.Ok(_store.Items.Single()));
+			ReleaseObservedReturns();
 			_voiceProvider.Setup(x => x.PlaceCallAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(),
 				It.IsAny<CancellationToken>())).ReturnsAsync((string)null);
 
 			await Voice().ConnectAsync(Dept, ItemId, Me, "+15557770000");
 
-			_routing.Verify(x => x.ReleaseAsync(Dept, ItemId, Me, It.IsAny<CancellationToken>()), Times.Once);
+			_routing.Verify(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>()), Times.Once);
 		}
+
+		[Test]
+		public async Task Answer_the_provider_refuses_still_gives_back_work_after_a_failed_history_read()
+		{
+			AddItem(DispatcherQueueItemKinds.Voice, DispatcherQueueItemStates.Offered, Me);
+			AcceptTakesIt();
+			ReleaseObservedReturns();
+			var reads = 0;
+			_routing.Setup(x => x.GetItemDetailAsync(Dept, ItemId, It.IsAny<string>())).ReturnsAsync(() =>
+			{
+				// RingDispatcherAsync's own read, then a blip on the failed dial's first look.
+				if (++reads == 2)
+					throw new InvalidOperationException("db blip");
+				return new DispatcherQueueItemDetail { Item = _store.Items.Single() };
+			});
+			_voiceProvider.Setup(x => x.PlaceCallAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(),
+				It.IsAny<CancellationToken>())).ReturnsAsync((string)null);
+
+			await Voice().ConnectAsync(Dept, ItemId, Me, "+15557770000");
+
+			_routing.Verify(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>()), Times.Once,
+				"the item must not stay held by a dispatcher with no leg");
+		}
+
+		[Test]
+		public async Task Answer_the_provider_refuses_keeps_work_when_another_ring_lands_after_its_read()
+		{
+			AddItem(DispatcherQueueItemKinds.Voice, DispatcherQueueItemStates.Offered, Me);
+			AcceptTakesIt();
+			var events = new List<DispatcherQueueEvent>();
+			_routing.Setup(x => x.GetItemDetailAsync(Dept, ItemId, It.IsAny<string>()))
+				.ReturnsAsync(() => new DispatcherQueueItemDetail { Item = _store.Items.Single(), Events = events });
+			// A second tap's leg records its VoiceConnecting after the failed dial read the row: the touch moves the Version, so the fenced
+			// release fails, and the next look sees that ring.
+			_routing.Setup(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>())).ReturnsAsync(() =>
+			{
+				events.Add(new DispatcherQueueEvent { EventType = (int)DispatcherQueueEventTypes.VoiceConnecting, UserId = Me, OccurredOn = _now.AddSeconds(1) });
+				return DispatcherDeskResult<DispatcherQueueItem>.Fail(DispatcherDeskErrors.ItemNotAvailable);
+			});
+			_voiceProvider.Setup(x => x.PlaceCallAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(),
+				It.IsAny<CancellationToken>())).ReturnsAsync((string)null);
+
+			await Voice().ConnectAsync(Dept, ItemId, Me, "+15557770000");
+
+			_routing.Verify(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>()), Times.Once);
+			_routing.Verify(x => x.ReleaseAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		private void ReleaseObservedReturns() =>
+			_routing.Setup(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(() => DispatcherDeskResult<DispatcherQueueItem>.Ok(_store.Items.Single()));
 
 		[Test]
 		public async Task Answer_the_provider_refuses_keeps_work_the_dispatcher_already_held()
@@ -181,6 +231,7 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			(await Voice().CallBackAsync(Dept, ItemId, Me, "+15557770000")).Error.Should().Be(DispatcherDeskErrors.ChannelUnavailable);
 
 			_routing.Verify(x => x.ReleaseAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+			_routing.Verify(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[TestCase(DispatcherQueueItemKinds.Chat, "700001122")]

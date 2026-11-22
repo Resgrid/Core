@@ -26,6 +26,15 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 		/// <summary>Departments whose break start took the department lock, in order.</summary>
 		public List<int> BreakStartLocks { get; } = new List<int>();
 
+		/// <summary>Runs when the department break lock is granted: what other writers committed while the caller waited for it.</summary>
+		public Action<int> WhileWaitingForBreakLock { get; set; }
+
+		/// <summary>How many of the next alert-claim give-backs throw (a failed database write).</summary>
+		public int FailingAlertClears { get; set; }
+
+		/// <summary>Runs before each read of a user's active break (user id): another session committing between a service's reads.</summary>
+		public Action<string> BeforeActiveBreakRead { get; set; }
+
 		/// <summary>Runs before each conditional presence write (duty, back from break): a concurrent writer acting between a read and the write.</summary>
 		public Action<DispatcherPresence> BeforePresenceWrite { get; set; }
 
@@ -314,6 +323,31 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 					row.LastSeenOn = lastSeenOnUtc;
 				return Task.FromResult(true);
 			}
+
+			public Task<bool> TrySignInAsync(DispatcherPresence updated, DispatcherPresence observed, CancellationToken cancellationToken = default)
+			{
+				Store.BeforePresenceWrite?.Invoke(observed);
+				var row = List.FirstOrDefault(x => string.Equals(x.DispatcherPresenceId, updated?.DispatcherPresenceId, StringComparison.OrdinalIgnoreCase));
+				if (row == null || observed == null || row.State != observed.State || row.SignedInOn != observed.SignedInOn ||
+					!string.Equals(row.ActiveBreakId ?? string.Empty, observed.ActiveBreakId ?? string.Empty, StringComparison.OrdinalIgnoreCase))
+					return Task.FromResult(false);
+
+				// Like the SQL: the session columns only (LastOfferedOn, Capacity and the keys stay as stored).
+				row.State = updated.State;
+				row.ActiveBreakId = updated.ActiveBreakId;
+				row.StateChangedOn = updated.StateChangedOn;
+				row.SignedInOn = updated.SignedInOn;
+				row.LastSeenOn = updated.LastSeenOn;
+				row.DutyMode = updated.DutyMode;
+				row.DutyShiftId = updated.DutyShiftId;
+				row.DutyShiftDayId = updated.DutyShiftDayId;
+				row.DutyEndsOn = updated.DutyEndsOn;
+				row.MissedOffers = updated.MissedOffers;
+				row.AwayReason = updated.AwayReason;
+				row.DeviceKind = updated.DeviceKind;
+				row.CallbackNumber = updated.CallbackNumber;
+				return Task.FromResult(true);
+			}
 		}
 
 		private sealed class BreaksRepo : RepoBase<DispatcherBreak>, IDispatcherBreaksRepository
@@ -334,9 +368,12 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 					(x.State == (int)DispatcherBreakStates.Active || x.State == (int)DispatcherBreakStates.Scheduled && x.ScheduledStartOn >= fromUtc && x.ScheduledStartOn < toUtc))
 					.Select(Clone).ToList());
 
-			public Task<DispatcherBreak> GetActiveForUserAsync(int departmentId, string userId) =>
-				Task.FromResult(Clone(List.FirstOrDefault(x => x.DepartmentId == departmentId && string.Equals(x.UserId, userId, StringComparison.OrdinalIgnoreCase) &&
+			public Task<DispatcherBreak> GetActiveForUserAsync(int departmentId, string userId)
+			{
+				Store.BeforeActiveBreakRead?.Invoke(userId);
+				return Task.FromResult(Clone(List.FirstOrDefault(x => x.DepartmentId == departmentId && string.Equals(x.UserId, userId, StringComparison.OrdinalIgnoreCase) &&
 					x.State == (int)DispatcherBreakStates.Active)));
+			}
 
 			public Task<IEnumerable<DispatcherBreak>> GetForTimersAsync(DateTime before, DateTime after) =>
 				Task.FromResult<IEnumerable<DispatcherBreak>>(List.Where(x => x.State == (int)DispatcherBreakStates.Active ||
@@ -351,6 +388,23 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 
 			public Task<bool> TryUpdateObservedAsync(DispatcherBreak updated, DispatcherBreak observed, bool resetPlanAlerts, CancellationToken cancellationToken = default) =>
 				Task.FromResult(observed != null && Write(updated, stored => Matches(stored, observed), resetPlanAlerts));
+
+			public Task<bool> TryStartObservedAsync(DispatcherBreak started, DispatcherBreak observed, CancellationToken cancellationToken = default)
+			{
+				Store.BeforeBreakWrite?.Invoke(started);
+				var row = List.FirstOrDefault(x => x.DispatcherBreakId == started?.DispatcherBreakId);
+				if (row == null || observed == null || !Matches(row, observed))
+					return Task.FromResult(false);
+
+				// Like the SQL: the start columns only; the plan's type, note and shift day stay as stored.
+				row.State = started.State;
+				row.DurationMinutes = started.DurationMinutes;
+				row.StartedOn = started.StartedOn;
+				row.ExpectedReturnOn = started.ExpectedReturnOn;
+				row.UpdatedByUserId = started.UpdatedByUserId;
+				row.UpdatedOn = started.UpdatedOn;
+				return Task.FromResult(true);
+			}
 
 			private bool Write(DispatcherBreak updated, Func<DispatcherBreak, bool> condition, bool resetPlanAlerts)
 			{
@@ -403,6 +457,12 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 				if (!AlertColumns.Contains(column))
 					throw new ArgumentOutOfRangeException(nameof(column));
 
+				if (Store.FailingAlertClears > 0)
+				{
+					Store.FailingAlertClears--;
+					throw new InvalidOperationException("alert claim give-back failed");
+				}
+
 				var row = List.FirstOrDefault(x => string.Equals(x.DispatcherBreakId, id, StringComparison.OrdinalIgnoreCase));
 				var property = typeof(DispatcherBreak).GetProperty(column);
 				if (row == null || !Equals(property.GetValue(row), (DateTime?)sentOnUtc))
@@ -415,6 +475,7 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			public Task LockDepartmentForBreakStartAsync(int departmentId, CancellationToken cancellationToken = default)
 			{
 				Store.BreakStartLocks.Add(departmentId);
+				Store.WhileWaitingForBreakLock?.Invoke(departmentId);
 				return Task.CompletedTask;
 			}
 

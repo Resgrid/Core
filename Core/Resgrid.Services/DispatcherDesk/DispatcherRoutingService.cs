@@ -96,7 +96,7 @@ namespace Resgrid.Services
 			if (!config.Routes(request.Kind))
 				return DispatcherRouteResult.NotRouted();
 
-			var duplicate = await FindDuplicateAsync(request);
+			var duplicate = await CompleteSenderAsync(await FindDuplicateAsync(request), request, cancellationToken);
 			if (duplicate != null)
 				return new DispatcherRouteResult { Outcome = DispatcherRouteOutcomes.Duplicate, Item = duplicate, UserId = duplicate.AssignedUserId };
 
@@ -143,7 +143,7 @@ namespace Resgrid.Services
 			// The unique open-item indexes decide a race the duplicate check above cannot (a call event and the sweep, a provider retry).
 			if (!await _itemsRepository.TryInsertAsync(item, cancellationToken))
 			{
-				var winner = await FindOpenWinnerAsync(item);
+				var winner = await CompleteSenderAsync(await FindOpenWinnerAsync(item), request, cancellationToken);
 				return winner != null
 					? new DispatcherRouteResult { Outcome = DispatcherRouteOutcomes.Duplicate, Item = winner, UserId = winner.AssignedUserId }
 					: DispatcherRouteResult.NotRouted();
@@ -1352,7 +1352,7 @@ namespace Resgrid.Services
 				catch (Exception ex)
 				{
 					Logging.LogException(ex, $"Dispatcher queue overflow for item {item.DispatcherQueueItemId}: the pending call could not be saved");
-					await ReleaseClaimAsync(item, reason + " The pending call could not be saved; trying again.", cancellationToken);
+					await ReleaseClaimAsync(item, reason + " The pending call could not be saved; trying again.", now, cancellationToken);
 					return OverflowResults.Retry;
 				}
 
@@ -1362,10 +1362,18 @@ namespace Resgrid.Services
 					return item.IsOpen() ? OverflowResults.Retry : OverflowResults.Closed;
 				}
 
-				item.CallId = call.CallId;
 				var useAi = config.GetTextOverflowMode() == DispatcherTextOverflowModes.EnhancedAi && await AiAvailableAsync(item.DepartmentId);
-				if (!await MarkOverflowedCoreAsync(item, reason + $" Saved as pending call {call.Number ?? call.CallId.ToString()}" + (useAi ? "; Enhanced AI is filling it in." : "."),
-						requireQueued: false, copyBack: true, cancellationToken))
+				var linked = await LinkOverflowCallAsync(item, call, now,
+					reason + $" Saved as pending call {call.Number ?? call.CallId.ToString()}" + (useAi ? "; Enhanced AI is filling it in." : "."), cancellationToken);
+				if (linked == OverflowLinkResults.Lost)
+				{
+					// This pass stalled past the stranded-claim window: the worker gave its claim back and another pass overflowed the item
+					// (or linked another call). That pass's call is the item's; this one is the duplicate and is taken back.
+					await DiscardDuplicateOverflowCallAsync(item, call);
+					return OverflowResults.Skipped;
+				}
+
+				if (linked == OverflowLinkResults.NotLinked)
 				{
 					// The call exists (dispatchers see it with the pending calls) but the item could not be linked to it. The claim stays, so
 					// no second call is saved; the worker links the two later (RecoverStrandedOverflowAsync finds the call by its "DQ:" source).
@@ -1491,13 +1499,18 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		/// <summary>Gives a text overflow claim back (the pending call was not saved), so the worker's next pass tries again.</summary>
-		private async Task ReleaseClaimAsync(DispatcherQueueItem item, string note, CancellationToken cancellationToken)
+		/// <summary>
+		/// Gives a text overflow claim back (the pending call was not saved), so the worker's next pass tries again. Only the claim stamped
+		/// <paramref name="claimedOn"/>: a pass that stalled past the stranded-claim window never gives back the newer claim of the pass
+		/// that overflowed the item after it (that pass may be saving its call right now).
+		/// </summary>
+		private async Task ReleaseClaimAsync(DispatcherQueueItem item, string note, DateTime claimedOn, CancellationToken cancellationToken)
 		{
 			for (var attempt = 0; attempt < 3; attempt++)
 			{
 				var current = await _itemsRepository.GetItemAsync(item.DispatcherQueueItemId);
-				if (current == null || !current.IsOpen() || current.CallId.HasValue || !current.OverflowedOn.HasValue)
+				if (current == null || !current.IsOpen() || current.CallId.HasValue || !current.OverflowedOn.HasValue ||
+					!SameStamp(current.OverflowedOn.Value, claimedOn))
 					return;
 
 				var expected = current.Version;
@@ -1533,11 +1546,13 @@ namespace Resgrid.Services
 		/// <summary>
 		/// A text, chat or other conversation whose overflow claim (OverflowedOn) has stood for <see cref="StrandedOverflowClaimMinutes"/>
 		/// with no call linked: the overflow's link write lost every retry, or the host stopped between the save and the link. Its call
-		/// (found by "DQ:{itemId}") is linked now; with none saved the claim is given back so the next pass makes the call. Voice items
-		/// are not included: a held caller's claim is the Overflowed state, and the voicemail path links its own call.
+		/// (found by "DQ:{itemId}") is linked now; with none saved the claim is given back so the next pass makes the call. That includes
+		/// an item a dispatcher was offered or took while its overflow call was being saved: the call is linked to it as it stands (holder
+		/// and state kept), and with no call the stale claim is only cleared (an item someone has never overflows again). Voice items are
+		/// not included: a held caller's claim is the Overflowed state, and the voicemail path links its own call.
 		/// </summary>
 		internal static bool IsStrandedOverflowClaim(DispatcherQueueItem item, DateTime now) =>
-			item.State == (int)DispatcherQueueItemStates.Queued && !item.CallId.HasValue && item.OverflowedOn.HasValue &&
+			item.IsOpen() && !item.CallId.HasValue && item.OverflowedOn.HasValue &&
 			item.OverflowedOn.Value <= now.AddMinutes(-StrandedOverflowClaimMinutes) &&
 			(item.Kind == (int)DispatcherQueueItemKinds.Text || item.Kind == (int)DispatcherQueueItemKinds.Chat || item.Kind == (int)DispatcherQueueItemKinds.Other);
 
@@ -1545,16 +1560,18 @@ namespace Resgrid.Services
 		{
 			try
 			{
+				var claimedOn = item.OverflowedOn.Value;
 				var call = await FindOverflowCallAsync(item);
 				if (call == null)
 				{
-					await ReleaseClaimAsync(item, "The earlier overflow left no pending call; trying again.", cancellationToken);
+					await ReleaseClaimAsync(item, item.State == (int)DispatcherQueueItemStates.Queued
+						? "The earlier overflow left no pending call; trying again."
+						: "The earlier overflow left no pending call; the dispatcher has the item.", claimedOn, cancellationToken);
 					return true;
 				}
 
-				item.CallId = call.CallId;
-				return await MarkOverflowedCoreAsync(item, $"Linked to pending call {call.Number ?? call.CallId.ToString()} that an earlier overflow saved.",
-					requireQueued: false, copyBack: true, cancellationToken);
+				return await LinkOverflowCallAsync(item, call, claimedOn,
+					$"Linked to pending call {call.Number ?? call.CallId.ToString()} that an earlier overflow saved.", cancellationToken) == OverflowLinkResults.Linked;
 			}
 			catch (Exception ex)
 			{
@@ -1562,6 +1579,103 @@ namespace Resgrid.Services
 				return false;
 			}
 		}
+
+		/// <summary>What linking an overflow's pending call to its item did.</summary>
+		private enum OverflowLinkResults
+		{
+			/// <summary>The item now names the call (this write, or it already did).</summary>
+			Linked,
+
+			/// <summary>The item is no longer this claim's: another pass claimed it or linked another call.</summary>
+			Lost,
+
+			/// <summary>Every write lost to a concurrent touch (or the item is gone): the claim stays for the worker's recovery.</summary>
+			NotLinked
+		}
+
+		/// <summary>
+		/// Links <paramref name="call"/> to the item only while the item is still the claim stamped <paramref name="claimedOn"/> (or carries
+		/// no claim at all: the worker gave a stalled claim back and nobody has claimed it since). Each write is version-checked, so a pass
+		/// that overflows the item meanwhile either sees this link (and claims nothing) or makes this pass see its claim. Holder and state
+		/// stay as they are: a dispatcher who took the text meanwhile keeps it, now with its call.
+		/// </summary>
+		private async Task<OverflowLinkResults> LinkOverflowCallAsync(DispatcherQueueItem item, Call call, DateTime claimedOn, string note,
+			CancellationToken cancellationToken)
+		{
+			for (var attempt = 0; attempt < 3; attempt++)
+			{
+				var current = await _itemsRepository.GetItemAsync(item.DispatcherQueueItemId);
+				if (current == null)
+					return OverflowLinkResults.NotLinked;
+
+				if (current.CallId == call.CallId)
+				{
+					Copy(current, item);
+					return OverflowLinkResults.Linked;
+				}
+
+				if (current.CallId.HasValue || (current.OverflowedOn.HasValue && !SameStamp(current.OverflowedOn.Value, claimedOn)))
+				{
+					Copy(current, item);
+					return OverflowLinkResults.Lost;
+				}
+
+				var now = UtcNow();
+				var expected = current.Version;
+				current.CallId = call.CallId;
+				current.OverflowedOn = now;
+				current.OverflowNote = Truncate(note, 250);
+				current.LastActivityOn = now;
+				if (current.State == (int)DispatcherQueueItemStates.Overflowed)
+				{
+					current.State = (int)DispatcherQueueItemStates.Queued;
+					current.AssignedUserId = null;
+				}
+
+				if (!await _itemsRepository.TryUpdateAsync(current, expected, cancellationToken))
+					continue;
+
+				Copy(current, item);
+				await AddEventAsync(current, DispatcherQueueEventTypes.Overflowed, null, current.OverflowNote, now, cancellationToken);
+				await PublishAsync(current);
+				return OverflowLinkResults.Linked;
+			}
+
+			return OverflowLinkResults.NotLinked;
+		}
+
+		/// <summary>
+		/// Takes back the pending call a stalled overflow pass saved after another pass had overflowed the item: deleted (it was never
+		/// dispatched, and the item's own call stands for the same message). A delete that fails is logged and the call is left in Pending
+		/// Calls, where a dispatcher sees it as the duplicate it is.
+		/// </summary>
+		private async Task DiscardDuplicateOverflowCallAsync(DispatcherQueueItem item, Call call)
+		{
+			try
+			{
+				call.IsDeleted = true;
+				call.DeletedOn = UtcNow();
+				call.DeletedByUserId = DuplicateOverflowCallDeleter;
+				call.DeletedReason = "Duplicate of the pending call another overflow of the same dispatcher desk item saved.";
+				await _callsService.Value.SaveCallAsync(call, CancellationToken.None);
+				Logging.LogInfo($"Dispatcher queue overflow for item {item.DispatcherQueueItemId}: pending call {call.CallId} was a duplicate (another pass overflowed the item) and was deleted.");
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Dispatcher queue overflow for item {item.DispatcherQueueItemId}: duplicate pending call {call.CallId} could not be deleted");
+			}
+		}
+
+		/// <summary>Who deletes a duplicate overflow call (as the recurring call worker's own clean-up records it).</summary>
+		private const string DuplicateOverflowCallDeleter = "system";
+
+		/// <summary>
+		/// One claim stamp read back from the store: SQL Server keeps every tick, PostgreSQL microseconds, so stamps are compared to the
+		/// millisecond. That is exact enough: a claim is given back under a pass still running only by the worker's recovery, after the
+		/// stranded-claim window, so the claim that replaces it is minutes newer.
+		/// </summary>
+		private static bool SameStamp(DateTime stored, DateTime claimedOn) =>
+			Math.Abs((stored - claimedOn).Ticks) < TimeSpan.TicksPerMillisecond;
 
 		/// <summary>The pending call a text or chat conversation becomes when no dispatcher can take it (nobody dispatched yet).</summary>
 		private async Task<Call> CreatePendingCallAsync(DispatcherQueueItem item, CancellationToken cancellationToken)
@@ -1666,6 +1780,41 @@ namespace Resgrid.Services
 			}
 
 			return null;
+		}
+
+		/// <summary>
+		/// An emailed call the call-event hand-off or the desk's sweep put on the desk first (they know only the call, not who sent it) is
+		/// the email hand-off's duplicate: it gives that item the sender, so the desk can reply and the sender's answer joins the item. Only
+		/// a blank sender is filled, on an open Email item, by a version-checked write; another kind, or an address already there, is kept.
+		/// </summary>
+		private async Task<DispatcherQueueItem> CompleteSenderAsync(DispatcherQueueItem duplicate, DispatcherEnqueueRequest request, CancellationToken cancellationToken)
+		{
+			if (duplicate == null || request.Kind != DispatcherQueueItemKinds.Email || string.IsNullOrWhiteSpace(request.SourceAddress))
+				return duplicate;
+
+			var address = Truncate(request.SourceAddress.Trim(), 256);
+			var current = duplicate;
+			for (var attempt = 0; attempt < 3 && current != null; attempt++)
+			{
+				if (current.DepartmentId != request.DepartmentId || current.Kind != (int)DispatcherQueueItemKinds.Email || !current.IsOpen() ||
+					!string.IsNullOrWhiteSpace(current.SourceAddress))
+					return current;
+
+				var expected = current.Version;
+				current.SourceAddress = address;
+				if (string.IsNullOrWhiteSpace(current.ConversationKey) && DispatcherRoutingPolicy.IntakeConversationIdOf(current) == null)
+					current.ConversationKey = DispatcherRoutingPolicy.ConversationKey(DispatcherQueueItemKinds.Email, address);
+
+				if (await _itemsRepository.TryUpdateAsync(current, expected, cancellationToken))
+				{
+					await PublishAsync(current);
+					return current;
+				}
+
+				current = await _itemsRepository.GetItemAsync(duplicate.DispatcherQueueItemId);
+			}
+
+			return current ?? duplicate;
 		}
 
 		/// <summary>The open item that won an insert race against <paramref name="item"/> (same call, or same external reference).</summary>

@@ -69,15 +69,53 @@ namespace Resgrid.Services
 			if (unscheduled && request.DutyEndsOn.HasValue && request.DutyEndsOn.Value <= now)
 				return DispatcherDeskResult<DispatcherDeskMember>.Fail(DispatcherDeskErrors.InvalidInput, "The duty end is in the past.");
 
+			var signedIn = false;
+			for (var attempt = 1; attempt <= SignInAttempts && !signedIn; attempt++)
+				signedIn = await TrySignInOnceAsync(departmentId, userId, request, duty, unscheduled, now, attempt == SignInAttempts, cancellationToken);
+
+			if (!signedIn)
+				return DispatcherDeskResult<DispatcherDeskMember>.Fail(DispatcherDeskErrors.ItemNotAvailable,
+					"The desk session changed while signing in; sign in again.");
+
+			await _notifier.PublishDeskChangedAsync(departmentId, userId);
+			await RouteAsync(departmentId, cancellationToken);
+
+			return DispatcherDeskResult<DispatcherDeskMember>.Ok(await GetMemberAsync(departmentId, userId, now));
+		}
+
+		/// <summary>How many times a sign-in reads the row again after another writer changed it between the read and the write.</summary>
+		private const int SignInAttempts = 3;
+
+		/// <summary>
+		/// One sign-in attempt: reads the row and the active break, then writes the session only while the row is still what was read
+		/// (state, session, break). False when another sign-in, break or sign-off committed in between (the caller reads again).
+		/// </summary>
+		/// <param name="lastAttempt">
+		/// A break that still cannot be closed on the last attempt is not a race (its start is after the row's sign-off time, e.g. clocks
+		/// apart): the sign-in goes ahead without it, still conditional on the row as read, rather than refusing every sign-in.
+		/// </param>
+		private async Task<bool> TrySignInOnceAsync(int departmentId, string userId, DispatcherSignInRequest request, DispatcherDutyWindow duty, bool unscheduled,
+			DateTime now, bool lastAttempt, CancellationToken cancellationToken)
+		{
 			var presence = await GetOrCreateAsync(departmentId, userId, now, cancellationToken);
+			var observed = new DispatcherPresence
+			{
+				DispatcherPresenceId = presence.DispatcherPresenceId,
+				State = presence.State,
+				SignedInOn = presence.SignedInOn,
+				ActiveBreakId = presence.ActiveBreakId
+			};
 			var activeBreak = await _breaksRepository.GetActiveForUserAsync(departmentId, userId);
 
 			// A break carries on only into a sign-in that refreshes a session already on it. Breaks start only signed in and sign-off
 			// ends them, so one still active on a signed-off row is left over from a sign-off whose close failed: it ends now, as ended
-			// by that sign-off, instead of putting the new session on break.
+			// by that sign-off, instead of putting the new session on break. A close refused (the break began after that sign-off: a
+			// sign-in in between started it) means the row read is stale: read again rather than sign in over that session.
 			if (activeBreak != null && !presence.IsSignedIn())
 			{
-				await CloseSignedOffBreakAsync(activeBreak, presence.StateChangedOn, userId, now, cancellationToken);
+				if (!await CloseSignedOffBreakAsync(activeBreak, presence.StateChangedOn, userId, now, cancellationToken) && !lastAttempt)
+					return false;
+
 				activeBreak = null;
 			}
 
@@ -99,11 +137,8 @@ namespace Resgrid.Services
 			if (callback != null)
 				presence.CallbackNumber = callback;
 
-			await _presencesRepository.SaveOrUpdateAsync(presence, cancellationToken, true);
-			await _notifier.PublishDeskChangedAsync(departmentId, userId);
-			await RouteAsync(departmentId, cancellationToken);
-
-			return DispatcherDeskResult<DispatcherDeskMember>.Ok(await GetMemberAsync(departmentId, userId, now));
+			// Conditional on the row as read (like sign-off): a sign-in, a break started or a sign-off committed since wins.
+			return await _presencesRepository.TrySignInAsync(presence, observed, cancellationToken);
 		}
 
 		public Task<DispatcherDeskResult<bool>> SignOffAsync(int departmentId, string userId, string byUserId, CancellationToken cancellationToken = default) =>
@@ -137,9 +172,18 @@ namespace Resgrid.Services
 
 			// The session's break ends with it. Also on a row already signed off: a sign-off whose break close failed is finished by
 			// signing off again (and otherwise by the next sign-in or the break timer), never by putting the next session on break.
-			var activeBreak = await _breaksRepository.GetActiveForUserAsync(departmentId, userId);
-			if (activeBreak != null)
-				await CloseSignedOffBreakAsync(activeBreak, signedOff ? now : presence.StateChangedOn, byUserId, now, cancellationToken);
+			// A close that fails does not keep the work: the break stays active for the next sign-off, the next sign-in or the break
+			// timer to close, and the hand-back below still runs.
+			try
+			{
+				var activeBreak = await _breaksRepository.GetActiveForUserAsync(departmentId, userId);
+				if (activeBreak != null)
+					await CloseSignedOffBreakAsync(activeBreak, signedOff ? now : presence.StateChangedOn, byUserId, now, cancellationToken);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException && cancellationToken.IsCancellationRequested))
+			{
+				Logging.LogException(ex, $"Dispatcher sign-off of {userId} in {departmentId}: the break could not be closed yet (closed later by the break timer)");
+			}
 
 			// Offline first, so held and offered work handed back goes to someone else, never straight back to this dispatcher.
 			var held = await GetHeldAsync(departmentId, userId);
@@ -176,8 +220,8 @@ namespace Resgrid.Services
 		/// <summary>
 		/// Hands back work a signed-off dispatcher still holds: each item on its own, so one failing never keeps the rest, and each
 		/// only as the assignment read here (a version-fenced release: work the dispatcher accepted again after signing back in, or that
-		/// has moved to someone else, is left alone). A dispatcher signed in again by now keeps their work. Returns how many of the read
-		/// assignments are still held afterwards (logged; the next sign-off or the worker's sweep retries them).
+		/// has moved to someone else, is left alone). A dispatcher signed in again by now keeps their work. Returns how many items the
+		/// still signed-off dispatcher holds afterwards, read fresh (logged; the next sign-off or the worker's sweep retries them).
 		/// </summary>
 		private async Task<int> HandBackAsync(int departmentId, string userId, List<DispatcherQueueItem> held, CancellationToken cancellationToken)
 		{
@@ -204,10 +248,13 @@ namespace Resgrid.Services
 			await _notifier.PublishDeskChangedAsync(departmentId, userId);
 			await RouteAsync(departmentId, cancellationToken);
 
-			// Still held as read (same Version): an assignment that changed since is someone else's now, or theirs again.
-			var observed = held.ToDictionary(x => x.DispatcherQueueItemId, x => x.Version, StringComparer.OrdinalIgnoreCase);
-			var stillHeld = (await GetHeldAsync(departmentId, userId))
-				.Count(x => observed.TryGetValue(x.DispatcherQueueItemId, out var version) && version == x.Version);
+			// What the dispatcher holds now, whatever its Version (an accept or a participant message since the read changes it without
+			// changing the holder, and the fenced release above left such an item alone). Signed in again by now, the work is theirs.
+			var after = await _presencesRepository.GetForUserAsync(departmentId, userId);
+			if (after != null && after.IsSignedIn())
+				return 0;
+
+			var stillHeld = (await GetHeldAsync(departmentId, userId)).Count;
 			if (stillHeld > 0)
 				Logging.LogError($"Dispatcher {userId} in {departmentId} is signed off but still holds {stillHeld} desk item(s); the next sign-off or desk sweep retries.");
 

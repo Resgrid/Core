@@ -195,7 +195,7 @@ namespace Resgrid.Web.Services.Controllers
 
 			// An item that already is its voicemail call (a repeat of this request) has nothing more to save.
 			var durable = item?.CallId != null;
-			var inProgress = false;
+			DispatcherVoicemailOutcomes? outcome = null;
 			if (item != null && !item.CallId.HasValue && !string.IsNullOrWhiteSpace(recordingUrl))
 			{
 				try
@@ -205,7 +205,7 @@ namespace Resgrid.Web.Services.Controllers
 					var result = await _pendingCalls.FromVoicemailAsync(item, item.SourceAddress ?? DeskPhoneNumbers.ToE164(Field("From")), recordingUrl,
 						ParseInt(Field("RecordingDuration")), Field("RecordingSid"));
 					durable = result != null && result.Durable;
-					inProgress = result?.Outcome == DispatcherVoicemailOutcomes.InProgress;
+					outcome = result?.Outcome;
 				}
 				catch (Exception ex)
 				{
@@ -213,9 +213,12 @@ namespace Resgrid.Web.Services.Controllers
 				}
 
 				if (!durable)
-					await RecordVoiceEventAsync(item, DispatcherQueueEventTypes.VoiceEnded, null, inProgress
-						? $"The voicemail was still being saved by another request. Recording: {recordingUrl}"
-						: $"The voicemail could not be saved as a call. Recording: {recordingUrl}");
+					await RecordVoiceEventAsync(item, DispatcherQueueEventTypes.VoiceEnded, null, outcome switch
+					{
+						DispatcherVoicemailOutcomes.InProgress => $"The voicemail was still being saved by another request. Recording: {recordingUrl}",
+						DispatcherVoicemailOutcomes.Unconfirmed => $"The voicemail's call may have been saved; that could not be confirmed. Recording: {recordingUrl}",
+						_ => $"The voicemail could not be saved as a call. Recording: {recordingUrl}"
+					});
 			}
 			else if (item == null && !string.IsNullOrWhiteSpace(recordingUrl))
 			{
@@ -258,8 +261,8 @@ namespace Resgrid.Web.Services.Controllers
 			if (!item.CallId.HasValue)
 			{
 				// Still no call (its save failed, or it could not be linked): the transcript stays with the item's history rather than
-				// being dropped. Acknowledged only once that history entry is stored.
-				if (await RecordStoredVoiceEventAsync(item, transcript))
+				// being dropped, in as many entries as its length needs. Acknowledged only once every entry is stored.
+				if (await RecordStoredTranscriptAsync(item, text.Trim()))
 				{
 					Logging.LogInfo($"[Dispatcher desk] Voicemail transcription for item {itemId} arrived before its pending call was linked; kept on the item.");
 					return Twiml(new VoiceResponse());
@@ -287,8 +290,8 @@ namespace Resgrid.Web.Services.Controllers
 				Logging.LogException(ex, $"Dispatcher desk: the voicemail transcription for call {item.CallId} could not be saved.");
 			}
 
-			// The call note failed: the item's history keeps the transcript instead, or the request is not acknowledged.
-			if (await RecordStoredVoiceEventAsync(item, transcript))
+			// The call note failed: the item's history keeps the whole transcript instead, or the request is not acknowledged.
+			if (await RecordStoredTranscriptAsync(item, text.Trim()))
 				return Twiml(new VoiceResponse());
 
 			return StatusCode(StatusCodes.Status500InternalServerError);
@@ -751,23 +754,52 @@ namespace Resgrid.Web.Services.Controllers
 		}
 
 		/// <summary>
-		/// <see cref="ReleaseIfHeldAsync"/> for a status callback of the ring that started at <paramref name="attemptStartedOn"/>: the
-		/// item's history is read again just before the release, so a ring of the same dispatcher placed while this callback was
-		/// being handled (after its first look at the history) keeps the item instead of losing it to the earlier ring's status.
+		/// <see cref="ReleaseIfHeldAsync"/> for a status callback of the ring that started at <paramref name="attemptStartedOn"/>. The
+		/// item row and then its history are read just before the release, and the release is fenced on that row's Version: a ring of the
+		/// same dispatcher whose VoiceConnecting was recorded before the read is seen in the history, and one recorded after it (the
+		/// entry touches the item) makes the release fail, so the newer ring keeps the item instead of losing it to the earlier ring's
+		/// status. A release that lost to another write is judged again on the row as it is then.
 		/// </summary>
 		private async System.Threading.Tasks.Task ReleaseIfStillThisRingAsync(DispatcherQueueItem item, string userId, string detail, DateTime? attemptStartedOn)
 		{
-			if (attemptStartedOn.HasValue)
+			if (!attemptStartedOn.HasValue)
 			{
-				var events = (await _dispatcherRoutingService.GetItemDetailAsync(item.DepartmentId, item.DispatcherQueueItemId))?.Events;
-				if (NewerAttemptStarted(events, userId, attemptStartedOn.Value))
+				await ReleaseIfHeldAsync(item, userId, detail);
+				return;
+			}
+
+			for (var attempt = 0; attempt < DispatcherDeskPendingCalls.WriteAttempts; attempt++)
+			{
+				try
 				{
-					Logging.LogInfo($"[Dispatcher desk] Status of an earlier ring for item {item.DispatcherQueueItemId}; the newer ring keeps it.");
-					return;
+					// One read: the row first, then its history (GetItemDetailAsync reads them in that order).
+					var detailRead = await _dispatcherRoutingService.GetItemDetailAsync(item.DepartmentId, item.DispatcherQueueItemId);
+					var row = detailRead?.Item;
+					if (row == null || !row.IsOpen())
+						break;
+
+					if (NewerAttemptStarted(detailRead.Events, userId, attemptStartedOn.Value))
+					{
+						Logging.LogInfo($"[Dispatcher desk] Status of an earlier ring for item {item.DispatcherQueueItemId}; the newer ring keeps it.");
+						return;
+					}
+
+					if (!string.Equals(row.AssignedUserId, userId, StringComparison.OrdinalIgnoreCase) ||
+						(row.State != (int)DispatcherQueueItemStates.Accepted && row.State != (int)DispatcherQueueItemStates.Offered))
+						break;
+
+					var released = await _dispatcherRoutingService.ReleaseObservedAsync(row, CancellationToken.None);
+					if (released == null || released.Success || released.Error != DispatcherDeskErrors.ItemNotAvailable)
+						break;
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Dispatcher desk: item {item.DispatcherQueueItemId} could not be returned after its ring ended (attempt {attempt + 1}).");
 				}
 			}
 
-			await ReleaseIfHeldAsync(item, userId, detail);
+			if (!string.IsNullOrWhiteSpace(detail))
+				await RecordVoiceEventAsync(item, DispatcherQueueEventTypes.VoiceEnded, userId, detail);
 		}
 
 		/// <summary>
@@ -811,26 +843,79 @@ namespace Resgrid.Web.Services.Controllers
 			}
 		}
 
+		/// <summary>The longest detail an item history entry stores (DispatcherQueueEvents.Detail).</summary>
+		public const int HistoryDetailLength = 500;
+
+		/// <summary>The transcript text each history entry carries when it needs more than one (its part label fits in the rest).</summary>
+		public const int TranscriptPartLength = 440;
+
 		/// <summary>
-		/// Adds a caller-leg VoiceEnded entry to the item's history and reports whether it is stored (read back: the routing service's
-		/// history write logs and swallows its own failures).
+		/// The history entries that keep a voicemail transcript whole: one entry when it fits, else numbered parts that each fit the
+		/// history's detail length (never split inside a surrogate pair), so no part of what the caller said is cut off.
 		/// </summary>
-		private async Task<bool> RecordStoredVoiceEventAsync(DispatcherQueueItem item, string detail)
+		public static List<string> TranscriptEntries(string text)
 		{
-			await RecordVoiceEventAsync(item, DispatcherQueueEventTypes.VoiceEnded, null, detail);
+			text = text?.Trim() ?? string.Empty;
+			var single = $"Voicemail transcription (automatic): {text}";
+			if (single.Length <= HistoryDetailLength)
+				return new List<string> { single };
+
+			var parts = new List<string>();
+			for (var start = 0; start < text.Length;)
+			{
+				var length = Math.Min(TranscriptPartLength, text.Length - start);
+				if (start + length < text.Length && char.IsHighSurrogate(text[start + length - 1]))
+					length--;
+
+				parts.Add(text.Substring(start, length));
+				start += length;
+			}
+
+			return parts.Select((part, i) => $"Voicemail transcription (automatic, part {i + 1} of {parts.Count}): {part}").ToList();
+		}
+
+		/// <summary>
+		/// Keeps the whole transcript in the item's history (<see cref="TranscriptEntries"/>, caller-leg VoiceEnded entries) and reports
+		/// whether every entry is stored, read back (the routing service's history write logs and swallows its own failures). Entries a
+		/// previous delivery already stored are not added again.
+		/// </summary>
+		private async Task<bool> RecordStoredTranscriptAsync(DispatcherQueueItem item, string text)
+		{
+			var entries = TranscriptEntries(text);
+
+			HashSet<string> before;
+			try
+			{
+				before = await StoredVoiceEndedDetailsAsync(item);
+			}
+			catch (Exception ex)
+			{
+				// Written in full then: a repeated entry is better than a missing one.
+				Logging.LogException(ex, $"Dispatcher desk: the history of item {item.DispatcherQueueItemId} could not be read before the transcript was kept.");
+				before = new HashSet<string>(StringComparer.Ordinal);
+			}
+
+			foreach (var entry in entries.Where(x => !before.Contains(x)))
+				await RecordVoiceEventAsync(item, DispatcherQueueEventTypes.VoiceEnded, null, entry);
 
 			try
 			{
-				var stored = detail != null && detail.Length > 500 ? detail.Substring(0, 500) : detail;
-				var events = (await _dispatcherRoutingService.GetItemDetailAsync(item.DepartmentId, item.DispatcherQueueItemId))?.Events;
-				return events != null && events.Any(x => x != null && x.EventType == (int)DispatcherQueueEventTypes.VoiceEnded &&
-														 string.Equals(x.Detail, stored, StringComparison.Ordinal));
+				var stored = await StoredVoiceEndedDetailsAsync(item);
+				return entries.All(stored.Contains);
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex, $"Dispatcher desk: the history of item {item.DispatcherQueueItemId} could not be read back.");
 				return false;
 			}
+		}
+
+		private async Task<HashSet<string>> StoredVoiceEndedDetailsAsync(DispatcherQueueItem item)
+		{
+			var events = (await _dispatcherRoutingService.GetItemDetailAsync(item.DepartmentId, item.DispatcherQueueItemId))?.Events;
+			return new HashSet<string>((events ?? new List<DispatcherQueueEvent>())
+				.Where(x => x != null && x.EventType == (int)DispatcherQueueEventTypes.VoiceEnded && string.IsNullOrWhiteSpace(x.UserId) && x.Detail != null)
+				.Select(x => x.Detail), StringComparer.Ordinal);
 		}
 
 		private async System.Threading.Tasks.Task RecordVoiceEventAsync(DispatcherQueueItem item, DispatcherQueueEventTypes eventType, string userId, string detail)

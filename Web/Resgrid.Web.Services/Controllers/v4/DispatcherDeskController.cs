@@ -839,7 +839,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (result?.Success == true)
 			{
 				entity.State = (int)DispatcherBreakStates.Cancelled;
-				action.Break = await ToBreakDataAsync(entity);
+				action.Break = await CommittedBreakDataAsync(entity);
 			}
 
 			return Ok(action);
@@ -1316,13 +1316,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 			};
 		}
 
-		private async Task<DispatcherBreakData> ToBreakDataAsync(DispatcherBreak dispatcherBreak)
+		private async Task<DispatcherBreakData> ToBreakDataAsync(DispatcherBreak dispatcherBreak) =>
+			ToBreakData(dispatcherBreak, await NameForAsync(dispatcherBreak.UserId));
+
+		private static DispatcherBreakData ToBreakData(DispatcherBreak dispatcherBreak, string userName)
 		{
 			return new DispatcherBreakData
 			{
 				DispatcherBreakId = dispatcherBreak.DispatcherBreakId,
 				UserId = dispatcherBreak.UserId,
-				UserName = await NameForAsync(dispatcherBreak.UserId),
+				UserName = userName,
 				ShiftId = dispatcherBreak.ShiftId,
 				ShiftDayId = dispatcherBreak.ShiftDayId,
 				BreakType = dispatcherBreak.BreakType,
@@ -1497,9 +1500,28 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var action = await ActionResultAsync(result);
 			if (result?.Value != null)
-				action.Break = await ToBreakDataAsync(result.Value);
+				action.Break = await CommittedBreakDataAsync(result.Value);
 
 			return action;
+		}
+
+		/// <summary>
+		/// A break an action already stored, as the v4 model: a failed name lookup leaves UserName empty instead of turning the stored
+		/// change into an error the app would repeat (supplemental, like Me).
+		/// </summary>
+		private async Task<DispatcherBreakData> CommittedBreakDataAsync(DispatcherBreak dispatcherBreak)
+		{
+			string userName = null;
+			try
+			{
+				userName = await NameForAsync(dispatcherBreak.UserId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Dispatcher desk: naming the dispatcher of break {dispatcherBreak.DispatcherBreakId} after an action");
+			}
+
+			return ToBreakData(dispatcherBreak, userName);
 		}
 
 		private async Task<DispatcherDeskActionResult> MessageActionResultAsync(string itemId, DispatcherDeskResult<DispatcherConversationMessage> result)

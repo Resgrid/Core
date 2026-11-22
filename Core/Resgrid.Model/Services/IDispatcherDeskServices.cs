@@ -370,6 +370,7 @@ namespace Resgrid.Model.Services
 
 		Task NotifyQueueEscalationAsync(DispatcherQueueItem item, IEnumerable<string> userIds, CancellationToken cancellationToken = default);
 
+		/// <summary>A new message on an item the user holds; sent only while the user may still use Dispatch (checked at send time).</summary>
 		Task NotifyMessageAsync(DispatcherQueueItem item, string userId, string preview, CancellationToken cancellationToken = default);
 
 		/// <summary>
@@ -381,7 +382,8 @@ namespace Resgrid.Model.Services
 		/// <summary>
 		/// Break over: to the dispatcher when <paramref name="supervisorUserIds"/> is null; otherwise to those supervisors only (the
 		/// dispatcher is overdue / was auto-returned), and to nobody when the list is empty. True when it reached the dispatcher (or at
-		/// least one supervisor, or there was nobody to tell); false when nothing could be sent.
+		/// least one supervisor's push was accepted, or there was nobody to tell: no supervisor, or every one on a break that holds desk
+		/// alerts back); false when nothing could be sent.
 		/// </summary>
 		Task<bool> NotifyBreakOverAsync(DispatcherBreak dispatcherBreak, IEnumerable<string> supervisorUserIds, bool autoReturned, CancellationToken cancellationToken = default);
 

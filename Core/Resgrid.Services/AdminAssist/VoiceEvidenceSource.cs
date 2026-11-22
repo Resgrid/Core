@@ -9,10 +9,11 @@ using Resgrid.Model.Services;
 namespace Resgrid.Services.AdminAssist
 {
 	/// <summary>
-	/// Push-to-Talk availability and the voice channel count, read through the same gate and record the v4 Voice API uses
-	/// (GetDepartmentVoiceSettings), so the facts match what the apps and a Resgrid Relay are given. Counts and a boolean only:
-	/// no channel names, tokens or member identifiers leave this adapter. Each fact is read independently, so an unavailable
-	/// billing check does not hide the channel count.
+	/// Push-to-Talk availability (the entitlement gate the v4 Voice API checks before it returns channels) and the configured
+	/// standing-channel count (the stored voice record, read whatever the entitlement says). The count is stored configuration,
+	/// not what the apps are given: the v4 API exposes no channels while <c>pttAvailable</c> is false, and the rules pair the two
+	/// facts (a channel check does not apply without Push-to-Talk). Counts and a boolean only: no channel names, tokens or member
+	/// identifiers leave this adapter. Each fact is read independently, so an unavailable billing check does not hide the count.
 	/// </summary>
 	public sealed class VoiceEvidenceSource(IVoiceService voice) : IAdminAssistEvidenceSource
 	{

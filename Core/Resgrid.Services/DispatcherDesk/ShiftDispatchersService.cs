@@ -374,6 +374,50 @@ namespace Resgrid.Services
 			if (error != DispatcherDeskErrors.None)
 				return DispatcherDeskResult<bool>.Fail(error);
 
+			// The denial and the break cancellations commit together under the department's break lock (the one day plans and break
+			// starts take): a plan cannot read the roster before the denial and insert a break after the cleanup, and a re-assignment
+			// and its breaks land only after this removal, so the cleanup cancels the breaks of the roster entry it denies and no others.
+			var owns = _unitOfWork != null && _unitOfWork.Transaction == null;
+			if (_unitOfWork != null)
+				await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
+
+			try
+			{
+				if (_unitOfWork != null)
+					await _breaksRepository.LockDepartmentForBreakStartAsync(departmentId, cancellationToken);
+
+				var removed = await RemoveFromDayUnderLockAsync(departmentId, day, shiftDayId, userId, byUserId, note, requiredSource, cancellationToken);
+				if (owns)
+				{
+					if (removed.Success)
+						_unitOfWork.CommitChanges();
+					else
+						_unitOfWork.DiscardChanges();
+				}
+
+				if (removed.Success && removed.Value)
+					await PublishDeskChangedAsync(departmentId, userId);
+
+				return removed;
+			}
+			catch (TimeoutException) when (owns || _unitOfWork == null)
+			{
+				if (owns)
+					_unitOfWork.DiscardChanges();
+
+				return DispatcherDeskResult<bool>.Fail(DispatcherDeskErrors.BreakNotStartable, "Breaks are being planned or started on the desk; try again.");
+			}
+			catch
+			{
+				if (owns)
+					_unitOfWork.DiscardChanges();
+				throw;
+			}
+		}
+
+		private async Task<DispatcherDeskResult<bool>> RemoveFromDayUnderLockAsync(int departmentId, ShiftDayTimesRow day, int shiftDayId, string userId,
+			string byUserId, string note, int? requiredSource, CancellationToken cancellationToken)
+		{
 			var now = UtcNow();
 			var row = await GetDayRowAsync(day, userId);
 
@@ -429,7 +473,6 @@ namespace Resgrid.Services
 				await _breaksRepository.TryTransitionAsync(planned, (int)DispatcherBreakStates.Scheduled, cancellationToken);
 			}
 
-			await PublishDeskChangedAsync(departmentId, userId);
 			return DispatcherDeskResult<bool>.Ok(true);
 		}
 

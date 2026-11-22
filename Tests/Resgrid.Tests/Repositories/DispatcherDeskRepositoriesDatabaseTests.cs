@@ -442,6 +442,57 @@ namespace Resgrid.Tests.Repositories
 		}
 
 		[Test]
+		public async Task The_sign_in_write_needs_the_state_session_and_break_it_read()
+		{
+			// PR 589 round 3: a sign-in, a break or a sign-off committed after the sign-in read the row wins over its write.
+			var signedOff = Now.AddHours(-1);
+			var presence = new DispatcherPresence
+			{
+				DispatcherPresenceId = Guid.NewGuid().ToString(), DepartmentId = Dept, UserId = "SignIn-Cat", State = (int)DispatcherPresenceStates.Offline,
+				StateChangedOn = signedOff, LastOfferedOn = signedOff, CallbackNumber = "+15555550100"
+			};
+			(await Presences().TryInsertAsync(presence)).Should().BeTrue();
+			var read = await Presences().GetForUserAsync(Dept, "signin-cat");
+
+			var signIn = await Presences().GetForUserAsync(Dept, "signin-cat");
+			signIn.State = (int)DispatcherPresenceStates.Available;
+			signIn.StateChangedOn = Now;
+			signIn.SignedInOn = Now;
+			signIn.LastSeenOn = Now;
+			signIn.DutyMode = (int)DispatcherDutyModes.Scheduled;
+			signIn.DutyShiftId = 3;
+			signIn.DutyShiftDayId = 100;
+			signIn.DutyEndsOn = Now.AddHours(8);
+			signIn.DeviceKind = "web";
+			signIn.CallbackNumber = "+15555550199";
+
+			var stale = new DispatcherPresence { DispatcherPresenceId = read.DispatcherPresenceId, State = read.State, SignedInOn = Now.AddMinutes(-5) };
+			(await Presences().TrySignInAsync(signIn, stale, cancellationToken: CancellationToken.None)).Should().BeFalse("another session was read");
+
+			(await Presences().TrySignInAsync(signIn, read)).Should().BeTrue("the row is still the signed-off one read");
+			var stored = await Presences().GetForUserAsync(Dept, "SignIn-Cat");
+			stored.State.Should().Be((int)DispatcherPresenceStates.Available);
+			stored.SignedInOn.Should().BeCloseTo(Now, TimeSpan.FromMilliseconds(1));
+			stored.DutyShiftDayId.Should().Be(100);
+			stored.DutyEndsOn.Should().BeCloseTo(Now.AddHours(8), TimeSpan.FromMilliseconds(1));
+			stored.DeviceKind.Should().Be("web");
+			stored.CallbackNumber.Should().Be("+15555550199");
+			stored.LastOfferedOn.Should().BeCloseTo(signedOff, TimeSpan.FromMilliseconds(1), "the sign-in writes only its own columns");
+
+			(await Presences().TrySignInAsync(signIn, read)).Should().BeFalse("the row read was signed off; it is signed in now");
+
+			// On break: the refresh is conditional on the break read (case-insensitive id).
+			stored.State = (int)DispatcherPresenceStates.OnBreak;
+			stored.ActiveBreakId = "Break-Cat";
+			(await Presences().TrySignInAsync(stored, await Presences().GetForUserAsync(Dept, "signin-cat"))).Should().BeTrue();
+			var onBreak = await Presences().GetForUserAsync(Dept, "signin-cat");
+			var otherBreak = new DispatcherPresence { DispatcherPresenceId = onBreak.DispatcherPresenceId, State = onBreak.State, SignedInOn = onBreak.SignedInOn, ActiveBreakId = "Break-Other" };
+			(await Presences().TrySignInAsync(onBreak, otherBreak)).Should().BeFalse("another break was read");
+			var sameBreak = new DispatcherPresence { DispatcherPresenceId = onBreak.DispatcherPresenceId, State = onBreak.State, SignedInOn = onBreak.SignedInOn, ActiveBreakId = "break-cat" };
+			(await Presences().TrySignInAsync(onBreak, sameBreak)).Should().BeTrue();
+		}
+
+		[Test]
 		public async Task A_withdrawal_write_needs_the_source_it_checked()
 		{
 			var row = new ShiftDispatcher
@@ -570,6 +621,49 @@ namespace Resgrid.Tests.Repositories
 			(await Breaks().GetOverdueScheduledAsync(Now.AddHours(-25), 50)).Should().Contain(x => x.DispatcherBreakId == ancient.DispatcherBreakId,
 				"a break the timer window passed by is still found for the catch-up");
 			(await Breaks().GetOverdueScheduledAsync(Now.AddHours(-25), 1)).Should().HaveCount(1);
+		}
+
+		[Test]
+		public async Task A_break_start_writes_only_the_start_columns_and_needs_the_read_plan()
+		{
+			// PR 589 round 3: a note or shift-day edit saved after the start read the plan stands; a moved plan refuses the start.
+			var planned = new DispatcherBreak
+			{
+				DispatcherBreakId = Guid.NewGuid().ToString(), DepartmentId = Dept, UserId = "Start-Break", BreakType = (int)DispatcherBreakTypes.Meal,
+				State = (int)DispatcherBreakStates.Scheduled, ScheduledStartOn = Now.AddMinutes(5).AddTicks(1234560), DurationMinutes = 15, Note = "Old note",
+				ShiftId = 3, ShiftDayId = 100, CreatedOn = Now, ReminderSentOn = Now
+			};
+			await Breaks().InsertAsync(planned, CancellationToken.None, true);
+			var read = await Breaks().GetByIdAsync(planned.DispatcherBreakId);
+			var observed = new DispatcherBreak { DispatcherBreakId = read.DispatcherBreakId, State = read.State, DurationMinutes = read.DurationMinutes, ScheduledStartOn = read.ScheduledStartOn };
+
+			// A supervisor's edit lands after the read (plan start and length unchanged).
+			var edited = await Breaks().GetByIdAsync(planned.DispatcherBreakId);
+			edited.Note = "New note";
+			edited.ShiftDayId = 101;
+			(await Breaks().TryUpdateObservedAsync(edited, observed, false)).Should().BeTrue();
+
+			read.State = (int)DispatcherBreakStates.Active;
+			read.DurationMinutes = 20;
+			read.StartedOn = Now;
+			read.ExpectedReturnOn = Now.AddMinutes(20);
+			read.UpdatedByUserId = "start-break";
+			read.UpdatedOn = Now;
+			var moved = new DispatcherBreak { DispatcherBreakId = read.DispatcherBreakId, State = observed.State, DurationMinutes = 30, ScheduledStartOn = observed.ScheduledStartOn };
+			(await Breaks().TryStartObservedAsync(read, moved)).Should().BeFalse("the plan read was a 30-minute break");
+
+			(await Breaks().TryStartObservedAsync(read, observed)).Should().BeTrue();
+			var started = await Breaks().GetByIdAsync(planned.DispatcherBreakId);
+			started.State.Should().Be((int)DispatcherBreakStates.Active);
+			started.DurationMinutes.Should().Be(20);
+			started.StartedOn.Should().BeCloseTo(Now, TimeSpan.FromMilliseconds(1));
+			started.ExpectedReturnOn.Should().BeCloseTo(Now.AddMinutes(20), TimeSpan.FromMilliseconds(1));
+			started.Note.Should().Be("New note", "the edit saved after the read stands");
+			started.ShiftDayId.Should().Be(101);
+			started.BreakType.Should().Be((int)DispatcherBreakTypes.Meal);
+			started.ReminderSentOn.Should().BeCloseTo(Now, TimeSpan.FromMilliseconds(1), "alert stamps are untouched");
+
+			(await Breaks().TryStartObservedAsync(read, observed)).Should().BeFalse("already started");
 		}
 
 		[Test]

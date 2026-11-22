@@ -437,6 +437,9 @@ namespace Resgrid.Web.Services.Controllers
 									if (!onDesk)
 										return await DeskHandOffOwedAsync(receipt, aiQueued);
 
+									if (enrich && !aiQueued)
+										return await AiEnrichmentOwedAsync(receipt, pendingSteps);
+
 									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 									return Ok(savedCall);
 								}
@@ -678,8 +681,9 @@ namespace Resgrid.Web.Services.Controllers
 									if (pendingSteps.HasFlag(InboundEmailPendingSteps.CallBroadcast))
 										await QueueCallBroadcastAsync(savedCall, cancellationToken, false);
 
-									if (pendingSteps.HasFlag(InboundEmailPendingSteps.AiEnrichment))
-										await QueueAiDispatchEnrichmentAsync(savedCall, 2, message.FromFull?.Email, cancellationToken);
+									if (pendingSteps.HasFlag(InboundEmailPendingSteps.AiEnrichment) &&
+										!await QueueAiDispatchEnrichmentAsync(savedCall, 2, message.FromFull?.Email, cancellationToken))
+										return await AiEnrichmentOwedAsync(receipt, pendingSteps);
 
 									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 									return Ok(savedCall);
@@ -850,8 +854,26 @@ namespace Resgrid.Web.Services.Controllers
 			if (!onDesk)
 				return await DeskHandOffOwedAsync(receipt, aiQueued);
 
+			if (enrich && !aiQueued)
+				return await AiEnrichmentOwedAsync(receipt, InboundEmailPendingSteps.CallBroadcast | InboundEmailPendingSteps.CallAddedEvent);
+
 			await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 			return Ok(call);
+		}
+
+		/// <summary>
+		/// The call is saved and its other steps (<paramref name="done"/>: the page or the desk entry) went out, but the AI enrichment job
+		/// could not be queued: only that step stays owed, and the claim goes back with a 400 so Postmark redelivers and the resume queues
+		/// the job (finding the saved call, so no second call is made and nobody is paged again).
+		/// </summary>
+		private async Task<ActionResult> AiEnrichmentOwedAsync(InboundEmailReceiptClaim receipt, InboundEmailPendingSteps done)
+		{
+			done &= ~InboundEmailPendingSteps.AiEnrichment;
+			if (done != InboundEmailPendingSteps.None)
+				await _inboundEmailReceiptsService.CompleteStepAsync(receipt, done);
+
+			await _inboundEmailReceiptsService.ReleaseAsync(receipt);
+			return BadRequest();
 		}
 
 		/// <summary>

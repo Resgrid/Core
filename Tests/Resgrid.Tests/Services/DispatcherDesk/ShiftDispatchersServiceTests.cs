@@ -72,6 +72,7 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 
 			var breaksRepo = new Mock<IDispatcherBreaksRepository>();
 			breaksRepo.Setup(x => x.GetForShiftDayAsync(100)).ReturnsAsync(() => _breaks.ToList());
+			_breaksRepo = breaksRepo;
 			breaksRepo.Setup(x => x.TryTransitionAsync(It.IsAny<DispatcherBreak>(), It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
 			var shifts = new Mock<IShiftsService>();
@@ -94,6 +95,7 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 		}
 
 		private Mock<IShiftDispatchersRepository> _rowsRepo;
+		private Mock<IDispatcherBreaksRepository> _breaksRepo;
 		private Mock<IEventAggregator> _events;
 		private Mock<IUnitOfWork> _unitOfWork;
 
@@ -268,6 +270,52 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 
 			result.Error.Should().Be(DispatcherDeskErrors.NotPermitted);
 			_breaks.Single().State.Should().Be((int)DispatcherBreakStates.Scheduled, "no break is cancelled for a withdrawal that did not happen");
+		}
+
+		[Test]
+		public async Task A_removal_commits_its_denial_and_break_cleanup_together_under_the_department_break_lock()
+		{
+			Standing("bob");
+			_breaks.Add(new DispatcherBreak { DispatcherBreakId = "b1", UserId = "bob", ShiftDayId = 100, State = (int)DispatcherBreakStates.Scheduled });
+			var order = new List<string>();
+			_breaksRepo.Setup(x => x.LockDepartmentForBreakStartAsync(Dept, It.IsAny<CancellationToken>())).Callback(() => order.Add("lock")).Returns(Task.CompletedTask);
+			_breaksRepo.Setup(x => x.TryTransitionAsync(It.IsAny<DispatcherBreak>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+				.Callback(() => order.Add("cancel")).ReturnsAsync(true);
+			_unitOfWork.Setup(x => x.CommitChanges()).Callback(() => order.Add("commit"));
+			_events.Setup(x => x.SendMessageAsync(It.IsAny<DispatcherDeskUpdatedEvent>())).Callback(() => order.Add("announce")).Returns(Task.CompletedTask);
+
+			(await _service.RemoveFromDayAsync(Dept, 100, "bob", "boss", "Sick")).Value.Should().BeTrue();
+
+			order.Should().Equal(new[] { "lock", "cancel", "commit", "announce" },
+				"a day plan waiting on the same lock reads the roster only after the denial and its cleanup committed");
+			_unitOfWork.Verify(x => x.DiscardChanges(), Times.Never);
+		}
+
+		[Test]
+		public async Task A_refused_withdrawal_rolls_back_and_announces_nothing()
+		{
+			(await _service.SignupForDayAsync(Dept, 100, "ann")).Success.Should().BeTrue();
+			_events.Invocations.Clear();
+			_rowsRepo.Setup(x => x.TryUpdateReviewWithSourceAsync(It.IsAny<ShiftDispatcher>(), It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+
+			(await _service.RemoveFromDayAsync(Dept, 100, "ann", "ann", null, (int)ShiftDispatcherSources.Signup)).Error.Should().Be(DispatcherDeskErrors.NotPermitted);
+
+			_unitOfWork.Verify(x => x.DiscardChanges(), Times.Once);
+			_unitOfWork.Verify(x => x.CommitChanges(), Times.Never);
+			_events.Verify(x => x.SendMessageAsync(It.IsAny<DispatcherDeskUpdatedEvent>()), Times.Never);
+		}
+
+		[Test]
+		public async Task A_removal_that_cannot_get_the_break_lock_writes_nothing_and_asks_to_try_again()
+		{
+			Standing("bob");
+			_breaksRepo.Setup(x => x.LockDepartmentForBreakStartAsync(Dept, It.IsAny<CancellationToken>())).ThrowsAsync(new TimeoutException("busy"));
+
+			var result = await _service.RemoveFromDayAsync(Dept, 100, "bob", "boss", "Sick");
+
+			result.Error.Should().Be(DispatcherDeskErrors.BreakNotStartable);
+			_rows.Should().NotContain(x => x.ShiftDayId == 100, "no denied day row is written");
+			_unitOfWork.Verify(x => x.DiscardChanges(), Times.Once);
 		}
 
 		[Test]

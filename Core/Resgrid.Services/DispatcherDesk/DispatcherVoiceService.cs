@@ -162,29 +162,55 @@ namespace Resgrid.Services
 			return DispatcherDeskResult<DispatcherQueueItem>.Ok(item);
 		}
 
+		/// <summary>Reads and fenced releases tried for the work a failed dial took before it is left with the dispatcher.</summary>
+		public const int FailedDialReleaseAttempts = 3;
+
+		/// <remarks>
+		/// Another dial of the same dispatcher (a second tap, another device) may have placed its leg on the item this attempt took
+		/// meanwhile: the release would hand that live call's work to someone else. Every placed leg records a VoiceConnecting for its
+		/// dispatcher, so one since this attempt started means the item is in use; it stays theirs. The row is read before its history
+		/// and the release is fenced on that row's Version, so a VoiceConnecting recorded after the read (it touches the item) makes the
+		/// release fail and the next pass sees it. A failed read or write is tried again, so a blip does not leave the item held by a
+		/// dispatcher with no leg (they can still release it from the desk when every pass fails).
+		/// </remarks>
 		private async Task ReleaseAfterFailedDialAsync(int departmentId, string itemId, string userId, DateTime attemptStartedOn)
 		{
-			try
+			for (var attempt = 0; attempt < FailedDialReleaseAttempts; attempt++)
 			{
-				// Another dial of the same dispatcher (a second tap, another device) may have placed its leg on the item this attempt
-				// took meanwhile: the release would hand that live call's work to someone else. Every placed leg records a
-				// VoiceConnecting for its dispatcher, so one since this attempt started means the item is in use; it stays theirs.
-				var detail = await _routingService.GetItemDetailAsync(departmentId, itemId);
-				if (DialPlacedSince(detail?.Events, userId, attemptStartedOn))
+				try
 				{
-					Logging.LogInfo($"[Dispatcher desk] Item {itemId} kept after a failed dial: another ring of the same dispatcher is placed.");
-					return;
-				}
+					var detail = await _routingService.GetItemDetailAsync(departmentId, itemId);
+					var row = detail?.Item;
+					if (row == null || !row.IsOpen() || !string.Equals(row.AssignedUserId, userId, StringComparison.OrdinalIgnoreCase) ||
+						(row.State != (int)DispatcherQueueItemStates.Accepted && row.State != (int)DispatcherQueueItemStates.Offered))
+						return;
 
-				// The dispatcher's request may be gone; the item must not stay held either way.
-				var released = await _routingService.ReleaseAsync(departmentId, itemId, userId, CancellationToken.None);
-				if (released == null || !released.Success)
-					Logging.LogInfo($"[Dispatcher desk] Item {itemId} could not be returned after a failed dial ({released?.Error}).");
+					if (DialPlacedSince(detail.Events, userId, attemptStartedOn))
+					{
+						Logging.LogInfo($"[Dispatcher desk] Item {itemId} kept after a failed dial: another ring of the same dispatcher is placed.");
+						return;
+					}
+
+					// The dispatcher's request may be gone; the item must not stay held either way.
+					var released = await _routingService.ReleaseObservedAsync(row, CancellationToken.None);
+					if (released != null && released.Success)
+						return;
+
+					if (released?.Error != DispatcherDeskErrors.ItemNotAvailable)
+					{
+						Logging.LogInfo($"[Dispatcher desk] Item {itemId} could not be returned after a failed dial ({released?.Error}).");
+						return;
+					}
+
+					// The item changed after the read: judged again on the row as it is now.
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Dispatcher desk: item {itemId} could not be returned after a failed dial (attempt {attempt + 1}).");
+				}
 			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex, $"Dispatcher desk: item {itemId} could not be returned after a failed dial.");
-			}
+
+			Logging.LogError($"[Dispatcher desk] Item {itemId} is still held by its dispatcher after a failed dial; it was not returned.");
 		}
 
 		/// <summary>A leg of <paramref name="userId"/> was placed on the item at or after <paramref name="sinceUtc"/> (its VoiceConnecting entry).</summary>

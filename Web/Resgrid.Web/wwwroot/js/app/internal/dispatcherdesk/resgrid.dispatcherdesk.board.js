@@ -10,6 +10,7 @@ var resgrid;
             var data = null;
             var skew = 0;
             var loading = false;
+            var reloadQueued = false;
             var pending = null;
             // The alert shows either a failed board load or an action's answer: a good load clears only its own failure.
             var alertIsLoadFailure = false;
@@ -195,11 +196,15 @@ var resgrid;
             }
 
             function load() {
+                // One GET at a time; a refresh asked for meanwhile (an action's result, a realtime change) runs once it finishes, so the
+                // board never keeps what an earlier GET read before the change.
                 if (loading) {
+                    reloadQueued = true;
                     return;
                 }
 
                 loading = true;
+                reloadQueued = false;
                 $.ajax({ url: options.boardUrl, type: 'GET', dataType: 'json', cache: false }).done(function (result) {
                     data = result;
                     skew = (result && result.ServerNowMs ? result.ServerNowMs : Date.now()) - Date.now();
@@ -213,6 +218,9 @@ var resgrid;
                     alertIsLoadFailure = true;
                 }).always(function () {
                     loading = false;
+                    if (reloadQueued) {
+                        load();
+                    }
                 });
             }
 

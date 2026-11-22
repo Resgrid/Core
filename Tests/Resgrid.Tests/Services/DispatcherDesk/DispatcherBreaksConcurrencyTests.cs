@@ -342,9 +342,10 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			h.Held("i-1", "ann");
 			h.Held("i-2", "ann");
 			var failNext = true;
-			h.Routing.Setup(x => x.ReleaseAsync(Dept, It.IsAny<string>(), "ann", It.IsAny<CancellationToken>()))
-				.ReturnsAsync((int d, string id, string u, CancellationToken c) =>
+			h.Routing.Setup(x => x.ReleaseObservedAsync(It.IsAny<DispatcherQueueItem>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((DispatcherQueueItem observed, CancellationToken c) =>
 				{
+					var id = observed.DispatcherQueueItemId;
 					if (id == "i-2" && failNext)
 					{
 						failNext = false;
@@ -364,7 +365,10 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			(await h.Breaks.ProcessBreakTimersAsync(h.Now.AddMinutes(1))).Should().Be(1);
 
 			h.Store.Items.Should().OnlyContain(x => x.State == (int)DispatcherQueueItemStates.Queued);
-			h.Routing.Verify(x => x.ReleaseAsync(Dept, "i-2", "ann", It.IsAny<CancellationToken>()), Times.Exactly(2));
+			h.Routing.Verify(x => x.ReleaseObservedAsync(It.Is<DispatcherQueueItem>(i => i.DispatcherQueueItemId == "i-2" && i.AssignedUserId == "ann"),
+				It.IsAny<CancellationToken>()), Times.Exactly(2));
+			h.Routing.Verify(x => x.ReleaseAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never,
+				"the hand-back releases only the assignment it read (version-fenced)");
 		}
 
 		[Test]
@@ -597,7 +601,7 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			h.OnDuty("ann");
 			h.SignedIn("ann");
 			h.Held("i-1", "ann");
-			h.Routing.Setup(x => x.ReleaseAsync(Dept, "i-1", "ann", It.IsAny<CancellationToken>()))
+			h.Routing.Setup(x => x.ReleaseObservedAsync(It.Is<DispatcherQueueItem>(i => i.DispatcherQueueItemId == "i-1"), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(DispatcherDeskResult<DispatcherQueueItem>.Fail(DispatcherDeskErrors.ItemNotAvailable));
 
 			var started = await h.Breaks.StartBreakAsync(Dept, "ann", null, null, 15, true, "ann");
@@ -613,7 +617,7 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			h.OnDuty("ann");
 			h.SignedIn("ann");
 			h.Held("i-1", "ann");
-			h.Routing.Setup(x => x.ReleaseAsync(Dept, "i-1", "ann", It.IsAny<CancellationToken>()))
+			h.Routing.Setup(x => x.ReleaseObservedAsync(It.Is<DispatcherQueueItem>(i => i.DispatcherQueueItemId == "i-1"), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(() =>
 				{
 					// A supervisor moved it to bob between the hand-back's read and its write.
@@ -625,6 +629,167 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			var started = await h.Breaks.StartBreakAsync(Dept, "ann", null, null, 15, true, "ann");
 
 			started.Warnings.Should().Contain(x => x.Kind == DispatcherDeskWarningKinds.WorkReturnedToQueue, "it is no longer work she holds");
+		}
+
+		// ------------------------------------------------------------------ PR 589 round 3
+
+		private static void OneBreakPlan(Harness h) =>
+			h.Settings[3].SetBreakPlan(new[] { new DispatcherBreakPlanEntry { BreakType = (int)DispatcherBreakTypes.Break, DurationMinutes = 15 } });
+
+		[Test]
+		public async Task A_dispatcher_taken_off_the_day_while_the_plan_waited_for_the_lock_is_planned_no_break()
+		{
+			var h = new Harness(withUnitOfWork: true);
+			h.OnDuty("ann");
+			h.OnDuty("bob");
+			OneBreakPlan(h);
+
+			// Bob's removal (denial + break cleanup, under the same lock) commits while the planner waits for the lock.
+			h.Store.WhileWaitingForBreakLock = _ => h.Duty.RemoveAll(x => x.UserId == "bob");
+
+			var result = await h.Breaks.PlanBreaksAsync(Dept, 100, false, "sup");
+
+			result.Success.Should().BeTrue();
+			result.Value.Should().NotBeEmpty().And.OnlyContain(x => x.UserId == "ann");
+			h.Store.Breaks.Should().NotContain(x => x.UserId == "bob", "the roster is read under the lock, after the removal committed");
+		}
+
+		[Test]
+		public async Task A_break_that_fell_due_while_the_re_plan_waited_for_the_lock_is_not_replaced()
+		{
+			var h = new Harness(withUnitOfWork: true);
+			h.OnDuty("ann");
+			OneBreakPlan(h);
+			var soon = h.Planned("ann", h.Now.AddMinutes(5));
+
+			h.Store.WhileWaitingForBreakLock = _ => h.Now = h.Now.AddMinutes(10);
+
+			var result = await h.Breaks.PlanBreaksAsync(Dept, 100, true, "sup");
+
+			result.Success.Should().BeTrue();
+			h.Stored(soon.DispatcherBreakId).State.Should().Be((int)DispatcherBreakStates.Scheduled, "it was due by the time the re-plan held the lock");
+		}
+
+		[Test]
+		public async Task A_re_plan_that_fails_inside_a_callers_transaction_dooms_that_transaction()
+		{
+			var h = new Harness(withUnitOfWork: true);
+			h.UnitOfWork.Setup(x => x.Transaction).Returns(new Mock<DbTransaction>().Object);
+			h.OnDuty("ann");
+			h.OnDuty("bob");
+			OneBreakPlan(h);
+			h.Planned("ann", h.Now.AddHours(2));
+			var bobPlanned = h.Planned("bob", h.Now.AddHours(3));
+
+			// Ann's break is cancelled first; bob's starts before the re-plan reaches it.
+			h.BeforeNextWrite(_ =>
+			{
+				var stored = h.Stored(bobPlanned.DispatcherBreakId);
+				stored.State = (int)DispatcherBreakStates.Active;
+				stored.StartedOn = h.Now;
+			});
+
+			Func<Task> plan = () => h.Breaks.PlanBreaksAsync(Dept, 100, true, "sup");
+
+			await plan.Should().ThrowAsync<InvalidOperationException>("ann's cancellation is already in the caller's transaction and cannot be undone here");
+			h.UnitOfWork.Verify(x => x.CommitChanges(), Times.Never);
+			h.UnitOfWork.Verify(x => x.DiscardChanges(), Times.Never, "the caller owns the transaction and rolls it back");
+		}
+
+		[Test]
+		public async Task Starting_a_planned_break_keeps_an_edit_saved_after_the_start_read_it()
+		{
+			var h = new Harness();
+			h.OnDuty("ann");
+			h.SignedIn("ann");
+			var planned = h.Planned("ann", h.Now, 15);
+
+			// A supervisor edits the note and the shift day (not the start or length) between the start's read and its write.
+			h.BeforeNextWrite(_ =>
+			{
+				var stored = h.Stored(planned.DispatcherBreakId);
+				stored.Note = "Cover the radio first";
+				stored.ShiftDayId = 101;
+			});
+
+			var started = await h.Breaks.StartBreakAsync(Dept, "ann", planned.DispatcherBreakId, null, null, false, "ann");
+
+			started.Success.Should().BeTrue();
+			var after = h.Stored(planned.DispatcherBreakId);
+			after.State.Should().Be((int)DispatcherBreakStates.Active);
+			after.Note.Should().Be("Cover the radio first", "the start writes only its own columns");
+			after.ShiftDayId.Should().Be(101);
+			started.Value.Note.Should().Be("Cover the radio first", "the break is answered as stored");
+		}
+
+		[Test]
+		public async Task A_break_ended_across_a_sign_in_refresh_still_brings_the_dispatcher_back()
+		{
+			var h = new Harness();
+			var presence = h.SignedIn("ann", DispatcherPresenceStates.OnBreak);
+			var active = h.Active("ann", h.Now.AddMinutes(-10));
+			presence.ActiveBreakId = active.DispatcherBreakId;
+
+			// A sign-in refresh on the same break (new session time) commits between the end's read and its presence write.
+			var refreshed = false;
+			h.Store.BeforePresenceWrite = _ =>
+			{
+				if (refreshed)
+					return;
+
+				refreshed = true;
+				h.Store.Presences.Single(x => x.UserId == "ann").SignedInOn = h.Now.AddSeconds(5);
+			};
+
+			var ended = await h.Breaks.EndBreakAsync(Dept, "ann", "ann", DispatcherBreakEndReasons.Returned);
+
+			ended.Success.Should().BeTrue();
+			var after = h.Store.Presences.Single(x => x.UserId == "ann");
+			after.State.Should().Be((int)DispatcherPresenceStates.Available, "the refreshed session still pointed at the break that ended");
+			after.ActiveBreakId.Should().BeNull();
+		}
+
+		[Test]
+		public async Task A_break_ended_after_the_dispatcher_went_on_another_leaves_the_new_break_alone()
+		{
+			var h = new Harness();
+			var presence = h.SignedIn("ann", DispatcherPresenceStates.OnBreak);
+			var active = h.Active("ann", h.Now.AddMinutes(-10));
+			presence.ActiveBreakId = active.DispatcherBreakId;
+
+			h.Store.BeforePresenceWrite = _ =>
+			{
+				h.Store.BeforePresenceWrite = null;
+				var stored = h.Store.Presences.Single(x => x.UserId == "ann");
+				stored.SignedInOn = h.Now.AddSeconds(5);
+				stored.ActiveBreakId = "b-other";
+			};
+
+			(await h.Breaks.EndBreakAsync(Dept, "ann", "ann", DispatcherBreakEndReasons.Returned)).Success.Should().BeTrue();
+
+			var after = h.Store.Presences.Single(x => x.UserId == "ann");
+			after.State.Should().Be((int)DispatcherPresenceStates.OnBreak);
+			after.ActiveBreakId.Should().Be("b-other");
+		}
+
+		[Test]
+		public async Task An_undelivered_alert_whose_claim_give_back_fails_once_is_still_sent_again()
+		{
+			var h = new Harness();
+			h.SignedIn("ann");
+			var planned = h.Planned("ann", h.Now.AddMinutes(10), shiftId: null);
+			h.Delivers = false;
+			h.Store.FailingAlertClears = 1;
+
+			await h.Breaks.ProcessBreakTimersAsync(h.Now);
+
+			h.Stored(planned.DispatcherBreakId).ReminderSentOn.Should().BeNull("the give-back is tried again after its write failed");
+
+			h.Delivers = true;
+			await h.Breaks.ProcessBreakTimersAsync(h.Now.AddMinutes(1));
+
+			h.Pushes.Count(x => x.Kind == "reminder").Should().Be(2);
+			h.Stored(planned.DispatcherBreakId).ReminderSentOn.Should().Be(h.Now.AddMinutes(1));
 		}
 	}
 }

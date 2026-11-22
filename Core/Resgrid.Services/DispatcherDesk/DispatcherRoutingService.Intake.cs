@@ -148,6 +148,25 @@ namespace Resgrid.Services
 				return;
 
 			await AddEventAsync(item, DispatcherQueueEventTypes.Accepted, userId, ConnectedFromCallDetail, now, CancellationToken.None);
+
+			// The holder check above and this write are not one step: intake can release the thread in between, and its release callback
+			// (run after its commit) then found the item still queued and left it. Read intake again now the accept is stored: when it no
+			// longer has this dispatcher, the accept goes back exactly as written (version-checked, so a release callback or a newer
+			// connect that already moved the item wins), and a release that commits after this read finds the accept and returns it itself.
+			if (!await StillConnectedAsync(conversation, userId) &&
+				await ReturnToQueueAsync(item, userId, addToDeclined: false, UtcNow(), CancellationToken.None))
+			{
+				await AddEventAsync(item, DispatcherQueueEventTypes.Released, userId, "Intake released the text thread before the desk recorded the connect",
+					item.LastActivityOn, CancellationToken.None);
+				await AfterReturnAsync(item, item.LastActivityOn, CancellationToken.None);
+
+				if (!string.IsNullOrWhiteSpace(previous) && !SameUser(previous, userId))
+					await _notifier.PublishDeskChangedAsync(item.DepartmentId, previous);
+
+				await _notifier.PublishDeskChangedAsync(item.DepartmentId, userId);
+				return;
+			}
+
 			await PublishAsync(item);
 
 			if (!string.IsNullOrWhiteSpace(previous) && !SameUser(previous, userId))

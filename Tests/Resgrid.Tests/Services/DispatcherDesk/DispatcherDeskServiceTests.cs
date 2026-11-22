@@ -47,6 +47,8 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 			public int FailCallSaves;
 			/// <summary>How many of the next call saves commit the call and then throw (a failure in the save's follow-up work).</summary>
 			public int FailAfterCallSaves;
+			/// <summary>Runs as a call save starts (another pass acting while this one saves).</summary>
+			public Action<Call> BeforeCallSave;
 			/// <summary>The routing service's unit of work (a transaction only in name: the in-memory store does not roll back).</summary>
 			public readonly Mock<IUnitOfWork> UnitOfWork = new Mock<IUnitOfWork>();
 			private int _nextCallId = 5000;
@@ -102,6 +104,7 @@ namespace Resgrid.Tests.Services.DispatcherDesk
 					Calls.Values.Where(x => x.State == (int)CallStates.Active && x.DispatchOn.HasValue && x.HasBeenDispatched != true).ToList());
 				calls.Setup(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>())).ReturnsAsync((Call c, CancellationToken t) =>
 				{
+					BeforeCallSave?.Invoke(c);
 					if (FailCallSaves > 0)
 					{
 						FailCallSaves--;

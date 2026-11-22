@@ -311,6 +311,53 @@ NARR: SMOKE SHOWING";
 		}
 
 		[Test]
+		public async Task A_failed_ai_enqueue_on_a_call_put_on_the_desk_keeps_only_that_step_owed_and_the_retry_queues_it()
+		{
+			_desk.EmailCallMode = (int)DispatcherEmailCallModes.EnhancedAi;
+			var id = Guid.NewGuid().ToString();
+			var aiAttempts = 0;
+			_queue.Setup(q => q.EnqueueAiDispatchTriageAsync(It.IsAny<AiDispatchQueueItem>(), It.IsAny<CancellationToken>()))
+				.Returns((AiDispatchQueueItem item, CancellationToken ct) => ++aiAttempts == 1
+					? throw new TimeoutException("bus unavailable")
+					: Task.FromResult(true));
+
+			(await ReceiveAsync(Email(id))).Should().Be(400, "Postmark redelivers so the AI job is not lost");
+			_receipts.Find(id).State.Should().Be((int)InboundEmailReceiptStates.Saved);
+			((InboundEmailPendingSteps)_receipts.Find(id).PendingSteps).Should().Be(InboundEmailPendingSteps.AiEnrichment, "the desk entry went out");
+
+			(await ReceiveAsync(Email(id))).Should().Be(200);
+
+			_saved.Should().ContainSingle("the retry finished the first call");
+			aiAttempts.Should().Be(2, "the redelivery queued the AI job the first delivery could not");
+			_routing.Verify(r => r.EnqueueAsync(It.Is<DispatcherEnqueueRequest>(q => q.CallId == _saved[0].CallId), It.IsAny<CancellationToken>()), Times.Once(),
+				"the desk entry is not made again");
+			_receipts.Find(id).State.Should().Be((int)InboundEmailReceiptStates.Completed);
+		}
+
+		[Test]
+		public async Task A_failed_ai_enqueue_on_a_dispatched_ai_format_call_is_retried_without_paging_again()
+		{
+			_formatType = (int)CallEmailTypes.AI;
+			var id = Guid.NewGuid().ToString();
+			var aiAttempts = 0;
+			_queue.Setup(q => q.EnqueueAiDispatchTriageAsync(It.IsAny<AiDispatchQueueItem>(), It.IsAny<CancellationToken>()))
+				.Returns((AiDispatchQueueItem item, CancellationToken ct) => ++aiAttempts == 1
+					? throw new TimeoutException("bus unavailable")
+					: Task.FromResult(true));
+
+			(await ReceiveAsync(Email(id))).Should().Be(400);
+			_broadcasts.Should().Be(1);
+			((InboundEmailPendingSteps)_receipts.Find(id).PendingSteps).Should().Be(InboundEmailPendingSteps.AiEnrichment, "the page went out");
+
+			(await ReceiveAsync(Email(id))).Should().Be(200);
+
+			_saved.Should().ContainSingle();
+			_broadcasts.Should().Be(1, "the call is paged once");
+			aiAttempts.Should().Be(2);
+			_receipts.Find(id).State.Should().Be((int)InboundEmailReceiptStates.Completed);
+		}
+
+		[Test]
 		public async Task Only_a_held_call_is_queued_for_ai_as_held_for_a_dispatcher()
 		{
 			_desk.EmailCallMode = (int)DispatcherEmailCallModes.EnhancedAi;

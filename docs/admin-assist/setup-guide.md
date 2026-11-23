@@ -41,7 +41,7 @@ Setup Report replaces the old numerical setup score. It is administrative config
 | Push-to-Talk | Voice channels in supported Resgrid clients | Review seats, devices and channel membership. Phone voice alerts and radio requirements are separate. |
 | Advanced Data Protection | Additional protection and scoped disclosure for supported sensitive content | Purchase and enrollment are separate. Review MFA, recovery, supported fields and effects on search, exports and integrations. |
 | Readiness Pro | Maintenance, work orders, preventive and corrective work, approvals and safety holds | Checklists remain available without the add-on. Maintenance also needs its module and permissions. |
-| Business Operations | Invoicing, rates, contracts, bids, reimbursement and workforce costing | Certifications and Deployment Finance remain available without the add-on. Pay-data reporting also requires enabled ADP; payment providers need separate setup. |
+| Business Ops | Invoicing, rates, contracts, bids, reimbursement and labor costing | Certifications and Deployment Finance remain available without the add-on. Pay-data reporting also requires enabled ADP; payment providers need separate setup. |
 | Enhanced AI | Planned summaries, drafts, knowledge assistance and optional conversation | Availability depends on release and rollout. Deterministic setup and Admin Assist do not require it. |
 
 Availability can depend on subscription, rollout, module settings, permissions, protection enrollment and source availability. An unknown subscription is not confirmation of a free or paid plan. Only the managing member can perform subscription changes through the billing screen. Feature interest does not start a trial or purchase.

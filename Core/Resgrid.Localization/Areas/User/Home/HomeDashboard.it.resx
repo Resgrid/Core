@@ -138,7 +138,7 @@
     <value>Registri</value>
   </data>
   <data name="Category.Business" xml:space="preserve">
-    <value>Personale e gestione</value>
+    <value>Business Ops</value>
   </data>
   <data name="Category.IncidentBackOffice" xml:space="preserve">
     <value>Incident Back Office</value>

@@ -138,7 +138,7 @@
     <value>Akten</value>
   </data>
   <data name="Category.Business" xml:space="preserve">
-    <value>Personal &amp; Betriebsverwaltung</value>
+    <value>Business Ops</value>
   </data>
   <data name="Category.IncidentBackOffice" xml:space="preserve">
     <value>Incident Back Office</value>

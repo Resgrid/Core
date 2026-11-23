@@ -25,7 +25,7 @@
     <value>Automatización e integraciones</value>
   </data>
   <data xml:space="preserve" name="Area.business">
-    <value>Workforce and business operations</value>
+    <value>Business Ops</value>
   </data>
   <data xml:space="preserve" name="Area.calls">
     <value>Despacho y llamadas</value>
@@ -664,7 +664,7 @@
     <value>Enhanced AI</value>
   </data>
   <data xml:space="preserve" name="Feature.addon-business">
-    <value>Business Operations</value>
+    <value>Business Ops</value>
   </data>
   <data xml:space="preserve" name="Feature.addon-ptt">
     <value>Push-to-Talk</value>
@@ -1105,7 +1105,7 @@
     <value>Flujos de trabajo</value>
   </data>
   <data xml:space="preserve" name="Feature.workforce">
-    <value>Plantilla</value>
+    <value>Mano de obra y costos</value>
   </data>
   <data xml:space="preserve" name="Feature.workforce-annual-facts">
     <value>Datos salariales anuales</value>
@@ -1156,7 +1156,7 @@
     <value>Asistencia de IA más allá de la asignación gratuita de Admin Assist.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.addon-business">
-    <value>El complemento Workforce and Business Operations: facturación, pagos, contratos, propuestas, reembolso de MARS y costeo de personal.</value>
+    <value>El complemento Business Ops: facturación, pagos, contratos, propuestas, reembolso de MARS y costeo de personal.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.addon-ptt">
     <value>El complemento Push-to-Talk: canales de voz en las aplicaciones de Resgrid.</value>
@@ -2872,7 +2872,7 @@
     <value>Disponibilidad de IA</value>
   </data>
   <data xml:space="preserve" name="Module.BusinessOperationsDisabled">
-    <value>Disponibilidad de Business Operations</value>
+    <value>Disponibilidad de Business Ops</value>
   </data>
   <data xml:space="preserve" name="Module.CalendarDisabled">
     <value>Disponibilidad del calendario</value>
@@ -2956,7 +2956,7 @@
     <value>Tenga listos los sistemas de destino y las credenciales, y decida quién es responsable de cada automatización.</value>
   </data>
   <data xml:space="preserve" name="ModuleAdoption.business">
-    <value>Requiere el complemento Workforce and Business Operations. Los pagos en línea también necesitan su propia cuenta con un proveedor de pagos.</value>
+    <value>Requiere el complemento Business Ops. Los pagos en línea también necesitan su propia cuenta con un proveedor de pagos.</value>
   </data>
   <data xml:space="preserve" name="ModuleAdoption.calls">
     <value>Reúna sus tipos de llamada, los estados que reportan los miembros mientras responden, y los datos de cualquier sistema de CAD o buscapersonas que deba crear llamadas.</value>
@@ -5704,7 +5704,7 @@
     <value>Requiere Advanced Data Protection</value>
   </data>
   <data xml:space="preserve" name="Ui.AddonRequired.BusinessOperations">
-    <value>Requiere Workforce and Business Operations</value>
+    <value>Requiere Business Ops</value>
   </data>
   <data xml:space="preserve" name="Ui.AddonRequired.EnhancedAi">
     <value>Requiere Enhanced AI</value>
@@ -7759,7 +7759,7 @@
     <value>Mesa de despachadores</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.DispatcherDeskConfig">
-    <value>Activa el puesto de despacho y define cómo funciona: qué trabajo se ofrece a los despachadores de servicio en la aplicación Dispatch (llamadas pendientes y programadas, mensajes de texto, llamadas telefónicas, correos, chats), cuánto espera una oferta y cuántos elementos puede tener un despachador antes de contar como ocupado, cuántas ofertas perdidas seguidas ponen a un despachador como Ausente, y qué pasa con los mensajes de texto y las llamadas telefónicas cuando nadie está libre (esperar en la cola, Enhanced AI o buzón de voz). También define en qué se convierte una llamada enviada por correo a la dirección de despacho (despachada de inmediato, guardada como pendiente o leída por Enhanced AI en una llamada pendiente) y las reglas de descansos y servicio: recordatorios de descanso, regreso automático de los descansos, el mínimo disponible, rechazar descansos por debajo de él, sin alertas del puesto en descanso, y si los despachadores deben estar en un turno o pueden estar de servicio sin turno (Turnos, Configuración del puesto de despacho). Desactivado por defecto; las llamadas por correo se despachan de inmediato hasta que se cambie Llamadas por correo, lo que se aplica incluso con el envío desactivado.</value>
+    <value>Activa el puesto de despacho y define cómo funciona: qué trabajo se ofrece a los despachadores de servicio en la aplicación Dispatch (llamadas pendientes y programadas, mensajes de texto, llamadas telefónicas, correos, chats), cuánto espera una oferta y cuántos elementos puede tener un despachador antes de contar como ocupado, cuántas ofertas perdidas seguidas ponen a un despachador como Ausente, y qué pasa con los mensajes de texto y las llamadas telefónicas cuando nadie está libre (esperar en la cola, Enhanced AI o buzón de voz). También define en qué se convierte una llamada enviada por correo a la dirección de despacho (despachada de inmediato, guardada como pendiente o leída por Enhanced AI en una llamada pendiente) y las reglas de descansos y servicio: recordatorios de descanso, regreso automático de los descansos, el mínimo disponible, rechazar descansos por debajo de él, sin alertas del puesto en descanso, y si los despachadores deben estar en un turno o pueden estar de servicio sin turno (Turnos, Puesto de despacho, Configuración del puesto de despacho). Desactivado por defecto; las llamadas por correo se despachan de inmediato hasta que se cambie Llamadas por correo, lo que se aplica incluso con el envío desactivado.</value>
   </data>
   <data xml:space="preserve" name="Feature.home-dashboard">
     <value>Panel de inicio personalizable</value>
@@ -8020,7 +8020,7 @@
     <value>Dos despachadores voluntarios cubren un fin de semana desde sus teléfonos. Un mensaje sobre un árbol caído que corta una carretera se ofrece al que está libre y se convierte en una llamada, mientras el otro está en su descanso para comer y no recibe alertas del puesto hasta que vuelve.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk" xml:space="preserve">
-    <value>Dé a sus despachadores el permiso Inicio de sesión en la aplicación Dispatch y póngalos en la lista de despacho de un turno. Luego abra Turnos, Configuración del puesto de despacho, active Enviar trabajo a los despachadores de servicio, elija qué Enviar al puesto y guarde. Los despachadores inician sesión en el puesto desde la aplicación Dispatch; la página Puesto de despacho muestra quién está disponible, ocupado o en descanso y la cola abierta, y un supervisor del puesto puede terminar un descanso o pasar trabajo a otra persona.</value>
+    <value>Dé a sus despachadores el permiso Inicio de sesión en la aplicación Dispatch y póngalos en la lista de despacho de un turno. Luego abra Turnos, Puesto de despacho, Configuración del puesto de despacho, active Enviar trabajo a los despachadores de servicio, elija qué Enviar al puesto y guarde. Los despachadores inician sesión en el puesto desde la aplicación Dispatch; la página Puesto de despacho muestra quién está disponible, ocupado o en descanso y la cola abierta, y un supervisor del puesto puede terminar un descanso o pasar trabajo a otra persona.</value>
   </data>
   <data name="Feature.shift-dispatchers" xml:space="preserve">
     <value>Despachadores de servicio</value>
@@ -8050,7 +8050,7 @@
     <value>En un turno de 12 horas con tres despachadores, Planificar descansos coloca la comida de 30 minutos y dos descansos de 15 minutos de cada uno en horas distintas, y cada despachador recibe un recordatorio cinco minutos antes de que toque un descanso.</value>
   </data>
   <data name="FeatureSetup.dispatcher-breaks" xml:space="preserve">
-    <value>Defina un plan de descansos en cada turno, o un plan de descansos predeterminado en Configuración del puesto de despacho. Luego abra Turnos, Descansos de despacho, elija una fecha y un día de turno y use Planificar descansos, o planifique usted mismo descansos sueltos. Los supervisores del puesto y los responsables de turno planifican los descansos de cualquiera; los despachadores planifican los suyos solo en los turnos que lo permiten. Un descanso es una duración, así que si empieza antes también termina antes.</value>
+    <value>Defina un plan de descansos en cada turno, o un plan de descansos predeterminado en Configuración del puesto de despacho. Luego abra Turnos, Puesto de despacho, Descansos de despacho, elija una fecha y un día de turno y use Planificar descansos, o planifique usted mismo descansos sueltos. Los supervisores del puesto y los responsables de turno planifican los descansos de cualquiera; los despachadores planifican los suyos solo en los turnos que lo permiten. Un descanso es una duración, así que si empieza antes también termina antes.</value>
   </data>
   <data name="Feature.dispatcher-desk-settings" xml:space="preserve">
     <value>Configuración del puesto de despacho</value>
@@ -8065,7 +8065,7 @@
     <value>Un departamento envía al puesto los mensajes de texto y las llamadas telefónicas, da 60 segundos a cada oferta, deja que Enhanced AI complete una llamada pendiente cuando nadie está libre y guarda las llamadas por correo como pendientes para que un despachador las revise.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk-settings" xml:space="preserve">
-    <value>Los administradores del departamento abren Turnos y luego Configuración del puesto de despacho. Active Enviar trabajo a los despachadores de servicio, elija Enviar al puesto, el tiempo de cada oferta y los elementos por despachador, qué pasa cuando todos los despachadores están ocupados, Llamadas por correo y las reglas de descanso, y guarde. Las opciones de Enhanced AI necesitan el complemento Enhanced AI.</value>
+    <value>Los administradores del departamento abren Turnos y luego Puesto de despacho, Configuración del puesto de despacho. Active Enviar trabajo a los despachadores de servicio, elija Enviar al puesto, el tiempo de cada oferta y los elementos por despachador, qué pasa cuando todos los despachadores están ocupados, Llamadas por correo y las reglas de descanso, y guarde. Las opciones de Enhanced AI necesitan el complemento Enhanced AI.</value>
   </data>
   <data name="Feature.dispatcher-desk-activity" xml:space="preserve">
     <value>Actividad de despacho</value>
@@ -8080,7 +8080,7 @@
     <value>Un supervisor ve que los mensajes de texto se escalaban a menudo los viernes por la tarde y añade un segundo despachador a ese turno.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk-activity" xml:space="preserve">
-    <value>Los administradores del departamento y los supervisores del puesto abren Turnos y luego Actividad de despacho, eligen las fechas Desde y Hasta y seleccionan Mostrar.</value>
+    <value>Los administradores del departamento y los supervisores del puesto abren Turnos y luego Puesto de despacho, Actividad de despacho, eligen las fechas Desde y Hasta y seleccionan Mostrar.</value>
   </data>
   <data name="Feature.intake-spam-screening" xml:space="preserve">
     <value>Filtro de spam en la entrada</value>

@@ -35,15 +35,15 @@
 	</div>
 	<div class="col-sm-6">
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-			<a class="btn btn-primary top-button" asp-controller="DispatcherDesk" asp-action="Breaks" asp-route-area="User"><i class="fa fa-coffee"></i> @desk["BreaksTitle"]</a>
+			<a class="btn btn-primary top-button" asp-controller="DispatcherDesk" asp-action="Breaks" asp-route-area="User">@desk["BreaksTitle"]</a>
 			<a class="btn btn-success top-button" asp-controller="Shifts" asp-action="OnDuty" asp-route-area="User">@shiftsLocalizer["OnDutyButton"]</a>
 			@if (Model.CanSupervise || Model.IsAdmin)
 			{
-				<a class="btn btn-info top-button" asp-controller="DispatcherDesk" asp-action="Activity" asp-route-area="User"><i class="fa fa-bar-chart"></i> @desk["ActivityTitle"]</a>
+				<a class="btn btn-info top-button" asp-controller="DispatcherDesk" asp-action="Activity" asp-route-area="User">@desk["ActivityTitle"]</a>
 			}
 			@if (Model.IsAdmin)
 			{
-				<a class="btn btn-white top-button" asp-controller="DispatcherDesk" asp-action="Settings" asp-route-area="User"><i class="fa fa-cog"></i> @desk["SettingsTitle"]</a>
+				<a class="btn btn-white top-button" asp-controller="DispatcherDesk" asp-action="Settings" asp-route-area="User">@desk["SettingsTitle"]</a>
 			}
 		</div>
 	</div>

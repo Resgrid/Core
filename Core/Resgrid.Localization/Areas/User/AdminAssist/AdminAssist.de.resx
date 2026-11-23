@@ -25,7 +25,7 @@
     <value>Automatisierung und Integrationen</value>
   </data>
   <data xml:space="preserve" name="Area.business">
-    <value>Workforce and business operations</value>
+    <value>Business Ops</value>
   </data>
   <data xml:space="preserve" name="Area.calls">
     <value>Disposition und Einsätze</value>
@@ -664,7 +664,7 @@
     <value>Enhanced AI</value>
   </data>
   <data xml:space="preserve" name="Feature.addon-business">
-    <value>Business Operations</value>
+    <value>Business Ops</value>
   </data>
   <data xml:space="preserve" name="Feature.addon-ptt">
     <value>Push-to-Talk</value>
@@ -1105,7 +1105,7 @@
     <value>Workflows</value>
   </data>
   <data xml:space="preserve" name="Feature.workforce">
-    <value>Belegschaft</value>
+    <value>Personal &amp; Kosten</value>
   </data>
   <data xml:space="preserve" name="Feature.workforce-annual-facts">
     <value>Jährliche Gehaltsdaten</value>
@@ -1156,7 +1156,7 @@
     <value>KI-Unterstützung über das kostenlose Admin-Assist-Kontingent hinaus.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.addon-business">
-    <value>Die Erweiterung Workforce and Business Operations: Rechnungsstellung, Zahlungen, Verträge, Angebote, MARS-Erstattung und Personalkostenrechnung.</value>
+    <value>Die Erweiterung Business Ops: Rechnungsstellung, Zahlungen, Verträge, Angebote, MARS-Erstattung und Personalkostenrechnung.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.addon-ptt">
     <value>Die Erweiterung Push-to-Talk: Sprachkanäle in den Resgrid-Apps.</value>
@@ -2461,7 +2461,7 @@
     <value>Gespeicherte Zeilen hinter einem ausgeblendeten Moduleintrag</value>
   </data>
   <data xml:space="preserve" name="Impact.ModuleScope">
-    <value>Menüzahlen umfassen aktuelle Abteilungsmitgliedschaften, einschließlich verborgener Mitglieder. Sie beschreiben die gemeinsame Web-Navigationssperre, nicht die erfolgreiche Anmeldung, die für jedes Mitglied sichtbaren Datensätze oder mobile Clients. Inhaltszahlen umfassen nur die primären Zeilen von Nachrichten, Schichten, Dokumenten, Kalendereinträgen, Notizen und Schulungen; sie schließen aufbewahrte oder abgelaufene Zeilen ein. Kartierung und Berichte aggregieren andere Quellen; Protokolle/Datensätze und Inventar verwenden mehrere Datenmodelle. Deren Inhaltssummen bleiben unbekannt, bis die entsprechenden Adapter verfügbar sind. Die lizenzierten Schalter für Wartung, Checklisten und Business Operations benötigen eine eigene, nutzungsrechtsbewusste Vorschau.</value>
+    <value>Menüzahlen umfassen aktuelle Abteilungsmitgliedschaften, einschließlich verborgener Mitglieder. Sie beschreiben die gemeinsame Web-Navigationssperre, nicht die erfolgreiche Anmeldung, die für jedes Mitglied sichtbaren Datensätze oder mobile Clients. Inhaltszahlen umfassen nur die primären Zeilen von Nachrichten, Schichten, Dokumenten, Kalendereinträgen, Notizen und Schulungen; sie schließen aufbewahrte oder abgelaufene Zeilen ein. Kartierung und Berichte aggregieren andere Quellen; Protokolle/Datensätze und Inventar verwenden mehrere Datenmodelle. Deren Inhaltssummen bleiben unbekannt, bis die entsprechenden Adapter verfügbar sind. Die lizenzierten Schalter für Wartung, Checklisten und Business Ops benötigen eine eigene, nutzungsrechtsbewusste Vorschau.</value>
   </data>
   <data xml:space="preserve" name="Impact.ModuleTiming">
     <value>Ein gespeicherter Schalter wirkt sich nach der Aktualisierung des zuständigen Einstellungs-Caches und der Seite auf die Navigation aus. Das Ausblenden eines Menüs löscht keine Daten, entzieht keine bestehende API-Berechtigung und belegt nicht, dass ein Worker-Prozess stoppt. Überprüfen Sie relevante Nutzer und geplante Arbeiten gesondert, bevor Sie sich auf einen Schalter als operative Abschaltung verlassen.</value>
@@ -2872,7 +2872,7 @@
     <value>Verfügbarkeit von KI</value>
   </data>
   <data xml:space="preserve" name="Module.BusinessOperationsDisabled">
-    <value>Verfügbarkeit von Business Operations</value>
+    <value>Verfügbarkeit von Business Ops</value>
   </data>
   <data xml:space="preserve" name="Module.CalendarDisabled">
     <value>Verfügbarkeit des Kalenders</value>
@@ -2956,7 +2956,7 @@
     <value>Halten Sie die Zielsysteme und Anmeldedaten bereit, und legen Sie fest, wer für jede Automatisierung verantwortlich ist.</value>
   </data>
   <data xml:space="preserve" name="ModuleAdoption.business">
-    <value>Erfordert die Erweiterung Workforce and Business Operations. Online-Zahlungen benötigen zusätzlich ein eigenes Konto bei einem Zahlungsanbieter.</value>
+    <value>Erfordert die Erweiterung Business Ops. Online-Zahlungen benötigen zusätzlich ein eigenes Konto bei einem Zahlungsanbieter.</value>
   </data>
   <data xml:space="preserve" name="ModuleAdoption.calls">
     <value>Erfassen Sie Ihre Einsatztypen, die Status, die Mitglieder während der Reaktion melden, sowie die Details jedes CAD- oder Alarmierungssystems, das Einsätze erstellen soll.</value>
@@ -3010,7 +3010,7 @@
     <value>Steuert die Verfügbarkeit der optionalen KI-Unterstützung. Das Deaktivieren dieses Moduls kann die Navigation entfernen und Modulvorgänge blockieren; seine Datensätze werden dadurch nicht gelöscht. Das Aktivieren erfordert weiterhin das entsprechende Abonnement, die Einführung und die Berechtigungen.</value>
   </data>
   <data xml:space="preserve" name="ModuleHelp.BusinessOperationsDisabled">
-    <value>Steuert die Verfügbarkeit von Business Operations. Das Deaktivieren dieses Moduls kann die Navigation entfernen und Modulvorgänge blockieren; seine Datensätze werden dadurch nicht gelöscht. Das Aktivieren erfordert weiterhin das entsprechende Abonnement, die Einführung und die Berechtigungen.</value>
+    <value>Steuert die Verfügbarkeit von Business Ops. Das Deaktivieren dieses Moduls kann die Navigation entfernen und Modulvorgänge blockieren; seine Datensätze werden dadurch nicht gelöscht. Das Aktivieren erfordert weiterhin das entsprechende Abonnement, die Einführung und die Berechtigungen.</value>
   </data>
   <data xml:space="preserve" name="ModuleHelp.CalendarDisabled">
     <value>Steuert die Verfügbarkeit von Kalenderereignissen. Das Deaktivieren dieses Moduls kann die Navigation entfernen und Modulvorgänge blockieren; seine Datensätze werden dadurch nicht gelöscht. Das Aktivieren erfordert weiterhin das entsprechende Abonnement, die Einführung und die Berechtigungen.</value>
@@ -5704,7 +5704,7 @@
     <value>Erfordert Advanced Data Protection</value>
   </data>
   <data xml:space="preserve" name="Ui.AddonRequired.BusinessOperations">
-    <value>Erfordert Workforce and Business Operations</value>
+    <value>Erfordert Business Ops</value>
   </data>
   <data xml:space="preserve" name="Ui.AddonRequired.EnhancedAi">
     <value>Erfordert Enhanced AI</value>
@@ -7759,7 +7759,7 @@
     <value>Disponentenplatz</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.DispatcherDeskConfig">
-    <value>Schaltet den Dispositionsplatz ein und legt fest, wie er arbeitet: welche Arbeit den Disponenten im Dienst in der Dispatch-App angeboten wird (ausstehende und geplante Einsätze, SMS, Anrufe, E-Mails, Chats), wie lange ein Angebot wartet und wie viele Einträge ein Disponent halten kann, bevor er als beschäftigt gilt, nach wie vielen verpassten Angeboten in Folge ein Disponent auf Abwesend gesetzt wird und was mit SMS und Anrufen geschieht, wenn niemand frei ist (in der Warteschlange warten, Enhanced AI oder Mailbox). Legt außerdem fest, was aus einem an die Alarmierungsadresse gemailten Einsatz wird (sofort alarmiert, als ausstehend gespeichert oder von Enhanced AI in einen ausstehenden Einsatz übernommen), sowie die Pausen- und Dienstregeln: Pausenerinnerungen, automatische Rückkehr aus Pausen, die Mindestzahl Verfügbarer, das Ablehnen von Pausen darunter, keine Platzbenachrichtigungen in der Pause und ob Disponenten in einer Schicht sein müssen oder auch ohne Schicht Dienst haben dürfen (Schichten, Einstellungen Dispositionsplatz). Standardmäßig aus; per E-Mail gemeldete Einsätze werden sofort alarmiert, bis Per E-Mail gemeldete Einsätze geändert wird, was auch bei ausgeschalteter Weiterleitung gilt.</value>
+    <value>Schaltet den Dispositionsplatz ein und legt fest, wie er arbeitet: welche Arbeit den Disponenten im Dienst in der Dispatch-App angeboten wird (ausstehende und geplante Einsätze, SMS, Anrufe, E-Mails, Chats), wie lange ein Angebot wartet und wie viele Einträge ein Disponent halten kann, bevor er als beschäftigt gilt, nach wie vielen verpassten Angeboten in Folge ein Disponent auf Abwesend gesetzt wird und was mit SMS und Anrufen geschieht, wenn niemand frei ist (in der Warteschlange warten, Enhanced AI oder Mailbox). Legt außerdem fest, was aus einem an die Alarmierungsadresse gemailten Einsatz wird (sofort alarmiert, als ausstehend gespeichert oder von Enhanced AI in einen ausstehenden Einsatz übernommen), sowie die Pausen- und Dienstregeln: Pausenerinnerungen, automatische Rückkehr aus Pausen, die Mindestzahl Verfügbarer, das Ablehnen von Pausen darunter, keine Platzbenachrichtigungen in der Pause und ob Disponenten in einer Schicht sein müssen oder auch ohne Schicht Dienst haben dürfen (Schichten, Dispositionsplatz, Einstellungen Dispositionsplatz). Standardmäßig aus; per E-Mail gemeldete Einsätze werden sofort alarmiert, bis Per E-Mail gemeldete Einsätze geändert wird, was auch bei ausgeschalteter Weiterleitung gilt.</value>
   </data>
   <data xml:space="preserve" name="Feature.home-dashboard">
     <value>Anpassbares Start-Dashboard</value>
@@ -8020,7 +8020,7 @@
     <value>Zwei ehrenamtliche Disponenten decken ein Wochenende mit ihren Smartphones ab. Eine SMS über einen umgestürzten Baum auf einer Straße wird dem freien Disponenten angeboten und wird zum Einsatz, während der andere in der Essenspause ist und bis zu seiner Rückkehr keine Platzbenachrichtigungen erhält.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk" xml:space="preserve">
-    <value>Geben Sie Ihren Disponenten die Berechtigung Anmeldung Dispatch-App und setzen Sie sie auf den Dispositionsdienstplan einer Schicht. Öffnen Sie dann Schichten, Einstellungen Dispositionsplatz, aktivieren Sie Arbeit an Disponenten im Dienst weiterleiten, wählen Sie unter An den Dispositionsplatz senden die Arbeit aus und speichern Sie. Disponenten melden sich in der Dispatch-App am Platz an; die Seite Dispositionsplatz zeigt, wer verfügbar, beschäftigt oder in Pause ist, sowie die offene Warteschlange, und eine Aufsicht am Platz kann eine Pause beenden oder Arbeit an jemand anderen übergeben.</value>
+    <value>Geben Sie Ihren Disponenten die Berechtigung Anmeldung Dispatch-App und setzen Sie sie auf den Dispositionsdienstplan einer Schicht. Öffnen Sie dann Schichten, Dispositionsplatz, Einstellungen Dispositionsplatz, aktivieren Sie Arbeit an Disponenten im Dienst weiterleiten, wählen Sie unter An den Dispositionsplatz senden die Arbeit aus und speichern Sie. Disponenten melden sich in der Dispatch-App am Platz an; die Seite Dispositionsplatz zeigt, wer verfügbar, beschäftigt oder in Pause ist, sowie die offene Warteschlange, und eine Aufsicht am Platz kann eine Pause beenden oder Arbeit an jemand anderen übergeben.</value>
   </data>
   <data name="Feature.shift-dispatchers" xml:space="preserve">
     <value>Disponenten im Dienst</value>
@@ -8050,7 +8050,7 @@
     <value>In einer 12-Stunden-Schicht mit drei Disponenten legt Pausen planen für jeden die 30-minütige Essenspause und zwei 15-minütige Pausen zu unterschiedlichen Zeiten, und jeder Disponent wird fünf Minuten vor Beginn einer Pause erinnert.</value>
   </data>
   <data name="FeatureSetup.dispatcher-breaks" xml:space="preserve">
-    <value>Legen Sie für jede Schicht einen Pausenplan fest oder einen Standard-Pausenplan in den Einstellungen Dispositionsplatz. Öffnen Sie dann Schichten, Disponentenpausen, wählen Sie ein Datum und einen Schichttag und verwenden Sie Pausen planen, oder planen Sie einzelne Pausen selbst. Aufsichten am Platz und Schichtverantwortliche planen die Pausen aller; Disponenten planen ihre eigenen nur in Schichten, die das erlauben. Eine Pause ist eine Dauer, eine früher begonnene Pause endet also auch früher.</value>
+    <value>Legen Sie für jede Schicht einen Pausenplan fest oder einen Standard-Pausenplan in den Einstellungen Dispositionsplatz. Öffnen Sie dann Schichten, Dispositionsplatz, Disponentenpausen, wählen Sie ein Datum und einen Schichttag und verwenden Sie Pausen planen, oder planen Sie einzelne Pausen selbst. Aufsichten am Platz und Schichtverantwortliche planen die Pausen aller; Disponenten planen ihre eigenen nur in Schichten, die das erlauben. Eine Pause ist eine Dauer, eine früher begonnene Pause endet also auch früher.</value>
   </data>
   <data name="Feature.dispatcher-desk-settings" xml:space="preserve">
     <value>Einstellungen Dispositionsplatz</value>
@@ -8065,7 +8065,7 @@
     <value>Eine Abteilung sendet SMS und Anrufe an den Platz, gibt jedem Angebot 60 Sekunden, lässt Enhanced AI einen ausstehenden Einsatz ausfüllen, wenn niemand frei ist, und speichert per E-Mail gemeldete Einsätze als ausstehend zur Prüfung durch einen Disponenten.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk-settings" xml:space="preserve">
-    <value>Abteilungsadministratoren öffnen Schichten und dann Einstellungen Dispositionsplatz. Aktivieren Sie Arbeit an Disponenten im Dienst weiterleiten, wählen Sie An den Dispositionsplatz senden, die Angebotsdauer und die Einträge pro Disponent, was geschieht, wenn alle Disponenten beschäftigt sind, Per E-Mail gemeldete Einsätze und die Pausenregeln, und speichern Sie. Die Enhanced-AI-Optionen erfordern die Erweiterung Enhanced AI.</value>
+    <value>Abteilungsadministratoren öffnen Schichten und dann Dispositionsplatz, Einstellungen Dispositionsplatz. Aktivieren Sie Arbeit an Disponenten im Dienst weiterleiten, wählen Sie An den Dispositionsplatz senden, die Angebotsdauer und die Einträge pro Disponent, was geschieht, wenn alle Disponenten beschäftigt sind, Per E-Mail gemeldete Einsätze und die Pausenregeln, und speichern Sie. Die Enhanced-AI-Optionen erfordern die Erweiterung Enhanced AI.</value>
   </data>
   <data name="Feature.dispatcher-desk-activity" xml:space="preserve">
     <value>Disponentenaktivität</value>
@@ -8080,7 +8080,7 @@
     <value>Eine Aufsicht sieht, dass SMS am Freitagabend oft eskaliert sind, und setzt einen zweiten Disponenten in diese Schicht.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk-activity" xml:space="preserve">
-    <value>Abteilungsadministratoren und Aufsichten am Platz öffnen Schichten und dann Disponentenaktivität, wählen die Daten Von und Bis und wählen Anzeigen.</value>
+    <value>Abteilungsadministratoren und Aufsichten am Platz öffnen Schichten und dann Dispositionsplatz, Disponentenaktivität, wählen die Daten Von und Bis und wählen Anzeigen.</value>
   </data>
   <data name="Feature.intake-spam-screening" xml:space="preserve">
     <value>Spam-Prüfung im Eingang</value>

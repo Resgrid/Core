@@ -22,9 +22,9 @@
   <data name="InvoicesLower" xml:space="preserve"><value>فواتير</value></data>
   <data name="Invoice" xml:space="preserve"><value>فاتورة</value></data>
   <data name="InvoicingIntro" xml:space="preserve"><value>فواتير العملاء والمدفوعات والذمم المدينة.</value></data>
-  <data name="ReadOnlyNotice" xml:space="preserve"><value>إضافة Business Operations غير نشطة لهذا القسم. تبقى الفواتير الحالية قابلة للقراءة؛ يتطلب الإنشاء أو التغيير إضافة نشطة.</value></data>
-  <data name="BusinessOperations" xml:space="preserve"><value>Business Operations</value></data>
-  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>الفوترة وبطاقات الأسعار وملفات الفوترة. تتطلب الصفحات أيضًا إضافة Business Operations.</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>إضافة Business Ops غير نشطة لهذا القسم. تبقى الفواتير الحالية قابلة للقراءة؛ يتطلب الإنشاء أو التغيير إضافة نشطة.</value></data>
+  <data name="BusinessOperations" xml:space="preserve"><value>Business Ops</value></data>
+  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>الفوترة وبطاقات الأسعار وملفات الفوترة. تتطلب الصفحات أيضًا إضافة Business Ops.</value></data>
   <data name="RateCards" xml:space="preserve"><value>بطاقات الأسعار</value></data>
   <data name="RateCard" xml:space="preserve"><value>بطاقة الأسعار</value></data>
   <data name="RateCardsIntro" xml:space="preserve"><value>أسعار الفوترة المطبقة عند إضافة البلاغات إلى فاتورة.</value></data>
@@ -131,7 +131,7 @@
   <data name="Saved" xml:space="preserve"><value>تم الحفظ.</value></data>
   <data name="InvalidInput" xml:space="preserve"><value>القيم المرسلة غير صالحة.</value></data>
   <data name="NameRequired" xml:space="preserve"><value>الاسم مطلوب.</value></data>
-  <data name="AddonRequired" xml:space="preserve"><value>يتطلب ذلك إضافة Business Operations نشطة.</value></data>
+  <data name="AddonRequired" xml:space="preserve"><value>يتطلب ذلك إضافة Business Ops نشطة.</value></data>
   <data name="TotalsUpdateOnSave" xml:space="preserve"><value>يُعاد حساب الخصم والضريبة عند الحفظ.</value></data>
   <data name="PreviewAndSend" xml:space="preserve"><value>معاينة وإرسال</value></data>
   <data name="BackToInvoices" xml:space="preserve"><value>العودة إلى الفواتير</value></data>
@@ -232,7 +232,7 @@
   <data name="NotAvailableInRegion" xml:space="preserve"><value>غير متاح في هذه المنطقة</value></data>
   <data name="Enabled" xml:space="preserve"><value>مفعّل</value></data>
   <data name="Disabled" xml:space="preserve"><value>معطّل</value></data>
-  <data name="BusinessOperationsAddon" xml:space="preserve"><value>إضافة Business Operations</value></data>
+  <data name="BusinessOperationsAddon" xml:space="preserve"><value>إضافة Business Ops</value></data>
   <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>إضافة شهرية للأقسام التي تفوتر العملاء وتدير العقود. يمكن فقط للعضو المدير للقسم شراؤها أو إلغاؤها.</value></data>
   <data name="AddonFeatureInvoicing" xml:space="preserve"><value>فوترة العملاء وبطاقات الأسعار والمدفوعات وأعمار الذمم المدينة</value></data>
   <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>جداول أسعار المقاولين والعقود واسترداد التكاليف</value></data>
@@ -244,7 +244,7 @@
   <data name="SubscriptionCancelled" xml:space="preserve"><value>تم إلغاء التجديد؛ يستمر الوصول حتى نهاية الفترة المدفوعة.</value></data>
   <data name="Buy" xml:space="preserve"><value>شراء</value></data>
   <data name="CancelSubscription" xml:space="preserve"><value>إلغاء التجديد</value></data>
-  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>هل تريد إلغاء تجديد Business Operations؟</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>هل تريد إلغاء تجديد Business Ops؟</value></data>
   <data name="BillingUnavailable" xml:space="preserve"><value>الفوترة غير متاحة الآن. يرجى المحاولة لاحقًا.</value></data>
   <data name="ManageSubscription" xml:space="preserve"><value>إدارة الاشتراك</value></data>
   <data name="ModuleSettings" xml:space="preserve"><value>إعدادات الوحدات</value></data>
@@ -341,7 +341,7 @@
   <data name="TooManyRequests" xml:space="preserve"><value>طلبات كثيرة جدًا. يرجى الانتظار دقيقة ثم المحاولة مجددًا.</value></data>
   <data name="payments_not_available_in_region" xml:space="preserve"><value>تحصيل المدفوعات عبر الإنترنت غير متاح في هذه المنطقة.</value></data>
   <data name="payments_flag_off" xml:space="preserve"><value>المدفوعات عبر الإنترنت غير مفعّلة لهذا القسم.</value></data>
-  <data name="payments_addon_required" xml:space="preserve"><value>تتطلب المدفوعات عبر الإنترنت إضافة Business Operations نشطة.</value></data>
+  <data name="payments_addon_required" xml:space="preserve"><value>تتطلب المدفوعات عبر الإنترنت إضافة Business Ops نشطة.</value></data>
   <data name="payments_not_enabled_for_department" xml:space="preserve"><value>الدفع عبر الإنترنت معطّل في إعدادات الفوترة الخاصة بك.</value></data>
   <data name="payments_no_connection" xml:space="preserve"><value>لا يوجد حساب Stripe مرتبط.</value></data>
   <data name="payments_connection_not_ready" xml:space="preserve"><value>لا يمكن لحساب Stripe المرتبط قبول الرسوم بعد. أكمل متطلبات Stripe وحاول مجددًا.</value></data>

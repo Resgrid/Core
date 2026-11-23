@@ -2153,7 +2153,7 @@
   <data name="MoreMenu" xml:space="preserve"><value>المزيد</value></data>
   <data name="InventoryUsage" xml:space="preserve"><value>استخدام المخزون</value></data>
   <data name="DeploymentReports" xml:space="preserve"><value>تقارير الانتشار</value></data>
-  <data name="DeploymentReportingIntro" xml:space="preserve"><value>سجل الانتشار والتقارير وعمليات التصدير للقراءة فقط. أدر عمليات الانتشار في قسم القوى العاملة والعمليات التجارية.</value></data>
+  <data name="DeploymentReportingIntro" xml:space="preserve"><value>سجل الانتشار والتقارير وعمليات التصدير للقراءة فقط. أدر عمليات الانتشار في قسم Business Ops.</value></data>
   <data name="DeploymentExportResources" xml:space="preserve"><value>تصدير الموارد بصيغة CSV</value></data>
   <data name="DeploymentOpenWorkspace" xml:space="preserve"><value>فتح إدارة الانتشار</value></data>
   <data name="DeploymentExternalOrders" xml:space="preserve"><value>الأوامر الخارجية</value></data>

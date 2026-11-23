@@ -22,9 +22,9 @@
   <data name="InvoicesLower" xml:space="preserve"><value>τιμολόγια</value></data>
   <data name="Invoice" xml:space="preserve"><value>Τιμολόγιο</value></data>
   <data name="InvoicingIntro" xml:space="preserve"><value>Τιμολόγια πελατών, πληρωμές και απαιτήσεις.</value></data>
-  <data name="ReadOnlyNotice" xml:space="preserve"><value>Το πρόσθετο Business Operations δεν είναι ενεργό για αυτό το τμήμα. Τα υπάρχοντα τιμολόγια παραμένουν αναγνώσιμα· η δημιουργία ή αλλαγή απαιτεί ενεργό πρόσθετο.</value></data>
-  <data name="BusinessOperations" xml:space="preserve"><value>Business Operations</value></data>
-  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Τιμολόγηση, τιμοκατάλογοι και προφίλ χρέωσης. Οι σελίδες απαιτούν επίσης το πρόσθετο Business Operations.</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>Το πρόσθετο Business Ops δεν είναι ενεργό για αυτό το τμήμα. Τα υπάρχοντα τιμολόγια παραμένουν αναγνώσιμα· η δημιουργία ή αλλαγή απαιτεί ενεργό πρόσθετο.</value></data>
+  <data name="BusinessOperations" xml:space="preserve"><value>Business Ops</value></data>
+  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Τιμολόγηση, τιμοκατάλογοι και προφίλ χρέωσης. Οι σελίδες απαιτούν επίσης το πρόσθετο Business Ops.</value></data>
   <data name="RateCards" xml:space="preserve"><value>Τιμοκατάλογοι</value></data>
   <data name="RateCard" xml:space="preserve"><value>Τιμοκατάλογος</value></data>
   <data name="RateCardsIntro" xml:space="preserve"><value>Χρεώσεις που εφαρμόζονται όταν κλήσεις προστίθενται σε τιμολόγιο.</value></data>
@@ -131,7 +131,7 @@
   <data name="Saved" xml:space="preserve"><value>Αποθηκεύτηκε.</value></data>
   <data name="InvalidInput" xml:space="preserve"><value>Οι τιμές που υποβλήθηκαν δεν είναι έγκυρες.</value></data>
   <data name="NameRequired" xml:space="preserve"><value>Απαιτείται όνομα.</value></data>
-  <data name="AddonRequired" xml:space="preserve"><value>Απαιτεί ενεργό πρόσθετο Business Operations.</value></data>
+  <data name="AddonRequired" xml:space="preserve"><value>Απαιτεί ενεργό πρόσθετο Business Ops.</value></data>
   <data name="TotalsUpdateOnSave" xml:space="preserve"><value>Η έκπτωση και ο φόρος επανυπολογίζονται κατά την αποθήκευση.</value></data>
   <data name="PreviewAndSend" xml:space="preserve"><value>Προεπισκόπηση &amp; αποστολή</value></data>
   <data name="BackToInvoices" xml:space="preserve"><value>Επιστροφή στα τιμολόγια</value></data>
@@ -232,7 +232,7 @@
   <data name="NotAvailableInRegion" xml:space="preserve"><value>Μη διαθέσιμο σε αυτή την περιοχή</value></data>
   <data name="Enabled" xml:space="preserve"><value>Ενεργοποιημένο</value></data>
   <data name="Disabled" xml:space="preserve"><value>Απενεργοποιημένο</value></data>
-  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Πρόσθετο Business Operations</value></data>
+  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Πρόσθετο Business Ops</value></data>
   <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>Μηνιαίο πρόσθετο για τμήματα που τιμολογούν πελάτες και διαχειρίζονται συμβάσεις. Μόνο το διαχειριστικό μέλος του τμήματος μπορεί να το αγοράσει ή να το ακυρώσει.</value></data>
   <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Τιμολόγηση πελατών, τιμοκατάλογοι, πληρωμές και χρονολόγηση απαιτήσεων</value></data>
   <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Τιμολόγια εργολάβων, συμβάσεις και ανάκτηση κόστους</value></data>
@@ -244,7 +244,7 @@
   <data name="SubscriptionCancelled" xml:space="preserve"><value>Η ανανέωση ακυρώθηκε· η πρόσβαση συνεχίζεται μέχρι το τέλος της πληρωμένης περιόδου.</value></data>
   <data name="Buy" xml:space="preserve"><value>Αγορά</value></data>
   <data name="CancelSubscription" xml:space="preserve"><value>Ακύρωση ανανέωσης</value></data>
-  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Ακύρωση της ανανέωσης Business Operations;</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Ακύρωση της ανανέωσης Business Ops;</value></data>
   <data name="BillingUnavailable" xml:space="preserve"><value>Η χρέωση δεν είναι διαθέσιμη αυτή τη στιγμή. Δοκιμάστε ξανά αργότερα.</value></data>
   <data name="ManageSubscription" xml:space="preserve"><value>Διαχείριση συνδρομής</value></data>
   <data name="ModuleSettings" xml:space="preserve"><value>Ρυθμίσεις ενοτήτων</value></data>
@@ -341,7 +341,7 @@
   <data name="TooManyRequests" xml:space="preserve"><value>Πάρα πολλά αιτήματα. Περιμένετε ένα λεπτό και δοκιμάστε ξανά.</value></data>
   <data name="payments_not_available_in_region" xml:space="preserve"><value>Η διαδικτυακή είσπραξη δεν είναι διαθέσιμη σε αυτή την περιοχή.</value></data>
   <data name="payments_flag_off" xml:space="preserve"><value>Οι διαδικτυακές πληρωμές δεν είναι ενεργοποιημένες για αυτό το τμήμα.</value></data>
-  <data name="payments_addon_required" xml:space="preserve"><value>Οι διαδικτυακές πληρωμές απαιτούν ενεργό πρόσθετο Business Operations.</value></data>
+  <data name="payments_addon_required" xml:space="preserve"><value>Οι διαδικτυακές πληρωμές απαιτούν ενεργό πρόσθετο Business Ops.</value></data>
   <data name="payments_not_enabled_for_department" xml:space="preserve"><value>Η διαδικτυακή πληρωμή είναι απενεργοποιημένη στις ρυθμίσεις χρέωσης.</value></data>
   <data name="payments_no_connection" xml:space="preserve"><value>Δεν υπάρχει συνδεδεμένος λογαριασμός Stripe.</value></data>
   <data name="payments_connection_not_ready" xml:space="preserve"><value>Ο συνδεδεμένος λογαριασμός Stripe δεν μπορεί ακόμη να δεχθεί χρεώσεις. Ολοκληρώστε τις απαιτήσεις του Stripe και δοκιμάστε ξανά.</value></data>

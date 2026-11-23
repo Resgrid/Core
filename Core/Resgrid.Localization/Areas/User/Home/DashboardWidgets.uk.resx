@@ -2032,7 +2032,7 @@
     <value>Чернетки</value>
   </data>
   <data name="W.invoicing.receivables.ReadOnly" xml:space="preserve">
-    <value>Лише перегляд: термін дії доповнення Business Operations завершився.</value>
+    <value>Лише перегляд: термін дії доповнення Business Ops завершився.</value>
   </data>
   <data name="W.invoicing.receivables.Bucket.Current" xml:space="preserve">
     <value>Поточні</value>
@@ -2083,7 +2083,7 @@
     <value>Онлайн-платежі не ввімкнено для вашого підрозділу.</value>
   </data>
   <data name="W.invoicing.onlinePayments.Blocked.payments_addon_required" xml:space="preserve">
-    <value>Онлайн-платежі потребують доповнення Business Operations.</value>
+    <value>Онлайн-платежі потребують доповнення Business Ops.</value>
   </data>
   <data name="W.invoicing.onlinePayments.Blocked.payments_not_enabled_for_department" xml:space="preserve">
     <value>Онлайн-платежі вимкнено в налаштуваннях виставлення рахунків.</value>
@@ -2746,7 +2746,7 @@
     <value>Readiness Pro</value>
   </data>
   <data name="W.admin.plan.Addon.BusinessOperations" xml:space="preserve">
-    <value>Business Operations</value>
+    <value>Business Ops</value>
   </data>
   <data name="W.admin.plan.Addon.EnhancedAi" xml:space="preserve">
     <value>Enhanced AI</value>

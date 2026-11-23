@@ -22,9 +22,9 @@
   <data name="InvoicesLower" xml:space="preserve"><value>invoices</value></data>
   <data name="Invoice" xml:space="preserve"><value>Invoice</value></data>
   <data name="InvoicingIntro" xml:space="preserve"><value>Customer invoices, payments and accounts receivable.</value></data>
-  <data name="ReadOnlyNotice" xml:space="preserve"><value>The Business Operations add-on is not active for this department. Existing invoices stay readable; creating or changing anything needs an active add-on.</value></data>
-  <data name="BusinessOperations" xml:space="preserve"><value>Business Operations</value></data>
-  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Invoicing, rate cards and billing profiles. The pages also need the Business Operations add-on.</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>The Business Ops add-on is not active for this department. Existing invoices stay readable; creating or changing anything needs an active add-on.</value></data>
+  <data name="BusinessOperations" xml:space="preserve"><value>Business Ops</value></data>
+  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Invoicing, rate cards and billing profiles. The pages also need the Business Ops add-on.</value></data>
   <data name="RateCards" xml:space="preserve"><value>Rate Cards</value></data>
   <data name="RateCard" xml:space="preserve"><value>Rate card</value></data>
   <data name="RateCardsIntro" xml:space="preserve"><value>Billing rates applied when calls are added to an invoice.</value></data>
@@ -131,7 +131,7 @@
   <data name="Saved" xml:space="preserve"><value>Saved.</value></data>
   <data name="InvalidInput" xml:space="preserve"><value>The submitted values are not valid.</value></data>
   <data name="NameRequired" xml:space="preserve"><value>A name is required.</value></data>
-  <data name="AddonRequired" xml:space="preserve"><value>This needs an active Business Operations add-on.</value></data>
+  <data name="AddonRequired" xml:space="preserve"><value>This needs an active Business Ops add-on.</value></data>
   <data name="TotalsUpdateOnSave" xml:space="preserve"><value>Discount and tax are recalculated when you save.</value></data>
   <data name="PreviewAndSend" xml:space="preserve"><value>Preview &amp; send</value></data>
   <data name="BackToInvoices" xml:space="preserve"><value>Back to invoices</value></data>
@@ -232,11 +232,11 @@
   <data name="NotAvailableInRegion" xml:space="preserve"><value>Not available in this region</value></data>
   <data name="Enabled" xml:space="preserve"><value>Enabled</value></data>
   <data name="Disabled" xml:space="preserve"><value>Disabled</value></data>
-  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Business Operations add-on</value></data>
+  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Business Ops add-on</value></data>
   <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>A monthly add-on for departments that bill customers and manage contracts. Only the department's managing member can buy or cancel it.</value></data>
   <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Customer invoicing, rate cards, payments and accounts-receivable aging</value></data>
   <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Contractor rate schedules, contracts and cost recovery</value></data>
-  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Workforce pay data and field costing</value></data>
+  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Labor &amp; Costing: pay data and field costing</value></data>
   <data name="AddonActive" xml:space="preserve"><value>The add-on is active for your department.</value></data>
   <data name="Monthly" xml:space="preserve"><value>month</value></data>
   <data name="CheckoutPending" xml:space="preserve"><value>Your department does not hold this add-on yet.</value></data>
@@ -244,7 +244,7 @@
   <data name="SubscriptionCancelled" xml:space="preserve"><value>Renewal cancelled; access continues until the paid period ends.</value></data>
   <data name="Buy" xml:space="preserve"><value>Buy</value></data>
   <data name="CancelSubscription" xml:space="preserve"><value>Cancel renewal</value></data>
-  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Cancel the Business Operations renewal?</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Cancel the Business Ops renewal?</value></data>
   <data name="BillingUnavailable" xml:space="preserve"><value>Billing is unavailable right now. Please try again later.</value></data>
   <data name="ManageSubscription" xml:space="preserve"><value>Manage subscription</value></data>
   <data name="ModuleSettings" xml:space="preserve"><value>Module settings</value></data>
@@ -341,7 +341,7 @@
   <data name="TooManyRequests" xml:space="preserve"><value>Too many requests. Please wait a minute and try again.</value></data>
   <data name="payments_not_available_in_region" xml:space="preserve"><value>Online payment collection is not available in this region.</value></data>
   <data name="payments_flag_off" xml:space="preserve"><value>Online payments are not enabled for this department.</value></data>
-  <data name="payments_addon_required" xml:space="preserve"><value>Online payments need an active Business Operations add-on.</value></data>
+  <data name="payments_addon_required" xml:space="preserve"><value>Online payments need an active Business Ops add-on.</value></data>
   <data name="payments_not_enabled_for_department" xml:space="preserve"><value>Online payment is switched off in your billing settings.</value></data>
   <data name="payments_no_connection" xml:space="preserve"><value>No Stripe account is connected.</value></data>
   <data name="payments_connection_not_ready" xml:space="preserve"><value>The connected Stripe account cannot take charges yet. Complete Stripe's requirements and try again.</value></data>

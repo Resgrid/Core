@@ -638,7 +638,7 @@
   <data name="WorkerKindVolunteer" xml:space="preserve"><value>Voluntario</value></data>
   <data name="Workers" xml:space="preserve"><value>Trabajadores</value></data>
   <data name="WorkersIntro" xml:space="preserve"><value>Cada persona a la que el departamento paga o reporta — miembros y trabajadores externos — con sus periodos de empleo.</value></data>
-  <data name="Workforce" xml:space="preserve"><value>Plantilla</value></data>
+  <data name="Workforce" xml:space="preserve"><value>Mano de obra y costos</value></data>
   <data name="WorksheetIntro" xml:space="preserve"><value>Los valores del empleador que introduce en el portal del CRD junto con el archivo cargado.</value></data>
   <data name="WorksheetNoStore" xml:space="preserve"><value>Servido sin caché y auditado; cierre la pestaña al terminar. Resgrid nunca inicia sesión en el portal.</value></data>
   <data name="Year" xml:space="preserve"><value>Año</value></data>

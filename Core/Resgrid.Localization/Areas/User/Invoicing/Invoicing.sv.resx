@@ -22,9 +22,9 @@
   <data name="InvoicesLower" xml:space="preserve"><value>fakturor</value></data>
   <data name="Invoice" xml:space="preserve"><value>Faktura</value></data>
   <data name="InvoicingIntro" xml:space="preserve"><value>Kundfakturor, betalningar och kundfordringar.</value></data>
-  <data name="ReadOnlyNotice" xml:space="preserve"><value>Tillägget Business Operations är inte aktivt för denna avdelning. Befintliga fakturor kan fortfarande läsas; att skapa eller ändra kräver ett aktivt tillägg.</value></data>
-  <data name="BusinessOperations" xml:space="preserve"><value>Business Operations</value></data>
-  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Fakturering, prislistor och faktureringsprofiler. Sidorna kräver även tillägget Business Operations.</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>Tillägget Business Ops är inte aktivt för denna avdelning. Befintliga fakturor kan fortfarande läsas; att skapa eller ändra kräver ett aktivt tillägg.</value></data>
+  <data name="BusinessOperations" xml:space="preserve"><value>Business Ops</value></data>
+  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Fakturering, prislistor och faktureringsprofiler. Sidorna kräver även tillägget Business Ops.</value></data>
   <data name="RateCards" xml:space="preserve"><value>Prislistor</value></data>
   <data name="RateCard" xml:space="preserve"><value>Prislista</value></data>
   <data name="RateCardsIntro" xml:space="preserve"><value>Debiteringssatser som tillämpas när larm läggs till på en faktura.</value></data>
@@ -131,7 +131,7 @@
   <data name="Saved" xml:space="preserve"><value>Sparat.</value></data>
   <data name="InvalidInput" xml:space="preserve"><value>De angivna värdena är inte giltiga.</value></data>
   <data name="NameRequired" xml:space="preserve"><value>Ett namn krävs.</value></data>
-  <data name="AddonRequired" xml:space="preserve"><value>Detta kräver ett aktivt Business Operations-tillägg.</value></data>
+  <data name="AddonRequired" xml:space="preserve"><value>Detta kräver ett aktivt Business Ops-tillägg.</value></data>
   <data name="TotalsUpdateOnSave" xml:space="preserve"><value>Rabatt och skatt räknas om när du sparar.</value></data>
   <data name="PreviewAndSend" xml:space="preserve"><value>Förhandsgranska &amp; skicka</value></data>
   <data name="BackToInvoices" xml:space="preserve"><value>Tillbaka till fakturor</value></data>
@@ -232,7 +232,7 @@
   <data name="NotAvailableInRegion" xml:space="preserve"><value>Inte tillgänglig i denna region</value></data>
   <data name="Enabled" xml:space="preserve"><value>Aktiverad</value></data>
   <data name="Disabled" xml:space="preserve"><value>Inaktiverad</value></data>
-  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Tillägget Business Operations</value></data>
+  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Tillägget Business Ops</value></data>
   <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>Ett månadstillägg för avdelningar som fakturerar kunder och hanterar avtal. Endast avdelningens ansvariga medlem kan köpa eller avsluta det.</value></data>
   <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Kundfakturering, prislistor, betalningar och åldersanalys</value></data>
   <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Entreprenörstaxor, avtal och kostnadsåtervinning</value></data>
@@ -244,7 +244,7 @@
   <data name="SubscriptionCancelled" xml:space="preserve"><value>Förnyelsen avbruten; åtkomsten fortsätter till betalperiodens slut.</value></data>
   <data name="Buy" xml:space="preserve"><value>Köp</value></data>
   <data name="CancelSubscription" xml:space="preserve"><value>Avbryt förnyelse</value></data>
-  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Avbryta förnyelsen av Business Operations?</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Avbryta förnyelsen av Business Ops?</value></data>
   <data name="BillingUnavailable" xml:space="preserve"><value>Fakturering är inte tillgänglig just nu. Försök igen senare.</value></data>
   <data name="ManageSubscription" xml:space="preserve"><value>Hantera prenumeration</value></data>
   <data name="ModuleSettings" xml:space="preserve"><value>Modulinställningar</value></data>
@@ -341,7 +341,7 @@
   <data name="TooManyRequests" xml:space="preserve"><value>För många förfrågningar. Vänta en minut och försök igen.</value></data>
   <data name="payments_not_available_in_region" xml:space="preserve"><value>Onlinebetalning är inte tillgänglig i denna region.</value></data>
   <data name="payments_flag_off" xml:space="preserve"><value>Onlinebetalningar är inte aktiverade för denna avdelning.</value></data>
-  <data name="payments_addon_required" xml:space="preserve"><value>Onlinebetalningar kräver ett aktivt Business Operations-tillägg.</value></data>
+  <data name="payments_addon_required" xml:space="preserve"><value>Onlinebetalningar kräver ett aktivt Business Ops-tillägg.</value></data>
   <data name="payments_not_enabled_for_department" xml:space="preserve"><value>Onlinebetalning är avstängd i era faktureringsinställningar.</value></data>
   <data name="payments_no_connection" xml:space="preserve"><value>Inget Stripe-konto är anslutet.</value></data>
   <data name="payments_connection_not_ready" xml:space="preserve"><value>Det anslutna Stripe-kontot kan inte ta emot betalningar ännu. Slutför Stripes krav och försök igen.</value></data>

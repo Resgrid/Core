@@ -737,15 +737,15 @@ namespace Resgrid.Services
 			case AuditLogTypes.CalOesMarsWorkItemDeleted:
 				return "Cal OES MARS Work Item Deleted";
 			case AuditLogTypes.WorkforceEmployerProfileChanged:
-				return "Workforce Employer Profile Changed";
+				return "Employer Profile Changed";
 			case AuditLogTypes.WorkforceEstablishmentChanged:
-				return "Workforce Establishment Changed";
+				return "Establishment Changed";
 			case AuditLogTypes.WorkforceEmploymentChanged:
-				return "Workforce Employment Changed";
+				return "Employment Changed";
 			case AuditLogTypes.WorkforceCompensationChanged:
-				return "Workforce Compensation Changed";
+				return "Compensation Changed";
 			case AuditLogTypes.WorkforceAnnualPayFactImported:
-				return "Workforce Annual Pay Data Imported";
+				return "Annual Pay Data Imported";
 			case AuditLogTypes.PayDataDemographicChanged:
 				return "Pay Data Demographics Changed";
 			case AuditLogTypes.PayDataReportCreated:

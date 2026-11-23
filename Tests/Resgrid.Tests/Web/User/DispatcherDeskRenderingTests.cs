@@ -160,13 +160,20 @@ namespace Resgrid.Tests.Web.User
 				var index = await Render("Index");
 				// Without a layout the Scripts section is not written; the page body is what is checked here.
 				index.Should().Contain("id=\"deskMembers\"").And.Contain("Routing work to dispatchers is turned off").And.Contain("id=\"deskTransferModal\"");
+				// Breaks, Activity and Desk Settings are not in the sidebar; the board's top buttons are the way in, and they
+				// carry their name only (no icon), like On Duty Now.
+				foreach (var (action, text) in new[] { ("Breaks", "Dispatcher Breaks"), ("Activity", "Dispatcher Activity"), ("Settings", "Dispatcher Desk Settings") })
+					index.Should().MatchRegex($"<a\\b(?=[^>]*\\btop-button\\b)(?=[^>]*href=\"/User/DispatcherDesk/{action}\")[^>]*>{text}</a>");
 
 				var breaks = await Render("Breaks");
 				breaks.Should().Contain("id=\"breaksTimeline\"").And.Contain("id=\"breaksPlan\"").And.Contain("Days &lt;A&gt;").And.NotContain("Days <A>");
+				const string boardButton = "<a\\b(?=[^>]*\\btop-button\\b)(?=[^>]*href=\"/User/DispatcherDesk\")[^>]*>Dispatcher Desk</a>";
+				breaks.Should().MatchRegex(boardButton, "the way back to the board is a text-only top button");
 
 				var settings = await Render("Settings");
 				settings.Should().Contain("name=\"EmailCallMode\"").And.Contain("name=\"breakPlanMinutes_0\" value=\"30\"").And.Contain("name=\"breakPlanOffset_0\" value=\"240\"");
 				settings.Should().Contain("Enhanced AI is not available", "the department in this harness has no add-on");
+				settings.Should().MatchRegex(boardButton, "the way back to the board is a text-only top button");
 
 				var activity = await Render("Activity");
 				activity.Should().Contain("Pat &lt;Dispatcher&gt;").And.Contain("1:06:40").And.Contain("1:15");

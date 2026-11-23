@@ -266,7 +266,7 @@
   <data name="AdpProtectedDeployment" xml:space="preserve"><value>Skyddad insats</value></data>
   <data name="AdpProtectedTimeReport" xml:space="preserve"><value>Skyddad tidrapport</value></data>
   <data name="DeploymentReports" xml:space="preserve"><value>Insatsrapporter</value></data>
-  <data name="ReportingIntro" xml:space="preserve"><value>Insatshistorik, rapporter och exporter med läsbehörighet. Hantera insatser i Personal och verksamhetsdrift.</value></data>
+  <data name="ReportingIntro" xml:space="preserve"><value>Insatshistorik, rapporter och exporter med läsbehörighet. Hantera insatser i Business Ops.</value></data>
   <data name="ExportSummary" xml:space="preserve"><value>Exportera sammanfattning som CSV</value></data>
   <data name="PrintReport" xml:space="preserve"><value>Skriv ut rapport</value></data>
   <data name="ExportData" xml:space="preserve"><value>Exportera rapport som JSON</value></data>

@@ -143,7 +143,7 @@ namespace Resgrid.Model
 				case PlanAddonTypes.ReadinessPro:
 					return "Readiness Pro";
 				case PlanAddonTypes.BusinessOperations:
-					return "Business Operations";
+					return "Business Ops";
 				case PlanAddonTypes.EnhancedAi:
 					return "Enhanced AI";
 				case PlanAddonTypes.IncidentBackOffice:

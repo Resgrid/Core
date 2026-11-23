@@ -814,28 +814,28 @@ Default: No permission row: department admins only; no group lock. Source: Permi
 <a id="permission-managemutualaidreimbursement"></a>
 ## Manage Mutual Aid Reimbursement
 
-Manage Mutual Aid Reimbursement. Allows preparing, handing off and reconciling Cal OES MARS reimbursement work. Building the salary survey also needs View Workforce Compensation, and classifications with fewer than three members are left out. Rostered members can still fill in their own F-42 and expenses, but printed packets show them no reimbursement rates or totals. With no saved rule only department administrators may. Needs Cal OES MARS turned on and an active Business Ops add-on.
+Manage Mutual Aid Reimbursement. Allows preparing, handing off and reconciling Cal OES MARS reimbursement work. Building the salary survey also needs View Compensation, and classifications with fewer than three members are left out. Rostered members can still fill in their own F-42 and expenses, but printed packets show them no reimbursement rates or totals. With no saved rule only department administrators may. Needs Cal OES MARS turned on and an active Business Ops add-on.
 
 Default: No permission row: department admins only; no group lock. Rostered members still reach their own F-42 and expense drafts. Source: PermissionTypes.ManageMutualAidReimbursement.
 
 <a id="permission-viewinternalcosts"></a>
 ## View Internal Costs
 
-View Internal Costs. Allows seeing the department's internal costs: resource cost profiles, usage, field cost runs and margin cards. Running, freezing or deleting cost runs, editing cost profiles and changing other people's usage also need Manage Workforce Compensation. With no saved rule only department administrators may. Needs Internal Costing turned on and an active Business Ops add-on.
+View Internal Costs. Allows seeing the department's internal costs: resource cost profiles, usage, field cost runs and margin cards. Running, freezing or deleting cost runs, editing cost profiles and changing other people's usage also need Manage Labor and Compensation. With no saved rule only department administrators may. Needs Internal Costing turned on and an active Business Ops add-on.
 
 Default: No permission row: department admins only; no group lock. Rostered members still file their own resource usage. Source: PermissionTypes.ViewInternalCosts.
 
 <a id="permission-manageworkforcecompensation"></a>
-## Manage Workforce Compensation
+## Manage Labor and Compensation
 
-Manage Workforce Compensation. Allows managing the employer profile, establishments, workers, employment and compensation records, and running cost runs. It includes viewing. Nobody can approve a compensation profile they last changed or their own pay. Pay amounts are protected and show redacted without a Protected Data Grant. Available on the web only. With no saved rule only department administrators may. Needs Internal Costing and an active Business Ops add-on.
+Manage Labor and Compensation. Allows managing the employer profile, establishments, workers, employment and compensation records, and running cost runs. It includes viewing. Nobody can approve a compensation profile they last changed or their own pay. Pay amounts are protected and show redacted without a Protected Data Grant. Available on the web only. With no saved rule only department administrators may. Needs Internal Costing and an active Business Ops add-on.
 
 Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ManageWorkforceCompensation.
 
 <a id="permission-viewworkforcecompensation"></a>
-## View Workforce Compensation
+## View Compensation
 
-View Workforce Compensation. Allows viewing the workforce roster and compensation records without changing them, and is needed to build the Cal OES MARS salary survey. Amounts show redacted without a Protected Data Grant. Available on the web only. With no saved rule only department administrators may.
+View Compensation. Allows viewing the worker roster and compensation records without changing them, and is needed to build the Cal OES MARS salary survey. Amounts show redacted without a Protected Data Grant. Available on the web only. With no saved rule only department administrators may.
 
 Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ViewWorkforceCompensation.
 
@@ -2438,7 +2438,7 @@ Dashboard templates Department admins only (there is no permission to delegate i
 <a id="dashboard-customize"></a>
 ## Customizing the home dashboard
 
-Customizing the home dashboard Members press Customize. Drag a widget by its handle (press and hold on a touch screen) or focus it and use the arrow keys; pick a size chip or press + and -; remove it with the remove button or Delete, with Undo in the notice. Add widget opens the gallery with category tabs (Operations, Personnel, Map & weather, Communications, Planning, Readiness, Records, Workforce & Business, Incident Back Office, Intelligence, Administration) and a search box; a few widgets, such as Unit Status Board and My Note, can be added more than once. Each widget menu has Refresh, Settings, Open module, size and Remove; Settings holds options such as rows, priorities, station, group or unit type filters and days ahead. Done saves, Cancel discards the changes, and Reset to department default replaces the board with the template that applies to the member or the built-in default. The More dashboard options menu holds Density (Comfortable or Compact), Wall display (hides the sidebar and top bar for a station screen; it never reveals protected data and does not change session time-outs), Add board (up to five boards; the Home board cannot be deleted) and Use the classic dashboard. A board holds up to 40 widgets. If the board was changed in another window, a banner offers Keep mine or Load latest.
+Customizing the home dashboard Members press Customize. Drag a widget by its handle (press and hold on a touch screen) or focus it and use the arrow keys; pick a size chip or press + and -; remove it with the remove button or Delete, with Undo in the notice. Add widget opens the gallery with category tabs (Operations, Personnel, Map & weather, Communications, Planning, Readiness, Records, Business Ops, Incident Back Office, Intelligence, Administration) and a search box; a few widgets, such as Unit Status Board and My Note, can be added more than once. Each widget menu has Refresh, Settings, Open module, size and Remove; Settings holds options such as rows, priorities, station, group or unit type filters and days ahead. Done saves, Cancel discards the changes, and Reset to department default replaces the board with the template that applies to the member or the built-in default. The More dashboard options menu holds Density (Comfortable or Compact), Wall display (hides the sidebar and top bar for a station screen; it never reveals protected data and does not change session time-outs), Add board (up to five boards; the Home board cannot be deleted) and Use the classic dashboard. A board holds up to 40 widgets. If the board was changed in another window, a banner offers Keep mine or Load latest.
 
 <a id="dashboard-defaults"></a>
 ## Which dashboard a member sees
@@ -2847,7 +2847,7 @@ Default: missing = department admins, group admins and the person who asked for 
 <a id="setting-dispatcherdeskconfig"></a>
 ## Dispatcher desk
 
-Dispatcher desk. Turns the dispatcher desk on and sets how it works: which work is offered to the dispatchers on duty in the Dispatch app (pending and scheduled calls, texts, phone calls, emails, chats), how long an offer waits and how many items a dispatcher holds before counting as busy, how many missed offers in a row set a dispatcher Away, and what happens to texts and phone calls when nobody is free (wait in the queue, Enhanced AI, or voicemail). It also sets what a call emailed to the dispatch address becomes (dispatched at once, saved as pending, or read by Enhanced AI into a pending call) and the break and duty rules: break reminders, automatic return from breaks, the minimum available, refusing breaks below it, no desk alerts on break, and whether dispatchers must be on a shift or may go on duty without one (Shifts, Dispatcher Desk Settings). Off by default; emailed calls are dispatched at once until Emailed calls is changed, which applies even while routing is off.
+Dispatcher desk. Turns the dispatcher desk on and sets how it works: which work is offered to the dispatchers on duty in the Dispatch app (pending and scheduled calls, texts, phone calls, emails, chats), how long an offer waits and how many items a dispatcher holds before counting as busy, how many missed offers in a row set a dispatcher Away, and what happens to texts and phone calls when nobody is free (wait in the queue, Enhanced AI, or voicemail). It also sets what a call emailed to the dispatch address becomes (dispatched at once, saved as pending, or read by Enhanced AI into a pending call) and the break and duty rules: break reminders, automatic return from breaks, the minimum available, refusing breaks below it, no desk alerts on break, and whether dispatchers must be on a shift or may go on duty without one (Shifts, Dispatcher Desk, Dispatcher Desk Settings). Off by default; emailed calls are dispatched at once until Emailed calls is changed, which applies even while routing is off.
 
 Default: missing = desk off; emailed calls are dispatched at once (email call mode 0). Once turned on: every kind of work is routed, 45-second offers, 1 item per dispatcher, Away after 2 missed offers in a row, texts wait in the queue, phone calls go to Enhanced AI voice intake (a voicemail without it), 5-minute break reminders, no automatic return, at least 1 dispatcher available, dispatchers must be on a shift. Source: DepartmentSettingTypes.DispatcherDeskConfig.
 
@@ -2912,7 +2912,7 @@ On-Shift Hours report Each person's hours on shift for a period across assigned,
 <a id="dispatcher-desk"></a>
 ## Dispatcher Desk
 
-Dispatcher Desk A live board of the dispatchers on duty and the work waiting for them. Pending and scheduled calls, texts, phone calls, emails and chats are offered to one free dispatcher at a time, who takes them in the Dispatch app on a phone or tablet. Work goes to someone who is free: a dispatcher holding work counts as busy, an offer nobody takes moves on to the next dispatcher, and work left waiting alerts everyone on duty. Dispatchers can work the desk from wherever they are, not only from a console. Two volunteer dispatchers cover a weekend from their phones. A text about a tree down across a road is offered to the one who is free and becomes a call, while the other is on a meal break and gets no desk alerts until they are back. Give your dispatchers the Dispatch app login permission and put them on a shift's dispatch roster. Then open Shifts, Dispatcher Desk Settings, turn on Route work to on-duty dispatchers, choose what to Send to the desk and save. Dispatchers sign in to the desk in the Dispatch app; the Dispatcher Desk page shows who is available, busy or on break and the open queue, and a desk supervisor can end a break or move work to someone else.
+Dispatcher Desk A live board of the dispatchers on duty and the work waiting for them. Pending and scheduled calls, texts, phone calls, emails and chats are offered to one free dispatcher at a time, who takes them in the Dispatch app on a phone or tablet. Work goes to someone who is free: a dispatcher holding work counts as busy, an offer nobody takes moves on to the next dispatcher, and work left waiting alerts everyone on duty. Dispatchers can work the desk from wherever they are, not only from a console. Two volunteer dispatchers cover a weekend from their phones. A text about a tree down across a road is offered to the one who is free and becomes a call, while the other is on a meal break and gets no desk alerts until they are back. Give your dispatchers the Dispatch app login permission and put them on a shift's dispatch roster. Then open Shifts, Dispatcher Desk, Dispatcher Desk Settings, turn on Route work to on-duty dispatchers, choose what to Send to the desk and save. Dispatchers sign in to the desk in the Dispatch app; the Dispatcher Desk page shows who is available, busy or on break and the open queue, and a desk supervisor can end a break or move work to someone else.
 
 <a id="shift-dispatchers"></a>
 ## Dispatchers on duty
@@ -2922,17 +2922,17 @@ Dispatchers on duty Put dispatchers on Assigned and Sign-up shifts, on a dispatc
 <a id="dispatcher-breaks"></a>
 ## Dispatcher Breaks
 
-Dispatcher Breaks Plan breaks and meals for the day's dispatchers on one coverage timeline that shows who is on duty, who is on a break and where coverage would drop below the minimum. Breaks stay staggered so the desk is never left empty: Plan breaks spreads a shift's break plan across its dispatchers without overlaps, and the planner warns about overlapping breaks and gaps before they happen. Dispatchers are reminded before each break and, by default, get no desk alerts while on it. On a 12-hour shift with three dispatchers, Plan breaks places each one's 30-minute meal and two 15-minute breaks at different times, and each dispatcher is reminded five minutes before a break is due. Set a break plan on each shift, or a default break plan in Dispatcher Desk Settings. Then open Shifts, Dispatcher Breaks, choose a date and a shift day and use Plan breaks, or plan single breaks yourself. Desk supervisors and shift managers plan anyone's breaks; dispatchers plan their own only on shifts that allow it. A break is a length, so a break started early also ends early.
+Dispatcher Breaks Plan breaks and meals for the day's dispatchers on one coverage timeline that shows who is on duty, who is on a break and where coverage would drop below the minimum. Breaks stay staggered so the desk is never left empty: Plan breaks spreads a shift's break plan across its dispatchers without overlaps, and the planner warns about overlapping breaks and gaps before they happen. Dispatchers are reminded before each break and, by default, get no desk alerts while on it. On a 12-hour shift with three dispatchers, Plan breaks places each one's 30-minute meal and two 15-minute breaks at different times, and each dispatcher is reminded five minutes before a break is due. Set a break plan on each shift, or a default break plan in Dispatcher Desk Settings. Then open Shifts, Dispatcher Desk, Dispatcher Breaks, choose a date and a shift day and use Plan breaks, or plan single breaks yourself. Desk supervisors and shift managers plan anyone's breaks; dispatchers plan their own only on shifts that allow it. A break is a length, so a break started early also ends early.
 
 <a id="dispatcher-desk-settings"></a>
 ## Dispatcher Desk Settings
 
-Dispatcher Desk Settings Turn routing on and choose which work goes to the desk, how long an offer waits, what happens to texts and phone calls when every dispatcher is busy, what an emailed call becomes, and the rules for breaks and duty. The department decides once how the desk behaves, from how quickly unanswered work moves on to whether a break may leave fewer dispatchers available than the minimum. A department sends texts and phone calls to the desk, gives each offer 60 seconds, lets Enhanced AI fill in a pending call when nobody is free, and saves emailed calls as pending for a dispatcher to review. Department administrators open Shifts, then Dispatcher Desk Settings. Turn on Route work to on-duty dispatchers, choose Send to the desk, the offer timeout and items per dispatcher, what happens when every dispatcher is busy, Emailed calls and the break rules, then save. The Enhanced AI choices need the Enhanced AI add-on.
+Dispatcher Desk Settings Turn routing on and choose which work goes to the desk, how long an offer waits, what happens to texts and phone calls when every dispatcher is busy, what an emailed call becomes, and the rules for breaks and duty. The department decides once how the desk behaves, from how quickly unanswered work moves on to whether a break may leave fewer dispatchers available than the minimum. A department sends texts and phone calls to the desk, gives each offer 60 seconds, lets Enhanced AI fill in a pending call when nobody is free, and saves emailed calls as pending for a dispatcher to review. Department administrators open Shifts, then Dispatcher Desk, Dispatcher Desk Settings. Turn on Route work to on-duty dispatchers, choose Send to the desk, the offer timeout and items per dispatcher, what happens when every dispatcher is busy, Emailed calls and the break rules, then save. The Enhanced AI choices need the Enhanced AI add-on.
 
 <a id="dispatcher-desk-activity"></a>
 ## Dispatcher Activity
 
-Dispatcher Activity Desk activity for up to 92 days: work by kind, completed, overflowed, cancelled and escalated items and the average time to answer, and for each dispatcher the offers accepted, declined and missed, the time to accept and complete, and breaks taken, missed or returned from late. See whether work is answered quickly, how often it overflows or escalates and whether breaks run on time, then adjust staffing, offer timeouts or break plans from the numbers. A supervisor sees that texts often escalated on Friday evenings and adds a second dispatcher to that shift. Department administrators and desk supervisors open Shifts, then Dispatcher Activity, choose the From and To dates and select Show.
+Dispatcher Activity Desk activity for up to 92 days: work by kind, completed, overflowed, cancelled and escalated items and the average time to answer, and for each dispatcher the offers accepted, declined and missed, the time to accept and complete, and breaks taken, missed or returned from late. See whether work is answered quickly, how often it overflows or escalates and whether breaks run on time, then adjust staffing, offer timeouts or break plans from the numbers. A supervisor sees that texts often escalated on Friday evenings and adds a second dispatcher to that shift. Department administrators and desk supervisors open Shifts, then Dispatcher Desk, Dispatcher Activity, choose the From and To dates and select Show.
 
 <a id="module-trainingdisabled"></a>
 ## Training availability
@@ -3692,9 +3692,9 @@ Maintenance history and reports Maintenance history, repair costs and safety hol
 Readiness Pro The Readiness Pro add-on: work orders, preventive maintenance, repair approvals and safety holds. Give equipment defects an owner and a recorded repair and return-to-service review. A failed apparatus check leads to an explicitly created maintenance work order. Checklists do not require this add-on. Maintenance needs its module, permissions and active entitlement. Historical evidence and hold release follow owning-module rules.
 
 <a id="module-businessoperationsdisabled"></a>
-## Business Operations availability
+## Business Ops availability
 
-Business Operations availability. Controls availability of business operations. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.
+Business Ops availability. Controls availability of Business Ops. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.
 
 Default: false. Source: DepartmentModuleSettings.BusinessOperationsDisabled.
 
@@ -3721,109 +3721,109 @@ Contracts Contracts, bids and rate schedules. Bill for standby and contract serv
 Cal OES MARS Cal OES MARS reimbursement claims. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Enter your annual rates, then work the MARS action queue after deployments.
 
 <a id="workforce"></a>
-## Workforce
+## Labor & Costing
 
-Workforce Workforce compensation and field cost runs. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Add compensation profiles, then run field costs for deployments.
+Labor & Costing Compensation and field cost runs. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Add compensation profiles, then run field costs for deployments.
 
 <a id="new-invoice"></a>
 ## New Invoice
 
-New Invoice Create an invoice for a customer. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.
+New Invoice Create an invoice for a customer. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Business Ops add-on. Online payments also need your own payment-provider account.
 
 <a id="rate-cards"></a>
 ## Rate Cards
 
-Rate Cards Rates for units, personnel and fees used on invoices. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.
+Rate Cards Rates for units, personnel and fees used on invoices. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Business Ops add-on. Online payments also need your own payment-provider account.
 
 <a id="invoice-aging"></a>
 ## Accounts Receivable Aging
 
-Accounts Receivable Aging Unpaid invoices grouped by how overdue they are. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.
+Accounts Receivable Aging Unpaid invoices grouped by how overdue they are. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Business Ops add-on. Online payments also need your own payment-provider account.
 
 <a id="billing-settings"></a>
 ## Billing Settings
 
-Billing Settings The legal name, remit-to address and tax details printed on invoices. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.
+Billing Settings The legal name, remit-to address and tax details printed on invoices. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Business Ops add-on. Online payments also need your own payment-provider account.
 
 <a id="online-payment-settings"></a>
 ## Online Payment Settings
 
-Online Payment Settings Connect your Stripe account to take invoice payments online. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.
+Online Payment Settings Connect your Stripe account to take invoice payments online. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Business Ops add-on. Online payments also need your own payment-provider account.
 
 <a id="bids"></a>
 ## Bids
 
-Bids Priced estimates for customers. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.
+Bids Priced estimates for customers. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Business Ops add-on. Online payments also need your own payment-provider account.
 
 <a id="new-bid"></a>
 ## New Bid
 
-New Bid Create a bid for a customer. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.
+New Bid Create a bid for a customer. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Business Ops add-on. Online payments also need your own payment-provider account.
 
 <a id="new-contract"></a>
 ## New Contract
 
-New Contract Create a service contract for a customer. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.
+New Contract Create a service contract for a customer. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Business Ops add-on. Online payments also need your own payment-provider account.
 
 <a id="compliance-documents"></a>
 ## Compliance Documents
 
-Compliance Documents Insurance, licences and bonds, with expiry reminders. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.
+Compliance Documents Insurance, licences and bonds, with expiry reminders. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Business Ops add-on. Online payments also need your own payment-provider account.
 
 <a id="rate-schedules"></a>
 ## Rate Schedules
 
-Rate Schedules Contractor rates for crews, vehicles and equipment. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.
+Rate Schedules Contractor rates for crews, vehicles and equipment. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Business Ops add-on. Online payments also need your own payment-provider account.
 
 <a id="cal-oes-mars-queue"></a>
 ## MARS Action Queue
 
-MARS Action Queue MARS claims waiting to be prepared and submitted. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.
+MARS Action Queue MARS claims waiting to be prepared and submitted. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Business Ops add-on. Online payments also need your own payment-provider account.
 
 <a id="cal-oes-mars-rates"></a>
 ## MARS Annual Rates
 
-MARS Annual Rates Annual MARS salary and equipment rates. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.
+MARS Annual Rates Annual MARS salary and equipment rates. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Business Ops add-on. Online payments also need your own payment-provider account.
 
 <a id="cal-oes-mars-reconciliation"></a>
 ## MARS Reconciliation
 
-MARS Reconciliation Match MARS payments to the claims you submitted. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.
+MARS Reconciliation Match MARS payments to the claims you submitted. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Business Ops add-on. Online payments also need your own payment-provider account.
 
 <a id="workforce-compensation"></a>
 ## Compensation Profiles
 
-Compensation Profiles Pay rates and employer costs for staff. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.
+Compensation Profiles Pay rates and employer costs for staff. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Business Ops add-on. Online payments also need your own payment-provider account.
 
 <a id="workforce-annual-facts"></a>
 ## Annual Pay Facts
 
-Annual Pay Facts Annual earnings and hours used for pay data reporting. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.
+Annual Pay Facts Annual earnings and hours used for pay data reporting. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Business Ops add-on. Online payments also need your own payment-provider account.
 
 <a id="resource-costs"></a>
 ## Resource Cost Profiles
 
-Resource Cost Profiles Running costs for units and equipment. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.
+Resource Cost Profiles Running costs for units and equipment. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Business Ops add-on. Online payments also need your own payment-provider account.
 
 <a id="cost-runs"></a>
 ## Field Cost Runs
 
-Field Cost Runs Work out the full cost of a bid, call or deployment. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.
+Field Cost Runs Work out the full cost of a bid, call or deployment. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Business Ops add-on. Online payments also need your own payment-provider account.
 
 <a id="pay-data-reporting"></a>
 ## California Pay Data Reporting
 
-California Pay Data Reporting Prepare California pay data reports. Also requires Advanced Data Protection. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.
+California Pay Data Reporting Prepare California pay data reports. Also requires Advanced Data Protection. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Business Ops add-on. Online payments also need your own payment-provider account.
 
 <a id="my-demographics"></a>
 ## My Demographic Response
 
-My Demographic Response Your voluntary answers for California pay data reporting. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.
+My Demographic Response Your voluntary answers for California pay data reporting. Bill for standby and contract services and prepare reimbursement claims from records you already keep. An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement. Requires the Business Ops add-on. Online payments also need your own payment-provider account.
 
 <a id="addon-business"></a>
-## Business Operations
+## Business Ops
 
-Business Operations The Workforce and Business Operations add-on: invoicing, payments, contracts, bids, MARS reimbursement and workforce costing. Connect administrative commercial work to the department activities it supports. Prepare an event standby invoice or review documented mutual-aid costs. Certifications and Deployment Finance do not require this add-on. Pay-data reporting additionally needs ADP Enabled; online payments require provider setup. No reimbursement or savings are guaranteed.
+Business Ops The Business Ops add-on: invoicing, payments, contracts, bids, MARS reimbursement and labor costing. Connect administrative commercial work to the department activities it supports. Prepare an event standby invoice or review documented mutual-aid costs. Certifications and Deployment Finance do not require this add-on. Pay-data reporting additionally needs ADP Enabled; online payments require provider setup. No reimbursement or savings are guaranteed.
 
 <a id="voice"></a>
 ## Voice

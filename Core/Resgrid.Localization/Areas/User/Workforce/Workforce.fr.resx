@@ -638,7 +638,7 @@
   <data name="WorkerKindVolunteer" xml:space="preserve"><value>Bénévole</value></data>
   <data name="Workers" xml:space="preserve"><value>Travailleurs</value></data>
   <data name="WorkersIntro" xml:space="preserve"><value>Chaque personne que le service rémunère ou déclare — membres et travailleurs externes — avec ses périodes d'emploi.</value></data>
-  <data name="Workforce" xml:space="preserve"><value>Effectifs</value></data>
+  <data name="Workforce" xml:space="preserve"><value>Main-d'œuvre et coûts</value></data>
   <data name="WorksheetIntro" xml:space="preserve"><value>Les valeurs de niveau employeur que vous saisissez sur le portail du CRD avec le fichier téléversé.</value></data>
   <data name="WorksheetNoStore" xml:space="preserve"><value>Servi sans cache et audité ; fermez l'onglet une fois terminé. Resgrid ne se connecte jamais au portail.</value></data>
   <data name="Year" xml:space="preserve"><value>Année</value></data>

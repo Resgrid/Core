@@ -22,9 +22,9 @@
   <data name="InvoicesLower" xml:space="preserve"><value>faktur</value></data>
   <data name="Invoice" xml:space="preserve"><value>Faktura</value></data>
   <data name="InvoicingIntro" xml:space="preserve"><value>Faktury klientów, płatności i należności.</value></data>
-  <data name="ReadOnlyNotice" xml:space="preserve"><value>Dodatek Business Operations nie jest aktywny dla tego oddziału. Istniejące faktury pozostają do odczytu; tworzenie lub zmiany wymagają aktywnego dodatku.</value></data>
-  <data name="BusinessOperations" xml:space="preserve"><value>Business Operations</value></data>
-  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Fakturowanie, cenniki i profile rozliczeniowe. Strony wymagają też dodatku Business Operations.</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>Dodatek Business Ops nie jest aktywny dla tego oddziału. Istniejące faktury pozostają do odczytu; tworzenie lub zmiany wymagają aktywnego dodatku.</value></data>
+  <data name="BusinessOperations" xml:space="preserve"><value>Business Ops</value></data>
+  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Fakturowanie, cenniki i profile rozliczeniowe. Strony wymagają też dodatku Business Ops.</value></data>
   <data name="RateCards" xml:space="preserve"><value>Cenniki</value></data>
   <data name="RateCard" xml:space="preserve"><value>Cennik</value></data>
   <data name="RateCardsIntro" xml:space="preserve"><value>Stawki stosowane przy dodawaniu zgłoszeń do faktury.</value></data>
@@ -131,7 +131,7 @@
   <data name="Saved" xml:space="preserve"><value>Zapisano.</value></data>
   <data name="InvalidInput" xml:space="preserve"><value>Przesłane wartości są nieprawidłowe.</value></data>
   <data name="NameRequired" xml:space="preserve"><value>Nazwa jest wymagana.</value></data>
-  <data name="AddonRequired" xml:space="preserve"><value>Wymaga aktywnego dodatku Business Operations.</value></data>
+  <data name="AddonRequired" xml:space="preserve"><value>Wymaga aktywnego dodatku Business Ops.</value></data>
   <data name="TotalsUpdateOnSave" xml:space="preserve"><value>Rabat i podatek są przeliczane przy zapisie.</value></data>
   <data name="PreviewAndSend" xml:space="preserve"><value>Podgląd i wysyłka</value></data>
   <data name="BackToInvoices" xml:space="preserve"><value>Wróć do faktur</value></data>
@@ -232,7 +232,7 @@
   <data name="NotAvailableInRegion" xml:space="preserve"><value>Niedostępne w tym regionie</value></data>
   <data name="Enabled" xml:space="preserve"><value>Włączone</value></data>
   <data name="Disabled" xml:space="preserve"><value>Wyłączone</value></data>
-  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Dodatek Business Operations</value></data>
+  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Dodatek Business Ops</value></data>
   <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>Miesięczny dodatek dla oddziałów, które fakturują klientów i zarządzają umowami. Tylko członek zarządzający oddziałem może go kupić lub anulować.</value></data>
   <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Fakturowanie klientów, cenniki, płatności i wiekowanie należności</value></data>
   <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Stawki wykonawców, umowy i odzyskiwanie kosztów</value></data>
@@ -244,7 +244,7 @@
   <data name="SubscriptionCancelled" xml:space="preserve"><value>Odnowienie anulowane; dostęp trwa do końca opłaconego okresu.</value></data>
   <data name="Buy" xml:space="preserve"><value>Kup</value></data>
   <data name="CancelSubscription" xml:space="preserve"><value>Anuluj odnowienie</value></data>
-  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Anulować odnowienie Business Operations?</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Anulować odnowienie Business Ops?</value></data>
   <data name="BillingUnavailable" xml:space="preserve"><value>Rozliczenia są teraz niedostępne. Spróbuj ponownie później.</value></data>
   <data name="ManageSubscription" xml:space="preserve"><value>Zarządzaj subskrypcją</value></data>
   <data name="ModuleSettings" xml:space="preserve"><value>Ustawienia modułów</value></data>
@@ -341,7 +341,7 @@
   <data name="TooManyRequests" xml:space="preserve"><value>Zbyt wiele żądań. Odczekaj minutę i spróbuj ponownie.</value></data>
   <data name="payments_not_available_in_region" xml:space="preserve"><value>Pobieranie płatności online nie jest dostępne w tym regionie.</value></data>
   <data name="payments_flag_off" xml:space="preserve"><value>Płatności online nie są włączone dla tego oddziału.</value></data>
-  <data name="payments_addon_required" xml:space="preserve"><value>Płatności online wymagają aktywnego dodatku Business Operations.</value></data>
+  <data name="payments_addon_required" xml:space="preserve"><value>Płatności online wymagają aktywnego dodatku Business Ops.</value></data>
   <data name="payments_not_enabled_for_department" xml:space="preserve"><value>Płatność online jest wyłączona w ustawieniach rozliczeń.</value></data>
   <data name="payments_no_connection" xml:space="preserve"><value>Nie połączono konta Stripe.</value></data>
   <data name="payments_connection_not_ready" xml:space="preserve"><value>Połączone konto Stripe nie może jeszcze przyjmować obciążeń. Uzupełnij wymagania Stripe i spróbuj ponownie.</value></data>

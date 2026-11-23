@@ -638,7 +638,7 @@
   <data name="WorkerKindVolunteer" xml:space="preserve"><value>متطوع</value></data>
   <data name="Workers" xml:space="preserve"><value>العاملون</value></data>
   <data name="WorkersIntro" xml:space="preserve"><value>كل شخص يدفع له القسم أو يبلّغ عنه — الأعضاء والعاملون الخارجيون — مع فترات عملهم.</value></data>
-  <data name="Workforce" xml:space="preserve"><value>القوى العاملة</value></data>
+  <data name="Workforce" xml:space="preserve"><value>العمالة والتكاليف</value></data>
   <data name="WorksheetIntro" xml:space="preserve"><value>قيم صاحب العمل التي تُدخلها في بوابة CRD إلى جانب الملف المرفوع.</value></data>
   <data name="WorksheetNoStore" xml:space="preserve"><value>يُقدَّم بدون تخزين مؤقت ويُدقق؛ أغلق التبويب عند الانتهاء. Resgrid لا تسجل الدخول إلى البوابة أبدًا.</value></data>
   <data name="Year" xml:space="preserve"><value>السنة</value></data>

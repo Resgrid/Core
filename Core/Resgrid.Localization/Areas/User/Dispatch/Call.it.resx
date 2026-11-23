@@ -1164,6 +1164,9 @@
   <data name="DestinationPlusCodePlaceholder" xml:space="preserve">
     <value>Codice plus</value>
   </data>
+  <data name="PlusCodePlaceholder" xml:space="preserve">
+    <value>Codice plus</value>
+  </data>
   <data name="FindPlusCode" xml:space="preserve">
     <value>Trova codice plus</value>
   </data>

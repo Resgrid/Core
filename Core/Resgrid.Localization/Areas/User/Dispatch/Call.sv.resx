@@ -1164,6 +1164,9 @@
   <data name="DestinationPlusCodePlaceholder" xml:space="preserve">
     <value>Pluskod</value>
   </data>
+  <data name="PlusCodePlaceholder" xml:space="preserve">
+    <value>Pluskod</value>
+  </data>
   <data name="FindPlusCode" xml:space="preserve">
     <value>Hitta pluskod</value>
   </data>

@@ -1076,6 +1076,9 @@
   <data name="DestinationPlusCodePlaceholder" xml:space="preserve">
     <value>Κωδικός Plus</value>
   </data>
+  <data name="PlusCodePlaceholder" xml:space="preserve">
+    <value>Κωδικός Plus</value>
+  </data>
   <data name="FindPlusCode" xml:space="preserve">
     <value>Εύρεση κωδικού Plus</value>
   </data>

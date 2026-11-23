@@ -1,0 +1,22 @@
+@model Resgrid.Web.Areas.User.Models.Calls.ICallLocationsForm
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
+@*
+    The call location's plus code (Open Location Code): like the destination's, it only finds the point. A found code places the
+    call pin (and the address, through the page's reverse geocode, unless the dispatcher typed one) and the code is emptied; it
+    is never stored. A save with a code still typed in looks it up first (resgrid.dispatch.calllocations.js). Shown by the Plus
+    Code field of the New Call Form Fields policy, which can hide it but never require it.
+*@
+@if (Model.IsFieldVisible(NewCallFieldKeys.PlusCode))
+{
+    <div class="row" style="margin-top: 8px;">
+        <div class="col-md-5">
+            <div class="input-group input-group-sm">
+                <input type="text" class="form-control" id="CallPlusCode" maxlength="100" autocomplete="off"
+                       placeholder="@localizer["PlusCodePlaceholder"]">
+                <span class="input-group-btn">
+                    <a id="callPlusCodeButton" href="#" class="btn btn-info">@localizer["FindPlusCode"]</a>
+                </span>
+            </div>
+        </div>
+    </div>
+}

@@ -11,7 +11,8 @@
     var showAddress = Model.IsFieldVisible(NewCallFieldKeys.Address);
     var showGeolocation = Model.IsFieldVisible(NewCallFieldKeys.Geolocation);
     var showWhat3Words = Model.IsFieldVisible(NewCallFieldKeys.What3Words);
-    var showLocation = showAddress || showGeolocation || showWhat3Words;
+    var showPlusCode = Model.IsFieldVisible(NewCallFieldKeys.PlusCode);
+    var showLocation = showAddress || showGeolocation || showWhat3Words || showPlusCode;
     var showDispatchPersonnel = Model.IsFieldVisible(NewCallFieldKeys.DispatchPersonnel);
     var showDispatchGroups = Model.IsFieldVisible(NewCallFieldKeys.DispatchGroups);
     var showDispatchRoles = Model.IsFieldVisible(NewCallFieldKeys.DispatchRoles);
@@ -282,9 +283,10 @@
                                             }
                                         </div>
                                     }
+                                    <partial name="_CallLocationPlusCode" model="Model" />
                                     @if (showGeolocation)
                                     {
-                                        <div class="row" style="@(showAddress || showWhat3Words ? "margin-top: 8px;" : "")">
+                                        <div class="row" style="@(showAddress || showWhat3Words || showPlusCode ? "margin-top: 8px;" : "")">
                                             <div class="col-md-11">
                                                 <div class="input-group input-group-sm">
                                                     <span class="input-group-addon">@localizer["LatitudeShort"]</span>
@@ -304,7 +306,7 @@
                         }
                         @if (!showGeolocation)
                         {
-                            @* No pin entry: the stored point rides along, and an address or what3words lookup can still move it,
+                            @* No pin entry: the stored point rides along, and an address, what3words or plus code lookup can still move it,
                                as an edited address would be geocoded anyway. *@
                             <input type="hidden" asp-for="Latitude">
                             <input type="hidden" asp-for="Longitude">

@@ -606,6 +606,9 @@
   <data name="DestinationPlusCodePlaceholder" xml:space="preserve">
     <value>رمز Plus</value>
   </data>
+  <data name="PlusCodePlaceholder" xml:space="preserve">
+    <value>رمز Plus</value>
+  </data>
   <data name="FindPlusCode" xml:space="preserve">
     <value>البحث عن رمز Plus</value>
   </data>

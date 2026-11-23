@@ -152,6 +152,35 @@ namespace Resgrid.Tests.Security.Audit20261005
 		}
 
 		[Test]
+		public void Templates_Edit_view_posts_to_the_Edit_action()
+		{
+			// New always saves a new row (above), so an Edit page that posted to New saved a copy instead of updating.
+			var root = new System.IO.DirectoryInfo(TestContext.CurrentContext.TestDirectory);
+			while (root != null && !System.IO.File.Exists(System.IO.Path.Combine(root.FullName, "Resgrid.sln"))) root = root.Parent;
+			var source = System.IO.File.ReadAllText(System.IO.Path.Combine(root!.FullName, "Web", "Resgrid.Web", "Areas", "User", "Views", "Templates", "Edit.cshtml"));
+
+			var forms = System.Text.RegularExpressions.Regex.Matches(source, "<form\\b[^>]*>").Select(m => m.Value).ToList();
+			forms.Should().ContainSingle();
+			forms[0].Should().Contain("asp-controller=\"Templates\"").And.Contain("asp-action=\"Edit\"");
+			source.Should().Contain("HiddenFor(m => m.Template.CallQuickTemplateId)", "the Edit action finds the row to update by the posted id");
+		}
+
+		[Test]
+		public async Task Templates_Edit_updates_the_posted_template()
+		{
+			M<ITemplatesService>().Setup(x => x.GetCallQuickTemplateByIdAsync(501)).ReturnsAsync(new CallQuickTemplate { CallQuickTemplateId = 501, DepartmentId = DepartmentId });
+			CallQuickTemplate saved = null;
+			M<ITemplatesService>().Setup(x => x.SaveCallQuickTemplateAsync(It.IsAny<CallQuickTemplate>(), It.IsAny<CancellationToken>()))
+				.Callback((CallQuickTemplate t, CancellationToken _) => saved = t).ReturnsAsync((CallQuickTemplate t, CancellationToken _) => t);
+
+			await Build<TemplatesController>().Edit(new NewTemplateModel { Template = new CallQuickTemplate { CallQuickTemplateId = 501, CallName = "Fire alarm", CallPriority = 3 } }, CancellationToken.None);
+
+			saved.Should().NotBeNull();
+			saved.CallQuickTemplateId.Should().Be(501);
+			saved.CallPriority.Should().Be(3);
+		}
+
+		[Test]
 		public async Task Templates_New_and_Edit_refuse_a_post_without_a_template()
 		{
 			(await Build<TemplatesController>().New(new NewTemplateModel(), CancellationToken.None)).Should().BeOfType<BadRequestResult>();

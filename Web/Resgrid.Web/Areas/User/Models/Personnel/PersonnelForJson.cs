@@ -13,6 +13,8 @@ namespace Resgrid.Web.Areas.User.Models.Personnel
 		public int GroupId { get; set; }
 		public string Status { get; set; }
 		public string StatusColor { get; set; }
+		/// <summary>The status's own text colour (hex), or null when it has none (the built-in statuses): the list then picks one that reads on StatusColor.</summary>
+		public string StatusTextColor { get; set; }
 		public string Staffing { get; set; }
 		public string StaffingColor { get; set; }
 		public List<string> Roles { get; set; }

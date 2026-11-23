@@ -8247,4 +8247,10 @@
   <data name="SetupEvidence.relay-voice" xml:space="preserve">
     <value>Vengono verificati la disponibilità di Push-to-Talk e i canali vocali permanenti. Resgrid non osserva se un relay è installato, connesso o trasmette audio; verificalo nella dashboard del relay stesso.</value>
   </data>
+  <data name="Setting.AllowShiftOverSignup" xml:space="preserve">
+    <value>Consenti iscrizioni oltre i posti del gruppo</value>
+  </data>
+  <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
+    <value>Consente ai membri di iscriversi a un gruppo del turno anche quando tutti i posti dei suoi ruoli (obbligatori e facoltativi) sono occupati. Serve comunque uno dei ruoli del gruppo. I supervisori possono sempre assegnare persone oltre i posti.</value>
+  </data>
 </root>

@@ -795,4 +795,22 @@
   <data name="Inactive" xml:space="preserve"><value>Inaktiv</value></data>
   <data name="M4SupplierHelp" xml:space="preserve"><value>Saknas en leverantör? Lägg till den på leverantörssidan.</value></data>
   <data name="M4PurchaseOrderCurrencyHelp" xml:space="preserve"><value>Välj valuta för den här beställningen. Nya beställningar använder din avdelnings valuta som standard.</value></data>
+  <data name="ParLevels" xml:space="preserve">
+    <value>Minimum per plats</value>
+  </data>
+  <data name="ParLevelsHint" xml:space="preserve">
+    <value>En plats som når sitt eget minimum eller lägre ger en varning om lågt lager för den platsen, även när avdelningens totala lager räcker. Minimum och beställningspunkt ovan är fortfarande kontrollen för hela avdelningen.</value>
+  </data>
+  <data name="ParLevelAddLocation" xml:space="preserve">
+    <value>Lägg till en plats</value>
+  </data>
+  <data name="ParLevelMinimum" xml:space="preserve">
+    <value>Minimum där</value>
+  </data>
+  <data name="ParLevelsRemoveHint" xml:space="preserve">
+    <value>Töm en plats minimum för att ta bort det.</value>
+  </data>
+  <data name="InvalidParLevel" xml:space="preserve">
+    <value>Varje plats kan ha ett minimum på 0 eller mer.</value>
+  </data>
 </root>

@@ -193,7 +193,7 @@ namespace Resgrid.Services
 			{
 				InventoryLocation l => new[] { l.Id }, InventoryAsset a => new[] { a.CurrentLocationId }, InventoryStock s => new[] { s.LocationId },
 				InventoryTransaction t => new[] { t.FromLocationId, t.ToLocationId }, InventoryIssuance i => new[] { i.LocationId },
-				InventoryTransfer t => new[] { t.FromLocationId, t.ToLocationId }, _ => Array.Empty<string>()
+				InventoryTransfer t => new[] { t.FromLocationId, t.ToLocationId }, InventoryParLevel p => new[] { p.LocationId }, _ => Array.Empty<string>()
 			};
 			foreach (var id in ids.Where(x => x != null).Distinct()) await LocationAsync(actor, id, historical: row is InventoryTransaction or InventoryTransfer or InventoryIssuance);
 			if (row is InventoryOperation op && op.CreatedBy != actor.UserId) await _auth.RequireAsync(actor, false, PermissionTypes.ManageControlledSubstances);

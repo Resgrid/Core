@@ -2292,4 +2292,10 @@
   <data name="ImportMapPoisHelp" xml:space="preserve">
     <value>استورد ملف KML أو KMZ أو CSV كنقاط اهتمام على الخريطة (معالم)، منفصلة عن سجلات صنابير الحريق.</value>
   </data>
+  <data name="RatedFlowGpm" xml:space="preserve">
+    <value>المعدل عند 20 psi (gpm)</value>
+  </data>
+  <data name="RatedFlowHelp" xml:space="preserve">
+    <value>التدفق المقدّر وفق NFPA 291: التدفق المرصود × ((الساكن − 20) / (الساكن − المتبقي))^0.54. تُحدَّد فئة التدفق منه عند إدخال الضغطين الساكن والمتبقي.</value>
+  </data>
 </root>

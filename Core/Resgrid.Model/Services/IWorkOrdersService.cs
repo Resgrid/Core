@@ -79,6 +79,8 @@ namespace Resgrid.Model.WorkOrders
 		public int? TargetGroupId { get; set; }
 		public string InventoryAssetId { get; set; }
 		public DateTime? DueOn { get; set; }
+		/// <summary>Take the target unit out of service with a safety hold when the order is saved (needs manage rights over the order).</summary>
+		public bool SetUnitOutOfService { get; set; }
 		public WorkOrderContent Content { get; set; } = new WorkOrderContent();
 	}
 	public sealed class WorkOrderTransition

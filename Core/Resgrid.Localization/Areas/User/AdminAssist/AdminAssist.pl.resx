@@ -8247,4 +8247,10 @@
   <data name="SetupEvidence.relay-voice" xml:space="preserve">
     <value>Sprawdzana jest dostępność Push-to-Talk i stałe kanały głosowe. Resgrid nie widzi, czy relay jest zainstalowany, połączony lub przesyła dźwięk; sprawdź to na pulpicie samego relaya.</value>
   </data>
+  <data name="Setting.AllowShiftOverSignup" xml:space="preserve">
+    <value>Zezwalaj na zapisy ponad miejsca w grupie</value>
+  </data>
+  <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
+    <value>Pozwala członkom zapisać się do grupy zmiany, nawet gdy wszystkie miejsca jej ról (wymagane i opcjonalne) są zajęte. Nadal potrzebują jednej z ról grupy. Przełożeni zawsze mogą przydzielać osoby ponad liczbę miejsc.</value>
+  </data>
 </root>

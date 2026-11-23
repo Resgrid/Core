@@ -1665,6 +1665,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				case ShiftActionErrors.NotPending: return "not_pending";
 				case ShiftActionErrors.AlreadyOnRoster: return "already_on_roster";
 				case ShiftActionErrors.NotEligible: return "not_eligible";
+				case ShiftActionErrors.GroupFull: return "group_full";
+				case ShiftActionErrors.RoleRequired: return "role_required";
 				default: return "invalid_request";
 			}
 		}

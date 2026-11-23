@@ -79,7 +79,16 @@ namespace Resgrid.Model.WorkOrders
 		public DateTime? ClosedOn { get; set; }
 		public string VerifiedBy { get; set; }
 		public string DuplicateOfId { get; set; }
+		/// <summary>
+		/// The order asked for its target unit to be taken out of service. Setting it on create or edit puts the unit on a safety
+		/// hold (the same hold "Add hold" makes); clearing it leaves an existing hold for the independent release.
+		/// </summary>
 		public bool SetUnitOutOfService { get; set; }
+		/// <summary>
+		/// Retired, never read or written (stays false). Closing an order does not restore the unit: a safety hold is released on
+		/// its own, by someone other than the person who completed the work (Readiness Pro review 2026-09-08, item 3). The
+		/// column is kept so stored rows still map.
+		/// </summary>
 		public bool RestoreUnitStateOnClose { get; set; }
 		public int? PreviousUnitStateType { get; set; }
 		public string WorkOrderRecurrenceId { get; set; }

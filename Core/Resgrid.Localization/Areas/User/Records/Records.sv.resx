@@ -2292,4 +2292,10 @@
   <data name="ImportMapPoisHelp" xml:space="preserve">
     <value>Importera en KML-, KMZ- eller CSV-fil som kartans intressepunkter (landmärken), skilda från brandpostposterna.</value>
   </data>
+  <data name="RatedFlowGpm" xml:space="preserve">
+    <value>Klassat vid 20 psi (gpm)</value>
+  </data>
+  <data name="RatedFlowHelp" xml:space="preserve">
+    <value>Klassat flöde enligt NFPA 291: uppmätt flöde × ((statiskt − 20) / (statiskt − resttryck))^0.54. Flödesklassen läses från det när statiskt tryck och resttryck är angivna.</value>
+  </data>
 </root>

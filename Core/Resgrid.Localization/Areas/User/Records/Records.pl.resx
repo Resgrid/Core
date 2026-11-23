@@ -2292,4 +2292,10 @@
   <data name="ImportMapPoisHelp" xml:space="preserve">
     <value>Zaimportuj plik KML, KMZ lub CSV jako punkty zainteresowania na mapie (punkty orientacyjne), oddzielnie od rejestru hydrantów.</value>
   </data>
+  <data name="RatedFlowGpm" xml:space="preserve">
+    <value>Znamionowa przy 20 psi (gpm)</value>
+  </data>
+  <data name="RatedFlowHelp" xml:space="preserve">
+    <value>Wydajność znamionowa wg NFPA 291: zmierzona wydajność × ((statyczne − 20) / (statyczne − resztkowe))^0.54. Klasa wydajności wynika z niej, gdy wpisano ciśnienie statyczne i resztkowe.</value>
+  </data>
 </root>

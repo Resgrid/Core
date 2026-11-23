@@ -37,7 +37,6 @@
 								@Html.AntiForgeryToken()
 								@Html.HiddenFor(m => m.Shift.ShiftId)
 								@Html.HiddenFor(m => m.Shift.AssignmentType)
-								@Html.HiddenFor(m => m.Shift.ScheduleType)
 								<div asp-validation-summary="All" class="text-danger"></div>
 
 								@if (!String.IsNullOrEmpty(Model.Message))

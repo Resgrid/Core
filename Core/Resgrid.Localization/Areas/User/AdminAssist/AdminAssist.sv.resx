@@ -8247,4 +8247,10 @@
   <data name="SetupEvidence.relay-voice" xml:space="preserve">
     <value>Tillgången till Push-to-Talk och permanenta röstkanaler kontrolleras. Resgrid ser inte om ett relä är installerat, anslutet eller överför ljud; kontrollera det på reläets egen instrumentpanel.</value>
   </data>
+  <data name="Setting.AllowShiftOverSignup" xml:space="preserve">
+    <value>Tillåt anmälningar utöver gruppens platser</value>
+  </data>
+  <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
+    <value>Låter medlemmar anmäla sig till en passgrupp även när alla platser för dess roller (obligatoriska och valfria) är tagna. De behöver fortfarande en av gruppens roller. Arbetsledare kan alltid tilldela personer utöver platserna.</value>
+  </data>
 </root>

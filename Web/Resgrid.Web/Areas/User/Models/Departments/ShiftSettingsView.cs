@@ -7,6 +7,9 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 	{
 		public bool AllowSignupsForMultipleShiftGroups { get; set; }
 
+		/// <summary>Members may sign up for a group past its role slots (setting 129).</summary>
+		public bool AllowShiftOverSignup { get; set; }
+
 		/// <summary>Group admins may pick the applicant for (and approve) trades in their groups.</summary>
 		public bool TradeApproversGroupAdmins { get; set; }
 

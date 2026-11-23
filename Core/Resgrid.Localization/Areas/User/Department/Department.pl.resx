@@ -2603,4 +2603,10 @@
   <data name="NewCallDispatchListsHiddenWarning" xml:space="preserve">
     <value>Wszystkie listy dysponowania (personel, grupy, role i jednostki) są ukryte. Formularze zdarzeń zaoferują zamiast nich opcjonalny przycisk „Alarm ogólny”: z nim zdarzenie trafia do wszystkich, bez niego jest zapisywane tylko informacyjnie i nikt nie jest alarmowany. Karty dysponowania z automatycznym dysponowaniem nadal wysyłają swoje jednostki.</value>
   </data>
+  <data name="ShiftOverSignupHeader" xml:space="preserve">
+    <value>Zezwalaj na zapisy ponad miejsca w grupie</value>
+  </data>
+  <data name="ShiftOverSignupHelp" xml:space="preserve">
+    <value>Członkowie mogą zapisać się do grupy, nawet gdy wszystkie miejsca dla ról (wymagane i opcjonalne) są zajęte. Nadal potrzebują jednej z ról grupy.</value>
+  </data>
 </root>

@@ -30,7 +30,7 @@ namespace Resgrid.Tests.Services
 		public async Task Schema_covers_every_persisted_model_column_and_six_decimal_quantities()
 		{
 			await using var db = Connect(_connection);
-			InventoryTables.All.Should().HaveCount(21);
+			InventoryTables.All.Should().HaveCount(22);
 			foreach (var binding in InventoryTables.All)
 			{
 				var actual = (await db.QueryAsync<string>("SELECT LOWER(column_name) FROM information_schema.columns WHERE LOWER(table_name)=@table", new { table = binding.Value.ToLowerInvariant() })).ToHashSet();
@@ -50,7 +50,7 @@ namespace Resgrid.Tests.Services
 		public void Usage_catalog_upgrade_adds_only_new_content_and_keeps_existing_inventory_at_version_19()
 		{
 			var catalog = new ProtectedFieldCatalog();
-			var originalTables = InventoryTables.All.Values.Except(new[] { "RecordInventoryUsages", "InventoryVendors", "InventoryPurchaseOrders", "InventoryPurchaseOrderItems", "InventoryCounts", "InventoryCountItems", "InventoryAlerts", "InventoryAlertDeliveries" }).ToArray();
+			var originalTables = InventoryTables.All.Values.Except(new[] { "RecordInventoryUsages", "InventoryVendors", "InventoryPurchaseOrders", "InventoryPurchaseOrderItems", "InventoryCounts", "InventoryCountItems", "InventoryAlerts", "InventoryAlertDeliveries", "InventoryParLevels" }).ToArray();
 			originalTables.Should().HaveCount(13);
 			// Only the original tables that can hold notes about people are catalogued (2026-10-17), and of those only the
 			// private members (ProtectedContent) are sealed (review §8); the others are metadata.

@@ -2292,4 +2292,10 @@
   <data name="ImportMapPoisHelp" xml:space="preserve">
     <value>Importa un file KML, KMZ o CSV come punti di interesse della mappa (riferimenti), separati dai registri degli idranti.</value>
   </data>
+  <data name="RatedFlowGpm" xml:space="preserve">
+    <value>Nominale a 20 psi (gpm)</value>
+  </data>
+  <data name="RatedFlowHelp" xml:space="preserve">
+    <value>Portata nominale NFPA 291: portata osservata × ((statica − 20) / (statica − residua))^0.54. La classe di portata si ricava da essa quando sono inserite la pressione statica e quella residua.</value>
+  </data>
 </root>

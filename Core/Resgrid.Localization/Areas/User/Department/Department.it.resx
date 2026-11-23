@@ -2603,4 +2603,10 @@
   <data name="NewCallDispatchListsHiddenWarning" xml:space="preserve">
     <value>Tutti gli elenchi di invio (personale, gruppi, ruoli e unità) sono nascosti. I moduli di chiamata offriranno invece un pulsante facoltativo «Chiamata generale»: con esso la chiamata va a tutti, senza di esso viene salvata solo a titolo informativo e nessuno viene allertato. Le schede di intervento con invio automatico continuano a inviare le loro unità.</value>
   </data>
+  <data name="ShiftOverSignupHeader" xml:space="preserve">
+    <value>Consenti iscrizioni oltre i posti del gruppo</value>
+  </data>
+  <data name="ShiftOverSignupHelp" xml:space="preserve">
+    <value>I membri possono iscriversi a un gruppo anche quando tutti i posti per ruolo (obbligatori e facoltativi) sono occupati. Serve comunque uno dei ruoli del gruppo.</value>
+  </data>
 </root>

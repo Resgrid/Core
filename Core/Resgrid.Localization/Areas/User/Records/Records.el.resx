@@ -2292,4 +2292,10 @@
   <data name="ImportMapPoisHelp" xml:space="preserve">
     <value>Εισαγωγή αρχείου KML, KMZ ή CSV ως σημεία ενδιαφέροντος χάρτη (ορόσημα), χωριστά από τις εγγραφές κρουνών.</value>
   </data>
+  <data name="RatedFlowGpm" xml:space="preserve">
+    <value>Ονομαστική στα 20 psi (gpm)</value>
+  </data>
+  <data name="RatedFlowHelp" xml:space="preserve">
+    <value>Ονομαστική ροή κατά NFPA 291: μετρημένη ροή × ((στατική − 20) / (στατική − παραμένουσα))^0.54. Η κλάση ροής προκύπτει από αυτήν όταν έχουν καταχωριστεί στατική και παραμένουσα πίεση.</value>
+  </data>
 </root>

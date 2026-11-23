@@ -54,7 +54,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			if (present.Contains("InventoryCountItems"))
 				await connection.ExecuteAsync(new CommandDefinition($"UPDATE {Q("InventoryCountItems")} SET {Q("TransactionId")}=NULL WHERE {Q("DepartmentId")}=@DepartmentId", parameters, transaction, cancellationToken: ct));
-			foreach (var table in new[] { "InventoryAlertDeliveries", "InventoryAlerts", "RecordInventoryUsages", "InventoryTransferItems", "InventoryTransactions", "InventoryCountItems", "InventoryCounts", "InventoryPurchaseOrderItems", "InventoryPurchaseOrders", "InventoryVendors", "InventoryIssuances", "InventoryTransfers", "InventoryStocks", "InventoryKitItems" }) await Delete(table);
+			foreach (var table in new[] { "InventoryParLevels", "InventoryAlertDeliveries", "InventoryAlerts", "RecordInventoryUsages", "InventoryTransferItems", "InventoryTransactions", "InventoryCountItems", "InventoryCounts", "InventoryPurchaseOrderItems", "InventoryPurchaseOrders", "InventoryVendors", "InventoryIssuances", "InventoryTransfers", "InventoryStocks", "InventoryKitItems" }) await Delete(table);
 			// Break only the nullable asset -> location edge; changing container holder columns would violate its CHECK.
 			// Protected Content and immutable historical transactions are never decoded or rewritten.
 			if (present.Contains("InventoryAssets"))

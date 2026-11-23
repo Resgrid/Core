@@ -4030,7 +4030,10 @@
             <summary>Adjustment compatibility route: provide a positive delta and exactly one explicit source/destination location.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.InventoryController.GetLowStockItems(System.Int32)">
-            <summary>Bulk items at/below their reorder point, using only stock locations this caller can view. Page is the catalog page.</summary>
+            <summary>
+            Bulk items at/below their department-wide reorder point, or with a visible location at/below its own minimum (par
+            level), using only stock locations this caller can view. Page is the catalog page.
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.InventoryController.GetAccess(System.Nullable{System.Int32})">
             <summary>Field apps: whether inventory is usable, whether the caller may count (AdjustInventory at the unit's holder location) and the unit's countable locations.</summary>
@@ -16798,6 +16801,15 @@
         <member name="T:Resgrid.Web.Services.Models.v4.Inventory.InventoryLowStockItem">
             <summary>Bulk stock visible to this caller, summed across authorized locations and lots.</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Inventory.InventoryLowStockItem.ReorderPoint">
+            <summary>The item's department-wide level (ReorderPoint, else MinLevel); null when only per-location minimums are set.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Inventory.InventoryLowStockItem.DepartmentLow">
+            <summary>The department total is at or below ReorderPoint.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Inventory.InventoryLowStockItem.Locations">
+            <summary>Visible locations at or below their own minimum (par level).</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Invoicing.InvoicingAccessResult">
             <summary>Whether this department may use customer invoicing right now (flag and Business Operations entitlement) and what it costs.</summary>
         </member>
@@ -19185,6 +19197,15 @@
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.NerisCrosswalkCoverageData">
             <summary>Crosswalk gap report: an unmapped or stale local code is a filing that will need manual work.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.HydrantData.FlowGpm">
+            <summary>Observed flow of the latest test when both pressures are set; otherwise the flow as recorded.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.HydrantData.RatedFlowGpm">
+            <summary>Rated flow at 20 psi residual (NFPA 291), when the pressures allow it; FlowClass is read from it.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.HydrantFlowTestData.RatedFlowGpm">
+            <summary>Rated flow at 20 psi residual (NFPA 291); null when the pressures do not allow it.</summary> 
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.HydrantBulkDeleteInput">
             <summary>Scope: 0 = the HydrantIds given, 1 = every imported hydrant, 2 = every hydrant. ExpectedCount is required for 1 and 2 and must equal the number that match.</summary>

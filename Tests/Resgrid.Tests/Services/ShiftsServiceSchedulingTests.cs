@@ -189,6 +189,83 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task Signup_needs_one_of_the_groups_roles()
+		{
+			// The crisis team needs a clinician; "someone" holds no role.
+			var result = await _service.SignupUserForShiftDayAsync(ShiftDayId, CrisisTeam, "someone");
+
+			result.Error.Should().Be(ShiftActionErrors.RoleRequired);
+			_saved.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task Signup_stops_at_the_groups_slots_and_a_pending_signup_holds_one()
+		{
+			SetupClinicians("clinician", "clinician2");
+			_signups.Add(new ShiftSignup { ShiftSignupId = 1, ShiftId = ShiftId, ShiftDay = _day.Day, UserId = "clinician", DepartmentGroupId = CrisisTeam, ApprovalPending = true });
+
+			var result = await _service.SignupUserForShiftDayAsync(ShiftDayId, CrisisTeam, "clinician2");
+
+			result.Error.Should().Be(ShiftActionErrors.GroupFull);
+			_saved.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task Signup_fills_optional_slots_after_the_required_ones()
+		{
+			SetupClinicians("clinician", "clinician2", "clinician3");
+			_shiftGroupRolesRepository.Setup(x => x.GetShiftGroupRolesByGroupIdAsync(1))
+				.ReturnsAsync(new List<ShiftGroupRole> { new ShiftGroupRole { ShiftGroupId = 1, PersonnelRoleId = Clinician, Required = 1, Optional = 1 } });
+			_personnel.Add(new ShiftPerson { ShiftId = ShiftId, UserId = "clinician", GroupId = CrisisTeam });
+
+			(await _service.SignupUserForShiftDayAsync(ShiftDayId, CrisisTeam, "clinician2")).Success.Should().BeTrue();
+			_signups.AddRange(_saved);
+
+			(await _service.SignupUserForShiftDayAsync(ShiftDayId, CrisisTeam, "clinician3")).Error.Should().Be(ShiftActionErrors.GroupFull);
+		}
+
+		[Test]
+		public async Task Department_over_signup_setting_skips_the_slot_count_only()
+		{
+			SetupClinicians("clinician", "clinician2");
+			_departmentSettingsService.Setup(x => x.GetAllowShiftOverSignupAsync(DepartmentId)).ReturnsAsync(true);
+			_personnel.Add(new ShiftPerson { ShiftId = ShiftId, UserId = "clinician", GroupId = CrisisTeam });
+
+			(await _service.SignupUserForShiftDayAsync(ShiftDayId, CrisisTeam, "clinician2")).Success.Should().BeTrue();
+			(await _service.SignupUserForShiftDayAsync(ShiftDayId, CrisisTeam, "someone")).Error.Should().Be(ShiftActionErrors.RoleRequired);
+		}
+
+		[Test]
+		public async Task A_supervisor_can_still_assign_past_the_groups_slots()
+		{
+			SetupClinicians("clinician", "clinician2");
+			_personnel.Add(new ShiftPerson { ShiftId = ShiftId, UserId = "clinician", GroupId = CrisisTeam });
+
+			var result = await _service.AssignUserToShiftDayAsync(ShiftDayId, "clinician2", CrisisTeam, "supervisor");
+
+			result.Success.Should().BeTrue();
+		}
+
+		[Test]
+		public async Task New_shifts_are_always_saved_as_manual()
+		{
+			_shiftsRepository.Setup(x => x.SaveOrUpdateAsync(It.IsAny<Shift>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((Shift shift, CancellationToken _, bool __) => shift);
+
+			var created = await _service.SaveShiftAsync(new Shift { DepartmentId = DepartmentId, Name = "B", ScheduleType = (int)ShiftScheduleTypes.TwentyFourFortyEight });
+			var legacy = await _service.SaveShiftAsync(new Shift { ShiftId = 77, DepartmentId = DepartmentId, Name = "Old", ScheduleType = (int)ShiftScheduleTypes.TwentyFourSeventyTwo });
+
+			created.ScheduleType.Should().Be((int)ShiftScheduleTypes.Manual);
+			legacy.ScheduleType.Should().Be((int)ShiftScheduleTypes.TwentyFourSeventyTwo, "rows stored with an older type keep it");
+		}
+
+		private void SetupClinicians(params string[] userIds)
+		{
+			_personnelRolesService.Setup(x => x.GetAllRolesForUsersInDepartmentAsync(DepartmentId))
+				.ReturnsAsync(userIds.ToDictionary(x => x, x => new List<PersonnelRole> { new PersonnelRole { PersonnelRoleId = Clinician, Name = "Clinician" } }));
+		}
+
+		[Test]
 		public async Task Removing_a_standing_roster_person_takes_them_off_that_day_only()
 		{
 			_personnel.Add(new ShiftPerson { ShiftId = ShiftId, UserId = "alice", GroupId = CrisisTeam });

@@ -8247,4 +8247,10 @@
   <data name="SetupEvidence.relay-voice" xml:space="preserve">
     <value>يتم التحقق من توفر Push-to-Talk ومن القنوات الصوتية الدائمة. لا يرى Resgrid ما إذا كان الـ relay مثبتًا أو متصلًا أو ينقل الصوت؛ تحقق من ذلك في لوحة معلومات الـ relay نفسه.</value>
   </data>
+  <data name="Setting.AllowShiftOverSignup" xml:space="preserve">
+    <value>السماح بالتسجيل بعد امتلاء أماكن المجموعة</value>
+  </data>
+  <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
+    <value>يسمح للأعضاء بالتسجيل في مجموعة مناوبة حتى عندما تكون جميع الأماكن التي تقدمها أدوارها (المطلوبة والاختيارية) مشغولة. يظل العضو بحاجة إلى أحد أدوار المجموعة. يمكن للمشرفين دائمًا تعيين أشخاص بعد امتلاء الأماكن.</value>
+  </data>
 </root>

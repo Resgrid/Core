@@ -405,4 +405,13 @@
   <data name="DepartmentCurrencyHelp" xml:space="preserve"><value>La moneda se administra en la configuración de órdenes de trabajo. Las órdenes existentes conservan su moneda registrada.</value></data>
   <data name="DepartmentCurrencySettingsHelp" xml:space="preserve"><value>Se aplica a las nuevas órdenes y sus cargos de proveedores. Los costos y límites de aprobación existentes conservan su moneda original. Si una plantilla de mantenimiento usa otra moneda, el costo estimado de las nuevas órdenes queda vacío para su revisión.</value></data>
   <data name="DepartmentThresholdHelp" xml:space="preserve"><value>Introduzca el límite de aprobación en la moneda del departamento seleccionada arriba. Se conservan los límites de las órdenes existentes en otras monedas.</value></data>
+  <data name="SetUnitOutOfService" xml:space="preserve">
+    <value>Dejar la unidad fuera de servicio</value>
+  </data>
+  <data name="SetUnitOutOfServiceHelp" xml:space="preserve">
+    <value>Al guardar, la unidad queda en retención de seguridad. La retención se levanta aparte, por alguien distinto de quien hizo el trabajo; cerrar la orden no devuelve la unidad al servicio.</value>
+  </data>
+  <data name="HoldReasonOrderOutOfService" xml:space="preserve">
+    <value>Puesta fuera de servicio por la orden de trabajo.</value>
+  </data>
 </root>

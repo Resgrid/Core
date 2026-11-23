@@ -795,4 +795,22 @@
   <data name="Inactive" xml:space="preserve"><value>Inactivo</value></data>
   <data name="M4SupplierHelp" xml:space="preserve"><value>¿Falta un proveedor? Añádalo en la página de proveedores.</value></data>
   <data name="M4PurchaseOrderCurrencyHelp" xml:space="preserve"><value>Seleccione la moneda de este pedido. Los pedidos nuevos usan de forma predeterminada la moneda de su departamento.</value></data>
+  <data name="ParLevels" xml:space="preserve">
+    <value>Mínimo en cada ubicación</value>
+  </data>
+  <data name="ParLevelsHint" xml:space="preserve">
+    <value>Una ubicación en su propio mínimo o por debajo genera una alerta de existencias bajas para esa ubicación, aunque el total del departamento sea suficiente. El mínimo y el punto de pedido de arriba siguen siendo la comprobación de todo el departamento.</value>
+  </data>
+  <data name="ParLevelAddLocation" xml:space="preserve">
+    <value>Añadir una ubicación</value>
+  </data>
+  <data name="ParLevelMinimum" xml:space="preserve">
+    <value>Mínimo allí</value>
+  </data>
+  <data name="ParLevelsRemoveHint" xml:space="preserve">
+    <value>Vacíe el mínimo de una ubicación para quitarlo.</value>
+  </data>
+  <data name="InvalidParLevel" xml:space="preserve">
+    <value>Cada ubicación puede tener un mínimo, de 0 o más.</value>
+  </data>
 </root>

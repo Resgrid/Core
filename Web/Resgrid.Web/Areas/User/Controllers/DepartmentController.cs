@@ -2189,6 +2189,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new ShiftSettingsView();
 			model.AllowSignupsForMultipleShiftGroups = await _departmentSettingsService.GetAllowSignupsForMultipleShiftGroupsAsync(DepartmentId);
+			model.AllowShiftOverSignup = await _departmentSettingsService.GetAllowShiftOverSignupAsync(DepartmentId);
 
 			var approvers = await _departmentSettingsService.GetShiftTradeApproverSettingsAsync(DepartmentId) ?? ShiftTradeApproverSettings.Default();
 			model.TradeApproversGroupAdmins = approvers.GroupAdmins;
@@ -2211,6 +2212,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.AllowSignupsForMultipleShiftGroups.ToString(),
 					DepartmentSettingTypes.AllowSignupsForMultipleShiftGroups, cancellationToken);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.AllowShiftOverSignup.ToString(),
+					DepartmentSettingTypes.AllowShiftOverSignup, cancellationToken);
 
 				// Only this department's roles can approve its trades.
 				var roles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId) ?? new List<PersonnelRole>();

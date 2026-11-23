@@ -405,4 +405,13 @@
   <data name="DepartmentCurrencyHelp" xml:space="preserve"><value>Currency is managed in Work Order Settings. Existing orders keep their recorded currency.</value></data>
   <data name="DepartmentCurrencySettingsHelp" xml:space="preserve"><value>Applies to new work orders and vendor charges on those orders. Existing costs and approval thresholds keep their original currency. If a maintenance template uses another currency, its estimated cost is left blank on new orders for review.</value></data>
   <data name="DepartmentThresholdHelp" xml:space="preserve"><value>Enter the approval threshold in the department currency selected above. Thresholds for existing orders in other currencies are retained.</value></data>
+  <data name="SetUnitOutOfService" xml:space="preserve">
+    <value>Take the unit out of service</value>
+  </data>
+  <data name="SetUnitOutOfServiceHelp" xml:space="preserve">
+    <value>Saving puts the unit on a safety hold. The hold is released on its own, by someone other than the person who did the work; closing the order does not return the unit to service.</value>
+  </data>
+  <data name="HoldReasonOrderOutOfService" xml:space="preserve">
+    <value>Taken out of service by the work order.</value>
+  </data>
 </root>

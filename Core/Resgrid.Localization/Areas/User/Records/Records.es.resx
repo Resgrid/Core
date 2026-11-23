@@ -2292,4 +2292,10 @@
   <data name="ImportMapPoisHelp" xml:space="preserve">
     <value>Importe un archivo KML, KMZ o CSV como puntos de interés del mapa (referencias), separados de los registros de hidrantes.</value>
   </data>
+  <data name="RatedFlowGpm" xml:space="preserve">
+    <value>Nominal a 20 psi (gpm)</value>
+  </data>
+  <data name="RatedFlowHelp" xml:space="preserve">
+    <value>Caudal nominal NFPA 291: caudal observado × ((estática − 20) / (estática − residual))^0.54. La clase de caudal se obtiene de él cuando se introducen la presión estática y la residual.</value>
+  </data>
 </root>

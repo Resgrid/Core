@@ -108,7 +108,6 @@
 								<tr>
 									<th>@localizer["NameColumn"]</th>
 									<th>@localizer["TypeColumn"]</th>
-									<th>@localizer["ScheduleColumn"]</th>
 									<th>@localizer["GroupsColumn"]</th>
 									<th>@localizer["PersonnelColumn"]</th>
 									<th class="span1"></th>
@@ -133,28 +132,6 @@
 											else
 											{
 												@Html.Raw(localizer["SignupType"].Value)
-											}
-										</td>
-										<td>
-											@if (g.ScheduleType == (int)ShiftScheduleTypes.Manual)
-											{
-												@Html.Raw(localizer["ManualSchedule"].Value)
-											}
-											else if (g.ScheduleType == (int)ShiftScheduleTypes.Custom)
-											{
-												@Html.Raw(localizer["CustomSchedule"].Value)
-											}
-											else if (g.ScheduleType == (int)ShiftScheduleTypes.FortyEightNintySix)
-											{
-												@Html.Raw(localizer["Schedule48_96"].Value)
-											}
-											else if (g.ScheduleType == (int)ShiftScheduleTypes.TwentyFourFortyEight)
-											{
-												@Html.Raw(localizer["Schedule24_48"].Value)
-											}
-											else if (g.ScheduleType == (int)ShiftScheduleTypes.TwentyFourSeventyTwo)
-											{
-												@Html.Raw(localizer["Schedule24_72"].Value)
 											}
 										</td>
 										<td>

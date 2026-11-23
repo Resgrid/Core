@@ -8247,4 +8247,10 @@
   <data name="SetupEvidence.relay-voice" xml:space="preserve">
     <value>Geprüft werden die Verfügbarkeit von Push-to-Talk und dauerhafte Sprachkanäle. Ob ein Relay installiert oder verbunden ist oder Audio überträgt, sieht Resgrid nicht; prüfen Sie das im Dashboard des Relays.</value>
   </data>
+  <data name="Setting.AllowShiftOverSignup" xml:space="preserve">
+    <value>Anmeldungen über die Gruppenplätze hinaus zulassen</value>
+  </data>
+  <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
+    <value>Mitglieder können sich für eine Schichtgruppe anmelden, auch wenn alle Plätze ihrer Rollen (Pflicht und optional) belegt sind. Sie benötigen weiterhin eine der Rollen der Gruppe. Vorgesetzte können Personen jederzeit über die Plätze hinaus einteilen.</value>
+  </data>
 </root>

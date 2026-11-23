@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Resgrid.Model.Inventories;
@@ -50,6 +51,38 @@ namespace Resgrid.Services
 				foreach (var quantity in location) if (totals.ContainsKey(quantity.ItemId)) totals[quantity.ItemId] += quantity.Quantity;
 			}
 			return totals;
+		}
+
+		public async Task<System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<InventoryLowStockLevel>>> GetVisibleLowStockAsync(InventoryActor actor, System.Collections.Generic.IReadOnlyCollection<string> itemIds)
+		{
+			await _auth.RequireAsync(actor);
+			if (itemIds == null || itemIds.Count > 500) throw new InventoryException(400, "InvalidPage");
+			foreach (var id in itemIds) Id(id);
+			var ids = itemIds.Distinct().ToArray();
+			var result = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<InventoryLowStockLevel>>();
+			if (ids.Length == 0) return result;
+			var visible = new System.Collections.Generic.Dictionary<string, bool>();
+			async Task<bool> Visible(string locationId)
+			{
+				if (locationId == null) return false;
+				if (visible.TryGetValue(locationId, out var known)) return known;
+				try { await LocationAsync(actor, locationId); known = true; }
+				catch (InventoryException ex) when (ex.StatusCode is 403 or 404 || ex.Code == "LocationUnavailable") { known = false; }
+				visible[locationId] = known; return known;
+			}
+			var quantities = ids.ToDictionary(id => id, _ => new System.Collections.Generic.Dictionary<string, decimal>());
+			foreach (var quantity in await _store.StockQuantitiesAsync(actor.DepartmentId, ids))
+				if (quantities.TryGetValue(quantity.ItemId, out var byLocation) && await Visible(quantity.LocationId))
+					byLocation[quantity.LocationId] = byLocation.GetValueOrDefault(quantity.LocationId) + quantity.Quantity;
+			var parLevels = (await _store.RelatedManyAsync<InventoryParLevel>(actor.DepartmentId, "ItemId", ids)).ToLookup(p => p.ItemId);
+			foreach (var item in await _store.RelatedManyAsync<InventoryItem>(actor.DepartmentId, "Id", ids))
+			{
+				var visiblePars = new System.Collections.Generic.List<InventoryParLevel>();
+				foreach (var par in parLevels[item.Id]) if (await Visible(par.LocationId)) visiblePars.Add(par);
+				var content = Decode<InventoryItemContent>(await RevealAsync(actor, item));
+				result[item.Id] = InventoryLowStock.Evaluate(item, content, quantities[item.Id], visiblePars, id => visible.GetValueOrDefault(id));
+			}
+			return result;
 		}
 
 		public async Task<InventoryPage<T>> QueryAsync<T>(InventoryActor actor, InventoryQuery filter, int page = 0) where T : InventoryRow

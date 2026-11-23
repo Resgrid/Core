@@ -187,8 +187,10 @@ namespace Resgrid.Services
 			if (input.DueOn.HasValue && (input.DueOn.Value.Year < 2000 || input.DueOn.Value.Year > 2200)) throw new WorkOrderException(400, "InvalidInput");
 			if (input.DueOn.HasValue) input.DueOn = DateTime.SpecifyKind(input.DueOn.Value, DateTimeKind.Utc);
 		}
-		private static void Apply(WorkOrder row, WorkOrderInput input) { row.Type = (int)input.Type; row.Priority = (int)input.Priority; row.TargetUnitId = input.TargetUnitId; row.TargetGroupId = input.TargetGroupId; row.InventoryAssetId = input.InventoryAssetId; row.DueOn = input.DueOn; }
-		private static string Fingerprint(WorkOrderInput input) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { input.Type, input.Priority, input.TargetUnitId, input.TargetGroupId, input.InventoryAssetId, input.DueOn, input.Content }))));
+		private static void Apply(WorkOrder row, WorkOrderInput input) { row.Type = (int)input.Type; row.Priority = (int)input.Priority; row.TargetUnitId = input.TargetUnitId; row.TargetGroupId = input.TargetGroupId; row.InventoryAssetId = input.InventoryAssetId; row.DueOn = input.DueOn; row.SetUnitOutOfService = input.SetUnitOutOfService; }
+		// The out-of-service request is part of a retry's identity only when set, so requests stored before it existed hash as they did.
+		private static string Fingerprint(WorkOrderInput input) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { input.Type, input.Priority, input.TargetUnitId, input.TargetGroupId, input.InventoryAssetId, input.DueOn, input.Content })
+			+ (input.SetUnitOutOfService ? "|unit-out-of-service" : ""))));
 		public Task<WorkOrderDetail> CreateAsync(ChecklistActor actor, WorkOrderInput input) => CreateAsync(actor, input, null);
 		private async Task<WorkOrderDetail> CreateAsync(ChecklistActor actor, WorkOrderInput input, string previewCurrency)
 		{
@@ -217,7 +219,9 @@ namespace Resgrid.Services
 				await PinSlaAsync(row);
 				await SaveAsync(actor, row, true);
 				var activityId = await ActivityAsync(actor, row, WorkOrderActivityType.Created, snapshot: input.Content);
-				await EventAsync(row, WorkflowTriggerEventType.WorkOrderCreated, events, activityId: activityId); return row.Id;
+				await EventAsync(row, WorkflowTriggerEventType.WorkOrderCreated, events, activityId: activityId);
+				if (row.SetUnitOutOfService) await HoldUnitForOrderAsync(actor, row, events);
+				return row.Id;
 			});
 			return await GetAsync(actor, id);
 		}
@@ -238,10 +242,10 @@ namespace Resgrid.Services
                     throw new WorkOrderException(409, "TargetUnavailable");
 				if (row.StartedOn.HasValue && (document.Fields.SafetyCritical && !input.Content.SafetyCritical || document.Fields.HazardousWork && !input.Content.HazardousWork)) throw new WorkOrderException(409, "SafetyRequirements");
 				if (!manage && (input.Content.ApprovedCost.HasValue && input.Content.ApprovedCost != document.Fields.ApprovedCost || input.Content.Resolution != document.Fields.Resolution || input.Content.VerificationEvidence != document.Fields.VerificationEvidence)) throw new WorkOrderException(403, "PermissionRequired");
-				if (!manage) input.Content.ApprovedCost = document.Fields.ApprovedCost;
+				if (!manage) { input.Content.ApprovedCost = document.Fields.ApprovedCost; input.SetUnitOutOfService = row.SetUnitOutOfService; }
 				input.Content.Approval = document.Fields.Approval;
 				if ((await ReadPolicyAsync(actor)).ApprovalsEnabled && input.Content.ApprovedCost != document.Fields.ApprovedCost) throw new WorkOrderException(409, "SpendingApprovalRequired");
-				var oldPriority = row.Priority;
+				var oldPriority = row.Priority; var wasOutOfService = row.SetUnitOutOfService;
 				document.Fields = input.Content; row.Content = JsonConvert.SerializeObject(document); Apply(row, input);
 				if (oldPriority != row.Priority)
 				{
@@ -251,7 +255,10 @@ namespace Resgrid.Services
 					await PinSlaAsync(row);
 					row.ResponseBreachedOn = responseBreachedOn; row.RepairBreachedOn = repairBreachedOn;
 				}
-				await ChangedAsync(actor, row, WorkOrderActivityType.Updated, events); return true;
+				await ChangedAsync(actor, row, WorkOrderActivityType.Updated, events);
+				// Newly asked for: hold the unit. Clearing the request leaves an existing hold for its independent release.
+				if (row.SetUnitOutOfService && !wasOutOfService) await HoldUnitForOrderAsync(actor, row, events);
+				return true;
 			});
 		}
 		public static WorkOrderStatus[] NextStatuses(WorkOrderStatus current) => current switch
@@ -406,7 +413,7 @@ namespace Resgrid.Services
 		{
 			var row = await ReadOrderAsync(actor, id); var c = Decode<StoredContent>(row.Content).Fields; var manage = await _authorization.CanManageAsync(actor, row.TargetGroupId); var contribute = await _authorization.CanContributeAsync(actor, row);
 			var write = await _access.CanUseMaintenanceAsync(actor.DepartmentId);
-			var detail = new WorkOrderDetail { Order = Summary(row, c), Input = new WorkOrderInput { RequestId = row.RequestId, Revision = row.Revision, Type = (WorkOrderType)row.Type, Priority = (WorkOrderPriority)row.Priority, TargetUnitId = row.TargetUnitId, TargetGroupId = row.TargetGroupId, InventoryAssetId = row.InventoryAssetId, DueOn = row.DueOn, Content = c },
+			var detail = new WorkOrderDetail { Order = Summary(row, c), Input = new WorkOrderInput { RequestId = row.RequestId, Revision = row.Revision, Type = (WorkOrderType)row.Type, Priority = (WorkOrderPriority)row.Priority, TargetUnitId = row.TargetUnitId, TargetGroupId = row.TargetGroupId, InventoryAssetId = row.InventoryAssetId, DueOn = row.DueOn, SetUnitOutOfService = row.SetUnitOutOfService, Content = c },
 				CanWrite = write, CanManage = manage && write, CanEdit = write && !Terminal(row) && row.Status != 5 && (manage || row.Status == 0 && row.CreatedBy == actor.UserId), CanContribute = write && contribute && !Terminal(row) && row.Status != 5,
 				CanAccept = write && row.Status == 2 && !row.AssignmentAcceptedOn.HasValue && (await _authorization.RecipientsAsync(actor.DepartmentId, row)).Contains(actor.UserId), ReportedBy = row.CreatedBy, VerifiedBy = row.VerifiedBy, CompletedOn = row.CompletedOn, ClosedOn = row.ClosedOn, SourceChecklistCompletionId = row.SourceChecklistCompletionId, SourceChecklistItemId = row.SourceChecklistItemId, RecurrenceId = row.WorkOrderRecurrenceId, OriginalDueOn = row.OriginalDueOn, EscalatedOn = row.EscalatedOn };
 			if (write) detail.Transitions = NextStatuses((WorkOrderStatus)row.Status).Where(s => manage || contribute && row.Status != 5 && s is WorkOrderStatus.InProgress or WorkOrderStatus.OnHold or WorkOrderStatus.Completed).ToArray();

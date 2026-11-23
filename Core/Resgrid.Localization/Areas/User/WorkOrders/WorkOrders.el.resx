@@ -405,4 +405,13 @@
   <data name="DepartmentCurrencyHelp" xml:space="preserve"><value>Το νόμισμα ορίζεται στις ρυθμίσεις εντολών εργασίας. Οι υπάρχουσες εντολές διατηρούν το καταγεγραμμένο νόμισμά τους.</value></data>
   <data name="DepartmentCurrencySettingsHelp" xml:space="preserve"><value>Ισχύει για νέες εντολές και τις χρεώσεις προμηθευτών τους. Τα υπάρχοντα κόστη και όρια έγκρισης διατηρούν το αρχικό νόμισμά τους. Αν ένα πρότυπο συντήρησης χρησιμοποιεί άλλο νόμισμα, το εκτιμώμενο κόστος στις νέες εντολές παραμένει κενό για έλεγχο.</value></data>
   <data name="DepartmentThresholdHelp" xml:space="preserve"><value>Εισαγάγετε το όριο έγκρισης στο νόμισμα του τμήματος που επιλέχθηκε παραπάνω. Διατηρούνται τα όρια των υπαρχουσών εντολών σε άλλα νομίσματα.</value></data>
+  <data name="SetUnitOutOfService" xml:space="preserve">
+    <value>Θέση της μονάδας εκτός υπηρεσίας</value>
+  </data>
+  <data name="SetUnitOutOfServiceHelp" xml:space="preserve">
+    <value>Η αποθήκευση θέτει τη μονάδα σε αναστολή ασφαλείας. Η αναστολή αίρεται χωριστά, από άλλο άτομο από αυτό που έκανε την εργασία· το κλείσιμο της εντολής δεν επαναφέρει τη μονάδα σε υπηρεσία.</value>
+  </data>
+  <data name="HoldReasonOrderOutOfService" xml:space="preserve">
+    <value>Τέθηκε εκτός υπηρεσίας από την εντολή εργασίας.</value>
+  </data>
 </root>

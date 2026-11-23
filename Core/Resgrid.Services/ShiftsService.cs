@@ -127,6 +127,11 @@ namespace Resgrid.Services
 
 		public async Task<Shift> SaveShiftAsync(Shift shift, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			// Nothing generates days from a rotation type: every shift's days are the dates picked for it, so a new shift is
+			// always Manual. Rows stored with an older type keep their value (ShiftScheduleTypes).
+			if (shift != null && shift.ShiftId == 0)
+				shift.ScheduleType = (int)ShiftScheduleTypes.Manual;
+
 			var saved = await _shiftsRepository.SaveOrUpdateAsync(shift, cancellationToken);
 
 			// The repository cascades one level: a new shift's Groups are written, but each group's Roles are a level

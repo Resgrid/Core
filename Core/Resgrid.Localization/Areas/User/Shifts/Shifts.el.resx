@@ -1143,4 +1143,10 @@
   <data name="ShiftErrorNotEligible" xml:space="preserve">
     <value>Αυτό το άτομο δεν πληροί τις απαιτήσεις για αυτή τη θέση.</value>
   </data>
+  <data name="ShiftErrorGroupFull" xml:space="preserve">
+    <value>Όλες οι θέσεις αυτής της ομάδας για τους ρόλους σας είναι κατειλημμένες.</value>
+  </data>
+  <data name="ShiftErrorRoleRequired" xml:space="preserve">
+    <value>Χρειάζεστε έναν από τους ρόλους που ζητά αυτή η ομάδα για να εγγραφείτε.</value>
+  </data>
 </root>

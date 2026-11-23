@@ -732,6 +732,13 @@ namespace Resgrid.Services
 			return false;
 		}
 
+		public async Task<bool> GetAllowShiftOverSignupAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.AllowShiftOverSignup);
+
+			return settingValue != null && bool.TryParse(settingValue.Setting, out var allow) && allow;
+		}
+
 		public async Task<ShiftTradeApproverSettings> GetShiftTradeApproverSettingsAsync(int departmentId)
 		{
 			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.ShiftTradeApprovers);

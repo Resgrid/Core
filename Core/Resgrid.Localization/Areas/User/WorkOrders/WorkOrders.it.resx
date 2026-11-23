@@ -405,4 +405,13 @@
   <data name="DepartmentCurrencyHelp" xml:space="preserve"><value>La valuta viene gestita nelle impostazioni degli ordini di lavoro. Gli ordini esistenti mantengono la valuta registrata.</value></data>
   <data name="DepartmentCurrencySettingsHelp" xml:space="preserve"><value>Si applica ai nuovi ordini e ai relativi addebiti dei fornitori. I costi e le soglie esistenti mantengono la valuta originale. Se un modello di manutenzione usa un’altra valuta, il costo stimato nei nuovi ordini resta vuoto per la verifica.</value></data>
   <data name="DepartmentThresholdHelp" xml:space="preserve"><value>Inserisci la soglia di approvazione nella valuta del reparto selezionata sopra. Le soglie degli ordini esistenti in altre valute vengono mantenute.</value></data>
+  <data name="SetUnitOutOfService" xml:space="preserve">
+    <value>Mettere l'unità fuori servizio</value>
+  </data>
+  <data name="SetUnitOutOfServiceHelp" xml:space="preserve">
+    <value>Il salvataggio mette l'unità in blocco di sicurezza. Il blocco si rimuove a parte, da una persona diversa da chi ha eseguito il lavoro; chiudere l'ordine non rimette l'unità in servizio.</value>
+  </data>
+  <data name="HoldReasonOrderOutOfService" xml:space="preserve">
+    <value>Messa fuori servizio dall'ordine di lavoro.</value>
+  </data>
 </root>

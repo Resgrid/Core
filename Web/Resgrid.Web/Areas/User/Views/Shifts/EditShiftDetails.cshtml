@@ -36,7 +36,6 @@
 								@Html.AntiForgeryToken()
 								@Html.HiddenFor(m => m.Shift.ShiftId)
 								@Html.HiddenFor(m => m.Shift.AssignmentType)
-								@Html.HiddenFor(m => m.Shift.ScheduleType)
 								@* Set to true by the page script once the personnel pickers hold the current roster; until then a save leaves personnel alone. *@
 								<input type="hidden" id="PersonnelLoaded" name="PersonnelLoaded" value="false" />
 								<div asp-validation-summary="All" class="text-danger"></div>

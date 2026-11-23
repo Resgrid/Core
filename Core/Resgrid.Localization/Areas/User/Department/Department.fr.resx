@@ -2603,4 +2603,10 @@
   <data name="NewCallDispatchListsHiddenWarning" xml:space="preserve">
     <value>Toutes les listes d'envoi (personnel, groupes, rôles et unités) sont masquées. Les formulaires d'intervention proposeront à la place un bouton facultatif « Appel général » : avec lui, l'intervention est envoyée à tout le monde ; sans lui, elle est enregistrée pour information et personne n'est alerté. Les plans de départ à envoi automatique continuent d'engager leurs unités.</value>
   </data>
+  <data name="ShiftOverSignupHeader" xml:space="preserve">
+    <value>Autoriser les inscriptions au-delà des places du groupe</value>
+  </data>
+  <data name="ShiftOverSignupHelp" xml:space="preserve">
+    <value>Les membres peuvent s'inscrire dans un groupe même lorsque toutes ses places par rôle (obligatoires et facultatives) sont prises. Ils doivent toujours avoir l'un des rôles du groupe.</value>
+  </data>
 </root>

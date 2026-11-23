@@ -2603,4 +2603,10 @@
   <data name="NewCallDispatchListsHiddenWarning" xml:space="preserve">
     <value>Alla larmlistor (personal, grupper, roller och enheter) är dolda. Ärendeformulären erbjuder i stället en valfri knapp ”Allmänt larm”: med den går ärendet till alla, utan den sparas ärendet endast som information och ingen larmas. Larmplaner som larmar automatiskt skickar fortfarande sina enheter.</value>
   </data>
+  <data name="ShiftOverSignupHeader" xml:space="preserve">
+    <value>Tillåt anmälningar utöver gruppens platser</value>
+  </data>
+  <data name="ShiftOverSignupHelp" xml:space="preserve">
+    <value>Medlemmar kan anmäla sig till en grupp även när alla rollplatser (obligatoriska och valfria) är tagna. De behöver fortfarande en av gruppens roller.</value>
+  </data>
 </root>

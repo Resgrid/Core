@@ -8247,4 +8247,10 @@
   <data name="SetupEvidence.relay-voice" xml:space="preserve">
     <value>La disponibilité de Push-to-Talk et les canaux vocaux permanents sont vérifiés. Resgrid ne voit pas si un relais est installé, connecté ou s’il transmet de l’audio ; vérifiez-le sur le tableau de bord du relais.</value>
   </data>
+  <data name="Setting.AllowShiftOverSignup" xml:space="preserve">
+    <value>Autoriser les inscriptions au-delà des places du groupe</value>
+  </data>
+  <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
+    <value>Permet aux membres de s'inscrire dans un groupe de garde même lorsque toutes les places de ses rôles (obligatoires et facultatives) sont prises. Ils doivent toujours avoir l'un des rôles du groupe. Les superviseurs peuvent toujours affecter des personnes au-delà des places.</value>
+  </data>
 </root>

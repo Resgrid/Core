@@ -8247,4 +8247,10 @@
   <data name="SetupEvidence.relay-voice" xml:space="preserve">
     <value>Push-to-Talk availability and standing voice channels are checked. Resgrid does not observe whether a relay is installed, connected or passing audio; check that on the relay's own dashboard.</value>
   </data>
+  <data name="Setting.AllowShiftOverSignup" xml:space="preserve">
+    <value>Allow Signups Past Group Slots</value>
+  </data>
+  <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
+    <value>Let members sign up for a shift group even when every slot its roles offer (required and optional) is taken. They still need one of the group's roles. Supervisors can always assign people past the slots.</value>
+  </data>
 </root>

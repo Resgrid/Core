@@ -405,4 +405,13 @@
   <data name="DepartmentCurrencyHelp" xml:space="preserve"><value>Валюта визначається в налаштуваннях нарядів на роботи. Наявні наряди зберігають записану валюту.</value></data>
   <data name="DepartmentCurrencySettingsHelp" xml:space="preserve"><value>Застосовується до нових нарядів та їхніх витрат на постачальників. Наявні витрати й пороги погодження зберігають початкову валюту. Якщо шаблон обслуговування використовує іншу валюту, очікувана вартість нових нарядів залишається порожньою для перевірки.</value></data>
   <data name="DepartmentThresholdHelp" xml:space="preserve"><value>Введіть поріг погодження у валюті підрозділу, вибраній вище. Пороги наявних нарядів в інших валютах зберігаються.</value></data>
+  <data name="SetUnitOutOfService" xml:space="preserve">
+    <value>Вивести підрозділ зі служби</value>
+  </data>
+  <data name="SetUnitOutOfServiceHelp" xml:space="preserve">
+    <value>Збереження ставить підрозділ на блокування безпеки. Блокування знімається окремо, іншою особою, ніж та, що виконала роботу; закриття наряду не повертає підрозділ до служби.</value>
+  </data>
+  <data name="HoldReasonOrderOutOfService" xml:space="preserve">
+    <value>Виведено зі служби нарядом на роботу.</value>
+  </data>
 </root>

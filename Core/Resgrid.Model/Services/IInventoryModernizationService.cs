@@ -18,10 +18,17 @@ namespace Resgrid.Model.Services
 		Task<InventoryTransaction> GetLegacyTransactionAsync(InventoryActor actor, int inventoryId);
 		Task<InventoryPage<T>> ListAsync<T>(InventoryActor actor, int page = 0) where T : InventoryRow;
 		Task<InventoryPage<T>> QueryAsync<T>(InventoryActor actor, InventoryQuery filter, int page = 0) where T : InventoryRow;
+		/// <summary>The live per-location minimums (par levels) of a page of items, at locations this caller can view.</summary>
+		Task<List<InventoryParLevel>> GetParLevelsAsync(InventoryActor actor, IReadOnlyCollection<string> itemIds);
 	}
 	public interface IInventoryStockService
 	{
 		Task<Dictionary<string, decimal>> GetVisibleQuantitiesAsync(InventoryActor actor, IReadOnlyCollection<string> itemIds);
+		/// <summary>
+		/// Low-stock checks (<see cref="InventoryLowStock"/>) for a page of bulk items over the stock locations this caller can view:
+		/// the department total against the item's level, and each visible location with a par level against its minimum.
+		/// </summary>
+		Task<Dictionary<string, List<InventoryLowStockLevel>>> GetVisibleLowStockAsync(InventoryActor actor, IReadOnlyCollection<string> itemIds);
 		Task<InventoryResult> PostTransactionAsync(InventoryActor actor, InventoryCommand command, CancellationToken ct = default);
 		/// <summary>The caller owns the active transaction and dispatches returned OutboxIds only after its commit.</summary>
 		Task<InventoryResult> PostWithinTransactionAsync(InventoryActor actor, InventoryCommand command, CancellationToken ct = default);

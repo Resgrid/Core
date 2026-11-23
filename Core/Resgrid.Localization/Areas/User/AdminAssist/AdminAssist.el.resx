@@ -8247,4 +8247,10 @@
   <data name="SetupEvidence.relay-voice" xml:space="preserve">
     <value>Ελέγχονται η διαθεσιμότητα του Push-to-Talk και τα μόνιμα κανάλια φωνής. Το Resgrid δεν βλέπει αν ένα relay είναι εγκατεστημένο, συνδεδεμένο ή αν μεταδίδει ήχο· ελέγξτε το στον πίνακα ελέγχου του ίδιου του relay.</value>
   </data>
+  <data name="Setting.AllowShiftOverSignup" xml:space="preserve">
+    <value>Να επιτρέπονται εγγραφές πέρα από τις θέσεις της ομάδας</value>
+  </data>
+  <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
+    <value>Επιτρέπει στα μέλη να εγγράφονται σε ομάδα βάρδιας ακόμη κι όταν όλες οι θέσεις των ρόλων της (υποχρεωτικές και προαιρετικές) είναι κατειλημμένες. Χρειάζονται πάντα έναν από τους ρόλους της ομάδας. Οι επόπτες μπορούν πάντα να τοποθετούν άτομα πέρα από τις θέσεις.</value>
+  </data>
 </root>

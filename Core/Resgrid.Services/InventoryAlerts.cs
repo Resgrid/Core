@@ -78,17 +78,34 @@ namespace Resgrid.Services
 		private async Task RefreshLowStockAsync(InventoryActor actor, string itemId, List<long> events)
 		{
 			var item = await GetAsync<InventoryItem>(actor, itemId); var content = Decode<InventoryItemContent>(item);
-			decimal quantity = 0;
+			var live = new Dictionary<string, bool>();
+			async Task<bool> Live(string id)
+			{
+				if (id == null) return false;
+				if (!live.TryGetValue(id, out var value)) live[id] = value = await LiveAlertLocationAsync(actor.DepartmentId, id);
+				return value;
+			}
+			var quantities = new Dictionary<string, decimal>();
 			if (item.TrackingMode == 0)
 			{
 				foreach (var stock in await _store.RelatedAsync<InventoryStock>(actor.DepartmentId, "ItemId", itemId))
-					if (!stock.IsDeleted && await LiveAlertLocationAsync(actor.DepartmentId, stock.LocationId)) quantity += stock.Quantity;
+					if (!stock.IsDeleted && await Live(stock.LocationId)) quantities[stock.LocationId] = quantities.GetValueOrDefault(stock.LocationId) + stock.Quantity;
 			}
 			else foreach (var asset in await _store.RelatedAsync<InventoryAsset>(actor.DepartmentId, "ItemId", itemId))
-				if (!asset.IsDeleted && asset.Status is 0 or 1 or 2 or 3 && await LiveAlertLocationAsync(actor.DepartmentId, asset.CurrentLocationId)) quantity++;
-			var threshold = content.ReorderPoint ?? content.MinLevel;
-			await SetAlertAsync(actor.DepartmentId, InventoryAlertType.LowStock, itemId, null, null, null, null,
-				!item.IsDeleted && item.IsActive && threshold.HasValue && quantity <= threshold.Value, null, quantity, events);
+				if (!asset.IsDeleted && asset.Status is 0 or 1 or 2 or 3 && await Live(asset.CurrentLocationId)) quantities[asset.CurrentLocationId] = quantities.GetValueOrDefault(asset.CurrentLocationId) + 1;
+			var parLevels = await _store.RelatedAsync<InventoryParLevel>(actor.DepartmentId, "ItemId", itemId);
+			foreach (var par in parLevels) await Live(par.LocationId);
+			await SetLowStockAlertsAsync(actor.DepartmentId, item, content, quantities, parLevels, live, events, null);
+		}
+		/// <summary>
+		/// The department-wide alert (no location) against the item's ReorderPoint/MinLevel, and one alert per location with a
+		/// par level against its own minimum (InventoryLowStock).
+		/// </summary>
+		private async Task SetLowStockAlertsAsync(int departmentId, InventoryItem item, InventoryItemContent content, Dictionary<string, decimal> quantities,
+			IEnumerable<InventoryParLevel> parLevels, Dictionary<string, bool> live, List<long> events, Dictionary<string, InventoryAlert> openAlerts)
+		{
+			foreach (var level in InventoryLowStock.Evaluate(item, content, quantities, parLevels, id => id != null && live.TryGetValue(id, out var value) && value))
+				await SetAlertAsync(departmentId, InventoryAlertType.LowStock, item.Id, level.LocationId, null, null, null, level.IsLow, null, level.Quantity, events, openAlerts);
 		}
 		private async Task RefreshPostingAlertsAsync(InventoryActor actor, InventoryCommand command, List<long> events)
 		{
@@ -130,18 +147,19 @@ namespace Resgrid.Services
 				if (!locations.TryGetValue(id, out var live)) locations[id] = live = await LiveAlertLocationAsync(actor.DepartmentId, id);
 				return live;
 			}
+			var parLevels = (await AllAsync<InventoryParLevel>(actor.DepartmentId)).ToLookup(p => p.ItemId);
 			foreach (var row in await AllAsync<InventoryItem>(actor.DepartmentId))
 			{
 				await AuthorizeRowAsync(actor, row);
-				var item = await RevealAsync(actor, row); var content = Decode<InventoryItemContent>(item); decimal quantity = 0;
+				var item = await RevealAsync(actor, row); var content = Decode<InventoryItemContent>(item);
+				var quantities = new Dictionary<string, decimal>();
 				if (item.TrackingMode == 0)
 				{
-					foreach (var stock in stocks[item.Id]) if (await Live(stock.LocationId)) quantity += stock.Quantity;
+					foreach (var stock in stocks[item.Id]) if (await Live(stock.LocationId)) quantities[stock.LocationId] = quantities.GetValueOrDefault(stock.LocationId) + stock.Quantity;
 				}
-				else foreach (var asset in assets[item.Id]) if (await Live(asset.CurrentLocationId)) quantity++;
-				var threshold = content.ReorderPoint ?? content.MinLevel;
-				await SetAlertAsync(actor.DepartmentId, InventoryAlertType.LowStock, item.Id, null, null, null, null,
-					!item.IsDeleted && item.IsActive && threshold.HasValue && quantity <= threshold.Value, null, quantity, events, openAlerts);
+				else foreach (var asset in assets[item.Id]) if (await Live(asset.CurrentLocationId)) quantities[asset.CurrentLocationId] = quantities.GetValueOrDefault(asset.CurrentLocationId) + 1;
+				foreach (var par in parLevels[item.Id]) await Live(par.LocationId);
+				await SetLowStockAlertsAsync(actor.DepartmentId, item, content, quantities, parLevels[item.Id], locations, events, openAlerts);
 			}
 		}
 		public Task RefreshAlertsAsync(InventoryActor actor) => TransactionAsync(actor, async events =>

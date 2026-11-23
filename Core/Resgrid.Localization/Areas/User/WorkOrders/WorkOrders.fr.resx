@@ -405,4 +405,13 @@
   <data name="DepartmentCurrencyHelp" xml:space="preserve"><value>La devise est gérée dans les paramètres des ordres de travail. Les ordres existants conservent leur devise enregistrée.</value></data>
   <data name="DepartmentCurrencySettingsHelp" xml:space="preserve"><value>S’applique aux nouveaux ordres et à leurs frais fournisseurs. Les coûts et seuils d’approbation existants conservent leur devise d’origine. Si un modèle de maintenance utilise une autre devise, le coût estimé des nouveaux ordres reste vide pour vérification.</value></data>
   <data name="DepartmentThresholdHelp" xml:space="preserve"><value>Saisissez le seuil d’approbation dans la devise du service sélectionnée ci-dessus. Les seuils des ordres existants dans d’autres devises sont conservés.</value></data>
+  <data name="SetUnitOutOfService" xml:space="preserve">
+    <value>Mettre l'unité hors service</value>
+  </data>
+  <data name="SetUnitOutOfServiceHelp" xml:space="preserve">
+    <value>L'enregistrement place l'unité en consignation de sécurité. La consignation est levée séparément, par une autre personne que celle qui a fait le travail ; clôturer l'ordre ne remet pas l'unité en service.</value>
+  </data>
+  <data name="HoldReasonOrderOutOfService" xml:space="preserve">
+    <value>Mise hors service par l'ordre de travail.</value>
+  </data>
 </root>

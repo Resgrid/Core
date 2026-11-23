@@ -194,19 +194,24 @@ namespace Resgrid.Web.Services.Controllers.v4
 				FromLocationId = input.FromLocationId, ToLocationId = input.ToLocationId, Quantity = input.Quantity, Type = InventoryTransactionType.Adjust, ExpectedAssetRevision = input.ExpectedAssetRevision, Note = input.Note } } };
 			return Reply(await _stock.PostTransactionAsync(Actor, command, cancellationToken));
 		}
-		/// <summary>Bulk items at/below their reorder point, using only stock locations this caller can view. Page is the catalog page.</summary>
+		/// <summary>
+		/// Bulk items at/below their department-wide reorder point, or with a visible location at/below its own minimum (par
+		/// level), using only stock locations this caller can view. Page is the catalog page.
+		/// </summary>
 		[HttpGet("GetLowStockItems")]
 		public async Task<IActionResult> GetLowStockItems(int page = 0)
 		{
 			var actor = Actor; var items = await _catalog.ListAsync<InventoryItem>(actor, page);
 			var itemIds = items.Items.Where(i => !i.IsDeleted && i.IsActive && i.TrackingMode == (int)InventoryTrackingMode.Bulk).Select(i => i.Id).ToArray();
-			var totals = await _stock.GetVisibleQuantitiesAsync(actor, itemIds);
+			var levels = await _stock.GetVisibleLowStockAsync(actor, itemIds);
 			var result = new InventoryPage<InventoryLowStockItem> { HasMore = items.HasMore };
-			foreach (var item in items.Items.Where(i => totals.ContainsKey(i.Id)))
+			foreach (var item in items.Items.Where(i => levels.ContainsKey(i.Id)))
 			{
-				var details = JsonConvert.DeserializeObject<InventoryItemContent>(item.Content ?? "{}") ?? new InventoryItemContent();
-				var threshold = details.ReorderPoint ?? details.MinLevel;
-				if (threshold.HasValue && totals[item.Id] <= threshold.Value) result.Items.Add(new InventoryLowStockItem { Item = item, VisibleQuantity = totals[item.Id], ReorderPoint = threshold.Value });
+				var department = levels[item.Id].First(l => l.LocationId == null);
+				var locations = levels[item.Id].Where(l => l.LocationId != null && l.IsLow)
+					.Select(l => new InventoryLowStockLocation { LocationId = l.LocationId, Quantity = l.Quantity, MinimumQuantity = l.Threshold ?? 0 }).ToList();
+				if (department.IsLow || locations.Count > 0)
+					result.Items.Add(new InventoryLowStockItem { Item = item, VisibleQuantity = department.Quantity, ReorderPoint = department.Threshold, DepartmentLow = department.IsLow, Locations = locations });
 			}
 			return Reply(result, result.Items.Count, result.HasMore, page);
 		}

@@ -95,6 +95,10 @@ namespace Resgrid.Chatbot.Handlers
 					return ChatbotResources.Get("Shift_GroupRequired", culture);
 				case ShiftActionErrors.InvalidRequest:
 					return ChatbotResources.Get("Shift_NotOpenForSignup", culture);
+				case ShiftActionErrors.GroupFull:
+					return ChatbotResources.Get("Shift_GroupFull", culture);
+				case ShiftActionErrors.RoleRequired:
+					return ChatbotResources.Get("Shift_RoleRequired", culture);
 				default:
 					return ChatbotResources.Get("Shift_ErrorSignup", culture);
 			}

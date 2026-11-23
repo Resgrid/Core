@@ -2241,4 +2241,10 @@
   <data name="NewCallDispatchListsHiddenWarning" xml:space="preserve">
     <value>Every dispatch list (personnel, groups, roles and units) is hidden. The call forms will offer an optional All Call button instead: with it a call goes to everyone, without it the call is saved for information only and nobody is paged. Run cards that dispatch automatically still send their units.</value>
   </data>
+  <data name="ShiftOverSignupHeader" xml:space="preserve">
+    <value>Allow Signups Past Group Slots</value>
+  </data>
+  <data name="ShiftOverSignupHelp" xml:space="preserve">
+    <value>Members can sign up for a group even when all its role slots (required and optional) are taken. They still need one of the group's roles.</value>
+  </data>
 </root>

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Resgrid.Model.Inventories;
 
@@ -51,7 +52,18 @@ namespace Resgrid.Web.Services.Models.v4.Inventory
 	{
 		public InventoryItem Item { get; set; }
 		public decimal VisibleQuantity { get; set; }
-		public decimal ReorderPoint { get; set; }
+		/// <summary>The item's department-wide level (ReorderPoint, else MinLevel); null when only per-location minimums are set.</summary>
+		public decimal? ReorderPoint { get; set; }
+		/// <summary>The department total is at or below ReorderPoint.</summary>
+		public bool DepartmentLow { get; set; }
+		/// <summary>Visible locations at or below their own minimum (par level).</summary>
+		public List<InventoryLowStockLocation> Locations { get; set; } = new List<InventoryLowStockLocation>();
 		public string QuantityScope { get; set; } = "AuthorizedLocations";
+	}
+	public sealed class InventoryLowStockLocation
+	{
+		public string LocationId { get; set; }
+		public decimal Quantity { get; set; }
+		public decimal MinimumQuantity { get; set; }
 	}
 }

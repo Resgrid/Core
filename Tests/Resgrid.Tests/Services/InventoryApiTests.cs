@@ -168,15 +168,23 @@ namespace Resgrid.Tests.Services
 		{
 			_catalog.Setup(s => s.ListAsync<InventoryItem>(It.IsAny<InventoryActor>(), 2)).ReturnsAsync(new InventoryPage<InventoryItem> { HasMore = true,
 				Items = new() { new InventoryItem { Id = ItemId, DepartmentId = 77, Content = JsonConvert.SerializeObject(new InventoryItemContent { Name = "Synthetic gloves", UnitOfMeasure = "pair", ReorderPoint = 5m }) } } });
-			_stock.Setup(s => s.GetVisibleQuantitiesAsync(It.IsAny<InventoryActor>(), It.Is<IReadOnlyCollection<string>>(ids => ids.Count == 1 && ids.Contains(ItemId))))
-				.ReturnsAsync(new Dictionary<string, decimal> { [ItemId] = 3.125m });
+			const string Station = "5f1d8a3e-2b7c-4c1e-9a6d-3e2f1b0c9d8e";
+			_stock.Setup(s => s.GetVisibleLowStockAsync(It.IsAny<InventoryActor>(), It.Is<IReadOnlyCollection<string>>(ids => ids.Count == 1 && ids.Contains(ItemId))))
+				.ReturnsAsync(new Dictionary<string, List<InventoryLowStockLevel>> { [ItemId] = new List<InventoryLowStockLevel>
+				{
+					new InventoryLowStockLevel { LocationId = null, Threshold = 5m, Quantity = 3.125m, IsLow = true },
+					new InventoryLowStockLevel { LocationId = Station, Threshold = 2m, Quantity = 0m, IsLow = true }
+				} });
 			await WithServer(async client =>
 			{
 				SignIn(client); var response = await client.GetAsync(Route + "GetLowStockItems?page=2"); await Success(response);
 				var json = JObject.Parse(await response.Content.ReadAsStringAsync()); var row = json["Data"]["Items"].Single();
 				row.Value<decimal>("VisibleQuantity").Should().Be(3.125m); row.Value<string>("QuantityScope").Should().Be("AuthorizedLocations");
+				row.Value<decimal>("ReorderPoint").Should().Be(5m); row.Value<bool>("DepartmentLow").Should().BeTrue();
+				var location = row["Locations"].Single();
+				location.Value<string>("LocationId").Should().Be(Station); location.Value<decimal>("Quantity").Should().Be(0m); location.Value<decimal>("MinimumQuantity").Should().Be(2m);
 				json.Value<bool>("HasMore").Should().BeTrue();
-				_stock.Verify(s => s.GetVisibleQuantitiesAsync(It.Is<InventoryActor>(a => a.DepartmentId == 77 && a.UserId == "manager"), It.IsAny<IReadOnlyCollection<string>>()), Times.Once);
+				_stock.Verify(s => s.GetVisibleLowStockAsync(It.Is<InventoryActor>(a => a.DepartmentId == 77 && a.UserId == "manager"), It.IsAny<IReadOnlyCollection<string>>()), Times.Once);
 				_catalog.Verify(s => s.ListAsync<InventoryStock>(It.IsAny<InventoryActor>(), It.IsAny<int>()), Times.Never);
 			});
 		}

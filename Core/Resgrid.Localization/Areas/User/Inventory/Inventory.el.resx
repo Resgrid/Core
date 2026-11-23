@@ -854,4 +854,22 @@
   <data name="Inactive" xml:space="preserve"><value>Ανενεργό</value></data>
   <data name="M4SupplierHelp" xml:space="preserve"><value>Λείπει ένας προμηθευτής; Προσθέστε τον στη σελίδα Προμηθευτές.</value></data>
   <data name="M4PurchaseOrderCurrencyHelp" xml:space="preserve"><value>Επιλέξτε το νόμισμα για αυτή την παραγγελία. Οι νέες παραγγελίες χρησιμοποιούν από προεπιλογή το νόμισμα του τμήματός σας.</value></data>
+  <data name="ParLevels" xml:space="preserve">
+    <value>Ελάχιστο σε κάθε τοποθεσία</value>
+  </data>
+  <data name="ParLevelsHint" xml:space="preserve">
+    <value>Μια τοποθεσία στο δικό της ελάχιστο ή κάτω από αυτό ενεργοποιεί ειδοποίηση χαμηλού αποθέματος για αυτήν, ακόμη κι όταν το σύνολο του τμήματος επαρκεί. Το ελάχιστο και το σημείο αναπαραγγελίας παραπάνω παραμένουν ο έλεγχος για όλο το τμήμα.</value>
+  </data>
+  <data name="ParLevelAddLocation" xml:space="preserve">
+    <value>Προσθήκη τοποθεσίας</value>
+  </data>
+  <data name="ParLevelMinimum" xml:space="preserve">
+    <value>Ελάχιστο εκεί</value>
+  </data>
+  <data name="ParLevelsRemoveHint" xml:space="preserve">
+    <value>Καθαρίστε το ελάχιστο μιας τοποθεσίας για να το αφαιρέσετε.</value>
+  </data>
+  <data name="InvalidParLevel" xml:space="preserve">
+    <value>Κάθε τοποθεσία μπορεί να έχει ένα ελάχιστο, 0 ή μεγαλύτερο.</value>
+  </data>
 </root>

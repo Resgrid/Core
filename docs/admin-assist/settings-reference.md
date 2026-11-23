@@ -2830,6 +2830,13 @@ Allow Signups For Multiple Shift Groups. Allow a member to sign up for multiple 
 
 Default: false. Source: DepartmentSettingTypes.AllowSignupsForMultipleShiftGroups.
 
+<a id="setting-allowshiftoversignup"></a>
+## Allow Signups Past Group Slots
+
+Allow Signups Past Group Slots. Let members sign up for a shift group even when every slot its roles offer (required and optional) is taken. They still need one of the group's roles. Supervisors can always assign people past the slots.
+
+Default: false. Source: DepartmentSettingTypes.AllowShiftOverSignup.
+
 <a id="setting-shifttradeapprovers"></a>
 ## Shift trade approvers
 

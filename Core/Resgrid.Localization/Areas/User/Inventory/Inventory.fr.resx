@@ -795,4 +795,22 @@
   <data name="Inactive" xml:space="preserve"><value>Inactif</value></data>
   <data name="M4SupplierHelp" xml:space="preserve"><value>Il manque un fournisseur ? Ajoutez-le sur la page Fournisseurs.</value></data>
   <data name="M4PurchaseOrderCurrencyHelp" xml:space="preserve"><value>Choisissez la devise de cette commande. Les nouvelles commandes utilisent par défaut la devise de votre département.</value></data>
+  <data name="ParLevels" xml:space="preserve">
+    <value>Minimum par emplacement</value>
+  </data>
+  <data name="ParLevelsHint" xml:space="preserve">
+    <value>Un emplacement à son propre minimum ou en dessous déclenche une alerte de stock bas pour cet emplacement, même lorsque le total du service suffit. Le minimum et le seuil de réapprovisionnement ci-dessus restent le contrôle pour tout le service.</value>
+  </data>
+  <data name="ParLevelAddLocation" xml:space="preserve">
+    <value>Ajouter un emplacement</value>
+  </data>
+  <data name="ParLevelMinimum" xml:space="preserve">
+    <value>Minimum à cet endroit</value>
+  </data>
+  <data name="ParLevelsRemoveHint" xml:space="preserve">
+    <value>Videz le minimum d’un emplacement pour le supprimer.</value>
+  </data>
+  <data name="InvalidParLevel" xml:space="preserve">
+    <value>Chaque emplacement peut avoir un minimum, de 0 ou plus.</value>
+  </data>
 </root>

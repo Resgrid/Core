@@ -150,6 +150,20 @@ namespace Resgrid.Services
                 await ChangedAsync(actor, order, WorkOrderActivityType.SafetyHold, events, input.Reason); return true;
             });
         }
+        /// <summary>
+        /// WorkOrder.SetUnitOutOfService on create or edit: the target unit goes on a safety hold, exactly as "Add hold" does,
+        /// so the unit status, the release (independent verifier) and the events are the hold's. Needs manage rights, like
+        /// Add hold. Closing the order never restores the unit (RestoreUnitStateOnClose is retired).
+        /// </summary>
+        private async Task HoldUnitForOrderAsync(ChecklistActor actor, WorkOrder order, List<long> events)
+        {
+            if (!order.TargetUnitId.HasValue) throw new WorkOrderException(400, "TargetUnavailable");
+            RequireMaintenanceStore();
+            if (!await _authorization.CanManageAsync(actor, order.TargetGroupId)) throw new WorkOrderException(403, "PermissionRequired");
+            var reason = MaintenanceText("HoldReasonOrderOutOfService");
+            await CreateHoldAsync(actor, order, true, reason, events, false);
+            await ActivityAsync(actor, order, WorkOrderActivityType.SafetyHold, reason);
+        }
         private async Task CreateHoldAsync(ChecklistActor actor, WorkOrder order, bool unit, string reason, List<long> events, bool unattended)
         {
             if (unit && !order.TargetUnitId.HasValue || !unit && order.InventoryAssetId == null) throw new WorkOrderException(400, "TargetUnavailable");

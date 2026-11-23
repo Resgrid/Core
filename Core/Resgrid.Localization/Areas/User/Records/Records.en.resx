@@ -2292,4 +2292,10 @@
   <data name="ImportMapPoisHelp" xml:space="preserve">
     <value>Import a KML, KMZ or CSV file as map points of interest (landmarks), separate from hydrant records.</value>
   </data>
+  <data name="RatedFlowGpm" xml:space="preserve">
+    <value>Rated at 20 psi (gpm)</value>
+  </data>
+  <data name="RatedFlowHelp" xml:space="preserve">
+    <value>NFPA 291 rated flow: observed flow × ((static − 20) / (static − residual))^0.54. The flow class is read from it when static and residual are entered.</value>
+  </data>
 </root>

@@ -262,5 +262,12 @@
 		/// emailed calls dispatch at once. Read through <c>IDispatcherDeskConfigService</c> (its own cache key).
 		/// </summary>
 		DispatcherDeskConfig = 128,
+
+		/// <summary>
+		/// Bool, Shifts → Shift Settings: members may sign themselves up for a shift group even when every slot its roles
+		/// offer (Required + Optional) is taken. They still need one of the group's roles. Missing = false (sign-ups stop at
+		/// the group's slots). See <see cref="ShiftSignupEligibility"/>.
+		/// </summary>
+		AllowShiftOverSignup = 129,
 	}
 }

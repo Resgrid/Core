@@ -468,4 +468,10 @@
   <data name="ShiftErrorNotEligible" xml:space="preserve">
     <value>هذا الشخص لا يستوفي متطلبات هذا المكان.</value>
   </data>
+  <data name="ShiftErrorGroupFull" xml:space="preserve">
+    <value>جميع الأماكن في هذه المجموعة للأدوار التي تشغلها مشغولة.</value>
+  </data>
+  <data name="ShiftErrorRoleRequired" xml:space="preserve">
+    <value>تحتاج إلى أحد الأدوار التي تطلبها هذه المجموعة للتسجيل.</value>
+  </data>
 </root>

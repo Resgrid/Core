@@ -405,4 +405,13 @@
   <data name="DepartmentCurrencyHelp" xml:space="preserve"><value>Die Währung wird in den Arbeitsauftragseinstellungen verwaltet. Bestehende Aufträge behalten ihre erfasste Währung.</value></data>
   <data name="DepartmentCurrencySettingsHelp" xml:space="preserve"><value>Gilt für neue Arbeitsaufträge und deren Lieferantenkosten. Bestehende Kosten und Freigabegrenzen behalten ihre ursprüngliche Währung. Verwendet eine Wartungsvorlage eine andere Währung, bleibt der Kostenvoranschlag bei neuen Aufträgen zur Prüfung leer.</value></data>
   <data name="DepartmentThresholdHelp" xml:space="preserve"><value>Die Freigabegrenze in der oben ausgewählten Abteilungswährung eingeben. Grenzen für bestehende Aufträge in anderen Währungen bleiben erhalten.</value></data>
+  <data name="SetUnitOutOfService" xml:space="preserve">
+    <value>Einheit außer Dienst stellen</value>
+  </data>
+  <data name="SetUnitOutOfServiceHelp" xml:space="preserve">
+    <value>Beim Speichern erhält die Einheit eine Sicherheitssperre. Die Sperre wird gesondert aufgehoben, von jemand anderem als der Person, die die Arbeit erledigt hat; das Schließen des Auftrags stellt die Einheit nicht wieder in Dienst.</value>
+  </data>
+  <data name="HoldReasonOrderOutOfService" xml:space="preserve">
+    <value>Durch den Arbeitsauftrag außer Dienst gestellt.</value>
+  </data>
 </root>

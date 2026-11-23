@@ -795,4 +795,22 @@
   <data name="Inactive" xml:space="preserve"><value>Nieaktywny</value></data>
   <data name="M4SupplierHelp" xml:space="preserve"><value>Brakuje dostawcy? Dodaj go na stronie dostawców.</value></data>
   <data name="M4PurchaseOrderCurrencyHelp" xml:space="preserve"><value>Wybierz walutę dla tego zamówienia. Nowe zamówienia domyślnie używają waluty Twojej jednostki.</value></data>
+  <data name="ParLevels" xml:space="preserve">
+    <value>Minimum w każdej lokalizacji</value>
+  </data>
+  <data name="ParLevelsHint" xml:space="preserve">
+    <value>Lokalizacja na poziomie własnego minimum lub poniżej wywołuje alert niskiego stanu dla tej lokalizacji, nawet gdy łączny stan jednostki jest wystarczający. Minimum i punkt ponownego zamówienia powyżej pozostają kontrolą dla całej jednostki.</value>
+  </data>
+  <data name="ParLevelAddLocation" xml:space="preserve">
+    <value>Dodaj lokalizację</value>
+  </data>
+  <data name="ParLevelMinimum" xml:space="preserve">
+    <value>Minimum tam</value>
+  </data>
+  <data name="ParLevelsRemoveHint" xml:space="preserve">
+    <value>Wyczyść minimum lokalizacji, aby je usunąć.</value>
+  </data>
+  <data name="InvalidParLevel" xml:space="preserve">
+    <value>Każda lokalizacja może mieć jedno minimum, równe 0 lub więcej.</value>
+  </data>
 </root>

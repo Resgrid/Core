@@ -109,20 +109,9 @@ namespace Resgrid.Services.CallEmailTemplates
 				}
 			}
 
-			// Search for an active call
-			if (activeCalls != null && activeCalls.Any())
-			{
-				var activeCall = activeCalls.FirstOrDefault(x => x.IncidentNumber == c.IncidentNumber);
-
-				if (activeCall != null)
-				{
-					activeCall.Notes = c.Notes;
-					activeCall.LastDispatchedOn = DateTime.UtcNow;
-
-					return activeCall;
-				}
-			}
-
+			// Always a new call: matching a follow-up page to an open call is the CAD update engine's decision (EmailCallUpdateService,
+			// cad-email-call-updates-plan.md D1), keyed on the incident number. An email without one no longer attaches to an open
+			// call that also has none (B8).
 			return c;
 		}
 

@@ -61,13 +61,16 @@ namespace Resgrid.Services.Intake
 		private readonly TimeProvider _clock;
 		// Lazy: the desk's routing reaches back into intake (its conversations and screenings) through its own lazies.
 		private readonly Lazy<IDispatcherRoutingService> _dispatcherRouting;
+		private readonly Lazy<IEmailCallUpdateService> _emailCallUpdates;
 
 		public IntakeService(IIntakeChannelsRepository channels, IIntakeMessagesRepository messages, IVoiceIntakeSessionsRepository sessions,
 			IDepartmentsService departments, IDepartmentSettingsService departmentSettings, IFeatureToggleService flags, ICallsService calls,
 			INumbersService numbers, IGeoLocationProvider geo, IEventAggregator events, IQueueService queue, ICommunicationService communication,
 			ICacheProvider cache, IIntakeConversationService conversations, IIntakeConversationOperations conversationOperations,
-			IIntakeBlockedSendersRepository blocked, TimeProvider clock, Lazy<IDispatcherRoutingService> dispatcherRouting)
+			IIntakeBlockedSendersRepository blocked, TimeProvider clock, Lazy<IDispatcherRoutingService> dispatcherRouting,
+			Lazy<IEmailCallUpdateService> emailCallUpdates = null)
 		{
+			_emailCallUpdates = emailCallUpdates;
 			_blocked = blocked;
 			_dispatcherRouting = dispatcherRouting;
 			_channels = channels;
@@ -205,6 +208,32 @@ namespace Resgrid.Services.Intake
 					}
 				}
 
+				// D8 (cad-email-call-updates-plan.md): an email channel that accepts CAD updates hands an email carrying the CAD call ID of
+				// a call the department already has to the CAD update engine, which updates, closes or notes that call; otherwise the
+				// message makes its pending call below, which then carries the ID.
+				var cad = await MatchCadUpdateAsync(channel, department, envelope, cancellationToken);
+				if (cad.Result != null)
+				{
+					if (cad.Result.Outcome == CallEmailUpdateOutcomes.Busy)
+					{
+						// Another email for the same CAD call is still being handled: recorded as failed so the provider's retry takes the claim over.
+						await _messages.CompleteAsync(message.IntakeMessageId, (int)IntakeMessageStates.Failed, null, "CadUpdateBusy", now, CancellationToken.None);
+						result.State = IntakeMessageStates.Failed;
+						result.Reason = "CadUpdateBusy";
+						return result;
+					}
+
+					if (!cad.Result.CreatedNewCall)
+					{
+						var touchedCallId = cad.Result.Call?.CallId > 0 ? cad.Result.Call.CallId : (int?)null;
+						await _messages.CompleteAsync(message.IntakeMessageId, (int)IntakeMessageStates.UpdatedCall, touchedCallId, cad.Result.Outcome.ToString(), now, CancellationToken.None);
+						result.State = IntakeMessageStates.UpdatedCall;
+						result.CallId = touchedCallId;
+						result.Reason = cad.Result.Outcome.ToString();
+						return result;
+					}
+				}
+
 				// M0326 per-sender limit: past IntakeConfig.MaxCallsPerSenderPerHour, the message joins the sender's newest open call as a note.
 				var limit = await CheckSenderLimitAsync(channel, department, envelope, now, cancellationToken);
 				if (limit.JoinedCallId.HasValue)
@@ -220,9 +249,21 @@ namespace Resgrid.Services.Intake
 				}
 
 				var built = await BuildCallAsync(channel, department, envelope, now);
+				if (cad.CadCallId != null)
+				{
+					// The CAD's later emails find this call by the ID it carries.
+					if (string.IsNullOrWhiteSpace(built.Call.ExternalIdentifier))
+						built.Call.ExternalIdentifier = cad.CadCallId;
+					if (string.IsNullOrWhiteSpace(built.Call.IncidentNumber))
+						built.Call.IncidentNumber = cad.CadCallId;
+				}
+
 				pendingCall = built.Call;
 				var saved = await _calls.SaveCallAsync(built.Call, cancellationToken);
 				savedCallId = saved.CallId > 0 ? saved.CallId : (int?)null;
+
+				if (cad.CadCallId != null && savedCallId.HasValue)
+					await _emailCallUpdates.Value.RecordCreatedAsync(cad.Request, saved, cad.CadCallId);
 
 				// The id is on the claim before anything else runs, so a retry after a later failure finds the call instead of making another
 				// (a process that dies between the two is covered by ClaimAsync's lookup of the call by SourceIdentifier).
@@ -304,6 +345,75 @@ namespace Resgrid.Services.Intake
 				result.Reason = "Failed";
 				return result;
 			}
+		}
+
+		/// <summary>What the CAD update engine made of an intake email: its result when it matched a call, else the ID the new call carries.</summary>
+		private sealed class CadMatch
+		{
+			public EmailCallUpdateResult Result { get; set; }
+			public string CadCallId { get; set; }
+			public EmailCallUpdateRequest Request { get; set; }
+		}
+
+		/// <summary>
+		/// D8: an opted-in email channel's message read with the channel's template (Generic for an AI channel), matched by the
+		/// department's CAD update settings. No call is created here: when nothing matches, the caller's normal intake path makes the
+		/// pending call (outside the engine's lock: two first emails for one incident arriving together can make two pending calls,
+		/// which the desk shows side by side).
+		/// </summary>
+		private async Task<CadMatch> MatchCadUpdateAsync(IntakeChannel channel, Department department, IntakeEnvelope envelope, CancellationToken cancellationToken)
+		{
+			var none = new CadMatch();
+			if (_emailCallUpdates == null || channel == null || !channel.CadUpdates || envelope.ChannelType != IntakeChannelTypes.Email)
+				return none;
+
+			var format = channel.ProcessingMode == (int)IntakeProcessingModes.Template ? channel.TemplateFormat ?? (int)CallEmailTypes.Generic : (int)CallEmailTypes.Generic;
+			var config = await _departmentSettings.GetEmailCallUpdateConfigAsync(channel.DepartmentId, format);
+			if (config == null || !config.Enabled)
+				return none;
+
+			var body = MessageText(envelope.Body);
+			var email = new CallEmail
+			{
+				MessageId = envelope.ProviderMessageId,
+				From = envelope.Sender,
+				Subject = string.IsNullOrWhiteSpace(envelope.Subject) ? null : envelope.Subject.Trim(),
+				Body = body,
+				TextBody = body,
+				SentOn = envelope.SentOnUtc
+			};
+
+			var priorities = await _calls.GetActiveCallPrioritiesForDepartmentAsync(channel.DepartmentId) ?? new List<DepartmentCallPriority>();
+			var callTypes = await _calls.GetCallTypesForDepartmentAsync(channel.DepartmentId) ?? new List<CallType>();
+			var priority = channel.DefaultPriority ?? CallPriorityMatch.DefaultForImport(priorities);
+
+			// No members or units go in, as for every intake template read: intake never dispatches anyone itself.
+			var parsed = await _emailCallUpdates.Value.ParseAsync(format, email, department.ManagingUserId, new List<IdentityUser>(), department,
+				new List<Unit>(), priority, priorities, callTypes, cancellationToken);
+			if (parsed?.Call == null)
+				parsed = new CallEmailParseResult { Call = new Call { Name = email.Subject, NatureOfCall = body, Priority = priority } };
+
+			var request = new EmailCallUpdateRequest
+			{
+				DepartmentId = channel.DepartmentId,
+				Department = department,
+				FormatType = format,
+				Email = email,
+				Parsed = parsed,
+				Source = CallEmailUpdateSources.IntakeChannel,
+				IntakeChannelId = channel.IntakeChannelId,
+				Config = config
+			};
+
+			// The engine asks for a new call only when nothing matched; that call is made by the normal intake path afterwards.
+			var result = await _emailCallUpdates.Value.ProcessAsync(request, unsaved => Task.FromResult<Call>(null), cancellationToken);
+
+			return new CadMatch
+			{
+				Result = result,
+				CadCallId = result.Outcome == CallEmailUpdateOutcomes.Created ? result.CadCallId : null,
+				Request = request
+			};
 		}
 
 		public async Task<int> GetMonthlyCountAsync(int departmentId, IntakeChannelTypes channelType, DateTime nowUtc)

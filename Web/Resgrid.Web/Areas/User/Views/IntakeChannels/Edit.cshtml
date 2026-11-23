@@ -162,6 +162,24 @@
 							</div>
 						}
 
+						@if (type == IntakeChannelTypes.Email)
+						{
+							<div class="form-group">
+								<label class="col-sm-3 control-label" asp-for="CadUpdates">@localizer["CadUpdates"]</label>
+								<div class="col-sm-6">
+									<div class="checkbox checkbox-primary">
+										<input type="checkbox" asp-for="CadUpdates" disabled="@(!Model.CadUpdatesAvailable && !Model.CadUpdates)" />
+										<label for="CadUpdates"></label>
+									</div>
+									<span class="help-block m-b-none">@localizer["CadUpdatesHelp"]</span>
+									@if (!Model.CadUpdatesAvailable)
+									{
+										<span class="help-block m-b-none text-warning">@localizer["CadUpdatesUnavailable"] <a asp-controller="CadUpdates" asp-action="Index" asp-route-area="User">@localizer["CadUpdatesSettingsLink"]</a></span>
+									}
+								</div>
+							</div>
+						}
+
 						<div class="form-group">
 							<label class="col-sm-3 control-label" asp-for="IsEnabled">@localizer["Enabled"]</label>
 							<div class="col-sm-6">

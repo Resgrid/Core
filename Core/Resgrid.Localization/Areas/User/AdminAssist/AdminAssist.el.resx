@@ -8253,4 +8253,16 @@
   <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
     <value>Επιτρέπει στα μέλη να εγγράφονται σε ομάδα βάρδιας ακόμη κι όταν όλες οι θέσεις των ρόλων της (υποχρεωτικές και προαιρετικές) είναι κατειλημμένες. Χρειάζονται πάντα έναν από τους ρόλους της ομάδας. Οι επόπτες μπορούν πάντα να τοποθετούν άτομα πέρα από τις θέσεις.</value>
   </data>
+  <data name="Setting.EmailCallUpdates" xml:space="preserve">
+    <value>Ενημερώσεις από το CAD σας</value>
+  </data>
+  <data name="SettingHelp.EmailCallUpdates" xml:space="preserve">
+    <value>Ενημέρωση της υπάρχουσας κλήσης όταν το CAD σας στέλνει διορθωμένο ή συμπληρωματικό email για το ίδιο αναγνωριστικό κλήσης.</value>
+  </data>
+  <data name="Setting.EmailLabeledFields" xml:space="preserve">
+    <value>Ετικέτες για τη μορφή «Labeled fields»</value>
+  </data>
+  <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
+    <value>Χρησιμοποιούνται όταν η μορφή email σας είναι «Labeled fields». Εισαγάγετε την ετικέτα που γράφει το CAD σας μπροστά από κάθε τιμή. Χωρίστε τις εναλλακτικές με |.</value>
+  </data>
 </root>

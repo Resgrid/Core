@@ -37,8 +37,6 @@ namespace Resgrid.Workers.Framework.Logic
 
 				if (emailResult?.Emails != null && emailResult.Emails.Count > 0)
 				{
-					var calls = new List<Call>();
-
 					var _callsService = scope.Resolve<ICallsService>();
 					var _queueService = scope.Resolve<IQueueService>();
 					var _departmentsService = scope.Resolve<IDepartmentsService>();
@@ -59,122 +57,138 @@ namespace Resgrid.Workers.Framework.Logic
 						retry++;
 					}
 
-					// Sender by message id, for the AI dispatch sender allowlist (never put on the bus).
-					var senders = new Dictionary<string, string>(StringComparer.Ordinal);
-					foreach (var email in emailResult.Emails)
+					var units = await _unitsService.GetUnitsForDepartmentAsync(item.EmailSettings.Department.DepartmentId);
+					var callTypes = await _callsService.GetCallTypesForDepartmentAsync(item.EmailSettings.Department.DepartmentId);
+					var priorities = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(item.EmailSettings.Department.DepartmentId);
+					// The default priority, else the department's High priority, else the built-in High (CallPriorityMatch).
+					int defaultPriority = CallPriorityMatch.DefaultForImport(priorities);
+					var departmentTextNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.EmailSettings.DepartmentId);
+
+					// The department's email call mode (D10): Pending / EnhancedAi hold each call for a dispatcher instead of paging. The
+					// emails are already off the mail server, so anything going wrong here falls back to dispatching them as before.
+					IDispatcherEmailCallService emailCallService = null;
+					var emailCallMode = DispatcherEmailCallModes.AutoDispatch;
+					try
 					{
-						if (!string.IsNullOrWhiteSpace(email.MessageId) && !string.IsNullOrWhiteSpace(email.From))
-							senders[email.MessageId] = email.From;
-
-						var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(item.EmailSettings.Department.DepartmentId);
-						var units = await _unitsService.GetUnitsForDepartmentAsync(item.EmailSettings.Department.DepartmentId);
-						var callTypes = await _callsService.GetCallTypesForDepartmentAsync(item.EmailSettings.Department.DepartmentId);
-						var priorities = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(item.EmailSettings.Department.DepartmentId);
-						// The default priority, else the department's High priority, else the built-in High (CallPriorityMatch).
-						int defaultPriority = CallPriorityMatch.DefaultForImport(priorities);
-
-						var call = await _callsService.GenerateCallFromEmail(item.EmailSettings.FormatType, email,
-							item.EmailSettings.Department.ManagingUserId, departmentUsers, item.EmailSettings.Department,
-							activeCalls, units, defaultPriority, priorities, callTypes);
-
-						if (call != null)
-						{
-							call.DepartmentId = item.EmailSettings.DepartmentId;
-
-							if (!calls.Any(x => x.Name == call.Name && x.NatureOfCall == call.NatureOfCall))
-								calls.Add(call);
-						}
+						emailCallService = scope.Resolve<IDispatcherEmailCallService>();
+						emailCallMode = await emailCallService.GetModeAsync(item.EmailSettings.DepartmentId);
+					}
+					catch (Exception modeEx)
+					{
+						Logging.LogException(modeEx);
 					}
 
-					if (calls.Any())
-					{
-						var departmentTextNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.EmailSettings.DepartmentId);
+					var holdAsPending = emailCallService != null && emailCallMode != DispatcherEmailCallModes.AutoDispatch;
+					var enrich = emailCallService != null
+						? await emailCallService.ShouldEnrichAsync(item.EmailSettings.DepartmentId, item.EmailSettings.FormatType, emailCallMode)
+						: item.EmailSettings.FormatType == (int)CallEmailTypes.AI;
 
-						// The department's email call mode (D10): Pending / EnhancedAi hold each call for a dispatcher instead of paging. The
-						// emails are already off the mail server, so anything going wrong here falls back to dispatching them as before.
-						IDispatcherEmailCallService emailCallService = null;
-						var emailCallMode = DispatcherEmailCallModes.AutoDispatch;
+					// A new call is saved and dispatched as the importer always did; the CAD update engine decides whether one is needed.
+					async Task<Call> createImportedCall(Call call, string sender)
+					{
+						// Adding this in here to try and fix the error below with ObjectContext issues.
+						var newCall = CreateNewCallFromCall(call);
+
+						if (holdAsPending)
+						{
+							// A dispatcher picks the resources of a pending call, so one without a dispatch list is kept too.
+							emailCallService.HoldAsPending(newCall);
+							var pendingCall = await _callsService.SaveCallAsync(newCall);
+							await emailCallService.OnPendingCallSavedAsync(pendingCall, sender, call.Name);
+
+							if (enrich)
+								await QueueImportedCallEnrichmentAsync(scope, _queueService, pendingCall, sender, heldForDispatcher: true);
+
+							return pendingCall;
+						}
+
+						if (newCall.Dispatches == null || !newCall.Dispatches.Any())
+							return null;
+
+						var savedCall = await _callsService.SaveCallAsync(newCall);
+
+						// Run card auto-dispatch for imported email calls.
 						try
 						{
-							emailCallService = scope.Resolve<IDispatcherEmailCallService>();
-							emailCallMode = await emailCallService.GetModeAsync(item.EmailSettings.DepartmentId);
-						}
-						catch (Exception modeEx)
-						{
-							Logging.LogException(modeEx);
-						}
-
-						var holdAsPending = emailCallService != null && emailCallMode != DispatcherEmailCallModes.AutoDispatch;
-						var enrich = emailCallService != null
-							? await emailCallService.ShouldEnrichAsync(item.EmailSettings.DepartmentId, item.EmailSettings.FormatType, emailCallMode)
-							: item.EmailSettings.FormatType == (int)CallEmailTypes.AI;
-
-						foreach (var call in calls)
-						{
-							try
+							var featureToggleService = scope.Resolve<IFeatureToggleService>();
+							if (await featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, savedCall.DepartmentId))
 							{
-								// Adding this in here to try and fix the error below with ObjectContext issues. 
-								var newCall = CreateNewCallFromCall(call);
+								var dispatchRecommendationService = scope.Resolve<IDispatchRecommendationService>();
+								var recommendation = await dispatchRecommendationService.EnrichCallForDispatchAsync(savedCall, 1, true);
 
-								if (holdAsPending)
+								if (recommendation.MatchedRunCardId.HasValue && recommendation.AutoDispatch && recommendation.HasRecommendations)
 								{
-									// A dispatcher picks the resources of a pending call, so one without a dispatch list is kept too.
-									emailCallService.HoldAsPending(newCall);
-									var pendingCall = await _callsService.SaveCallAsync(newCall);
-									var sender = call.SourceIdentifier == null ? null : senders.GetValueOrDefault(call.SourceIdentifier);
-									await emailCallService.OnPendingCallSavedAsync(pendingCall, sender, call.Name);
-
-									if (enrich)
-										await QueueImportedCallEnrichmentAsync(scope, _queueService, pendingCall, sender, heldForDispatcher: true);
-								}
-								else if (newCall.Dispatches != null && newCall.Dispatches.Any())
-								{
-									// We've been having this error here:
-									//      The relationship between the two objects cannot be defined because they are attached to different ObjectContext objects.
-									// So I'm wrapping this in a try catch to prevent all calls form being dropped.
-									var savedCall = await _callsService.SaveCallAsync(newCall);
-
-									// Run card auto-dispatch for imported email calls.
-									try
-									{
-										var featureToggleService = scope.Resolve<IFeatureToggleService>();
-										if (await featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, savedCall.DepartmentId))
-										{
-											var dispatchRecommendationService = scope.Resolve<IDispatchRecommendationService>();
-											var recommendation = await dispatchRecommendationService.EnrichCallForDispatchAsync(savedCall, 1, true);
-
-											if (recommendation.MatchedRunCardId.HasValue && recommendation.AutoDispatch && recommendation.HasRecommendations)
-											{
-												savedCall = await _callsService.SaveCallAsync(savedCall);
-												await dispatchRecommendationService.RecordActivationAsync(savedCall, recommendation, null);
-											}
-										}
-									}
-									catch (Exception recEx)
-									{
-										// A recommendation failure must never block the imported call's dispatch.
-										Logging.LogException(recEx);
-									}
-
-									var cqi = new CallQueueItem();
-									cqi.Call = savedCall;
-
-									cqi.Profiles = profiles.Values.ToList();
-									cqi.DepartmentTextNumber = departmentTextNumber;
-
-									await _queueService.EnqueueCallBroadcastAsync(cqi);
-
-									// AI dispatch, Enrich mode: enrichment follows the normal dispatch and can never hold it up.
-									if (enrich)
-										await QueueImportedCallEnrichmentAsync(scope, _queueService, savedCall, call.SourceIdentifier == null ? null : senders.GetValueOrDefault(call.SourceIdentifier));
+									savedCall = await _callsService.SaveCallAsync(savedCall);
+									await dispatchRecommendationService.RecordActivationAsync(savedCall, recommendation, null);
 								}
 							}
-							catch (Exception ex)
-							{
-								result = ex.ToString();
-								Logging.LogException(ex);
-							}
+						}
+						catch (Exception recEx)
+						{
+							// A recommendation failure must never block the imported call's dispatch.
+							Logging.LogException(recEx);
+						}
 
+						var cqi = new CallQueueItem();
+						cqi.Call = savedCall;
+
+						cqi.Profiles = profiles.Values.ToList();
+						cqi.DepartmentTextNumber = departmentTextNumber;
+
+						await _queueService.EnqueueCallBroadcastAsync(cqi);
+
+						// AI dispatch, Enrich mode: enrichment follows the normal dispatch and can never hold it up.
+						if (enrich)
+							await QueueImportedCallEnrichmentAsync(scope, _queueService, savedCall, sender);
+
+						return savedCall;
+					}
+
+					var emailCallUpdates = scope.Resolve<IEmailCallUpdateService>();
+
+					// The same email fetched twice in one pass is imported once.
+					var seen = new HashSet<string>(StringComparer.Ordinal);
+					foreach (var email in emailResult.Emails)
+					{
+						try
+						{
+							var parsed = await emailCallUpdates.ParseAsync(item.EmailSettings.FormatType, email, item.EmailSettings.Department.ManagingUserId,
+								departmentUsers, item.EmailSettings.Department, units, defaultPriority, priorities, callTypes);
+
+							if (parsed?.Call == null)
+								continue;
+
+							parsed.Call.DepartmentId = item.EmailSettings.DepartmentId;
+							if (!seen.Add((parsed.Call.Name ?? string.Empty) + "\n" + (parsed.Call.NatureOfCall ?? string.Empty)))
+								continue;
+
+							// Sender, for the AI dispatch sender allowlist (never put on the bus).
+							var sender = string.IsNullOrWhiteSpace(email.From) ? null : email.From;
+
+							// A follow-up email for an open call (same CAD call ID) updates it in place (cad-email-call-updates-plan.md; this
+							// path used to copy a matched call into a second, new call). The messages are already off the mail server, so an
+							// email that cannot take the lock is imported as a new call rather than lost.
+							var update = await emailCallUpdates.ProcessAsync(new EmailCallUpdateRequest
+							{
+								DepartmentId = item.EmailSettings.DepartmentId,
+								Department = item.EmailSettings.Department,
+								FormatType = item.EmailSettings.FormatType,
+								Email = email,
+								Parsed = parsed,
+								Source = CallEmailUpdateSources.MailboxImport,
+								LockTimeout = TimeSpan.FromSeconds(30)
+							}, call => createImportedCall(call, sender));
+
+							if (update.Outcome == CallEmailUpdateOutcomes.Busy)
+							{
+								Logging.LogError($"Imported email for department {item.EmailSettings.DepartmentId}: CAD call {update.CadCallId} stayed locked; imported as a new call.");
+								await createImportedCall(parsed.Call, sender);
+							}
+						}
+						catch (Exception ex)
+						{
+							result = ex.ToString();
+							Logging.LogException(ex);
 						}
 					}
 
@@ -217,6 +231,10 @@ namespace Resgrid.Workers.Framework.Logic
 			newCall.IsCritical = call.IsCritical;
 			newCall.Type = call.Type;
 			newCall.IncidentNumber = call.IncidentNumber;
+			newCall.ExternalIdentifier = call.ExternalIdentifier;
+			newCall.ReferenceNumber = call.ReferenceNumber;
+			newCall.CallTypeId = call.CallTypeId;
+			newCall.W3W = call.W3W;
 			newCall.Name = call.Name;
 			newCall.NatureOfCall = call.NatureOfCall;
 			newCall.MapPage = call.MapPage;

@@ -7,6 +7,8 @@ import {
   getPoiIconClass,
   getPoiMarkerShapePath,
   isPoiMarker,
+  selectFitPositions,
+  type CustomMapOverlay,
   type MapMarkerInfo,
   type MapRendererProps,
   type ResolvedMapConfig,
@@ -29,6 +31,8 @@ interface MarkerState {
   markerType: MapMarkerInfo['Type'];
   infoWindowContent: string;
   hideLabels: boolean;
+  /** POIs are reference points: they do not drive the camera fit while operational markers exist. */
+  isPoi: boolean;
 }
 
 function createMarkerElement(markerInfo: MapMarkerInfo, hideLabels: boolean): HTMLDivElement {
@@ -91,7 +95,7 @@ function fitMapToMarkers(
   if (markers.size > 0) {
     const bounds = new mapboxgl.LngLatBounds();
 
-    markers.forEach(({ latitude, longitude }) => bounds.extend([longitude, latitude]));
+    selectFitPositions(markers.values()).forEach(({ latitude, longitude }) => bounds.extend([longitude, latitude]));
 
     if (!bounds.isEmpty()) {
       map.fitBounds(bounds, {
@@ -179,6 +183,69 @@ function addGeoJsonLayer(map: MapboxMap, layerId: string, layer: MapRendererProp
   };
 }
 
+const customOverlayPrefix = 'rg-custom-';
+
+/** Removes every custom map source and layer this view added (ids start with rg-custom-). */
+function clearCustomOverlays(map: MapboxMap) {
+  const style = map.getStyle();
+  for (const layer of style?.layers ?? []) {
+    if (layer.id.startsWith(customOverlayPrefix) && map.getLayer(layer.id)) {
+      map.removeLayer(layer.id);
+    }
+  }
+  for (const sourceId of Object.keys(style?.sources ?? {})) {
+    if (sourceId.startsWith(customOverlayPrefix) && map.getSource(sourceId)) {
+      map.removeSource(sourceId);
+    }
+  }
+}
+
+/**
+ * Draws one switched-on custom map layer: its image as XYZ tiles inside the layer bounds, then the regions (rooms,
+ * zones) as outlines with labels. Inserted under the department layers so drawn shapes and markers stay on top.
+ * Returns the region layer ids, which open a popup when clicked.
+ */
+function addCustomOverlay(map: MapboxMap, overlay: CustomMapOverlay): string[] {
+  const key = `${customOverlayPrefix}${overlay.id}`;
+  const style = map.getStyle();
+  const beforeId = (style?.layers ?? []).find((layer) => layer.id.startsWith('rg-layer-'))?.id;
+
+  if (overlay.tileUrl) {
+    map.addSource(`${key}-raster`, {
+      type: 'raster',
+      tiles: [overlay.tileUrl],
+      tileSize: 256,
+      maxzoom: 22,
+      ...(overlay.bounds ? { bounds: overlay.bounds } : {}),
+    } as never);
+    map.addLayer({ id: `${key}-raster`, type: 'raster', source: `${key}-raster`, paint: { 'raster-opacity': overlay.opacity } }, beforeId);
+  }
+
+  if (!overlay.regions || overlay.regions.features.length === 0) {
+    return [];
+  }
+
+  const color = ['to-color', ['get', 'color'], '#1c7ed6'] as unknown as string;
+  map.addSource(`${key}-regions`, { type: 'geojson', data: overlay.regions });
+  map.addLayer({
+    id: `${key}-region-fill`, type: 'fill', source: `${key}-regions`, filter: ['==', '$type', 'Polygon'],
+    paint: { 'fill-color': color, 'fill-opacity': 0.08 },
+  }, beforeId);
+  map.addLayer({
+    id: `${key}-region-line`, type: 'line', source: `${key}-regions`,
+    paint: { 'line-color': color, 'line-width': 1.5, 'line-opacity': 0.9 },
+  }, beforeId);
+  // Labels need the style's glyphs; a raster-only style has none, and the popup still names the room.
+  if (style?.glyphs) {
+    map.addLayer({
+      id: `${key}-region-label`, type: 'symbol', source: `${key}-regions`, minzoom: 16,
+      layout: { 'text-field': ['get', 'name'], 'text-size': 11, 'text-max-width': 10, 'text-allow-overlap': false } as never,
+      paint: { 'text-color': '#212529', 'text-halo-color': '#ffffff', 'text-halo-width': 1.5 },
+    }, beforeId);
+  }
+  return [`${key}-region-fill`];
+}
+
 /**
  * The GL map library a view renders with. mapbox-gl and maplibre-gl share every call made here (Map, Marker, Popup,
  * LngLatBounds, NavigationControl, GeoJSON sources and layers), so one view serves both (maplibre plan §7.1).
@@ -217,6 +284,8 @@ export function GlMapView({
   fitBoundsKey,
   fitMaxZoom,
   keepMarkersInView = false,
+  customOverlays,
+  focusRequest,
 }: MapRendererProps & { library: GlMapLibrary }) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapboxMap | null>(null);
@@ -229,6 +298,8 @@ export function GlMapView({
   const sourceIdsRef = useRef<string[]>([]);
   // GL layer id -> the department layer's name, for the shape popup.
   const layerNamesRef = useRef<Map<string, string>>(new Map());
+  // Region fill layers of the custom maps that are on, and the map/layer name each one shows in its popup.
+  const customLayerIdsRef = useRef<string[]>([]);
   const [styleReady, setStyleReady] = useState(false);
   const [initError, setInitError] = useState<string | null>(null);
 
@@ -285,7 +356,7 @@ export function GlMapView({
 
       // A layer shape with a name or description (an imported event layer's vendors, stages, aid posts) opens a popup.
       const handleLayerClick = (event: import('mapbox-gl').MapMouseEvent) => {
-        const ids = layerIdsRef.current.filter((id) => map.getLayer(id));
+        const ids = [...layerIdsRef.current, ...customLayerIdsRef.current].filter((id) => map.getLayer(id));
         if (ids.length === 0) {
           return;
         }
@@ -434,7 +505,8 @@ export function GlMapView({
 
         const nextMarker = new mapboxgl.Marker({
           element: createMarkerElement(markerInfo, hideLabels),
-          anchor: 'bottom',
+          // A hydrant is a dot on its point (as on Leaflet); every other marker is a pin whose tip is the point.
+          anchor: Number(markerInfo.Type) === 5 ? 'center' : 'bottom',
         })
           .setLngLat([markerInfo.Longitude, markerInfo.Latitude])
           .addTo(map);
@@ -456,6 +528,7 @@ export function GlMapView({
           markerType: markerInfo.Type,
           infoWindowContent: markerInfo.InfoWindowContent,
           hideLabels,
+          isPoi: isPoiMarker(markerInfo),
         });
 
         continue;
@@ -518,6 +591,40 @@ export function GlMapView({
       }
     }
   }, [layerVisibility, layers, styleReady]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+
+    if (!map || !styleReady) {
+      return;
+    }
+
+    clearCustomOverlays(map);
+    customLayerIdsRef.current = [];
+
+    for (const overlay of customOverlays ?? []) {
+      try {
+        for (const regionLayerId of addCustomOverlay(map, overlay)) {
+          customLayerIdsRef.current.push(regionLayerId);
+          layerNamesRef.current.set(regionLayerId, overlay.name);
+        }
+      } catch (overlayError) {
+        // One bad layer (no tiles, broken region geometry) must not take the rest of the map with it.
+        console.error(`Unable to draw the custom map ${overlay.name}`, overlayError);
+      }
+    }
+  }, [customOverlays, layerVisibility, layers, styleReady]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+
+    if (!map || !styleReady || !focusRequest) {
+      return;
+    }
+
+    const [west, south, east, north] = focusRequest.bounds;
+    map.fitBounds([[west, south], [east, north]], { padding: 24, maxZoom: 19 });
+  }, [focusRequest?.key, styleReady]);
 
   // The container has to stay mounted through a failure. Swapping it out for the error nulls
   // mapContainerRef, and the retry effect bails on its !mapContainerRef.current guard before

@@ -1163,4 +1163,16 @@
   <data name="CallRouteNoRuns" xml:space="preserve">
     <value>Καμία μονάδα δεν έχει ξεκινήσει ακόμη αυτή τη διαδρομή.</value>
   </data>
+  <data name="FacilityMaps" xml:space="preserve">
+    <value>Χάρτες εγκατάστασης</value>
+  </data>
+  <data name="FacilityMapsNone" xml:space="preserve">
+    <value>Κανένας</value>
+  </data>
+  <data name="FacilityMapsFloor" xml:space="preserve">
+    <value>Όροφος ή επίπεδο</value>
+  </data>
+  <data name="FacilityMapsHint" xml:space="preserve">
+    <value>Κάντε κλικ σε ένα δωμάτιο για να ορίσετε την τοποθεσία της κλήσης.</value>
+  </data>
 </root>

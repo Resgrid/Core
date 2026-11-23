@@ -440,6 +440,7 @@ namespace Resgrid.Services
 			builder.RegisterType<TransportDestinationCheckService>().As<ITransportDestinationCheckService>().InstancePerLifetimeScope();
 			builder.RegisterType<NearestDestinationService>().As<INearestDestinationService>().InstancePerLifetimeScope();
 			builder.RegisterType<DestinationRulesService>().As<IDestinationRulesService>().InstancePerLifetimeScope();
+			builder.RegisterType<EmailCallUpdateService>().As<IEmailCallUpdateService>().InstancePerLifetimeScope();
 			// Intake channels and Enhanced AI voice intake (call-intake-and-ai-destinations-plan.md, workstream C).
 			builder.RegisterType<Intake.IntakeChannelsService>().As<IIntakeChannelsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Intake.IntakeService>().As<IIntakeService>().InstancePerLifetimeScope();

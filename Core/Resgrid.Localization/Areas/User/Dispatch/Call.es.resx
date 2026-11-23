@@ -1309,4 +1309,16 @@
   <data name="CallRouteNoRuns" xml:space="preserve">
     <value>Ninguna unidad ha iniciado esta ruta todavía.</value>
   </data>
+  <data name="FacilityMaps" xml:space="preserve">
+    <value>Mapas de instalaciones</value>
+  </data>
+  <data name="FacilityMapsNone" xml:space="preserve">
+    <value>Ninguno</value>
+  </data>
+  <data name="FacilityMapsFloor" xml:space="preserve">
+    <value>Planta o capa</value>
+  </data>
+  <data name="FacilityMapsHint" xml:space="preserve">
+    <value>Haga clic en una sala para fijar la ubicación de la llamada.</value>
+  </data>
 </root>

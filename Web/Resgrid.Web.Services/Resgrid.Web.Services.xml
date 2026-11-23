@@ -217,6 +217,12 @@
             department's email format can read), 400 on a failure worth retrying.
             </returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.AnswerUpdateAsync(Resgrid.Model.InboundEmailReceiptClaim,Resgrid.Model.Services.EmailCallUpdateResult,Microsoft.AspNetCore.Mvc.ActionResult)">
+            <summary>
+            Postmark's answer once the CAD update engine handled a dispatch email: the create path's own answer for a new call; 409 (the
+            claim goes back, Postmark delivers again) while another email with the same CAD call ID is being handled; otherwise 200.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.EmailController.DuplicateDeliveryResult(Resgrid.Model.InboundEmailReceiptClaim)">
             <summary>
             The answer to a delivery of an email this API already handled, or is handling right now; null when the delivery should
@@ -11213,6 +11219,16 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.DestinationWhat3Words">
             <summary>
             Free destination what3words address (M0322).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.IndoorMapZoneId">
+            <summary>
+            The indoor map zone (room or region on a custom/indoor map) picked as the call location; null when none.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.IndoorMapFloorId">
+            <summary>
+            The floor / custom map layer the indoor zone is on; null when none.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.LocationPoiId">

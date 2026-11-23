@@ -50,7 +50,7 @@ namespace Resgrid.Tests.Intake
 				Mock.Of<IDepartmentsService>(), Mock.Of<IUserProfileService>(), Mock.Of<ITextCommandService>(), Mock.Of<IActionLogsService>(), Mock.Of<IUserStateService>(),
 				Mock.Of<ICommunicationService>(), Mock.Of<IDistributionListsService>(), Mock.Of<IUsersService>(), Mock.Of<IEmailService>(), Mock.Of<IDepartmentGroupsService>(),
 				Mock.Of<IMessageService>(), Mock.Of<IFileService>(), Mock.Of<IUnitsService>(), Mock.Of<IGeoLocationProvider>(), Mock.Of<ICallDispatchStatusService>(),
-				Mock.Of<IDispatchRecommendationService>(), Mock.Of<IFeatureToggleService>(), Mock.Of<IAiDispatchAdminService>(), _receipts.Object, _intake.Object, _sender.Object, Mock.Of<IDispatcherEmailCallService>());
+				Mock.Of<IDispatchRecommendationService>(), Mock.Of<IFeatureToggleService>(), Mock.Of<IAiDispatchAdminService>(), _receipts.Object, _intake.Object, _sender.Object, Mock.Of<IDispatcherEmailCallService>(), Mock.Of<IEmailCallUpdateService>());
 		}
 
 		private static PostmarkInboundMessage Email(string localPart, string from = "nurse@mercy.example", List<PostmarkDotNet.Header> headers = null) => new PostmarkInboundMessage

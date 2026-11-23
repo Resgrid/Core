@@ -8253,4 +8253,16 @@
   <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
     <value>Låter medlemmar anmäla sig till en passgrupp även när alla platser för dess roller (obligatoriska och valfria) är tagna. De behöver fortfarande en av gruppens roller. Arbetsledare kan alltid tilldela personer utöver platserna.</value>
   </data>
+  <data name="Setting.EmailCallUpdates" xml:space="preserve">
+    <value>Uppdateringar från ert CAD</value>
+  </data>
+  <data name="SettingHelp.EmailCallUpdates" xml:space="preserve">
+    <value>Uppdatera det befintliga larmet när ert CAD skickar ett rättat eller kompletterande e-postmeddelande med samma larm-ID.</value>
+  </data>
+  <data name="Setting.EmailLabeledFields" xml:space="preserve">
+    <value>Etiketter för formatet "Labeled fields"</value>
+  </data>
+  <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
+    <value>Används när ert e-postformat är "Labeled fields". Ange etiketten som ert CAD skriver framför varje värde. Skilj alternativ åt med |.</value>
+  </data>
 </root>

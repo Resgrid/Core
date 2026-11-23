@@ -12,7 +12,7 @@ using TimeZoneConverter;
 
 namespace Resgrid.Services.CallEmailTemplates
 {
-	public class ParklandCounty2Template : ICallEmailTemplate
+	public class ParklandCounty2Template : ICallEmailTemplate, ICallEmailMatchKeyTemplate
 	{
 		public async Task<Call> GenerateCall(CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units,
 			int priority, List<DepartmentCallPriority> activePriorities, List<CallType> callTypes, IGeoLocationProvider geolocationProvider)
@@ -126,23 +126,26 @@ namespace Resgrid.Services.CallEmailTemplates
 				}
 			}
 
-			// Search for an active call
-			if (activeCalls != null && activeCalls.Any())
-			{
-				var activeCall = activeCalls.FirstOrDefault(x => x.Name == c.Name && x.LoggedOn == c.LoggedOn);
-
-				if (activeCall != null)
-				{
-					activeCall.Priority = c.Priority;
-					activeCall.Notes = c.Notes;
-					activeCall.LastDispatchedOn = DateTime.UtcNow;
-					activeCall.IncreaseDispatchCount();
-
-					return activeCall;
-				}
-			}
-			
+			// Always a new call: a follow-up page (the same name and call time) updates the open call through the CAD update engine
+			// (EmailCallUpdateService, cad-email-call-updates-plan.md D1) with this format's preset: priority and notes taken, the
+			// page sent again as the next alarm.
 			return c;
+		}
+
+		/// <summary>This format has no incident number: a page belongs to the incident with the same name and call time.</summary>
+		public string GetMatchKey(Call parsed)
+		{
+			if (parsed == null || string.IsNullOrWhiteSpace(parsed.Name) || parsed.LoggedOn == DateTime.MinValue)
+				return null;
+
+			var key = parsed.Name.Trim() + "|" + parsed.LoggedOn.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
+			return key.Length > CallEmailUpdate.MaxCadCallIdLength ? key.Substring(0, CallEmailUpdate.MaxCadCallIdLength) : key;
+		}
+
+		/// <summary>The comparison this format used to find its own open calls before the update ledger existed.</summary>
+		public bool IsSameIncident(Call parsed, Call existing)
+		{
+			return parsed != null && existing != null && existing.Name == parsed.Name && existing.LoggedOn == parsed.LoggedOn;
 		}
 
 		private int PriorityMapping(string priority, bool is2ndPage, int priorityDefault)

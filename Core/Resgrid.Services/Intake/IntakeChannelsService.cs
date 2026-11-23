@@ -120,6 +120,8 @@ namespace Resgrid.Services.Intake
 			target.DefaultPriority = channel.DefaultPriority;
 			target.DefaultCallTypeId = channel.DefaultCallTypeId;
 			target.SendAcknowledgement = channel.SendAcknowledgement;
+			// CAD updates (cad-email-call-updates-plan.md D8) are an email channel's option only.
+			target.CadUpdates = channel.CadUpdates && target.ChannelType == (int)IntakeChannelTypes.Email;
 
 			return await _channels.SaveOrUpdateAsync(target, cancellationToken);
 		}

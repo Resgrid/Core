@@ -32,7 +32,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			"CallLocationIndexStates", "CallNumberSequences", "DocumentNumberSequences", "DepartmentApiKeys", "ScheduledTasks", "UserStates",
 			"UdfDefinitions", "ChatbotSessions", "ChatbotMessageLog", "ChatbotDepartmentConfigs", "AiDispatchAudits", "DepartmentAiDispatchConfigs",
-			"AiBillingAccounts", "AdpBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "RoadClosures", "PoiImports", "PoiCapabilityAssignments", "PoiCapabilities", "PoiAvailabilities", "DestinationRules", "RecurringCallAlerts", "RecurringCallOccurrences", "RecurringCalls", "CallPersonnelReleases", "CallBroadcastOutbox", "IntakeConversationMessages", "IntakeConversations", "IntakeBlockedSenders", "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions", "DepartmentPhoneNumbers", "AiDestinationReviews", "AiDestinationAdvices", "DedicatedNumberBillingAccounts", "DispatcherConversationMessages", "DispatcherQueueEvents", "DispatcherQueueItems", "DispatcherPresences", "DispatcherBreaks", "ShiftDispatchers", "ShiftDispatchSettings", "UserDashboards", "DepartmentDashboardTemplates",
+			"AiBillingAccounts", "AdpBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "RoadClosures", "PoiImports", "PoiCapabilityAssignments", "PoiCapabilities", "PoiAvailabilities", "DestinationRules", "CallEmailUpdates", "RecurringCallAlerts", "RecurringCallOccurrences", "RecurringCalls", "CallPersonnelReleases", "CallBroadcastOutbox", "IntakeConversationMessages", "IntakeConversations", "IntakeBlockedSenders", "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions", "DepartmentPhoneNumbers", "AiDestinationReviews", "AiDestinationAdvices", "DedicatedNumberBillingAccounts", "DispatcherConversationMessages", "DispatcherQueueEvents", "DispatcherQueueItems", "DispatcherPresences", "DispatcherBreaks", "ShiftDispatchers", "ShiftDispatchSettings", "UserDashboards", "DepartmentDashboardTemplates",
 			"CallOutstandingRequirements", "RunCardDecisions", "RunCardTargets", "ResponsePackages", "RunCardActivations",
 			"RunCards", "StationCoverageRequirements", "ModerationActions", "ModerationReports", "ModerationRequests", "MessageRecipients", "Messages",
 			"DepartmentMemberSensitiveData", "DepartmentMemberEmergencyContacts", "UserExternalIdentityLinks", "DepartmentSecurityPolicies",
@@ -88,6 +88,9 @@ namespace Resgrid.Repositories.DataRepository
 
 			// Destination rules (M0317); no foreign keys
 			await Delete("DestinationRules");
+
+			// CAD email update ledger (M0330); no foreign keys, hashes only
+			await Delete("CallEmailUpdates");
 
 			// Recurring call schedules, their created / skipped occurrences (M0319) and dispatcher alerts (M0320); no foreign keys
 			await Delete("RecurringCallAlerts", "RecurringCallOccurrences", "RecurringCalls");

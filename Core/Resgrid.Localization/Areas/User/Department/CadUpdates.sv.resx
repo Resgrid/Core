@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Uppdateringar från ert CAD</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>När ert CAD skickar ett nytt e-postmeddelande för ett larm som det redan har skickat (en rättad adress, en uppgradering, en avslutning) kan Resgrid uppdatera larmet som skapades från det första meddelandet i stället för att skapa ett nytt. Resgrid känner igen samma larm på larm-ID:t från CAD.</value>
+  </data>
+  <data name="CallSettingsLinkHelp" xml:space="preserve">
+    <value>Uppdatera det befintliga larmet när ert CAD skickar ett rättat eller kompletterande e-postmeddelande med samma larm-ID.</value>
+  </data>
+  <data name="CurrentFormat" xml:space="preserve">
+    <value>Ert e-postformat</value>
+  </data>
+  <data name="BuiltInNotice" xml:space="preserve">
+    <value>Ert e-postformat kopplade redan uppföljande meddelanden till öppna larm innan den här sidan fanns, så Resgrid använder det inbyggda beteendet: larmets anteckningar ersätts och inget annat ändras. Spara den här sidan för att ändra det.</value>
+  </data>
+  <data name="UseBuiltIn" xml:space="preserve">
+    <value>Gå tillbaka till det inbyggda beteendet</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Uppdatera befintliga larm</value>
+  </data>
+  <data name="EnabledHelp" xml:space="preserve">
+    <value>Av: varje e-postmeddelande skapar ett nytt larm.</value>
+  </data>
+  <data name="IdSourceHeader" xml:space="preserve">
+    <value>Hitta larm-ID:t från CAD</value>
+  </data>
+  <data name="IdSource" xml:space="preserve">
+    <value>Läs larm-ID</value>
+  </data>
+  <data name="IdSourceFromFormat" xml:space="preserve">
+    <value>Från e-postformatet</value>
+  </data>
+  <data name="IdSourceLabel" xml:space="preserve">
+    <value>Efter en etikett</value>
+  </data>
+  <data name="IdSourcePattern" xml:space="preserve">
+    <value>Med ett mönster (avancerat)</value>
+  </data>
+  <data name="IdSourceHelp" xml:space="preserve">
+    <value>"Från e-postformatet" fungerar för format som läser ett händelsenummer. Ange annars etiketten som ert CAD skriver framför larm-ID:t.</value>
+  </data>
+  <data name="FormatHasNoKey" xml:space="preserve">
+    <value>Ert e-postformat läser inget larm-ID. Använd en etikett eller ett mönster.</value>
+  </data>
+  <data name="IdLabel" xml:space="preserve">
+    <value>Etikett</value>
+  </data>
+  <data name="IdLabelHelp" xml:space="preserve">
+    <value>Resgrid tar första ordet efter den här texten på samma rad, till exempel "Call ID:".</value>
+  </data>
+  <data name="IdPattern" xml:space="preserve">
+    <value>Mönster</value>
+  </data>
+  <data name="IdPatternHelp" xml:space="preserve">
+    <value>Ett reguljärt uttryck med exakt en fångstgrupp runt larm-ID:t.</value>
+  </data>
+  <data name="IdSearchIn" xml:space="preserve">
+    <value>Sök i</value>
+  </data>
+  <data name="SearchSubjectThenBody" xml:space="preserve">
+    <value>Ämnesraden, sedan brödtexten</value>
+  </data>
+  <data name="SearchSubject" xml:space="preserve">
+    <value>Bara ämnesraden</value>
+  </data>
+  <data name="SearchBody" xml:space="preserve">
+    <value>Bara brödtexten</value>
+  </data>
+  <data name="FieldsHeader" xml:space="preserve">
+    <value>Vad en uppdatering får ändra</value>
+  </data>
+  <data name="FieldsIntro" xml:space="preserve">
+    <value>Bara anteckning: larmet behåller sitt värde och det nya värdet från CAD skrivs i uppdateringsanteckningen på larmet.</value>
+  </data>
+  <data name="FieldLocation" xml:space="preserve">
+    <value>Adress och kartposition</value>
+  </data>
+  <data name="FieldPriority" xml:space="preserve">
+    <value>Prioritet</value>
+  </data>
+  <data name="FieldType" xml:space="preserve">
+    <value>Larmtyp</value>
+  </data>
+  <data name="FieldName" xml:space="preserve">
+    <value>Larmnamn</value>
+  </data>
+  <data name="FieldNature" xml:space="preserve">
+    <value>Larmets art</value>
+  </data>
+  <data name="FieldNotes" xml:space="preserve">
+    <value>Larmanteckningar</value>
+  </data>
+  <data name="PolicyUpdate" xml:space="preserve">
+    <value>Uppdatera</value>
+  </data>
+  <data name="PolicyNoteOnly" xml:space="preserve">
+    <value>Bara anteckning</value>
+  </data>
+  <data name="TextReplace" xml:space="preserve">
+    <value>Ersätt</value>
+  </data>
+  <data name="TextAppend" xml:space="preserve">
+    <value>Lägg till sist</value>
+  </data>
+  <data name="DispatcherEditsWin" xml:space="preserve">
+    <value>Behåll ändringar som gjorts i Resgrid</value>
+  </data>
+  <data name="DispatcherEditsWinHelp" xml:space="preserve">
+    <value>När någon har ändrat ett fält i Resgrid skriver ett senare meddelande från CAD inte över det. Värdet från CAD hamnar i uppdateringsanteckningen.</value>
+  </data>
+  <data name="PagingHeader" xml:space="preserve">
+    <value>Utlarmning</value>
+  </data>
+  <data name="RepageWhen" xml:space="preserve">
+    <value>Larma ut alla på larmet igen</value>
+  </data>
+  <data name="RepageNever" xml:space="preserve">
+    <value>Aldrig</value>
+  </data>
+  <data name="RepageLocationOrPriority" xml:space="preserve">
+    <value>När adressen eller prioriteten ändras</value>
+  </data>
+  <data name="RepageAnyChange" xml:space="preserve">
+    <value>När något ändras</value>
+  </data>
+  <data name="RepageEveryUpdate" xml:space="preserve">
+    <value>Vid varje uppdatering (skickas som nästa larmnivå)</value>
+  </data>
+  <data name="PageAddedResources" xml:space="preserve">
+    <value>Larma ut enheter och grupper som en uppdatering lägger till</value>
+  </data>
+  <data name="ClosedHeader" xml:space="preserve">
+    <value>Stängda larm</value>
+  </data>
+  <data name="ClosedMatchMinutes" xml:space="preserve">
+    <value>Minuter som ett stängt larm fortfarande matchas</value>
+  </data>
+  <data name="ClosedMatchMinutesHelp" xml:space="preserve">
+    <value>Ett e-postmeddelande för ett larm som stängdes inom den här tiden skrivs som en anteckning på det larmet. Larmet öppnas inte igen. 0: ett nytt larm skapas.</value>
+  </data>
+  <data name="ClosePhrases" xml:space="preserve">
+    <value>Fraser för stängning</value>
+  </data>
+  <data name="ClosePhrasesHelp" xml:space="preserve">
+    <value>En per rad. Ett e-postmeddelande som innehåller någon av dem stänger larmet med samma larm-ID. Lämna tomt för att aldrig stänga larm via e-post.</value>
+  </data>
+  <data name="CancelPhrases" xml:space="preserve">
+    <value>Fraser för avbrytande</value>
+  </data>
+  <data name="CancelPhrasesHelp" xml:space="preserve">
+    <value>En per rad. Ett e-postmeddelande som innehåller någon av dem avbryter larmet med samma larm-ID.</value>
+  </data>
+  <data name="NotifyOnClose" xml:space="preserve">
+    <value>Skicka meddelande om stängning</value>
+  </data>
+  <data name="LabelsHeader" xml:space="preserve">
+    <value>Etiketter för formatet "Labeled fields"</value>
+  </data>
+  <data name="LabelsIntro" xml:space="preserve">
+    <value>Används när ert e-postformat är "Labeled fields". Ange etiketten som ert CAD skriver framför varje värde. Skilj alternativ åt med |.</value>
+  </data>
+  <data name="Label.CallId" xml:space="preserve">
+    <value>Larm-ID</value>
+  </data>
+  <data name="Label.Name" xml:space="preserve">
+    <value>Larmnamn</value>
+  </data>
+  <data name="Label.Nature" xml:space="preserve">
+    <value>Larmets art</value>
+  </data>
+  <data name="Label.Address" xml:space="preserve">
+    <value>Adress</value>
+  </data>
+  <data name="Label.City" xml:space="preserve">
+    <value>Stad</value>
+  </data>
+  <data name="Label.CrossStreets" xml:space="preserve">
+    <value>Korsande gator</value>
+  </data>
+  <data name="Label.Coordinates" xml:space="preserve">
+    <value>Koordinater (latitud, longitud)</value>
+  </data>
+  <data name="Label.Latitude" xml:space="preserve">
+    <value>Latitud</value>
+  </data>
+  <data name="Label.Longitude" xml:space="preserve">
+    <value>Longitud</value>
+  </data>
+  <data name="Label.Type" xml:space="preserve">
+    <value>Larmtyp</value>
+  </data>
+  <data name="Label.Priority" xml:space="preserve">
+    <value>Prioritet</value>
+  </data>
+  <data name="Label.Units" xml:space="preserve">
+    <value>Enheter</value>
+  </data>
+  <data name="Label.Notes" xml:space="preserve">
+    <value>Anteckningar</value>
+  </data>
+  <data name="TestHeader" xml:space="preserve">
+    <value>Testa med ett e-postmeddelande</value>
+  </data>
+  <data name="TestIntro" xml:space="preserve">
+    <value>Klistra in ett e-postmeddelande som ert CAD har skickat. Inget skapas: Resgrid visar vad det läser med inställningarna på den här sidan, sparade eller inte.</value>
+  </data>
+  <data name="TestSubject" xml:space="preserve">
+    <value>Ämne</value>
+  </data>
+  <data name="TestBody" xml:space="preserve">
+    <value>Brödtext</value>
+  </data>
+  <data name="TestButton" xml:space="preserve">
+    <value>Testa</value>
+  </data>
+  <data name="TestCallId" xml:space="preserve">
+    <value>Larm-ID från CAD</value>
+  </data>
+  <data name="TestNoCallId" xml:space="preserve">
+    <value>Inget larm-ID hittades</value>
+  </data>
+  <data name="TestClose" xml:space="preserve">
+    <value>Tolkas som</value>
+  </data>
+  <data name="TestCloseNone" xml:space="preserve">
+    <value>Ett nytt larm eller en uppdatering</value>
+  </data>
+  <data name="TestCloseClose" xml:space="preserve">
+    <value>Stängning av larmet</value>
+  </data>
+  <data name="TestCloseCancel" xml:space="preserve">
+    <value>Avbrytande av larmet</value>
+  </data>
+  <data name="TestNoCall" xml:space="preserve">
+    <value>Ert e-postformat hittade inget larm i det här meddelandet.</value>
+  </data>
+  <data name="TestFailed" xml:space="preserve">
+    <value>Testet kunde inte köras.</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Sparat.</value>
+  </data>
+  <data name="SettingsInvalid" xml:space="preserve">
+    <value>Några värden kunde inte läsas. Kontrollera sidan och spara igen.</value>
+  </data>
+  <data name="CadUpdatesLabelRequired" xml:space="preserve">
+    <value>Ange etiketten som ert CAD skriver framför larm-ID:t.</value>
+  </data>
+  <data name="CadUpdatesPatternRequired" xml:space="preserve">
+    <value>Ange ett mönster.</value>
+  </data>
+  <data name="CadUpdatesPatternOneGroup" xml:space="preserve">
+    <value>Mönstret måste ha exakt en fångstgrupp, till exempel Call ID: (\S+)</value>
+  </data>
+  <data name="CadUpdatesPatternInvalid" xml:space="preserve">
+    <value>Mönstret är inte ett giltigt reguljärt uttryck.</value>
+  </data>
+  <data name="CadCallIdLabel" xml:space="preserve">
+    <value>Larm-ID från CAD</value>
+  </data>
+</root>

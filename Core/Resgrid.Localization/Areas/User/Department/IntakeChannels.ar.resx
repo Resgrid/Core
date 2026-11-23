@@ -364,4 +364,16 @@
   <data name="Screening.DismissedAsSpam" xml:space="preserve">
     <value>مرفوض كرسالة مزعجة</value>
   </data>
+  <data name="CadUpdates" xml:space="preserve">
+    <value>قبول تحديثات CAD</value>
+  </data>
+  <data name="CadUpdatesHelp" xml:space="preserve">
+    <value>رسالة البريد التي تحمل معرّف البلاغ في CAD لبلاغ موجود لدى الإدارة تحدّث ذلك البلاغ بدلًا من إنشاء بلاغ معلّق.</value>
+  </data>
+  <data name="CadUpdatesUnavailable" xml:space="preserve">
+    <value>فعّل أولًا التحديثات من نظام CAD لديك.</value>
+  </data>
+  <data name="CadUpdatesSettingsLink" xml:space="preserve">
+    <value>فتح الإعدادات</value>
+  </data>
 </root>

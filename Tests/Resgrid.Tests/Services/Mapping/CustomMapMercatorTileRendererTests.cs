@@ -86,5 +86,40 @@ namespace Resgrid.Tests.Services.Mapping
 
 			(await renderer.GetBoundsAsync(layer)).Should().BeNull();
 		}
+
+		[Test]
+		public async Task more_layers_than_the_source_cache_holds_are_all_painted()
+		{
+			// A full cache rejects a new source by "evicting" it at once; the renderer used to dispose sources on eviction,
+			// so every tile of the layer after the cache filled failed (QA: the 7th floor plan of a department, 2026-11-23).
+			var (x, y) = TileFor(39.55, -119.75, 14);
+			var renderer = Renderer();
+
+			for (var i = 0; i < 70; i++)
+			{
+				var bytes = await renderer.RenderTileAsync(Layer(), 14, x, y);
+
+				bytes.Should().NotBeNull($"layer {i} must still render once the cache is full");
+				using var tile = Image.Load<Rgba32>(bytes);
+				tile[128, 128].R.Should().Be(255, $"layer {i} is painted");
+			}
+		}
+
+		[Test]
+		public async Task a_layer_renders_again_and_again_while_other_layers_come_and_go()
+		{
+			var (x, y) = TileFor(39.55, -119.75, 14);
+			var renderer = Renderer();
+			var kept = Layer();
+
+			for (var i = 0; i < 40; i++)
+			{
+				await renderer.RenderTileAsync(Layer(), 14, x, y);
+				var bytes = await renderer.RenderTileAsync(kept, 14, x, y);
+
+				using var tile = Image.Load<Rgba32>(bytes);
+				tile[128, 128].A.Should().Be(255);
+			}
+		}
 	}
 }

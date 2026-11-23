@@ -1251,4 +1251,16 @@
   <data name="CallRouteNoRuns" xml:space="preserve">
     <value>Noch keine Einheit hat diese Fahrtroute gestartet.</value>
   </data>
+  <data name="FacilityMaps" xml:space="preserve">
+    <value>Anlagenpläne</value>
+  </data>
+  <data name="FacilityMapsNone" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="FacilityMapsFloor" xml:space="preserve">
+    <value>Etage oder Ebene</value>
+  </data>
+  <data name="FacilityMapsHint" xml:space="preserve">
+    <value>Klicken Sie auf einen Raum, um den Einsatzort festzulegen.</value>
+  </data>
 </root>

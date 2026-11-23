@@ -53,6 +53,9 @@ NARR: SMOKE SHOWING";
 		private Mock<IEventAggregator> _events;
 		private EmailController _controller;
 		private bool _aiEnrichEnabled;
+		private FakeCallEmailUpdatesRepository _ledger;
+		private EmailCallUpdateConfig _stored;
+		private Mock<ICallBroadcastOutboxService> _outbox;
 
 		[SetUp]
 		public void SetUp()
@@ -67,6 +70,10 @@ NARR: SMOKE SHOWING";
 			_formatType = (int)CallEmailTypes.Active911;
 			_existing = null;
 			_receipts = new MockInboundEmailReceiptsRepository();
+			_stored = null;
+			_outbox = new Mock<ICallBroadcastOutboxService>();
+			_ledger = new FakeCallEmailUpdatesRepository();
+			_ledger.Calls = () => _existing != null ? _saved.Concat(new[] { _existing }) : _saved;
 			var department = new Department { DepartmentId = DepartmentId, ManagingUserId = "manager", TimeZone = "Eastern Standard Time" };
 
 			var settings = new Mock<IDepartmentSettingsService>();
@@ -101,7 +108,8 @@ NARR: SMOKE SHOWING";
 
 					return call;
 				});
-			calls.Setup(c => c.GetCallByIdAsync(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync((int id, bool bypass) => _saved.SingleOrDefault(c => c.CallId == id));
+			calls.Setup(c => c.GetCallByIdAsync(It.IsAny<int>(), It.IsAny<bool>()))
+				.ReturnsAsync((int id, bool bypass) => (_existing != null ? _saved.Concat(new[] { _existing }) : _saved).SingleOrDefault(c => c.CallId == id));
 			calls.Setup(c => c.PopulateCallData(It.IsAny<Call>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
 					It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
 				.ReturnsAsync((Call call, bool a, bool b, bool c, bool d, bool e, bool f, bool g, bool h, bool i, bool j) => call);
@@ -138,7 +146,8 @@ NARR: SMOKE SHOWING";
 				Mock.Of<ICommunicationService>(), Mock.Of<IDistributionListsService>(), Mock.Of<IUsersService>(), Mock.Of<IEmailService>(), Mock.Of<IDepartmentGroupsService>(),
 				Mock.Of<IMessageService>(), Mock.Of<IFileService>(), units.Object, Mock.Of<IGeoLocationProvider>(), Mock.Of<ICallDispatchStatusService>(),
 				Mock.Of<IDispatchRecommendationService>(), Mock.Of<IFeatureToggleService>(), aiAdmin.Object,
-				new InboundEmailReceiptsService(_receipts, TimeProvider.System), Mock.Of<IIntakeService>(), Mock.Of<Resgrid.Model.Providers.IEmailSender>(), emailCalls);
+				new InboundEmailReceiptsService(_receipts, TimeProvider.System), Mock.Of<IIntakeService>(), Mock.Of<Resgrid.Model.Providers.IEmailSender>(), emailCalls,
+				EmailCallUpdateServices.Create(calls.Object, _ledger, () => _stored, _outbox, departments: departments.Object));
 		}
 
 		[TearDown]
@@ -436,18 +445,38 @@ NARR: SMOKE SHOWING";
 		}
 
 		[Test]
-		public async Task An_update_to_a_pending_call_is_not_redispatched_when_its_alarm_count_changes()
+		public async Task A_close_email_for_a_call_nobody_has_is_acknowledged_with_200_and_creates_nothing()
 		{
-			_existing = new Call { CallId = 77, DepartmentId = DepartmentId, State = (int)CallStates.Pending, Name = "Structure Fire", DispatchCount = 3, PreviousDispatchCount = 2 };
+			// Found in the 2026-11-23 walk: Ok(null) answered 204, which Postmark retries for hours.
+			_stored = new EmailCallUpdateConfig { Enabled = true, ClosePhrases = "SMOKE SHOWING" };
 
 			(await ReceiveAsync(Email())).Should().Be(200);
 
-			_broadcasts.Should().Be(0, "a pending call waits for its dispatcher");
+			_saved.Should().BeEmpty();
+			_ledger.Rows.Should().ContainSingle(r => r.Outcome == (int)CallEmailUpdateOutcomes.CloseUnmatched);
+		}
 
-			_existing = new Call { CallId = 78, DepartmentId = DepartmentId, State = (int)CallStates.Active, Name = "Structure Fire", DispatchCount = 3, PreviousDispatchCount = 2 };
+		[Test]
+		public async Task An_update_to_a_pending_call_is_never_paged_and_an_active_call_follows_the_repage_rule()
+		{
+			// The CAD sends every page again; the department re-pages on every update (the next alarm).
+			_stored = new EmailCallUpdateConfig { Enabled = true, RepageWhen = (int)CadRepageRules.EveryUpdate };
+			_existing = new Call { CallId = 77, DepartmentId = DepartmentId, State = (int)CallStates.Pending, Name = "Structure Fire", IncidentNumber = "2026-000777-FIRE", LoggedOn = DateTime.UtcNow };
+
 			(await ReceiveAsync(Email())).Should().Be(200);
 
-			_broadcasts.Should().Be(1, "a running call is still redispatched on a new alarm");
+			_saved.Should().BeEmpty("the email updated the pending call instead of creating another");
+			_broadcasts.Should().Be(0);
+			_outbox.Verify(o => o.RecordAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+				It.IsAny<IEnumerable<int>>(), It.IsAny<string>()), Times.Never, "a pending call waits for its dispatcher");
+
+			_existing = new Call { CallId = 78, DepartmentId = DepartmentId, State = (int)CallStates.Active, Name = "Structure Fire", IncidentNumber = "2026-000777-FIRE", LoggedOn = DateTime.UtcNow };
+			(await ReceiveAsync(Email())).Should().Be(200);
+
+			_saved.Should().BeEmpty();
+			_outbox.Verify(o => o.RecordAsync(It.Is<Call>(c => c.CallId == 78), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+				It.IsAny<IEnumerable<int>>(), It.IsAny<string>()), Times.Once, "a running call is paged again under its rule");
+			_existing.DispatchCount.Should().Be(1, "an every-update re-page is the call's next alarm");
 		}
 	}
 }

@@ -1251,4 +1251,16 @@
   <data name="CallRouteNoRuns" xml:space="preserve">
     <value>Żadna jednostka nie rozpoczęła jeszcze tej trasy.</value>
   </data>
+  <data name="FacilityMaps" xml:space="preserve">
+    <value>Mapy obiektu</value>
+  </data>
+  <data name="FacilityMapsNone" xml:space="preserve">
+    <value>Brak</value>
+  </data>
+  <data name="FacilityMapsFloor" xml:space="preserve">
+    <value>Piętro lub warstwa</value>
+  </data>
+  <data name="FacilityMapsHint" xml:space="preserve">
+    <value>Kliknij pomieszczenie, aby ustawić lokalizację zgłoszenia.</value>
+  </data>
 </root>

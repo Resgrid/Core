@@ -8253,4 +8253,16 @@
   <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
     <value>Дозволяє учасникам записуватися до групи зміни, навіть коли всі місця її ролей (обов'язкові й необов'язкові) зайняті. Їм усе одно потрібна одна з ролей групи. Керівники завжди можуть призначати людей понад кількість місць.</value>
   </data>
+  <data name="Setting.EmailCallUpdates" xml:space="preserve">
+    <value>Оновлення з вашого CAD</value>
+  </data>
+  <data name="SettingHelp.EmailCallUpdates" xml:space="preserve">
+    <value>Оновлювати наявний виклик, коли ваш CAD надсилає виправлений або наступний лист із тим самим ідентифікатором виклику.</value>
+  </data>
+  <data name="Setting.EmailLabeledFields" xml:space="preserve">
+    <value>Мітки для формату "Labeled fields"</value>
+  </data>
+  <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
+    <value>Використовуються, коли ваш формат листів — "Labeled fields". Введіть мітку, яку ваш CAD пише перед кожним значенням. Розділяйте варіанти символом |.</value>
+  </data>
 </root>

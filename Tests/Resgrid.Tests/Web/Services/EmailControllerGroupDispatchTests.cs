@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -12,6 +13,7 @@ using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
 using Resgrid.Services.CallEmailTemplates;
+using Resgrid.Tests.Mocks;
 using Resgrid.Web.Services.Controllers;
 
 namespace Resgrid.Tests.Web.Services
@@ -34,6 +36,7 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<IQueueService> _queue;
 		private Mock<IGeoLocationProvider> _geo;
 		private EmailController _controller;
+		private FakeCallEmailUpdatesRepository _ledger;
 
 		private const string Active911Body = @"CALL: Medical Unknown Problems
 ADDR1: 555 MAIN ST
@@ -47,6 +50,8 @@ NARR: 55 YOM";
 			_group = new DepartmentGroup { DepartmentGroupId = 5, DepartmentId = DepartmentId, Department = _department, DispatchEmail = GroupCode };
 			_activeCalls = new List<Call>();
 			_saved = new List<Call>();
+			_ledger = new FakeCallEmailUpdatesRepository();
+			_ledger.Calls = () => _activeCalls.Concat(_saved);
 
 			var groups = new Mock<IDepartmentGroupsService>();
 			groups.Setup(g => g.GetGroupByDispatchEmailCodeAsync(GroupCode)).ReturnsAsync(_group);
@@ -71,6 +76,8 @@ NARR: 55 YOM";
 					factory.GenerateCallFromEmailText((CallEmailTypes)type, email, manager, users, department, active, units, priority, priorities, types, Mock.Of<IGeoLocationProvider>()));
 			calls.Setup(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((Call call, CancellationToken ct) => { if (call.CallId <= 0) call.CallId = 900 + _saved.Count; _saved.Add(call); return call; });
+			calls.Setup(c => c.GetCallByIdAsync(It.IsAny<int>(), It.IsAny<bool>()))
+				.ReturnsAsync((int id, bool bypass) => _activeCalls.Concat(_saved).FirstOrDefault(c => c.CallId == id));
 			calls.Setup(c => c.PopulateCallData(It.IsAny<Call>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
 					It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
 				.ReturnsAsync((Call call, bool a, bool b, bool c, bool d, bool e, bool f, bool g, bool h, bool i, bool j) => call);
@@ -90,7 +97,8 @@ NARR: 55 YOM";
 				Mock.Of<IMessageService>(), Mock.Of<IFileService>(), units.Object, _geo.Object, Mock.Of<ICallDispatchStatusService>(),
 				Mock.Of<IDispatchRecommendationService>(), Mock.Of<IFeatureToggleService>(), Mock.Of<Resgrid.Model.AiDispatch.IAiDispatchAdminService>(),
 				Mock.Of<IInboundEmailReceiptsService>(s => s.ClaimAsync(It.IsAny<string>(), It.IsAny<InboundEmailKinds>(), It.IsAny<CancellationToken>()) == Task.FromResult(InboundEmailReceiptClaim.Untracked)),
-				Mock.Of<IIntakeService>(), Mock.Of<Resgrid.Model.Providers.IEmailSender>(), Mock.Of<IDispatcherEmailCallService>());
+				Mock.Of<IIntakeService>(), Mock.Of<Resgrid.Model.Providers.IEmailSender>(), Mock.Of<IDispatcherEmailCallService>(),
+				EmailCallUpdateServices.Create(calls.Object, _ledger, departments: departments.Object, geo: _geo.Object));
 		}
 
 		private static PostmarkInboundMessage GroupEmail(string subject, string textBody, string htmlBody = null)

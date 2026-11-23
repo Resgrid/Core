@@ -10,6 +10,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.RecurringCalls> recurringLocalizer
 @inject Resgrid.Model.Services.IFeatureToggleService featureToggleService
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.IntakeChannels> intakeLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.CadUpdates> cadUpdatesLocalizer
 @inject Resgrid.Model.Services.IIntakeService intakeService
 @inject Resgrid.Model.Services.IAuthorizationService dismissAuthorization
 @{
@@ -342,7 +343,8 @@
                             <dl class="dl-horizontal">
                                 <dt>@localizer["IncidentIdLabel"]:</dt>
                                 <dd><span data-adp-field="calls.incidentnumber">@Model.Call.IncidentNumber</span></dd>
-                                <dt>@localizer["CallIdentifierLabel"]:</dt>
+                                @* An emailed call's external identifier is the CAD's call ID, the key CAD email updates match on (cad-email-call-updates-plan.md §6). *@
+                                <dt>@(Model.Call.CallSource == (int)CallSources.EmailImport ? cadUpdatesLocalizer["CadCallIdLabel"] : localizer["CallIdentifierLabel"]):</dt>
                                 <dd><span data-adp-field="calls.externalidentifier">@Model.Call.ExternalIdentifier</span></dd>
                                 <dt>@localizer["ReferenceIdLabel"]:</dt>
                                 <dd><span data-adp-field="calls.referencenumber">@Model.Call.ReferenceNumber</span></dd>

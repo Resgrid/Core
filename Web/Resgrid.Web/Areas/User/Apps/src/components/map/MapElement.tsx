@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ComponentType } from 'react';
 import type { HubConnection } from '@microsoft/signalr';
 import LoadingIndicator from '../shared/LoadingIndicator';
+import type { FeatureCollection } from 'geojson';
 import { apiFetchJson } from '../../runtime/api';
+import { getBrowserConfig } from '../../runtime/browserConfig';
 import {
   connectEventingHub,
   connectGeolocationHub,
@@ -9,6 +11,9 @@ import {
   type UnitLocationUpdate,
 } from '../../runtime/signalr';
 import {
+  buildCustomMapOverlay,
+  chooseCustomMapLayer,
+  customMapTypeLabels,
   getPoiLayerId,
   isMapboxRendererEnabled,
   isMapLibreRendererEnabled,
@@ -17,6 +22,9 @@ import {
   normalizeMapLayers,
   resolveMapConfig,
   type GetMapDataResult,
+  type CustomMapLayerInfo,
+  type CustomMapOverlay,
+  type CustomMapSummary,
   type GetMapLayersResult,
   type MapElementProps,
   type MapMarkerInfo,
@@ -103,6 +111,30 @@ function readBooleanPreference(storageKey: string, fallbackValue: boolean): bool
   }
 }
 
+// A switched-on custom map remembers its chosen layer: "" means the map's default layer; no entry means off.
+function readCustomMapPreference(mapId: string): string | null {
+  try {
+    return typeof window === 'undefined' ? null : window.localStorage.getItem(`rg-map:custom-map:${mapId}`);
+  } catch {
+    return null;
+  }
+}
+
+function writeCustomMapPreference(mapId: string, layerId: string | null): void {
+  try {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    if (layerId === null) {
+      window.localStorage.removeItem(`rg-map:custom-map:${mapId}`);
+    } else {
+      window.localStorage.setItem(`rg-map:custom-map:${mapId}`, layerId);
+    }
+  } catch {
+    // Ignore storage failures and fall back to in-memory state.
+  }
+}
+
 function writeBooleanPreference(storageKey: string, value: boolean): void {
   if (typeof window === 'undefined') {
     return;
@@ -148,6 +180,13 @@ export default function MapElement(props: MapElementProps) {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState(() => new Date().toString());
   const [markerPositionOverrides, setMarkerPositionOverrides] = useState<Record<string, LivePosition>>({});
+  // Custom maps (site plans) and indoor maps (building floors): the list, each map's layers once loaded, the regions
+  // of each layer once loaded, and which maps are on (map id -> chosen layer id, "" for the map's default).
+  const [customMaps, setCustomMaps] = useState<CustomMapSummary[]>([]);
+  const [customMapLayers, setCustomMapLayers] = useState<Record<string, CustomMapLayerInfo[]>>({});
+  const [customMapRegions, setCustomMapRegions] = useState<Record<string, FeatureCollection | null>>({});
+  const [customMapSelection, setCustomMapSelection] = useState<Record<string, string>>({});
+  const [focusRequest, setFocusRequest] = useState<{ key: number; bounds: [number, number, number, number] } | null>(null);
   const [MapRenderer, setMapRenderer] = useState<MapRendererComponent | null>(null);
   const [rendererLoading, setRendererLoading] = useState(true);
   const [rendererError, setRendererError] = useState<string | null>(null);
@@ -369,6 +408,107 @@ export default function MapElement(props: MapElementProps) {
       cancelled = true;
     };
   }, []);
+
+  // The department's custom and indoor maps. Optional: a failure leaves the map without them.
+  useEffect(() => {
+    let cancelled = false;
+
+    void apiFetchJson<{ Data?: CustomMapSummary[] }>('/api/v4/Mapping/GetCustomMaps')
+      .then((response) => {
+        if (cancelled) {
+          return;
+        }
+        const maps = (response.Data ?? []).filter((map) => map && map.IndoorMapId);
+        setCustomMaps(maps);
+        setCustomMapSelection(
+          maps.reduce<Record<string, string>>((selection, map) => {
+            const saved = readCustomMapPreference(map.IndoorMapId);
+            if (saved !== null) {
+              selection[map.IndoorMapId] = saved;
+            }
+            return selection;
+          }, {}),
+        );
+      })
+      .catch((customMapsError: unknown) => console.error('Unable to load the custom maps', customMapsError));
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Layers of every switched-on map, then the regions of each chosen layer, fetched once each.
+  useEffect(() => {
+    for (const mapId of Object.keys(customMapSelection)) {
+      if (customMapLayers[mapId]) {
+        continue;
+      }
+      setCustomMapLayers((current) => ({ ...current, [mapId]: current[mapId] ?? [] }));
+      void apiFetchJson<{ Data?: { Layers?: CustomMapLayerInfo[] } }>(`/api/v4/Mapping/GetCustomMap/${encodeURIComponent(mapId)}`)
+        .then((response) => setCustomMapLayers((current) => ({ ...current, [mapId]: response.Data?.Layers ?? [] })))
+        .catch((layerError: unknown) => console.error('Unable to load the custom map layers', layerError));
+    }
+  }, [customMapLayers, customMapSelection]);
+
+  const customMapOverlays = useMemo<CustomMapOverlay[]>(() => {
+    const { apiBaseUrl } = getBrowserConfig();
+    return customMaps.flatMap((map) => {
+      const requested = customMapSelection[map.IndoorMapId];
+      if (requested === undefined) {
+        return [];
+      }
+      const layer = chooseCustomMapLayer(customMapLayers[map.IndoorMapId] ?? [], requested, map.DefaultFloorId);
+      return layer ? [buildCustomMapOverlay(map, layer, apiBaseUrl, customMapRegions[layer.IndoorMapFloorId] ?? null)] : [];
+    });
+  }, [customMapLayers, customMapRegions, customMapSelection, customMaps]);
+
+  useEffect(() => {
+    for (const overlay of customMapOverlays) {
+      if (overlay.id in customMapRegions) {
+        continue;
+      }
+      setCustomMapRegions((current) => ({ ...current, [overlay.id]: current[overlay.id] ?? null }));
+      void apiFetchJson<FeatureCollection>(`/api/v4/Mapping/GetCustomMapRegionsGeoJSON/${encodeURIComponent(overlay.id)}`)
+        .then((regions) => setCustomMapRegions((current) => ({ ...current, [overlay.id]: regions?.type === 'FeatureCollection' ? regions : null })))
+        .catch((regionError: unknown) => console.error('Unable to load the custom map regions', regionError));
+    }
+  }, [customMapOverlays, customMapRegions]);
+
+  const focusCustomMap = (mapId: string) => {
+    const overlay = customMapOverlays.find((candidate) => candidate.mapId === mapId);
+    const map = customMaps.find((candidate) => candidate.IndoorMapId === mapId);
+    const bounds = overlay?.bounds
+      ?? (map && Number(map.BoundsNELat) > Number(map.BoundsSWLat) && Number(map.BoundsNELon) > Number(map.BoundsSWLon)
+        ? [Number(map.BoundsSWLon), Number(map.BoundsSWLat), Number(map.BoundsNELon), Number(map.BoundsNELat)] as [number, number, number, number]
+        : null);
+    if (bounds) {
+      setFocusRequest({ key: Date.now(), bounds });
+    }
+  };
+
+  const setCustomMapOn = (map: CustomMapSummary, on: boolean) => {
+    setCustomMapSelection((current) => {
+      const next = { ...current };
+      if (on) {
+        next[map.IndoorMapId] = current[map.IndoorMapId] ?? '';
+      } else {
+        delete next[map.IndoorMapId];
+      }
+      return next;
+    });
+    writeCustomMapPreference(map.IndoorMapId, on ? customMapSelection[map.IndoorMapId] ?? '' : null);
+    if (on) {
+      // Switching a map on takes the viewer to it; its bounds are known from the list already.
+      if (Number(map.BoundsNELat) > Number(map.BoundsSWLat) && Number(map.BoundsNELon) > Number(map.BoundsSWLon)) {
+        setFocusRequest({ key: Date.now(), bounds: [Number(map.BoundsSWLon), Number(map.BoundsSWLat), Number(map.BoundsNELon), Number(map.BoundsNELat)] });
+      }
+    }
+  };
+
+  const setCustomMapLayer = (mapId: string, layerId: string) => {
+    setCustomMapSelection((current) => ({ ...current, [mapId]: layerId }));
+    writeCustomMapPreference(mapId, layerId);
+  };
 
   // Background marker reload (after a reconnect, or for a pushed marker the map does not have yet).
   // Only the markers are replaced; map center/zoom stay put.
@@ -781,10 +921,12 @@ export default function MapElement(props: MapElementProps) {
             hideLabels={hideLabels}
             resolvedMapConfig={resolvedMapConfig}
             fitBoundsKey={fitBoundsKey}
+            customOverlays={customMapOverlays}
+            focusRequest={focusRequest}
           />
         )}
 
-        {(layers.length > 0 || poiLayers.length > 0 || mapData?.HydrantsAvailable) && !layersOpen && (
+        {(layers.length > 0 || poiLayers.length > 0 || customMaps.length > 0 || mapData?.HydrantsAvailable) && !layersOpen && (
           <button
             ref={layersButtonRef}
             type="button"
@@ -800,7 +942,7 @@ export default function MapElement(props: MapElementProps) {
           </button>
         )}
 
-        {(layers.length > 0 || poiLayers.length > 0 || mapData?.HydrantsAvailable) && layersOpen && (
+        {(layers.length > 0 || poiLayers.length > 0 || customMaps.length > 0 || mapData?.HydrantsAvailable) && layersOpen && (
           <div className="rg-map__layers rg-card">
             <div className="rg-map__layers-header">
               <span>Layers</span>
@@ -841,6 +983,48 @@ export default function MapElement(props: MapElementProps) {
                       <span>{layer.name}</span>
                     </label>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {customMaps.length > 0 && (
+              <div className="rg-map__layer-section">
+                <div className="rg-map__layers-title">Facility &amp; custom maps</div>
+                <div className="rg-map__layer-list">
+                  {customMaps.map((map) => {
+                    const on = customMapSelection[map.IndoorMapId] !== undefined;
+                    const mapLayers = [...(customMapLayers[map.IndoorMapId] ?? [])].sort((a, b) => a.FloorOrder - b.FloorOrder);
+                    const chosen = on ? chooseCustomMapLayer(mapLayers, customMapSelection[map.IndoorMapId], map.DefaultFloorId) : null;
+
+                    return (
+                      <div key={map.IndoorMapId} className="rg-map__custom-map">
+                        <label className="rg-map__layer-toggle">
+                          <input type="checkbox" checked={on} onChange={(event) => setCustomMapOn(map, event.target.checked)} />
+                          <span>{map.Name}</span>
+                          <span className="rg-map__custom-map-type">{customMapTypeLabels[map.MapType] ?? ''}</span>
+                        </label>
+                        {on && (
+                          <div className="rg-map__custom-map-controls">
+                            {mapLayers.length > 1 && (
+                              <select
+                                className="rg-map__custom-map-layer"
+                                aria-label={`${map.Name} floor or layer`}
+                                value={chosen?.IndoorMapFloorId ?? ''}
+                                onChange={(event) => setCustomMapLayer(map.IndoorMapId, event.target.value)}
+                              >
+                                {mapLayers.map((layer) => (
+                                  <option key={layer.IndoorMapFloorId} value={layer.IndoorMapFloorId}>{layer.Name}</option>
+                                ))}
+                              </select>
+                            )}
+                            <button type="button" className="rg-map__custom-map-zoom" onClick={() => focusCustomMap(map.IndoorMapId)}>
+                              Zoom to
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}

@@ -32,11 +32,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var zones = await _indoorMapService.SearchZonesAsync(DepartmentId, term);
 
-			var results = (zones ?? Enumerable.Empty<Resgrid.Model.IndoorMapZone>()).Select(z => new
+			// Call location pickers use this: only zones marked dispatchable (rooms, muster points, not corridors), with
+			// their centre so picking one can move the call's map pin there.
+			var results = (zones ?? Enumerable.Empty<Resgrid.Model.IndoorMapZone>()).Where(z => z.IsDispatchable).Select(z => new
 			{
 				id = z.IndoorMapZoneId,
 				text = z.Name,
-				floorId = z.IndoorMapFloorId
+				floorId = z.IndoorMapFloorId,
+				lat = z.CenterLatitude,
+				lng = z.CenterLongitude
 			});
 
 			return Json(new { results });

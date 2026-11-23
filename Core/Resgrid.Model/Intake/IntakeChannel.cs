@@ -103,6 +103,13 @@ namespace Resgrid.Model
 		public bool SendAcknowledgement { get; set; }
 
 		/// <summary>
+		/// Email channels only (M0330, cad-email-call-updates-plan.md D8): an email carrying the CAD call ID of a call the department
+		/// already has updates, closes or is noted on that call, using the department's CAD update settings, instead of creating a
+		/// pending call. Needs those settings on.
+		/// </summary>
+		public bool CadUpdates { get; set; }
+
+		/// <summary>
 		/// Webhook channels only: the HMAC-SHA256 signing secret, stored protected (data protection purpose
 		/// "Resgrid.Intake.WebhookSecret"); null for other channel types.
 		/// </summary>
@@ -177,7 +184,14 @@ namespace Resgrid.Model
 		/// The sender reached IntakeConfig.MaxCallsPerSenderPerHour (M0326): the message joined their newest open intake call as a note
 		/// (<see cref="IntakeMessage.CallId"/>) instead of creating another pending call.
 		/// </summary>
-		AddedToCall = 9
+		AddedToCall = 9,
+
+		/// <summary>
+		/// The channel accepts CAD updates (<see cref="IntakeChannel.CadUpdates"/>) and the email carried the CAD call ID of a call the
+		/// department already has: it updated, closed or was noted on that call (<see cref="IntakeMessage.CallId"/>; the reason names
+		/// the <see cref="CallEmailUpdateOutcomes"/>) instead of creating a pending call.
+		/// </summary>
+		UpdatedCall = 10
 	}
 
 	/// <summary>
@@ -292,6 +306,9 @@ namespace Resgrid.Model
 		public string Body { get; set; }
 
 		public DateTime ReceivedOnUtc { get; set; }
+
+		/// <summary>Email: the Date header (UTC) when readable; orders CAD updates that arrive out of order (cad-email-call-updates-plan.md D9).</summary>
+		public DateTime? SentOnUtc { get; set; }
 
 		/// <summary>Voice intake: the session's answers by step, for the AI to read as structured input.</summary>
 		public IDictionary<string, string> Answers { get; set; }

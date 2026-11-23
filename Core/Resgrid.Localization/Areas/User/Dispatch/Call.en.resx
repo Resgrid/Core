@@ -1163,4 +1163,16 @@
   <data name="CallRouteNoRuns" xml:space="preserve">
     <value>No unit has started this route yet.</value>
   </data>
+  <data name="FacilityMaps" xml:space="preserve">
+    <value>Facility maps</value>
+  </data>
+  <data name="FacilityMapsNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="FacilityMapsFloor" xml:space="preserve">
+    <value>Floor or layer</value>
+  </data>
+  <data name="FacilityMapsHint" xml:space="preserve">
+    <value>Click a room to set the call location.</value>
+  </data>
 </root>

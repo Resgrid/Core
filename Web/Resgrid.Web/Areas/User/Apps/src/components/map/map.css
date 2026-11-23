@@ -45,6 +45,38 @@
   margin-bottom: 8px;
 }
 
+.rg-map__custom-map {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rg-map__custom-map-type {
+  color: #6b7280;
+  font-size: 11px;
+}
+
+.rg-map__custom-map-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 20px;
+}
+
+.rg-map__custom-map-layer {
+  max-width: 170px;
+  font-size: 12px;
+}
+
+.rg-map__custom-map-zoom {
+  padding: 1px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: #ffffff;
+  font-size: 12px;
+  cursor: pointer;
+}
+
 .rg-map__viewport {
   position: relative;
   width: 100%;
@@ -203,6 +235,15 @@
   justify-content: flex-start;
 }
 
+/* On the GL maps the marker element itself is placed with position:absolute + a transform by maplibre-gl.css /
+   mapbox-gl.css. Those rules have the same specificity as the one above and come earlier in the bundle, so without
+   this the POI pins fall back into normal flow: they line up in rows at the bottom of the map and drift as you zoom.
+   An absolutely positioned marker is still the containing block for the icon inside it. */
+.rg-map__marker--poi.maplibregl-marker,
+.rg-map__marker--poi.mapboxgl-marker {
+  position: absolute;
+}
+
 .rg-map__marker-icon {
   width: 32px;
   height: 37px;
@@ -248,7 +289,16 @@
   top: 10px;
 }
 
+/* The label hangs under the icon outside the marker's box, so the box's bottom (the GL marker anchor) is the pin's
+   tip and the pin points at the location instead of floating a label-height above it. */
 .rg-map__marker-label {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   max-width: 180px;
   padding: 2px 6px;
   border: 1px solid #111827;

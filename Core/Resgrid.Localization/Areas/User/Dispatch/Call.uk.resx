@@ -1251,4 +1251,16 @@
   <data name="CallRouteNoRuns" xml:space="preserve">
     <value>Жоден підрозділ ще не розпочав цей маршрут.</value>
   </data>
+  <data name="FacilityMaps" xml:space="preserve">
+    <value>Карти об'єкта</value>
+  </data>
+  <data name="FacilityMapsNone" xml:space="preserve">
+    <value>Немає</value>
+  </data>
+  <data name="FacilityMapsFloor" xml:space="preserve">
+    <value>Поверх або шар</value>
+  </data>
+  <data name="FacilityMapsHint" xml:space="preserve">
+    <value>Натисніть на приміщення, щоб задати місце виклику.</value>
+  </data>
 </root>

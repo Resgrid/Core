@@ -135,6 +135,14 @@ var resgrid;
 
                         map.setView(clicked);
 
+                        // A click inside a room of a shown facility map sets the call's indoor location; the room
+                        // names the place better than a street address would.
+                        var room = resgrid.dispatch.facilitymaps ? resgrid.dispatch.facilitymaps.zoneAt(e.latlng.lat, e.latlng.lng) : null;
+                        if (room) {
+                            resgrid.dispatch.facilitymaps.selectZone(room, e.latlng.lat, e.latlng.lng);
+                            return;
+                        }
+
                         resgrid.dispatch.newcall.geocodeCoordinates(e.latlng.lat, e.latlng.lng);
                     });
 
@@ -143,6 +151,17 @@ var resgrid;
                         // Location POI, destination and route (resgrid.dispatch.calllocations.js) draw on the same map.
                         if (resgrid.dispatch.calllocations && typeof resgrid.dispatch.calllocations.mapReady === 'function') {
                             resgrid.dispatch.calllocations.mapReady(map);
+                        }
+
+                        // Facility maps (site plans, building floors) with rooms to click (resgrid.dispatch.facilitymaps.js).
+                        if (resgrid.dispatch.facilitymaps) {
+                            resgrid.dispatch.facilitymaps.mapReady(map, {
+                                setLocation: function (lat, lng) {
+                                    resgrid.dispatch.newcall.setMarkerLocation(lat, lng);
+                                    $("#Latitude").val(lat.toString());
+                                    $("#Longitude").val(lng.toString());
+                                }
+                            });
                         }
 
                         // A location placed before the map finished loading gets its pin now.

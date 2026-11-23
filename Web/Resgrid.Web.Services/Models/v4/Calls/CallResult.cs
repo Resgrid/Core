@@ -123,6 +123,16 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string DestinationWhat3Words { get; set; }
 
 		/// <summary>
+		/// The indoor map zone (room or region on a custom/indoor map) picked as the call location; null when none.
+		/// </summary>
+		public string IndoorMapZoneId { get; set; }
+
+		/// <summary>
+		/// The floor / custom map layer the indoor zone is on; null when none.
+		/// </summary>
+		public string IndoorMapFloorId { get; set; }
+
+		/// <summary>
 		/// The POI the call location was picked from (M0322); null when none.
 		/// </summary>
 		public int? LocationPoiId { get; set; }

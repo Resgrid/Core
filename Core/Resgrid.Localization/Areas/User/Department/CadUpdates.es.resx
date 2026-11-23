@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Actualizaciones de su CAD</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Cuando su CAD envía otro correo de una llamada que ya envió (una dirección corregida, una escalada, un cierre), Resgrid puede actualizar la llamada que creó a partir del primer correo en lugar de crear una nueva. Resgrid reconoce la misma llamada por el ID de llamada del CAD.</value>
+  </data>
+  <data name="CallSettingsLinkHelp" xml:space="preserve">
+    <value>Actualizar la llamada existente cuando su CAD envía un correo corregido o de seguimiento con el mismo ID de llamada.</value>
+  </data>
+  <data name="CurrentFormat" xml:space="preserve">
+    <value>Su formato de correo</value>
+  </data>
+  <data name="BuiltInNotice" xml:space="preserve">
+    <value>Su formato de correo ya asociaba los correos de seguimiento a las llamadas abiertas antes de que existiera esta página, así que Resgrid usa ese comportamiento integrado: se reemplazan las notas de la llamada y no cambia nada más. Guarde esta página para cambiarlo.</value>
+  </data>
+  <data name="UseBuiltIn" xml:space="preserve">
+    <value>Volver al comportamiento integrado</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Actualizar las llamadas existentes</value>
+  </data>
+  <data name="EnabledHelp" xml:space="preserve">
+    <value>Desactivado: cada correo crea una llamada nueva.</value>
+  </data>
+  <data name="IdSourceHeader" xml:space="preserve">
+    <value>Cómo encontrar el ID de llamada del CAD</value>
+  </data>
+  <data name="IdSource" xml:space="preserve">
+    <value>Leer el ID de llamada</value>
+  </data>
+  <data name="IdSourceFromFormat" xml:space="preserve">
+    <value>Del formato de correo</value>
+  </data>
+  <data name="IdSourceLabel" xml:space="preserve">
+    <value>Después de una etiqueta</value>
+  </data>
+  <data name="IdSourcePattern" xml:space="preserve">
+    <value>Con un patrón (avanzado)</value>
+  </data>
+  <data name="IdSourceHelp" xml:space="preserve">
+    <value>"Del formato de correo" funciona con los formatos que leen un número de incidente. Si no, introduzca la etiqueta que su CAD escribe delante del ID de llamada.</value>
+  </data>
+  <data name="FormatHasNoKey" xml:space="preserve">
+    <value>Su formato de correo no lee ningún ID de llamada. Use una etiqueta o un patrón.</value>
+  </data>
+  <data name="IdLabel" xml:space="preserve">
+    <value>Etiqueta</value>
+  </data>
+  <data name="IdLabelHelp" xml:space="preserve">
+    <value>Resgrid toma la primera palabra después de este texto en la misma línea, por ejemplo "Call ID:".</value>
+  </data>
+  <data name="IdPattern" xml:space="preserve">
+    <value>Patrón</value>
+  </data>
+  <data name="IdPatternHelp" xml:space="preserve">
+    <value>Una expresión regular con exactamente un grupo de captura alrededor del ID de llamada.</value>
+  </data>
+  <data name="IdSearchIn" xml:space="preserve">
+    <value>Buscar en</value>
+  </data>
+  <data name="SearchSubjectThenBody" xml:space="preserve">
+    <value>El asunto y después el cuerpo</value>
+  </data>
+  <data name="SearchSubject" xml:space="preserve">
+    <value>Solo el asunto</value>
+  </data>
+  <data name="SearchBody" xml:space="preserve">
+    <value>Solo el cuerpo</value>
+  </data>
+  <data name="FieldsHeader" xml:space="preserve">
+    <value>Qué puede cambiar una actualización</value>
+  </data>
+  <data name="FieldsIntro" xml:space="preserve">
+    <value>Solo nota: la llamada conserva su valor y el nuevo valor del CAD se escribe en la nota de actualización de la llamada.</value>
+  </data>
+  <data name="FieldLocation" xml:space="preserve">
+    <value>Dirección y ubicación en el mapa</value>
+  </data>
+  <data name="FieldPriority" xml:space="preserve">
+    <value>Prioridad</value>
+  </data>
+  <data name="FieldType" xml:space="preserve">
+    <value>Tipo de llamada</value>
+  </data>
+  <data name="FieldName" xml:space="preserve">
+    <value>Nombre de la llamada</value>
+  </data>
+  <data name="FieldNature" xml:space="preserve">
+    <value>Naturaleza de la llamada</value>
+  </data>
+  <data name="FieldNotes" xml:space="preserve">
+    <value>Notas de la llamada</value>
+  </data>
+  <data name="PolicyUpdate" xml:space="preserve">
+    <value>Actualizar</value>
+  </data>
+  <data name="PolicyNoteOnly" xml:space="preserve">
+    <value>Solo nota</value>
+  </data>
+  <data name="TextReplace" xml:space="preserve">
+    <value>Reemplazar</value>
+  </data>
+  <data name="TextAppend" xml:space="preserve">
+    <value>Añadir al final</value>
+  </data>
+  <data name="DispatcherEditsWin" xml:space="preserve">
+    <value>Conservar los cambios hechos en Resgrid</value>
+  </data>
+  <data name="DispatcherEditsWinHelp" xml:space="preserve">
+    <value>Si alguien cambió un campo en Resgrid, un correo posterior del CAD no lo sobrescribe. El valor del CAD va a la nota de actualización.</value>
+  </data>
+  <data name="PagingHeader" xml:space="preserve">
+    <value>Alertas</value>
+  </data>
+  <data name="RepageWhen" xml:space="preserve">
+    <value>Volver a alertar a todos los de la llamada</value>
+  </data>
+  <data name="RepageNever" xml:space="preserve">
+    <value>Nunca</value>
+  </data>
+  <data name="RepageLocationOrPriority" xml:space="preserve">
+    <value>Si cambia la dirección o la prioridad</value>
+  </data>
+  <data name="RepageAnyChange" xml:space="preserve">
+    <value>Si cambia cualquier dato</value>
+  </data>
+  <data name="RepageEveryUpdate" xml:space="preserve">
+    <value>En cada actualización (se envía como la siguiente alarma)</value>
+  </data>
+  <data name="PageAddedResources" xml:space="preserve">
+    <value>Alertar a las unidades y grupos que añade una actualización</value>
+  </data>
+  <data name="ClosedHeader" xml:space="preserve">
+    <value>Llamadas cerradas</value>
+  </data>
+  <data name="ClosedMatchMinutes" xml:space="preserve">
+    <value>Minutos durante los que una llamada cerrada sigue coincidiendo</value>
+  </data>
+  <data name="ClosedMatchMinutesHelp" xml:space="preserve">
+    <value>Un correo de una llamada cerrada dentro de este tiempo se escribe como nota en esa llamada. La llamada no se reabre. 0: se crea una llamada nueva.</value>
+  </data>
+  <data name="ClosePhrases" xml:space="preserve">
+    <value>Frases de cierre</value>
+  </data>
+  <data name="ClosePhrasesHelp" xml:space="preserve">
+    <value>Una por línea. Un correo que contenga una de ellas cierra la llamada con el mismo ID de llamada. Déjelo vacío para no cerrar nunca llamadas por correo.</value>
+  </data>
+  <data name="CancelPhrases" xml:space="preserve">
+    <value>Frases de cancelación</value>
+  </data>
+  <data name="CancelPhrasesHelp" xml:space="preserve">
+    <value>Una por línea. Un correo que contenga una de ellas cancela la llamada con el mismo ID de llamada.</value>
+  </data>
+  <data name="NotifyOnClose" xml:space="preserve">
+    <value>Enviar el aviso de cierre</value>
+  </data>
+  <data name="LabelsHeader" xml:space="preserve">
+    <value>Etiquetas para el formato "Labeled fields"</value>
+  </data>
+  <data name="LabelsIntro" xml:space="preserve">
+    <value>Se usan cuando su formato de correo es "Labeled fields". Introduzca la etiqueta que su CAD escribe delante de cada valor. Separe las alternativas con |.</value>
+  </data>
+  <data name="Label.CallId" xml:space="preserve">
+    <value>ID de llamada</value>
+  </data>
+  <data name="Label.Name" xml:space="preserve">
+    <value>Nombre de la llamada</value>
+  </data>
+  <data name="Label.Nature" xml:space="preserve">
+    <value>Naturaleza de la llamada</value>
+  </data>
+  <data name="Label.Address" xml:space="preserve">
+    <value>Dirección</value>
+  </data>
+  <data name="Label.City" xml:space="preserve">
+    <value>Ciudad</value>
+  </data>
+  <data name="Label.CrossStreets" xml:space="preserve">
+    <value>Calles transversales</value>
+  </data>
+  <data name="Label.Coordinates" xml:space="preserve">
+    <value>Coordenadas (latitud, longitud)</value>
+  </data>
+  <data name="Label.Latitude" xml:space="preserve">
+    <value>Latitud</value>
+  </data>
+  <data name="Label.Longitude" xml:space="preserve">
+    <value>Longitud</value>
+  </data>
+  <data name="Label.Type" xml:space="preserve">
+    <value>Tipo de llamada</value>
+  </data>
+  <data name="Label.Priority" xml:space="preserve">
+    <value>Prioridad</value>
+  </data>
+  <data name="Label.Units" xml:space="preserve">
+    <value>Unidades</value>
+  </data>
+  <data name="Label.Notes" xml:space="preserve">
+    <value>Notas</value>
+  </data>
+  <data name="TestHeader" xml:space="preserve">
+    <value>Probar con un correo</value>
+  </data>
+  <data name="TestIntro" xml:space="preserve">
+    <value>Pegue un correo que haya enviado su CAD. No se crea nada: Resgrid muestra lo que lee con la configuración de esta página, guardada o no.</value>
+  </data>
+  <data name="TestSubject" xml:space="preserve">
+    <value>Asunto</value>
+  </data>
+  <data name="TestBody" xml:space="preserve">
+    <value>Cuerpo</value>
+  </data>
+  <data name="TestButton" xml:space="preserve">
+    <value>Probar</value>
+  </data>
+  <data name="TestCallId" xml:space="preserve">
+    <value>ID de llamada del CAD</value>
+  </data>
+  <data name="TestNoCallId" xml:space="preserve">
+    <value>No se encontró ningún ID de llamada</value>
+  </data>
+  <data name="TestClose" xml:space="preserve">
+    <value>Se interpreta como</value>
+  </data>
+  <data name="TestCloseNone" xml:space="preserve">
+    <value>Una llamada nueva o una actualización</value>
+  </data>
+  <data name="TestCloseClose" xml:space="preserve">
+    <value>Cierre de la llamada</value>
+  </data>
+  <data name="TestCloseCancel" xml:space="preserve">
+    <value>Cancelación de la llamada</value>
+  </data>
+  <data name="TestNoCall" xml:space="preserve">
+    <value>Su formato de correo no encontró ninguna llamada en este correo.</value>
+  </data>
+  <data name="TestFailed" xml:space="preserve">
+    <value>No se pudo ejecutar la prueba.</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Guardado.</value>
+  </data>
+  <data name="SettingsInvalid" xml:space="preserve">
+    <value>No se pudieron leer algunos valores. Revise la página y vuelva a guardar.</value>
+  </data>
+  <data name="CadUpdatesLabelRequired" xml:space="preserve">
+    <value>Introduzca la etiqueta que su CAD escribe delante del ID de llamada.</value>
+  </data>
+  <data name="CadUpdatesPatternRequired" xml:space="preserve">
+    <value>Introduzca un patrón.</value>
+  </data>
+  <data name="CadUpdatesPatternOneGroup" xml:space="preserve">
+    <value>El patrón necesita exactamente un grupo de captura, por ejemplo Call ID: (\S+)</value>
+  </data>
+  <data name="CadUpdatesPatternInvalid" xml:space="preserve">
+    <value>El patrón no es una expresión regular válida.</value>
+  </data>
+  <data name="CadCallIdLabel" xml:space="preserve">
+    <value>ID de llamada del CAD</value>
+  </data>
+</root>

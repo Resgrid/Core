@@ -51,6 +51,7 @@ NARR: SMOKE SHOWING";
 		private MockInboundEmailReceiptsRepository _receipts;
 		private Mock<IQueueService> _queue;
 		private EmailController _controller;
+		private FakeCallEmailUpdatesRepository _ledger;
 
 		[SetUp]
 		public void SetUp()
@@ -65,6 +66,8 @@ NARR: SMOKE SHOWING";
 			_sendFailures = 0;
 			_sendAttempts = 0;
 			_receipts = new MockInboundEmailReceiptsRepository();
+			_ledger = new FakeCallEmailUpdatesRepository();
+			_ledger.Calls = () => _saved;
 
 			var settings = new Mock<IDepartmentSettingsService>();
 			settings.Setup(s => s.GetDepartmentIdForDispatchEmailAsync(DispatchCode)).ReturnsAsync(DepartmentId);
@@ -165,7 +168,34 @@ NARR: SMOKE SHOWING";
 				Mock.Of<ICommunicationService>(), Mock.Of<IDistributionListsService>(), Mock.Of<IUsersService>(), Mock.Of<IEmailService>(), groups.Object,
 				messages.Object, Mock.Of<IFileService>(), units.Object, Mock.Of<IGeoLocationProvider>(), Mock.Of<ICallDispatchStatusService>(),
 				Mock.Of<IDispatchRecommendationService>(), Mock.Of<IFeatureToggleService>(), Mock.Of<Resgrid.Model.AiDispatch.IAiDispatchAdminService>(),
-				new InboundEmailReceiptsService(_receipts, TimeProvider.System), Mock.Of<IIntakeService>(), Mock.Of<Resgrid.Model.Providers.IEmailSender>(), Mock.Of<IDispatcherEmailCallService>());
+				new InboundEmailReceiptsService(_receipts, TimeProvider.System), Mock.Of<IIntakeService>(), Mock.Of<Resgrid.Model.Providers.IEmailSender>(), Mock.Of<IDispatcherEmailCallService>(),
+				new UnreadableAwareEmailCallUpdates(EmailCallUpdateServices.Create(calls.Object, _ledger, departments: departments.Object), () => _unreadable));
+		}
+
+		/// <summary>The engine, except that it finds no call while the test marks the email unreadable (the format cannot read it).</summary>
+		private sealed class UnreadableAwareEmailCallUpdates : IEmailCallUpdateService
+		{
+			private readonly IEmailCallUpdateService _inner;
+			private readonly Func<bool> _unreadable;
+
+			public UnreadableAwareEmailCallUpdates(IEmailCallUpdateService inner, Func<bool> unreadable)
+			{
+				_inner = inner;
+				_unreadable = unreadable;
+			}
+
+			public Task<CallEmailParseResult> ParseAsync(int formatType, CallEmail email, string managingUserId, List<IdentityUser> users, Department department,
+				List<Unit> units, int priority, List<DepartmentCallPriority> priorities, List<CallType> callTypes, CancellationToken cancellationToken = default) =>
+				_unreadable() ? Task.FromResult<CallEmailParseResult>(null) : _inner.ParseAsync(formatType, email, managingUserId, users, department, units, priority, priorities, callTypes, cancellationToken);
+
+			public Task<EmailCallUpdateResult> ProcessAsync(EmailCallUpdateRequest request, Func<Call, Task<Call>> createCall, CancellationToken cancellationToken = default) =>
+				_inner.ProcessAsync(request, createCall, cancellationToken);
+
+			public Task RecordCreatedAsync(EmailCallUpdateRequest request, Call saved, string cadCallId) => _inner.RecordCreatedAsync(request, saved, cadCallId);
+
+			public Task<EmailCallUpdatePreview> PreviewAsync(int departmentId, int formatType, string subject, string body, EmailCallUpdateConfig config = null,
+				EmailLabeledFieldsConfig labeledFields = null, CancellationToken cancellationToken = default) =>
+				_inner.PreviewAsync(departmentId, formatType, subject, body, config, labeledFields, cancellationToken);
 		}
 
 		private static PostmarkInboundMessage Email(string messageId, string to = null)
@@ -295,12 +325,14 @@ NARR: SMOKE SHOWING";
 		}
 
 		[Test]
-		public async Task Without_a_provider_message_id_every_delivery_is_processed_as_before()
+		public async Task Without_a_provider_message_id_every_delivery_is_processed_and_the_repeat_updates_the_call()
 		{
 			(await ReceiveAsync(Email(null))).Should().Be(200);
 			(await ReceiveAsync(Email(null))).Should().Be(200);
 
-			_saved.Should().HaveCount(2);
+			// Both deliveries are processed (no receipt to dedupe them), but the second carries the same CAD call ID, so the
+			// Active911 format's built-in CAD update behaviour updates the first call instead of creating another.
+			_saved.Should().HaveCount(1);
 			_receipts.Receipts.Should().BeEmpty();
 		}
 

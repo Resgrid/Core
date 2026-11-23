@@ -27,6 +27,8 @@ namespace Resgrid.Services
 		private static string CloseCallWhenUnitsClearCacheKey = "DSetCloseCallWhenUnitsClear_{0}";
 		private static string TransportDestinationChecksCacheKey = "DSetTransportDestinationChecks_{0}";
 		private static string DestinationSuggestionsCacheKey = "DSetDestinationSuggestions_{0}";
+		private static string EmailCallUpdatesCacheKey = "DSetEmailCallUpdates_{0}";
+		private static string EmailLabeledFieldsCacheKey = "DSetEmailLabeledFields_{0}";
 		private static string RequirePasswordResetViaEmailCacheKey = "DSetRequirePasswordResetViaEmail_{0}";
 		private static string ForceChatbotSecurityPinCacheKey = "DSetForceChatbotSecurityPin_{0}";
 		private static string HardwareTrackingStaleAfterSecondsCacheKey = "DSetHardwareTrackingStale_{0}";
@@ -1856,6 +1858,89 @@ namespace Resgrid.Services
 			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(stored), DepartmentSettingTypes.DestinationSuggestions, cancellationToken);
 		}
 
+		public async Task<EmailCallUpdateConfig> GetEmailCallUpdateConfigAsync(int departmentId, int? formatType, bool bypassCache = false)
+		{
+			var stored = await GetStoredEmailCallUpdateConfigAsync(departmentId, bypassCache);
+			if (stored != null)
+				return stored;
+
+			// No saved row: the formats that matched follow-up emails before this setting existed keep that behaviour (plan D1).
+			return (formatType.HasValue ? EmailCallUpdatePresets.ForFormat(formatType.Value) : null) ?? new EmailCallUpdateConfig();
+		}
+
+		public async Task<EmailCallUpdateConfig> GetStoredEmailCallUpdateConfigAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.EmailCallUpdates);
+				return setting?.Setting ?? string.Empty;
+			}
+
+			var value = Config.SystemBehaviorConfig.CacheEnabled && !bypassCache
+				? await _cacheProvider.RetrieveAsync<string>(string.Format(EmailCallUpdatesCacheKey, departmentId), getSetting, LongCacheLength)
+				: await getSetting();
+
+			if (String.IsNullOrWhiteSpace(value))
+				return null;
+
+			try
+			{
+				return ObjectSerialization.Deserialize<EmailCallUpdateConfig>(value)?.Normalized();
+			}
+			catch (Exception ex)
+			{
+				// Read on every inbound dispatch email; a corrupt blob means CAD updates are off, never a lost dispatch.
+				Logging.LogException(ex, $"Unreadable CAD email update setting for department {departmentId}");
+				return new EmailCallUpdateConfig();
+			}
+		}
+
+		public async Task<DepartmentSetting> SetEmailCallUpdateConfigAsync(int departmentId, EmailCallUpdateConfig config,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var stored = (config ?? new EmailCallUpdateConfig()).Normalized();
+			stored.IsBuiltInPreset = false;
+
+			// SaveOrUpdateSettingAsync invalidates the cached value (see the EmailCallUpdates case in its cache switch).
+			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(stored), DepartmentSettingTypes.EmailCallUpdates, cancellationToken);
+		}
+
+		public async Task<EmailLabeledFieldsConfig> GetEmailLabeledFieldsConfigAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.EmailLabeledFields);
+				return setting?.Setting ?? string.Empty;
+			}
+
+			var value = Config.SystemBehaviorConfig.CacheEnabled && !bypassCache
+				? await _cacheProvider.RetrieveAsync<string>(string.Format(EmailLabeledFieldsCacheKey, departmentId), getSetting, LongCacheLength)
+				: await getSetting();
+
+			if (!String.IsNullOrWhiteSpace(value))
+			{
+				try
+				{
+					var config = ObjectSerialization.Deserialize<EmailLabeledFieldsConfig>(value);
+					if (config != null)
+						return config;
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Unreadable labeled email fields setting for department {departmentId}");
+				}
+			}
+
+			return new EmailLabeledFieldsConfig();
+		}
+
+		public async Task<DepartmentSetting> SetEmailLabeledFieldsConfigAsync(int departmentId, EmailLabeledFieldsConfig config,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var stored = (config ?? new EmailLabeledFieldsConfig()).Normalized();
+			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(stored), DepartmentSettingTypes.EmailLabeledFields, cancellationToken);
+		}
+
 		public async Task<DepartmentSetting> SetDepartmentModuleSettingsAsync(int departmentId, DepartmentModuleSettings settings, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(settings),
@@ -2059,6 +2144,12 @@ namespace Resgrid.Services
 					break;
 				case DepartmentSettingTypes.DestinationSuggestions:
 					cacheKey = string.Format(DestinationSuggestionsCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.EmailCallUpdates:
+					cacheKey = string.Format(EmailCallUpdatesCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.EmailLabeledFields:
+					cacheKey = string.Format(EmailLabeledFieldsCacheKey, departmentId);
 					break;
 				case DepartmentSettingTypes.RequirePasswordResetViaEmail:
 					cacheKey = string.Format(RequirePasswordResetViaEmailCacheKey, departmentId);

@@ -1852,10 +1852,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!string.IsNullOrWhiteSpace(editCallInput.What3Words))
 				call.W3W = editCallInput.What3Words;
 
-			if (!string.IsNullOrWhiteSpace(editCallInput.IndoorMapZoneId))
+			// Null leaves the indoor location as it is (a client without an indoor picker); an empty string clears it.
+			if (editCallInput.IndoorMapZoneId != null)
 			{
-				call.IndoorMapZoneId = editCallInput.IndoorMapZoneId;
-				call.IndoorMapFloorId = editCallInput.IndoorMapFloorId;
+				if (string.IsNullOrWhiteSpace(editCallInput.IndoorMapZoneId))
+				{
+					call.IndoorMapZoneId = null;
+					call.IndoorMapFloorId = null;
+				}
+				else
+				{
+					call.IndoorMapZoneId = editCallInput.IndoorMapZoneId;
+					call.IndoorMapFloorId = string.IsNullOrWhiteSpace(editCallInput.IndoorMapFloorId) ? null : editCallInput.IndoorMapFloorId;
+				}
 			}
 
 			// Added to what the call already has, the same as the web edit form: neither can remove one here.
@@ -3568,6 +3577,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				callResult.DestinationGeolocation = call.DestinationGeoLocationData;
 				callResult.DestinationWhat3Words = call.DestinationW3W;
 			}
+
+			callResult.IndoorMapZoneId = call.IndoorMapZoneId;
+			callResult.IndoorMapFloorId = call.IndoorMapFloorId;
 
 			callResult.LocationPoiId = call.LocationPoiId;
 			if (locationPoi != null && call.LocationPoiId == locationPoi.PoiId)

@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>التحديثات من نظام CAD لديك</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>عندما يرسل نظام CAD لديك رسالة بريد أخرى عن بلاغ سبق أن أرسله (عنوان مصحَّح، أو رفع في المستوى، أو إغلاق)، يمكن لـ Resgrid تحديث البلاغ الذي أنشأه من الرسالة الأولى بدلًا من إنشاء بلاغ جديد. يتعرّف Resgrid على البلاغ نفسه من خلال معرّف البلاغ في CAD.</value>
+  </data>
+  <data name="CallSettingsLinkHelp" xml:space="preserve">
+    <value>تحديث البلاغ الموجود عندما يرسل نظام CAD لديك رسالة بريد مصحَّحة أو لاحقة بمعرّف البلاغ نفسه.</value>
+  </data>
+  <data name="CurrentFormat" xml:space="preserve">
+    <value>تنسيق البريد لديك</value>
+  </data>
+  <data name="BuiltInNotice" xml:space="preserve">
+    <value>كان تنسيق البريد لديك يطابق الرسائل اللاحقة مع البلاغات المفتوحة قبل وجود هذه الصفحة، لذا يستخدم Resgrid هذا السلوك المدمج: تُستبدل ملاحظات البلاغ ولا يتغير شيء آخر. احفظ هذه الصفحة لتغييره.</value>
+  </data>
+  <data name="UseBuiltIn" xml:space="preserve">
+    <value>العودة إلى السلوك المدمج</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>تحديث البلاغات الموجودة</value>
+  </data>
+  <data name="EnabledHelp" xml:space="preserve">
+    <value>عند الإيقاف: تنشئ كل رسالة بريد بلاغًا جديدًا.</value>
+  </data>
+  <data name="IdSourceHeader" xml:space="preserve">
+    <value>العثور على معرّف البلاغ في CAD</value>
+  </data>
+  <data name="IdSource" xml:space="preserve">
+    <value>قراءة معرّف البلاغ</value>
+  </data>
+  <data name="IdSourceFromFormat" xml:space="preserve">
+    <value>من تنسيق البريد</value>
+  </data>
+  <data name="IdSourceLabel" xml:space="preserve">
+    <value>بعد تسمية</value>
+  </data>
+  <data name="IdSourcePattern" xml:space="preserve">
+    <value>باستخدام نمط (متقدم)</value>
+  </data>
+  <data name="IdSourceHelp" xml:space="preserve">
+    <value>يعمل خيار "من تنسيق البريد" مع التنسيقات التي تقرأ رقم الحادث. وإلا فأدخل التسمية التي يكتبها نظام CAD لديك قبل معرّف البلاغ.</value>
+  </data>
+  <data name="FormatHasNoKey" xml:space="preserve">
+    <value>تنسيق البريد لديك لا يقرأ معرّف البلاغ. استخدم تسمية أو نمطًا.</value>
+  </data>
+  <data name="IdLabel" xml:space="preserve">
+    <value>التسمية</value>
+  </data>
+  <data name="IdLabelHelp" xml:space="preserve">
+    <value>يأخذ Resgrid الكلمة الأولى التي تلي هذا النص في السطر نفسه، مثل "Call ID:".</value>
+  </data>
+  <data name="IdPattern" xml:space="preserve">
+    <value>النمط</value>
+  </data>
+  <data name="IdPatternHelp" xml:space="preserve">
+    <value>تعبير نمطي فيه مجموعة التقاط واحدة بالضبط حول معرّف البلاغ.</value>
+  </data>
+  <data name="IdSearchIn" xml:space="preserve">
+    <value>البحث في</value>
+  </data>
+  <data name="SearchSubjectThenBody" xml:space="preserve">
+    <value>الموضوع، ثم نص الرسالة</value>
+  </data>
+  <data name="SearchSubject" xml:space="preserve">
+    <value>الموضوع فقط</value>
+  </data>
+  <data name="SearchBody" xml:space="preserve">
+    <value>نص الرسالة فقط</value>
+  </data>
+  <data name="FieldsHeader" xml:space="preserve">
+    <value>ما يمكن أن يغيّره التحديث</value>
+  </data>
+  <data name="FieldsIntro" xml:space="preserve">
+    <value>ملاحظة فقط: يحتفظ البلاغ بقيمته، وتُكتب القيمة الجديدة من CAD في ملاحظة التحديث على البلاغ.</value>
+  </data>
+  <data name="FieldLocation" xml:space="preserve">
+    <value>العنوان والموقع على الخريطة</value>
+  </data>
+  <data name="FieldPriority" xml:space="preserve">
+    <value>الأولوية</value>
+  </data>
+  <data name="FieldType" xml:space="preserve">
+    <value>نوع البلاغ</value>
+  </data>
+  <data name="FieldName" xml:space="preserve">
+    <value>اسم البلاغ</value>
+  </data>
+  <data name="FieldNature" xml:space="preserve">
+    <value>طبيعة البلاغ</value>
+  </data>
+  <data name="FieldNotes" xml:space="preserve">
+    <value>ملاحظات البلاغ</value>
+  </data>
+  <data name="PolicyUpdate" xml:space="preserve">
+    <value>تحديث</value>
+  </data>
+  <data name="PolicyNoteOnly" xml:space="preserve">
+    <value>ملاحظة فقط</value>
+  </data>
+  <data name="TextReplace" xml:space="preserve">
+    <value>استبدال</value>
+  </data>
+  <data name="TextAppend" xml:space="preserve">
+    <value>إضافة في النهاية</value>
+  </data>
+  <data name="DispatcherEditsWin" xml:space="preserve">
+    <value>الاحتفاظ بالتغييرات التي أُجريت في Resgrid</value>
+  </data>
+  <data name="DispatcherEditsWinHelp" xml:space="preserve">
+    <value>إذا غيّر أحدٌ حقلًا في Resgrid، فلا تستبدله رسالة لاحقة من CAD. تذهب قيمة CAD إلى ملاحظة التحديث.</value>
+  </data>
+  <data name="PagingHeader" xml:space="preserve">
+    <value>التنبيه</value>
+  </data>
+  <data name="RepageWhen" xml:space="preserve">
+    <value>إعادة تنبيه جميع من في البلاغ</value>
+  </data>
+  <data name="RepageNever" xml:space="preserve">
+    <value>أبدًا</value>
+  </data>
+  <data name="RepageLocationOrPriority" xml:space="preserve">
+    <value>عند تغيّر العنوان أو الأولوية</value>
+  </data>
+  <data name="RepageAnyChange" xml:space="preserve">
+    <value>عند تغيّر أي شيء</value>
+  </data>
+  <data name="RepageEveryUpdate" xml:space="preserve">
+    <value>مع كل تحديث (يُرسل كالإنذار التالي)</value>
+  </data>
+  <data name="PageAddedResources" xml:space="preserve">
+    <value>تنبيه الوحدات والمجموعات التي يضيفها التحديث</value>
+  </data>
+  <data name="ClosedHeader" xml:space="preserve">
+    <value>البلاغات المغلقة</value>
+  </data>
+  <data name="ClosedMatchMinutes" xml:space="preserve">
+    <value>عدد الدقائق التي يظل فيها البلاغ المغلق قابلًا للمطابقة</value>
+  </data>
+  <data name="ClosedMatchMinutesHelp" xml:space="preserve">
+    <value>تُكتب رسالة البريد الخاصة ببلاغ أُغلق خلال هذه المدة كملاحظة على ذلك البلاغ. لا يُعاد فتح البلاغ. 0: يُنشأ بلاغ جديد.</value>
+  </data>
+  <data name="ClosePhrases" xml:space="preserve">
+    <value>عبارات الإغلاق</value>
+  </data>
+  <data name="ClosePhrasesHelp" xml:space="preserve">
+    <value>عبارة واحدة في كل سطر. أي رسالة بريد تحتوي على إحداها تغلق البلاغ الذي يحمل معرّف البلاغ نفسه. اتركه فارغًا كي لا تُغلق البلاغات من البريد أبدًا.</value>
+  </data>
+  <data name="CancelPhrases" xml:space="preserve">
+    <value>عبارات الإلغاء</value>
+  </data>
+  <data name="CancelPhrasesHelp" xml:space="preserve">
+    <value>عبارة واحدة في كل سطر. أي رسالة بريد تحتوي على إحداها تلغي البلاغ الذي يحمل معرّف البلاغ نفسه.</value>
+  </data>
+  <data name="NotifyOnClose" xml:space="preserve">
+    <value>إرسال إشعار الإغلاق</value>
+  </data>
+  <data name="LabelsHeader" xml:space="preserve">
+    <value>التسميات لتنسيق "Labeled fields"</value>
+  </data>
+  <data name="LabelsIntro" xml:space="preserve">
+    <value>تُستخدم عندما يكون تنسيق البريد لديك "Labeled fields". أدخل التسمية التي يكتبها نظام CAD لديك قبل كل قيمة. افصل بين البدائل بالرمز |.</value>
+  </data>
+  <data name="Label.CallId" xml:space="preserve">
+    <value>معرّف البلاغ</value>
+  </data>
+  <data name="Label.Name" xml:space="preserve">
+    <value>اسم البلاغ</value>
+  </data>
+  <data name="Label.Nature" xml:space="preserve">
+    <value>طبيعة البلاغ</value>
+  </data>
+  <data name="Label.Address" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Label.City" xml:space="preserve">
+    <value>المدينة</value>
+  </data>
+  <data name="Label.CrossStreets" xml:space="preserve">
+    <value>الشوارع المتقاطعة</value>
+  </data>
+  <data name="Label.Coordinates" xml:space="preserve">
+    <value>الإحداثيات (خط العرض، خط الطول)</value>
+  </data>
+  <data name="Label.Latitude" xml:space="preserve">
+    <value>خط العرض</value>
+  </data>
+  <data name="Label.Longitude" xml:space="preserve">
+    <value>خط الطول</value>
+  </data>
+  <data name="Label.Type" xml:space="preserve">
+    <value>نوع البلاغ</value>
+  </data>
+  <data name="Label.Priority" xml:space="preserve">
+    <value>الأولوية</value>
+  </data>
+  <data name="Label.Units" xml:space="preserve">
+    <value>الوحدات</value>
+  </data>
+  <data name="Label.Notes" xml:space="preserve">
+    <value>الملاحظات</value>
+  </data>
+  <data name="TestHeader" xml:space="preserve">
+    <value>الاختبار برسالة بريد</value>
+  </data>
+  <data name="TestIntro" xml:space="preserve">
+    <value>الصق رسالة بريد أرسلها نظام CAD لديك. لن يُنشأ أي شيء: يعرض Resgrid ما يقرؤه باستخدام إعدادات هذه الصفحة، سواء حُفظت أم لا.</value>
+  </data>
+  <data name="TestSubject" xml:space="preserve">
+    <value>الموضوع</value>
+  </data>
+  <data name="TestBody" xml:space="preserve">
+    <value>نص الرسالة</value>
+  </data>
+  <data name="TestButton" xml:space="preserve">
+    <value>اختبار</value>
+  </data>
+  <data name="TestCallId" xml:space="preserve">
+    <value>معرّف البلاغ في CAD</value>
+  </data>
+  <data name="TestNoCallId" xml:space="preserve">
+    <value>لم يُعثر على معرّف بلاغ</value>
+  </data>
+  <data name="TestClose" xml:space="preserve">
+    <value>يُقرأ على أنه</value>
+  </data>
+  <data name="TestCloseNone" xml:space="preserve">
+    <value>بلاغ جديد أو تحديث</value>
+  </data>
+  <data name="TestCloseClose" xml:space="preserve">
+    <value>إغلاق البلاغ</value>
+  </data>
+  <data name="TestCloseCancel" xml:space="preserve">
+    <value>إلغاء البلاغ</value>
+  </data>
+  <data name="TestNoCall" xml:space="preserve">
+    <value>لم يعثر تنسيق البريد لديك على أي بلاغ في هذه الرسالة.</value>
+  </data>
+  <data name="TestFailed" xml:space="preserve">
+    <value>تعذّر تشغيل الاختبار.</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>تم الحفظ.</value>
+  </data>
+  <data name="SettingsInvalid" xml:space="preserve">
+    <value>تعذّرت قراءة بعض القيم. تحقق من الصفحة واحفظ مرة أخرى.</value>
+  </data>
+  <data name="CadUpdatesLabelRequired" xml:space="preserve">
+    <value>أدخل التسمية التي يكتبها نظام CAD لديك قبل معرّف البلاغ.</value>
+  </data>
+  <data name="CadUpdatesPatternRequired" xml:space="preserve">
+    <value>أدخل نمطًا.</value>
+  </data>
+  <data name="CadUpdatesPatternOneGroup" xml:space="preserve">
+    <value>يجب أن يحتوي النمط على مجموعة التقاط واحدة بالضبط، مثل Call ID: (\S+)</value>
+  </data>
+  <data name="CadUpdatesPatternInvalid" xml:space="preserve">
+    <value>النمط ليس تعبيرًا نمطيًا صالحًا.</value>
+  </data>
+  <data name="CadCallIdLabel" xml:space="preserve">
+    <value>معرّف البلاغ في CAD</value>
+  </data>
+</root>

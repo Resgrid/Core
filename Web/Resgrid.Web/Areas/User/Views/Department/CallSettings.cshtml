@@ -1,6 +1,7 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Departments.CallSettings.CallSettingsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.AiDispatch.AiDispatch> aiDispatchLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.CadUpdates> cadUpdatesLocalizer
 @inject Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService aiDispatch
 @{
     ViewBag.Title = "Resgrid | " + @localizer["CallSettingsHeader"];
@@ -82,6 +83,10 @@
                                 {
                                     <p class="m-t-sm"><a asp-controller="AiDispatch" asp-action="Index" asp-route-area="User">@aiDispatchLocalizer["SettingsTitle"]</a></p>
                                 }
+                                <p class="m-t-sm">
+                                    <a asp-controller="CadUpdates" asp-action="Index" asp-route-area="User">@cadUpdatesLocalizer["PageTitle"]</a>
+                                    <span class="help-block m-b-none">@cadUpdatesLocalizer["CallSettingsLinkHelp"]</span>
+                                </p>
                             </div>
                         </div>
 

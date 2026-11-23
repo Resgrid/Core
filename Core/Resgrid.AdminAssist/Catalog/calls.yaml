@@ -20,6 +20,72 @@
   ],
   "Settings": [
     {
+      "Id": "setting.EmailCallUpdates",
+      "AreaId": "calls",
+      "LabelKey": "Setting.EmailCallUpdates",
+      "HelpKey": "SettingHelp.EmailCallUpdates",
+      "Binding": "DepartmentSettingTypes.EmailCallUpdates",
+      "ValueType": "protobuf",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "CadUpdates",
+        "Action": "Index",
+        "Field": "Enabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-23T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.EmailCallUpdates",
+      "DefaultValue": "off; Active911, R&R, Ottawa/Kingston/Toronto and Parkland County 2 use their built-in behaviour",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.EmailLabeledFields",
+      "AreaId": "calls",
+      "LabelKey": "Setting.EmailLabeledFields",
+      "HelpKey": "SettingHelp.EmailLabeledFields",
+      "Binding": "DepartmentSettingTypes.EmailLabeledFields",
+      "ValueType": "protobuf",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "CadUpdates",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-23T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.EmailLabeledFields",
+      "DefaultValue": "no labels (the Labeled fields format then reads an email like Generic)",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
       "Id": "setting.RssFeedKeyForActiveCalls",
       "AreaId": "calls",
       "LabelKey": "Setting.RssFeedKeyForActiveCalls",
@@ -3159,6 +3225,28 @@
   ],
   "Packs": [],
   "Articles": [
+    {
+      "Id": "setting.EmailCallUpdates",
+      "Locale": "en",
+      "TitleKey": "Setting.EmailCallUpdates",
+      "Body": "Updates from your CAD. Update the existing call when your CAD sends a corrected or follow-up email for the same call ID.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-emailcallupdates",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-23T00:00:00Z"
+    },
+    {
+      "Id": "setting.EmailLabeledFields",
+      "Locale": "en",
+      "TitleKey": "Setting.EmailLabeledFields",
+      "Body": "Labels for the Labeled fields format. Used when your email format is \"Labeled fields\". Enter the label your CAD writes in front of each value. Separate alternatives with |.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-emaillabeledfields",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-23T00:00:00Z"
+    },
     {
       "Id": "setting.CallNumberingConfig",
       "Locale": "en",

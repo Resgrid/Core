@@ -713,6 +713,7 @@
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.runcarddecision.js"></script>
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.nearestboard.js"></script>
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.destinations.js"></script>
+    <script src="~/js/app/internal/dispatch/resgrid.dispatch.facilitymaps.js" asp-append-version="true"></script>
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.newcall.js"></script>
     <partial name="_CallLocationsScript" model="Model" />
 
@@ -818,6 +819,10 @@
                 var data = e.params.data;
                 $('#IndoorMapZoneId').val(data.id);
                 $('#IndoorMapFloorId').val(data.floorId);
+                // Moves the pin to the room and shows its floor on the call map.
+                if (resgrid.dispatch.facilitymaps) {
+                    resgrid.dispatch.facilitymaps.zonePicked(data);
+                }
             });
 
             $('#indoorZoneSearch').on('select2:clear', function () {

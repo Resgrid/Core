@@ -364,4 +364,16 @@
   <data name="Screening.DismissedAsSpam" xml:space="preserve">
     <value>Als Spam verworfen</value>
   </data>
+  <data name="CadUpdates" xml:space="preserve">
+    <value>CAD-Aktualisierungen annehmen</value>
+  </data>
+  <data name="CadUpdatesHelp" xml:space="preserve">
+    <value>Eine E-Mail mit der CAD-Einsatz-ID eines Einsatzes, den die Organisation bereits hat, aktualisiert diesen Einsatz, statt einen wartenden Einsatz anzulegen.</value>
+  </data>
+  <data name="CadUpdatesUnavailable" xml:space="preserve">
+    <value>Schalten Sie zuerst Aktualisierungen aus Ihrem CAD ein.</value>
+  </data>
+  <data name="CadUpdatesSettingsLink" xml:space="preserve">
+    <value>Einstellungen öffnen</value>
+  </data>
 </root>

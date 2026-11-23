@@ -1251,4 +1251,16 @@
   <data name="CallRouteNoRuns" xml:space="preserve">
     <value>Nessuna unità ha ancora avviato questo percorso.</value>
   </data>
+  <data name="FacilityMaps" xml:space="preserve">
+    <value>Mappe della struttura</value>
+  </data>
+  <data name="FacilityMapsNone" xml:space="preserve">
+    <value>Nessuna</value>
+  </data>
+  <data name="FacilityMapsFloor" xml:space="preserve">
+    <value>Piano o livello</value>
+  </data>
+  <data name="FacilityMapsHint" xml:space="preserve">
+    <value>Fai clic su una stanza per impostare la posizione della chiamata.</value>
+  </data>
 </root>

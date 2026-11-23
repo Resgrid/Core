@@ -1251,4 +1251,16 @@
   <data name="CallRouteNoRuns" xml:space="preserve">
     <value>Ingen enhet har startat den här rutten ännu.</value>
   </data>
+  <data name="FacilityMaps" xml:space="preserve">
+    <value>Anläggningskartor</value>
+  </data>
+  <data name="FacilityMapsNone" xml:space="preserve">
+    <value>Ingen</value>
+  </data>
+  <data name="FacilityMapsFloor" xml:space="preserve">
+    <value>Våning eller lager</value>
+  </data>
+  <data name="FacilityMapsHint" xml:space="preserve">
+    <value>Klicka på ett rum för att ange larmets plats.</value>
+  </data>
 </root>

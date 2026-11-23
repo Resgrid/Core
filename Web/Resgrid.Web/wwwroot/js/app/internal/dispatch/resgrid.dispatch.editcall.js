@@ -157,6 +157,13 @@ var resgrid;
                             $("#Longitude").val(e.latlng.lng.toString());
                             map.setView(clicked);
 
+                            // A click inside a room of a shown facility map sets the call's indoor location.
+                            var room = resgrid.dispatch.facilitymaps ? resgrid.dispatch.facilitymaps.zoneAt(e.latlng.lat, e.latlng.lng) : null;
+                            if (room) {
+                                resgrid.dispatch.facilitymaps.selectZone(room, e.latlng.lat, e.latlng.lng);
+                                return;
+                            }
+
                             resgrid.dispatch.editcall.geocodeCoordinates(e.latlng.lat, e.latlng.lng);
                         });
 
@@ -165,6 +172,17 @@ var resgrid;
                         // Location POI, destination and route (resgrid.dispatch.calllocations.js) draw on the same map.
                         if (resgrid.dispatch.calllocations && typeof resgrid.dispatch.calllocations.mapReady === 'function') {
                             resgrid.dispatch.calllocations.mapReady(map);
+                        }
+
+                        // Facility maps with rooms to click; a call with an indoor location opens on its floor.
+                        if (resgrid.dispatch.facilitymaps) {
+                            resgrid.dispatch.facilitymaps.mapReady(map, {
+                                setLocation: function (lat, lng) {
+                                    resgrid.dispatch.editcall.setMarkerLocation(lat.toString(), lng.toString());
+                                    $("#Latitude").val(lat.toString());
+                                    $("#Longitude").val(lng.toString());
+                                }
+                            });
                         }
                         });
                     }

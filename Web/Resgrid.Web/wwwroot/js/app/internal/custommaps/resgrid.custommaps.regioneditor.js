@@ -166,6 +166,18 @@ $(document).ready(function () {
         cx /= pixelCoords.length;
         cy /= pixelCoords.length;
 
+        // On a map placed on the earth (tiles or bounds) the editor works in longitude/latitude, so the region is also
+        // stored as GeoJSON: the maps, the call location pickers and the apps draw regions from GeoGeometry only.
+        var geoGeometry = '';
+        if (isTiled || (boundsNE[0] !== 0 && boundsSW[0] !== 0)) {
+            var ring = pixelCoords.slice();
+            var first = ring[0], last = ring[ring.length - 1];
+            if (first && (first[0] !== last[0] || first[1] !== last[1])) {
+                ring.push(first);
+            }
+            geoGeometry = JSON.stringify({ type: 'Polygon', coordinates: [ring] });
+        }
+
         var regionData = {
             IndoorMapZoneId: currentLayer.existingRegionId || '',
             IndoorMapFloorId: layerId,
@@ -173,7 +185,7 @@ $(document).ready(function () {
             Description: $('#regionDescription').val(),
             ZoneType: parseInt($('#regionType').val()),
             PixelGeometry: JSON.stringify(pixelCoords),
-            GeoGeometry: '',
+            GeoGeometry: geoGeometry,
             CenterPixelX: cx,
             CenterPixelY: cy,
             CenterLatitude: cy,

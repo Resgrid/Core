@@ -8253,4 +8253,16 @@
   <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
     <value>Pozwala członkom zapisać się do grupy zmiany, nawet gdy wszystkie miejsca jej ról (wymagane i opcjonalne) są zajęte. Nadal potrzebują jednej z ról grupy. Przełożeni zawsze mogą przydzielać osoby ponad liczbę miejsc.</value>
   </data>
+  <data name="Setting.EmailCallUpdates" xml:space="preserve">
+    <value>Aktualizacje z Twojego CAD</value>
+  </data>
+  <data name="SettingHelp.EmailCallUpdates" xml:space="preserve">
+    <value>Aktualizuj istniejące zgłoszenie, gdy Twój CAD wyśle poprawiony lub kolejny e-mail z tym samym identyfikatorem zgłoszenia.</value>
+  </data>
+  <data name="Setting.EmailLabeledFields" xml:space="preserve">
+    <value>Etykiety dla formatu "Labeled fields"</value>
+  </data>
+  <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
+    <value>Używane, gdy Twój format e-maili to "Labeled fields". Wpisz etykietę, którą Twój CAD umieszcza przed każdą wartością. Oddziel warianty znakiem |.</value>
+  </data>
 </root>

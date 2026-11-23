@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Aktualisierungen aus Ihrem CAD</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Wenn Ihr CAD zu einem bereits gesendeten Einsatz eine weitere E-Mail schickt (eine korrigierte Adresse, eine Hochstufung, einen Abschluss), kann Resgrid den Einsatz aktualisieren, der aus der ersten E-Mail entstanden ist, statt einen neuen anzulegen. Resgrid erkennt denselben Einsatz an der Einsatz-ID des CAD.</value>
+  </data>
+  <data name="CallSettingsLinkHelp" xml:space="preserve">
+    <value>Den bestehenden Einsatz aktualisieren, wenn Ihr CAD eine korrigierte oder nachfolgende E-Mail mit derselben Einsatz-ID sendet.</value>
+  </data>
+  <data name="CurrentFormat" xml:space="preserve">
+    <value>Ihr E-Mail-Format</value>
+  </data>
+  <data name="BuiltInNotice" xml:space="preserve">
+    <value>Ihr E-Mail-Format hat Folge-E-Mails schon vor dieser Seite offenen Einsätzen zugeordnet, daher nutzt Resgrid dieses eingebaute Verhalten: Die Notizen des Einsatzes werden ersetzt, sonst ändert sich nichts. Speichern Sie diese Seite, um das zu ändern.</value>
+  </data>
+  <data name="UseBuiltIn" xml:space="preserve">
+    <value>Zum eingebauten Verhalten zurückkehren</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Bestehende Einsätze aktualisieren</value>
+  </data>
+  <data name="EnabledHelp" xml:space="preserve">
+    <value>Aus: Jede E-Mail legt einen neuen Einsatz an.</value>
+  </data>
+  <data name="IdSourceHeader" xml:space="preserve">
+    <value>Die CAD-Einsatz-ID finden</value>
+  </data>
+  <data name="IdSource" xml:space="preserve">
+    <value>Einsatz-ID lesen</value>
+  </data>
+  <data name="IdSourceFromFormat" xml:space="preserve">
+    <value>Aus dem E-Mail-Format</value>
+  </data>
+  <data name="IdSourceLabel" xml:space="preserve">
+    <value>Nach einer Bezeichnung</value>
+  </data>
+  <data name="IdSourcePattern" xml:space="preserve">
+    <value>Mit einem Muster (fortgeschritten)</value>
+  </data>
+  <data name="IdSourceHelp" xml:space="preserve">
+    <value>"Aus dem E-Mail-Format" funktioniert bei Formaten, die eine Einsatznummer lesen. Geben Sie sonst die Bezeichnung ein, die Ihr CAD vor die Einsatz-ID schreibt.</value>
+  </data>
+  <data name="FormatHasNoKey" xml:space="preserve">
+    <value>Ihr E-Mail-Format liest keine Einsatz-ID. Verwenden Sie eine Bezeichnung oder ein Muster.</value>
+  </data>
+  <data name="IdLabel" xml:space="preserve">
+    <value>Bezeichnung</value>
+  </data>
+  <data name="IdLabelHelp" xml:space="preserve">
+    <value>Resgrid übernimmt das erste Wort nach diesem Text in derselben Zeile, zum Beispiel "Call ID:".</value>
+  </data>
+  <data name="IdPattern" xml:space="preserve">
+    <value>Muster</value>
+  </data>
+  <data name="IdPatternHelp" xml:space="preserve">
+    <value>Ein regulärer Ausdruck mit genau einer Erfassungsgruppe um die Einsatz-ID.</value>
+  </data>
+  <data name="IdSearchIn" xml:space="preserve">
+    <value>Suchen in</value>
+  </data>
+  <data name="SearchSubjectThenBody" xml:space="preserve">
+    <value>Betreff, dann Nachrichtentext</value>
+  </data>
+  <data name="SearchSubject" xml:space="preserve">
+    <value>Nur Betreff</value>
+  </data>
+  <data name="SearchBody" xml:space="preserve">
+    <value>Nur Nachrichtentext</value>
+  </data>
+  <data name="FieldsHeader" xml:space="preserve">
+    <value>Was eine Aktualisierung ändern darf</value>
+  </data>
+  <data name="FieldsIntro" xml:space="preserve">
+    <value>Nur Notiz: Der Einsatz behält seinen Wert, und der neue Wert des CAD wird in die Aktualisierungsnotiz des Einsatzes geschrieben.</value>
+  </data>
+  <data name="FieldLocation" xml:space="preserve">
+    <value>Adresse und Kartenposition</value>
+  </data>
+  <data name="FieldPriority" xml:space="preserve">
+    <value>Priorität</value>
+  </data>
+  <data name="FieldType" xml:space="preserve">
+    <value>Einsatztyp</value>
+  </data>
+  <data name="FieldName" xml:space="preserve">
+    <value>Einsatzname</value>
+  </data>
+  <data name="FieldNature" xml:space="preserve">
+    <value>Einsatzart</value>
+  </data>
+  <data name="FieldNotes" xml:space="preserve">
+    <value>Einsatznotizen</value>
+  </data>
+  <data name="PolicyUpdate" xml:space="preserve">
+    <value>Aktualisieren</value>
+  </data>
+  <data name="PolicyNoteOnly" xml:space="preserve">
+    <value>Nur Notiz</value>
+  </data>
+  <data name="TextReplace" xml:space="preserve">
+    <value>Ersetzen</value>
+  </data>
+  <data name="TextAppend" xml:space="preserve">
+    <value>Am Ende anfügen</value>
+  </data>
+  <data name="DispatcherEditsWin" xml:space="preserve">
+    <value>In Resgrid vorgenommene Änderungen behalten</value>
+  </data>
+  <data name="DispatcherEditsWinHelp" xml:space="preserve">
+    <value>Wenn jemand ein Feld in Resgrid geändert hat, überschreibt eine spätere CAD-E-Mail es nicht. Der Wert des CAD kommt in die Aktualisierungsnotiz.</value>
+  </data>
+  <data name="PagingHeader" xml:space="preserve">
+    <value>Alarmierung</value>
+  </data>
+  <data name="RepageWhen" xml:space="preserve">
+    <value>Alle im Einsatz erneut alarmieren</value>
+  </data>
+  <data name="RepageNever" xml:space="preserve">
+    <value>Nie</value>
+  </data>
+  <data name="RepageLocationOrPriority" xml:space="preserve">
+    <value>Wenn sich Adresse oder Priorität ändert</value>
+  </data>
+  <data name="RepageAnyChange" xml:space="preserve">
+    <value>Bei jeder Änderung</value>
+  </data>
+  <data name="RepageEveryUpdate" xml:space="preserve">
+    <value>Bei jeder Aktualisierung (als nächste Alarmstufe gesendet)</value>
+  </data>
+  <data name="PageAddedResources" xml:space="preserve">
+    <value>Einheiten und Gruppen alarmieren, die eine Aktualisierung hinzufügt</value>
+  </data>
+  <data name="ClosedHeader" xml:space="preserve">
+    <value>Geschlossene Einsätze</value>
+  </data>
+  <data name="ClosedMatchMinutes" xml:space="preserve">
+    <value>Minuten, in denen ein geschlossener Einsatz noch zugeordnet wird</value>
+  </data>
+  <data name="ClosedMatchMinutesHelp" xml:space="preserve">
+    <value>Eine E-Mail zu einem Einsatz, der innerhalb dieser Zeit geschlossen wurde, wird als Notiz in diesen Einsatz geschrieben. Der Einsatz wird nicht wieder geöffnet. 0: Es wird ein neuer Einsatz angelegt.</value>
+  </data>
+  <data name="ClosePhrases" xml:space="preserve">
+    <value>Begriffe zum Schließen</value>
+  </data>
+  <data name="ClosePhrasesHelp" xml:space="preserve">
+    <value>Einer pro Zeile. Eine E-Mail, die einen dieser Begriffe enthält, schließt den Einsatz mit derselben Einsatz-ID. Leer lassen, um Einsätze nie per E-Mail zu schließen.</value>
+  </data>
+  <data name="CancelPhrases" xml:space="preserve">
+    <value>Begriffe zum Stornieren</value>
+  </data>
+  <data name="CancelPhrasesHelp" xml:space="preserve">
+    <value>Einer pro Zeile. Eine E-Mail, die einen dieser Begriffe enthält, storniert den Einsatz mit derselben Einsatz-ID.</value>
+  </data>
+  <data name="NotifyOnClose" xml:space="preserve">
+    <value>Abschlussmeldung senden</value>
+  </data>
+  <data name="LabelsHeader" xml:space="preserve">
+    <value>Bezeichnungen für das Format "Labeled fields"</value>
+  </data>
+  <data name="LabelsIntro" xml:space="preserve">
+    <value>Wird verwendet, wenn Ihr E-Mail-Format "Labeled fields" ist. Geben Sie die Bezeichnung ein, die Ihr CAD vor jeden Wert schreibt. Trennen Sie Alternativen mit |.</value>
+  </data>
+  <data name="Label.CallId" xml:space="preserve">
+    <value>Einsatz-ID</value>
+  </data>
+  <data name="Label.Name" xml:space="preserve">
+    <value>Einsatzname</value>
+  </data>
+  <data name="Label.Nature" xml:space="preserve">
+    <value>Einsatzart</value>
+  </data>
+  <data name="Label.Address" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="Label.City" xml:space="preserve">
+    <value>Stadt</value>
+  </data>
+  <data name="Label.CrossStreets" xml:space="preserve">
+    <value>Querstraßen</value>
+  </data>
+  <data name="Label.Coordinates" xml:space="preserve">
+    <value>Koordinaten (Breitengrad, Längengrad)</value>
+  </data>
+  <data name="Label.Latitude" xml:space="preserve">
+    <value>Breitengrad</value>
+  </data>
+  <data name="Label.Longitude" xml:space="preserve">
+    <value>Längengrad</value>
+  </data>
+  <data name="Label.Type" xml:space="preserve">
+    <value>Einsatztyp</value>
+  </data>
+  <data name="Label.Priority" xml:space="preserve">
+    <value>Priorität</value>
+  </data>
+  <data name="Label.Units" xml:space="preserve">
+    <value>Einheiten</value>
+  </data>
+  <data name="Label.Notes" xml:space="preserve">
+    <value>Notizen</value>
+  </data>
+  <data name="TestHeader" xml:space="preserve">
+    <value>Mit einer E-Mail testen</value>
+  </data>
+  <data name="TestIntro" xml:space="preserve">
+    <value>Fügen Sie eine E-Mail ein, die Ihr CAD gesendet hat. Es wird nichts angelegt: Resgrid zeigt, was es mit den Einstellungen dieser Seite liest, ob gespeichert oder nicht.</value>
+  </data>
+  <data name="TestSubject" xml:space="preserve">
+    <value>Betreff</value>
+  </data>
+  <data name="TestBody" xml:space="preserve">
+    <value>Nachrichtentext</value>
+  </data>
+  <data name="TestButton" xml:space="preserve">
+    <value>Testen</value>
+  </data>
+  <data name="TestCallId" xml:space="preserve">
+    <value>CAD-Einsatz-ID</value>
+  </data>
+  <data name="TestNoCallId" xml:space="preserve">
+    <value>Keine Einsatz-ID gefunden</value>
+  </data>
+  <data name="TestClose" xml:space="preserve">
+    <value>Gelesen als</value>
+  </data>
+  <data name="TestCloseNone" xml:space="preserve">
+    <value>Neuer Einsatz oder Aktualisierung</value>
+  </data>
+  <data name="TestCloseClose" xml:space="preserve">
+    <value>Schließen des Einsatzes</value>
+  </data>
+  <data name="TestCloseCancel" xml:space="preserve">
+    <value>Stornieren des Einsatzes</value>
+  </data>
+  <data name="TestNoCall" xml:space="preserve">
+    <value>Ihr E-Mail-Format hat in dieser E-Mail keinen Einsatz gefunden.</value>
+  </data>
+  <data name="TestFailed" xml:space="preserve">
+    <value>Der Test konnte nicht ausgeführt werden.</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Gespeichert.</value>
+  </data>
+  <data name="SettingsInvalid" xml:space="preserve">
+    <value>Einige Werte konnten nicht gelesen werden. Prüfen Sie die Seite und speichern Sie erneut.</value>
+  </data>
+  <data name="CadUpdatesLabelRequired" xml:space="preserve">
+    <value>Geben Sie die Bezeichnung ein, die Ihr CAD vor die Einsatz-ID schreibt.</value>
+  </data>
+  <data name="CadUpdatesPatternRequired" xml:space="preserve">
+    <value>Geben Sie ein Muster ein.</value>
+  </data>
+  <data name="CadUpdatesPatternOneGroup" xml:space="preserve">
+    <value>Das Muster braucht genau eine Erfassungsgruppe, zum Beispiel Call ID: (\S+)</value>
+  </data>
+  <data name="CadUpdatesPatternInvalid" xml:space="preserve">
+    <value>Das Muster ist kein gültiger regulärer Ausdruck.</value>
+  </data>
+  <data name="CadCallIdLabel" xml:space="preserve">
+    <value>CAD-Einsatz-ID</value>
+  </data>
+</root>

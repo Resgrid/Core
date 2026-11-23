@@ -8253,4 +8253,16 @@
   <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
     <value>Permite que los miembros se inscriban en un grupo de turno aunque todos los puestos de sus funciones (obligatorios y opcionales) estén ocupados. Siguen necesitando una de las funciones del grupo. Los supervisores siempre pueden asignar personas por encima de los puestos.</value>
   </data>
+  <data name="Setting.EmailCallUpdates" xml:space="preserve">
+    <value>Actualizaciones de su CAD</value>
+  </data>
+  <data name="SettingHelp.EmailCallUpdates" xml:space="preserve">
+    <value>Actualizar la llamada existente cuando su CAD envía un correo corregido o de seguimiento con el mismo ID de llamada.</value>
+  </data>
+  <data name="Setting.EmailLabeledFields" xml:space="preserve">
+    <value>Etiquetas para el formato "Labeled fields"</value>
+  </data>
+  <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
+    <value>Se usan cuando su formato de correo es "Labeled fields". Introduzca la etiqueta que su CAD escribe delante de cada valor. Separe las alternativas con |.</value>
+  </data>
 </root>

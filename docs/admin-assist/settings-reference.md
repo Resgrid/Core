@@ -1669,6 +1669,20 @@ Call Numbering Config. How new call numbers are written: the call number pattern
 
 Default: legacy pattern {YY}-{SEQ}, unpadded. Source: DepartmentSettingTypes.CallNumberingConfig.
 
+<a id="setting-emailcallupdates"></a>
+## Updates from your CAD
+
+Updates from your CAD. Update the existing call when your CAD sends a corrected or follow-up email for the same call ID. The call ID comes from the email format, from the text after a label, or from a pattern. Each field (address and map location, priority, call type, name, nature, notes) is updated or only noted; a value changed in Resgrid is kept by default; everyone is paged again when the address or priority changes by default; units an update adds are paged. An email for a call closed within the window (60 minutes by default) is noted on it, and configured close or cancel phrases close or cancel the matched call through the normal close rules. Active911, R&R, Ottawa/Kingston/Toronto and Parkland County 2 keep their built-in behaviour until the page is saved.
+
+Default: off (built-in behaviour for the four formats above). Source: DepartmentSettingTypes.EmailCallUpdates.
+
+<a id="setting-emaillabeledfields"></a>
+## Labels for the Labeled fields format
+
+Labels for the Labeled fields format. Used when your email format is "Labeled fields". Enter the label your CAD writes in front of each value. Separate alternatives with |. A value runs to the end of its line or to the next known label on the same line. Call types and priorities are matched by name, units by unit name.
+
+Default: no labels. Source: DepartmentSettingTypes.EmailLabeledFields.
+
 <a id="field-callnumberingconfig-pattern"></a>
 ## Call Numbering Config / Pattern
 

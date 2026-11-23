@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Ενημερώσεις από το CAD σας</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Όταν το CAD σας στέλνει ακόμη ένα email για μια κλήση που έχει ήδη στείλει (διορθωμένη διεύθυνση, αναβάθμιση, κλείσιμο), το Resgrid μπορεί να ενημερώσει την κλήση που δημιούργησε από το πρώτο email αντί να δημιουργήσει νέα. Το Resgrid αναγνωρίζει την ίδια κλήση από το αναγνωριστικό κλήσης του CAD.</value>
+  </data>
+  <data name="CallSettingsLinkHelp" xml:space="preserve">
+    <value>Ενημέρωση της υπάρχουσας κλήσης όταν το CAD σας στέλνει διορθωμένο ή συμπληρωματικό email για το ίδιο αναγνωριστικό κλήσης.</value>
+  </data>
+  <data name="CurrentFormat" xml:space="preserve">
+    <value>Η μορφή email σας</value>
+  </data>
+  <data name="BuiltInNotice" xml:space="preserve">
+    <value>Η μορφή email σας αντιστοίχιζε ήδη τα επόμενα email σε ανοιχτές κλήσεις πριν υπάρξει αυτή η σελίδα, οπότε το Resgrid χρησιμοποιεί αυτή την ενσωματωμένη συμπεριφορά: οι σημειώσεις της κλήσης αντικαθίστανται και τίποτε άλλο δεν αλλάζει. Αποθηκεύστε αυτή τη σελίδα για να την αλλάξετε.</value>
+  </data>
+  <data name="UseBuiltIn" xml:space="preserve">
+    <value>Επιστροφή στην ενσωματωμένη συμπεριφορά</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Ενημέρωση υπαρχουσών κλήσεων</value>
+  </data>
+  <data name="EnabledHelp" xml:space="preserve">
+    <value>Ανενεργό: κάθε email δημιουργεί νέα κλήση.</value>
+  </data>
+  <data name="IdSourceHeader" xml:space="preserve">
+    <value>Εύρεση του αναγνωριστικού κλήσης του CAD</value>
+  </data>
+  <data name="IdSource" xml:space="preserve">
+    <value>Ανάγνωση του αναγνωριστικού κλήσης</value>
+  </data>
+  <data name="IdSourceFromFormat" xml:space="preserve">
+    <value>Από τη μορφή email</value>
+  </data>
+  <data name="IdSourceLabel" xml:space="preserve">
+    <value>Μετά από ετικέτα</value>
+  </data>
+  <data name="IdSourcePattern" xml:space="preserve">
+    <value>Με μοτίβο (για προχωρημένους)</value>
+  </data>
+  <data name="IdSourceHelp" xml:space="preserve">
+    <value>Το «Από τη μορφή email» λειτουργεί για μορφές που διαβάζουν αριθμό συμβάντος. Διαφορετικά, εισαγάγετε την ετικέτα που γράφει το CAD σας μπροστά από το αναγνωριστικό κλήσης.</value>
+  </data>
+  <data name="FormatHasNoKey" xml:space="preserve">
+    <value>Η μορφή email σας δεν διαβάζει αναγνωριστικό κλήσης. Χρησιμοποιήστε ετικέτα ή μοτίβο.</value>
+  </data>
+  <data name="IdLabel" xml:space="preserve">
+    <value>Ετικέτα</value>
+  </data>
+  <data name="IdLabelHelp" xml:space="preserve">
+    <value>Το Resgrid παίρνει την πρώτη λέξη μετά από αυτό το κείμενο στην ίδια γραμμή, για παράδειγμα «Call ID:».</value>
+  </data>
+  <data name="IdPattern" xml:space="preserve">
+    <value>Μοτίβο</value>
+  </data>
+  <data name="IdPatternHelp" xml:space="preserve">
+    <value>Μια κανονική έκφραση με ακριβώς μία ομάδα σύλληψης γύρω από το αναγνωριστικό κλήσης.</value>
+  </data>
+  <data name="IdSearchIn" xml:space="preserve">
+    <value>Αναζήτηση σε</value>
+  </data>
+  <data name="SearchSubjectThenBody" xml:space="preserve">
+    <value>Θέμα, μετά κυρίως κείμενο</value>
+  </data>
+  <data name="SearchSubject" xml:space="preserve">
+    <value>Μόνο θέμα</value>
+  </data>
+  <data name="SearchBody" xml:space="preserve">
+    <value>Μόνο κυρίως κείμενο</value>
+  </data>
+  <data name="FieldsHeader" xml:space="preserve">
+    <value>Τι μπορεί να αλλάξει μια ενημέρωση</value>
+  </data>
+  <data name="FieldsIntro" xml:space="preserve">
+    <value>Μόνο σημείωση: η κλήση κρατά την τιμή της και η νέα τιμή του CAD γράφεται στη σημείωση ενημέρωσης της κλήσης.</value>
+  </data>
+  <data name="FieldLocation" xml:space="preserve">
+    <value>Διεύθυνση και θέση στον χάρτη</value>
+  </data>
+  <data name="FieldPriority" xml:space="preserve">
+    <value>Προτεραιότητα</value>
+  </data>
+  <data name="FieldType" xml:space="preserve">
+    <value>Τύπος κλήσης</value>
+  </data>
+  <data name="FieldName" xml:space="preserve">
+    <value>Όνομα κλήσης</value>
+  </data>
+  <data name="FieldNature" xml:space="preserve">
+    <value>Φύση της κλήσης</value>
+  </data>
+  <data name="FieldNotes" xml:space="preserve">
+    <value>Σημειώσεις κλήσης</value>
+  </data>
+  <data name="PolicyUpdate" xml:space="preserve">
+    <value>Ενημέρωση</value>
+  </data>
+  <data name="PolicyNoteOnly" xml:space="preserve">
+    <value>Μόνο σημείωση</value>
+  </data>
+  <data name="TextReplace" xml:space="preserve">
+    <value>Αντικατάσταση</value>
+  </data>
+  <data name="TextAppend" xml:space="preserve">
+    <value>Προσθήκη στο τέλος</value>
+  </data>
+  <data name="DispatcherEditsWin" xml:space="preserve">
+    <value>Διατήρηση αλλαγών που έγιναν στο Resgrid</value>
+  </data>
+  <data name="DispatcherEditsWinHelp" xml:space="preserve">
+    <value>Αν κάποιος άλλαξε ένα πεδίο στο Resgrid, ένα μεταγενέστερο email του CAD δεν το αντικαθιστά. Η τιμή του CAD μπαίνει στη σημείωση ενημέρωσης.</value>
+  </data>
+  <data name="PagingHeader" xml:space="preserve">
+    <value>Ειδοποίηση</value>
+  </data>
+  <data name="RepageWhen" xml:space="preserve">
+    <value>Νέα ειδοποίηση σε όλους στην κλήση</value>
+  </data>
+  <data name="RepageNever" xml:space="preserve">
+    <value>Ποτέ</value>
+  </data>
+  <data name="RepageLocationOrPriority" xml:space="preserve">
+    <value>Όταν αλλάξει η διεύθυνση ή η προτεραιότητα</value>
+  </data>
+  <data name="RepageAnyChange" xml:space="preserve">
+    <value>Όταν αλλάξει οτιδήποτε</value>
+  </data>
+  <data name="RepageEveryUpdate" xml:space="preserve">
+    <value>Σε κάθε ενημέρωση (στέλνεται ως ο επόμενος συναγερμός)</value>
+  </data>
+  <data name="PageAddedResources" xml:space="preserve">
+    <value>Ειδοποίηση μονάδων και ομάδων που προσθέτει μια ενημέρωση</value>
+  </data>
+  <data name="ClosedHeader" xml:space="preserve">
+    <value>Κλεισμένες κλήσεις</value>
+  </data>
+  <data name="ClosedMatchMinutes" xml:space="preserve">
+    <value>Λεπτά κατά τα οποία μια κλεισμένη κλήση εξακολουθεί να αντιστοιχίζεται</value>
+  </data>
+  <data name="ClosedMatchMinutesHelp" xml:space="preserve">
+    <value>Ένα email για κλήση που έκλεισε μέσα σε αυτό το διάστημα γράφεται ως σημείωση σε εκείνη την κλήση. Η κλήση δεν ανοίγει ξανά. 0: δημιουργείται νέα κλήση.</value>
+  </data>
+  <data name="ClosePhrases" xml:space="preserve">
+    <value>Φράσεις κλεισίματος</value>
+  </data>
+  <data name="ClosePhrasesHelp" xml:space="preserve">
+    <value>Μία ανά γραμμή. Ένα email που περιέχει μία από αυτές κλείνει την κλήση με το ίδιο αναγνωριστικό κλήσης. Αφήστε το κενό για να μην κλείνουν ποτέ κλήσεις από email.</value>
+  </data>
+  <data name="CancelPhrases" xml:space="preserve">
+    <value>Φράσεις ακύρωσης</value>
+  </data>
+  <data name="CancelPhrasesHelp" xml:space="preserve">
+    <value>Μία ανά γραμμή. Ένα email που περιέχει μία από αυτές ακυρώνει την κλήση με το ίδιο αναγνωριστικό κλήσης.</value>
+  </data>
+  <data name="NotifyOnClose" xml:space="preserve">
+    <value>Αποστολή ειδοποίησης κλεισίματος</value>
+  </data>
+  <data name="LabelsHeader" xml:space="preserve">
+    <value>Ετικέτες για τη μορφή «Labeled fields»</value>
+  </data>
+  <data name="LabelsIntro" xml:space="preserve">
+    <value>Χρησιμοποιούνται όταν η μορφή email σας είναι «Labeled fields». Εισαγάγετε την ετικέτα που γράφει το CAD σας μπροστά από κάθε τιμή. Χωρίστε τις εναλλακτικές με |.</value>
+  </data>
+  <data name="Label.CallId" xml:space="preserve">
+    <value>Αναγνωριστικό κλήσης</value>
+  </data>
+  <data name="Label.Name" xml:space="preserve">
+    <value>Όνομα κλήσης</value>
+  </data>
+  <data name="Label.Nature" xml:space="preserve">
+    <value>Φύση της κλήσης</value>
+  </data>
+  <data name="Label.Address" xml:space="preserve">
+    <value>Διεύθυνση</value>
+  </data>
+  <data name="Label.City" xml:space="preserve">
+    <value>Πόλη</value>
+  </data>
+  <data name="Label.CrossStreets" xml:space="preserve">
+    <value>Κάθετοι δρόμοι</value>
+  </data>
+  <data name="Label.Coordinates" xml:space="preserve">
+    <value>Συντεταγμένες (γεωγραφικό πλάτος, γεωγραφικό μήκος)</value>
+  </data>
+  <data name="Label.Latitude" xml:space="preserve">
+    <value>Γεωγραφικό πλάτος</value>
+  </data>
+  <data name="Label.Longitude" xml:space="preserve">
+    <value>Γεωγραφικό μήκος</value>
+  </data>
+  <data name="Label.Type" xml:space="preserve">
+    <value>Τύπος κλήσης</value>
+  </data>
+  <data name="Label.Priority" xml:space="preserve">
+    <value>Προτεραιότητα</value>
+  </data>
+  <data name="Label.Units" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="Label.Notes" xml:space="preserve">
+    <value>Σημειώσεις</value>
+  </data>
+  <data name="TestHeader" xml:space="preserve">
+    <value>Δοκιμή με email</value>
+  </data>
+  <data name="TestIntro" xml:space="preserve">
+    <value>Επικολλήστε ένα email που έστειλε το CAD σας. Δεν δημιουργείται τίποτα: το Resgrid δείχνει τι διαβάζει με τις ρυθμίσεις αυτής της σελίδας, αποθηκευμένες ή όχι.</value>
+  </data>
+  <data name="TestSubject" xml:space="preserve">
+    <value>Θέμα</value>
+  </data>
+  <data name="TestBody" xml:space="preserve">
+    <value>Κυρίως κείμενο</value>
+  </data>
+  <data name="TestButton" xml:space="preserve">
+    <value>Δοκιμή</value>
+  </data>
+  <data name="TestCallId" xml:space="preserve">
+    <value>Αναγνωριστικό κλήσης του CAD</value>
+  </data>
+  <data name="TestNoCallId" xml:space="preserve">
+    <value>Δεν βρέθηκε αναγνωριστικό κλήσης</value>
+  </data>
+  <data name="TestClose" xml:space="preserve">
+    <value>Ερμηνεύεται ως</value>
+  </data>
+  <data name="TestCloseNone" xml:space="preserve">
+    <value>Νέα κλήση ή ενημέρωση</value>
+  </data>
+  <data name="TestCloseClose" xml:space="preserve">
+    <value>Κλείσιμο της κλήσης</value>
+  </data>
+  <data name="TestCloseCancel" xml:space="preserve">
+    <value>Ακύρωση της κλήσης</value>
+  </data>
+  <data name="TestNoCall" xml:space="preserve">
+    <value>Η μορφή email σας δεν βρήκε κλήση σε αυτό το email.</value>
+  </data>
+  <data name="TestFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η εκτέλεση της δοκιμής.</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Αποθηκεύτηκε.</value>
+  </data>
+  <data name="SettingsInvalid" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η ανάγνωση ορισμένων τιμών. Ελέγξτε τη σελίδα και αποθηκεύστε ξανά.</value>
+  </data>
+  <data name="CadUpdatesLabelRequired" xml:space="preserve">
+    <value>Εισαγάγετε την ετικέτα που γράφει το CAD σας μπροστά από το αναγνωριστικό κλήσης.</value>
+  </data>
+  <data name="CadUpdatesPatternRequired" xml:space="preserve">
+    <value>Εισαγάγετε ένα μοτίβο.</value>
+  </data>
+  <data name="CadUpdatesPatternOneGroup" xml:space="preserve">
+    <value>Το μοτίβο χρειάζεται ακριβώς μία ομάδα σύλληψης, για παράδειγμα Call ID: (\S+)</value>
+  </data>
+  <data name="CadUpdatesPatternInvalid" xml:space="preserve">
+    <value>Το μοτίβο δεν είναι έγκυρη κανονική έκφραση.</value>
+  </data>
+  <data name="CadCallIdLabel" xml:space="preserve">
+    <value>Αναγνωριστικό κλήσης του CAD</value>
+  </data>
+</root>

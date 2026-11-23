@@ -1,0 +1,322 @@
+@model Resgrid.Web.Areas.User.Models.Departments.CallSettings.CadUpdatesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.CadUpdates> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["PageTitle"];
+	var fieldPolicies = new[]
+	{
+		new { Name = "LocationPolicy", Label = localizer["FieldLocation"].Value, Value = Model.LocationPolicy },
+		new { Name = "PriorityPolicy", Label = localizer["FieldPriority"].Value, Value = Model.PriorityPolicy },
+		new { Name = "TypePolicy", Label = localizer["FieldType"].Value, Value = Model.TypePolicy },
+		new { Name = "NamePolicy", Label = localizer["FieldName"].Value, Value = Model.NamePolicy }
+	};
+	var textPolicies = new[]
+	{
+		new { Name = "NaturePolicy", Label = localizer["FieldNature"].Value, Value = Model.NaturePolicy },
+		new { Name = "NotesPolicy", Label = localizer["FieldNotes"].Value, Value = Model.NotesPolicy }
+	};
+	var labelFields = new[]
+	{
+		new { Name = "LabelCallId", Key = "Label.CallId", Value = Model.LabelCallId },
+		new { Name = "LabelName", Key = "Label.Name", Value = Model.LabelName },
+		new { Name = "LabelNature", Key = "Label.Nature", Value = Model.LabelNature },
+		new { Name = "LabelAddress", Key = "Label.Address", Value = Model.LabelAddress },
+		new { Name = "LabelCity", Key = "Label.City", Value = Model.LabelCity },
+		new { Name = "LabelCrossStreets", Key = "Label.CrossStreets", Value = Model.LabelCrossStreets },
+		new { Name = "LabelCoordinates", Key = "Label.Coordinates", Value = Model.LabelCoordinates },
+		new { Name = "LabelLatitude", Key = "Label.Latitude", Value = Model.LabelLatitude },
+		new { Name = "LabelLongitude", Key = "Label.Longitude", Value = Model.LabelLongitude },
+		new { Name = "LabelType", Key = "Label.Type", Value = Model.LabelType },
+		new { Name = "LabelPriority", Key = "Label.Priority", Value = Model.LabelPriority },
+		new { Name = "LabelUnits", Key = "Label.Units", Value = Model.LabelUnits },
+		new { Name = "LabelNotes", Key = "Label.Notes", Value = Model.LabelNotes }
+	};
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["PageTitle"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Department" asp-action="Settings" asp-route-area="User">@departmentLocalizer["DepartmentSettingsHeader"]</a>
+			</li>
+			<li>
+				<a asp-controller="Department" asp-action="CallSettings" asp-route-area="User">@departmentLocalizer["CallSettingsHeader"]</a>
+			</li>
+			<li class="active">
+				<strong>@localizer["PageTitle"]</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<p>@localizer["PageIntro"]</p>
+					<p><strong>@localizer["CurrentFormat"]:</strong> @Model.FormatName</p>
+
+					@if (!String.IsNullOrEmpty(Model.Message))
+					{
+						<div class="alert alert-success">@Model.Message</div>
+					}
+					@if (!String.IsNullOrEmpty(Model.ErrorMessage))
+					{
+						<div class="alert alert-danger">@Model.ErrorMessage</div>
+					}
+					@if (Model.IsBuiltInPreset)
+					{
+						<div class="alert alert-info">@localizer["BuiltInNotice"]</div>
+					}
+
+					<form id="cadUpdatesForm" class="form-horizontal" method="post" asp-controller="CadUpdates" asp-action="Index" asp-route-area="User">
+						@Html.AntiForgeryToken()
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="Enabled">@localizer["Enabled"]</label>
+							<div class="col-sm-6">
+								<admin-assist-help-after>
+									<div class="checkbox checkbox-primary">
+										<input type="checkbox" asp-for="Enabled" />
+										<label for="Enabled"></label>
+									</div>
+								</admin-assist-help-after>
+								<span class="help-block m-b-none">@localizer["EnabledHelp"]</span>
+							</div>
+						</div>
+
+						<div class="hr-line-dashed"></div>
+						<h3>@localizer["IdSourceHeader"]</h3>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" for="IdSource">@localizer["IdSource"]</label>
+							<div class="col-sm-6">
+								<select class="form-control" id="IdSource" name="IdSource">
+									<option value="0" selected="@(Model.IdSource == 0)">@localizer["IdSourceFromFormat"]</option>
+									<option value="1" selected="@(Model.IdSource == 1)">@localizer["IdSourceLabel"]</option>
+									<option value="2" selected="@(Model.IdSource == 2)">@localizer["IdSourcePattern"]</option>
+								</select>
+								<span class="help-block m-b-none">@localizer["IdSourceHelp"]</span>
+								@if (!Model.FormatReadsCallId)
+								{
+									<span class="help-block m-b-none text-warning" id="formatHasNoKey">@localizer["FormatHasNoKey"]</span>
+								}
+							</div>
+						</div>
+						<div class="form-group" id="idLabelGroup">
+							<label class="col-sm-3 control-label" asp-for="IdLabel">@localizer["IdLabel"]</label>
+							<div class="col-sm-6">
+								<input type="text" class="form-control" asp-for="IdLabel" maxlength="@Resgrid.Model.EmailCallUpdateConfig.MaxLabelLength" placeholder="Call ID:" />
+								<span class="help-block m-b-none">@localizer["IdLabelHelp"]</span>
+							</div>
+						</div>
+						<div class="form-group" id="idPatternGroup">
+							<label class="col-sm-3 control-label" asp-for="IdPattern">@localizer["IdPattern"]</label>
+							<div class="col-sm-6">
+								<input type="text" class="form-control" asp-for="IdPattern" maxlength="@Resgrid.Model.EmailCallUpdateConfig.MaxPatternLength" placeholder="Incident #(\S+)" />
+								<span class="help-block m-b-none">@localizer["IdPatternHelp"]</span>
+							</div>
+						</div>
+						<div class="form-group" id="idSearchGroup">
+							<label class="col-sm-3 control-label" for="IdSearchIn">@localizer["IdSearchIn"]</label>
+							<div class="col-sm-6">
+								<select class="form-control" id="IdSearchIn" name="IdSearchIn">
+									<option value="0" selected="@(Model.IdSearchIn == 0)">@localizer["SearchSubjectThenBody"]</option>
+									<option value="1" selected="@(Model.IdSearchIn == 1)">@localizer["SearchSubject"]</option>
+									<option value="2" selected="@(Model.IdSearchIn == 2)">@localizer["SearchBody"]</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="hr-line-dashed"></div>
+						<h3>@localizer["FieldsHeader"]</h3>
+						<p class="text-muted">@localizer["FieldsIntro"]</p>
+						@foreach (var field in fieldPolicies)
+						{
+							<div class="form-group">
+								<label class="col-sm-3 control-label" for="@field.Name">@field.Label</label>
+								<div class="col-sm-4">
+									<select class="form-control" id="@field.Name" name="@field.Name">
+										<option value="0" selected="@(field.Value == 0)">@localizer["PolicyUpdate"]</option>
+										<option value="1" selected="@(field.Value == 1)">@localizer["PolicyNoteOnly"]</option>
+									</select>
+								</div>
+							</div>
+						}
+						@foreach (var field in textPolicies)
+						{
+							<div class="form-group">
+								<label class="col-sm-3 control-label" for="@field.Name">@field.Label</label>
+								<div class="col-sm-4">
+									<select class="form-control" id="@field.Name" name="@field.Name">
+										<option value="0" selected="@(field.Value == 0)">@localizer["TextReplace"]</option>
+										<option value="1" selected="@(field.Value == 1)">@localizer["TextAppend"]</option>
+										<option value="2" selected="@(field.Value == 2)">@localizer["PolicyNoteOnly"]</option>
+									</select>
+								</div>
+							</div>
+						}
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="DispatcherEditsWin">@localizer["DispatcherEditsWin"]</label>
+							<div class="col-sm-6">
+								<div class="checkbox checkbox-primary">
+									<input type="checkbox" asp-for="DispatcherEditsWin" />
+									<label for="DispatcherEditsWin"></label>
+								</div>
+								<span class="help-block m-b-none">@localizer["DispatcherEditsWinHelp"]</span>
+							</div>
+						</div>
+
+						<div class="hr-line-dashed"></div>
+						<h3>@localizer["PagingHeader"]</h3>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" for="RepageWhen">@localizer["RepageWhen"]</label>
+							<div class="col-sm-6">
+								<select class="form-control" id="RepageWhen" name="RepageWhen">
+									<option value="0" selected="@(Model.RepageWhen == 0)">@localizer["RepageNever"]</option>
+									<option value="1" selected="@(Model.RepageWhen == 1)">@localizer["RepageLocationOrPriority"]</option>
+									<option value="2" selected="@(Model.RepageWhen == 2)">@localizer["RepageAnyChange"]</option>
+									<option value="3" selected="@(Model.RepageWhen == 3)">@localizer["RepageEveryUpdate"]</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="PageAddedResources">@localizer["PageAddedResources"]</label>
+							<div class="col-sm-6">
+								<div class="checkbox checkbox-primary">
+									<input type="checkbox" asp-for="PageAddedResources" />
+									<label for="PageAddedResources"></label>
+								</div>
+							</div>
+						</div>
+
+						<div class="hr-line-dashed"></div>
+						<h3>@localizer["ClosedHeader"]</h3>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="ClosedMatchMinutes">@localizer["ClosedMatchMinutes"]</label>
+							<div class="col-sm-2">
+								<input type="number" class="form-control" asp-for="ClosedMatchMinutes" min="0" max="@Resgrid.Model.EmailCallUpdateConfig.MaxClosedMatchMinutes" step="1" />
+							</div>
+							<div class="col-sm-7">
+								<span class="help-block m-b-none">@localizer["ClosedMatchMinutesHelp"]</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="ClosePhrases">@localizer["ClosePhrases"]</label>
+							<div class="col-sm-6">
+								<textarea class="form-control" asp-for="ClosePhrases" rows="3" maxlength="@Resgrid.Model.EmailCallUpdateConfig.MaxPhrasesLength"></textarea>
+								<span class="help-block m-b-none">@localizer["ClosePhrasesHelp"]</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="CancelPhrases">@localizer["CancelPhrases"]</label>
+							<div class="col-sm-6">
+								<textarea class="form-control" asp-for="CancelPhrases" rows="3" maxlength="@Resgrid.Model.EmailCallUpdateConfig.MaxPhrasesLength"></textarea>
+								<span class="help-block m-b-none">@localizer["CancelPhrasesHelp"]</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="NotifyOnClose">@localizer["NotifyOnClose"]</label>
+							<div class="col-sm-6">
+								<div class="checkbox checkbox-primary">
+									<input type="checkbox" asp-for="NotifyOnClose" />
+									<label for="NotifyOnClose"></label>
+								</div>
+							</div>
+						</div>
+
+						<div class="hr-line-dashed"></div>
+						<h3>@localizer["LabelsHeader"]</h3>
+						<p class="text-muted">@localizer["LabelsIntro"]</p>
+						@foreach (var field in labelFields)
+						{
+							<div class="form-group">
+								<label class="col-sm-3 control-label" for="@field.Name">@localizer[field.Key]</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" id="@field.Name" name="@field.Name" value="@field.Value" maxlength="@Resgrid.Model.EmailLabeledFieldsConfig.MaxLabelsLength" />
+								</div>
+							</div>
+						}
+
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-6">
+								<button type="submit" class="btn btn-primary">@localizer["Save"]</button>
+							</div>
+						</div>
+					</form>
+
+					@if (Model.FormatHasPreset && !Model.IsBuiltInPreset)
+					{
+						<form method="post" asp-controller="CadUpdates" asp-action="UseBuiltIn" asp-route-area="User" class="form-horizontal">
+							@Html.AntiForgeryToken()
+							<div class="form-group">
+								<div class="col-sm-offset-3 col-sm-6">
+									<button type="submit" class="btn btn-default">@localizer["UseBuiltIn"]</button>
+								</div>
+							</div>
+						</form>
+					}
+
+					<div class="hr-line-dashed"></div>
+					<h3>@localizer["TestHeader"]</h3>
+					<p class="text-muted">@localizer["TestIntro"]</p>
+					<div class="form-horizontal">
+						<div class="form-group">
+							<label class="col-sm-3 control-label" for="TestSubject">@localizer["TestSubject"]</label>
+							<div class="col-sm-6">
+								<input type="text" class="form-control" id="TestSubject" maxlength="1000" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" for="TestBody">@localizer["TestBody"]</label>
+							<div class="col-sm-6">
+								<textarea class="form-control" id="TestBody" rows="8"></textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-6">
+								<button type="button" class="btn btn-default" id="cadUpdatesTest">@localizer["TestButton"]</button>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-6">
+								<dl class="dl-horizontal" id="cadUpdatesTestResult" style="display:none"></dl>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script type="text/javascript">
+		var cadUpdatesStrings = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new
+		{
+			previewUrl = Url.Action("Preview", "CadUpdates", new { area = "User" }),
+			callId = localizer["TestCallId"].Value,
+			noCallId = localizer["TestNoCallId"].Value,
+			readsAs = localizer["TestClose"].Value,
+			closeNone = localizer["TestCloseNone"].Value,
+			closeClose = localizer["TestCloseClose"].Value,
+			closeCancel = localizer["TestCloseCancel"].Value,
+			noCall = localizer["TestNoCall"].Value,
+			failed = localizer["TestFailed"].Value,
+			name = localizer["FieldName"].Value,
+			address = localizer["FieldLocation"].Value,
+			coordinates = localizer["Label.Coordinates"].Value,
+			type = localizer["FieldType"].Value,
+			priority = localizer["FieldPriority"].Value,
+			units = localizer["Label.Units"].Value,
+			nature = localizer["FieldNature"].Value,
+			notes = localizer["FieldNotes"].Value
+		}, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
+	</script>
+	<script src="~/js/app/internal/department/resgrid.department.cadupdates.js"></script>
+}

@@ -364,4 +364,16 @@
   <data name="Screening.DismissedAsSpam" xml:space="preserve">
     <value>Écarté comme spam</value>
   </data>
+  <data name="CadUpdates" xml:space="preserve">
+    <value>Accepter les mises à jour du CAD</value>
+  </data>
+  <data name="CadUpdatesHelp" xml:space="preserve">
+    <value>Quand un e-mail porte l'identifiant d'appel du CAD d'un appel que le service a déjà, il met à jour cet appel au lieu de créer un appel en attente.</value>
+  </data>
+  <data name="CadUpdatesUnavailable" xml:space="preserve">
+    <value>Activez d'abord Mises à jour de votre CAD.</value>
+  </data>
+  <data name="CadUpdatesSettingsLink" xml:space="preserve">
+    <value>Ouvrir les paramètres</value>
+  </data>
 </root>

@@ -21,11 +21,23 @@ namespace Resgrid.Services.Search
 	{
 		private readonly IFeatureToggleService _featureToggles;
 		private readonly IRecordsCutoverService _recordsCutover;
+		private readonly Lazy<IDispatchAccessService> _dispatchAccess;
+		private readonly Lazy<IDispatcherPresenceService> _dispatcherPresence;
+		private readonly Lazy<IAuthorizationService> _authorization;
 
-		public SystemActionsService(IFeatureToggleService featureToggles, IRecordsCutoverService recordsCutover)
+		/// <summary>
+		/// The desk services are only for the dispatcher desk entries' access rules (lazy: the palette rarely needs them). Without
+		/// them those entries are hidden from everyone but department admins.
+		/// </summary>
+		public SystemActionsService(IFeatureToggleService featureToggles, IRecordsCutoverService recordsCutover,
+			Lazy<IDispatchAccessService> dispatchAccess = null, Lazy<IDispatcherPresenceService> dispatcherPresence = null,
+			Lazy<IAuthorizationService> authorization = null)
 		{
 			_featureToggles = featureToggles ?? throw new ArgumentNullException(nameof(featureToggles));
 			_recordsCutover = recordsCutover ?? throw new ArgumentNullException(nameof(recordsCutover));
+			_dispatchAccess = dispatchAccess;
+			_dispatcherPresence = dispatcherPresence;
+			_authorization = authorization;
 		}
 
 		public async Task<List<SystemActionHit>> SearchAsync(string text, SearchPrincipal principal, int max = 8, CancellationToken cancellationToken = default)
@@ -90,6 +102,7 @@ namespace Resgrid.Services.Search
 				return legacyWritesBlocked.Value;
 			}
 
+			var rules = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
 			var allowed = new List<SystemActionDefinition>();
 			foreach (var def in SystemActionCatalog.All)
 			{
@@ -104,9 +117,50 @@ namespace Resgrid.Services.Search
 					continue;
 				if (!await FlagAsync(def.FeatureFlag))
 					continue;
+				if (!await AccessRuleAsync(def.AccessRule))
+					continue;
 				allowed.Add(def);
 			}
 			return allowed;
+
+			async Task<bool> AccessRuleAsync(string rule)
+			{
+				if (string.IsNullOrWhiteSpace(rule) || principal.IsDepartmentAdmin)
+					return true;
+				if (rules.TryGetValue(rule, out var known))
+					return known;
+
+				bool value;
+				try { value = await EvaluateAccessRuleAsync(rule, principal); }
+				catch (Exception ex) { Logging.LogException(ex, $"Access rule {rule} could not be evaluated for the command palette; hiding its entries."); value = false; }
+				rules[rule] = value;
+				return value;
+			}
+		}
+
+		/// <summary>The destination pages' own per-person checks (MVC DispatcherDeskController: DeskAccess.CanView, Activity).</summary>
+		private async Task<bool> EvaluateAccessRuleAsync(string rule, SearchPrincipal principal)
+		{
+			if (string.IsNullOrWhiteSpace(principal.UserId))
+				return false;
+
+			switch (rule)
+			{
+				case SystemActionAccessRules.DispatcherSupervisor:
+					return _dispatcherPresence != null && await _dispatcherPresence.Value.CanSuperviseAsync(principal.DepartmentId, principal.UserId);
+
+				case SystemActionAccessRules.DispatcherDesk:
+					if (_dispatchAccess != null && await _dispatchAccess.Value.CanUseDispatchAsync(principal.DepartmentId, principal.UserId))
+						return true;
+					// The desk supervisor check first: a failing shift-scope lookup must not hide the desk from an on-duty desk
+					// supervisor the desk page itself admits (CanSuperviseAsync swallows its own scope failure).
+					if (_dispatcherPresence != null && await _dispatcherPresence.Value.CanSuperviseAsync(principal.DepartmentId, principal.UserId))
+						return true;
+					return _authorization != null && (await _authorization.Value.GetShiftManagementScopeAsync(principal.UserId, principal.DepartmentId))?.IsSupervisor == true;
+
+				default:
+					return false; // an unknown rule fails closed
+			}
 		}
 
 		private static SystemActionHit ToHit(SystemActionDefinition def, SearchPrincipal principal, float score)

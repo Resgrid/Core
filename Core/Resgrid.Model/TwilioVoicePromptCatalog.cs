@@ -41,20 +41,21 @@ namespace Resgrid.Model
 		public const string PleaseWaitForInformation = "Please wait while we gather that information.";
 
 		// Enhanced AI voice intake on a department's dedicated number (call-intake-and-ai-destinations-plan.md D2). Department-neutral on
-		// purpose: the same audio is cached for every department. The emergency number is fixed here for now (configurable later).
-		public const string VoiceIntakeGreeting = "Thank you for calling. This automated line records your request, and a dispatcher will review it. If this is a life-threatening emergency, hang up and dial 911.";
+		// purpose: the same audio is cached for every department. The emergency number comes from IntakeConfig.EmergencyNumber (a
+		// deployment setting, the same for every department), so the prompts that name it are properties, not constants.
+		public static string VoiceIntakeGreeting => $"Thank you for calling. This automated line records your request, and a dispatcher will review it. If this is a life-threatening emergency, hang up and dial {EmergencyNumber.Current}.";
 		public const string VoiceIntakeAskNature = "Please tell us the emergency or request, then pause.";
 		public const string VoiceIntakeAskLocation = "Please say the address or location, including the city.";
 		public const string VoiceIntakeAskCallerName = "Please say your name.";
 		public const string VoiceIntakeAskCallback = "Please say or key in the best number to call you back on, then press pound. To use the number you are calling from, press star.";
 		public const string VoiceIntakeNotHeard = "Sorry, we did not catch that.";
 		public const string VoiceIntakeCompleted = "Thank you. Your request has been recorded and a dispatcher will review it. Goodbye.";
-		public const string VoiceIntakeFailed = "Sorry, we could not record your request. Please text this number or call back. For emergencies, dial 911. Goodbye.";
-		public const string VoiceIntakeNothingHeard = "We did not hear a request. Please call back or text this number. For emergencies, dial 911. Goodbye.";
-		public const string VoiceIntakeTextOnly = "This line takes text messages. Please text this number. For emergencies, dial 911. Goodbye.";
-		public const string VoiceIntakeNumberInactive = "This number is no longer in service for the department. For emergencies, dial 911. Goodbye.";
+		public static string VoiceIntakeFailed => $"Sorry, we could not record your request. Please text this number or call back. For emergencies, dial {EmergencyNumber.Current}. Goodbye.";
+		public static string VoiceIntakeNothingHeard => $"We did not hear a request. Please call back or text this number. For emergencies, dial {EmergencyNumber.Current}. Goodbye.";
+		public static string VoiceIntakeTextOnly => $"This line takes text messages. Please text this number. For emergencies, dial {EmergencyNumber.Current}. Goodbye.";
+		public static string VoiceIntakeNumberInactive => $"This number is no longer in service for the department. For emergencies, dial {EmergencyNumber.Current}. Goodbye.";
 		public const string VoiceIntakeGate = "Thank you for calling. To leave a request for the dispatcher, press 1 now.";
-		public const string VoiceIntakeUnavailable = "This line cannot take your call. For emergencies, dial 911. Goodbye.";
+		public static string VoiceIntakeUnavailable => $"This line cannot take your call. For emergencies, dial {EmergencyNumber.Current}. Goodbye.";
 
 		public static string CallClosedByNumber(string callNumber) => $"This call, ID {callNumber}, has been closed. Goodbye.";
 

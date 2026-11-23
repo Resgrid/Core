@@ -53,6 +53,7 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly IInboundEmailReceiptsService _inboundEmailReceiptsService;
 		private readonly IIntakeService _intakeService;
 		private readonly IEmailSender _emailSender;
+		private readonly IDispatcherEmailCallService _dispatcherEmailCallService;
 
 		public EmailController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 			ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
@@ -62,10 +63,11 @@ namespace Resgrid.Web.Services.Controllers
 			IFileService fileService, IUnitsService unitsService, IGeoLocationProvider geoLocationProvider, ICallDispatchStatusService callDispatchStatusService,
 			IDispatchRecommendationService dispatchRecommendationService, IFeatureToggleService featureToggleService,
 			Resgrid.Model.AiDispatch.IAiDispatchAdminService aiDispatchAdminService, IInboundEmailReceiptsService inboundEmailReceiptsService,
-			IIntakeService intakeService, IEmailSender emailSender)
+			IIntakeService intakeService, IEmailSender emailSender, IDispatcherEmailCallService dispatcherEmailCallService)
 		{
 			_intakeService = intakeService;
 			_emailSender = emailSender;
+			_dispatcherEmailCallService = dispatcherEmailCallService;
 			_departmentSettingsService = departmentSettingsService;
 			_numbersService = numbersService;
 			_limitsService = limitsService;
@@ -401,12 +403,18 @@ namespace Resgrid.Web.Services.Controllers
 
 								if (call != null && call.CallId <= 0)
 								{
-									// New Call Dispatch as normal
+									// New Call Dispatch as normal, unless the department's email call mode holds it pending for a dispatcher (D10)
 									isNewCall = true;
 									call.DepartmentId = departmentId.Value;
-									pendingSteps = InboundEmailPendingSteps.CallBroadcast;
+									var emailCallMode = await _dispatcherEmailCallService.GetModeAsync(departmentId.Value);
+									var holdAsPending = emailCallMode != DispatcherEmailCallModes.AutoDispatch;
+									var enrich = await _dispatcherEmailCallService.ShouldEnrichAsync(departmentId.Value, emailSettings.FormatType, emailCallMode);
+									pendingSteps = holdAsPending ? InboundEmailPendingSteps.CallAddedEvent : InboundEmailPendingSteps.CallBroadcast;
 
-									if (emailSettings.FormatType == (int)CallEmailTypes.AI)
+									if (holdAsPending)
+										_dispatcherEmailCallService.HoldAsPending(call);
+
+									if (enrich)
 										pendingSteps |= InboundEmailPendingSteps.AiEnrichment;
 
 									if (!String.IsNullOrWhiteSpace(call.Address) && (String.IsNullOrWhiteSpace(call.GeoLocationData) || call.GeoLocationData.Length <= 1))
@@ -418,10 +426,19 @@ namespace Resgrid.Web.Services.Controllers
 									await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedCall.CallId, pendingSteps);
 									saveRecorded = true;
 
-									await QueueCallBroadcastAsync(savedCall, cancellationToken);
+									var onDesk = true;
+									if (holdAsPending)
+										onDesk = await _dispatcherEmailCallService.OnPendingCallSavedAsync(savedCall, message.FromFull?.Email, callEmail.Subject, cancellationToken);
+									else
+										await QueueCallBroadcastAsync(savedCall, cancellationToken);
 
-									if (emailSettings.FormatType == (int)CallEmailTypes.AI)
-										await QueueAiDispatchEnrichmentAsync(savedCall, 1, message.FromFull?.Email, cancellationToken);
+									var aiQueued = enrich && await QueueAiDispatchEnrichmentAsync(savedCall, 1, message.FromFull?.Email, cancellationToken, heldForDispatcher: holdAsPending);
+
+									if (!onDesk)
+										return await DeskHandOffOwedAsync(receipt, aiQueued);
+
+									if (enrich && !aiQueued)
+										return await AiEnrichmentOwedAsync(receipt, pendingSteps, pagedNow: !holdAsPending);
 
 									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 									return Ok(savedCall);
@@ -436,8 +453,8 @@ namespace Resgrid.Web.Services.Controllers
 
 									var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
 
-									// If our Dispatch Count changed, i.e. 2nd Alarm to 3rd Alarm, redispatch
-									if (call.DidDispatchCountChange())
+									// If our Dispatch Count changed, i.e. 2nd Alarm to 3rd Alarm, redispatch (a pending call waits for its dispatcher)
+									if (call.DidDispatchCountChange() && call.State != (int)CallStates.Pending)
 									{
 										await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedCall.CallId, InboundEmailPendingSteps.CallBroadcast);
 										await QueueCallBroadcastAsync(savedCall, cancellationToken);
@@ -664,8 +681,9 @@ namespace Resgrid.Web.Services.Controllers
 									if (pendingSteps.HasFlag(InboundEmailPendingSteps.CallBroadcast))
 										await QueueCallBroadcastAsync(savedCall, cancellationToken, false);
 
-									if (pendingSteps.HasFlag(InboundEmailPendingSteps.AiEnrichment))
-										await QueueAiDispatchEnrichmentAsync(savedCall, 2, message.FromFull?.Email, cancellationToken);
+									if (pendingSteps.HasFlag(InboundEmailPendingSteps.AiEnrichment) &&
+										!await QueueAiDispatchEnrichmentAsync(savedCall, 2, message.FromFull?.Email, cancellationToken))
+										return await AiEnrichmentOwedAsync(receipt, pendingSteps, pagedNow: pendingSteps.HasFlag(InboundEmailPendingSteps.CallBroadcast));
 
 									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 									return Ok(savedCall);
@@ -812,20 +830,85 @@ namespace Resgrid.Web.Services.Controllers
 		{
 			var call = receipt.EntityId.HasValue ? await _callsService.GetCallByIdAsync(receipt.EntityId.Value) : null;
 
-			if (call == null || call.IsDeleted || call.State != (int)CallStates.Active)
+			if (call == null || call.IsDeleted || (call.State != (int)CallStates.Active && call.State != (int)CallStates.Pending))
 			{
 				await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 				return Ok();
 			}
 
-			if (receipt.Has(InboundEmailPendingSteps.CallBroadcast))
+			// A pending call (email call mode Pending / EnhancedAi) is never paged here: only its desk entry and screen refresh are owed.
+			var onDesk = true;
+			var paged = false;
+			if (call.State == (int)CallStates.Pending)
+			{
+				if (receipt.Has(InboundEmailPendingSteps.CallAddedEvent))
+					onDesk = await _dispatcherEmailCallService.OnPendingCallSavedAsync(call, message.FromFull?.Email, message.Subject, cancellationToken);
+			}
+			else if (receipt.Has(InboundEmailPendingSteps.CallBroadcast))
+			{
 				await QueueCallBroadcastAsync(call, cancellationToken, allowRunCardEnrichment);
+				paged = true;
+			}
 
-			if (receipt.Has(InboundEmailPendingSteps.AiEnrichment))
-				await QueueAiDispatchEnrichmentAsync(call, aiChannel, message.FromFull?.Email, cancellationToken);
+			// Held for a dispatcher: the original delivery recorded the desk step only for a call its email call mode held, and a call
+			// still pending was held (the email call mode is the only path here that saves one). The pending state counts as well because
+			// the desk step is recorded done once the desk entry went out, so an AI job owed after that keeps its held entitlement.
+			var enrich = receipt.Has(InboundEmailPendingSteps.AiEnrichment);
+			var aiQueued = enrich && await QueueAiDispatchEnrichmentAsync(call, aiChannel, message.FromFull?.Email, cancellationToken,
+				heldForDispatcher: receipt.Has(InboundEmailPendingSteps.CallAddedEvent) || call.State == (int)CallStates.Pending);
+
+			if (!onDesk)
+				return await DeskHandOffOwedAsync(receipt, aiQueued);
+
+			if (enrich && !aiQueued)
+				return await AiEnrichmentOwedAsync(receipt, InboundEmailPendingSteps.CallBroadcast | InboundEmailPendingSteps.CallAddedEvent, paged);
 
 			await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 			return Ok(call);
+		}
+
+		/// <summary>
+		/// The call is saved and its other steps (<paramref name="done"/>: the page or the desk entry) went out, but the AI enrichment job
+		/// could not be queued: only that step stays owed, and the claim goes back with a 400 so Postmark redelivers and the resume queues
+		/// the job (finding the saved call, so no second call is made and nobody is paged again).
+		/// </summary>
+		/// <param name="pagedNow">
+		/// This request queued the call's page. If the receipt cannot record that, a redelivery would page the call again, so the AI job
+		/// is given up instead (logged; a dispatcher reads the call without it) and the delivery answered as done. A desk entry that could
+		/// not be recorded is still retried: the desk takes a call it already has once. An untracked delivery (the receipt store was
+		/// unavailable at the claim) is never sent back either: its redelivery would save and page a second call.
+		/// </param>
+		private async Task<ActionResult> AiEnrichmentOwedAsync(InboundEmailReceiptClaim receipt, InboundEmailPendingSteps done, bool pagedNow)
+		{
+			done &= ~InboundEmailPendingSteps.AiEnrichment;
+			var tracked = receipt != null && receipt.IsTracked;
+			var recorded = tracked && (done == InboundEmailPendingSteps.None || await _inboundEmailReceiptsService.CompleteStepAsync(receipt, done));
+
+			if (!recorded && (pagedNow || !tracked))
+			{
+				Logging.LogError(tracked
+					? $"Inbound email receipt {receipt.ReceiptId}: the call was paged but that could not be recorded, so its AI enrichment is not retried (a retry would page it again)."
+					: "Inbound email: the AI enrichment of an untracked delivery is not retried (a retry would save and page a second call).");
+				await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+				return Ok();
+			}
+
+			await _inboundEmailReceiptsService.ReleaseAsync(receipt);
+			return BadRequest();
+		}
+
+		/// <summary>
+		/// A held emailed call is saved but could not be put on the dispatcher desk: that step is still owed (the AI step is recorded
+		/// done only when its job was actually queued, so a failed AI enqueue is retried with it), and the claim goes back with a 400 so
+		/// Postmark redelivers and the resume retries the desk entry at once instead of waiting for the desk worker's sweep.
+		/// </summary>
+		private async Task<ActionResult> DeskHandOffOwedAsync(InboundEmailReceiptClaim receipt, bool aiQueued)
+		{
+			if (aiQueued)
+				await _inboundEmailReceiptsService.CompleteStepAsync(receipt, InboundEmailPendingSteps.AiEnrichment);
+
+			await _inboundEmailReceiptsService.ReleaseAsync(receipt);
+			return BadRequest();
 		}
 
 		/// <summary>Sends a group message an earlier delivery of the same email saved and then failed to send.</summary>
@@ -898,11 +981,17 @@ namespace Resgrid.Web.Services.Controllers
 		/// <summary>
 		/// AI dispatch, Enrich mode: the call above is already saved and its broadcast queued exactly as for GenericTemplate.
 		/// Enrichment runs afterwards on the worker, so a disabled host or a failed enqueue never touches the dispatch itself.
+		/// <paramref name="heldForDispatcher"/>: the dispatcher desk's email call mode held the call pending (the worker enriches it while
+		/// it waits, under that mode's entitlement); otherwise the job keeps the active-call, AI-format rule.
 		/// </summary>
-		private async Task QueueAiDispatchEnrichmentAsync(Call savedCall, int channel, string sender, CancellationToken cancellationToken)
+		/// <returns>
+		/// True when the job was queued or is not wanted (AI dispatch off on this host, no call): the step is done. False when queueing
+		/// it failed (logged), so a delivery that is retried anyway can keep the step owed.
+		/// </returns>
+		private async Task<bool> QueueAiDispatchEnrichmentAsync(Call savedCall, int channel, string sender, CancellationToken cancellationToken, bool heldForDispatcher = false)
 		{
 			if (!Config.AiDispatchConfig.EnrichEnabled || savedCall == null || savedCall.CallId <= 0)
-				return;
+				return true;
 
 			try
 			{
@@ -910,12 +999,15 @@ namespace Resgrid.Web.Services.Controllers
 				await _queueService.EnqueueAiDispatchTriageAsync(new AiDispatchQueueItem
 				{
 					DepartmentId = savedCall.DepartmentId, CallId = savedCall.CallId, Channel = channel, QueuedOnUtc = DateTime.UtcNow,
-					SenderNotAllowed = !await _aiDispatchAdminService.IsSenderAllowedAsync(savedCall.DepartmentId, sender)
+					SenderNotAllowed = !await _aiDispatchAdminService.IsSenderAllowedAsync(savedCall.DepartmentId, sender),
+					HeldForDispatcher = heldForDispatcher
 				}, cancellationToken);
+				return true;
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
+				return false;
 			}
 		}
 

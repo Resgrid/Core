@@ -124,7 +124,8 @@ CREATE TABLE {Q("DeploymentTimeReports")} ({Q("Id")} int PRIMARY KEY, {Q("Depart
                 _type == DatabaseTypes.Postgres ? new M0225_AddMaintenanceAssigneesPg() : new M0225_AddMaintenanceAssignees(),
                 _type == DatabaseTypes.Postgres ? new M0226_AddWorkOrderCurrencyPg() : new M0226_AddWorkOrderCurrency(),
                 _type == DatabaseTypes.Postgres ? new M0268_AddDocumentNumberingPg() : new M0268_AddDocumentNumbering(),
-                _type == DatabaseTypes.Postgres ? new M0274_SplitModuleProtectedContentPg() : new M0274_SplitModuleProtectedContent()
+                _type == DatabaseTypes.Postgres ? new M0274_SplitModuleProtectedContentPg() : new M0274_SplitModuleProtectedContent(),
+                _type == DatabaseTypes.Postgres ? new M0329_AddInventoryParLevelsPg() : new M0329_AddInventoryParLevels()
 			});
 			_runner = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r =>
 			{
@@ -140,7 +141,7 @@ CREATE TABLE {Q("DeploymentTimeReports")} ({Q("Id")} int PRIMARY KEY, {Q("Depart
 			foreach (var table in new[] { "WorkflowRunLogs", "WorkflowRuns", "DomainEventOutbox", "AuditLogs", "RmsRecordLegalHolds" })
 				await db.ExecuteAsync("DELETE FROM " + Q(table));
 			await db.ExecuteAsync($"UPDATE {Q("InventoryCountItems")} SET {Q("TransactionId")}=NULL");
-			foreach (var table in new[] { "InventoryAlertDeliveries", "InventoryAlerts", "RecordInventoryUsages", "InventoryTransferItems", "InventoryTransactions", "InventoryCountItems", "InventoryCounts", "InventoryPurchaseOrderItems", "InventoryPurchaseOrders", "InventoryVendors", "InventoryIssuances", "InventoryTransfers", "InventoryStocks", "InventoryKitItems" })
+			foreach (var table in new[] { "InventoryParLevels", "InventoryAlertDeliveries", "InventoryAlerts", "RecordInventoryUsages", "InventoryTransferItems", "InventoryTransactions", "InventoryCountItems", "InventoryCounts", "InventoryPurchaseOrderItems", "InventoryPurchaseOrders", "InventoryVendors", "InventoryIssuances", "InventoryTransfers", "InventoryStocks", "InventoryKitItems" })
 				await db.ExecuteAsync("DELETE FROM " + Q(table));
 			await db.ExecuteAsync($"UPDATE {Q("InventoryAssets")} SET {Q("CurrentLocationId")}=NULL");
 			foreach (var table in new[] { "InventoryLocations", "InventoryAssets", "InventoryLots", "InventoryItems", "InventoryCategories", "InventoryKits", "InventoryOperations", "Inventories", "InventoryTypes", "Contacts" })
@@ -270,7 +271,8 @@ CREATE TABLE {Q("DeploymentTimeReports")} ({Q("Id")} int PRIMARY KEY, {Q("Depart
 			countMovement.OperationId = operation.Id; countMovement.LineNumber = 99; countMovement.CountItemId = countLine.Id; countMovement.TransactionType = 7; countMovement.ReferenceType = 7; countMovement.ReferenceId = count.Id;
 			var alert = NewRow<InventoryAlert>(department); alert.ItemId = item.Id; alert.LocationId = child.Id; alert.DedupKey = new string('B', 64); alert.OpenedOn = DateTime.UtcNow;
 			var delivery = NewRow<InventoryAlertDelivery>(department); delivery.AlertId = alert.Id; delivery.UserId = "inventory-test-author"; delivery.NextAttemptOn = DateTime.UtcNow;
-			alert.Content = null; delivery.Content = null;
+			var parLevel = NewRow<InventoryParLevel>(department); parLevel.ItemId = item.Id; parLevel.LocationId = child.Id; parLevel.MinimumQuantity = 2;
+			alert.Content = null; delivery.Content = null; parLevel.Content = null;
 			await WriteAsync(async store =>
 			{
 				await store.InsertAsync(category); await store.InsertAsync(subcategory); await store.InsertAsync(item);
@@ -283,7 +285,7 @@ CREATE TABLE {Q("DeploymentTimeReports")} ({Q("Id")} int PRIMARY KEY, {Q("Depart
 				await store.InsertAsync(transfer); await store.InsertAsync(transferItem); await store.InsertAsync(kit); await store.InsertAsync(kitItem);
 				await store.InsertAsync(count); await store.InsertAsync(countLine); await store.InsertAsync(countMovement);
 				countLine.TransactionId = countMovement.Id; countLine.Revision++; await store.UpdateAsync(countLine, countLine.Revision - 1);
-				await store.InsertAsync(alert); await store.InsertAsync(delivery);
+				await store.InsertAsync(alert); await store.InsertAsync(delivery); await store.InsertAsync(parLevel);
 			}, department);
 			foreach (var trigger in InventoryWorkflowPayload.Triggers.Concat(new[] { 0, 67, 70 }))
 			{

@@ -2661,4 +2661,10 @@
   <data name="NewCallDispatchListsHiddenWarning" xml:space="preserve">
     <value>Todas las listas de despacho (personal, grupos, roles y unidades) están ocultas. Los formularios de llamada ofrecerán en su lugar un botón opcional «Llamada general»: con él la llamada va a todos; sin él, la llamada se guarda solo como información y no se avisa a nadie. Las tarjetas de despacho que despachan automáticamente siguen enviando sus unidades.</value>
   </data>
+  <data name="ShiftOverSignupHeader" xml:space="preserve">
+    <value>Permitir inscripciones por encima de los puestos del grupo</value>
+  </data>
+  <data name="ShiftOverSignupHelp" xml:space="preserve">
+    <value>Los miembros pueden inscribirse en un grupo aunque todos sus puestos por función (obligatorios y opcionales) estén ocupados. Siguen necesitando una de las funciones del grupo.</value>
+  </data>
 </root>

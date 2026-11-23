@@ -17,9 +17,9 @@ namespace Resgrid.Console.Commands
 	///     One-off cleanup of the Novu subscribers left behind before deletion and removal started deleting them, which
 	///     still hold the phone and browser tokens of people and rigs that should no longer get a department's pushes:
 	///     <list type="bullet">
-	///     <item>Deleted departments: every {code}_User_, {code}_IC_User_ and {code}_Unit_ subscriber whose code
+	///     <item>Deleted departments: every {code}_User_, {code}_IC_User_, {code}_Dispatch_User_ and {code}_Unit_ subscriber whose code
 	///     belongs to no department in this database.</item>
-	///     <item>Removed members: {code}_User_ and {code}_IC_User_ subscribers of a department that still exists,
+	///     <item>Removed members: {code}_User_, {code}_IC_User_ and {code}_Dispatch_User_ subscribers of a department that still exists,
 	///     for a user who is not one of its current (non-deleted) members.</item>
 	///     <item>Deleted units: {code}_Unit_ subscribers of a department that still exists, for a unit that is not
 	///     one of its current (non-deleted) units.</item>
@@ -85,9 +85,9 @@ namespace Resgrid.Console.Commands
 			var departmentOrphans = NovuSubscriberIds.FindOrphans(subscriberIds, codes);
 			var orphanCodes = departmentOrphans.Select(o => o.Code).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(c => c, StringComparer.OrdinalIgnoreCase).ToList();
 
-			logger.LogInformation("Deleted departments: {Count} subscribers under {Codes} codes that no longer exist ({UserCount} user, {ICCount} IC user, {UnitCount} unit).",
+			logger.LogInformation("Deleted departments: {Count} subscribers under {Codes} codes that no longer exist ({UserCount} user, {ICCount} IC user, {DispatchCount} Dispatch desk, {UnitCount} unit).",
 				departmentOrphans.Count, orphanCodes.Count, CountOf(departmentOrphans, NovuSubscriberKind.User), CountOf(departmentOrphans, NovuSubscriberKind.ICUser),
-				CountOf(departmentOrphans, NovuSubscriberKind.Unit));
+				CountOf(departmentOrphans, NovuSubscriberKind.DispatchUser), CountOf(departmentOrphans, NovuSubscriberKind.Unit));
 
 			if (orphanCodes.Count > 0)
 				logger.LogInformation("    Codes: {Codes}{More}", string.Join(", ", orphanCodes.Take(Listed)), orphanCodes.Count > Listed ? ", ..." : "");
@@ -97,9 +97,9 @@ namespace Resgrid.Console.Commands
 			var removedMembers = NovuSubscriberIds.FindRemovedMembers(subscriberIds, currentMembersByCode);
 			var removedByCode = removedMembers.GroupBy(r => r.Code, StringComparer.OrdinalIgnoreCase).OrderByDescending(g => g.Count()).ToList();
 
-			logger.LogInformation("Removed members: {Count} subscribers of {Users} users who are no longer members, across {Departments} departments ({UserCount} user, {ICCount} IC user).",
+			logger.LogInformation("Removed members: {Count} subscribers of {Users} users who are no longer members, across {Departments} departments ({UserCount} user, {ICCount} IC user, {DispatchCount} Dispatch desk).",
 				removedMembers.Count, removedMembers.Select(r => r.Id).Distinct(StringComparer.OrdinalIgnoreCase).Count(), removedByCode.Count,
-				CountOf(removedMembers, NovuSubscriberKind.User), CountOf(removedMembers, NovuSubscriberKind.ICUser));
+				CountOf(removedMembers, NovuSubscriberKind.User), CountOf(removedMembers, NovuSubscriberKind.ICUser), CountOf(removedMembers, NovuSubscriberKind.DispatchUser));
 
 			if (removedByCode.Count > 0)
 				logger.LogInformation("    By code: {Codes}{More}", string.Join(", ", removedByCode.Take(Listed).Select(g => $"{g.Key} ({g.Count()})")), removedByCode.Count > Listed ? ", ..." : "");
@@ -149,6 +149,7 @@ namespace Resgrid.Console.Commands
 						{
 							NovuSubscriberKind.User => await novuProvider.DeleteUserSubscriber(subscriber.Id, subscriber.Code),
 							NovuSubscriberKind.ICUser => await novuProvider.DeleteICUserSubscriber(subscriber.Id, subscriber.Code),
+							NovuSubscriberKind.DispatchUser => await novuProvider.DeleteDispatchUserSubscriber(subscriber.Id, subscriber.Code),
 							_ => await novuProvider.DeleteUnitSubscriber(int.Parse(subscriber.Id), subscriber.Code)
 						};
 					}

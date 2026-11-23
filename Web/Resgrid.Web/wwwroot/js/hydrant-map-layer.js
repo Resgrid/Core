@@ -37,6 +37,9 @@
                 popup.appendChild(link);
                 var flow = field(point, 'FlowGpm');
                 if (flow !== null && flow !== undefined) { popup.appendChild(document.createElement('br')); popup.appendChild(document.createTextNode(flow + ' gpm')); }
+                // NFPA 291 rated flow at 20 psi residual; the marker colour (flow class) is read from it.
+                var rated = field(point, 'RatedFlowGpm');
+                if (rated !== null && rated !== undefined) { popup.appendChild(document.createElement('br')); popup.appendChild(document.createTextNode(rated + ' gpm @ 20 psi')); }
                 popup.appendChild(document.createElement('br'));
                 popup.appendChild(document.createTextNode(field(point, 'InService') ? config.inService : config.outOfService));
                 var color = field(point, 'Color') || '#999999';

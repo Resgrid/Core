@@ -18,5 +18,14 @@ namespace Resgrid.Web.Areas.User.Models.Shifts
 		public bool CanUpdateShifts { get; set; }
 		public bool CanDeleteShifts { get; set; }
 		public int PendingApprovalsCount { get; set; }
+
+		/// <summary>Dispatcher, shift manager or department admin: gets the dispatcher desk board and break planner (M0324).</summary>
+		public bool ShowDispatcherDesk { get; set; }
+
+		/// <summary>Department admin: gets the dispatcher desk settings.</summary>
+		public bool ShowDispatcherDeskSettings { get; set; }
+
+		/// <summary>Department admin or desk supervisor: gets the dispatcher activity report (the page refuses anyone else).</summary>
+		public bool ShowDispatcherActivity { get; set; }
 	}
 }

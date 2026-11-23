@@ -146,28 +146,39 @@ namespace Resgrid.Services
 			}
 			else if (input.Kind == InventoryReportKind.LowStock)
 			{
-				Columns("Name", "UnitOfMeasure", "OnHand", "ReorderPoint", "M5Shortfall", "M5ReorderQuantity");
-				var totals = new Dictionary<string, decimal>();
-				var assetTotals = new Dictionary<string, decimal>();
+				// One row for the department total against the item's level (blank Location), and one per visible location whose
+				// own minimum (par level) is reached (InventoryLowStock).
+				Columns("Name", "UnitOfMeasure", "Location", "OnHand", "ReorderPoint", "M5Shortfall", "M5ReorderQuantity");
+				var totals = new Dictionary<string, Dictionary<string, decimal>>();
+				var assetTotals = new Dictionary<string, Dictionary<string, decimal>>();
+				void Count(Dictionary<string, Dictionary<string, decimal>> into, string itemId, string locationId, decimal quantity)
+				{
+					if (!into.TryGetValue(itemId, out var byLocation)) into[itemId] = byLocation = new Dictionary<string, decimal>();
+					byLocation[locationId] = byLocation.GetValueOrDefault(locationId) + quantity;
+				}
 				foreach (var stock in await AllAsync<InventoryStock>(actor.DepartmentId))
 				{
 					if (stock.IsDeleted || !ItemMatches(stock.ItemId) || !await VisibleLocation(stock.LocationId)) continue;
-					totals.TryGetValue(stock.ItemId, out var quantity); totals[stock.ItemId] = quantity + stock.Quantity;
+					Count(totals, stock.ItemId, stock.LocationId, stock.Quantity);
 					await Location(stock.LocationId);
 				}
 				foreach (var asset in await AllAsync<InventoryAsset>(actor.DepartmentId))
 				{
 					if (asset.IsDeleted || asset.Status is not (0 or 1 or 2 or 3) || !ItemMatches(asset.ItemId) || !await VisibleLocation(asset.CurrentLocationId)) continue;
-					assetTotals.TryGetValue(asset.ItemId, out var quantity); assetTotals[asset.ItemId] = quantity + 1;
+					Count(assetTotals, asset.ItemId, asset.CurrentLocationId, 1);
 					await Location(asset.CurrentLocationId);
 				}
+				var parLevels = (await AllAsync<InventoryParLevel>(actor.DepartmentId)).Where(p => !p.IsDeleted && ItemMatches(p.ItemId)).ToLookup(p => p.ItemId);
 				foreach (var stored in await AllAsync<InventoryItem>(actor.DepartmentId))
 				{
 					if (stored.IsDeleted || !stored.IsActive || !ItemMatches(stored.Id)) continue;
-					var details = Decode<InventoryItemContent>(await Item(stored.Id)); var threshold = details.ReorderPoint ?? details.MinLevel;
-					(stored.TrackingMode == (int)InventoryTrackingMode.Bulk ? totals : assetTotals).TryGetValue(stored.Id, out var quantity);
-					if (threshold.HasValue && quantity <= threshold.Value) Add(("Name", details.Name), ("UnitOfMeasure", details.UnitOfMeasure), ("OnHand", quantity),
-						("ReorderPoint", threshold), ("M5Shortfall", threshold.Value - quantity), ("M5ReorderQuantity", details.ReorderQuantity));
+					var details = Decode<InventoryItemContent>(await Item(stored.Id));
+					(stored.TrackingMode == (int)InventoryTrackingMode.Bulk ? totals : assetTotals).TryGetValue(stored.Id, out var quantities);
+					var visiblePars = new List<InventoryParLevel>();
+					foreach (var par in parLevels[stored.Id]) if (await VisibleLocation(par.LocationId)) visiblePars.Add(par);
+					foreach (var level in InventoryLowStock.Evaluate(stored, details, quantities ?? new Dictionary<string, decimal>(), visiblePars, _ => true).Where(l => l.IsLow))
+						Add(("Name", details.Name), ("UnitOfMeasure", details.UnitOfMeasure), ("Location", await LocationName(level.LocationId)), ("OnHand", level.Quantity),
+							("ReorderPoint", level.Threshold), ("M5Shortfall", level.Shortfall), ("M5ReorderQuantity", details.ReorderQuantity));
 				}
 			}
 			else if (input.Kind == InventoryReportKind.Valuation)

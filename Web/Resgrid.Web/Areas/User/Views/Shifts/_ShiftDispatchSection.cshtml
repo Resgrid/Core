@@ -1,0 +1,128 @@
+@using Resgrid.Web.Areas.User.Models.DispatcherDesk
+@model Resgrid.Web.Areas.User.Models.Shifts.ShiftDispatchSectionView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatcherDesk.DispatcherDesk> desk
+@* "Dispatchers on duty" on the new and edit shift pages (M0324). Rendered with <partial for="Dispatch" />, so the bound
+   fields post as Dispatch.*; the break plan rows and the standing roster are read from the form by DispatcherDeskForms.
+   DispatchSectionPosted tells the save that this section was on the page. *@
+<input type="hidden" name="DispatchSectionPosted" value="true" />
+<div class="shift-dispatch-section">
+	<div class="form-group">
+		<div class="col-sm-offset-2 col-sm-10">
+			<div class="checkbox">
+				<label><input type="checkbox" asp-for="IsEnabled" class="shift-dispatch-enabled" /> @desk["ShiftDispatchEnabledLabel"]</label>
+			</div>
+			<span class="help-block m-b-none">@desk["ShiftDispatchEnabledHelp"]</span>
+			@if (!Model.DeskEnabled)
+			{
+				<span class="help-block m-b-none text-warning"><i class="fa fa-info-circle"></i> @desk["DeskRoutingOffNotice"]</span>
+			}
+		</div>
+	</div>
+	<div class="shift-dispatch-details" style="@(Model.IsEnabled ? "" : "display:none;")">
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-10">
+				<div class="checkbox">
+					<label><input type="checkbox" asp-for="IsDispatchOnly" /> @desk["ShiftDispatchOnlyLabel"]</label>
+				</div>
+				<span class="help-block m-b-none">@desk["ShiftDispatchOnlyHelp"]</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label" asp-for="RequiredDispatchers">@desk["RequiredDispatchersLabel"]</label>
+			<div class="col-sm-2">
+				<input type="number" min="0" max="100" step="1" class="form-control" asp-for="RequiredDispatchers" />
+			</div>
+			<div class="col-sm-8">
+				<span class="help-block m-b-none">@desk["RequiredDispatchersHelp"]</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label" asp-for="MinimumOnDesk">@desk["MinimumOnDeskLabel"]</label>
+			<div class="col-sm-2">
+				<input type="number" min="0" max="100" step="1" class="form-control" asp-for="MinimumOnDesk" />
+			</div>
+			<div class="col-sm-8">
+				<span class="help-block m-b-none">@String.Format(desk["MinimumOnDeskHelpFormat"].Value, Model.DepartmentMinimum)</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-10">
+				<div class="checkbox">
+					<label><input type="checkbox" asp-for="AllowSelfScheduledBreaks" /> @desk["AllowSelfScheduledBreaksLabel"]</label>
+				</div>
+				<span class="help-block m-b-none">@desk["AllowSelfScheduledBreaksHelp"]</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">@desk["BreakPlanLabel"]</label>
+			<div class="col-sm-10">
+				<partial name="_DispatcherBreakPlanEditor" model='new DispatcherBreakPlanEditorModel { Id = "shiftBreakPlan", Rows = Model.BreakPlan }' />
+			</div>
+		</div>
+		@if (Model.ShowStandingRoster)
+		{
+			<div class="form-group shift-dispatch-roster">
+				<label class="col-sm-2 control-label">@desk["StandingRosterLabel"]</label>
+				<div class="col-sm-10">
+					<p class="help-block m-t-none">@desk["StandingRosterHelp"]</p>
+					@* The roster as this page opened it: the save applies only what changes here (ShiftsController.ReadPreviousStandingRoster). *@
+					<input type="hidden" name="dispatchRosterEdit" value="1" />
+					@if (!Model.Candidates.Any())
+					{
+						<p class="text-muted">@desk["NoEligibleDispatchers"]</p>
+					}
+					else
+					{
+						<input type="search" class="form-control input-sm m-b-xs shift-dispatch-roster-filter" placeholder="@desk["FilterDispatchersPlaceholder"]" aria-label="@desk["FilterDispatchersPlaceholder"]" />
+						<div class="table-responsive" style="max-height: 360px; overflow-y: auto;">
+							<table class="table table-condensed table-striped">
+								<thead>
+									<tr>
+										<th>@desk["DispatcherColumn"]</th>
+										<th style="width: 20%;">@desk["OnRosterColumn"]</th>
+										<th style="width: 20%;">@desk["DeskSupervisorColumn"]</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var candidate in Model.Candidates)
+									{
+										<tr class="shift-dispatch-candidate" data-name="@candidate.Name">
+											<td>
+												@candidate.Name
+												@if (!candidate.IsEligible)
+												{
+													<span class="label label-warning" title="@desk["NotEligibleHelp"]">@desk["NotEligibleBadge"]</span>
+												}
+											</td>
+											@if (candidate.IsEligible)
+											{
+												<td>
+													<input type="checkbox" name="dispatchRoster" value="@candidate.UserId" class="shift-dispatch-onroster" checked="@candidate.OnRoster" aria-label="@desk["OnRosterColumn"]: @candidate.Name" />
+													@if (candidate.WasOnRoster)
+													{
+														<input type="hidden" name="dispatchRosterWas" value="@candidate.UserId" />
+													}
+													@if (candidate.WasSupervisor)
+													{
+														<input type="hidden" name="dispatchSupervisorWas" value="@candidate.UserId" />
+													}
+												</td>
+												<td>
+													<input type="checkbox" name="dispatchSupervisor" value="@candidate.UserId" class="shift-dispatch-supervisor" checked="@candidate.IsSupervisor" aria-label="@desk["DeskSupervisorColumn"]: @candidate.Name" />
+												</td>
+											}
+											else
+											{
+												<td colspan="2"><small class="text-muted">@desk["NotEligibleHelp"]</small></td>
+											}
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+				</div>
+			</div>
+		}
+	</div>
+</div>

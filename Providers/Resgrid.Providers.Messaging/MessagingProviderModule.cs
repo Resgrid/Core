@@ -9,6 +9,7 @@ namespace Resgrid.Providers.Messaging
 		{
 			builder.RegisterType<NovuProvider>().As<INovuProvider>().InstancePerLifetimeScope();
 			builder.RegisterType<GifProvider>().As<IGifProvider>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatcherDeskPushProvider>().As<IDispatcherDeskPushProvider>().InstancePerLifetimeScope();
 		}
 	}
 }

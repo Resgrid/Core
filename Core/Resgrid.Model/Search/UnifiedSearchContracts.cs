@@ -192,6 +192,22 @@ namespace Resgrid.Model.Search
 
 		/// <summary>Hide once the department's Records cutover is active: a legacy Logs write that the Logs pages now refuse. Reads stay listed.</summary>
 		public bool HiddenAfterRecordsCutover { get; set; }
+
+		/// <summary>
+		/// A per-person rule the destination page applies beyond claims (see <see cref="SystemActionAccessRules"/>); null = none.
+		/// Department admins always pass it.
+		/// </summary>
+		public string AccessRule { get; set; }
+	}
+
+	/// <summary>Per-person page rules the system-functionality search applies, mirroring the pages' own checks.</summary>
+	public static class SystemActionAccessRules
+	{
+		/// <summary>Dispatcher desk board and break planner: dispatchers, shift managers and desk supervisors (MVC DispatcherDesk DeskAccess.CanView).</summary>
+		public const string DispatcherDesk = "DispatcherDesk";
+
+		/// <summary>Dispatcher activity: desk supervisors (MVC DispatcherDesk Activity).</summary>
+		public const string DispatcherSupervisor = "DispatcherSupervisor";
 	}
 
 	public class SystemActionHit

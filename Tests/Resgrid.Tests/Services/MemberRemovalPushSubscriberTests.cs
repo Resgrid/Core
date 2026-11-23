@@ -47,6 +47,7 @@ namespace Resgrid.Tests.Services
 			_novu = new Mock<INovuProvider>();
 			_novu.Setup(n => n.DeleteUserSubscriber(Leaver, It.IsAny<string>())).ReturnsAsync(true);
 			_novu.Setup(n => n.DeleteICUserSubscriber(Leaver, It.IsAny<string>())).ReturnsAsync(true);
+			_novu.Setup(n => n.DeleteDispatchUserSubscriber(Leaver, It.IsAny<string>())).ReturnsAsync(true);
 
 			_service = new DeleteService(Mock.Of<IAuthorizationService>(), _departments.Object, Mock.Of<ICallsService>(), Mock.Of<IActionLogsService>(), Mock.Of<IUsersService>(),
 				Mock.Of<IUserProfileService>(), Mock.Of<IMessageService>(), Mock.Of<IDepartmentGroupsService>(), Mock.Of<IWorkLogsService>(), Mock.Of<IUserStateService>(),
@@ -64,6 +65,7 @@ namespace Resgrid.Tests.Services
 			revoked.Should().BeTrue();
 			_novu.Verify(n => n.DeleteUserSubscriber(Leaver, "AAAA"), Times.Once);
 			_novu.Verify(n => n.DeleteICUserSubscriber(Leaver, "AAAA"), Times.Once);
+			_novu.Verify(n => n.DeleteDispatchUserSubscriber(Leaver, "AAAA"), Times.Once, "the Dispatch app's desk subscriber holds a device too");
 			_novu.VerifyNoOtherCalls();
 		}
 
@@ -113,6 +115,8 @@ namespace Resgrid.Tests.Services
 			_novu.Verify(n => n.DeleteICUserSubscriber(Leaver, "AAAA"), Times.Once);
 			_novu.Verify(n => n.DeleteUserSubscriber(Leaver, "BBBB"), Times.Once);
 			_novu.Verify(n => n.DeleteICUserSubscriber(Leaver, "BBBB"), Times.Once);
+			_novu.Verify(n => n.DeleteDispatchUserSubscriber(Leaver, "AAAA"), Times.Once);
+			_novu.Verify(n => n.DeleteDispatchUserSubscriber(Leaver, "BBBB"), Times.Once);
 			_novu.VerifyNoOtherCalls();
 		}
 

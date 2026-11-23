@@ -854,4 +854,22 @@
   <data name="Inactive" xml:space="preserve"><value>Inactive</value></data>
   <data name="M4SupplierHelp" xml:space="preserve"><value>Missing a supplier? Add one on the Suppliers page.</value></data>
   <data name="M4PurchaseOrderCurrencyHelp" xml:space="preserve"><value>Choose the currency for this order. New orders default to your department's currency.</value></data>
+  <data name="ParLevels" xml:space="preserve">
+    <value>Minimum at each location</value>
+  </data>
+  <data name="ParLevelsHint" xml:space="preserve">
+    <value>A location at or below its own minimum raises a low stock alert for that location, even when the department total is fine. The minimum and reorder point above stay the department-wide check.</value>
+  </data>
+  <data name="ParLevelAddLocation" xml:space="preserve">
+    <value>Add a location</value>
+  </data>
+  <data name="ParLevelMinimum" xml:space="preserve">
+    <value>Minimum there</value>
+  </data>
+  <data name="ParLevelsRemoveHint" xml:space="preserve">
+    <value>Clear a location’s minimum to remove it.</value>
+  </data>
+  <data name="InvalidParLevel" xml:space="preserve">
+    <value>Each location can have one minimum, of 0 or more.</value>
+  </data>
 </root>

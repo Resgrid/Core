@@ -12,6 +12,9 @@
 @inject Resgrid.Model.Services.IBusinessOperationsAccessService businessOperationsAccess
 @inject Resgrid.Model.Services.IIncidentBackOfficeAccessService incidentBackOfficeAccess
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> incidentBackOfficeLocalizer
+@inject Resgrid.Model.Services.IDispatchAccessService dispatchAccess
+@inject Resgrid.Model.Services.IDispatcherPresenceService dispatcherPresence
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatcherDesk.DispatcherDesk> dispatcherDeskLocalizer
 @{
 	// Chat.System flag gates every chat surface (chat, assistant, moderation). When it is off
 	// the nav items are hidden entirely; the API 404s the endpoints regardless.
@@ -54,6 +57,16 @@
 	var onIncidentBackOfficePage = Html.IsController(incidentSections.SelectMany(s => s.Items).Select(i => i.Controller).Distinct().Append("IncidentBackOfficeBilling").ToArray());
 	var onReadinessPage = Html.IsController("WorkOrders", "WorkOrderMaintenance", "WorkOrderOperations", "WorkOrderReporting",
 		"Checklists", "ChecklistsScheduling", "ChecklistReports", "ChecklistReporting", "ChecklistReminders");
+	// Dispatcher Desk (M0324): dispatchers (Dispatch app login, a cached permission check), department admins and shift
+	// managers; the pages themselves decide who supervises. Settings are for department admins.
+	var showDispatcherDesk = SettingsHelper.IsShiftsEnabled() && (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() ||
+		ClaimsAuthorizationHelper.CanCreateShift() ||
+		await dispatchAccess.CanUseDispatchAsync(ClaimsAuthorizationHelper.GetDepartmentId(), ClaimsAuthorizationHelper.GetUserId()));
+	var onDispatcherDeskPage = Html.IsController("DispatcherDesk");
+	// The Activity report is for department admins and desk supervisors only (DispatcherDeskController.Activity refuses others);
+	// checked only for members who get the desk group at all.
+	var showDispatcherActivity = showDispatcherDesk && (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() ||
+		await dispatcherPresence.CanSuperviseAsync(ClaimsAuthorizationHelper.GetDepartmentId(), ClaimsAuthorizationHelper.GetUserId()));
 }
 <nav class="navbar-default navbar-static-side module-navigation" role="navigation">
 	<div class="nav-header">
@@ -120,7 +133,45 @@
 					<a asp-controller="Mapping" asp-action="Index" asp-route-area="User"><i class="fa fa-map-marker"></i> <span class="nav-label" data-i18n="nav.mapping">@(await departmentTerms.NameAsync(DepartmentTerms.Mapping))</span></a>
 				</li>
 			}
-			@if (SettingsHelper.IsShiftsEnabled())
+			@if (showDispatcherDesk)
+			{
+				// The Dispatcher Desk lives under the Shifts module: Shifts becomes a group holding the shift pages' entry and the
+				// desk pages (the dispatch roster and breaks are part of shifts).
+				var deskAction = (string)ViewContext.RouteData.Values["action"];
+				var shiftsName = await departmentTerms.NameAsync(DepartmentTerms.Shifts);
+				var onShiftsPage = Html.IsController("Shifts");
+				<li class="sidebar-module-group @(onShiftsPage || onDispatcherDeskPage ? "active mm-active" : null)">
+					<a href="#" aria-label="@shiftsName" aria-controls="shifts-module-menu" aria-expanded="@(onShiftsPage || onDispatcherDeskPage ? "true" : "false")">
+						<i class="fa fa-briefcase"></i>
+						<span class="nav-label" data-i18n="nav.shifts">@shiftsName</span>
+						<span class="fa arrow"></span>
+					</a>
+					<ul class="nav nav-second-level" id="shifts-module-menu">
+						<li class="@(onShiftsPage ? "active" : null)">
+							<a asp-controller="Shifts" asp-action="Index" asp-route-area="User"><i class="fa fa-calendar"></i> @shiftsName</a>
+						</li>
+						<li class="@(onDispatcherDeskPage && String.Equals(deskAction, "Index", StringComparison.OrdinalIgnoreCase) ? "active" : null)">
+							<a asp-controller="DispatcherDesk" asp-action="Index" asp-route-area="User"><i class="fa fa-headphones"></i> @dispatcherDeskLocalizer["DeskBoardTitle"]</a>
+						</li>
+						<li class="@(onDispatcherDeskPage && String.Equals(deskAction, "Breaks", StringComparison.OrdinalIgnoreCase) ? "active" : null)">
+							<a asp-controller="DispatcherDesk" asp-action="Breaks" asp-route-area="User"><i class="fa fa-coffee"></i> @dispatcherDeskLocalizer["BreaksTitle"]</a>
+						</li>
+						@if (showDispatcherActivity)
+						{
+							<li class="@(onDispatcherDeskPage && String.Equals(deskAction, "Activity", StringComparison.OrdinalIgnoreCase) ? "active" : null)">
+								<a asp-controller="DispatcherDesk" asp-action="Activity" asp-route-area="User"><i class="fa fa-bar-chart"></i> @dispatcherDeskLocalizer["ActivityTitle"]</a>
+							</li>
+						}
+						@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+						{
+							<li class="@(onDispatcherDeskPage && String.Equals(deskAction, "Settings", StringComparison.OrdinalIgnoreCase) ? "active" : null)">
+								<a asp-controller="DispatcherDesk" asp-action="Settings" asp-route-area="User"><i class="fa fa-cog"></i> @dispatcherDeskLocalizer["SettingsTitle"]</a>
+							</li>
+						}
+					</ul>
+				</li>
+			}
+			else if (SettingsHelper.IsShiftsEnabled())
 			{
 				<li class="@Html.IsSelected(controller: "Shifts")">
 					<a asp-controller="Shifts" asp-action="Index" asp-route-area="User"><i class="fa fa-briefcase"></i> <span class="nav-label" data-i18n="nav.mapping">@(await departmentTerms.NameAsync(DepartmentTerms.Shifts))</span></a>

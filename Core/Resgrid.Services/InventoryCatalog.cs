@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -41,8 +42,59 @@ namespace Resgrid.Services
 			row.CategoryId = input.CategoryId; row.TrackingMode = (int)input.TrackingMode; row.IsKit = input.IsKit; row.RequiresLotTracking = input.RequiresLotTracking;
 			row.RequiresExpiration = input.RequiresExpiration; row.IsControlledSubstance = input.IsControlledSubstance; row.IsActive = input.IsActive;
 			input.Details.Name = input.Details.Name.Trim(); row.Content = JsonConvert.SerializeObject(input.Details);
-			await SaveAsync(actor, row, input.Id == null); await AuditAsync(actor, row, "InventoryItemSaved"); await RefreshLowStockAsync(actor, row.Id, events); return await RevealAsync(actor, row);
+			await SaveAsync(actor, row, input.Id == null); await AuditAsync(actor, row, "InventoryItemSaved");
+			if (input.ParLevels != null) await SaveParLevelsAsync(actor, row, input.ParLevels);
+			await RefreshLowStockAsync(actor, row.Id, events); return await RevealAsync(actor, row);
 		});
+		/// <summary>
+		/// Sets or removes the listed locations' minimums for the item; locations not listed keep theirs, so a form showing only
+		/// some locations never wipes the rest. Setting or removing needs write access to that location. Removing soft deletes;
+		/// setting again revives the same row.
+		/// </summary>
+		private async Task SaveParLevelsAsync(InventoryActor actor, InventoryItem item, System.Collections.Generic.List<InventoryParLevelInput> input)
+		{
+			if (input.Count > 1000) throw new InventoryException(400, "InvalidParLevel");
+			var changes = new System.Collections.Generic.Dictionary<string, decimal?>(StringComparer.Ordinal);
+			foreach (var level in input.Where(x => x != null))
+			{
+				Id(level.LocationId);
+				var minimum = level.MinimumQuantity;
+				if (minimum.HasValue && (minimum.Value < 0 || minimum.Value > 1_000_000_000m || decimal.Round(minimum.Value, 6) != minimum.Value) || !changes.TryAdd(level.LocationId, minimum))
+					throw new InventoryException(400, "InvalidParLevel");
+			}
+			var existing = (await _store.RelatedAsync<InventoryParLevel>(actor.DepartmentId, "ItemId", item.Id)).ToDictionary(x => x.LocationId, StringComparer.Ordinal);
+			foreach (var change in changes)
+			{
+				var current = existing.GetValueOrDefault(change.Key);
+				var live = current != null && !current.IsDeleted;
+				if (!change.Value.HasValue ? !live : live && current.MinimumQuantity == change.Value.Value) continue;
+				await LocationAsync(actor, change.Key, true);
+				if (!change.Value.HasValue)
+				{
+					current.IsDeleted = true; await SaveAsync(actor, current, false); await AuditAsync(actor, current, "InventoryParLevelRemoved");
+					continue;
+				}
+				var row = current ?? New<InventoryParLevel>(actor);
+				row.ItemId = item.Id; row.LocationId = change.Key; row.MinimumQuantity = change.Value.Value; row.IsDeleted = false;
+				await SaveAsync(actor, row, current == null); await AuditAsync(actor, row, "InventoryParLevelSaved");
+			}
+		}
+		public async Task<System.Collections.Generic.List<InventoryParLevel>> GetParLevelsAsync(InventoryActor actor, System.Collections.Generic.IReadOnlyCollection<string> itemIds)
+		{
+			await _auth.RequireAsync(actor);
+			if (itemIds == null || itemIds.Count > 500) throw new InventoryException(400, "InvalidPage");
+			foreach (var id in itemIds) Id(id);
+			var result = new System.Collections.Generic.List<InventoryParLevel>();
+			if (itemIds.Count == 0) return result;
+			foreach (var row in await _store.RelatedManyAsync<InventoryParLevel>(actor.DepartmentId, "ItemId", itemIds.Distinct().ToArray()))
+			{
+				if (row.IsDeleted) continue;
+				try { await AuthorizeRowAsync(actor, row); }
+				catch (InventoryException ex) when (ex.StatusCode is 403 or 404 || ex.Code == "LocationUnavailable") { continue; }
+				result.Add(row);
+			}
+			return result;
+		}
 		public Task<InventoryCategory> SaveCategoryAsync(InventoryActor actor, string id, int revision, string name, string parentId) => TransactionAsync(actor, async events =>
 		{
 			await _auth.RequireAsync(actor, true); Text(name);
@@ -106,7 +158,12 @@ namespace Resgrid.Services
 			if (row is InventoryItem item && ((await _store.RelatedAsync<InventoryStock>(actor.DepartmentId, "ItemId", id)).Any(x => x.Quantity != 0) || (await _store.RelatedAsync<InventoryAsset>(actor.DepartmentId, "ItemId", id)).Any(x => !x.IsDeleted && x.Status is not (4 or 5 or 6)))) throw new InventoryException(409, "StockRemains");
 			if (row is InventoryLocation location && (location.IsDefault || (await _store.RelatedAsync<InventoryStock>(actor.DepartmentId, "LocationId", id)).Any(x => x.Quantity != 0) || (await _store.RelatedAsync<InventoryAsset>(actor.DepartmentId, "CurrentLocationId", id)).Any() || (await _store.RelatedAsync<InventoryLocation>(actor.DepartmentId, "ParentLocationId", id)).Any(x => !x.IsDeleted))) throw new InventoryException(409, "LocationInUse");
 			if (row is InventoryCategory && ((await _store.RelatedAsync<InventoryItem>(actor.DepartmentId, "CategoryId", id)).Any(x => !x.IsDeleted) || (await _store.RelatedAsync<InventoryCategory>(actor.DepartmentId, "ParentCategoryId", id)).Any(x => !x.IsDeleted))) throw new InventoryException(409, "CategoryInUse");
-			row.IsDeleted = true; await SaveAsync(actor, row, false); await AuditAsync(actor, row, "InventoryArchived"); return true;
+			row.IsDeleted = true; await SaveAsync(actor, row, false); await AuditAsync(actor, row, "InventoryArchived");
+			// An archived location holds no stock, so its par level alerts resolve.
+			if (row is InventoryLocation)
+				foreach (var itemId in (await _store.RelatedAsync<InventoryParLevel>(actor.DepartmentId, "LocationId", id)).Select(p => p.ItemId).Distinct())
+					await RefreshLowStockAsync(actor, itemId, events);
+			return true;
 		});
 		public Task RebuildStocksAsync(InventoryActor actor) => TransactionAsync(actor, async events => {
 			await _auth.RequireAsync(actor, true); await _store.RebuildStocksAsync(actor.DepartmentId);

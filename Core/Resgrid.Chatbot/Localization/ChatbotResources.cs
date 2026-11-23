@@ -809,6 +809,28 @@ namespace Resgrid.Chatbot.Localization
 				"Ця зміна вже заповнена.",
 				"هذه المناوبة ممتلئة بالفعل."),
 
+			["Shift_GroupFull"] = L(
+				"Every slot in your group on this shift is taken for the roles you hold.",
+				"Todos los puestos de su grupo en este turno están ocupados para sus funciones.",
+				"Alla platser i din grupp på detta skift är tagna för dina roller.",
+				"Alle Plätze Ihrer Gruppe in dieser Schicht sind für Ihre Rollen belegt.",
+				"Toutes les places de votre groupe sur ce quart sont prises pour vos rôles.",
+				"Tutti i posti del tuo gruppo in questo turno sono occupati per i tuoi ruoli.",
+				"Wszystkie miejsca Twojej grupy na tej zmianie są zajęte dla Twoich ról.",
+				"Усі місця вашої групи на цій зміні для ваших ролей зайняті.",
+				"جميع الأماكن في مجموعتك في هذه المناوبة مشغولة للأدوار التي تشغلها."),
+
+			["Shift_RoleRequired"] = L(
+				"You need one of the roles your group asks for on this shift to sign up.",
+				"Necesita una de las funciones que su grupo pide en este turno para inscribirse.",
+				"Du behöver en av de roller som din grupp kräver på detta skift för att anmäla dig.",
+				"Sie benötigen eine der Rollen, die Ihre Gruppe in dieser Schicht verlangt, um sich anzumelden.",
+				"Vous devez avoir l'un des rôles que votre groupe demande sur ce quart pour vous inscrire.",
+				"Per iscriverti ti serve uno dei ruoli che il tuo gruppo richiede in questo turno.",
+				"Aby się zapisać, potrzebujesz jednej z ról, których Twoja grupa wymaga na tej zmianie.",
+				"Щоб записатися, вам потрібна одна з ролей, яких ваша група вимагає на цій зміні.",
+				"تحتاج إلى أحد الأدوار التي تطلبها مجموعتك في هذه المناوبة للتسجيل."),
+
 			["Shift_SignedUp"] = L(
 				"Signed up for the shift on {0}.",
 				"Te has inscrito en el turno del {0}.",

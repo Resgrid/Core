@@ -7755,6 +7755,12 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>من يمكنه اختيار المتقدم الذي يأخذ طلب تبديل المناوبة والموافقة على التبديلات المنتظرة. يمكن لمسؤولي القسم ذلك دائمًا؛ أما مسؤولو المجموعات والشخص المتنازل وأعضاء الأدوار المختارة فهم اختيار القسم.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatcherDeskConfig">
+    <value>مكتب المرسلين</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatcherDeskConfig">
+    <value>يشغّل مكتب الإرسال ويحدد طريقة عمله: العمل الذي يُعرض على موظفي الإرسال المناوبين في تطبيق Dispatch (البلاغات المعلقة والمجدولة، والرسائل النصية، والمكالمات الهاتفية، ورسائل البريد الإلكتروني، والمحادثات)، ومدة انتظار العرض وعدد العناصر التي يحملها موظف الإرسال قبل أن يُعدّ مشغولًا، وعدد العروض الفائتة المتتالية التي تجعل موظف الإرسال غائبًا، وما يحدث للرسائل النصية والمكالمات الهاتفية عندما لا يكون أحد متاحًا (الانتظار في الطابور، أو Enhanced AI، أو البريد الصوتي). ويحدد أيضًا ما يصبح عليه البلاغ المرسل بالبريد الإلكتروني إلى عنوان الإرسال (يُرسل فورًا، أو يُحفظ كمعلق، أو يقرؤه Enhanced AI في بلاغ معلق)، وقواعد الاستراحات والمناوبة: تذكيرات الاستراحة، والعودة التلقائية من الاستراحات، والحد الأدنى من المتاحين، ورفض الاستراحات دونه، وعدم إرسال تنبيهات المكتب أثناء الاستراحة، وما إذا كان على موظفي الإرسال أن يكونوا في وردية أو يمكنهم المناوبة دونها (الورديات، إعدادات مكتب الإرسال). معطّل افتراضيًا؛ تُرسل البلاغات الواردة بالبريد فورًا حتى يُغيَّر إعداد البلاغات الواردة بالبريد، وهذا يسري حتى عند إيقاف التوجيه.</value>
+  </data>
   <data xml:space="preserve" name="Feature.home-dashboard">
     <value>لوحة معلومات رئيسية قابلة للتخصيص</value>
   </data>
@@ -8000,5 +8006,251 @@
   </data>
   <data name="FeatureSetup.ai-destination-advice" xml:space="preserve">
     <value>يتطلب إضافة Enhanced AI مع تفعيل توصية الوجهة بالذكاء الاصطناعي لقسمك. أضف أولًا وجهاتك بقدراتها وقواعد الوجهات. تظهر التوصية عند عرض البلاغ وتحديثه، ولا يتغير شيء حتى يطبقها أحد، ولا تحصل الأقسام التي تستخدم Advanced Data Protection على توصيات.</value>
+  </data>
+  <data name="Feature.dispatcher-desk" xml:space="preserve">
+    <value>مكتب الإرسال</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk" xml:space="preserve">
+    <value>لوحة مباشرة لموظفي الإرسال المناوبين والعمل الذي ينتظرهم. تُعرض البلاغات المعلقة والمجدولة والرسائل النصية والمكالمات الهاتفية ورسائل البريد الإلكتروني والمحادثات على موظف إرسال واحد متاح في كل مرة، فيتسلّمها في تطبيق Dispatch على هاتف أو جهاز لوحي.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk" xml:space="preserve">
+    <value>يصل العمل إلى من هو متاح: موظف الإرسال الذي يحمل عملًا يُعدّ مشغولًا، والعرض الذي لا يقبله أحد ينتقل إلى موظف الإرسال التالي، والعمل الذي يبقى منتظرًا ينبّه جميع المناوبين. ويستطيع موظفو الإرسال العمل على المكتب من أي مكان، لا من وحدة تحكم فقط.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk" xml:space="preserve">
+    <value>يغطي موظفا إرسال متطوعان عطلة نهاية الأسبوع من هاتفيهما. تُعرض رسالة نصية عن شجرة سقطت عبر طريق على المتاح منهما فتصبح بلاغًا، بينما يكون الآخر في استراحة الوجبة ولا تصله تنبيهات المكتب حتى يعود.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk" xml:space="preserve">
+    <value>امنح موظفي الإرسال صلاحية تسجيل الدخول إلى تطبيق Dispatch وأضفهم إلى جدول الإرسال في وردية. ثم افتح الورديات، إعدادات مكتب الإرسال، وفعّل توجيه العمل إلى موظفي الإرسال المناوبين، واختر ما يُرسل في الإرسال إلى المكتب واحفظ. يسجّل موظفو الإرسال دخولهم إلى المكتب في تطبيق Dispatch؛ وتعرض صفحة مكتب الإرسال من هو متاح أو مشغول أو في استراحة والطابور المفتوح، ويمكن لمشرف المكتب إنهاء استراحة أو نقل العمل إلى شخص آخر.</value>
+  </data>
+  <data name="Feature.shift-dispatchers" xml:space="preserve">
+    <value>موظفو الإرسال المناوبون</value>
+  </data>
+  <data name="FeaturePurpose.shift-dispatchers" xml:space="preserve">
+    <value>أضف موظفي إرسال إلى الورديات المعيّنة وورديات التسجيل، أو إلى وردية للإرسال فقط أو بجانب المستجيبين، مع عدد مواقع الإرسال المطلوب شغلها، وحد أدنى على المكتب، ومشرف للمكتب.</value>
+  </data>
+  <data name="FeatureValue.shift-dispatchers" xml:space="preserve">
+    <value>لا يعرض المكتب العمل إلا على موظفي الإرسال المناوبين فعلًا: المدرجين في جدول يوم وردية جارٍ الآن، ما لم يسمح القسم بالمناوبة دون وردية. وتظهر مواقع الإرسال الشاغرة في يوم الوردية، وتعرض صفحة في الخدمة الآن موظفي الإرسال مع حالتهم على المكتب واستراحاتهم.</value>
+  </data>
+  <data name="FeatureExample.shift-dispatchers" xml:space="preserve">
+    <value>يشغّل مركز إرسال ورديات A وB وC للإرسال فقط بموظفَي إرسال في كل منها، ويضيف قسم متطوعين موقع موظف إرسال واحدًا إلى وردية التسجيل في عطلة نهاية الأسبوع.</value>
+  </data>
+  <data name="FeatureSetup.shift-dispatchers" xml:space="preserve">
+    <value>افتح الورديات، وأنشئ وردية أو عدّلها، وفعّل هذه الوردية تضم موظفي إرسال. حدّد موظفو الإرسال المطلوبون، وفي الوردية المعيّنة حدّد الأشخاص في جدول الإرسال وعيّن مشرفًا للمكتب؛ أما في وردية التسجيل فيختار موظفو الإرسال التسجيل كموظف إرسال في يوم الوردية. لا يمكن إضافة إلا من لديهم صلاحية تسجيل الدخول إلى تطبيق Dispatch.</value>
+  </data>
+  <data name="Feature.dispatcher-breaks" xml:space="preserve">
+    <value>استراحات موظفي الإرسال</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-breaks" xml:space="preserve">
+    <value>خطّط استراحات ووجبات موظفي الإرسال لليوم على مخطط زمني واحد للتغطية يبيّن من هو مناوب ومن هو في استراحة وأين ستنخفض التغطية دون الحد الأدنى.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-breaks" xml:space="preserve">
+    <value>تبقى الاستراحات متباعدة كي لا يخلو المكتب أبدًا: توزّع جدولة الاستراحات خطة استراحات الوردية على موظفي الإرسال فيها دون تداخل، وينبّه المخطِّط إلى الاستراحات المتداخلة والفجوات قبل حدوثها. ويتلقى موظفو الإرسال تذكيرًا قبل كل استراحة، ولا تصلهم افتراضيًا تنبيهات المكتب أثناءها.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-breaks" xml:space="preserve">
+    <value>في وردية مدتها 12 ساعة بثلاثة موظفي إرسال، تضع جدولة الاستراحات لكل منهم وجبة مدتها 30 دقيقة واستراحتين مدة كل منهما 15 دقيقة في أوقات مختلفة، ويتلقى كل موظف إرسال تذكيرًا قبل الاستراحة بخمس دقائق.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-breaks" xml:space="preserve">
+    <value>حدّد خطة استراحات لكل وردية، أو خطة الاستراحات الافتراضية في إعدادات مكتب الإرسال. ثم افتح الورديات، استراحات موظفي الإرسال، واختر تاريخًا ويوم وردية واستخدم جدولة الاستراحات، أو خطّط استراحات منفردة بنفسك. يخطّط مشرفو المكتب ومديرو الورديات استراحات الجميع؛ ولا يخطّط موظفو الإرسال استراحاتهم إلا في الورديات التي تسمح بذلك. الاستراحة مدة، لذا فإن الاستراحة التي تبدأ مبكرًا تنتهي مبكرًا أيضًا.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-settings" xml:space="preserve">
+    <value>إعدادات مكتب الإرسال</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-settings" xml:space="preserve">
+    <value>فعّل التوجيه واختر العمل الذي يذهب إلى المكتب، ومدة انتظار العرض، وما يحدث للرسائل النصية والمكالمات الهاتفية عندما يكون جميع موظفي الإرسال مشغولين، وما يصبح عليه البلاغ الوارد بالبريد، وقواعد الاستراحات والمناوبة.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-settings" xml:space="preserve">
+    <value>يقرّر القسم مرة واحدة كيف يعمل المكتب، من سرعة انتقال العمل الذي لم يُجب عنه إلى ما إذا كان يجوز لاستراحة أن تترك عددًا من موظفي الإرسال المتاحين أقل من الحد الأدنى.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-settings" xml:space="preserve">
+    <value>يرسل قسمٌ الرسائل النصية والمكالمات الهاتفية إلى المكتب، ويمنح كل عرض 60 ثانية، ويترك Enhanced AI يملأ بلاغًا معلقًا عندما لا يكون أحد متاحًا، ويحفظ البلاغات الواردة بالبريد كمعلقة ليراجعها موظف إرسال.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-settings" xml:space="preserve">
+    <value>يفتح مسؤولو القسم الورديات ثم إعدادات مكتب الإرسال. فعّل توجيه العمل إلى موظفي الإرسال المناوبين، واختر الإرسال إلى المكتب، ومهلة العرض وعدد العناصر لكل موظف إرسال، وما يحدث عندما يكون جميع موظفي الإرسال مشغولين، والبلاغات الواردة بالبريد، وقواعد الاستراحات، ثم احفظ. تتطلب خيارات Enhanced AI إضافة Enhanced AI.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-activity" xml:space="preserve">
+    <value>نشاط موظفي الإرسال</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-activity" xml:space="preserve">
+    <value>نشاط المكتب لمدة تصل إلى 92 يومًا: العمل حسب النوع، والعناصر المكتملة والفائضة والملغاة والمصعّدة، ومتوسط زمن الرد، ولكل موظف إرسال العروض المقبولة والمرفوضة والفائتة، وزمن القبول والإكمال، والاستراحات المأخوذة والفائتة أو التي عاد منها متأخرًا.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-activity" xml:space="preserve">
+    <value>اعرف ما إذا كان العمل يُستلم بسرعة، وكم مرة يفيض أو يُصعَّد، وما إذا كانت الاستراحات تنتهي في وقتها، ثم عدّل التوظيف أو مهلة العروض أو خطط الاستراحات استنادًا إلى الأرقام.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-activity" xml:space="preserve">
+    <value>يلاحظ مشرف أن الرسائل النصية كثيرًا ما صُعّدت مساء الجمعة، فيضيف موظف إرسال ثانيًا إلى تلك الوردية.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-activity" xml:space="preserve">
+    <value>يفتح مسؤولو القسم ومشرفو المكتب الورديات ثم نشاط موظفي الإرسال، ويختارون التاريخين من وإلى، ثم يختارون عرض.</value>
+  </data>
+  <data name="Feature.intake-spam-screening" xml:space="preserve">
+    <value>فحص الرسائل المزعجة في الاستقبال</value>
+  </data>
+  <data name="FeaturePurpose.intake-spam-screening" xml:space="preserve">
+    <value>أبعد الرسائل المزعجة والمكالمات الآلية عن البلاغات المعلقة: ارفض بلاغ استقبال كرسالة مزعجة واحظر مرسله، وحدّد عدد البلاغات التي يمكن لرقم هاتف واحد إنشاؤها في الساعة، واطلب من المتصلين صوتيًا الضغط على 1 قبل بدء الأسئلة، وضع علامة على الرسائل التي يقرؤها Enhanced AI على أنها ليست حادثًا.</value>
+  </data>
+  <data name="FeatureValue.intake-spam-screening" xml:space="preserve">
+    <value>يقضي موظفو الإرسال وقتهم في البلاغات الحقيقية. لا تُنشئ رسائل ومكالمات المرسل المحظور أي بلاغات ولا تتلقى ردًا، ويحتفظ البلاغ الذي خضع للفحص بعلامته في البلاغات المعلقة لكنه لا يُعرض على مكتب الإرسال؛ ويظل موظف الإرسال هو من يقرر ما يحدث له.</value>
+  </data>
+  <data name="FeatureExample.intake-spam-screening" xml:space="preserve">
+    <value>رقم إعلاني يواصل إرسال الرسائل إلى رقم القسم. بعد تجاوز الحد بالساعة تُضاف رسائله كملاحظات إلى بلاغه المفتوح، ثم يرفض موظف إرسال ذلك البلاغ كرسالة مزعجة ويحظر الرقم لمدة 30 يومًا.</value>
+  </data>
+  <data name="FeatureSetup.intake-spam-screening" xml:space="preserve">
+    <value>في بلاغ استقبال معلق، اختر رفض كرسالة مزعجة واترك حظر المرسل أيضًا محددًا؛ يُلغى البلاغ ولا يُبلَّغ أحد. يظهر المرسلون المحظورون في صفحة قنوات الاستقبال، حيث يرفع خيار رفع الحظر الحظر قبل موعده. ينطبق الحد بالساعة على قنوات الرسائل النصية والصوت وWhatsApp التي ليس لها مرسلون مسموح لهم، ولا ينطبق أبدًا على قنوات البريد الإلكتروني أو المحادثة أو webhook.</value>
+  </data>
+  <data name="Area.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="AreaPurpose.relay" xml:space="preserve">
+    <value>تطبيق مرافق مفتوح المصدر يربط Resgrid برسائل البريد الإلكتروني الواردة من CAD وأنظمة الاستدعاء، وأجهزة المسح، وأجهزة الراديو ثنائية الاتجاه، وأجهزة راديو push-to-talk العاملة عبر LTE.</value>
+  </data>
+  <data name="AreaValue.relay" xml:space="preserve">
+    <value>أدخِل إلى Resgrid البلاغات والرسائل وحركة الراديو من الأنظمة التي لديك بالفعل، دون استبدالها.</value>
+  </data>
+  <data name="AreaExample.relay" xml:space="preserve">
+    <value>يرسل نظام CAD في المقاطعة كل عملية إرسال بالبريد الإلكتروني إلى الـ relay، فينشئ البلاغ مع إرفاق بطاقة الاستجابة، بينما يتيح راديو المحطة الموصول بقناة صوتية لمستخدمي التطبيق التحدث مع الطواقم على الراديو.</value>
+  </data>
+  <data name="ModuleAdoption.relay" xml:space="preserve">
+    <value>ثبّت Relay على حاسوب تابع للقسم: تطبيق سطح المكتب لنظام Windows، أو دون واجهة على Windows أو Linux أو macOS أو Docker. لا يحتاج الإرسال عبر البريد الإلكتروني إلى إضافة؛ أما جسر الراديو والمسجّل والتنبيه بالنغمات فتحتاج إلى إضافة Push-to-Talk وقناة صوتية. يكمّل Relay أنظمة الراديو والاستدعاء لديك؛ ولا يحل محلها.</value>
+  </data>
+  <data name="Feature.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay" xml:space="preserve">
+    <value>ثبّت Relay وشغّله، واختر أوضاعه، واربطه بقسمك.</value>
+  </data>
+  <data name="FeatureValue.relay" xml:space="preserve">
+    <value>يشغّل تطبيق سطح المكتب لنظام Windows عدة أوضاع جنبًا إلى جنب مع لوحة معلومات مباشرة؛ ويشغّل المضيف دون واجهة وضعًا واحدًا لكل عملية على خادم أو في Docker.</value>
+  </data>
+  <data name="FeatureExample.relay" xml:space="preserve">
+    <value>يثبّت قسمٌ تطبيق سطح المكتب على حاسوب المحطة، ويسجّل الدخول إليه بحساب عضو مخصص، ويفعّل التشغيل التلقائي للإرسال عبر البريد الإلكتروني وجسر الراديو.</value>
+  </data>
+  <data name="FeatureSetup.relay" xml:space="preserve">
+    <value>أضف حساب عضو يسجّل الـ relay الدخول به، ثم ثبّت Relay واربطه برمز التحديث (refresh token) الخاص بهذا الحساب. يتطلب جسر الراديو والمسجّل والتنبيه بالنغمات رمز المستخدم هذا؛ ويمكن للإرسال عبر البريد الإلكتروني واكتشاف النغمات استخدام بيانات اعتماد العميل أيضًا. شغّل «Test connection» قبل بدء أي وضع.</value>
+  </data>
+  <data name="Feature.relay-smtp-dispatch" xml:space="preserve">
+    <value>الإرسال عبر البريد الإلكتروني باستخدام Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay-smtp-dispatch" xml:space="preserve">
+    <value>يحوّل خادم البريد المدمج في Relay رسائل الإرسال الواردة من أنظمة CAD أو لوحات الإنذار أو بوابات الاستدعاء إلى بلاغات ورسائل مجموعات في Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-smtp-dispatch" xml:space="preserve">
+    <value>الرسالة إلى رمز الإرسال الخاص بالقسم تستدعي القسم كله، ورمز الإرسال الخاص بمجموعة يرسل تلك المجموعة، ورمز رسائلها يرسل إليها رسالة. تُضاف المرفقات إلى البلاغ، ولا تنشئ الرسالة المعاد تسليمها بلاغًا ثانيًا أبدًا.</value>
+  </data>
+  <data name="FeatureExample.relay-smtp-dispatch" xml:space="preserve">
+    <value>يرسل نظام CAD في المقاطعة كل مهمة للمحطة 5 إلى رمز الإرسال الخاص بتلك المجموعة على نطاق الإرسال الخاص بالمقاطعة، فينشئ الـ relay البلاغ مع إرفاق بطاقة الاستجابة بصيغة PDF.</value>
+  </data>
+  <data name="FeatureSetup.relay-smtp-dispatch" xml:space="preserve">
+    <value>اعثر على عنوان الإرسال الخاص بالقسم في إعدادات البلاغات، وعلى عنواني الإرسال والرسائل لكل مجموعة في المجموعات. وجّه بريد نطاقات الإرسال لديك إلى Relay وأدرج هذه النطاقات في إعدادات SMTP الخاصة به. يحتاج حساب الـ relay إلى صلاحية إنشاء البلاغات، وإلى صلاحية إضافة بيانات البلاغ من أجل المرفقات.</value>
+  </data>
+  <data name="Feature.relay-tone-detect" xml:space="preserve">
+    <value>نغمات الاستدعاء إلى بلاغات</value>
+  </data>
+  <data name="FeaturePurpose.relay-tone-detect" xml:space="preserve">
+    <value>على Windows، يستمع Relay إلى جهاز مسح أو راديو عبر بطاقة صوت لاكتشاف نداءات النغمتين والنغمة الواحدة، وينشئ بلاغًا في Resgrid مع الصوت المسجّل لعملية الإرسال.</value>
+  </data>
+  <data name="FeatureValue.relay-tone-detect" xml:space="preserve">
+    <value>يتلقى الأعضاء الاستدعاء في تطبيق Responder مع إرفاق صوت المرسِل، حتى عندما يكون نداء الراديو هو الإرسال الوحيد.</value>
+  </data>
+  <data name="FeatureExample.relay-tone-detect" xml:space="preserve">
+    <value>يلتقط جهاز المسح لدى فرقة متطوعين نداء النغمتين الخاص بها، فينشئ الـ relay بلاغًا لمجموعة تلك المحطة مع إرفاق صوت الإرسال.</value>
+  </data>
+  <data name="FeatureSetup.relay-tone-detect" xml:space="preserve">
+    <value>في المجموعات، دوّن رمز الإرسال لكل مجموعة تستدعيها بالنغمات: يرسل watcher المجموعة تلك المجموعة، ويستدعي watcher القسم الجميع. أدخل نغمات كل watcher في Relay. يحتاج حساب الـ relay إلى صلاحيتي إنشاء البلاغات وإضافة بيانات البلاغ.</value>
+  </data>
+  <data name="Feature.relay-radio-bridge" xml:space="preserve">
+    <value>جسر الراديو</value>
+  </data>
+  <data name="FeaturePurpose.relay-radio-bridge" xml:space="preserve">
+    <value>على Windows، يربط Relay جهاز راديو ثنائي الاتجاه موصولًا بالكابل بقناة push-to-talk في Resgrid في الاتجاهين.</value>
+  </data>
+  <data name="FeatureValue.relay-radio-bridge" xml:space="preserve">
+    <value>يسمع الطواقم على الراديو والأعضاء في تطبيقات Responder وUnit وDispatch بعضهم بعضًا، ويمكن لنغمة طوارئ على الراديو أن تنشئ بلاغًا.</value>
+  </data>
+  <data name="FeatureExample.relay-radio-bridge" xml:space="preserve">
+    <value>يربط فريق بحث وإنقاذ جهاز الراديو الأساسي VHF الخاص به بقناة الفريق، فيتحدث الباحثون الذين يحملون أجهزة لاسلكية محمولة مع الباحثين الذين يحملون هواتف.</value>
+  </data>
+  <data name="FeatureSetup.relay-radio-bridge" xml:space="preserve">
+    <value>يتطلب إضافة Push-to-Talk وقناة صوتية ورمز التحديث الخاص بالـ relay. فعّل إرسال الراديو عبر واجهة PTT من نوع CM108 USB أو تسلسلية، واضبط كاتم الضوضاء باستخدام «Tune»، وتحقق من التوصيلات وتأخير بدء الإرسال باستخدام «Test transmit».</value>
+  </data>
+  <data name="Feature.relay-lte-donor-radios" xml:space="preserve">
+    <value>أجهزة راديو مانحة push-to-talk عبر LTE</value>
+  </data>
+  <data name="FeaturePurpose.relay-lte-donor-radios" xml:space="preserve">
+    <value>يضم مجموعة تحدث push-to-talk خلوية (PoC)، مثل Rapid Radios أو Diga-Talk+، إلى قناة صوتية في Resgrid عبر أحد أجهزتها الموصول بالكابل بالـ relay.</value>
+  </data>
+  <data name="FeatureValue.relay-lte-donor-radios" xml:space="preserve">
+    <value>يتشارك مستخدمو أجهزة PoC ومستخدمو تطبيقات Resgrid محادثة واحدة، رغم أن خدمات PoC هذه لا توفر واجهة برمجة تطبيقات أو بوابة للصوت الخارجي.</value>
+  </data>
+  <data name="FeatureExample.relay-lte-donor-radios" xml:space="preserve">
+    <value>يوصل فريق أمن جهاز Diga-Talk+ مثبتًا في مركبة بالـ relay، فيسمع الحراس الذين يحملون أجهزة PoC والمشرفون في تطبيقات Resgrid بعضهم بعضًا.</value>
+  </data>
+  <data name="FeatureSetup.relay-lte-donor-radios" xml:space="preserve">
+    <value>طبّق ملف تعريف الراديو، وفعّل إرساله بخط PTT فعلي بدلًا من VOX، وأوقف خاصية VOX والأصوات التنبيهية فيه، وأبقه موصولًا بمصدر طاقة خارجي. يشغل الراديو المانح جهازًا واحدًا في حساب PoC ويربط مجموعة التحدث المضبوط عليها. يتطلب إضافة Push-to-Talk وقناة صوتية.</value>
+  </data>
+  <data name="Feature.relay-recorder" xml:space="preserve">
+    <value>مسجّل القنوات</value>
+  </data>
+  <data name="FeaturePurpose.relay-recorder" xml:space="preserve">
+    <value>يسجّل كل إرسال على قناة push-to-talk واحدة أو على جميعها في ملفات صوتية، مع سجل يوضح من تحدث وعلى أي قناة ومتى ولأي مدة.</value>
+  </data>
+  <data name="FeatureValue.relay-recorder" xml:space="preserve">
+    <value>يحتفظ بحركة الصوت لأغراض الامتثال ومراجعة ما بعد الحدث، على قرص محلي أو في تخزين متوافق مع S3.</value>
+  </data>
+  <data name="FeatureExample.relay-recorder" xml:space="preserve">
+    <value>تسجّل وكالة لإدارة الطوارئ جميع القنوات أثناء تمرين على فيضان، وتراجع سجل الإرسال في اجتماع مراجعة ما بعد التمرين.</value>
+  </data>
+  <data name="FeatureSetup.relay-recorder" xml:space="preserve">
+    <value>يتطلب إضافة Push-to-Talk وقناة صوتية ورمز التحديث الخاص بالـ relay. تشغل كل قناة مسجّلة مقعدًا صوتيًا. تحتوي التسجيلات على حركة صوتية تشغيلية: خزّنها واحمِها واحذفها وفق سياسة السجلات لديك.</value>
+  </data>
+  <data name="Feature.relay-dispatch-tone-out" xml:space="preserve">
+    <value>التنبيه بالنغمات عبر push-to-talk</value>
+  </data>
+  <data name="FeaturePurpose.relay-dispatch-tone-out" xml:space="preserve">
+    <value>يعلن كل بلاغ جديد في Resgrid على قناة push-to-talk: نغمات تنبيه، ثم يُقرأ البلاغ بصوت عالٍ بواسطة خدمة تحويل النص إلى كلام في Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-dispatch-tone-out" xml:space="preserve">
+    <value>تسمع الطواقم التي تتابع قناة ما عمليات الإرسال كما تسمعها على الراديو، بصياغة Resgrid نفسها وبأسماء أولويات البلاغات لديك.</value>
+  </data>
+  <data name="FeatureExample.relay-dispatch-tone-out" xml:space="preserve">
+    <value>يتابع فريق الاستجابة للطوارئ في مصنع قناته، ويُعلَن كل بلاغ جديد بتنبيه بنغمة عالية-منخفضة يليه اسم البلاغ وطبيعته وعنوانه وأولويته.</value>
+  </data>
+  <data name="FeatureSetup.relay-dispatch-tone-out" xml:space="preserve">
+    <value>يتطلب إضافة Push-to-Talk وقناة صوتية ورمز التحديث الخاص بالـ relay. لا تُعلَن البلاغات المفتوحة بالفعل عند بدء تشغيل الـ relay، وتُعلَن البلاغات المجدولة عند إرسالها.</value>
+  </data>
+  <data name="Rule.relay-dispatch-code" xml:space="preserve">
+    <value>لا يوجد رمز بريد إلكتروني للإرسال خاص بالقسم</value>
+  </data>
+  <data name="RuleWhy.relay-dispatch-code" xml:space="preserve">
+    <value>لا يملك القسم رمز بريد إلكتروني للإرسال، لذا لا يمكن للرسائل المرسلة إلى عنوان الإرسال الخاص به إنشاء بلاغ، سواء استقبلها Resgrid أو relay.</value>
+  </data>
+  <data name="RuleNext.relay-dispatch-code" xml:space="preserve">
+    <value>تحقق من عنوان الإرسال في إعدادات البلاغات. إذا لم يظهر أي عنوان، فاطلب من دعم Resgrid، أو من مسؤول تثبيت Resgrid لديك، تعيين رمز إرسال.</value>
+  </data>
+  <data name="Rule.relay-group-email-codes" xml:space="preserve">
+    <value>مجموعات بلا رمز بريد إلكتروني للإرسال أو للرسائل</value>
+  </data>
+  <data name="RuleWhy.relay-group-email-codes" xml:space="preserve">
+    <value>مجموعة واحدة أو أكثر ليس لها رمز بريد إلكتروني للإرسال أو للرسائل، لذا لا تصل الرسائل المرسلة إلى عناوين هذه المجموعات إلى أحد، لا عبر Resgrid ولا عبر relay. قد تفتقر المجموعات المضافة خارج محرر المجموعات، مثلًا عبر الاستيراد، إلى الرموز.</value>
+  </data>
+  <data name="RuleNext.relay-group-email-codes" xml:space="preserve">
+    <value>في المجموعات، حدد كل مجموعة لا يحتوي عنوان الإرسال أو الرسائل الخاص بها على رمز قبل @، وافتح تحرير واحفظ؛ يؤدي الحفظ إلى تعيين الرموز الناقصة.</value>
+  </data>
+  <data name="Rule.relay-voice-channel" xml:space="preserve">
+    <value>لا توجد قناة صوتية في Push-to-Talk</value>
+  </data>
+  <data name="RuleWhy.relay-voice-channel" xml:space="preserve">
+    <value>لدى القسم Push-to-Talk ولكن دون قناة صوتية دائمة، لذا لا تجد تطبيقات Resgrid، ولا جسر الراديو والمسجّل والتنبيه بالنغمات في الـ relay، قناة للانضمام إليها.</value>
+  </data>
+  <data name="RuleNext.relay-voice-channel" xml:space="preserve">
+    <value>افتح صفحة القنوات الصوتية، وأنشئ قناة، وأضف الأعضاء الذين يستخدمونها.</value>
+  </data>
+  <data name="SetupEvidence.relay-voice" xml:space="preserve">
+    <value>يتم التحقق من توفر Push-to-Talk ومن القنوات الصوتية الدائمة. لا يرى Resgrid ما إذا كان الـ relay مثبتًا أو متصلًا أو ينقل الصوت؛ تحقق من ذلك في لوحة معلومات الـ relay نفسه.</value>
+  </data>
+  <data name="Setting.AllowShiftOverSignup" xml:space="preserve">
+    <value>السماح بالتسجيل بعد امتلاء أماكن المجموعة</value>
+  </data>
+  <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
+    <value>يسمح للأعضاء بالتسجيل في مجموعة مناوبة حتى عندما تكون جميع الأماكن التي تقدمها أدوارها (المطلوبة والاختيارية) مشغولة. يظل العضو بحاجة إلى أحد أدوار المجموعة. يمكن للمشرفين دائمًا تعيين أشخاص بعد امتلاء الأماكن.</value>
   </data>
 </root>

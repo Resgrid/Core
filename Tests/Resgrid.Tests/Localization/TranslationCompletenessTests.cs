@@ -60,6 +60,9 @@ namespace Resgrid.Tests.Localization
 			"Areas/User/Department/IntakeChannels",
 			// Intake SMS conversation panel on View Call / Update Call (2026-11-20) shipped fully translated.
 			"Areas/User/Dispatch/IntakeConversation",
+			// Dispatcher desk on the web (M0324, 2026-11-19): shift "Dispatchers on duty", desk board, break planner, desk
+			// settings and activity report shipped fully translated.
+			"Areas/User/DispatcherDesk/DispatcherDesk",
 		};
 
 		private static string LocalizationRoot()
@@ -111,6 +114,8 @@ namespace Resgrid.Tests.Localization
 			"IntakeChannels|Type.Telegram", "IntakeChannels|Type.Discord", "IntakeChannels|Type.GoogleChat",
 			// The Private Inbound Dispatch Number add-on name (renamed from Dedicated Number 2026-11-20), kept in English like the other add-ons.
 			"DashboardWidgets|W.admin.plan.Addon.DedicatedNumber", "DedicatedNumber|PageTitle",
+			// Dispatcher desk (2026-11-19): a break bar's tooltip is "type · state · time", format only.
+			"DispatcherDesk|BreakTooltipFormat",
 		};
 
 		private static readonly HashSet<string> KnownIdentical = new HashSet<string>(StringComparer.Ordinal)
@@ -121,6 +126,9 @@ namespace Resgrid.Tests.Localization
 			"DestinationRules|it|KilometersShort", "DestinationRules|pl|KilometersShort", "DestinationRules|sv|KilometersShort",
 			"DestinationRules|es|MinutesShort", "DestinationRules|fr|MinutesShort", "DestinationRules|it|MinutesShort",
 			"DestinationRules|pl|MinutesShort", "DestinationRules|sv|MinutesShort", "DestinationRules|fr|Destination", "DestinationRules|sv|Destination",
+			// Dispatcher desk (2026-11-19), checked side by side: "{0} min" is the same minutes abbreviation in these languages.
+			"DispatcherDesk|es|MinutesShortFormat", "DispatcherDesk|fr|MinutesShortFormat", "DispatcherDesk|it|MinutesShortFormat",
+			"DispatcherDesk|pl|MinutesShortFormat", "DispatcherDesk|sv|MinutesShortFormat",
 			// Home dashboard (2026-10-31), checked side by side: the same word in that language (Status, Budget, Personnel,
 			// Normal, Chat, Spam, compass letters), the module's own wording (Messages it "Inbox", sv "Poll"), or a proper name
 			// (Cal OES Attachment A). Product names, sizes and format-only strings are in KnownIdenticalEverywhere.

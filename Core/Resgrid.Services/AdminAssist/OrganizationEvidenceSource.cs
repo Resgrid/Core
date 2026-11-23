@@ -17,7 +17,7 @@ namespace Resgrid.Services.AdminAssist
 		IRecordsAuthorizationService membership) : IAdminAssistEvidenceSource
 	{
 		public string SourceId => "Organization";
-		public IReadOnlyList<string> EvidenceIds { get; } = new[] { "emptyGroupCount", "unitsWithoutType", "unitsWithoutGroup", "stationsWithoutLocation", "activePersonnelCount", "unitCount", "groupCount" };
+		public IReadOnlyList<string> EvidenceIds { get; } = new[] { "emptyGroupCount", "unitsWithoutType", "unitsWithoutGroup", "stationsWithoutLocation", "activePersonnelCount", "unitCount", "groupCount", "groupsWithoutEmailCodes" };
 		public async Task<IReadOnlyList<ConfigurationEvidence>> ReadAsync(AdminAssistActor actor, DateTime now, CancellationToken ct)
 		{
 			var groupRows = (await groups.GetAllGroupsByDepartmentIdAsync(actor.DepartmentId).WaitAsync(ct))?.ToList()
@@ -54,7 +54,9 @@ namespace Resgrid.Services.AdminAssist
 				Count("unitsWithoutType", visibleUnits.Count(u => string.IsNullOrWhiteSpace(u.Type))),
 				Count("unitsWithoutGroup", visibleUnits.Count(u => !u.StationGroupId.HasValue || !groupRows.Any(g => g.DepartmentGroupId == u.StationGroupId))),
 				Count("stationsWithoutLocation", groupRows.Count(g => g.Type == (int)DepartmentGroupTypes.Station && !g.AddressId.HasValue && !(Coordinate(g.Latitude, -90, 90) && Coordinate(g.Longitude, -180, 180)))),
-				Count("activePersonnelCount", active.Count), Count("unitCount", visibleUnits.Count), Count("groupCount", groupRows.Count)
+				Count("activePersonnelCount", active.Count), Count("unitCount", visibleUnits.Count), Count("groupCount", groupRows.Count),
+				// Inbound email (Resgrid's own pipeline and Resgrid Relay) resolves a group only by these codes; the codes never leave.
+				Count("groupsWithoutEmailCodes", groupRows.Count(g => string.IsNullOrWhiteSpace(g.DispatchEmail) || string.IsNullOrWhiteSpace(g.MessageEmail)))
 			};
 		}
 	}

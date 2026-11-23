@@ -2603,4 +2603,10 @@
   <data name="NewCallDispatchListsHiddenWarning" xml:space="preserve">
     <value>Alle Alarmierungslisten (Personal, Gruppen, Rollen und Einheiten) sind ausgeblendet. Die Einsatzformulare bieten stattdessen eine optionale Schaltfläche „Vollalarm“: Damit geht der Einsatz an alle, ohne sie wird er nur zur Information gespeichert und niemand wird alarmiert. Ausrückeordnungen mit automatischer Alarmierung alarmieren ihre Einheiten weiterhin.</value>
   </data>
+  <data name="ShiftOverSignupHeader" xml:space="preserve">
+    <value>Anmeldungen über die Gruppenplätze hinaus zulassen</value>
+  </data>
+  <data name="ShiftOverSignupHelp" xml:space="preserve">
+    <value>Mitglieder können sich für eine Gruppe anmelden, auch wenn alle Rollenplätze (Pflicht und optional) belegt sind. Sie benötigen weiterhin eine der Rollen der Gruppe.</value>
+  </data>
 </root>

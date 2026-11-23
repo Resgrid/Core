@@ -70,6 +70,8 @@ namespace Resgrid.Web.Services.Controllers
 	private readonly IIntakeConversationService _intakeConversations;
 	private readonly IIntakeConversationOperations _intakeConversationOperations;
 	private readonly IIntakeScreeningService _intakeScreening;
+	private readonly IDispatcherInboundTextHandler _dispatcherInboundTextHandler;
+	private readonly IDispatcherInboundVoiceHandler _dispatcherInboundVoiceHandler;
 
 	public TwilioController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 		ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
@@ -83,7 +85,8 @@ namespace Resgrid.Web.Services.Controllers
 		Model.Services.IAuthorizationService authorizationService, IAdpReleaseService adpRelease, IProtectedProjectionService adpProjection,
 		IDepartmentPhoneNumbersService departmentPhoneNumbersService, IIntakeService intakeService, IVoiceIntakeService voiceIntakeService,
 		ITextMessageProvider textMessageProvider, IIntakeConversationService intakeConversations, IIntakeConversationOperations intakeConversationOperations,
-		IIntakeScreeningService intakeScreening)
+		IIntakeScreeningService intakeScreening,
+		IDispatcherInboundTextHandler dispatcherInboundTextHandler, IDispatcherInboundVoiceHandler dispatcherInboundVoiceHandler)
 	{
 		_intakeScreening = intakeScreening;
 		_intakeConversations = intakeConversations;
@@ -92,6 +95,8 @@ namespace Resgrid.Web.Services.Controllers
 		_intakeService = intakeService;
 		_voiceIntakeService = voiceIntakeService;
 		_textMessageProvider = textMessageProvider;
+		_dispatcherInboundTextHandler = dispatcherInboundTextHandler;
+		_dispatcherInboundVoiceHandler = dispatcherInboundVoiceHandler;
 		_dispatchScopeService = dispatchScopeService;
 		_authorizationService = authorizationService;
 		_adpRelease = adpRelease;
@@ -337,6 +342,16 @@ namespace Resgrid.Web.Services.Controllers
 				if (departmentId.HasValue)
 					messageEvent.CustomerId = departmentId.Value.ToString();
 
+				// Dispatcher desk (plan D9): no profile, to a department number whose desk takes texts (or a reply to a desk conversation).
+				// No department means "the master number" to the handler, which then joins the sender's open conversation in ANY
+				// department: only a text that really was sent to the master number may do that, never one to an unmapped number.
+				if (userProfile == null && (departmentId.HasValue || IsMasterNumber(request.To)) && await _dispatcherInboundTextHandler.HandleAsync(departmentId,
+					request.From, request.To, request.Body, request.MessageSid, HttpContext?.RequestAborted ?? CancellationToken.None))
+				{
+					messageEvent.Processed = true;
+					return Content(response.ToString(), "application/xml");
+				}
+
 				// Diagnostic: did we resolve a department for this inbound text? If not, no reply is sent.
 				Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} To={textMessage.To} From={Framework.StringHelpers.MaskPhoneNumber(textMessage.Msisdn)} resolved DepartmentId={(departmentId.HasValue ? departmentId.Value.ToString() : "none")}");
 
@@ -418,7 +433,7 @@ namespace Resgrid.Web.Services.Controllers
 		}
 
 		/// <summary>The SMS refusal for a lapsed dedicated number (sent from the master number; no message content).</summary>
-		public const string LapsedNumberReply = "This number no longer accepts messages for the department. For emergencies, dial 911.";
+		public static string LapsedNumberReply => $"This number no longer accepts messages for the department. For emergencies, dial {EmergencyNumber.Current}.";
 
 		/// <summary>What became of a text sent to a dedicated number.</summary>
 		private enum DedicatedNumberTexts
@@ -1588,6 +1603,11 @@ namespace Resgrid.Web.Services.Controllers
 
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByHomeNumberAsync(request.From.Replace("+", ""));
+
+			// Dispatcher desk (plan D8): no profile, to a department number whose desk takes calls: held for a dispatcher.
+			if (profile == null && await _dispatcherInboundVoiceHandler.HandleAsync(request.From, request.To,
+				Request?.Query["CallSid"].ToString(), HttpContext?.RequestAborted ?? CancellationToken.None) is string deskTwiml)
+				return Content(deskTwiml, "application/xml");
 
 			if (profile != null)
 			{

@@ -379,8 +379,9 @@ namespace Resgrid.Model
 		public decimal? MainSizeInches { get; set; }
 		public int? StaticPressurePsi { get; set; }
 		public int? ResidualPressurePsi { get; set; }
+		/// <summary>Observed flow of the latest test when StaticPressurePsi/ResidualPressurePsi are set; otherwise the flow as recorded or imported.</summary>
 		public int? FlowGpm { get; set; }
-		/// <summary><see cref="RmsHydrantFlowClass"/>.</summary>
+		/// <summary><see cref="RmsHydrantFlowClass"/>, read from the rated flow when the pressures allow (<see cref="HydrantFlowCalculator.Classify(int?, int?, int?)"/>).</summary>
 		public int FlowClass { get; set; }
 		public bool InService { get; set; }
 		public string OutOfServiceReason { get; set; }
@@ -418,9 +419,12 @@ namespace Resgrid.Model
 		public decimal OutletDiameterInches { get; set; }
 		/// <summary>Discharge coefficient of the outlet (0.9 smooth, 0.8 square, 0.7 projecting).</summary>
 		public decimal Coefficient { get; set; }
-		/// <summary>Computed: 29.83 × c × d² × √p.</summary>
+		/// <summary>Computed observed flow: 29.83 × c × d² × √p.</summary>
 		public int FlowGpm { get; set; }
-		/// <summary><see cref="RmsHydrantFlowClass"/> derived from FlowGpm.</summary>
+		/// <summary>
+		/// <see cref="RmsHydrantFlowClass"/> from the rated flow at 20 psi residual
+		/// (<see cref="HydrantFlowCalculator.Classify(int?, int?, int?)"/>), or from FlowGpm when the pressures do not allow it.
+		/// </summary>
 		public int FlowClass { get; set; }
 		public string Notes { get; set; }
 		public DateTime CreatedOn { get; set; }
@@ -732,6 +736,38 @@ namespace Resgrid.Model
 			return (int)(Math.Round(q / 10.0) * 10);
 		}
 
+		/// <summary>NFPA 291 rates a hydrant at this residual pressure.</summary>
+		public const int RatedResidualPsi = 20;
+
+		/// <summary>
+		/// Rated flow at 20 psi residual: Q_R = Q_F × ((S − 20) / (S − R))^0.54, rounded to the nearest 10 gpm (halves away
+		/// from zero, as the M0328 backfill rounds). Null when it cannot be worked out: no observed flow, a static pressure of
+		/// 20 psi or less, no residual (0 is how a test form leaves it blank), or a residual at or above the static.
+		/// </summary>
+		public static int? RatedFlowGpm(int? observedFlowGpm, int? staticPsi, int? residualPsi)
+		{
+			if (!observedFlowGpm.HasValue || observedFlowGpm.Value <= 0 || !staticPsi.HasValue || !residualPsi.HasValue)
+				return null;
+			var s = staticPsi.Value; var r = residualPsi.Value;
+			if (s <= RatedResidualPsi || r <= 0 || r >= s)
+				return null;
+			var rated = observedFlowGpm.Value * Math.Pow((s - RatedResidualPsi) / (double)(s - r), 0.54);
+			var rounded = Math.Round(rated / 10.0, MidpointRounding.AwayFromZero) * 10;
+			return rounded > int.MaxValue ? int.MaxValue : (int)rounded;
+		}
+
+		/// <summary>The flow the class is read from: the rated flow when the pressures allow it, else the flow as recorded.</summary>
+		public static int? ClassificationFlowGpm(int? flowGpm, int? staticPsi, int? residualPsi)
+			=> RatedFlowGpm(flowGpm, staticPsi, residualPsi) ?? flowGpm;
+
+		/// <summary>
+		/// NFPA 291 class from the rated flow at 20 psi residual. A flow with both pressures is taken as the observed test flow
+		/// and rated first; a flow without them (another system's figure, a hand entry) is classed as given.
+		/// </summary>
+		public static RmsHydrantFlowClass Classify(int? flowGpm, int? staticPsi, int? residualPsi)
+			=> Classify(ClassificationFlowGpm(flowGpm, staticPsi, residualPsi));
+
+		/// <summary>Class bands for a flow that is already the rated flow (or the only figure known).</summary>
 		public static RmsHydrantFlowClass Classify(int? flowGpm)
 		{
 			if (!flowGpm.HasValue || flowGpm.Value <= 0) return RmsHydrantFlowClass.Unknown;

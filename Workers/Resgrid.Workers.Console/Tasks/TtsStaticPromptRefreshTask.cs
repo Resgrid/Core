@@ -8,6 +8,7 @@ using Resgrid.Model.Services;
 using Resgrid.Workers.Console.Commands;
 using Resgrid.Workers.Framework;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -42,7 +43,10 @@ namespace Resgrid.Workers.Console.Tasks
 
 				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
 				var ttsAudioService = scope.Resolve<ITtsAudioService>();
-				var prompts = TwilioVoicePromptCatalog.GetStaticPrompts();
+				// The dispatcher desk's hold, connect and voicemail prompts (M0324) are fixed text too: pre-generate them so a caller
+				// held for a dispatcher never waits on synthesis.
+				var prompts = TwilioVoicePromptCatalog.GetStaticPrompts().Concat(DispatcherDeskVoicePrompts.GetStaticPrompts())
+					.Distinct().ToList();
 				Exception lastException = null;
 
 				for (int attempt = 1; attempt <= MaxRetries; attempt++)

@@ -7755,6 +7755,12 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>Qui choisit le candidat qui prend une demande d'échange de garde et approuve les échanges en attente. Les administrateurs du service le peuvent toujours ; les administrateurs de groupe, la personne qui cède sa garde et les membres de rôles choisis relèvent du choix du service.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatcherDeskConfig">
+    <value>Poste des répartiteurs</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatcherDeskConfig">
+    <value>Active le poste de répartition et définit son fonctionnement : le travail proposé aux répartiteurs en service dans l'application Dispatch (appels en attente et planifiés, SMS, appels téléphoniques, courriels, discussions), la durée d'attente d'une proposition et le nombre d'éléments qu'un répartiteur détient avant de compter comme occupé, le nombre de propositions manquées d'affilée qui passe un répartiteur Absent, et ce que deviennent les SMS et les appels téléphoniques quand personne n'est libre (attente dans la file, Enhanced AI ou messagerie vocale). Définit aussi ce que devient un appel envoyé par courriel à l'adresse d'alerte (envoyé immédiatement, enregistré en attente ou lu par Enhanced AI dans un appel en attente) et les règles des pauses et du service : rappels de pause, retour automatique de pause, le minimum disponible, le refus des pauses en dessous, aucune alerte du poste en pause, et si les répartiteurs doivent être sur un quart ou peuvent être en service sans quart (Quarts, Paramètres du poste de répartition). Désactivé par défaut ; les appels reçus par courriel sont envoyés immédiatement tant qu'Appels reçus par courriel n'est pas modifié, ce qui vaut même quand l'acheminement est désactivé.</value>
+  </data>
   <data xml:space="preserve" name="Feature.home-dashboard">
     <value>Tableau de bord d'accueil personnalisable</value>
   </data>
@@ -8000,5 +8006,251 @@
   </data>
   <data name="FeatureSetup.ai-destination-advice" xml:space="preserve">
     <value>Nécessite le module complémentaire Enhanced AI avec le conseil de destination par IA activé pour votre service. Ajoutez d'abord vos destinations avec leurs capacités, ainsi que des règles de destination. Le conseil s'affiche à la consultation et à la modification de l'appel, rien ne change tant que personne ne l'applique, et les services qui utilisent Advanced Data Protection n'en reçoivent pas.</value>
+  </data>
+  <data name="Feature.dispatcher-desk" xml:space="preserve">
+    <value>Poste de répartition</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk" xml:space="preserve">
+    <value>Un tableau en direct des répartiteurs en service et du travail qui les attend. Les appels en attente et planifiés, les SMS, les appels téléphoniques, les courriels et les discussions sont proposés à un seul répartiteur libre à la fois, qui les prend dans l'application Dispatch sur un téléphone ou une tablette.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk" xml:space="preserve">
+    <value>Le travail va à quelqu'un de libre : un répartiteur qui détient du travail compte comme occupé, une proposition que personne ne prend passe au répartiteur suivant, et le travail resté en attente alerte toute l'équipe en service. Les répartiteurs peuvent tenir le poste d'où ils sont, pas seulement depuis une console.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk" xml:space="preserve">
+    <value>Deux répartiteurs bénévoles couvrent un week-end depuis leur téléphone. Un SMS signalant un arbre tombé en travers d'une route est proposé à celui qui est libre et devient un appel, pendant que l'autre est en pause repas et ne reçoit aucune alerte du poste jusqu'à son retour.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk" xml:space="preserve">
+    <value>Donnez à vos répartiteurs la permission Connexion à l'application Dispatch et placez-les sur la liste de répartition d'un quart. Ouvrez ensuite Quarts, Paramètres du poste de répartition, activez Acheminer le travail vers les répartiteurs en service, choisissez quoi Envoyer au poste et enregistrez. Les répartiteurs se connectent au poste dans l'application Dispatch ; la page Poste de répartition montre qui est disponible, occupé ou en pause et la file ouverte, et un superviseur du poste peut terminer une pause ou confier le travail à quelqu'un d'autre.</value>
+  </data>
+  <data name="Feature.shift-dispatchers" xml:space="preserve">
+    <value>Répartiteurs en service</value>
+  </data>
+  <data name="FeaturePurpose.shift-dispatchers" xml:space="preserve">
+    <value>Placez des répartiteurs sur les quarts assignés et à inscription, sur un quart réservé à la répartition ou aux côtés des intervenants, avec le nombre de postes de répartition à pourvoir, un minimum au poste et un superviseur du poste.</value>
+  </data>
+  <data name="FeatureValue.shift-dispatchers" xml:space="preserve">
+    <value>Le poste ne propose du travail qu'aux répartiteurs réellement en service : ceux de la liste d'un jour de quart en cours, sauf si le service autorise le service sans quart. Les postes de répartition libres apparaissent sur le jour de quart, et En service maintenant liste les répartiteurs avec leur état au poste et leurs pauses.</value>
+  </data>
+  <data name="FeatureExample.shift-dispatchers" xml:space="preserve">
+    <value>Un centre de répartition fait tourner des quarts A, B et C réservés à la répartition avec deux répartiteurs chacun, et un service de volontaires ajoute un poste de répartiteur à son quart à inscription du week-end.</value>
+  </data>
+  <data name="FeatureSetup.shift-dispatchers" xml:space="preserve">
+    <value>Ouvrez Quarts, créez ou modifiez un quart et activez Ce quart accueille des répartiteurs. Définissez Répartiteurs nécessaires puis, sur un quart assigné, cochez les personnes de la Liste de répartition et désignez un superviseur du poste ; sur un quart à inscription, les répartiteurs choisissent S'inscrire comme répartiteur sur le jour de quart. Seules les personnes ayant la permission Connexion à l'application Dispatch peuvent être ajoutées.</value>
+  </data>
+  <data name="Feature.dispatcher-breaks" xml:space="preserve">
+    <value>Pauses des répartiteurs</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-breaks" xml:space="preserve">
+    <value>Planifiez les pauses et les repas des répartiteurs du jour sur une seule frise de couverture qui montre qui est en service, qui est en pause et où la couverture passerait sous le minimum.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-breaks" xml:space="preserve">
+    <value>Les pauses restent décalées pour que le poste ne soit jamais vide : Planifier les pauses répartit le plan des pauses d'un quart entre ses répartiteurs sans chevauchement, et le planificateur signale les pauses qui se chevauchent et les trous avant qu'ils n'arrivent. Les répartiteurs reçoivent un rappel avant chaque pause et, par défaut, aucune alerte du poste pendant celle-ci.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-breaks" xml:space="preserve">
+    <value>Sur un quart de 12 heures avec trois répartiteurs, Planifier les pauses place pour chacun un repas de 30 minutes et deux pauses de 15 minutes à des heures différentes, et chaque répartiteur reçoit un rappel cinq minutes avant une pause.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-breaks" xml:space="preserve">
+    <value>Définissez un plan des pauses sur chaque quart, ou un plan de pauses par défaut dans Paramètres du poste de répartition. Ouvrez ensuite Quarts, Pauses des répartiteurs, choisissez un jour et un jour de quart et utilisez Planifier les pauses, ou planifiez vous-même des pauses une à une. Les superviseurs du poste et les responsables de quart planifient les pauses de tous ; les répartiteurs planifient les leurs uniquement sur les quarts qui le permettent. Une pause est une durée : commencée plus tôt, elle finit aussi plus tôt.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-settings" xml:space="preserve">
+    <value>Paramètres du poste de répartition</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-settings" xml:space="preserve">
+    <value>Activez l'acheminement et choisissez le travail envoyé au poste, la durée d'attente d'une proposition, ce que deviennent les SMS et les appels téléphoniques quand tous les répartiteurs sont occupés, ce que devient un appel reçu par courriel et les règles des pauses et du service.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-settings" xml:space="preserve">
+    <value>Le service décide une fois pour toutes du comportement du poste, de la vitesse à laquelle le travail sans réponse passe au suivant jusqu'à savoir si une pause peut laisser moins de répartiteurs disponibles que le minimum.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-settings" xml:space="preserve">
+    <value>Un service envoie les SMS et les appels téléphoniques au poste, laisse 60 secondes à chaque proposition, laisse Enhanced AI remplir un appel en attente quand personne n'est libre et enregistre les appels reçus par courriel comme en attente pour qu'un répartiteur les vérifie.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-settings" xml:space="preserve">
+    <value>Les administrateurs du service ouvrent Quarts, puis Paramètres du poste de répartition. Activez Acheminer le travail vers les répartiteurs en service, choisissez Envoyer au poste, le délai d'une proposition et les éléments par répartiteur, ce qui se passe quand tous les répartiteurs sont occupés, Appels reçus par courriel et les règles des pauses, puis enregistrez. Les choix Enhanced AI nécessitent le module complémentaire Enhanced AI.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-activity" xml:space="preserve">
+    <value>Activité de répartition</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-activity" xml:space="preserve">
+    <value>L'activité du poste sur 92 jours au plus : le travail par type, les éléments terminés, débordés, annulés et escaladés et le temps moyen de réponse, et pour chaque répartiteur les propositions acceptées, refusées et manquées, le temps pour accepter et pour terminer, et les pauses prises, manquées ou terminées en retard.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-activity" xml:space="preserve">
+    <value>Voyez si le travail est pris rapidement, à quelle fréquence il déborde ou est escaladé et si les pauses finissent à l'heure, puis ajustez l'effectif, les délais des propositions ou les plans de pauses à partir des chiffres.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-activity" xml:space="preserve">
+    <value>Un superviseur constate que les SMS étaient souvent escaladés le vendredi soir et ajoute un deuxième répartiteur à ce quart.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-activity" xml:space="preserve">
+    <value>Les administrateurs du service et les superviseurs du poste ouvrent Quarts, puis Activité de répartition, choisissent les dates Du et Au et sélectionnent Afficher.</value>
+  </data>
+  <data name="Feature.intake-spam-screening" xml:space="preserve">
+    <value>Filtrage du spam à l'entrée</value>
+  </data>
+  <data name="FeaturePurpose.intake-spam-screening" xml:space="preserve">
+    <value>Gardez le spam et les appels automatisés hors des Appels en attente : écartez un appel reçu comme spam et bloquez son expéditeur, limitez le nombre d'appels qu'un numéro de téléphone peut créer en une heure, demandez aux appelants vocaux d'appuyer sur 1 avant les questions, et signalez les messages qu'Enhanced AI lit comme n'étant pas un incident.</value>
+  </data>
+  <data name="FeatureValue.intake-spam-screening" xml:space="preserve">
+    <value>Les répartiteurs consacrent leur temps aux vrais signalements. Les SMS et appels d'un expéditeur bloqué ne créent aucun appel et ne reçoivent aucune réponse, et un appel filtré garde son libellé dans Appels en attente mais n'est pas proposé au poste de répartition ; un répartiteur décide toujours de sa suite.</value>
+  </data>
+  <data name="FeatureExample.intake-spam-screening" xml:space="preserve">
+    <value>Un numéro publicitaire écrit sans cesse au numéro du service. Au-delà de la limite horaire, ses SMS sont ajoutés en notes à son appel ouvert, et un répartiteur écarte cet appel comme spam et bloque le numéro pendant 30 jours.</value>
+  </data>
+  <data name="FeatureSetup.intake-spam-screening" xml:space="preserve">
+    <value>Sur un appel reçu en attente, choisissez Écarter comme spam et laissez Bloquer aussi l'expéditeur coché ; l'appel est annulé et personne n'est averti. Les expéditeurs bloqués sont listés sur la page Canaux d'entrée, où Débloquer lève un blocage plus tôt. La limite horaire s'applique aux canaux SMS, vocaux et WhatsApp sans expéditeurs autorisés, jamais aux canaux courriel, discussion ou webhook.</value>
+  </data>
+  <data name="Area.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="AreaPurpose.relay" xml:space="preserve">
+    <value>Une application compagnon open source qui relie à Resgrid les e-mails de CAD et de radiomessagerie, les scanners, les radios bidirectionnelles et les radios push-to-talk LTE.</value>
+  </data>
+  <data name="AreaValue.relay" xml:space="preserve">
+    <value>Faites entrer dans Resgrid les appels, les messages et le trafic radio des systèmes que vous avez déjà, sans les remplacer.</value>
+  </data>
+  <data name="AreaExample.relay" xml:space="preserve">
+    <value>Le CAD du comté envoie chaque régulation par e-mail au relais, qui crée l’appel avec sa fiche d’intervention jointe, tandis qu’une radio de caserne reliée à un canal vocal permet aux utilisateurs de l’application de parler avec les équipes à la radio.</value>
+  </data>
+  <data name="ModuleAdoption.relay" xml:space="preserve">
+    <value>Installez Relay sur un ordinateur du département : l’application de bureau Windows, ou sans interface sous Windows, Linux, macOS ou Docker. La régulation par e-mail ne nécessite aucun module complémentaire ; le pont radio, l’enregistreur et l’alerte par tonalités nécessitent le module complémentaire Push-to-Talk et un canal vocal. Relay complète vos systèmes radio et de radiomessagerie ; il ne les remplace pas.</value>
+  </data>
+  <data name="Feature.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay" xml:space="preserve">
+    <value>Installez et exécutez Relay, choisissez ses modes et connectez-le à votre département.</value>
+  </data>
+  <data name="FeatureValue.relay" xml:space="preserve">
+    <value>L’application de bureau Windows exécute plusieurs modes côte à côte avec un tableau de bord en direct ; l’hôte sans interface exécute un mode par processus sur un serveur ou dans Docker.</value>
+  </data>
+  <data name="FeatureExample.relay" xml:space="preserve">
+    <value>Un département installe l’application de bureau sur le PC de la caserne, la connecte avec un compte membre dédié et active le démarrage automatique de la régulation par e-mail et du pont radio.</value>
+  </data>
+  <data name="FeatureSetup.relay" xml:space="preserve">
+    <value>Ajoutez un compte membre avec lequel le relais se connecte, puis installez Relay et connectez-le avec le jeton d’actualisation de ce compte. Le pont radio, l’enregistreur et l’alerte par tonalités exigent ce jeton utilisateur ; la régulation par e-mail et la détection de tonalités peuvent aussi utiliser des identifiants client. Lancez « Test connection » avant de démarrer un mode.</value>
+  </data>
+  <data name="Feature.relay-smtp-dispatch" xml:space="preserve">
+    <value>Régulation par e-mail via Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay-smtp-dispatch" xml:space="preserve">
+    <value>Le serveur de messagerie intégré de Relay transforme les e-mails de régulation des CAD, centrales d’alarme ou passerelles de radiomessagerie en appels et messages de groupe Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-smtp-dispatch" xml:space="preserve">
+    <value>Un e-mail au code de régulation du département alerte tout le département, le code de régulation d’un groupe engage ce groupe et son code de message lui envoie un message. Les pièces jointes sont ajoutées à l’appel, et un message livré à nouveau ne crée jamais de second appel.</value>
+  </data>
+  <data name="FeatureExample.relay-smtp-dispatch" xml:space="preserve">
+    <value>Le CAD du comté envoie chaque intervention de la caserne 5 au code de régulation de ce groupe sur le domaine de régulation du comté, et le relais crée l’appel avec la fiche d’intervention PDF jointe.</value>
+  </data>
+  <data name="FeatureSetup.relay-smtp-dispatch" xml:space="preserve">
+    <value>Trouvez l’adresse de régulation du département dans Paramètres des appels et les adresses de régulation et de message de chaque groupe dans Groupes. Dirigez le courrier de vos domaines de régulation vers Relay et indiquez ces domaines dans ses paramètres SMTP. Le compte du relais a besoin de l’autorisation Créer des appels et, pour les pièces jointes, Ajouter des données d’appel.</value>
+  </data>
+  <data name="Feature.relay-tone-detect" xml:space="preserve">
+    <value>Tonalités d’alerte vers appels</value>
+  </data>
+  <data name="FeaturePurpose.relay-tone-detect" xml:space="preserve">
+    <value>Sous Windows, Relay écoute un scanner ou une radio via une carte son pour détecter les alertes à deux tons et à un ton, et crée un appel Resgrid avec l’audio de régulation enregistré.</value>
+  </data>
+  <data name="FeatureValue.relay-tone-detect" xml:space="preserve">
+    <value>Les membres reçoivent l’alerte dans l’application Responder avec l’audio du régulateur joint, même quand l’alerte radio est la seule régulation.</value>
+  </data>
+  <data name="FeatureExample.relay-tone-detect" xml:space="preserve">
+    <value>Le scanner d’une compagnie de volontaires entend son alerte à deux tons, et le relais crée un appel pour le groupe de cette caserne avec l’audio de régulation joint.</value>
+  </data>
+  <data name="FeatureSetup.relay-tone-detect" xml:space="preserve">
+    <value>Dans Groupes, notez le code de régulation de chaque groupe que vous alertez par tonalités : un watcher de groupe engage ce groupe et un watcher de département alerte tout le monde. Saisissez les tonalités de chaque watcher dans Relay. Le compte du relais a besoin de Créer des appels et d’Ajouter des données d’appel.</value>
+  </data>
+  <data name="Feature.relay-radio-bridge" xml:space="preserve">
+    <value>Pont radio</value>
+  </data>
+  <data name="FeaturePurpose.relay-radio-bridge" xml:space="preserve">
+    <value>Sous Windows, Relay relie une radio bidirectionnelle câblée à un canal push-to-talk Resgrid dans les deux sens.</value>
+  </data>
+  <data name="FeatureValue.relay-radio-bridge" xml:space="preserve">
+    <value>Les équipes à la radio et les membres dans les applications Responder, Unit et Dispatch s’entendent mutuellement, et une tonalité d’urgence à la radio peut créer un appel.</value>
+  </data>
+  <data name="FeatureExample.relay-radio-bridge" xml:space="preserve">
+    <value>Une équipe de recherche et sauvetage relie sa radio de base VHF au canal de l’équipe, pour que les chercheurs équipés de portatifs et ceux équipés de téléphones se parlent.</value>
+  </data>
+  <data name="FeatureSetup.relay-radio-bridge" xml:space="preserve">
+    <value>Nécessite le module complémentaire Push-to-Talk, un canal vocal et le jeton d’actualisation du relais. Déclenchez l’émission de la radio via une interface PTT USB CM108 ou série, réglez le squelch avec « Tune » et vérifiez le câblage et le délai d’émission avec « Test transmit ».</value>
+  </data>
+  <data name="Feature.relay-lte-donor-radios" xml:space="preserve">
+    <value>Radios donneuses push-to-talk LTE</value>
+  </data>
+  <data name="FeaturePurpose.relay-lte-donor-radios" xml:space="preserve">
+    <value>Relie un groupe de conversation push-to-talk cellulaire (PoC), comme Rapid Radios ou Diga-Talk+, à un canal vocal Resgrid grâce à l’une de ses radios câblée au relais.</value>
+  </data>
+  <data name="FeatureValue.relay-lte-donor-radios" xml:space="preserve">
+    <value>Les utilisateurs de radios PoC et des applications Resgrid partagent une même conversation, bien que ces services PoC n’offrent ni API ni passerelle pour un audio externe.</value>
+  </data>
+  <data name="FeatureExample.relay-lte-donor-radios" xml:space="preserve">
+    <value>Une équipe de sécurité câble un poste mobile Diga-Talk+ au relais, afin que les agents sur radios PoC et les superviseurs dans les applications Resgrid s’entendent.</value>
+  </data>
+  <data name="FeatureSetup.relay-lte-donor-radios" xml:space="preserve">
+    <value>Appliquez le profil de la radio, déclenchez-la par une vraie ligne PTT plutôt que par VOX, désactivez son propre VOX et ses bips et gardez-la sur alimentation externe. La radio donneuse occupe une radio du compte PoC et relie le groupe de conversation sur lequel elle est réglée. Nécessite le module complémentaire Push-to-Talk et un canal vocal.</value>
+  </data>
+  <data name="Feature.relay-recorder" xml:space="preserve">
+    <value>Enregistreur de canaux</value>
+  </data>
+  <data name="FeaturePurpose.relay-recorder" xml:space="preserve">
+    <value>Enregistre chaque transmission sur un ou tous les canaux push-to-talk sous forme de fichiers audio, avec un journal indiquant qui a parlé, sur quel canal, quand et pendant combien de temps.</value>
+  </data>
+  <data name="FeatureValue.relay-recorder" xml:space="preserve">
+    <value>Conserve le trafic vocal pour la conformité et les retours d’expérience, sur disque local ou sur un stockage compatible S3.</value>
+  </data>
+  <data name="FeatureExample.relay-recorder" xml:space="preserve">
+    <value>Une agence de gestion des urgences enregistre tous les canaux pendant un exercice d’inondation et examine le journal des transmissions lors du retour d’expérience.</value>
+  </data>
+  <data name="FeatureSetup.relay-recorder" xml:space="preserve">
+    <value>Nécessite le module complémentaire Push-to-Talk, un canal vocal et le jeton d’actualisation du relais. Chaque canal enregistré occupe une place vocale. Les enregistrements contiennent du trafic vocal opérationnel : stockez-les, protégez-les et purgez-les selon votre politique d’archivage.</value>
+  </data>
+  <data name="Feature.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Alerte par tonalités sur push-to-talk</value>
+  </data>
+  <data name="FeaturePurpose.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Annonce chaque nouvel appel Resgrid sur un canal push-to-talk : des tonalités d’alerte, puis l’appel lu à voix haute par la synthèse vocale de Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Les équipes qui écoutent un canal entendent les régulations comme à la radio, dans la formulation de Resgrid et avec vos noms de priorités d’appel.</value>
+  </data>
+  <data name="FeatureExample.relay-dispatch-tone-out" xml:space="preserve">
+    <value>L’équipe d’intervention d’un site industriel écoute son canal, et chaque nouvel appel est annoncé par une alerte deux tons suivie du nom, de la nature, de l’adresse et de la priorité de l’appel.</value>
+  </data>
+  <data name="FeatureSetup.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Nécessite le module complémentaire Push-to-Talk, un canal vocal et le jeton d’actualisation du relais. Les appels déjà ouverts au démarrage du relais ne sont pas annoncés, et les appels planifiés sont annoncés au moment de leur régulation.</value>
+  </data>
+  <data name="Rule.relay-dispatch-code" xml:space="preserve">
+    <value>Aucun code d’e-mail de régulation du département</value>
+  </data>
+  <data name="RuleWhy.relay-dispatch-code" xml:space="preserve">
+    <value>Le département n’a pas de code d’e-mail de régulation : un e-mail envoyé à son adresse de régulation ne peut donc pas créer d’appel, qu’il soit reçu par Resgrid ou par un relais.</value>
+  </data>
+  <data name="RuleNext.relay-dispatch-code" xml:space="preserve">
+    <value>Vérifiez l’adresse de régulation dans Paramètres des appels. Si aucune n’apparaît, demandez au support Resgrid, ou à l’administrateur de votre installation Resgrid, d’attribuer un code de régulation.</value>
+  </data>
+  <data name="Rule.relay-group-email-codes" xml:space="preserve">
+    <value>Groupes sans code d’e-mail de régulation ou de message</value>
+  </data>
+  <data name="RuleWhy.relay-group-email-codes" xml:space="preserve">
+    <value>Un ou plusieurs groupes n’ont pas de code d’e-mail de régulation ou de message : les e-mails envoyés à ces adresses de groupe n’atteignent donc personne, ni via Resgrid ni via un relais. Les groupes créés hors de l’éditeur de groupes, par exemple par une importation, peuvent ne pas avoir de codes.</value>
+  </data>
+  <data name="RuleNext.relay-group-email-codes" xml:space="preserve">
+    <value>Dans Groupes, repérez chaque groupe dont l’adresse de régulation ou de message n’a pas de code avant le @, ouvrez Modifier et enregistrez ; l’enregistrement attribue les codes manquants.</value>
+  </data>
+  <data name="Rule.relay-voice-channel" xml:space="preserve">
+    <value>Push-to-Talk sans canal vocal</value>
+  </data>
+  <data name="RuleWhy.relay-voice-channel" xml:space="preserve">
+    <value>Le département dispose de Push-to-Talk mais d’aucun canal vocal permanent : les applications Resgrid ainsi que le pont radio, l’enregistreur et l’alerte par tonalités d’un relais n’ont donc aucun canal à rejoindre.</value>
+  </data>
+  <data name="RuleNext.relay-voice-channel" xml:space="preserve">
+    <value>Ouvrez la page des canaux vocaux, créez un canal et ajoutez les membres qui l’utilisent.</value>
+  </data>
+  <data name="SetupEvidence.relay-voice" xml:space="preserve">
+    <value>La disponibilité de Push-to-Talk et les canaux vocaux permanents sont vérifiés. Resgrid ne voit pas si un relais est installé, connecté ou s’il transmet de l’audio ; vérifiez-le sur le tableau de bord du relais.</value>
+  </data>
+  <data name="Setting.AllowShiftOverSignup" xml:space="preserve">
+    <value>Autoriser les inscriptions au-delà des places du groupe</value>
+  </data>
+  <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
+    <value>Permet aux membres de s'inscrire dans un groupe de garde même lorsque toutes les places de ses rôles (obligatoires et facultatives) sont prises. Ils doivent toujours avoir l'un des rôles du groupe. Les superviseurs peuvent toujours affecter des personnes au-delà des places.</value>
   </data>
 </root>

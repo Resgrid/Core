@@ -95,13 +95,16 @@ namespace Resgrid.Services.Records
 			entity.HydrantNumber = number; entity.Type = input.Type == 0 ? (int)RmsHydrantType.DryBarrel : input.Type; entity.Latitude = input.Latitude; entity.Longitude = input.Longitude;
 			entity.AddressText = RecordsPreventionGate.Trim(input.AddressText, 500); entity.OwnerKind = input.OwnerKind == 0 ? (int)RmsHydrantOwnerKind.Municipal : input.OwnerKind; entity.OwnerName = RecordsPreventionGate.Trim(input.OwnerName, 200);
 			entity.MainSizeInches = input.MainSizeInches; if (source == "manual") { entity.Notes = RecordsPreventionGate.Trim(input.Notes, 4000); entity.PoiId = input.PoiId; }
-			if (input.FlowGpm.HasValue) { entity.FlowGpm = input.FlowGpm; entity.FlowClass = (int)HydrantFlowCalculator.Classify(input.FlowGpm); }
+			if (input.FlowGpm.HasValue) entity.FlowGpm = input.FlowGpm;
+			if (input.StaticPressurePsi.HasValue) entity.StaticPressurePsi = input.StaticPressurePsi;
+			if (input.ResidualPressurePsi.HasValue) entity.ResidualPressurePsi = input.ResidualPressurePsi;
+			// NFPA 291 classes by the rated flow at 20 psi residual: a flow with both pressures is rated first, one without them is classed as given.
+			if (input.FlowGpm.HasValue || entity.FlowGpm.HasValue && (input.StaticPressurePsi.HasValue || input.ResidualPressurePsi.HasValue))
+				entity.FlowClass = (int)HydrantFlowCalculator.Classify(entity.FlowGpm, entity.StaticPressurePsi, entity.ResidualPressurePsi);
 			// An import's flow class (another system's cap colour) applies only while there is no flow to classify: a known flow decides the class.
 			if (source != "manual" && Enum.IsDefined(typeof(RmsHydrantFlowClass), input.FlowClass) && input.FlowClass != (int)RmsHydrantFlowClass.Unknown
 				&& HydrantFlowCalculator.Classify(entity.FlowGpm) == RmsHydrantFlowClass.Unknown)
 				entity.FlowClass = input.FlowClass;
-			if (input.StaticPressurePsi.HasValue) entity.StaticPressurePsi = input.StaticPressurePsi;
-			if (input.ResidualPressurePsi.HasValue) entity.ResidualPressurePsi = input.ResidualPressurePsi;
 			// A change of state is applied as SetServiceStateAsync would; a hydrant already out of service keeps its own reason and date.
 			// Deliberately both ways (product decision 2026-11-13): the file is the source of truth for the state it carries, so an older
 			// export can return a hydrant to service. The result's TakenOutOfService/ReturnedToService counts and the audit make that visible.
@@ -201,7 +204,8 @@ namespace Resgrid.Services.Records
 				PitotPressurePsi = input.PitotPressurePsi, OutletDiameterInches = input.OutletDiameterInches, Coefficient = coefficient, Notes = RecordsPreventionGate.Trim(input.Notes, 2000), CreatedOn = now
 			};
 			test.FlowGpm = HydrantFlowCalculator.FlowGpm(coefficient, input.OutletDiameterInches, input.PitotPressurePsi);
-			test.FlowClass = (int)HydrantFlowCalculator.Classify(test.FlowGpm);
+			// The observed flow is kept; the class is read from the rated flow at 20 psi residual when the pressures allow it.
+			test.FlowClass = (int)HydrantFlowCalculator.Classify(test.FlowGpm, test.StaticPressurePsi, test.ResidualPressurePsi);
 			await _flowTests.InsertAsync(test, cancellationToken, true);
 			if (!hydrant.LastTestedOn.HasValue || hydrant.LastTestedOn <= test.TestedOn)
 			{
@@ -209,7 +213,7 @@ namespace Resgrid.Services.Records
 				hydrant.ModifiedOn = now; hydrant.RowVersion++;
 				await _hydrants.UpdateAsync(hydrant, cancellationToken, true);
 			}
-			await _gate.AuditAsync(departmentId, userId, RmsAccessAuditAction.Change, "Hydrant flow test recorded", hydrant.RmsHydrantId, new { test.FlowGpm, flow_class = ((RmsHydrantFlowClass)test.FlowClass).ToString() }, cancellationToken: cancellationToken);
+			await _gate.AuditAsync(departmentId, userId, RmsAccessAuditAction.Change, "Hydrant flow test recorded", hydrant.RmsHydrantId, new { test.FlowGpm, rated_flow_gpm = HydrantFlowCalculator.RatedFlowGpm(test.FlowGpm, test.StaticPressurePsi, test.ResidualPressurePsi), flow_class = ((RmsHydrantFlowClass)test.FlowClass).ToString() }, cancellationToken: cancellationToken);
 			return test;
 		}
 
@@ -328,7 +332,7 @@ namespace Resgrid.Services.Records
 			IEnumerable<RmsHydrant> rows = minLat.HasValue && maxLat.HasValue && minLon.HasValue && maxLon.HasValue
 				? await _hydrants.GetInBoundsAsync(departmentId, Math.Min(minLat.Value, maxLat.Value), Math.Max(minLat.Value, maxLat.Value), Math.Min(minLon.Value, maxLon.Value), Math.Max(minLon.Value, maxLon.Value), 5000)
 				: await _hydrants.GetAllLiveAsync(departmentId);
-			return (rows ?? Enumerable.Empty<RmsHydrant>()).Select(h => new HydrantMapPoint { HydrantId = h.RmsHydrantId, PoiId = h.PoiId, HydrantNumber = h.HydrantNumber, Type = h.Type, Latitude = h.Latitude, Longitude = h.Longitude, FlowClass = h.FlowClass, FlowGpm = h.FlowGpm, InService = h.InService, MainSizeInches = h.MainSizeInches }).ToList();
+			return (rows ?? Enumerable.Empty<RmsHydrant>()).Select(h => new HydrantMapPoint { HydrantId = h.RmsHydrantId, PoiId = h.PoiId, HydrantNumber = h.HydrantNumber, Type = h.Type, Latitude = h.Latitude, Longitude = h.Longitude, FlowClass = h.FlowClass, FlowGpm = h.FlowGpm, RatedFlowGpm = HydrantFlowCalculator.RatedFlowGpm(h.FlowGpm, h.StaticPressurePsi, h.ResidualPressurePsi), InService = h.InService, MainSizeInches = h.MainSizeInches }).ToList();
 		}
 
 		public async Task<List<RmsHydrant>> GetNearestAsync(int departmentId, decimal latitude, decimal longitude, int take, double maxMeters)

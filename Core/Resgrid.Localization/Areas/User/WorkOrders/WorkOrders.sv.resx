@@ -405,4 +405,13 @@
   <data name="DepartmentCurrencyHelp" xml:space="preserve"><value>Valutan hanteras i inställningarna för arbetsorder. Befintliga order behåller sin registrerade valuta.</value></data>
   <data name="DepartmentCurrencySettingsHelp" xml:space="preserve"><value>Gäller nya arbetsorder och deras leverantörsavgifter. Befintliga kostnader och godkännandegränser behåller sin ursprungliga valuta. Om en underhållsmall använder en annan valuta lämnas den uppskattade kostnaden tom på nya order för granskning.</value></data>
   <data name="DepartmentThresholdHelp" xml:space="preserve"><value>Ange godkännandegränsen i avdelningens valuta som valts ovan. Gränser för befintliga order i andra valutor behålls.</value></data>
+  <data name="SetUnitOutOfService" xml:space="preserve">
+    <value>Ta enheten ur tjänst</value>
+  </data>
+  <data name="SetUnitOutOfServiceHelp" xml:space="preserve">
+    <value>När du sparar läggs enheten i säkerhetsspärr. Spärren hävs separat, av någon annan än den som utförde arbetet; att stänga ordern återför inte enheten i tjänst.</value>
+  </data>
+  <data name="HoldReasonOrderOutOfService" xml:space="preserve">
+    <value>Tagen ur tjänst av arbetsordern.</value>
+  </data>
 </root>

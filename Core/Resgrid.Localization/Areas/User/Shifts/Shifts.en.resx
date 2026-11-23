@@ -1143,4 +1143,10 @@
   <data name="ShiftErrorNotEligible" xml:space="preserve">
     <value>That person does not meet the requirements for this slot.</value>
   </data>
+  <data name="ShiftErrorGroupFull" xml:space="preserve">
+    <value>Every slot in this group for the roles you hold is taken.</value>
+  </data>
+  <data name="ShiftErrorRoleRequired" xml:space="preserve">
+    <value>You need one of the roles this group asks for to sign up.</value>
+  </data>
 </root>

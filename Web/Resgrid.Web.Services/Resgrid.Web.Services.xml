@@ -29,6 +29,181 @@
             X-Twilio-Signature, so a configured URL that carries one still validates.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.DispatcherVoiceController">
+            <summary>
+            Twilio webhooks of the dispatcher desk voice flow (plan D8). An unknown caller to a department number is held in the item's
+            own queue (<see cref="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.Hold(System.String)"/>) until a dispatcher taps Answer; the desk rings the dispatcher's phone
+            (<see cref="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.DispatcherConnect(System.String,System.String)"/>), asks them to press 1, and bridges them to the caller with <c>&lt;Dial&gt;&lt;Queue&gt;</c>.
+            A caller nobody can take leaves for the overflow handling (voicemail, which becomes a pending call); a caller who hangs up
+            stays on the desk for Call back (<see cref="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.CallBack(System.String,System.String)"/>). Paths: <see cref="T:Resgrid.Model.DispatcherVoiceRoutes"/>.
+            </summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.DispatcherVoiceController.HoldPauseSeconds">
+            <summary>Seconds of hold between re-checks of the held caller's item (Twilio re-requests the wait URL when it ends).</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.DispatcherVoiceController.MaxHoldSeconds">
+            <summary>The longest a caller holds while an offer is out or a dispatcher is being rung, whatever the hold setting.</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.DispatcherVoiceController.VoicemailMaxSeconds">
+            <summary>Voicemail length; Twilio transcribes recordings of up to two minutes.</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.DispatcherVoiceController.DispatcherGatherSeconds">
+            <summary>Seconds the dispatcher has to press 1.</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.DispatcherVoiceController.CallBackRingSeconds">
+            <summary>Seconds a call back rings the caller.</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.DispatcherVoiceController.TranscriptionLinkChecks">
+            <summary>How often a transcription that arrived before its voicemail call was linked re-reads the item (within Twilio's 15 s).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.DispatcherVoiceController.TranscriptionLinkCheckInterval">
+            <summary>The pause between those re-reads (tests set zero).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.Hold(System.String)">
+            <summary>
+            The held caller's wait URL, re-requested by Twilio each time its TwiML ends: a hold prompt and a pause, or
+            <c>&lt;Leave/&gt;</c> when the item overflowed, was closed, or has waited past the department's hold time with nobody
+            taking it (then the item is marked overflowed). Leaving runs <see cref="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.EnqueueAction(System.String)"/>, which plays the overflow.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.EnqueueAction(System.String)">
+            <summary>
+            How the held caller left the queue (Twilio's QueueResult): hung up (the item stays open for Call back), bridged to a
+            dispatcher and now done, or left / failed (the overflow handling plays).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.Overflow(System.String)">
+            <summary>
+            The overflow handling for a caller no dispatcher can take: the voicemail (Enhanced AI voice intake is not in this build,
+            so that setting takes a message too). Reached by a redirect from the inbound call or the voice service.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.Voicemail(System.String)">
+            <summary>
+            The voicemail's record action: the message becomes a pending call (recording in its notes) and the overflowed voice item
+            becomes that call, waiting in the queue again for a dispatcher (Call back works from it). A repeat does nothing more. The
+            caller hears that the message was passed on only once it is held as a pending call; otherwise they are asked to call back,
+            and the recording is kept in the item's history for the dispatchers.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.VoicemailTranscription(System.String)">
+            <summary>Twilio's transcription of the voicemail: added to the pending call as a note.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.Bridge(System.String,System.String)">
+            <summary>
+            The <c>&lt;Queue url&gt;</c> of the dispatcher's dial, fetched on the held caller's leg the moment they are bridged: the
+            connection is recorded and the caller hears that a dispatcher is on the line.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.DispatcherConnect(System.String,System.String)">
+            <summary>
+            The dispatcher's phone answered for Answer: "Resgrid dispatch call from …. Press 1 to connect." No key (their voicemail,
+            or they hung up) goes to the action as a decline.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.DispatcherConnectAction(System.String,System.String)">
+            <summary>
+            The dispatcher's key: 1 takes the item (if it was only offered) and dials the caller's queue; anything else returns the
+            item to the queue for another dispatcher.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.CallBack(System.String,System.String)">
+            <summary>The dispatcher's phone answered for Call back: "Resgrid dispatch call back to …. Press 1 to call them now."</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.CallBackAction(System.String,System.String)">
+            <summary>
+            The dispatcher's key for Call back: 1 dials the caller from the number they called (the department's number), anything
+            else cancels. The item stays with the dispatcher either way.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.CallBackEnded(System.String,System.String)">
+            <summary>How the call back to the caller ended (Twilio's DialCallStatus).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.Status(System.String,System.String,System.String,System.Nullable{System.Int64})">
+            <summary>
+            Status callback of a leg the desk placed (<see cref="T:Resgrid.Model.DispatcherVoiceRoutes.Legs"/>; the voice service sends
+            <c>leg=dispatcher</c> for both). A dispatcher's phone that was busy, did not answer or failed, or that hung up before
+            connecting, returns the item to the queue only while a held caller is still waiting for it (Answer); a call back leg
+            (an abandoned caller, or a text item) only records what happened and the dispatcher keeps the item. <paramref name="attempt"/>
+            (UTC ticks the voice service took before placing the leg) ties the callback to its ring: a late status of an earlier ring,
+            once the dispatcher has been rung again, only records what happened, so it cannot return the item while the newer leg rings.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.LeaveHoldAsync(Resgrid.Model.DispatcherQueueItem,System.Boolean)">
+            <summary>The decision of <see cref="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.Hold(System.String)"/>: whether the held caller must leave the queue for the overflow handling now.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.CallerItemAsync(System.String)">
+            <summary>The held caller's voice item; null when it is not one, or the request is for another call.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.AnyItemAsync(System.String)">
+            <summary>Any desk item: Call back works for every item with a phone number (a voice caller who hung up, a text).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.CanTake(Resgrid.Model.DispatcherQueueItem,System.String)">
+            <summary>The dispatcher holds the item, it is offered to them, or it waits in the shared queue for anyone.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.CallerWaiting(System.Collections.Generic.IEnumerable{Resgrid.Model.DispatcherQueueEvent})">
+            <summary>No VoiceEnded on the caller's own leg (the convention: caller-leg events carry no user).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.ConnectedSinceLastAttempt(System.Collections.Generic.IEnumerable{Resgrid.Model.DispatcherQueueEvent},System.String)">
+            <summary>The dispatcher was bridged to the caller after the desk last rang them.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.AttemptStartedOn(System.Nullable{System.Int64})">
+            <summary>The ring attempt's start from the status callback's <c>attempt</c> (UTC ticks); null for a leg placed without one.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.NewerAttemptStarted(System.Collections.Generic.IEnumerable{Resgrid.Model.DispatcherQueueEvent},System.String,System.DateTime)">
+            <summary>
+            The dispatcher was rung again after the attempt that started at <paramref name="attemptStartedOn"/>: every placed leg records
+            one VoiceConnecting for its dispatcher after it is placed, so a second one since then belongs to a later ring.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.ReleaseIfStillThisRingAsync(Resgrid.Model.DispatcherQueueItem,System.String,System.String,System.Nullable{System.DateTime})">
+            <summary>
+            <see cref="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.ReleaseIfHeldAsync(Resgrid.Model.DispatcherQueueItem,System.String,System.String)"/> for a status callback of the ring that started at <paramref name="attemptStartedOn"/>. The
+            item row and then its history are read just before the release, and the release is fenced on that row's Version: a ring of the
+            same dispatcher whose VoiceConnecting was recorded before the read is seen in the history, and one recorded after it (the
+            entry touches the item) makes the release fail, so the newer ring keeps the item instead of losing it to the earlier ring's
+            status. A release that lost to another write is judged again on the row as it is then.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.MarkOverflowedAsync(Resgrid.Model.DispatcherQueueItem,System.String)">
+            <summary>
+            Overflows a held caller's item for the voicemail, never over a voicemail claim: each write is fenced on the row as read, and
+            an item that is claimed for its voicemail (or no longer open) is left as it is. An unfenced write here could replace the
+            claim note of a voicemail still being saved, and a repeat of that voicemail would then save a second call.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.TryMarkOverflowedAsync(Resgrid.Model.DispatcherQueueItem,System.String)">
+            <summary>
+            <see cref="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.MarkOverflowedAsync(Resgrid.Model.DispatcherQueueItem,System.String)"/> only while the item still has the version and state the caller read: false when another
+            write (a dispatcher accepting the caller) got there first. A failed write is logged and counts as overflowed, as before, so
+            a caller is never left on hold because the desk store is unreachable.
+            </summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.DispatcherVoiceController.HistoryDetailLength">
+            <summary>The longest detail an item history entry stores (DispatcherQueueEvents.Detail).</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.DispatcherVoiceController.TranscriptPartLength">
+            <summary>The transcript text each history entry carries when it needs more than one (its part label fits in the rest).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.TranscriptEntries(System.String)">
+            <summary>
+            The history entries that keep a voicemail transcript whole: one entry when it fits, else numbered parts that each fit the
+            history's detail length (never split inside a surrogate pair), so no part of what the caller said is cut off.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.RecordStoredTranscriptAsync(Resgrid.Model.DispatcherQueueItem,System.String)">
+            <summary>
+            Keeps the whole transcript in the item's history (<see cref="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.TranscriptEntries(System.String)"/>, caller-leg VoiceEnded entries) and reports
+            whether every entry is stored, read back (the routing service's history write logs and swallows its own failures). Entries a
+            previous delivery already stored are not added again.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.DepartmentNumberAsync(Resgrid.Model.DispatcherQueueItem)">
+            <summary>The caller id for a call back: the number the caller called, else the department's number, else the master number.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.DispatcherVoiceController.LoadFieldsAsync">
+            <summary>Twilio posts its parameters as a form (or, for GET webhooks, in the query string).</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.EmailController.Receive(PostmarkDotNet.PostmarkInboundMessage,System.Threading.CancellationToken)">
             <summary>
             The receiver API method call
@@ -65,6 +240,26 @@
             that never went out, once, instead of creating a second call. A call someone has since closed or deleted is not paged.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.AiEnrichmentOwedAsync(Resgrid.Model.InboundEmailReceiptClaim,Resgrid.Model.InboundEmailPendingSteps,System.Boolean)">
+            <summary>
+            The call is saved and its other steps (<paramref name="done"/>: the page or the desk entry) went out, but the AI enrichment job
+            could not be queued: only that step stays owed, and the claim goes back with a 400 so Postmark redelivers and the resume queues
+            the job (finding the saved call, so no second call is made and nobody is paged again).
+            </summary>
+            <param name="pagedNow">
+            This request queued the call's page. If the receipt cannot record that, a redelivery would page the call again, so the AI job
+            is given up instead (logged; a dispatcher reads the call without it) and the delivery answered as done. A desk entry that could
+            not be recorded is still retried: the desk takes a call it already has once. An untracked delivery (the receipt store was
+            unavailable at the claim) is never sent back either: its redelivery would save and page a second call.
+            </param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.DeskHandOffOwedAsync(Resgrid.Model.InboundEmailReceiptClaim,System.Boolean)">
+            <summary>
+            A held emailed call is saved but could not be put on the dispatcher desk: that step is still owed (the AI step is recorded
+            done only when its job was actually queued, so a failed AI enqueue is retried with it), and the claim goes back with a 400 so
+            Postmark redelivers and the resume retries the desk entry at once instead of waiting for the desk worker's sweep.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.EmailController.ResumeMessageAsync(Resgrid.Model.InboundEmailReceiptClaim,System.Int32,System.Threading.CancellationToken)">
             <summary>Sends a group message an earlier delivery of the same email saved and then failed to send.</summary>
         </member>
@@ -76,11 +271,17 @@
             stations and break the scoping the caller asked for by emailing that address.
             </param>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.EmailController.QueueAiDispatchEnrichmentAsync(Resgrid.Model.Call,System.Int32,System.String,System.Threading.CancellationToken)">
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.QueueAiDispatchEnrichmentAsync(Resgrid.Model.Call,System.Int32,System.String,System.Threading.CancellationToken,System.Boolean)">
             <summary>
             AI dispatch, Enrich mode: the call above is already saved and its broadcast queued exactly as for GenericTemplate.
             Enrichment runs afterwards on the worker, so a disabled host or a failed enqueue never touches the dispatch itself.
+            <paramref name="heldForDispatcher"/>: the dispatcher desk's email call mode held the call pending (the worker enriches it while
+            it waits, under that mode's entitlement); otherwise the job keeps the active-call, AI-format rule.
             </summary>
+            <returns>
+            True when the job was queued or is not wanted (AI dispatch off on this host, no call): the step is done. False when queueing
+            it failed (logged), so a delivery that is retried anyway can keep the step owed.
+            </returns>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.EmailController.ReceiveIntakeEmailAsync(PostmarkDotNet.PostmarkInboundMessage,System.String,System.Threading.CancellationToken)">
             <summary>
@@ -119,6 +320,12 @@
             the Twilio middleware's BaseUrlOverride behind the reverse proxy).
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.SignalWireController.IsMasterNumber(System.String)">
+            <summary>
+            The text was sent to the SignalWire master Resgrid number (digits compared, as the master-number branch of
+            <see cref="M:Resgrid.Web.Services.Controllers.SignalWireController.Receive(System.Threading.CancellationToken)"/> does).
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.SignalWireController.BuildTextToCallAsync(Resgrid.Model.Department,Resgrid.Model.TextMessage,System.Collections.Generic.List{Resgrid.Model.Identity.IdentityUser})">
             <summary>
             Builds the call for an inbound Text-To-Call message. When the department has a
@@ -129,7 +336,7 @@
             Text-To-Call has always done it.
             </summary>
         </member>
-        <member name="F:Resgrid.Web.Services.Controllers.TwilioController.LapsedNumberReply">
+        <member name="P:Resgrid.Web.Services.Controllers.TwilioController.LapsedNumberReply">
             <summary>The SMS refusal for a lapsed dedicated number (sent from the master number; no message content).</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.TwilioController.DedicatedNumberTexts">
@@ -2777,6 +2984,241 @@
             </summary>
             <returns>Array of CallTemplateResult objects for each role in the department</returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController">
+            <summary>
+            The dispatcher desk ("Dispatchers on duty", M0324): signing in to the desk from the Dispatch app, the work routed to on-duty
+            dispatchers (pending and scheduled calls, texts, phone calls, emails, chats), their breaks and the coverage timeline, and the
+            dispatch rosters of shift days. Everything but the shift roster reads and changes (and taking the caller's own device off
+            desk pushes) is for people allowed to work dispatch
+            (the Dispatch app login permission, 403 otherwise); acting for another dispatcher (their breaks, work they hold) and the
+            activity numbers are for desk supervisors, shift managers and department admins. Every POST answers a
+            <see cref="T:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskActionResult"/>: a business-rule refusal is HTTP 200 with Success false and the DispatcherDeskErrors
+            name. Authorization is the exception: a POST by a caller without the Dispatch app login permission gets 403 whose body is that
+            result with the NotADispatcher error, and a GET the caller may not read answers 403 with no body.
+            </summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.MaxWindowDays">
+            <summary>The longest window the coverage timeline and the break list answer.</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.MaxStatsDays">
+            <summary>The longest window of the activity numbers.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.GetDesk">
+            <summary>
+            The whole desk board: the department's desk settings, the caller's desk member, every on-duty or signed-in dispatcher,
+            the open queue and the caller's breaks today. A caller who may not work dispatch gets only the settings and
+            IsDispatcher false (the app then hides the desk).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.GetQueue">
+            <summary>The open work on the desk (queued, offered and held), in the order dispatchers should take it.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.GetItem(System.String)">
+            <summary>One desk item (open or closed) with its history and conversation. 404 for an item of another department.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.GetCoverage(System.String,System.String,System.Nullable{System.Int32})">
+            <summary>
+            Duty windows, breaks and coverage slots for the team timeline. from/to are ISO UTC instants (default: today's
+            department-local day, at most <see cref="F:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.MaxWindowDays"/> days); slotMinutes 1 to 60 (default 5).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.GetBreaks(System.String,System.String)">
+            <summary>
+            Every dispatcher's breaks planned or taken in the window (ISO UTC from/to; default today's department-local day, at most
+            <see cref="F:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.MaxWindowDays"/> days): everyone sees the whole team's breaks to keep coverage and avoid overlaps.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.GetShiftDispatchers(System.Int32,System.Nullable{System.Int32})">
+            <summary>
+            A shift's "Dispatchers on duty" settings and roster: the roster of the given shift day (approved and pending, with each
+            dispatcher's window), else the shift's standing roster. Anyone who can see shifts can see it; CanSignup tells whether the
+            caller can sign up for the day.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.GetStats(System.String,System.String)">
+            <summary>
+            Desk numbers per dispatcher and for the department over the window (ISO UTC from/to; default today's department-local
+            day, at most <see cref="F:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.MaxStatsDays"/> days). Desk supervisors, shift managers and department admins only.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.GetConfig">
+            <summary>The department's desk settings the Dispatch app needs.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.SignIn(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherSignInInput,System.Threading.CancellationToken)">
+            <summary>Signs on to the desk (on the shift running now, or unscheduled where the department allows it).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.SignOff(System.Threading.CancellationToken)">
+            <summary>Signs off the desk: held and offered work goes back to the queue, an active break ends.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.Heartbeat(System.Threading.CancellationToken)">
+            <summary>"Still here" from the app in the foreground.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.SetAvailable(System.Threading.CancellationToken)">
+            <summary>Back to taking routed work (from Away).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.SetAway(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherAwayInput,System.Threading.CancellationToken)">
+            <summary>Signed in but not taking routed work for now (offers in flight go back to the queue).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.SetCallbackNumber(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherCallbackNumberInput,System.Threading.CancellationToken)">
+            <summary>The phone the desk rings to connect the dispatcher to a caller (E.164; empty = the profile mobile).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.RegisterDevice(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeviceInput,System.Threading.CancellationToken)">
+            <summary>
+            Puts this device's push token on the caller's Dispatch-only desk subscriber (offers, queue alerts, break reminders). Only
+            the Dispatch app calls it; its ordinary Devices/RegisterDevice registration stays as it is.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.UnregisterDevice(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeviceInput,System.Threading.CancellationToken)">
+            <summary>
+            Takes this device's push token off the desk subscriber (signing out of the Dispatch app). Open to a caller who may no
+            longer dispatch too: it only ever removes the caller's own token, and a revoked dispatcher's device must be able to stop
+            desk pushes.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.AcceptItem(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherItemInput,System.Threading.CancellationToken)">
+            <summary>Takes an item: one offered to the caller, or one waiting in the shared queue.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.DeclineItem(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeclineInput,System.Threading.CancellationToken)">
+            <summary>Passes on an item offered to the caller (it is offered to someone else and never to them again).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.ReleaseItem(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherItemInput,System.Threading.CancellationToken)">
+            <summary>Puts a held item back in the queue. Releasing work someone else holds needs supervisor rights.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.TransferItem(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherTransferInput,System.Threading.CancellationToken)">
+            <summary>
+            Hands an item to another on-duty dispatcher (as an offer they accept). Transferring work the caller does not hold needs
+            supervisor rights.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.CompleteItem(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherCompleteInput,System.Threading.CancellationToken)">
+            <summary>Finishes an item with an outcome (and the call it became, if any).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.LinkCall(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherLinkCallInput,System.Threading.CancellationToken)">
+            <summary>Links the call made from a conversation to its item (the item stays held until completed).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.SendMessage(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherMessageInput,System.Threading.CancellationToken)">
+            <summary>Replies on the item's channel (SMS from the department number, email, chat where supported).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.AddNote(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherMessageInput,System.Threading.CancellationToken)">
+            <summary>A desk note on the item (never sent to the sender).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.ConnectVoice(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherVoiceInput,System.Threading.CancellationToken)">
+            <summary>Answer: rings the dispatcher's phone and, when they press 1, bridges them to the caller held for the item.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.CallBack(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherVoiceInput,System.Threading.CancellationToken)">
+            <summary>Call back: rings the dispatcher's phone, then calls the item's caller back from the department number.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.SaveBreak(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherSaveBreakInput,System.Threading.CancellationToken)">
+            <summary>
+            Plans (or, with an id, re-plans) a break. Supervisors plan anyone's; a dispatcher plans their own on a shift that allows
+            self-scheduled breaks. Overlaps with other dispatchers and coverage below the minimum come back as warnings.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.CancelBreak(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherBreakIdInput,System.Threading.CancellationToken)">
+            <summary>Removes a planned break (same rights as planning it).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.StartBreak(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherStartBreakInput,System.Threading.CancellationToken)">
+            <summary>
+            Starts a break: a planned one, or one taken now (type + minutes). The dispatcher is due back the break's length after
+            now. Held work goes back to the queue only with ReturnWork (otherwise HoldingWork). Someone else's break: supervisors.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.EndBreak(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherEndBreakInput,System.Threading.CancellationToken)">
+            <summary>Ends a break and makes the dispatcher available: the caller coming back, or a supervisor ending someone else's.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.PlanBreaks(Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherPlanBreaksInput,System.Threading.CancellationToken)">
+            <summary>Staggers the shift's break plan across the day's dispatchers without overlap (supervisors).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.SignupForDay(Resgrid.Web.Services.Models.v4.DispatcherDesk.ShiftDayDispatcherInput,System.Threading.CancellationToken)">
+            <summary>The caller signs up to dispatch on one day of a Signup shift (pending when the shift requires approval).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.WithdrawFromDay(Resgrid.Web.Services.Models.v4.DispatcherDesk.ShiftDayDispatcherInput,System.Threading.CancellationToken)">
+            <summary>The caller withdraws their own signup for a day (a standing assignment is for a shift manager to change).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.AssignToDay(Resgrid.Web.Services.Models.v4.DispatcherDesk.ShiftDayDispatcherInput,System.Threading.CancellationToken)">
+            <summary>A shift manager puts a dispatcher on one day of the shift (either shift type).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.RemoveFromDay(Resgrid.Web.Services.Models.v4.DispatcherDesk.ShiftDayDispatcherInput,System.Threading.CancellationToken)">
+            <summary>A shift manager takes a dispatcher off one day (a standing dispatcher is kept off that day only).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.ReviewDaySignup(Resgrid.Web.Services.Models.v4.DispatcherDesk.ShiftDispatcherReviewInput,System.Threading.CancellationToken)">
+            <summary>A shift manager approves or denies a pending dispatcher signup for a day.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.Iso(System.DateTime)">
+            <summary>ISO-8601 UTC, as every v4 desk instant ("2026-11-19T16:00:00Z").</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.Iso(System.Nullable{System.DateTime})">
+            <summary>ISO-8601 UTC, or null.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.TryParseInstant(System.String,System.DateTime@)">
+            <summary>
+            An ISO-8601 date and time (zone-less = UTC) as UTC; false for anything else or outside years 1900 to 9000. A time alone
+            ("09:00") is refused: it would take today's date from the server clock (the RecurringCalls rule).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.StartsWithIsoDateAndTime(System.String)">
+            <summary>"yyyy-MM-ddTHH:mm" at the start (seconds, fraction and zone may follow).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.UnreadCount(System.Collections.Generic.IEnumerable{Resgrid.Model.DispatcherConversationMessage})">
+            <summary>Messages received since the holder last replied (desk notes never count).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.IsCallerWaiting(Resgrid.Model.DispatcherQueueItem,System.Collections.Generic.IEnumerable{Resgrid.Model.DispatcherQueueEvent})">
+            <summary>A held phone caller is still on the line: an open voice item with a live leg and no VoiceEnded on the caller's own leg.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.CanReplyOnIntakeThread(Resgrid.Model.DispatcherQueueItem,Resgrid.Model.IntakeConversationView)">
+            <summary>An intake text thread takes replies from the dispatcher holding the item while it is open and the texter has not opted out.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.CanConnectVoice(Resgrid.Model.DispatcherQueueItem,System.Collections.Generic.IEnumerable{Resgrid.Model.DispatcherQueueEvent})">
+            <summary>Answer (a held caller is waiting) or Call back (a text or phone call with a phone number to ring back).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.ToDutyData(Resgrid.Model.DispatcherDutyWindow)">
+            <summary>A duty window as the v4 model.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.ToWarningData(Resgrid.Model.DispatcherDeskWarning)">
+            <summary>A desk warning as the v4 model (kind by name).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.ToConfigData(Resgrid.Model.DispatcherDeskConfig)">
+            <summary>The part of the desk config the app needs, with the limits clamped as the desk applies them.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.NotADispatcher">
+            <summary>403 with a desk body, so the app reads it as the NotADispatcher refusal.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.ActionResultAsync``1(Resgrid.Model.DispatcherDeskResult{``0})">
+            <summary>
+            The action's outcome with the caller's refreshed desk member. The outcome is already committed (a reply may be sent), so a
+            failed refresh read leaves Me unset rather than failing the request: a client that saw an error would repeat the action.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.RefreshedItemDataAsync(Resgrid.Model.DispatcherQueueItem)">
+            <summary>The item as it is after the action, or as the action returned it when the refresh read fails (supplemental, like Me).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.CommittedBreakDataAsync(Resgrid.Model.DispatcherBreak)">
+            <summary>
+            A break an action already stored, as the v4 model: a failed name lookup leaves UserName empty instead of turning the stored
+            change into an error the app would repeat (supplemental, like Me).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.CheckHolderOrSupervisorAsync(System.String)">
+            <summary>Null when the caller holds (or was offered) the item or may supervise; otherwise why it is refused.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.CanPlanBreakAsync(System.String,System.Nullable{System.Int32})">
+            <summary>Supervisors plan anyone's breaks; a dispatcher plans their own on a shift that allows self-scheduled breaks.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.FindDutyWindowAsync(System.String,System.Nullable{System.Int32},System.DateTime)">
+            <summary>The dispatcher's duty window a new break belongs to: on the given shift day, else the one covering its start.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.DepartmentShiftDayAsync(System.Int32)">
+            <summary>The shift day and its shift, when both are the department's.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.IsShiftDayOverAsync(Resgrid.Model.ShiftDay,Resgrid.Model.Shift)">
+            <summary>The shift day has ended in department-local time (the boundary ShiftDispatchersService.SignupForDayAsync refuses at).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.CanManageShiftRosterAsync(Resgrid.Model.Shift)">
+            <summary>The dispatch roster is the whole shift's (no group), so it takes the whole shift's management scope.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DispatcherDeskController.WindowAsync(System.String,System.String,System.Int32)">
+            <summary>The requested window, or today's department-local day; null when it is not valid.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.FactorRecoveryController">
             <summary>
             "I lost my authenticator" (passkey plan sections 5.4 and 6.3). A sign-in's verified first factor (its login
@@ -3588,7 +4030,10 @@
             <summary>Adjustment compatibility route: provide a positive delta and exactly one explicit source/destination location.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.InventoryController.GetLowStockItems(System.Int32)">
-            <summary>Bulk items at/below their reorder point, using only stock locations this caller can view. Page is the catalog page.</summary>
+            <summary>
+            Bulk items at/below their department-wide reorder point, or with a visible location at/below its own minimum (par
+            level), using only stock locations this caller can view. Page is the catalog page.
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.InventoryController.GetAccess(System.Nullable{System.Int32})">
             <summary>Field apps: whether inventory is usable, whether the caller may count (AdjustInventory at the unit's holder location) and the unit's countable locations.</summary>
@@ -15313,6 +15758,231 @@
             The unit the token was registered for (Unit app); empty for a user registration
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskActionResult">
+            <summary>A refusal or success with the desk state after the action.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskActionResult.Error">
+            <summary>DispatcherDeskErrors name when refused ("HoldingWork", "CoverageTooLow", …); empty on success.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskActionResult.Me">
+            <summary>The caller's desk member after the action.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskActionResult.Item">
+            <summary>The item acted on (item actions).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskActionResult.Break">
+            <summary>The break acted on (break actions).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskActionResult.Message">
+            <summary>The message sent (message actions).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskWarningData.Kind">
+            <summary>DispatcherDeskWarningKinds name.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskConfigData">
+            <summary>The department's desk settings the app needs (a subset of DispatcherDeskConfig).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskConfigData.EmailCallMode">
+            <summary>DispatcherEmailCallModes: 0 AutoDispatch, 1 Pending, 2 EnhancedAi.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskConfigData.DefaultBreakPlan">
+            <summary>The default break plan (shown when planning a break): type, minutes.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherBreakPlanEntryData.BreakType">
+            <summary>DispatcherBreakTypes: 1 Break, 2 Meal, 3 Personal, 4 Other.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherBreakPlanEntryData.TargetOffsetMinutes">
+            <summary>Minutes after the shift day starts; null = spread evenly.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDutyData.Day">
+            <summary>The shift day's local date, "yyyy-MM-dd".</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDutyData.Source">
+            <summary>1 Assigned, 2 Signup.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherBreakData.BreakType">
+            <summary>DispatcherBreakTypes.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherBreakData.State">
+            <summary>DispatcherBreakStates: 0 Scheduled, 1 Active, 2 Completed, 3 Missed, 4 Cancelled.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherBreakData.ScheduledEndOn">
+            <summary>ScheduledStartOn + DurationMinutes.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherBreakData.ExpectedReturnOn">
+            <summary>StartedOn + DurationMinutes: when the dispatcher is due back.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherBreakData.EndReason">
+            <summary>DispatcherBreakEndReasons.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskMemberData.DisplayState">
+            <summary>DispatcherDisplayStates: 0 Offline, 1 Available, 2 Busy, 3 Away, 4 OnBreak.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskMemberData.DutyMode">
+            <summary>0 Scheduled (on a shift), 1 Unscheduled.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskMemberData.DutyEndsOn">
+            <summary>When the duty ends (shift day end, or the chosen end of unscheduled duty); null = open.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskMemberData.DeviceKind">
+            <summary>phone, tablet or desktop.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskMemberData.CanSupervise">
+            <summary>The caller may supervise other dispatchers (end their breaks, reassign their work).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherQueueItemData.Kind">
+            <summary>DispatcherQueueItemKinds: 1 PendingCall, 2 ScheduledCall, 3 Text, 4 Voice, 5 Email, 6 Chat, 7 Other.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherQueueItemData.State">
+            <summary>DispatcherQueueItemStates: 0 Queued, 1 Offered, 2 Accepted, 3 Completed, 4 Overflowed, 5 Cancelled.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherQueueItemData.Outcome">
+            <summary>DispatcherQueueItemOutcomes.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherQueueItemData.CallerWaiting">
+            <summary>Voice: a held caller is waiting now (not hung up).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherQueueItemData.MessageCount">
+            <summary>Messages in the conversation (text, email, chat).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherQueueItemData.UnreadCount">
+            <summary>Messages received since the holder last replied.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherQueueItemData.IntakeConversationId">
+            <summary>
+            An intake text thread the item is linked to (a text to the department's private inbound dispatch number): its messages are read from
+            <see cref="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherQueueItemDetailData.IntakeConversation"/>, replies go out from the region's master number.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherQueueEventData.EventType">
+            <summary>DispatcherQueueEventTypes.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherConversationMessageData.Direction">
+            <summary>DispatcherMessageDirections: 1 Inbound, 2 Outbound, 3 Note.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherConversationMessageData.DeliveryState">
+            <summary>DispatcherMessageDeliveryStates: 0 Received, 1 Queued, 2 Sent, 3 Failed.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherQueueItemDetailData.CanReply">
+            <summary>Whether a reply can be sent on the item's channel.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherQueueItemDetailData.CanConnectVoice">
+            <summary>Whether the desk can ring the dispatcher's phone for this item (voice configured).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherQueueItemDetailData.IntakeConversation">
+            <summary>The intake text thread linked to the item, with its messages (null for other items).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherIntakeThreadData">
+            <summary>An intake text thread on a desk item (IntakeConversation, M0325).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherIntakeThreadData.State">
+            <summary>IntakeConversationStates: 1 Open, 2 Closed.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherIntakeThreadData.Handler">
+            <summary>IntakeConversationHandlers: 1 Assistant (Enhanced AI asks), 2 Unassisted, 3 Dispatcher.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherIntakeThreadData.OptedOut">
+            <summary>The texter sent STOP: nothing more can be sent.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherIntakeThreadData.ReplyFromAddress">
+            <summary>The number replies go out from (the region's master number).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherIntakeThreadData.Messages">
+            <summary>Oldest first.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherIntakeMessageData.Direction">
+            <summary>IntakeConversationMessageDirections: 1 Inbound, 2 Outbound.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherIntakeMessageData.Author">
+            <summary>IntakeConversationAuthors: 1 Participant, 2 Assistant (Enhanced AI), 3 Dispatcher, 4 System (welcome, connected, closed).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherIntakeMessageData.AuthorName">
+            <summary>The dispatcher's first name, for Dispatcher messages.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherIntakeMessageData.Status">
+            <summary>IntakeConversationMessageStatuses: 1 Received, 2 Queued, 3 Sent, 4 Failed.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskResultData">
+            <summary>GET DispatcherDesk/GetDesk: the whole board.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskResultData.MyBreaks">
+            <summary>The caller's open breaks today (active first, then planned).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskResultData.IsDispatcher">
+            <summary>The caller is allowed to use the desk (Dispatch app login).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherCoverageResultData">
+            <summary>GET DispatcherDesk/GetCoverage: duty windows, breaks and coverage slots for the timeline.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherCoverageResultData.Names">
+            <summary>Display names of every dispatcher in Duty/Breaks.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.DispatcherDesk.ShiftDispatchersResultData">
+            <summary>A shift's dispatcher settings and roster (GET DispatcherDesk/GetShiftDispatchers).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.ShiftDispatchersResultData.Dispatchers">
+            <summary>The day's roster when a shift day was asked for, else the standing roster.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.ShiftDispatchersResultData.CanSignup">
+            <summary>The caller can sign up for the asked day (Signup shift, eligible, not on it yet).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherQueueStatsData.CreatedByKind">
+            <summary>Kind (DispatcherQueueItemKinds value as string) → count.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeskConfigResult">
+            <summary>GET DispatcherDesk/GetConfig.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherBreaksResult">
+            <summary>GET DispatcherDesk/GetBreaks: every dispatcher's breaks planned or taken in the window (the team timeline).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherSignInInput.DeviceKind">
+            <summary>phone, tablet or desktop.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherSignInInput.DutyEndsOn">
+            <summary>ISO UTC end of unscheduled duty; null = until signed off.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherDeviceInput.Platform">
+            <summary>1 iOS, 2 Android, 3 web (as Devices/RegisterDevice).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherCompleteInput.Outcome">
+            <summary>DispatcherQueueItemOutcomes.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherCompleteInput.NotifyParticipant">
+            <summary>An intake text thread: tell the texter the conversation ended (default true).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherVoiceInput.CallbackNumber">
+            <summary>Ring this number (E.164); empty = the desk callback number, else the profile mobile.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherSaveBreakInput.DispatcherBreakId">
+            <summary>Empty to plan a new break.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherSaveBreakInput.UserId">
+            <summary>Whose break; empty = the caller. Someone else's needs supervisor rights.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherSaveBreakInput.ScheduledStartOn">
+            <summary>ISO UTC planned start.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherStartBreakInput.DispatcherBreakId">
+            <summary>The planned break to start; empty to take one now (BreakType + DurationMinutes).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherStartBreakInput.ReturnWork">
+            <summary>Put held work back in the queue (otherwise a dispatcher holding work is refused with HoldingWork).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherStartBreakInput.UserId">
+            <summary>Whose break; empty = the caller (supervisor for someone else).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.DispatcherEndBreakInput.UserId">
+            <summary>Whose break; empty = the caller (supervisor for someone else).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.ShiftDayDispatcherInput.UserId">
+            <summary>Assign/remove: whose; empty = the caller (signup/withdraw).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.DispatcherDesk.ShiftDispatcherReviewInput">
+            <summary>POST DispatcherDesk/ReviewDaySignup: a shift manager approves or denies a pending dispatcher signup.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DispatcherDesk.ShiftDispatcherReviewInput.ShiftDispatcherId">
+            <summary>The pending roster row (DispatcherDutyData.ShiftDispatcherId of the day roster).</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Dispatch.GetCallTemplatesResult">
             <summary>
             DCall Templates for Quick Dispatch
@@ -16130,6 +16800,15 @@
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Inventory.InventoryLowStockItem">
             <summary>Bulk stock visible to this caller, summed across authorized locations and lots.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Inventory.InventoryLowStockItem.ReorderPoint">
+            <summary>The item's department-wide level (ReorderPoint, else MinLevel); null when only per-location minimums are set.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Inventory.InventoryLowStockItem.DepartmentLow">
+            <summary>The department total is at or below ReorderPoint.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Inventory.InventoryLowStockItem.Locations">
+            <summary>Visible locations at or below their own minimum (par level).</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Invoicing.InvoicingAccessResult">
             <summary>Whether this department may use customer invoicing right now (flag and Business Operations entitlement) and what it costs.</summary>
@@ -18518,6 +19197,15 @@
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.NerisCrosswalkCoverageData">
             <summary>Crosswalk gap report: an unmapped or stale local code is a filing that will need manual work.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.HydrantData.FlowGpm">
+            <summary>Observed flow of the latest test when both pressures are set; otherwise the flow as recorded.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.HydrantData.RatedFlowGpm">
+            <summary>Rated flow at 20 psi residual (NFPA 291), when the pressures allow it; FlowClass is read from it.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.HydrantFlowTestData.RatedFlowGpm">
+            <summary>Rated flow at 20 psi residual (NFPA 291); null when the pressures do not allow it.</summary> 
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.HydrantBulkDeleteInput">
             <summary>Scope: 0 = the HydrantIds given, 1 = every imported hydrant, 2 = every hydrant. ExpectedCount is required for 1 and 2 and must equal the number that match.</summary>
@@ -21952,6 +22640,43 @@
             <summary>
               Overrides the current thread's CurrentUICulture property for all
               resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Twilio.IDispatcherInboundTextHandler">
+            <summary>
+            Inbound texts for the dispatcher desk (plan D9), shared by the Twilio and SignalWire webhooks. Only senders with no member
+            profile reach it: members keep their text commands, and dispatch-source numbers keep Text-To-Call.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Twilio.IDispatcherInboundTextHandler.HandleAsync(System.Nullable{System.Int32},System.String,System.String,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            True when the desk took the text (the webhook answers with its usual empty reply); false leaves it to today's handling.
+            </summary>
+            <param name="departmentId">
+            The department the texted number belongs to (its Text-To-Call number), or null for the master Resgrid number, where
+            only a reply to an open desk conversation is taken.
+            </param>
+        </member>
+        <member name="T:Resgrid.Web.Services.Twilio.DeskPhoneNumbers">
+            <summary>Phone number shapes the desk stores (E.164) and the legacy lookups expect (digits only).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Twilio.DeskPhoneNumbers.ToE164(System.String)">
+            <summary>"+15551234567" from "+15551234567", "15551234567" or "+1 (555) 123-4567"; anything that is not a number unchanged.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Twilio.IDispatcherInboundVoiceHandler">
+            <summary>
+            Inbound phone calls for the dispatcher desk (plan D8). Only callers with no member profile reach it (members keep the
+            voice menu): a call to a department's Text-To-Call number whose desk takes phone calls is put on the desk and the caller
+            held in its own Twilio queue until a dispatcher answers, or sent to the overflow handling when nobody can.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Twilio.IDispatcherInboundVoiceHandler.HandleAsync(System.String,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>The TwiML for the caller (hold, or overflow); null when the desk does not take the call, which keeps today's handling.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Twilio.DispatcherInboundVoiceHandler.HoldTwiml(Resgrid.Model.DispatcherQueueItem)">
+            <summary>
+            Holds the caller in the item's own queue: the wait URL plays the hold prompts and re-checks the item, the action URL hears
+            how the caller left (hung up, left for overflow, or was bridged to a dispatcher).
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Twilio.ITwilioVoiceResponseService.AppendDispatchPromptAsync(Twilio.TwiML.VoiceResponse,System.String,System.Threading.CancellationToken,System.String)">

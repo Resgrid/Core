@@ -5,6 +5,7 @@
 @{
     var departmentTime = DepartmentTime.From(ViewData);
 	var h = Model.Hydrant;
+	var ratedFlow = Resgrid.Model.HydrantFlowCalculator.RatedFlowGpm(h.FlowGpm, h.StaticPressurePsi, h.ResidualPressurePsi);
 	ViewBag.Title = "Resgrid | " + L["Hydrants"] + " | " + h.HydrantNumber;
 	var returnUrl = Url.Action("Details", "RecordHydrants", new { area = "User", id = h.RmsHydrantId });
 }
@@ -38,7 +39,7 @@
 					<dt>@L["AddressText"]</dt><dd>@h.AddressText<br /><small>@h.Latitude, @h.Longitude</small></dd>
 					<dt>@L["HydrantOwner"]</dt><dd>@(RmsEnumDisplay.Label<RmsHydrantOwnerKind>(h.OwnerKind)) @h.OwnerName</dd>
 					<dt>@L["MainSize"]</dt><dd>@h.MainSizeInches</dd>
-					<dt>@L["FlowClass"]</dt><dd>@(RmsEnumDisplay.Label<RmsHydrantFlowClass>(h.FlowClass)) · @h.FlowGpm gpm</dd>
+					<dt>@L["FlowClass"]</dt><dd>@(RmsEnumDisplay.Label<RmsHydrantFlowClass>(h.FlowClass)) · @h.FlowGpm gpm@if (ratedFlow.HasValue) { <text> · @L["RatedFlowGpm"] @ratedFlow gpm</text> }</dd>
 					<dt>@L["StaticPressure"]</dt><dd>@h.StaticPressurePsi psi · @L["ResidualPressure"] @h.ResidualPressurePsi psi</dd>
 					<dt>@L["LastTestedOn"]</dt><dd>@departmentTime.Date(h.LastTestedOn)</dd>
 					<dt>@L["LastMaintainedOn"]</dt><dd>@departmentTime.Date(h.LastMaintainedOn)</dd>
@@ -67,11 +68,11 @@
 				else
 				{
 					<table class="table table-condensed">
-						<thead><tr><th>@L["TestedOn"]</th><th>@L["StaticPressure"]</th><th>@L["ResidualPressure"]</th><th>@L["PitotPressure"]</th><th>@L["OutletDiameter"]</th><th>@L["FlowGpm"]</th><th>@L["FlowClass"]</th></tr></thead>
+						<thead><tr><th>@L["TestedOn"]</th><th>@L["StaticPressure"]</th><th>@L["ResidualPressure"]</th><th>@L["PitotPressure"]</th><th>@L["OutletDiameter"]</th><th>@L["FlowGpm"]</th><th title="@L["RatedFlowHelp"]">@L["RatedFlowGpm"]</th><th>@L["FlowClass"]</th></tr></thead>
 						<tbody>
 						@foreach (var t in Model.Aggregate.FlowTests.OrderByDescending(t => t.TestedOn))
 						{
-							<tr><td>@departmentTime.Date(t.TestedOn)</td><td>@t.StaticPressurePsi</td><td>@t.ResidualPressurePsi</td><td>@t.PitotPressurePsi</td><td>@t.OutletDiameterInches (c=@t.Coefficient)</td><td>@t.FlowGpm</td><td>@(RmsEnumDisplay.Label<RmsHydrantFlowClass>(t.FlowClass))</td></tr>
+							<tr><td>@departmentTime.Date(t.TestedOn)</td><td>@t.StaticPressurePsi</td><td>@t.ResidualPressurePsi</td><td>@t.PitotPressurePsi</td><td>@t.OutletDiameterInches (c=@t.Coefficient)</td><td>@t.FlowGpm</td><td>@Resgrid.Model.HydrantFlowCalculator.RatedFlowGpm(t.FlowGpm, t.StaticPressurePsi, t.ResidualPressurePsi)</td><td>@(RmsEnumDisplay.Label<RmsHydrantFlowClass>(t.FlowClass))</td></tr>
 						}
 						</tbody>
 					</table>

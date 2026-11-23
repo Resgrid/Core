@@ -62,6 +62,9 @@ namespace Resgrid.Services
 			return schedules.OrderBy(x => x.Day.Start).ThenBy(x => x.Shift.Name).ToList();
 		}
 
+		/// <summary>How many days back a running shift day may have started (see GetActiveShiftDaySchedulesAsync).</summary>
+		public const int ActiveShiftLookBackDays = 7;
+
 		public async Task<List<ShiftDaySchedule>> GetActiveShiftDaySchedulesAsync(int departmentId, DateTime timestampUtc)
 		{
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
@@ -71,8 +74,9 @@ namespace Resgrid.Services
 
 			var localNow = timestampUtc.TimeConverter(department);
 
-			// Look back far enough for a long shift (Hours up to 48+) that started days ago.
-			var data = await LoadScheduleDataAsync(departmentId, localNow.Date.AddDays(-3), localNow.Date, department);
+			// Look back far enough for a long shift that started days ago. Three days missed shifts longer than 72 hours (a
+			// 96-hour day started four days ago was never on duty); a week covers every length the shift setup allows.
+			var data = await LoadScheduleDataAsync(departmentId, localNow.Date.AddDays(-ActiveShiftLookBackDays), localNow.Date, department);
 			var schedules = new List<ShiftDaySchedule>();
 
 			foreach (var shift in data.Shifts)
@@ -198,6 +202,25 @@ namespace Resgrid.Services
 
 				if (!allowMultipleGroups || userEntries.Any(x => x.DepartmentGroupId == groupId))
 					return ShiftActionResult<ShiftSignup>.Fail(ShiftActionErrors.AlreadySignedUp);
+			}
+
+			// The group's role slots: the member needs one of its roles and a slot left for it (ShiftSignupEligibility).
+			var group = groupId.HasValue ? schedule.Shift.Groups?.FirstOrDefault(x => x != null && x.DepartmentGroupId == groupId.Value) : null;
+
+			if (ShiftSignupEligibility.SlotsByRole(group).Count > 0)
+			{
+				var eligibility = new ShiftSignupEligibility
+				{
+					Group = group,
+					Roster = schedule.Roster,
+					RoleIdsByUser = await GetRoleIdsByUserAsync(schedule.Shift.DepartmentId),
+					AllowOverSignup = await _departmentSettingsService.GetAllowShiftOverSignupAsync(schedule.Shift.DepartmentId)
+				};
+
+				var slotCheck = eligibility.Check(userId);
+
+				if (slotCheck != ShiftActionErrors.None)
+					return ShiftActionResult<ShiftSignup>.Fail(slotCheck);
 			}
 
 			var signup = new ShiftSignup
@@ -577,10 +600,7 @@ namespace Resgrid.Services
 			foreach (var member in members.Where(x => x != null && !x.IsDeleted && x.IsDisabled != true && !String.IsNullOrWhiteSpace(x.UserId)))
 				eligibility.MemberIds.Add(member.UserId);
 
-			var roles = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(departmentId.Value) ?? new Dictionary<string, List<PersonnelRole>>();
-
-			foreach (var pair in roles.Where(x => x.Key != null))
-				eligibility.RoleIdsByUser[pair.Key] = (pair.Value ?? new List<PersonnelRole>()).Select(x => x.PersonnelRoleId).Distinct().ToList();
+			eligibility.RoleIdsByUser = await GetRoleIdsByUserAsync(departmentId.Value);
 
 			if (trade.IsWorkshiftTrade())
 			{
@@ -611,6 +631,18 @@ namespace Resgrid.Services
 				eligibility.RequiredRoleIds = group.Roles.Where(x => x != null).Select(x => x.PersonnelRoleId).Where(sourceRoles.Contains).Distinct().ToList();
 
 			return eligibility;
+		}
+
+		/// <summary>Each department member's personnel role ids; trade and sign-up role checks read the same map.</summary>
+		private async Task<Dictionary<string, List<int>>> GetRoleIdsByUserAsync(int departmentId)
+		{
+			var result = new Dictionary<string, List<int>>(StringComparer.OrdinalIgnoreCase);
+			var roles = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(departmentId) ?? new Dictionary<string, List<PersonnelRole>>();
+
+			foreach (var pair in roles.Where(x => x.Key != null))
+				result[pair.Key] = (pair.Value ?? new List<PersonnelRole>()).Where(x => x != null).Select(x => x.PersonnelRoleId).Distinct().ToList();
+
+			return result;
 		}
 
 		public async Task<List<string>> GetTradeEligibleUserIdsAsync(ShiftSignupTrade trade)

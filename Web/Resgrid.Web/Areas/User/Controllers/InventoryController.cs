@@ -98,7 +98,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			switch (tab)
 			{
 				case "OnHand": await QueryAsync<InventoryStock>(view, new InventoryQuery { ItemId = itemId, LocationId = locationId }); break;
-				case "Items": await PageAsync<InventoryItem>(view); break;
+				case "Items":
+					await PageAsync<InventoryItem>(view);
+					view.ParLevels = await _catalog.GetParLevelsAsync(Actor, view.Rows.Select(r => r.Id).ToArray()) ?? new();
+					break;
 				case "Categories": await PageAsync<InventoryCategory>(view); break;
 				case "Locations": await PageAsync<InventoryLocation>(view); break;
 				case "Lots": await PageAsync<InventoryLot>(view); break;

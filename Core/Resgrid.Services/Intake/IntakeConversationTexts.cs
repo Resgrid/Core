@@ -99,6 +99,6 @@ namespace Resgrid.Services.Intake
 
 		private static string Department(string departmentName) => string.IsNullOrWhiteSpace(departmentName) ? "Dispatch" : departmentName.Trim();
 
-		private static string EmergencyNumber() => string.IsNullOrWhiteSpace(IntakeConfig.EmergencyNumber) ? "911" : IntakeConfig.EmergencyNumber.Trim();
+		private static string EmergencyNumber() => Resgrid.Model.EmergencyNumber.Current;
 	}
 }

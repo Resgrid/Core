@@ -21,6 +21,7 @@ namespace Resgrid.Tests.AdminAssist
 		[TestCase("password-recovery", "RequirePasswordResetViaEmail", false, true)]
 		[TestCase("import-heartbeat", "importHeartbeatMissing", true, false)]
 		[TestCase("new-call-dispatch-lists-hidden", "newCallDispatchListsHidden", true, false)]
+		[TestCase("relay-dispatch-code", "dispatchEmailCodePresent", false, true)]
 		public void Boolean_rules_distinguish_the_documented_failure_from_correct_configuration(string ruleId, string fact, bool failing, bool passing)
 		{
 			var rule = Rule(ruleId);
@@ -74,6 +75,8 @@ namespace Resgrid.Tests.AdminAssist
 		[TestCase("import-disabled-automation", "importDisabledScheduleCount", 1, 0)]
 		[TestCase("import-enforcement-relaxed", "importRelaxedEnforcementCount", 1, 0)]
 		[TestCase("import-files-retained", "importArtifactsRetainedCount", 1, 0)]
+		[TestCase("relay-group-email-codes", "groupsWithoutEmailCodes", 1, 0)]
+		[TestCase("relay-voice-channel", "voiceChannelCount", 0, 1)]
 		public void Numeric_rules_preserve_thresholds(string ruleId, string fact, double failing, double passing)
 		{
 			var rule = Rule(ruleId);
@@ -130,6 +133,18 @@ namespace Resgrid.Tests.AdminAssist
 					Assert.That(rule.Evaluate(Snapshot(evidence), Now, TimeSpan.FromMinutes(1)).Result, Is.EqualTo(RuleResult.Unknown), definition.Id);
 				}
 			}
+		}
+
+		[Test]
+		public void Relay_voice_channel_check_does_not_apply_without_Push_to_Talk()
+		{
+			// A department without the PTT add-on cannot create channels; the missing channel is not its failure.
+			var evidence = new Dictionary<string, ConfigurationEvidence>
+			{
+				["pttAvailable"] = Value("pttAvailable", boolean: false),
+				["voiceChannelCount"] = Value("voiceChannelCount", number: 0)
+			};
+			Assert.That(Rule("relay-voice-channel").Evaluate(Snapshot(evidence), Now, TimeSpan.FromMinutes(1)).Result, Is.EqualTo(RuleResult.NotApplicable));
 		}
 
 		[Test]

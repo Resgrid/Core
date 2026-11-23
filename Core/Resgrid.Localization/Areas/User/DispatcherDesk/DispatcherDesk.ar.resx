@@ -1,0 +1,967 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AcceptedColumn" xml:space="preserve">
+    <value>المقبولة</value>
+  </data>
+  <data name="AcknowledgeTextsHelp" xml:space="preserve">
+    <value>يتلقى المرسل ردًا تلقائيًا عندما تصل رسالته إلى موظف الإرسال.</value>
+  </data>
+  <data name="AcknowledgeTextsLabel" xml:space="preserve">
+    <value>تأكيد استلام الرسائل تلقائيًا</value>
+  </data>
+  <data name="ActionDone" xml:space="preserve">
+    <value>تم.</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>لم تنجح العملية. يُرجى المحاولة مرة أخرى.</value>
+  </data>
+  <data name="ActivityRangeHelpFormat" xml:space="preserve">
+    <value>حتى {0} يومًا.</value>
+  </data>
+  <data name="ActivityTitle" xml:space="preserve">
+    <value>نشاط موظفي الإرسال</value>
+  </data>
+  <data name="AddBreakRow" xml:space="preserve">
+    <value>إضافة استراحة</value>
+  </data>
+  <data name="AddBreakTitle" xml:space="preserve">
+    <value>جدولة استراحة</value>
+  </data>
+  <data name="AddDispatcherButton" xml:space="preserve">
+    <value>إضافة موظف إرسال</value>
+  </data>
+  <data name="AddDispatcherHeader" xml:space="preserve">
+    <value>إضافة موظف إرسال إلى هذا اليوم</value>
+  </data>
+  <data name="AgeColumn" xml:space="preserve">
+    <value>مدة الانتظار</value>
+  </data>
+  <data name="AllShiftDays" xml:space="preserve">
+    <value>كل أيام الورديات</value>
+  </data>
+  <data name="AllowSelfScheduledBreaksHelp" xml:space="preserve">
+    <value>يمكن لموظفي الإرسال في هذه الوردية جدولة استراحاتهم ونقلها بأنفسهم. وإلا فلا يستطيع ذلك إلا مشرفو المكتب ومديرو الورديات.</value>
+  </data>
+  <data name="AllowSelfScheduledBreaksLabel" xml:space="preserve">
+    <value>موظفو الإرسال يجدولون استراحاتهم</value>
+  </data>
+  <data name="AllowUnscheduledDutyHelp" xml:space="preserve">
+    <value>يمكن لموظفي الإرسال تسجيل الدخول إلى المكتب دون وردية (فعاليات، منشآت، تغطية).</value>
+  </data>
+  <data name="AllowUnscheduledDutyLabel" xml:space="preserve">
+    <value>السماح بالمناوبة دون وردية</value>
+  </data>
+  <data name="AutoReturnHelp" xml:space="preserve">
+    <value>يعيد موظف الإرسال متاحًا بعد هذا العدد من الدقائق من انتهاء مدة استراحته. 0 = أبدًا (يبقى في الاستراحة حتى يعود أو ينهيها المشرف).</value>
+  </data>
+  <data name="AutoReturnLabel" xml:space="preserve">
+    <value>العودة التلقائية بعد (دقائق)</value>
+  </data>
+  <data name="AvailableStat" xml:space="preserve">
+    <value>المتاحون</value>
+  </data>
+  <data name="AvgAcceptColumn" xml:space="preserve">
+    <value>متوسط حتى القبول</value>
+  </data>
+  <data name="AvgCompleteColumn" xml:space="preserve">
+    <value>متوسط حتى الإنجاز</value>
+  </data>
+  <data name="AwayReasonLabel" xml:space="preserve">
+    <value>السبب (اختياري)</value>
+  </data>
+  <data name="BackInFormat" xml:space="preserve">
+    <value>يعود خلال {0}</value>
+  </data>
+  <data name="BelowMinimumFormat" xml:space="preserve">
+    <value>{0} متاحون فقط (الحد الأدنى {1})</value>
+  </data>
+  <data name="BoardLoadFailed" xml:space="preserve">
+    <value>تعذر تحميل لوحة المكتب. ستتم إعادة المحاولة قريبًا.</value>
+  </data>
+  <data name="BoardUpdatedFormat" xml:space="preserve">
+    <value>آخر تحديث {0}</value>
+  </data>
+  <data name="BreakColumn" xml:space="preserve">
+    <value>الاستراحة</value>
+  </data>
+  <data name="BreakLengthColumn" xml:space="preserve">
+    <value>المدة (دقائق)</value>
+  </data>
+  <data name="BreakMinutesColumn" xml:space="preserve">
+    <value>دقائق الاستراحة</value>
+  </data>
+  <data name="BreakPlanEmpty" xml:space="preserve">
+    <value>لا توجد استراحات مجدولة.</value>
+  </data>
+  <data name="BreakPlanHelp" xml:space="preserve">
+    <value>الهدف = الدقائق بعد بدء الوردية؛ اتركه فارغًا لتوزيع الاستراحة بالتساوي. يوزّع «جدولة الاستراحات» الاستراحات على موظفي الإرسال في اليوم بحيث لا تتداخل حيثما أمكن، ولا يترك أبدًا في المكتب عددًا أقل من الحد الأدنى.</value>
+  </data>
+  <data name="BreakPlanLabel" xml:space="preserve">
+    <value>خطة الاستراحات</value>
+  </data>
+  <data name="BreakPlannerButton" xml:space="preserve">
+    <value>مخطط الاستراحات</value>
+  </data>
+  <data name="BreakReminderHelp" xml:space="preserve">
+    <value>عدد الدقائق قبل الاستراحة المجدولة التي يتلقى فيها موظف الإرسال تذكيرًا. 0 = عند حلول موعدها فقط.</value>
+  </data>
+  <data name="BreakReminderLabel" xml:space="preserve">
+    <value>التذكير بالاستراحة (دقائق قبلها)</value>
+  </data>
+  <data name="BreakState.Active" xml:space="preserve">
+    <value>في استراحة الآن</value>
+  </data>
+  <data name="BreakState.Completed" xml:space="preserve">
+    <value>أُخذت</value>
+  </data>
+  <data name="BreakState.Missed" xml:space="preserve">
+    <value>فاتت</value>
+  </data>
+  <data name="BreakState.Scheduled" xml:space="preserve">
+    <value>مجدولة</value>
+  </data>
+  <data name="BreakTargetColumn" xml:space="preserve">
+    <value>الهدف (دقائق بعد البدء)</value>
+  </data>
+  <data name="BreakTargetPlaceholder" xml:space="preserve">
+    <value>توزيع بالتساوي</value>
+  </data>
+  <data name="BreakTooltipFormat" xml:space="preserve">
+    <value>{0} · {1} · {2}</value>
+  </data>
+  <data name="BreakType.Break" xml:space="preserve">
+    <value>استراحة</value>
+  </data>
+  <data name="BreakType.Meal" xml:space="preserve">
+    <value>وجبة</value>
+  </data>
+  <data name="BreakType.Other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="BreakType.Personal" xml:space="preserve">
+    <value>شخصية</value>
+  </data>
+  <data name="BreakTypeColumn" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="BreaksColumn" xml:space="preserve">
+    <value>الاستراحات</value>
+  </data>
+  <data name="BreaksMissedColumn" xml:space="preserve">
+    <value>الاستراحات الفائتة</value>
+  </data>
+  <data name="BreaksPlannedFormat" xml:space="preserve">
+    <value>تمت جدولة {0} استراحة.</value>
+  </data>
+  <data name="BreaksTitle" xml:space="preserve">
+    <value>استراحات موظفي الإرسال</value>
+  </data>
+  <data name="ByDispatcherHeader" xml:space="preserve">
+    <value>حسب موظف الإرسال</value>
+  </data>
+  <data name="ByKindHeader" xml:space="preserve">
+    <value>العمل حسب النوع</value>
+  </data>
+  <data name="CancelBreakButton" xml:space="preserve">
+    <value>إزالة الاستراحة</value>
+  </data>
+  <data name="CancelBreakConfirm" xml:space="preserve">
+    <value>هل تريد إزالة هذه الاستراحة المجدولة؟</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="CapacityHelp" xml:space="preserve">
+    <value>عدد المهام المحوّلة التي يمكن لموظف الإرسال التعامل معها في الوقت نفسه قبل اعتباره مشغولًا.</value>
+  </data>
+  <data name="CapacityLabel" xml:space="preserve">
+    <value>المهام لكل موظف إرسال</value>
+  </data>
+  <data name="CloseButton" xml:space="preserve">
+    <value>إغلاق</value>
+  </data>
+  <data name="CompletedColumn" xml:space="preserve">
+    <value>المنجزة</value>
+  </data>
+  <data name="ConversationJoinHelp" xml:space="preserve">
+    <value>تنضم رسالة أو محادثة أخرى من المرسل نفسه خلال هذه الدقائق إلى المحادثة ذاتها.</value>
+  </data>
+  <data name="ConversationJoinLabel" xml:space="preserve">
+    <value>نافذة المحادثة (دقائق)</value>
+  </data>
+  <data name="CountColumn" xml:space="preserve">
+    <value>المهام</value>
+  </data>
+  <data name="CoverageLane" xml:space="preserve">
+    <value>التغطية</value>
+  </data>
+  <data name="CoverageSlotFormat" xml:space="preserve">
+    <value>{0}: {1} متاحون، {2} في استراحة، {3} في المناوبة</value>
+  </data>
+  <data name="CoverageTimelineHeader" xml:space="preserve">
+    <value>الخط الزمني للتغطية</value>
+  </data>
+  <data name="DateLabel" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="DeclinedColumn" xml:space="preserve">
+    <value>المرفوضة</value>
+  </data>
+  <data name="DefaultBreakPlanHelp" xml:space="preserve">
+    <value>الاستراحات التي يحصل عليها كل موظف إرسال في وردية ليست لها خطة استراحات خاصة.</value>
+  </data>
+  <data name="DefaultBreakPlanLabel" xml:space="preserve">
+    <value>خطة الاستراحات الافتراضية</value>
+  </data>
+  <data name="DeskBoardButton" xml:space="preserve">
+    <value>لوحة المكتب</value>
+  </data>
+  <data name="DeskBoardTitle" xml:space="preserve">
+    <value>مكتب الإرسال</value>
+  </data>
+  <data name="DeskRoutingOffNotice" xml:space="preserve">
+    <value>توجيه العمل إلى موظفي الإرسال متوقف. ما زالت الجداول والاستراحات تعمل؛ ويمكن لمسؤول القسم تشغيله من إعدادات مكتب الإرسال.</value>
+  </data>
+  <data name="DeskSupervisorBadge" xml:space="preserve">
+    <value>مشرف</value>
+  </data>
+  <data name="DeskSupervisorColumn" xml:space="preserve">
+    <value>مشرف المكتب</value>
+  </data>
+  <data name="DispatchOnlyBadge" xml:space="preserve">
+    <value>إرسال فقط</value>
+  </data>
+  <data name="DispatchPositionsFilled" xml:space="preserve">
+    <value>مواقع الإرسال مشغولة</value>
+  </data>
+  <data name="DispatchedColumn" xml:space="preserve">
+    <value>المُرسلة</value>
+  </data>
+  <data name="DispatcherAddedToDay" xml:space="preserve">
+    <value>تمت إضافة موظف الإرسال إلى اليوم.</value>
+  </data>
+  <data name="DispatcherColumn" xml:space="preserve">
+    <value>موظف الإرسال</value>
+  </data>
+  <data name="DispatcherDeskMenu" xml:space="preserve">
+    <value>مكتب الإرسال</value>
+  </data>
+  <data name="DispatcherRemovedFromDay" xml:space="preserve">
+    <value>تمت إزالة موظف الإرسال من اليوم.</value>
+  </data>
+  <data name="DispatcherSignedUp" xml:space="preserve">
+    <value>أنت مسجل للعمل في الإرسال في هذا اليوم.</value>
+  </data>
+  <data name="DispatcherSignupApproved" xml:space="preserve">
+    <value>تمت الموافقة على تسجيل موظف الإرسال.</value>
+  </data>
+  <data name="DispatcherSignupDenied" xml:space="preserve">
+    <value>تم رفض تسجيل موظف الإرسال.</value>
+  </data>
+  <data name="DispatcherSignupNeedsApproval" xml:space="preserve">
+    <value>في هذه الوردية يوافق مدير الورديات على تسجيلات موظفي الإرسال.</value>
+  </data>
+  <data name="DispatcherSignupPending" xml:space="preserve">
+    <value>تسجيلك كموظف إرسال بانتظار الموافقة.</value>
+  </data>
+  <data name="DispatcherWithdrawn" xml:space="preserve">
+    <value>لم تعد تعمل في الإرسال في هذا اليوم.</value>
+  </data>
+  <data name="DispatchersHeader" xml:space="preserve">
+    <value>موظفو الإرسال</value>
+  </data>
+  <data name="DispatchersOnDutyHeader" xml:space="preserve">
+    <value>موظفو الإرسال المناوبون</value>
+  </data>
+  <data name="DispatchersTabIntro" xml:space="preserve">
+    <value>يعمل موظفو الإرسال على مكتب الإرسال في تطبيق Dispatch. اختر ما إذا كانت هذه الوردية تضم موظفي إرسال، وعدد المطلوب منهم، وكيف تُجدول استراحاتهم.</value>
+  </data>
+  <data name="DueBackNow" xml:space="preserve">
+    <value>يجب أن يعود الآن</value>
+  </data>
+  <data name="DutyColumn" xml:space="preserve">
+    <value>المناوبة</value>
+  </data>
+  <data name="EditBreakTitle" xml:space="preserve">
+    <value>تعديل الاستراحة</value>
+  </data>
+  <data name="EmailCallMode.AutoDispatch" xml:space="preserve">
+    <value>الإرسال فورًا</value>
+  </data>
+  <data name="EmailCallMode.AutoDispatchHelp" xml:space="preserve">
+    <value>يُرسل البلاغ الوارد بالبريد فورًا (كما كان من قبل).</value>
+  </data>
+  <data name="EmailCallMode.EnhancedAi" xml:space="preserve">
+    <value>Enhanced AI إلى بلاغ معلّق</value>
+  </data>
+  <data name="EmailCallMode.EnhancedAiHelp" xml:space="preserve">
+    <value>يحوّل Enhanced AI البريد إلى بلاغ معلّق (النوع، الأولوية، العنوان) يراجعه موظف الإرسال ثم يرسله. يتطلب Enhanced AI.</value>
+  </data>
+  <data name="EmailCallMode.Pending" xml:space="preserve">
+    <value>الحفظ كبلاغ معلّق</value>
+  </data>
+  <data name="EmailCallMode.PendingHelp" xml:space="preserve">
+    <value>يُحفظ البلاغ الوارد بالبريد كبلاغ معلّق ليراجعه موظف الإرسال ثم يرسله.</value>
+  </data>
+  <data name="EmailCallModeIntro" xml:space="preserve">
+    <value>ما يصبح عليه البلاغ المرسل بالبريد إلى عنوان الإرسال الخاص بالقسم.</value>
+  </data>
+  <data name="EmailCallModeLabel" xml:space="preserve">
+    <value>البلاغات الواردة بالبريد</value>
+  </data>
+  <data name="EnabledHelp" xml:space="preserve">
+    <value>عرض البلاغات المعلّقة والمجدولة والرسائل والمكالمات والبريد والمحادثات على موظفي الإرسال المناوبين في تطبيق Dispatch.</value>
+  </data>
+  <data name="EnabledLabel" xml:space="preserve">
+    <value>توجيه العمل إلى موظفي الإرسال المناوبين</value>
+  </data>
+  <data name="EndBreakButton" xml:space="preserve">
+    <value>إنهاء الاستراحة</value>
+  </data>
+  <data name="EndBreakConfirm" xml:space="preserve">
+    <value>هل تريد إنهاء استراحة {0} وجعله متاحًا؟</value>
+  </data>
+  <data name="EndsFormat" xml:space="preserve">
+    <value>حتى {0}</value>
+  </data>
+  <data name="EnhancedAiUnavailable" xml:space="preserve">
+    <value>Enhanced AI غير متاح لهذا القسم.</value>
+  </data>
+  <data name="Error.AlreadyOnBreak" xml:space="preserve">
+    <value>موظف الإرسال هذا في استراحة بالفعل.</value>
+  </data>
+  <data name="Error.AlreadyOnRoster" xml:space="preserve">
+    <value>هذا الشخص مدرج بالفعل في جدول الإرسال لذلك اليوم.</value>
+  </data>
+  <data name="Error.AtCapacity" xml:space="preserve">
+    <value>موظف الإرسال هذا يتولى بالفعل أقصى ما يستطيع من عمل.</value>
+  </data>
+  <data name="Error.BreakNotFound" xml:space="preserve">
+    <value>تعذر العثور على الاستراحة.</value>
+  </data>
+  <data name="Error.BreakNotStartable" xml:space="preserve">
+    <value>بدأت هذه الاستراحة أو انتهت بالفعل ولا يمكن تعديلها.</value>
+  </data>
+  <data name="Error.BreakOverlaps" xml:space="preserve">
+    <value>تتداخل هذه الاستراحة مع استراحة أخرى لموظف الإرسال نفسه.</value>
+  </data>
+  <data name="Error.ChannelUnavailable" xml:space="preserve">
+    <value>هذه القناة غير متاحة لهذا القسم.</value>
+  </data>
+  <data name="Error.CoverageTooLow" xml:space="preserve">
+    <value>سيترك ذلك عددًا من موظفي الإرسال المتاحين أقل من الحد الأدنى.</value>
+  </data>
+  <data name="Error.DeskDisabled" xml:space="preserve">
+    <value>مكتب الإرسال متوقف لهذا القسم.</value>
+  </data>
+  <data name="Error.DispatchersNotEnabled" xml:space="preserve">
+    <value>هذه الوردية لا تضم موظفي إرسال.</value>
+  </data>
+  <data name="Error.HoldingWork" xml:space="preserve">
+    <value>لدى موظف الإرسال عمل جارٍ؛ أعده أولًا إلى قائمة الانتظار.</value>
+  </data>
+  <data name="Error.InvalidInput" xml:space="preserve">
+    <value>بعض القيم المدخلة غير صالحة.</value>
+  </data>
+  <data name="Error.ItemNotAvailable" xml:space="preserve">
+    <value>لم تعد هذه المهمة متاحة.</value>
+  </data>
+  <data name="Error.ItemNotFound" xml:space="preserve">
+    <value>تعذر العثور على المهمة. ربما عولجت بالفعل.</value>
+  </data>
+  <data name="Error.NoCallbackNumber" xml:space="preserve">
+    <value>لم يُحدد رقم معاودة الاتصال لموظف الإرسال هذا.</value>
+  </data>
+  <data name="Error.None" xml:space="preserve">
+    <value>لم يحدث أي خطأ.</value>
+  </data>
+  <data name="Error.NotADispatcher" xml:space="preserve">
+    <value>لا يستطيع هذا الشخص العمل على مكتب الإرسال: يحتاج إلى صلاحية تسجيل الدخول إلى تطبيق Dispatch.</value>
+  </data>
+  <data name="Error.NotAssignedToYou" xml:space="preserve">
+    <value>هذه المهمة غير مُسندة إليك.</value>
+  </data>
+  <data name="Error.NotOnBreak" xml:space="preserve">
+    <value>موظف الإرسال هذا ليس في استراحة.</value>
+  </data>
+  <data name="Error.NotOnDuty" xml:space="preserve">
+    <value>موظف الإرسال هذا ليس في المناوبة الآن.</value>
+  </data>
+  <data name="Error.NotPermitted" xml:space="preserve">
+    <value>غير مسموح لك بذلك.</value>
+  </data>
+  <data name="Error.NotSignedIn" xml:space="preserve">
+    <value>موظف الإرسال هذا غير مسجل الدخول إلى المكتب.</value>
+  </data>
+  <data name="Error.ShiftNotFound" xml:space="preserve">
+    <value>تعذر العثور على الوردية.</value>
+  </data>
+  <data name="EscalatedBadge" xml:space="preserve">
+    <value>مُصعّد</value>
+  </data>
+  <data name="FilterDispatchersPlaceholder" xml:space="preserve">
+    <value>تصفية موظفي الإرسال...</value>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>من</value>
+  </data>
+  <data name="HeartbeatTimeoutHelp" xml:space="preserve">
+    <value>عدد الدقائق دون إشارة من تطبيق Dispatch قبل أن يتوقف موظف الإرسال عن تلقي العمل. 0 = أبدًا (الهاتف في وضع السكون يتلقى الإشعارات مع ذلك؛ والعروض الفائتة تجعله غائبًا بدلًا من ذلك).</value>
+  </data>
+  <data name="HeartbeatTimeoutLabel" xml:space="preserve">
+    <value>مهلة انقطاع الإشارة (دقائق)</value>
+  </data>
+  <data name="HeldItemsFormat" xml:space="preserve">
+    <value>{0} قيد المعالجة</value>
+  </data>
+  <data name="ItemColumn" xml:space="preserve">
+    <value>المهمة</value>
+  </data>
+  <data name="Kind.Chat" xml:space="preserve">
+    <value>محادثة</value>
+  </data>
+  <data name="Kind.Email" xml:space="preserve">
+    <value>بريد إلكتروني</value>
+  </data>
+  <data name="Kind.Other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="Kind.PendingCall" xml:space="preserve">
+    <value>بلاغ معلّق</value>
+  </data>
+  <data name="Kind.ScheduledCall" xml:space="preserve">
+    <value>بلاغ مجدول</value>
+  </data>
+  <data name="Kind.Text" xml:space="preserve">
+    <value>رسالة نصية</value>
+  </data>
+  <data name="Kind.Voice" xml:space="preserve">
+    <value>مكالمة هاتفية</value>
+  </data>
+  <data name="KindColumn" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="LegendBelowMinimum" xml:space="preserve">
+    <value>دون الحد الأدنى</value>
+  </data>
+  <data name="LegendCovered" xml:space="preserve">
+    <value>مغطى</value>
+  </data>
+  <data name="LegendDuty" xml:space="preserve">
+    <value>في المناوبة</value>
+  </data>
+  <data name="LegendMissed" xml:space="preserve">
+    <value>فائتة</value>
+  </data>
+  <data name="LegendNobodyOnDuty" xml:space="preserve">
+    <value>لا أحد في المناوبة</value>
+  </data>
+  <data name="LegendOnBreak" xml:space="preserve">
+    <value>في استراحة الآن</value>
+  </data>
+  <data name="LegendOverlap" xml:space="preserve">
+    <value>استراحات متداخلة</value>
+  </data>
+  <data name="LegendPlanned" xml:space="preserve">
+    <value>استراحة مجدولة</value>
+  </data>
+  <data name="LegendTaken" xml:space="preserve">
+    <value>استراحة مأخوذة</value>
+  </data>
+  <data name="MinimumAvailableHelp" xml:space="preserve">
+    <value>موظفو الإرسال الذين يجب أن يبقوا متاحين؛ تؤدي جدولة استراحة أو بدؤها دون هذا العدد إلى تحذير. 0 = لا حد أدنى.</value>
+  </data>
+  <data name="MinimumAvailableLabel" xml:space="preserve">
+    <value>الحد الأدنى للمتاحين</value>
+  </data>
+  <data name="MinimumOnDeskHelpFormat" xml:space="preserve">
+    <value>موظفو الإرسال الذين يجب أن يبقوا متاحين خلال هذه الوردية. 0 = الحد الأدنى للقسم ({0}).</value>
+  </data>
+  <data name="MinimumOnDeskLabel" xml:space="preserve">
+    <value>الحد الأدنى على المكتب</value>
+  </data>
+  <data name="MinutesShortFormat" xml:space="preserve">
+    <value>{0} دقيقة</value>
+  </data>
+  <data name="MissedColumn" xml:space="preserve">
+    <value>العروض الفائتة</value>
+  </data>
+  <data name="MissedOffersHelp" xml:space="preserve">
+    <value>عدد العروض المتتالية التي يتركها موظف الإرسال تنتهي قبل أن يجعله المكتب غائبًا. 0 = أبدًا.</value>
+  </data>
+  <data name="MissedOffersLabel" xml:space="preserve">
+    <value>العروض الفائتة قبل الغياب</value>
+  </data>
+  <data name="NextBreakFormat" xml:space="preserve">
+    <value>{0} لمدة {1} دقيقة</value>
+  </data>
+  <data name="NextBreakLabel" xml:space="preserve">
+    <value>الاستراحة التالية:</value>
+  </data>
+  <data name="NoActivity" xml:space="preserve">
+    <value>لا يوجد نشاط للمكتب في هذه الفترة.</value>
+  </data>
+  <data name="NoDispatchersInWindow" xml:space="preserve">
+    <value>لا يوجد موظفو إرسال مناوبون أو استراحات في هذه الفترة.</value>
+  </data>
+  <data name="NoDispatchersOnDay" xml:space="preserve">
+    <value>لا يوجد موظفو إرسال في هذا اليوم بعد.</value>
+  </data>
+  <data name="NoDispatchersOnDesk" xml:space="preserve">
+    <value>لا يوجد موظفو إرسال مناوبون أو مسجلو الدخول.</value>
+  </data>
+  <data name="NoEligibleDispatchers" xml:space="preserve">
+    <value>لا أحد في القسم يملك بعدُ صلاحية تسجيل الدخول إلى تطبيق Dispatch.</value>
+  </data>
+  <data name="NoTransferTargets" xml:space="preserve">
+    <value>لا يستطيع أي موظف إرسال مناوب آخر استلامها الآن.</value>
+  </data>
+  <data name="NoWarnings" xml:space="preserve">
+    <value>لا توجد تحذيرات.</value>
+  </data>
+  <data name="NotEligibleBadge" xml:space="preserve">
+    <value>لا وصول إلى Dispatch</value>
+  </data>
+  <data name="NotEligibleHelp" xml:space="preserve">
+    <value>لم يعد يملك صلاحية تسجيل الدخول إلى تطبيق Dispatch؛ سيُزال من الجدول عند الحفظ.</value>
+  </data>
+  <data name="NotSignedInBadge" xml:space="preserve">
+    <value>غير مسجل الدخول</value>
+  </data>
+  <data name="NoteLabel" xml:space="preserve">
+    <value>ملاحظة</value>
+  </data>
+  <data name="NotifyOverdueLabel" xml:space="preserve">
+    <value>إبلاغ المشرفين عندما يتأخر موظف الإرسال في العودة من الاستراحة</value>
+  </data>
+  <data name="OffDutyBadge" xml:space="preserve">
+    <value>خارج المناوبة</value>
+  </data>
+  <data name="OfferTimeoutHelp" xml:space="preserve">
+    <value>عدد الثواني التي ينتظر فيها العرض أن يقبله موظف الإرسال قبل الانتقال إلى التالي.</value>
+  </data>
+  <data name="OfferTimeoutLabel" xml:space="preserve">
+    <value>مهلة العرض (ثوانٍ)</value>
+  </data>
+  <data name="OfferedColumn" xml:space="preserve">
+    <value>المعروضة</value>
+  </data>
+  <data name="OfferedItemsFormat" xml:space="preserve">
+    <value>{0} معروضة</value>
+  </data>
+  <data name="OnBreakStat" xml:space="preserve">
+    <value>في استراحة</value>
+  </data>
+  <data name="OnDutyStat" xml:space="preserve">
+    <value>في المناوبة</value>
+  </data>
+  <data name="OnRosterColumn" xml:space="preserve">
+    <value>في الجدول</value>
+  </data>
+  <data name="OpenDispatchPositionsFormat" xml:space="preserve">
+    <value>{0} مواقع إرسال شاغرة</value>
+  </data>
+  <data name="OverdueBadge" xml:space="preserve">
+    <value>متأخر</value>
+  </data>
+  <data name="OverdueColumn" xml:space="preserve">
+    <value>التأخر في العودة</value>
+  </data>
+  <data name="OverdueFormat" xml:space="preserve">
+    <value>متأخر {0} دقيقة</value>
+  </data>
+  <data name="OverdueMinutesFormat" xml:space="preserve">
+    <value>إجمالي التأخر {0} دقيقة</value>
+  </data>
+  <data name="OverflowIntro" xml:space="preserve">
+    <value>ما يحدث لرسالة أو مكالمة جارية عندما يكون جميع موظفي الإرسال مشغولين أو في استراحة.</value>
+  </data>
+  <data name="PendingApprovalBadge" xml:space="preserve">
+    <value>بانتظار الموافقة</value>
+  </data>
+  <data name="PlanBreaksButton" xml:space="preserve">
+    <value>جدولة الاستراحات</value>
+  </data>
+  <data name="PlanBreaksConfirm" xml:space="preserve">
+    <value>هل تريد تطبيق خطة استراحات الوردية على جميع موظفي الإرسال في هذا اليوم؟</value>
+  </data>
+  <data name="PlanBreaksReplaceConfirm" xml:space="preserve">
+    <value>هل تريد إزالة الاستراحات المجدولة لهذا اليوم وتطبيق خطة الوردية من جديد؟</value>
+  </data>
+  <data name="PlannedStartHelp" xml:space="preserve">
+    <value>بتوقيت المنطقة الزمنية للقسم. الاستراحة مدة: إن بدأت مبكرًا انتهت مبكرًا.</value>
+  </data>
+  <data name="PlannedStartLabel" xml:space="preserve">
+    <value>البداية المخططة</value>
+  </data>
+  <data name="PlannerLoadFailed" xml:space="preserve">
+    <value>تعذر تحميل مخطط الاستراحات.</value>
+  </data>
+  <data name="PreventBelowMinimumHelp" xml:space="preserve">
+    <value>رفض الاستراحة التي ستنزل بالمتاحين دون الحد الأدنى بدلًا من التحذير، ما لم يبدأها مشرف.</value>
+  </data>
+  <data name="PreventBelowMinimumLabel" xml:space="preserve">
+    <value>منع الاستراحات دون الحد الأدنى</value>
+  </data>
+  <data name="QueueEmpty" xml:space="preserve">
+    <value>لا شيء بانتظار المعالجة.</value>
+  </data>
+  <data name="QueueEscalationHelp" xml:space="preserve">
+    <value>عدد الدقائق التي يمكن أن تنتظرها مهمة دون إسناد قبل تنبيه جميع موظفي الإرسال والمشرفين المناوبين. 0 = أبدًا.</value>
+  </data>
+  <data name="QueueEscalationLabel" xml:space="preserve">
+    <value>تصعيد العمل المنتظر بعد (دقائق)</value>
+  </data>
+  <data name="QueueHeader" xml:space="preserve">
+    <value>قائمة الانتظار المفتوحة</value>
+  </data>
+  <data name="QueueState.Accepted" xml:space="preserve">
+    <value>قيد المعالجة</value>
+  </data>
+  <data name="QueueState.Offered" xml:space="preserve">
+    <value>معروضة</value>
+  </data>
+  <data name="QueueState.Queued" xml:space="preserve">
+    <value>بالانتظار</value>
+  </data>
+  <data name="ReleaseButton" xml:space="preserve">
+    <value>إعادة إلى قائمة الانتظار</value>
+  </data>
+  <data name="ReleaseConfirm" xml:space="preserve">
+    <value>هل تريد إعادة هذه المهمة إلى قائمة الانتظار؟</value>
+  </data>
+  <data name="RemoveBreakRow" xml:space="preserve">
+    <value>إزالة هذه الاستراحة</value>
+  </data>
+  <data name="RemoveDispatcherConfirm" xml:space="preserve">
+    <value>هل تريد إزالة موظف الإرسال هذا من اليوم؟</value>
+  </data>
+  <data name="RemoveFromDayButton" xml:space="preserve">
+    <value>إزالة من اليوم</value>
+  </data>
+  <data name="ReplacePlannedLabel" xml:space="preserve">
+    <value>استبدال الاستراحات المجدولة</value>
+  </data>
+  <data name="RequireShiftHelp" xml:space="preserve">
+    <value>لا يكون في المناوبة إلا موظفو الإرسال المدرجون في جدول الإرسال ليوم الوردية الجاري.</value>
+  </data>
+  <data name="RequireShiftLabel" xml:space="preserve">
+    <value>يجب أن يكون موظفو الإرسال في وردية</value>
+  </data>
+  <data name="RequiredDispatchersHelp" xml:space="preserve">
+    <value>مواقع الإرسال المطلوب شغلها كل يوم (أماكن التسجيل وهدف التوظيف). 0 = بلا هدف.</value>
+  </data>
+  <data name="RequiredDispatchersLabel" xml:space="preserve">
+    <value>موظفو الإرسال المطلوبون</value>
+  </data>
+  <data name="RouteChatLabel" xml:space="preserve">
+    <value>المحادثات (WhatsApp وSlack وTeams وTelegram وDiscord وGoogle Chat)</value>
+  </data>
+  <data name="RouteEmailLabel" xml:space="preserve">
+    <value>رسائل البريد (البلاغات محفوظة كمعلّقة)</value>
+  </data>
+  <data name="RoutePendingCallsLabel" xml:space="preserve">
+    <value>البلاغات المعلّقة</value>
+  </data>
+  <data name="RouteScheduledCallsLabel" xml:space="preserve">
+    <value>البلاغات المجدولة (للمراجعة قبل إرسالها)</value>
+  </data>
+  <data name="RouteTextLabel" xml:space="preserve">
+    <value>الرسائل النصية</value>
+  </data>
+  <data name="RouteToDeskHelp" xml:space="preserve">
+    <value>أنواع العمل التي تُعرض على موظفي الإرسال. ما لا يستقبله المكتب يُعالج كما كان من قبل. رسالة البريد أو المحادثة غير المحددة تصل إلى المكتب كبلاغ معلّق ما دام خيار البلاغات المعلّقة محددًا.</value>
+  </data>
+  <data name="RouteToDeskLabel" xml:space="preserve">
+    <value>الإرسال إلى المكتب</value>
+  </data>
+  <data name="RouteVoiceLabel" xml:space="preserve">
+    <value>المكالمات الهاتفية</value>
+  </data>
+  <data name="SaveBreakButton" xml:space="preserve">
+    <value>حفظ الاستراحة</value>
+  </data>
+  <data name="SaveSettingsButton" xml:space="preserve">
+    <value>حفظ الإعدادات</value>
+  </data>
+  <data name="ScheduledCallLeadHelp" xml:space="preserve">
+    <value>عدد الدقائق قبل إرسال البلاغ المجدول التي يصل فيها إلى المكتب للمراجعة (يُرسل من تلقاء نفسه على أي حال).</value>
+  </data>
+  <data name="ScheduledCallLeadLabel" xml:space="preserve">
+    <value>مراجعة البلاغات المجدولة (دقائق قبلها)</value>
+  </data>
+  <data name="SelectDispatcherToAdd" xml:space="preserve">
+    <value>اختر موظف إرسال لإضافته.</value>
+  </data>
+  <data name="SetAvailableButton" xml:space="preserve">
+    <value>جعله متاحًا</value>
+  </data>
+  <data name="SetAwayButton" xml:space="preserve">
+    <value>جعله غائبًا</value>
+  </data>
+  <data name="SettingsBreaksSection" xml:space="preserve">
+    <value>الاستراحات والتغطية</value>
+  </data>
+  <data name="SettingsDeskSection" xml:space="preserve">
+    <value>المكتب</value>
+  </data>
+  <data name="SettingsEmailSection" xml:space="preserve">
+    <value>البلاغات الواردة بالبريد</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>كيف يُوجَّه العمل إلى موظفي الإرسال المناوبين في تطبيق Dispatch، وماذا يحدث عندما لا يكون أحد متفرغًا، وكيف تُدار الاستراحات.</value>
+  </data>
+  <data name="SettingsOverflowSection" xml:space="preserve">
+    <value>عندما يكون جميع موظفي الإرسال مشغولين</value>
+  </data>
+  <data name="SettingsRoutingSection" xml:space="preserve">
+    <value>التوجيه</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>تم حفظ إعدادات مكتب الإرسال.</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>إعدادات مكتب الإرسال</value>
+  </data>
+  <data name="ShiftColumn" xml:space="preserve">
+    <value>الوردية</value>
+  </data>
+  <data name="ShiftDayLabel" xml:space="preserve">
+    <value>يوم الوردية</value>
+  </data>
+  <data name="ShiftDispatchEnabledHelp" xml:space="preserve">
+    <value>يمكن وضع موظفي الإرسال في هذه الوردية (وردية مُسندة) أو تسجيلهم فيها (وردية بالتسجيل)، وحدهم أو إلى جانب المستجيبين.</value>
+  </data>
+  <data name="ShiftDispatchEnabledLabel" xml:space="preserve">
+    <value>هذه الوردية تضم موظفي إرسال</value>
+  </data>
+  <data name="ShiftDispatchOnlyHelp" xml:space="preserve">
+    <value>الوردية مخصصة لموظفي الإرسال فقط (ورديات A وB وC في مركز الإرسال).</value>
+  </data>
+  <data name="ShiftDispatchOnlyLabel" xml:space="preserve">
+    <value>وردية إرسال فقط</value>
+  </data>
+  <data name="ShowButton" xml:space="preserve">
+    <value>عرض</value>
+  </data>
+  <data name="SignOffAtShiftEndHelp" xml:space="preserve">
+    <value>يُسجَّل خروج موظفي الإرسال من المكتب عند انتهاء يوم ورديتهم؛ ويعود عملهم الجاري إلى قائمة الانتظار.</value>
+  </data>
+  <data name="SignOffAtShiftEndLabel" xml:space="preserve">
+    <value>تسجيل الخروج عند نهاية الوردية</value>
+  </data>
+  <data name="SignupAsDispatcherButton" xml:space="preserve">
+    <value>التسجيل كموظف إرسال</value>
+  </data>
+  <data name="SourceAssigned" xml:space="preserve">
+    <value>مُسند</value>
+  </data>
+  <data name="SourceSignup" xml:space="preserve">
+    <value>مسجّل</value>
+  </data>
+  <data name="StandingRosterHelp" xml:space="preserve">
+    <value>موظفو الإرسال في كل يوم من هذه الوردية. يدير مشرف المكتب الاستراحات وينقل عمل موظفي الإرسال الآخرين.</value>
+  </data>
+  <data name="StandingRosterLabel" xml:space="preserve">
+    <value>جدول الإرسال</value>
+  </data>
+  <data name="StatAverageAnswer" xml:space="preserve">
+    <value>متوسط زمن الاستجابة</value>
+  </data>
+  <data name="StatCancelled" xml:space="preserve">
+    <value>الملغاة</value>
+  </data>
+  <data name="StatCompleted" xml:space="preserve">
+    <value>المنجزة</value>
+  </data>
+  <data name="StatCreated" xml:space="preserve">
+    <value>المهام</value>
+  </data>
+  <data name="StatEscalated" xml:space="preserve">
+    <value>المُصعّدة</value>
+  </data>
+  <data name="StatOverflowed" xml:space="preserve">
+    <value>الفائض</value>
+  </data>
+  <data name="State.Available" xml:space="preserve">
+    <value>متاح</value>
+  </data>
+  <data name="State.Away" xml:space="preserve">
+    <value>غائب</value>
+  </data>
+  <data name="State.Busy" xml:space="preserve">
+    <value>مشغول</value>
+  </data>
+  <data name="State.Offline" xml:space="preserve">
+    <value>غير متصل</value>
+  </data>
+  <data name="State.OnBreak" xml:space="preserve">
+    <value>في استراحة</value>
+  </data>
+  <data name="StateColumn" xml:space="preserve">
+    <value>حالة المكتب</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="SuppressAlertsHelp" xml:space="preserve">
+    <value>أثناء الاستراحة لا يتلقى موظف الإرسال إشعارات أو تنبيهات من المكتب، باستثناء التذكير بانتهاء الاستراحة.</value>
+  </data>
+  <data name="SuppressAlertsLabel" xml:space="preserve">
+    <value>لا تنبيهات من المكتب أثناء الاستراحة</value>
+  </data>
+  <data name="TextOverflow.EnhancedAi" xml:space="preserve">
+    <value>يملأ Enhanced AI بلاغًا معلّقًا</value>
+  </data>
+  <data name="TextOverflow.PendingQueue" xml:space="preserve">
+    <value>إبقاؤه في قائمة الانتظار</value>
+  </data>
+  <data name="TextOverflowLabel" xml:space="preserve">
+    <value>الرسائل النصية</value>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>إلى</value>
+  </data>
+  <data name="TodayCoverageHeader" xml:space="preserve">
+    <value>تغطية اليوم</value>
+  </data>
+  <data name="TransferButton" xml:space="preserve">
+    <value>تحويل</value>
+  </data>
+  <data name="TransferToLabel" xml:space="preserve">
+    <value>تحويل إلى</value>
+  </data>
+  <data name="Unassigned" xml:space="preserve">
+    <value>غير مُسند</value>
+  </data>
+  <data name="UnknownPerson" xml:space="preserve">
+    <value>شخص غير معروف</value>
+  </data>
+  <data name="ViewCallButton" xml:space="preserve">
+    <value>عرض البلاغ</value>
+  </data>
+  <data name="VoiceAiUnavailable" xml:space="preserve">
+    <value>الاستقبال الصوتي عبر Enhanced AI غير متاح؛ يترك المتصلون رسالة بدلًا من ذلك.</value>
+  </data>
+  <data name="VoiceHoldHelp" xml:space="preserve">
+    <value>عدد الثواني التي ينتظر فيها المتصل موظف إرسال قبل أن تتولى معالجة الفائض الأمر. 0 = فورًا.</value>
+  </data>
+  <data name="VoiceHoldLabel" xml:space="preserve">
+    <value>إبقاء المتصلين بالانتظار (ثوانٍ)</value>
+  </data>
+  <data name="VoiceOverflow.EnhancedAiIntake" xml:space="preserve">
+    <value>الاستقبال الصوتي عبر Enhanced AI</value>
+  </data>
+  <data name="VoiceOverflow.Voicemail" xml:space="preserve">
+    <value>بريد صوتي إلى بلاغ معلّق</value>
+  </data>
+  <data name="VoiceOverflowLabel" xml:space="preserve">
+    <value>المكالمات الهاتفية</value>
+  </data>
+  <data name="WaitingInQueueFormat" xml:space="preserve">
+    <value>{0} بالانتظار</value>
+  </data>
+  <data name="WaitingStat" xml:space="preserve">
+    <value>بالانتظار</value>
+  </data>
+  <data name="Warning.BreaksOverlap" xml:space="preserve">
+    <value>استراحات متداخلة من {1} إلى {2}: {0}.</value>
+  </data>
+  <data name="Warning.CoverageBelowMinimum" xml:space="preserve">
+    <value>{0} موظفي إرسال متاحون فقط (الحد الأدنى {1}) من {2} إلى {3}.</value>
+  </data>
+  <data name="Warning.NoCoverage" xml:space="preserve">
+    <value>لن يكون أحد متاحًا من {0} إلى {1}.</value>
+  </data>
+  <data name="Warning.OutsideDuty" xml:space="preserve">
+    <value>تقع الاستراحة خارج يوم الوردية: {0}.</value>
+  </data>
+  <data name="Warning.StartedEarly" xml:space="preserve">
+    <value>بدأ {0} الاستراحة مبكرًا بـ {1} دقيقة.</value>
+  </data>
+  <data name="Warning.StartedLate" xml:space="preserve">
+    <value>بدأ {0} الاستراحة متأخرًا بـ {1} دقيقة.</value>
+  </data>
+  <data name="Warning.WorkReturnedToQueue" xml:space="preserve">
+    <value>عاد العمل الذي كان لدى {0} إلى قائمة الانتظار.</value>
+  </data>
+  <data name="WarningsHeader" xml:space="preserve">
+    <value>التحذيرات</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>انسحاب</value>
+  </data>
+  <data name="WithdrawDispatcherConfirm" xml:space="preserve">
+    <value>هل تريد التوقف عن العمل في الإرسال في هذا اليوم؟</value>
+  </data>
+  <data name="WizardDispatchers" xml:space="preserve">
+    <value>موظفو الإرسال</value>
+  </data>
+  <data name="WorkColumn" xml:space="preserve">
+    <value>العمل</value>
+  </data>
+  <data name="WorkLoadFormat" xml:space="preserve">
+    <value>{0} من {1}</value>
+  </data>
+  <data name="YouBadge" xml:space="preserve">
+    <value>أنت</value>
+  </data>
+</root>

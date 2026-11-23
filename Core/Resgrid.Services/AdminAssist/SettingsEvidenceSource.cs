@@ -21,7 +21,7 @@ namespace Resgrid.Services.AdminAssist
 			DepartmentSettingTypes.MappingUseMapboxOverride, DepartmentSettingTypes.CheckInTimersAutoEnableForNewCalls,
 			DepartmentSettingTypes.WeatherAlertsEnabled, DepartmentSettingTypes.RequirePasswordResetViaEmail,
 			DepartmentSettingTypes.UnitDispatchAlsoDispatchToAssignedPersonnel, DepartmentSettingTypes.UnitDispatchAlsoDispatchToGroup,
-			DepartmentSettingTypes.AllowSignupsForMultipleShiftGroups, DepartmentSettingTypes.DisabledAutoAvailable,
+			DepartmentSettingTypes.AllowSignupsForMultipleShiftGroups, DepartmentSettingTypes.AllowShiftOverSignup, DepartmentSettingTypes.DisabledAutoAvailable,
 			DepartmentSettingTypes.PersonnelOnUnitSetUnitStatus, DepartmentSettingTypes.DispatchRecommendationAutoDispatch,
 			DepartmentSettingTypes.MappingPersonnelAllowStatusWithNoLocationToOverwrite,
 			DepartmentSettingTypes.MappingUnitAllowStatusWithNoLocationToOverwrite
@@ -38,7 +38,9 @@ namespace Resgrid.Services.AdminAssist
 		{
 			["textSourcePresent"] = DepartmentSettingTypes.TextToCallSourceNumbers,
 			["mapTokenPresent"] = DepartmentSettingTypes.MappingMapboxAccessToken,
-			["mapStylePresent"] = DepartmentSettingTypes.MappingMapboxStyleUrl
+			["mapStylePresent"] = DepartmentSettingTypes.MappingMapboxStyleUrl,
+			// The department dispatch email code (the local part of its dispatch address); only its presence leaves the source.
+			["dispatchEmailCodePresent"] = DepartmentSettingTypes.InternalDispatchEmail
 		};
 		/// <summary>True when New Call Form Fields hides every dispatch list (personnel, groups, roles and units).</summary>
 		public const string NewCallDispatchListsHiddenId = "newCallDispatchListsHidden";

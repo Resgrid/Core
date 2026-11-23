@@ -100,7 +100,8 @@ namespace Resgrid.Tests.Intake
 				Mock.Of<ICalendarService>(), _communicationTests.Object, Mock.Of<IEncryptionService>(), _prompts.Object, _flags.Object,
 				Mock.Of<ITextDepartmentSwitchService>(), Mock.Of<IDispatchRecommendationService>(), Mock.Of<IDispatchScopeService>(),
 				Mock.Of<Resgrid.Model.Services.IAuthorizationService>(), Mock.Of<IAdpReleaseService>(), Mock.Of<IProtectedProjectionService>(),
-				_numbers.Object, _intake.Object, _voice.Object, _text.Object, _conversations.Object, _conversationOperations.Object, _screening.Object)
+				_numbers.Object, _intake.Object, _voice.Object, _text.Object, _conversations.Object, _conversationOperations.Object, _screening.Object,
+				Mock.Of<Resgrid.Web.Services.Twilio.IDispatcherInboundTextHandler>(), Mock.Of<Resgrid.Web.Services.Twilio.IDispatcherInboundVoiceHandler>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() }
 			};
@@ -411,11 +412,18 @@ namespace Resgrid.Tests.Intake
 			_departments.Verify(d => d.GetDepartmentByUserIdAsync(It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
 		}
 
-		[TestCase(VoiceIntakeRoutes.TextOnly, TwilioVoicePromptCatalog.VoiceIntakeTextOnly)]
-		[TestCase(VoiceIntakeRoutes.NumberInactive, TwilioVoicePromptCatalog.VoiceIntakeNumberInactive)]
-		[TestCase(VoiceIntakeRoutes.Blocked, TwilioVoicePromptCatalog.VoiceIntakeUnavailable)]
-		public async Task other_routes_say_one_message_and_hang_up(VoiceIntakeRoutes route, string prompt)
+		// The prompts name the configured emergency number, so they are read when the test runs rather than baked into attributes.
+		[TestCase(VoiceIntakeRoutes.TextOnly)]
+		[TestCase(VoiceIntakeRoutes.NumberInactive)]
+		[TestCase(VoiceIntakeRoutes.Blocked)]
+		public async Task other_routes_say_one_message_and_hang_up(VoiceIntakeRoutes route)
 		{
+			var prompt = route switch
+			{
+				VoiceIntakeRoutes.TextOnly => TwilioVoicePromptCatalog.VoiceIntakeTextOnly,
+				VoiceIntakeRoutes.NumberInactive => TwilioVoicePromptCatalog.VoiceIntakeNumberInactive,
+				_ => TwilioVoicePromptCatalog.VoiceIntakeUnavailable
+			};
 			_voice.Setup(v => v.RouteAsync(_number, Caller, It.IsAny<DateTime>())).ReturnsAsync(new VoiceIntakeRouting { Route = route, DepartmentId = DepartmentId });
 
 			var twiml = Content(await Controller().InboundVoice(Call()));

@@ -75,6 +75,7 @@ namespace Resgrid.Tests.Services
 			_novu = new Mock<INovuProvider>();
 			_novu.Setup(n => n.DeleteUserSubscriber(It.IsAny<string>(), Code)).Callback(() => Record("novu")).ReturnsAsync(true);
 			_novu.Setup(n => n.DeleteICUserSubscriber(It.IsAny<string>(), Code)).Callback(() => Record("novu")).ReturnsAsync(true);
+			_novu.Setup(n => n.DeleteDispatchUserSubscriber(It.IsAny<string>(), Code)).Callback(() => Record("novu")).ReturnsAsync(true);
 			_novu.Setup(n => n.DeleteUnitSubscriber(It.IsAny<int>(), Code)).Callback(() => Record("novu")).ReturnsAsync(true);
 		}
 
@@ -88,6 +89,8 @@ namespace Resgrid.Tests.Services
 			_novu.Verify(n => n.DeleteICUserSubscriber("user-a", Code), Times.Once);
 			_novu.Verify(n => n.DeleteUserSubscriber("user-b", Code), Times.Once, "a removed member's subscriber can still hold a phone");
 			_novu.Verify(n => n.DeleteICUserSubscriber("user-b", Code), Times.Once);
+			_novu.Verify(n => n.DeleteDispatchUserSubscriber("user-a", Code), Times.Once, "the Dispatch app's desk subscriber holds a device too");
+			_novu.Verify(n => n.DeleteDispatchUserSubscriber("user-b", Code), Times.Once);
 			_novu.Verify(n => n.DeleteUnitSubscriber(7, Code), Times.Once);
 			_novu.Verify(n => n.DeleteUnitSubscriber(8, Code), Times.Once, "a deleted unit's subscriber is dropped too");
 			_novu.VerifyNoOtherCalls();

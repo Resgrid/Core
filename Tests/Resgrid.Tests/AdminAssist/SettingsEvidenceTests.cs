@@ -94,6 +94,20 @@ namespace Resgrid.Tests.AdminAssist
 			Assert.That(fact.ReasonCode, Is.EqualTo("InvalidStoredValue"));
 		}
 
+		[TestCase(null, false)]
+		[TestCase("", false)]
+		[TestCase("k3x9p2", true)]
+		public async Task Only_the_presence_of_the_department_dispatch_email_code_leaves_the_source(string code, bool present)
+		{
+			var rows = code == null ? Array.Empty<DepartmentSetting>() :
+				new[] { new DepartmentSetting { DepartmentId = DepartmentId, SettingType = (int)DepartmentSettingTypes.InternalDispatchEmail, Setting = code } };
+			var evidence = await Read(rows);
+			var fact = evidence.Single(e => e.Id == "dispatchEmailCodePresent");
+			Assert.That((fact.State, fact.Boolean), Is.EqualTo((EvidenceState.Known, (bool?)present)));
+			Assert.That(fact.Code, Is.Null);
+			if (present) Assert.That(Newtonsoft.Json.JsonConvert.SerializeObject(evidence), Does.Not.Contain(code), "The code itself never leaves the source.");
+		}
+
 		[Test]
 		public async Task Only_the_derived_answer_leaves_the_source()
 		{

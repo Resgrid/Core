@@ -398,7 +398,33 @@ namespace Resgrid.Providers.Messaging
 			}
 		}
 
-		private async Task<bool> UpdateSubscriberFcm(string id, string token, string fcmId)
+		/// <summary>
+		/// The native credential writes replace the channel's token list, as <see cref="ChangeChannelTokens"/> does after reading it,
+		/// so they take the same per-subscriber lock: a native token removal that read the list must not write it back over a
+		/// registration that completed in between.
+		/// </summary>
+		private async Task<bool> WithSubscriberChannelLock(string subscriberId, Func<Task<bool>> write)
+		{
+			var subscriberLock = SubscriberChannelLocks.GetOrAdd(subscriberId, _ => new SemaphoreSlim(1, 1));
+			await subscriberLock.WaitAsync();
+
+			try
+			{
+				return await write();
+			}
+			finally
+			{
+				subscriberLock.Release();
+			}
+		}
+
+		private Task<bool> UpdateSubscriberFcm(string id, string token, string fcmId) =>
+			WithSubscriberChannelLock(id, () => WriteSubscriberFcm(id, token, fcmId));
+
+		private Task<bool> UpdateSubscriberApns(string id, string token, string apnsId, string fcmId) =>
+			WithSubscriberChannelLock(id, () => WriteSubscriberApns(id, token, apnsId, fcmId));
+
+		private async Task<bool> WriteSubscriberFcm(string id, string token, string fcmId)
 		{
 			try
 			{
@@ -446,7 +472,7 @@ namespace Resgrid.Providers.Messaging
 			}
 		}
 
-		private async Task<bool> UpdateSubscriberApns(string id, string token, string apnsId, string fcmId)
+		private async Task<bool> WriteSubscriberApns(string id, string token, string apnsId, string fcmId)
 		{
 			try
 			{
@@ -975,7 +1001,7 @@ namespace Resgrid.Providers.Messaging
 		}
 
 		private async Task<bool> SendNotification(string title, string body, string recipientId, string eventCode,
-			string type, bool enableCustomSounds, int count, string color, string workflowIdentifier, string sound)
+			string type, bool enableCustomSounds, int count, string color, string workflowIdentifier, string sound, string? channelOverride = null)
 		{
 			var attempts = 0;
 
@@ -988,7 +1014,7 @@ namespace Resgrid.Providers.Messaging
 					httpClient.DefaultRequestHeaders.Add("Authorization", $"ApiKey {ChatConfig.NovuSecretKey}");
 					httpClient.DefaultRequestHeaders.Add("idempotency-key", Guid.NewGuid().ToString());
 
-					string channelName = GetAndroidChannelName(eventCode);
+					string channelName = channelOverride ?? GetAndroidChannelName(eventCode);
 					// Build request payload
 					var payload = new
 					{
@@ -1192,9 +1218,74 @@ namespace Resgrid.Providers.Messaging
 			return await SendNotification(title, body, $"{depCode}_Unit_{unitId}", eventCode, type, false, count, null, ChatConfig.NovuChatWorkflowId, GetSoundFileNameFromType(type));
 		}
 
+		#region Dispatcher desk (Dispatch app's own subscriber)
+
+		public async Task<bool> CreateDispatchUserSubscriber(string userId, string code, int departmentId, string email, string firstName, string lastName)
+		{
+			return await CreateSubscriber(NovuSubscriberIds.DispatchUser(code, userId), departmentId, email, firstName, lastName, null);
+		}
+
+		// The Dispatch app registers on the user subscriber with the Responder integrations (only the IC app has its own), so its
+		// desk subscriber uses the same ones: the same app credentials accept the same device tokens.
+
+		public async Task<bool> UpdateDispatchUserSubscriberFcm(string userId, string code, string token)
+		{
+			return await UpdateSubscriberFcm(NovuSubscriberIds.DispatchUser(code, userId), token, ChatConfig.NovuResponderFcmProviderId);
+		}
+
+		public async Task<bool> UpdateDispatchUserSubscriberApns(string userId, string code, string token)
+		{
+			return await UpdateSubscriberApns(NovuSubscriberIds.DispatchUser(code, userId), token, ChatConfig.NovuResponderApnsProviderId, null);
+		}
+
+		public async Task<bool> AddDispatchUserSubscriberWebPushToken(string userId, string code, string token)
+		{
+			return await ChangeChannelTokens(NovuSubscriberIds.DispatchUser(code, userId), "fcm", ChatConfig.NovuResponderWebFcmProviderId, token, true, "web push");
+		}
+
+		public async Task<bool> RemoveDispatchUserSubscriberWebPushToken(string userId, string code, string token)
+		{
+			return await ChangeChannelTokens(NovuSubscriberIds.DispatchUser(code, userId), "fcm", ChatConfig.NovuResponderWebFcmProviderId, token, false, "web push");
+		}
+
+		public async Task<bool> RemoveDispatchUserSubscriberNativeToken(string userId, string code, string token)
+		{
+			return await RemoveNativeToken(NovuSubscriberIds.DispatchUser(code, userId), token,
+				("fcm", ChatConfig.NovuResponderFcmProviderId), ("apns", ChatConfig.NovuResponderApnsProviderId));
+		}
+
+		public async Task<bool> DeleteDispatchUserSubscriber(string userId, string code)
+		{
+			return await DeleteSubscriber(NovuSubscriberIds.DispatchUser(code, userId));
+		}
+
+		public async Task<bool> SendDispatchUserDeskPush(string title, string body, string userId, string depCode, string eventCode, string type)
+		{
+			return await SendNotification(title, body, NovuSubscriberIds.DispatchUser(depCode, userId), eventCode, type, false, 0, null,
+				ChatConfig.EffectiveDispatcherDeskWorkflowId(), GetSoundFileNameFromType(type), GetDeskChannelName(type));
+		}
+
+		/// <summary>
+		/// The notification category of a desk push (Android priority, iOS category and critical sound): work to take now
+		/// (an offer, work waiting too long) is urgent like a call; a conversation message is a message; break reminders are
+		/// notifications. Desk event codes (DQ:, DB:) would otherwise all read as calls.
+		/// </summary>
+		public static string GetDeskChannelName(string type)
+		{
+			if (type == ((int)PushSoundTypes.ModernDeskOffer).ToString() || type == ((int)PushSoundTypes.ModernDeskQueueAlert).ToString())
+				return "calls";
+
+			if (type == ((int)PushSoundTypes.ModernDeskMessage).ToString())
+				return "messages";
+
+			return "notifications";
+		}
+
+		#endregion Dispatcher desk (Dispatch app's own subscriber)
+
 		#region Private Push Helpers
 
-		private string GetSoundFileNameFromType(string type)
+		public static string GetSoundFileNameFromType(string type)
 		{
 			if (type == ((int)PushSoundTypes.CallEmergency).ToString())
 			{

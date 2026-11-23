@@ -9,6 +9,7 @@ using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 
@@ -37,6 +38,8 @@ namespace Resgrid.Services
 		// Lazy: the staffing service reads shifts through this service, so a direct dependency would be circular.
 		private readonly Lazy<IShiftStaffingService> _shiftStaffingService;
 		private readonly Lazy<IWorkShiftsService> _workShiftsService;
+		private readonly Lazy<IShiftDispatchersService> _shiftDispatchers;
+		private readonly IUnitOfWork _unitOfWork;
 
 		public ShiftsService(IShiftsRepository shiftsRepository, IShiftPersonRepository shiftPersonRepository,
 			IShiftDaysRepository shiftDaysRepository, IShiftGroupsRepository shiftGroupsRepository,
@@ -45,9 +48,12 @@ namespace Resgrid.Services
 			IShiftStaffingRepository shiftStaffingRepository, IShiftStaffingPersonRepository shiftStaffingPersonRepository, IDepartmentsService departmentsService,
 			IDepartmentGroupsService departmentGroupsService, IShiftGroupAssignmentsRepository shiftGroupAssignmentsRepository, IShiftGroupRolesRepository shiftGroupRolesRepositor,
 			IEventAggregator eventAggregator, IDepartmentSettingsService departmentSettingsService, Lazy<ISearchProjectionService> searchProjections = null,
-			Lazy<IShiftStaffingService> shiftStaffingService = null, Lazy<IWorkShiftsService> workShiftsService = null)
+			Lazy<IShiftStaffingService> shiftStaffingService = null, Lazy<IWorkShiftsService> workShiftsService = null,
+			Lazy<IShiftDispatchersService> shiftDispatchers = null, IUnitOfWork unitOfWork = null)
 		{
 			_searchProjections = searchProjections;
+			_shiftDispatchers = shiftDispatchers;
+			_unitOfWork = unitOfWork;
 			_shiftsRepository = shiftsRepository;
 			_shiftPersonRepository = shiftPersonRepository;
 			_shiftDaysRepository = shiftDaysRepository;
@@ -121,6 +127,11 @@ namespace Resgrid.Services
 
 		public async Task<Shift> SaveShiftAsync(Shift shift, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			// Nothing generates days from a rotation type: every shift's days are the dates picked for it, so a new shift is
+			// always Manual. Rows stored with an older type keep their value (ShiftScheduleTypes).
+			if (shift != null && shift.ShiftId == 0)
+				shift.ScheduleType = (int)ShiftScheduleTypes.Manual;
+
 			var saved = await _shiftsRepository.SaveOrUpdateAsync(shift, cancellationToken);
 
 			// The repository cascades one level: a new shift's Groups are written, but each group's Roles are a level
@@ -269,10 +280,34 @@ namespace Resgrid.Services
 			// or offer, and those two foreign keys do not cascade, so the delete would fail.
 			var signups = await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAsync(shift.ShiftId);
 
-			foreach (var signup in signups ?? Enumerable.Empty<ShiftSignup>())
-				await ReleaseTradeReferencesToSignupAsync(signup.ShiftSignupId, cancellationToken);
+			// One transaction: the dispatch roster and settings (M0324) sit beside the shift with no foreign key, so a failed
+			// desk cleanup after a committed shift delete would leave them behind with nothing left for a retry to delete.
+			var owns = _unitOfWork != null && _unitOfWork.Transaction == null;
+			if (_unitOfWork != null)
+				await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
 
-			var deleted = await _shiftsRepository.DeleteAsync(shift, cancellationToken);
+			bool deleted;
+			try
+			{
+				foreach (var signup in signups ?? Enumerable.Empty<ShiftSignup>())
+					await ReleaseTradeReferencesToSignupAsync(signup.ShiftSignupId, cancellationToken);
+
+				deleted = await _shiftsRepository.DeleteAsync(shift, cancellationToken);
+
+				if (deleted && _shiftDispatchers != null)
+					await _shiftDispatchers.Value.DeleteForShiftAsync(shift.ShiftId, cancellationToken);
+
+				if (owns)
+					_unitOfWork.CommitChanges();
+			}
+			catch
+			{
+				if (owns)
+					_unitOfWork.DiscardChanges();
+				throw;
+			}
+
+			// After the commit, outside the transaction (the projection is the search index's copy, not the shift).
 			if (deleted && _searchProjections != null)
 				await _searchProjections.Value.RemoveAsync(shift.DepartmentId, SearchEntityTypes.Shift, shift.ShiftId.ToString(), cancellationToken);
 			return deleted;

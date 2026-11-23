@@ -2292,4 +2292,10 @@
   <data name="ImportMapPoisHelp" xml:space="preserve">
     <value>Імпортуйте файл KML, KMZ або CSV як цікаві місця на карті (орієнтири), окремо від записів гідрантів.</value>
   </data>
+  <data name="RatedFlowGpm" xml:space="preserve">
+    <value>Номінальна при 20 psi (gpm)</value>
+  </data>
+  <data name="RatedFlowHelp" xml:space="preserve">
+    <value>Номінальна витрата за NFPA 291: виміряна витрата × ((статичний − 20) / (статичний − залишковий))^0.54. Клас витрати визначається з неї, коли введено статичний і залишковий тиск.</value>
+  </data>
 </root>

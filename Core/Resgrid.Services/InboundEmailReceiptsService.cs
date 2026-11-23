@@ -126,18 +126,22 @@ namespace Resgrid.Services
 			}
 		}
 
-		public async Task CompleteStepAsync(InboundEmailReceiptClaim claim, InboundEmailPendingSteps step)
+		public async Task<bool> CompleteStepAsync(InboundEmailReceiptClaim claim, InboundEmailPendingSteps step)
 		{
-			if (claim == null || !claim.IsTracked || step == InboundEmailPendingSteps.None)
-				return;
+			if (claim == null || !claim.IsTracked)
+				return false;
+
+			if (step == InboundEmailPendingSteps.None)
+				return true;
 
 			try
 			{
-				await _inboundEmailReceiptsRepository.CompleteStepsAsync(claim.ReceiptId, (int)step, CancellationToken.None);
+				return await _inboundEmailReceiptsRepository.CompleteStepsAsync(claim.ReceiptId, (int)step, CancellationToken.None);
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex, $"Inbound email receipt {claim.ReceiptId} could not record finished step {step}.");
+				return false;
 			}
 		}
 

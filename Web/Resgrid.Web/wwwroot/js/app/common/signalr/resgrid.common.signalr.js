@@ -143,6 +143,13 @@ var resgrid;
             }
             function registerClientMethods() {
                 eventHub.on("checklistUpdated", function () { document.dispatchEvent(new Event("resgrid:checklists-updated")); });
+                // Dispatcher desk (EventingTypes 19 / 20): ids and states only; the desk board and break planner refetch.
+                eventHub.on("dispatcherDeskUpdated", function (id, payload) {
+                    document.dispatchEvent(new CustomEvent("resgrid:dispatcher-desk-updated", { detail: { userId: id, payload: payload } }));
+                });
+                eventHub.on("dispatcherQueueUpdated", function (id, payload) {
+                    document.dispatchEvent(new CustomEvent("resgrid:dispatcher-queue-updated", { detail: { itemId: id, payload: payload } }));
+                });
                 // Conditional run cards: calls awaiting resources changed, or a freed unit matches one (payload = alert JSON).
                 eventHub.on("outstandingRequirementsUpdated", function (id, payload) {
                     document.dispatchEvent(new CustomEvent("resgrid:outstanding-requirements-updated", { detail: { id: id, payload: payload } }));

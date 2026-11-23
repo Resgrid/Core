@@ -2661,4 +2661,10 @@
   <data name="NewCallDispatchListsHiddenWarning" xml:space="preserve">
     <value>جميع قوائم الإرسال (الأفراد والمجموعات والأدوار والوحدات) مخفية. ستعرض نماذج البلاغات بدلاً من ذلك زر «نداء عام» اختياريًا: معه يُرسَل البلاغ إلى الجميع، ومن دونه يُحفظ البلاغ للعلم فقط ولا يُنبَّه أحد. بطاقات الإرسال التي ترسل تلقائيًا تظل ترسل وحداتها.</value>
   </data>
+  <data name="ShiftOverSignupHeader" xml:space="preserve">
+    <value>السماح بالتسجيل بعد امتلاء أماكن المجموعة</value>
+  </data>
+  <data name="ShiftOverSignupHelp" xml:space="preserve">
+    <value>يمكن للأعضاء التسجيل في مجموعة حتى عندما تكون جميع أماكن أدوارها (المطلوبة والاختيارية) مشغولة. يظلون بحاجة إلى أحد أدوار المجموعة.</value>
+  </data>
 </root>

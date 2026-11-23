@@ -7755,6 +7755,12 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>Chi sceglie quale candidato prende una richiesta di scambio turno e approva gli scambi in attesa. Gli amministratori del dipartimento possono sempre; amministratori di gruppo, chi cede il turno e membri dei ruoli scelti sono a scelta del dipartimento.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatcherDeskConfig">
+    <value>Postazione operatori di centrale</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatcherDeskConfig">
+    <value>Attiva la postazione di centrale e stabilisce come funziona: quale lavoro viene offerto agli operatori in servizio nell'app Dispatch (chiamate in attesa e programmate, SMS, telefonate, e-mail, chat), quanto attende un'offerta e quanti elementi può tenere un operatore prima di contare come occupato, quante offerte perse di fila rendono un operatore Assente, e cosa succede a SMS e telefonate quando nessuno è libero (attesa in coda, Enhanced AI o segreteria). Stabilisce anche cosa diventa una chiamata inviata via e-mail all'indirizzo di allertamento (inviata subito, salvata in attesa o letta da Enhanced AI in una chiamata in attesa) e le regole di pause e servizio: promemoria delle pause, rientro automatico dalle pause, il minimo disponibile, il rifiuto delle pause sotto di esso, nessun avviso della postazione in pausa e se gli operatori devono essere in un turno o possono essere in servizio senza turno (Turni, Impostazioni della postazione di centrale). Disattivato per impostazione predefinita; le chiamate via e-mail vengono inviate subito finché non si cambia Chiamate via e-mail, il che vale anche con l'instradamento disattivato.</value>
+  </data>
   <data xml:space="preserve" name="Feature.home-dashboard">
     <value>Dashboard iniziale personalizzabile</value>
   </data>
@@ -8000,5 +8006,251 @@
   </data>
   <data name="FeatureSetup.ai-destination-advice" xml:space="preserve">
     <value>Richiede il componente aggiuntivo Enhanced AI con il consiglio di destinazione tramite IA attivato per il dipartimento. Aggiungi prima le destinazioni con le loro capacità e le regole di destinazione. Il consiglio compare quando si visualizza e si aggiorna la chiamata, nulla cambia finché qualcuno non lo applica, e i dipartimenti che usano Advanced Data Protection non ricevono consigli.</value>
+  </data>
+  <data name="Feature.dispatcher-desk" xml:space="preserve">
+    <value>Postazione di centrale</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk" xml:space="preserve">
+    <value>Una bacheca in tempo reale degli operatori in servizio e del lavoro che li attende. Chiamate in attesa e programmate, SMS, telefonate, e-mail e chat vengono offerte a un operatore libero alla volta, che le prende nell'app Dispatch da telefono o tablet.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk" xml:space="preserve">
+    <value>Il lavoro va a chi è libero: un operatore che ha del lavoro in carico conta come occupato, un'offerta che nessuno prende passa all'operatore successivo e il lavoro rimasto in attesa avvisa tutti quelli in servizio. Gli operatori possono gestire la postazione da dove si trovano, non solo da una console.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk" xml:space="preserve">
+    <value>Due operatori volontari coprono un fine settimana dal telefono. Un SMS su un albero caduto di traverso su una strada viene offerto a quello libero e diventa una chiamata, mentre l'altro è in pausa pranzo e non riceve avvisi della postazione finché non rientra.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk" xml:space="preserve">
+    <value>Dai ai tuoi operatori il permesso Accesso App Dispatch e mettili nell'elenco di centrale di un turno. Poi apri Turni, Impostazioni della postazione di centrale, attiva Instrada il lavoro agli operatori in servizio, scegli cosa Invia alla postazione e salva. Gli operatori accedono alla postazione nell'app Dispatch; la pagina Postazione di centrale mostra chi è disponibile, occupato o in pausa e la coda aperta, e un supervisore della postazione può terminare una pausa o passare il lavoro a un altro.</value>
+  </data>
+  <data name="Feature.shift-dispatchers" xml:space="preserve">
+    <value>Operatori in servizio</value>
+  </data>
+  <data name="FeaturePurpose.shift-dispatchers" xml:space="preserve">
+    <value>Metti operatori nei turni assegnati e a iscrizione, in un turno solo di centrale o accanto ai soccorritori, con il numero di posti di centrale da coprire, un minimo in postazione e un supervisore della postazione.</value>
+  </data>
+  <data name="FeatureValue.shift-dispatchers" xml:space="preserve">
+    <value>La postazione offre lavoro solo agli operatori davvero in servizio: quelli nell'elenco di un giorno di turno in corso, a meno che il dipartimento consenta il servizio senza turno. I posti di centrale scoperti compaiono sul giorno di turno, e In servizio ora elenca gli operatori con il loro stato in postazione e le pause.</value>
+  </data>
+  <data name="FeatureExample.shift-dispatchers" xml:space="preserve">
+    <value>Una centrale operativa gestisce turni A, B e C solo di centrale con due operatori ciascuno, e un dipartimento di volontari aggiunge un posto da operatore al turno a iscrizione del fine settimana.</value>
+  </data>
+  <data name="FeatureSetup.shift-dispatchers" xml:space="preserve">
+    <value>Apri Turni, crea o modifica un turno e attiva Questo turno ha operatori. Imposta Operatori necessari e, in un turno assegnato, spunta le persone nell'Elenco di centrale e indica un supervisore della postazione; in un turno a iscrizione, gli operatori scelgono Iscriviti come operatore sul giorno di turno. Si possono aggiungere solo persone con il permesso Accesso App Dispatch.</value>
+  </data>
+  <data name="Feature.dispatcher-breaks" xml:space="preserve">
+    <value>Pause degli operatori</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-breaks" xml:space="preserve">
+    <value>Pianifica pause e pasti degli operatori del giorno su un'unica linea temporale di copertura che mostra chi è in servizio, chi è in pausa e dove la copertura scenderebbe sotto il minimo.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-breaks" xml:space="preserve">
+    <value>Le pause restano sfalsate così la postazione non resta mai vuota: Pianifica pause distribuisce il piano delle pause di un turno tra i suoi operatori senza sovrapposizioni, e il pianificatore segnala pause sovrapposte e buchi prima che accadano. Gli operatori ricevono un promemoria prima di ogni pausa e, per impostazione predefinita, nessun avviso della postazione durante la pausa.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-breaks" xml:space="preserve">
+    <value>In un turno di 12 ore con tre operatori, Pianifica pause colloca per ciascuno il pasto di 30 minuti e due pause di 15 minuti in orari diversi, e ogni operatore riceve un promemoria cinque minuti prima di una pausa.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-breaks" xml:space="preserve">
+    <value>Imposta un piano delle pause su ogni turno, oppure un piano delle pause predefinito nelle Impostazioni della postazione di centrale. Poi apri Turni, Pause degli operatori, scegli una data e un giorno di turno e usa Pianifica pause, oppure pianifica tu le singole pause. I supervisori della postazione e i responsabili di turno pianificano le pause di tutti; gli operatori pianificano le proprie solo nei turni che lo consentono. Una pausa è una durata, quindi se inizia prima finisce anche prima.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-settings" xml:space="preserve">
+    <value>Impostazioni della postazione di centrale</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-settings" xml:space="preserve">
+    <value>Attiva l'instradamento e scegli quale lavoro va alla postazione, quanto attende un'offerta, cosa succede a SMS e telefonate quando tutti gli operatori sono occupati, cosa diventa una chiamata ricevuta via e-mail e le regole per pause e servizio.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-settings" xml:space="preserve">
+    <value>Il dipartimento decide una volta come si comporta la postazione, da quanto in fretta il lavoro senza risposta passa oltre a se una pausa può lasciare meno operatori disponibili del minimo.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-settings" xml:space="preserve">
+    <value>Un dipartimento invia SMS e telefonate alla postazione, concede 60 secondi a ogni offerta, lascia che Enhanced AI compili una chiamata in attesa quando nessuno è libero e salva le chiamate via e-mail come in attesa perché un operatore le verifichi.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-settings" xml:space="preserve">
+    <value>Gli amministratori del dipartimento aprono Turni, poi Impostazioni della postazione di centrale. Attiva Instrada il lavoro agli operatori in servizio, scegli Invia alla postazione, il tempo di ogni offerta e gli elementi per operatore, cosa succede quando tutti gli operatori sono occupati, Chiamate via e-mail e le regole delle pause, poi salva. Le opzioni Enhanced AI richiedono il componente aggiuntivo Enhanced AI.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-activity" xml:space="preserve">
+    <value>Attività degli operatori</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-activity" xml:space="preserve">
+    <value>L'attività della postazione fino a 92 giorni: il lavoro per tipo, gli elementi completati, in sovraccarico, annullati ed escalati e il tempo medio di risposta, e per ogni operatore le offerte accettate, rifiutate e perse, il tempo per accettare e per completare, e le pause fatte, saltate o rientrate in ritardo.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-activity" xml:space="preserve">
+    <value>Verifica se il lavoro viene preso in fretta, quanto spesso va in sovraccarico o viene escalato e se le pause finiscono in orario, poi regola personale, tempi delle offerte o piani delle pause in base ai numeri.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-activity" xml:space="preserve">
+    <value>Un supervisore vede che gli SMS venivano spesso escalati il venerdì sera e aggiunge un secondo operatore a quel turno.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-activity" xml:space="preserve">
+    <value>Gli amministratori del dipartimento e i supervisori della postazione aprono Turni, poi Attività degli operatori, scelgono le date Dal e Al e selezionano Mostra.</value>
+  </data>
+  <data name="Feature.intake-spam-screening" xml:space="preserve">
+    <value>Filtro antispam in ricezione</value>
+  </data>
+  <data name="FeaturePurpose.intake-spam-screening" xml:space="preserve">
+    <value>Tieni spam e chiamate automatiche fuori da Chiamate in attesa: scarta una chiamata in ricezione come spam e blocca il mittente, limita quante chiamate può creare un numero di telefono in un'ora, chiedi a chi chiama di premere 1 prima delle domande e contrassegna i messaggi che Enhanced AI interpreta come non un intervento.</value>
+  </data>
+  <data name="FeatureValue.intake-spam-screening" xml:space="preserve">
+    <value>Gli operatori dedicano il loro tempo alle segnalazioni vere. SMS e chiamate di un mittente bloccato non creano chiamate e non ricevono risposta, e una chiamata filtrata mantiene la sua etichetta in Chiamate in attesa ma non viene offerta sulla postazione di centrale; è sempre un operatore a decidere cosa farne.</value>
+  </data>
+  <data name="FeatureExample.intake-spam-screening" xml:space="preserve">
+    <value>Un numero pubblicitario continua a scrivere al numero del dipartimento. Oltre il limite orario i suoi SMS vengono aggiunti come note alla sua chiamata aperta, e un operatore scarta quella chiamata come spam e blocca il numero per 30 giorni.</value>
+  </data>
+  <data name="FeatureSetup.intake-spam-screening" xml:space="preserve">
+    <value>Su una chiamata in ricezione in attesa, scegli Scarta come spam e lascia spuntato Blocca anche il mittente; la chiamata viene annullata e nessuno viene avvisato. I mittenti bloccati sono elencati nella pagina Canali di ricezione, dove Sblocca toglie un blocco in anticipo. Il limite orario vale per i canali SMS, voce e WhatsApp senza mittenti consentiti, mai per i canali e-mail, chat o webhook.</value>
+  </data>
+  <data name="Area.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="AreaPurpose.relay" xml:space="preserve">
+    <value>Un'app complementare open source che collega a Resgrid le e-mail di CAD e di paging, gli scanner, le radio ricetrasmittenti e le radio push-to-talk LTE.</value>
+  </data>
+  <data name="AreaValue.relay" xml:space="preserve">
+    <value>Porta in Resgrid chiamate, messaggi e traffico radio dai sistemi che hai già, senza sostituirli.</value>
+  </data>
+  <data name="AreaExample.relay" xml:space="preserve">
+    <value>Il CAD della contea invia ogni dispaccio via e-mail al relay, che crea la chiamata con la scheda di intervento allegata, mentre una radio della stazione collegata a un canale vocale permette agli utenti dell'app di parlare con le squadre alla radio.</value>
+  </data>
+  <data name="ModuleAdoption.relay" xml:space="preserve">
+    <value>Installa Relay su un computer del dipartimento: l'app desktop per Windows, oppure senza interfaccia su Windows, Linux, macOS o Docker. Il dispaccio via e-mail non richiede componenti aggiuntivi; il ponte radio, il registratore e l'allerta a toni richiedono il componente aggiuntivo Push-to-Talk e un canale vocale. Relay integra i tuoi sistemi radio e di paging; non li sostituisce.</value>
+  </data>
+  <data name="Feature.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay" xml:space="preserve">
+    <value>Installa ed esegui Relay, scegli le sue modalità e collegalo al tuo dipartimento.</value>
+  </data>
+  <data name="FeatureValue.relay" xml:space="preserve">
+    <value>L'app desktop per Windows esegue più modalità affiancate con una dashboard in tempo reale; l'host senza interfaccia esegue una modalità per processo su un server o in Docker.</value>
+  </data>
+  <data name="FeatureExample.relay" xml:space="preserve">
+    <value>Un dipartimento installa l'app desktop sul PC della stazione, la collega con un account membro dedicato e attiva l'avvio automatico del dispaccio via e-mail e del ponte radio.</value>
+  </data>
+  <data name="FeatureSetup.relay" xml:space="preserve">
+    <value>Aggiungi un account membro con cui il relay accede, quindi installa Relay e collegalo con il token di aggiornamento di quell'account. Il ponte radio, il registratore e l'allerta a toni richiedono questo token utente; il dispaccio via e-mail e il rilevamento dei toni possono usare anche le credenziali client. Esegui «Test connection» prima di avviare una modalità.</value>
+  </data>
+  <data name="Feature.relay-smtp-dispatch" xml:space="preserve">
+    <value>Dispaccio via e-mail con Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay-smtp-dispatch" xml:space="preserve">
+    <value>Il server di posta integrato di Relay trasforma le e-mail di dispaccio di CAD, centrali d'allarme o gateway di paging in chiamate e messaggi di gruppo Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-smtp-dispatch" xml:space="preserve">
+    <value>Un'e-mail al codice di dispaccio del dipartimento allerta l'intero dipartimento, il codice di dispaccio di un gruppo invia quel gruppo e il suo codice messaggi gli invia un messaggio. Gli allegati vengono aggiunti alla chiamata e un messaggio recapitato di nuovo non crea mai una seconda chiamata.</value>
+  </data>
+  <data name="FeatureExample.relay-smtp-dispatch" xml:space="preserve">
+    <value>Il CAD della contea invia ogni intervento della Stazione 5 al codice di dispaccio di quel gruppo sul dominio di dispaccio della contea, e il relay crea la chiamata con la scheda di intervento in PDF allegata.</value>
+  </data>
+  <data name="FeatureSetup.relay-smtp-dispatch" xml:space="preserve">
+    <value>Trova l'indirizzo di dispaccio del dipartimento in Impostazioni chiamate e gli indirizzi di dispaccio e dei messaggi di ogni gruppo in Gruppi. Indirizza la posta dei tuoi domini di dispaccio a Relay ed elenca quei domini nelle sue impostazioni SMTP. L'account del relay ha bisogno dell'autorizzazione Crea chiamate e, per gli allegati, di Aggiungi dati chiamata.</value>
+  </data>
+  <data name="Feature.relay-tone-detect" xml:space="preserve">
+    <value>Toni di allerta in chiamate</value>
+  </data>
+  <data name="FeaturePurpose.relay-tone-detect" xml:space="preserve">
+    <value>Su Windows, Relay ascolta uno scanner o una radio tramite una scheda audio per rilevare le allerte bitonali e monotonali e crea una chiamata Resgrid con l'audio del dispaccio registrato.</value>
+  </data>
+  <data name="FeatureValue.relay-tone-detect" xml:space="preserve">
+    <value>I membri ricevono l'allerta nell'app Responder con l'audio dell'operatore allegato, anche quando l'allerta radio è l'unico dispaccio.</value>
+  </data>
+  <data name="FeatureExample.relay-tone-detect" xml:space="preserve">
+    <value>Lo scanner di una squadra di volontari sente la sua allerta bitonale e il relay crea una chiamata per il gruppo di quella stazione con l'audio del dispaccio allegato.</value>
+  </data>
+  <data name="FeatureSetup.relay-tone-detect" xml:space="preserve">
+    <value>In Gruppi, annota il codice di dispaccio di ogni gruppo che allerti a toni: un watcher di gruppo invia quel gruppo e un watcher di dipartimento allerta tutti. Inserisci i toni di ogni watcher in Relay. L'account del relay ha bisogno di Crea chiamate e Aggiungi dati chiamata.</value>
+  </data>
+  <data name="Feature.relay-radio-bridge" xml:space="preserve">
+    <value>Ponte radio</value>
+  </data>
+  <data name="FeaturePurpose.relay-radio-bridge" xml:space="preserve">
+    <value>Su Windows, Relay collega una radio ricetrasmittente cablata a un canale push-to-talk Resgrid in entrambe le direzioni.</value>
+  </data>
+  <data name="FeatureValue.relay-radio-bridge" xml:space="preserve">
+    <value>Le squadre alla radio e i membri nelle app Responder, Unit e Dispatch si sentono a vicenda, e un tono di emergenza alla radio può creare una chiamata.</value>
+  </data>
+  <data name="FeatureExample.relay-radio-bridge" xml:space="preserve">
+    <value>Una squadra SAR collega la sua radio base VHF al canale della squadra, così i soccorritori con i portatili e quelli con i telefoni parlano tra loro.</value>
+  </data>
+  <data name="FeatureSetup.relay-radio-bridge" xml:space="preserve">
+    <value>Richiede il componente aggiuntivo Push-to-Talk, un canale vocale e il token di aggiornamento del relay. Attiva la trasmissione della radio tramite un'interfaccia PTT USB CM108 o seriale, regola lo squelch con «Tune» e verifica cablaggio e ritardo di trasmissione con «Test transmit».</value>
+  </data>
+  <data name="Feature.relay-lte-donor-radios" xml:space="preserve">
+    <value>Radio donatrici push-to-talk LTE</value>
+  </data>
+  <data name="FeaturePurpose.relay-lte-donor-radios" xml:space="preserve">
+    <value>Unisce un gruppo di conversazione push-to-talk cellulare (PoC), come Rapid Radios o Diga-Talk+, a un canale vocale Resgrid tramite una delle sue radio cablata al relay.</value>
+  </data>
+  <data name="FeatureValue.relay-lte-donor-radios" xml:space="preserve">
+    <value>Gli utenti delle radio PoC e delle app Resgrid condividono un'unica conversazione, anche se questi servizi PoC non offrono API né gateway per l'audio esterno.</value>
+  </data>
+  <data name="FeatureExample.relay-lte-donor-radios" xml:space="preserve">
+    <value>Una squadra di sicurezza collega una veicolare Diga-Talk+ al relay, così le guardie con radio PoC e i supervisori nelle app Resgrid si sentono a vicenda.</value>
+  </data>
+  <data name="FeatureSetup.relay-lte-donor-radios" xml:space="preserve">
+    <value>Applica il profilo della radio, attivala con una linea PTT fisica anziché con il VOX, disattiva il suo VOX e i suoi bip e tienila su alimentazione esterna. La radio donatrice occupa una radio dell'account PoC e collega il gruppo di conversazione su cui è impostata. Richiede il componente aggiuntivo Push-to-Talk e un canale vocale.</value>
+  </data>
+  <data name="Feature.relay-recorder" xml:space="preserve">
+    <value>Registratore dei canali</value>
+  </data>
+  <data name="FeaturePurpose.relay-recorder" xml:space="preserve">
+    <value>Registra ogni trasmissione su uno o su tutti i canali push-to-talk come file audio, con un registro di chi ha parlato, su quale canale, quando e per quanto tempo.</value>
+  </data>
+  <data name="FeatureValue.relay-recorder" xml:space="preserve">
+    <value>Conserva il traffico vocale per la conformità e l'analisi post-intervento, su disco locale o su storage compatibile S3.</value>
+  </data>
+  <data name="FeatureExample.relay-recorder" xml:space="preserve">
+    <value>Un'agenzia di gestione delle emergenze registra tutti i canali durante un'esercitazione alluvionale e rivede il registro delle trasmissioni nella riunione di debriefing.</value>
+  </data>
+  <data name="FeatureSetup.relay-recorder" xml:space="preserve">
+    <value>Richiede il componente aggiuntivo Push-to-Talk, un canale vocale e il token di aggiornamento del relay. Ogni canale registrato occupa un posto vocale. Le registrazioni contengono traffico vocale operativo: archiviale, proteggile ed eliminale secondo la tua politica di conservazione dei registri.</value>
+  </data>
+  <data name="Feature.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Allerta a toni su push-to-talk</value>
+  </data>
+  <data name="FeaturePurpose.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Annuncia ogni nuova chiamata Resgrid su un canale push-to-talk: toni di allerta, poi la chiamata letta ad alta voce dalla sintesi vocale di Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Le squadre che ascoltano un canale sentono i dispacci come alla radio, con la formulazione di Resgrid e i nomi delle tue priorità di chiamata.</value>
+  </data>
+  <data name="FeatureExample.relay-dispatch-tone-out" xml:space="preserve">
+    <value>La squadra di emergenza di uno stabilimento ascolta il suo canale, e ogni nuova chiamata viene annunciata con un'allerta alto-basso seguita da nome, natura, indirizzo e priorità della chiamata.</value>
+  </data>
+  <data name="FeatureSetup.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Richiede il componente aggiuntivo Push-to-Talk, un canale vocale e il token di aggiornamento del relay. Le chiamate già aperte all'avvio del relay non vengono annunciate e le chiamate programmate vengono annunciate quando sono inviate.</value>
+  </data>
+  <data name="Rule.relay-dispatch-code" xml:space="preserve">
+    <value>Nessun codice e-mail di dispaccio del dipartimento</value>
+  </data>
+  <data name="RuleWhy.relay-dispatch-code" xml:space="preserve">
+    <value>Il dipartimento non ha un codice e-mail di dispaccio, quindi un'e-mail al suo indirizzo di dispaccio non può creare una chiamata, sia che la riceva Resgrid sia un relay.</value>
+  </data>
+  <data name="RuleNext.relay-dispatch-code" xml:space="preserve">
+    <value>Controlla l'indirizzo di dispaccio in Impostazioni chiamate. Se non ne compare nessuno, chiedi al supporto Resgrid, o all'amministratore della tua installazione Resgrid, di assegnare un codice di dispaccio.</value>
+  </data>
+  <data name="Rule.relay-group-email-codes" xml:space="preserve">
+    <value>Gruppi senza codice e-mail di dispaccio o dei messaggi</value>
+  </data>
+  <data name="RuleWhy.relay-group-email-codes" xml:space="preserve">
+    <value>Uno o più gruppi non hanno un codice e-mail di dispaccio o dei messaggi, quindi le e-mail a quegli indirizzi di gruppo non raggiungono nessuno, né tramite Resgrid né tramite un relay. I gruppi creati fuori dall'editor dei gruppi, ad esempio con un'importazione, possono essere privi di codici.</value>
+  </data>
+  <data name="RuleNext.relay-group-email-codes" xml:space="preserve">
+    <value>In Gruppi, individua ogni gruppo il cui indirizzo di dispaccio o dei messaggi non ha un codice prima della @, apri Modifica e salva; il salvataggio assegna i codici mancanti.</value>
+  </data>
+  <data name="Rule.relay-voice-channel" xml:space="preserve">
+    <value>Push-to-Talk senza canale vocale</value>
+  </data>
+  <data name="RuleWhy.relay-voice-channel" xml:space="preserve">
+    <value>Il dipartimento ha Push-to-Talk ma nessun canale vocale permanente, quindi le app Resgrid e il ponte radio, il registratore e l'allerta a toni di un relay non hanno un canale a cui unirsi.</value>
+  </data>
+  <data name="RuleNext.relay-voice-channel" xml:space="preserve">
+    <value>Apri la pagina dei canali vocali, crea un canale e aggiungi i membri che lo usano.</value>
+  </data>
+  <data name="SetupEvidence.relay-voice" xml:space="preserve">
+    <value>Vengono verificati la disponibilità di Push-to-Talk e i canali vocali permanenti. Resgrid non osserva se un relay è installato, connesso o trasmette audio; verificalo nella dashboard del relay stesso.</value>
+  </data>
+  <data name="Setting.AllowShiftOverSignup" xml:space="preserve">
+    <value>Consenti iscrizioni oltre i posti del gruppo</value>
+  </data>
+  <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
+    <value>Consente ai membri di iscriversi a un gruppo del turno anche quando tutti i posti dei suoi ruoli (obbligatori e facoltativi) sono occupati. Serve comunque uno dei ruoli del gruppo. I supervisori possono sempre assegnare persone oltre i posti.</value>
   </data>
 </root>

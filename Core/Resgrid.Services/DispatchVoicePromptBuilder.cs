@@ -153,15 +153,26 @@ namespace Resgrid.Services
 			if (CountryNames.Contains(segment) || PostalCodeRegex.IsMatch(segment))
 				return true;
 
-			// "WA", "Washington", "WA 98111" or "Washington 98111".
+			// Resgrid Relay's DispatchPromptBuilder mirrors this exactly, so its prompt hits the TTS audio cached here; change both together.
+			// "WA", "Washington", "WA 98111", "Washington 98111", "BC V6B 1A1" or "British Columbia V6B1A1". A spaced
+			// Canadian code spans the last two words, so those are tried as a postal code before the last word alone.
 			var lastSpaceIndex = segment.LastIndexOf(' ');
-			var head = lastSpaceIndex > 0 ? segment[..lastSpaceIndex].Trim() : segment;
-			var tail = lastSpaceIndex > 0 ? segment[(lastSpaceIndex + 1)..] : null;
+			if (lastSpaceIndex > 0)
+			{
+				var secondLastSpaceIndex = segment.LastIndexOf(' ', lastSpaceIndex - 1);
+				if (secondLastSpaceIndex > 0 && PostalCodeRegex.IsMatch(segment[(secondLastSpaceIndex + 1)..]))
+					return IsStateOrProvince(segment[..secondLastSpaceIndex].Trim());
 
-			if (tail != null && !PostalCodeRegex.IsMatch(tail))
-				return StateAbbreviations.Contains(segment) || StateNames.Contains(segment);
+				if (PostalCodeRegex.IsMatch(segment[(lastSpaceIndex + 1)..]))
+					return IsStateOrProvince(segment[..lastSpaceIndex].Trim());
+			}
 
-			return StateAbbreviations.Contains(head) || StateNames.Contains(head);
+			return IsStateOrProvince(segment);
+		}
+
+		private static bool IsStateOrProvince(string value)
+		{
+			return StateAbbreviations.Contains(value) || StateNames.Contains(value);
 		}
 
 		public static async Task<string> ResolveDispatchAddressAsync(Call call, IGeoLocationProvider geoLocationProvider, CancellationToken cancellationToken = default)

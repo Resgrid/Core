@@ -313,7 +313,7 @@ namespace Resgrid.Model.Services
 		/// <summary>
 		/// Everyone on a shift whose window (StartTime to EndTime, or Hours, in the department's local
 		/// time) contains <paramref name="utcNow"/>: assigned personnel for assigned shifts, approved
-		/// (not denied) signups for signup shifts. Trades are not applied.
+		/// (not denied) signups for signup shifts, with completed trades applied (the resolved roster).
 		/// </summary>
 		Task<List<OnShiftAssignment>> GetOnShiftPersonnelAsync(int departmentId, DateTime utcNow);
 	

@@ -20,7 +20,13 @@
 		InvalidRequest,
 
 		/// <summary>The caller does not meet the requirements to take the slot (roles, already on the day).</summary>
-		NotEligible
+		NotEligible,
+
+		/// <summary>Every slot the group offers for the roles the member holds is taken (see <see cref="ShiftSignupEligibility"/>).</summary>
+		GroupFull,
+
+		/// <summary>The group lists the roles it needs and the member holds none of them.</summary>
+		RoleRequired
 	}
 
 	public class ShiftActionResult<T>

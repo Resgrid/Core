@@ -2830,12 +2830,26 @@ Allow Signups For Multiple Shift Groups. Allow a member to sign up for multiple 
 
 Default: false. Source: DepartmentSettingTypes.AllowSignupsForMultipleShiftGroups.
 
+<a id="setting-allowshiftoversignup"></a>
+## Allow Signups Past Group Slots
+
+Allow Signups Past Group Slots. Let members sign up for a shift group even when every slot its roles offer (required and optional) is taken. They still need one of the group's roles. Supervisors can always assign people past the slots.
+
+Default: false. Source: DepartmentSettingTypes.AllowShiftOverSignup.
+
 <a id="setting-shifttradeapprovers"></a>
 ## Shift trade approvers
 
 Shift trade approvers. Who may pick which applicant takes a shift trade request and approve trades waiting for approval. Department admins always may; group admins, the person trading out and members of chosen roles are the department's choice.
 
 Default: missing = department admins, group admins and the person who asked for the trade. Source: DepartmentSettingTypes.ShiftTradeApprovers.
+
+<a id="setting-dispatcherdeskconfig"></a>
+## Dispatcher desk
+
+Dispatcher desk. Turns the dispatcher desk on and sets how it works: which work is offered to the dispatchers on duty in the Dispatch app (pending and scheduled calls, texts, phone calls, emails, chats), how long an offer waits and how many items a dispatcher holds before counting as busy, how many missed offers in a row set a dispatcher Away, and what happens to texts and phone calls when nobody is free (wait in the queue, Enhanced AI, or voicemail). It also sets what a call emailed to the dispatch address becomes (dispatched at once, saved as pending, or read by Enhanced AI into a pending call) and the break and duty rules: break reminders, automatic return from breaks, the minimum available, refusing breaks below it, no desk alerts on break, and whether dispatchers must be on a shift or may go on duty without one (Shifts, Dispatcher Desk Settings). Off by default; emailed calls are dispatched at once until Emailed calls is changed, which applies even while routing is off.
+
+Default: missing = desk off; emailed calls are dispatched at once (email call mode 0). Once turned on: every kind of work is routed, 45-second offers, 1 item per dispatcher, Away after 2 missed offers in a row, texts wait in the queue, phone calls go to Enhanced AI voice intake (a voicemail without it), 5-minute break reminders, no automatic return, at least 1 dispatcher available, dispatchers must be on a shift. Source: DepartmentSettingTypes.DispatcherDeskConfig.
 
 <a id="module-shiftsdisabled"></a>
 ## Shifts availability
@@ -2894,6 +2908,31 @@ Shift staffing Who actually worked each shift day, approved by a supervisor, for
 ## On-Shift Hours report
 
 On-Shift Hours report Each person's hours on shift for a period across assigned, signup and static shifts, for the department, a group or one shift, split into approved and automatic hours. Shifts show who is on duty and can drive dispatch, so calls page the people who are actually working. Open Reports, then On-Shift Hours Report. Choose the period and whether it covers the department, a group or a shift. Approve the staffing of the days that need an exact record on the Shift Staffing page before running it for payroll or compliance.
+
+<a id="dispatcher-desk"></a>
+## Dispatcher Desk
+
+Dispatcher Desk A live board of the dispatchers on duty and the work waiting for them. Pending and scheduled calls, texts, phone calls, emails and chats are offered to one free dispatcher at a time, who takes them in the Dispatch app on a phone or tablet. Work goes to someone who is free: a dispatcher holding work counts as busy, an offer nobody takes moves on to the next dispatcher, and work left waiting alerts everyone on duty. Dispatchers can work the desk from wherever they are, not only from a console. Two volunteer dispatchers cover a weekend from their phones. A text about a tree down across a road is offered to the one who is free and becomes a call, while the other is on a meal break and gets no desk alerts until they are back. Give your dispatchers the Dispatch app login permission and put them on a shift's dispatch roster. Then open Shifts, Dispatcher Desk Settings, turn on Route work to on-duty dispatchers, choose what to Send to the desk and save. Dispatchers sign in to the desk in the Dispatch app; the Dispatcher Desk page shows who is available, busy or on break and the open queue, and a desk supervisor can end a break or move work to someone else.
+
+<a id="shift-dispatchers"></a>
+## Dispatchers on duty
+
+Dispatchers on duty Put dispatchers on Assigned and Sign-up shifts, on a dispatch-only shift or beside the responders, with the number of dispatch positions to fill, a minimum on the desk and a desk supervisor. The desk offers work only to dispatchers who are really on duty: those on the roster of a shift day running now, unless the department allows duty without a shift. Open dispatch positions show on the shift day, and On Duty Now lists the dispatchers with their desk state and breaks. A dispatch center runs dispatch-only A, B and C shifts with two dispatchers each, and a volunteer department adds one dispatcher position to its weekend sign-up shift. Open Shifts, create or edit a shift and turn on This shift takes dispatchers. Set Dispatchers needed and, on an Assigned shift, tick the people on the Dispatch roster and mark a desk supervisor; on a Sign-up shift, dispatchers choose Sign up as dispatcher on the shift day. Only people with the Dispatch app login permission can be added.
+
+<a id="dispatcher-breaks"></a>
+## Dispatcher Breaks
+
+Dispatcher Breaks Plan breaks and meals for the day's dispatchers on one coverage timeline that shows who is on duty, who is on a break and where coverage would drop below the minimum. Breaks stay staggered so the desk is never left empty: Plan breaks spreads a shift's break plan across its dispatchers without overlaps, and the planner warns about overlapping breaks and gaps before they happen. Dispatchers are reminded before each break and, by default, get no desk alerts while on it. On a 12-hour shift with three dispatchers, Plan breaks places each one's 30-minute meal and two 15-minute breaks at different times, and each dispatcher is reminded five minutes before a break is due. Set a break plan on each shift, or a default break plan in Dispatcher Desk Settings. Then open Shifts, Dispatcher Breaks, choose a date and a shift day and use Plan breaks, or plan single breaks yourself. Desk supervisors and shift managers plan anyone's breaks; dispatchers plan their own only on shifts that allow it. A break is a length, so a break started early also ends early.
+
+<a id="dispatcher-desk-settings"></a>
+## Dispatcher Desk Settings
+
+Dispatcher Desk Settings Turn routing on and choose which work goes to the desk, how long an offer waits, what happens to texts and phone calls when every dispatcher is busy, what an emailed call becomes, and the rules for breaks and duty. The department decides once how the desk behaves, from how quickly unanswered work moves on to whether a break may leave fewer dispatchers available than the minimum. A department sends texts and phone calls to the desk, gives each offer 60 seconds, lets Enhanced AI fill in a pending call when nobody is free, and saves emailed calls as pending for a dispatcher to review. Department administrators open Shifts, then Dispatcher Desk Settings. Turn on Route work to on-duty dispatchers, choose Send to the desk, the offer timeout and items per dispatcher, what happens when every dispatcher is busy, Emailed calls and the break rules, then save. The Enhanced AI choices need the Enhanced AI add-on.
+
+<a id="dispatcher-desk-activity"></a>
+## Dispatcher Activity
+
+Dispatcher Activity Desk activity for up to 92 days: work by kind, completed, overflowed, cancelled and escalated items and the average time to answer, and for each dispatcher the offers accepted, declined and missed, the time to accept and complete, and breaks taken, missed or returned from late. See whether work is answered quickly, how often it overflows or escalates and whether breaks run on time, then adjust staffing, offer timeouts or break plans from the numbers. A supervisor sees that texts often escalated on Friday evenings and adds a second dispatcher to that shift. Department administrators and desk supervisors open Shifts, then Dispatcher Activity, choose the From and To dates and select Show.
 
 <a id="module-trainingdisabled"></a>
 ## Training availability
@@ -4213,7 +4252,47 @@ Department number and intake Choose and provision your department's number, choo
 
 Intake channels Turn texts to the department's number, mail to an intake email address, posts in a linked Slack, Teams, WhatsApp, Telegram, Discord or Google Chat channel, and signed webhook requests into pending calls. Requests that arrive outside the radio and CAD land in one queue for a dispatcher to review; intake never dispatches anyone by itself. A hospital transfer desk posts requests in a shared Teams channel, and each post becomes a pending call with the channel's default call type and priority. Open the department menu, then Intake Channels, and add a channel for each source. Choose Call template or Enhanced AI processing, limit Allowed senders, set a default priority and call type, then send a test message and check Pending Calls.
 
+<a id="intake-spam-screening"></a>
+## Intake spam screening
+
+Intake spam screening Keep spam and robocalls out of Pending Calls: dismiss an intake call as spam and block its sender, limit how many calls one phone number can create in an hour, ask voice callers to press 1 before the questions start, and label messages that Enhanced AI reads as not an incident. Dispatchers spend their time on real reports. A blocked sender's texts and calls create no calls and get no reply, and a screened call keeps its label in Pending Calls but is not offered on the dispatcher desk; a dispatcher still decides what happens to it. A marketing number keeps texting the department's number. Past the hourly limit its texts are added to its open call as notes, and a dispatcher dismisses that call as spam and blocks the number for 30 days. On a pending intake call, choose Dismiss as spam and keep Also block the sender ticked; the call is cancelled and nobody is notified. Blocked senders are listed on the Intake Channels page, where Unblock lifts a block early. The hourly limit applies to text, voice and WhatsApp channels without allowed senders, never to email, chat or webhook channels.
+
 <a id="addon-dedicated-number"></a>
 ## Private Inbound Dispatch Number
 
 Private Inbound Dispatch Number The Private Inbound Dispatch Number add-on: your department's own phone number for taking calls by text and by voice. Members and the public reach your department directly instead of through the shared Resgrid number. The managing member buys the add-on on the Private Inbound Dispatch Number page or its billing page, and a department admin then provisions a local number. Sold only with an active paid entity plan, and bought or cancelled by the managing member. Billed monthly per department, even on an annual plan. When the add-on ends, the number stops taking texts and calls and is released after a grace period unless the add-on is renewed.
+
+<a id="relay"></a>
+## Resgrid Relay
+
+Resgrid Relay Install and run Relay, choose its modes and connect it to your department. The Windows desktop app runs several modes side by side with a live dashboard; the headless host runs one mode per process on a server or in Docker. A department installs the desktop app on its station PC, signs it in with a dedicated member account and turns on Auto-start for email dispatch and the radio bridge. Add a member account for the relay to sign in as, then install Relay and connect it with that account's refresh token. The radio bridge, recorder and tone-out require this user token; email dispatch and tone detection can also use client credentials. Run Test connection before starting a mode.
+
+<a id="relay-smtp-dispatch"></a>
+## Email dispatch through Relay
+
+Email dispatch through Relay Relay's built-in mail server turns dispatch email from CAD, alarm panels or paging gateways into Resgrid calls and group messages. Mail to the department dispatch code pages the department, a group's dispatch code dispatches that group and a group's message code sends it a message. Attachments go onto the call, and a redelivered message never creates a second call. The county CAD sends each Station 5 run to that group's dispatch code at the county's dispatch domain, and the relay creates the call with the run card PDF attached. Find the department dispatch address on Call Settings and each group's dispatch and message addresses on Groups. Point your dispatch domains' mail at Relay and list those domains in its SMTP settings. The relay's account needs the Create calls permission, and Add Call Data for attachments.
+
+<a id="relay-tone-detect"></a>
+## Paging tones to calls
+
+Paging tones to calls On Windows, Relay listens to a scanner or radio through a sound card for two-tone and single-tone pages and creates a Resgrid call with the recorded dispatch audio. Members get the page in the Responder app with the dispatcher's audio attached, even when the radio page is the only dispatch. A volunteer company's scanner hears its two-tone page, and the relay creates a call for that station's group with the dispatch audio attached. On Groups, note the dispatch code of each group you tone out: a group watcher dispatches that group, and a department watcher pages everyone. Enter each watcher's tones in Relay. The relay's account needs Create calls and Add Call Data.
+
+<a id="relay-radio-bridge"></a>
+## Radio bridge
+
+Radio bridge On Windows, Relay bridges a cabled two-way radio to a Resgrid push-to-talk channel in both directions. Crews on the radio and members in the Responder, Unit and Dispatch apps hear each other, and an emergency tone on the radio can create a call. A SAR team bridges its VHF base radio to the team channel, so searchers with handhelds and searchers with phones talk to each other. Needs the Push-to-Talk add-on, a voice channel and the relay's refresh token. Key the radio through a CM108 USB or serial PTT interface, set the squelch with Tune and check the wiring and key-up delay with Test transmit.
+
+<a id="relay-lte-donor-radios"></a>
+## LTE push-to-talk donor radios
+
+LTE push-to-talk donor radios Joins a cellular push-to-talk (PoC) talk group, such as Rapid Radios or Diga-Talk+, to a Resgrid voice channel through one of its radios cabled to the relay. PoC radio users and Resgrid app users share one conversation, although these PoC services offer no API or gateway for outside audio. A security team cables one Diga-Talk+ mobile to the relay, so guards on PoC radios and supervisors in the Resgrid apps hear each other. Apply the radio's profile, key it with a hard PTT line rather than VOX, turn off its own VOX and beeps, and keep it on external power. The donor radio uses one radio on the PoC account and bridges the talk group it is set to. Needs the Push-to-Talk add-on and a voice channel.
+
+<a id="relay-recorder"></a>
+## Channel recorder
+
+Channel recorder Records every transmission on one or all push-to-talk channels as audio files, with a log of who spoke, on which channel, when and for how long. Keeps voice traffic for compliance and after-action review, on local disk or S3-compatible storage. An emergency management agency records every channel during a flood exercise and reviews the transmission log at the after-action meeting. Needs the Push-to-Talk add-on, a voice channel and the relay's refresh token. Each recorded channel occupies a voice seat. Recordings contain operational voice traffic: store, protect and prune them under your records policy.
+
+<a id="relay-dispatch-tone-out"></a>
+## Tone-out on push-to-talk
+
+Tone-out on push-to-talk Announces each new Resgrid call on a push-to-talk channel: alert tones, then the call read aloud by Resgrid's text-to-speech. Crews who monitor a channel hear dispatches the way they would on the radio, in Resgrid's own wording with your call priority names. A plant's emergency response team monitors its channel, and each new call is toned out with a hi-lo alert followed by the call name, nature, address and priority. Needs the Push-to-Talk add-on, a voice channel and the relay's refresh token. Calls already open when the relay starts are not announced, and scheduled calls are announced when they are dispatched.

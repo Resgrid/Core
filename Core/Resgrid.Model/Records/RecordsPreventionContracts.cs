@@ -132,7 +132,10 @@ namespace Resgrid.Model
 		public decimal Latitude { get; set; }
 		public decimal Longitude { get; set; }
 		public int FlowClass { get; set; }
+		/// <summary>Observed (or recorded) flow.</summary>
 		public int? FlowGpm { get; set; }
+		/// <summary>Rated flow at 20 psi residual, when the hydrant's pressures allow it (NFPA 291); the class is read from it.</summary>
+		public int? RatedFlowGpm { get; set; }
 		public bool InService { get; set; }
 		public decimal? MainSizeInches { get; set; }
 	}

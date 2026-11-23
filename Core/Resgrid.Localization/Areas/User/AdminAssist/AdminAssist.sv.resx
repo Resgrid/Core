@@ -7755,6 +7755,12 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>Vem som väljer vilken sökande som tar en bytesförfrågan och godkänner väntande byten. Avdelningsadministratörer får alltid; gruppadministratörer, den som byter bort sitt pass och medlemmar i valda roller bestämmer avdelningen.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatcherDeskConfig">
+    <value>Larmoperatörsplats</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatcherDeskConfig">
+    <value>Slår på operatörsplatsen och anger hur den fungerar: vilket arbete som erbjuds operatörerna i tjänst i Dispatch-appen (väntande och schemalagda larm, sms, telefonsamtal, e-post, chattar), hur länge ett erbjudande väntar och hur många poster en operatör kan hålla innan hen räknas som upptagen, hur många missade erbjudanden i rad som gör en operatör Borta, och vad som händer med sms och telefonsamtal när ingen är ledig (vänta i kön, Enhanced AI eller röstbrevlåda). Anger också vad ett larm som mejlas till larmadressen blir (skickas direkt, sparas som väntande eller läses av Enhanced AI till ett väntande larm) och reglerna för raster och tjänst: rastpåminnelser, automatisk återgång från raster, minsta antal tillgängliga, att neka raster under det, inga aviseringar från platsen under rast, och om operatörer måste vara på ett skift eller får gå i tjänst utan skift (Skift, Inställningar för operatörsplatsen). Av som standard; larm via e-post skickas direkt tills Larm via e-post ändras, vilket gäller även när tilldelningen är avstängd.</value>
+  </data>
   <data xml:space="preserve" name="Feature.home-dashboard">
     <value>Anpassningsbar startöversikt</value>
   </data>
@@ -8000,5 +8006,251 @@
   </data>
   <data name="FeatureSetup.ai-destination-advice" xml:space="preserve">
     <value>Kräver tillägget Enhanced AI med AI-destinationsråd aktiverat för er avdelning. Lägg först till era destinationer med deras förmågor samt destinationsregler. Rådet visas när larmet visas och uppdateras, inget ändras förrän någon tillämpar det, och avdelningar som använder Advanced Data Protection får inga råd.</value>
+  </data>
+  <data name="Feature.dispatcher-desk" xml:space="preserve">
+    <value>Operatörsplats</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk" xml:space="preserve">
+    <value>En direkttavla över operatörerna i tjänst och arbetet som väntar på dem. Väntande och schemalagda larm, sms, telefonsamtal, e-post och chattar erbjuds till en ledig operatör i taget, som tar dem i Dispatch-appen på telefon eller surfplatta.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk" xml:space="preserve">
+    <value>Arbetet går till någon som är ledig: en operatör som håller arbete räknas som upptagen, ett erbjudande som ingen tar går vidare till nästa operatör, och arbete som blir liggande larmar alla i tjänst. Operatörerna kan bemanna platsen var de än är, inte bara vid en konsol.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk" xml:space="preserve">
+    <value>Två frivilliga operatörer täcker en helg från sina telefoner. Ett sms om ett träd som fallit över en väg erbjuds den som är ledig och blir ett larm, medan den andra har matrast och inte får några aviseringar från platsen förrän hen är tillbaka.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk" xml:space="preserve">
+    <value>Ge operatörerna behörigheten Inloggning i Dispatch-appen och lägg in dem i ett skifts operatörsschema. Öppna sedan Skift, Inställningar för operatörsplatsen, slå på Tilldela arbete till operatörer i tjänst, välj vad som ska Skicka till operatörsplatsen och spara. Operatörerna loggar in på platsen i Dispatch-appen; sidan Operatörsplats visar vem som är tillgänglig, upptagen eller har rast och den öppna kön, och en arbetsledare på platsen kan avsluta en rast eller flytta arbete till någon annan.</value>
+  </data>
+  <data name="Feature.shift-dispatchers" xml:space="preserve">
+    <value>Operatörer i tjänst</value>
+  </data>
+  <data name="FeaturePurpose.shift-dispatchers" xml:space="preserve">
+    <value>Lägg operatörer på tilldelade skift och anmälningsskift, på ett skift bara för operatörer eller bredvid insatspersonalen, med antalet operatörsplatser att fylla, ett minimum på platsen och en arbetsledare på platsen.</value>
+  </data>
+  <data name="FeatureValue.shift-dispatchers" xml:space="preserve">
+    <value>Platsen erbjuder arbete bara till operatörer som verkligen är i tjänst: de som står på schemat för en skiftdag som pågår nu, om inte avdelningen tillåter tjänst utan skift. Lediga operatörsplatser visas på skiftdagen, och I tjänst nu listar operatörerna med deras status på platsen och raster.</value>
+  </data>
+  <data name="FeatureExample.shift-dispatchers" xml:space="preserve">
+    <value>En larmcentral kör skift A, B och C bara för operatörer med två operatörer vardera, och en frivillig avdelning lägger till en operatörsplats på sitt anmälningsskift på helgen.</value>
+  </data>
+  <data name="FeatureSetup.shift-dispatchers" xml:space="preserve">
+    <value>Öppna Skift, skapa eller redigera ett skift och slå på Det här skiftet har operatörer. Ange Operatörer som behövs och, på ett tilldelat skift, kryssa i personerna i Operatörsschema och markera en arbetsledare på platsen; på ett anmälningsskift väljer operatörerna Anmäl dig som operatör på skiftdagen. Bara personer med behörigheten Inloggning i Dispatch-appen kan läggas till.</value>
+  </data>
+  <data name="Feature.dispatcher-breaks" xml:space="preserve">
+    <value>Operatörsraster</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-breaks" xml:space="preserve">
+    <value>Planera raster och måltider för dagens operatörer på en gemensam tidslinje för täckning som visar vem som är i tjänst, vem som har rast och var bemanningen skulle falla under minimum.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-breaks" xml:space="preserve">
+    <value>Rasterna förblir förskjutna så att platsen aldrig blir tom: Planera raster fördelar ett skifts rastplan på dess operatörer utan överlapp, och planeraren varnar för överlappande raster och luckor innan de uppstår. Operatörerna påminns före varje rast och får som standard inga aviseringar från platsen under den.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-breaks" xml:space="preserve">
+    <value>På ett 12-timmarsskift med tre operatörer lägger Planera raster var och ens 30 minuter långa måltid och två raster på 15 minuter vid olika tider, och varje operatör påminns fem minuter innan en rast ska börja.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-breaks" xml:space="preserve">
+    <value>Ange en rastplan på varje skift, eller en standardrastplan i Inställningar för operatörsplatsen. Öppna sedan Skift, Operatörsraster, välj ett datum och en skiftdag och använd Planera raster, eller planera enstaka raster själv. Arbetsledare på platsen och skiftansvariga planerar allas raster; operatörer planerar sina egna bara på skift som tillåter det. En rast är en längd, så en rast som börjar tidigt slutar också tidigt.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-settings" xml:space="preserve">
+    <value>Inställningar för operatörsplatsen</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-settings" xml:space="preserve">
+    <value>Slå på tilldelningen och välj vilket arbete som går till platsen, hur länge ett erbjudande väntar, vad som händer med sms och telefonsamtal när alla operatörer är upptagna, vad ett larm via e-post blir och reglerna för raster och tjänst.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-settings" xml:space="preserve">
+    <value>Avdelningen bestämmer en gång hur platsen beter sig, från hur snabbt obesvarat arbete går vidare till om en rast får lämna färre tillgängliga operatörer än minimum.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-settings" xml:space="preserve">
+    <value>En avdelning skickar sms och telefonsamtal till platsen, ger varje erbjudande 60 sekunder, låter Enhanced AI fylla i ett väntande larm när ingen är ledig och sparar larm via e-post som väntande så att en operatör kan granska dem.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-settings" xml:space="preserve">
+    <value>Avdelningsadministratörer öppnar Skift och sedan Inställningar för operatörsplatsen. Slå på Tilldela arbete till operatörer i tjänst, välj Skicka till operatörsplatsen, tiden för erbjudanden och poster per operatör, vad som händer när alla operatörer är upptagna, Larm via e-post och rastreglerna, och spara. Valen med Enhanced AI kräver tillägget Enhanced AI.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-activity" xml:space="preserve">
+    <value>Operatörsaktivitet</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-activity" xml:space="preserve">
+    <value>Platsens aktivitet för upp till 92 dagar: arbete per typ, avslutade, överflödade, avbrutna och eskalerade poster och genomsnittlig svarstid, och för varje operatör accepterade, avböjda och missade erbjudanden, tiden till accept och till avslut samt tagna, missade eller sent avslutade raster.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-activity" xml:space="preserve">
+    <value>Se om arbetet tas snabbt, hur ofta det svämmar över eller eskaleras och om rasterna slutar i tid, och justera sedan bemanning, erbjudandetider eller rastplaner utifrån siffrorna.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-activity" xml:space="preserve">
+    <value>En arbetsledare ser att sms ofta eskalerades på fredagskvällar och lägger till en andra operatör på det skiftet.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-activity" xml:space="preserve">
+    <value>Avdelningsadministratörer och arbetsledare på platsen öppnar Skift och sedan Operatörsaktivitet, väljer datumen Från och Till och väljer Visa.</value>
+  </data>
+  <data name="Feature.intake-spam-screening" xml:space="preserve">
+    <value>Skräpfiltrering vid mottagning</value>
+  </data>
+  <data name="FeaturePurpose.intake-spam-screening" xml:space="preserve">
+    <value>Håll skräp och robotsamtal borta från Väntande larm: avfärda ett mottaget larm som skräp och blockera avsändaren, begränsa hur många larm ett telefonnummer kan skapa på en timme, be uppringare trycka 1 innan frågorna börjar och märk meddelanden som Enhanced AI läser som ingen händelse.</value>
+  </data>
+  <data name="FeatureValue.intake-spam-screening" xml:space="preserve">
+    <value>Operatörerna lägger sin tid på riktiga rapporter. Sms och samtal från en blockerad avsändare skapar inga larm och får inget svar, och ett filtrerat larm behåller sin märkning i Väntande larm men erbjuds inte på operatörsplatsen; en operatör avgör fortfarande vad som händer med det.</value>
+  </data>
+  <data name="FeatureExample.intake-spam-screening" xml:space="preserve">
+    <value>Ett reklamnummer sms:ar avdelningens nummer gång på gång. Över timgränsen läggs dess sms till som anteckningar på dess öppna larm, och en operatör avfärdar det larmet som skräp och blockerar numret i 30 dagar.</value>
+  </data>
+  <data name="FeatureSetup.intake-spam-screening" xml:space="preserve">
+    <value>På ett väntande mottaget larm väljer du Avfärda som skräp och låter Blockera även avsändaren vara ikryssad; larmet avbryts och ingen meddelas. Blockerade avsändare listas på sidan Mottagningskanaler, där Häv blockering tar bort en blockering i förtid. Timgränsen gäller sms-, röst- och WhatsApp-kanaler utan tillåtna avsändare, aldrig e-post-, chatt- eller webhook-kanaler.</value>
+  </data>
+  <data name="Area.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="AreaPurpose.relay" xml:space="preserve">
+    <value>En kompletterande app med öppen källkod som kopplar CAD- och personsökar-e-post, scannrar, kommunikationsradio och LTE-push-to-talk-radio till Resgrid.</value>
+  </data>
+  <data name="AreaValue.relay" xml:space="preserve">
+    <value>För in larm, meddelanden och radiotrafik från de system ni redan har i Resgrid, utan att ersätta dem.</value>
+  </data>
+  <data name="AreaExample.relay" xml:space="preserve">
+    <value>Länets CAD skickar varje utlarmning per e-post till reläet, som skapar larmet med insatskortet bifogat, medan en stationsradio som är bryggad till en röstkanal låter appanvändare prata med besättningarna på radion.</value>
+  </data>
+  <data name="ModuleAdoption.relay" xml:space="preserve">
+    <value>Installera Relay på en dator i avdelningen: Windows-skrivbordsappen, eller utan gränssnitt på Windows, Linux, macOS eller Docker. Utlarmning via e-post kräver inget tillägg; radiobryggan, inspelaren och tonlarmningen kräver tillägget Push-to-Talk och en röstkanal. Relay kompletterar era radio- och personsökarsystem; det ersätter dem inte.</value>
+  </data>
+  <data name="Feature.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay" xml:space="preserve">
+    <value>Installera och kör Relay, välj dess lägen och anslut det till er avdelning.</value>
+  </data>
+  <data name="FeatureValue.relay" xml:space="preserve">
+    <value>Windows-skrivbordsappen kör flera lägen sida vid sida med en direktuppdaterad instrumentpanel; värden utan gränssnitt kör ett läge per process på en server eller i Docker.</value>
+  </data>
+  <data name="FeatureExample.relay" xml:space="preserve">
+    <value>En avdelning installerar skrivbordsappen på stationsdatorn, loggar in den med ett eget medlemskonto och slår på automatisk start för e-postutlarmning och radiobryggan.</value>
+  </data>
+  <data name="FeatureSetup.relay" xml:space="preserve">
+    <value>Lägg till ett medlemskonto som reläet loggar in med, installera sedan Relay och anslut det med det kontots uppdateringstoken. Radiobryggan, inspelaren och tonlarmningen kräver denna användartoken; e-postutlarmning och tondetektering kan också använda klientuppgifter. Kör ”Test connection” innan du startar ett läge.</value>
+  </data>
+  <data name="Feature.relay-smtp-dispatch" xml:space="preserve">
+    <value>E-postutlarmning via Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay-smtp-dispatch" xml:space="preserve">
+    <value>Relays inbyggda e-postserver gör om utlarmningsmejl från CAD, larmcentraler eller personsökargateways till Resgrid-larm och gruppmeddelanden.</value>
+  </data>
+  <data name="FeatureValue.relay-smtp-dispatch" xml:space="preserve">
+    <value>E-post till avdelningens utlarmningskod larmar hela avdelningen, en grupps utlarmningskod larmar den gruppen och gruppens meddelandekod skickar ett meddelande till den. Bilagor läggs på larmet, och ett meddelande som levereras igen skapar aldrig ett andra larm.</value>
+  </data>
+  <data name="FeatureExample.relay-smtp-dispatch" xml:space="preserve">
+    <value>Länets CAD skickar varje uppdrag för Station 5 till den gruppens utlarmningskod på länets utlarmningsdomän, och reläet skapar larmet med insatskortet som PDF bifogat.</value>
+  </data>
+  <data name="FeatureSetup.relay-smtp-dispatch" xml:space="preserve">
+    <value>Avdelningens utlarmningsadress finns under Larminställningar och varje grupps utlarmnings- och meddelandeadress under Grupper. Peka era utlarmningsdomäners e-post mot Relay och ange domänerna i dess SMTP-inställningar. Reläets konto behöver behörigheten Skapa larm, och Lägg till larmdata för bilagor.</value>
+  </data>
+  <data name="Feature.relay-tone-detect" xml:space="preserve">
+    <value>Larmtoner till larm</value>
+  </data>
+  <data name="FeaturePurpose.relay-tone-detect" xml:space="preserve">
+    <value>I Windows lyssnar Relay på en scanner eller radio via ett ljudkort efter tvåtons- och entonslarm och skapar ett Resgrid-larm med det inspelade utlarmningsljudet.</value>
+  </data>
+  <data name="FeatureValue.relay-tone-detect" xml:space="preserve">
+    <value>Medlemmarna får larmet i Responder-appen med larmoperatörens ljud bifogat, även när radiolarmet är den enda utlarmningen.</value>
+  </data>
+  <data name="FeatureExample.relay-tone-detect" xml:space="preserve">
+    <value>Ett frivilligt räddningsvärns scanner hör sitt tvåtonslarm, och reläet skapar ett larm för stationens grupp med utlarmningsljudet bifogat.</value>
+  </data>
+  <data name="FeatureSetup.relay-tone-detect" xml:space="preserve">
+    <value>Notera under Grupper utlarmningskoden för varje grupp ni tonlarmar: en grupp-watcher larmar den gruppen och en avdelnings-watcher larmar alla. Ange varje watchers toner i Relay. Reläets konto behöver Skapa larm och Lägg till larmdata.</value>
+  </data>
+  <data name="Feature.relay-radio-bridge" xml:space="preserve">
+    <value>Radiobrygga</value>
+  </data>
+  <data name="FeaturePurpose.relay-radio-bridge" xml:space="preserve">
+    <value>I Windows bryggar Relay en kabelansluten kommunikationsradio till en push-to-talk-kanal i Resgrid i båda riktningarna.</value>
+  </data>
+  <data name="FeatureValue.relay-radio-bridge" xml:space="preserve">
+    <value>Besättningar på radion och medlemmar i apparna Responder, Unit och Dispatch hör varandra, och en nödton på radion kan skapa ett larm.</value>
+  </data>
+  <data name="FeatureExample.relay-radio-bridge" xml:space="preserve">
+    <value>Ett sök- och räddningslag bryggar sin VHF-basradio till lagets kanal, så att sökare med handapparater och sökare med telefoner kan prata med varandra.</value>
+  </data>
+  <data name="FeatureSetup.relay-radio-bridge" xml:space="preserve">
+    <value>Kräver tillägget Push-to-Talk, en röstkanal och reläets uppdateringstoken. Nyckla radion via ett CM108-USB- eller seriellt PTT-gränssnitt, ställ in brusspärren med ”Tune” och kontrollera kablage och sändfördröjning med ”Test transmit”.</value>
+  </data>
+  <data name="Feature.relay-lte-donor-radios" xml:space="preserve">
+    <value>LTE-push-to-talk-donatorradio</value>
+  </data>
+  <data name="FeaturePurpose.relay-lte-donor-radios" xml:space="preserve">
+    <value>Kopplar en mobil push-to-talk-talgrupp (PoC), till exempel Rapid Radios eller Diga-Talk+, till en röstkanal i Resgrid via en av dess radioapparater som är kabelansluten till reläet.</value>
+  </data>
+  <data name="FeatureValue.relay-lte-donor-radios" xml:space="preserve">
+    <value>PoC-radioanvändare och användare av Resgrid-apparna delar ett samtal, trots att dessa PoC-tjänster inte erbjuder något API eller någon gateway för externt ljud.</value>
+  </data>
+  <data name="FeatureExample.relay-lte-donor-radios" xml:space="preserve">
+    <value>Ett säkerhetsteam kabelansluter en Diga-Talk+-mobilstation till reläet, så att väktare med PoC-radio och arbetsledare i Resgrid-apparna hör varandra.</value>
+  </data>
+  <data name="FeatureSetup.relay-lte-donor-radios" xml:space="preserve">
+    <value>Tillämpa radions profil, nyckla den med en fast PTT-ledning i stället för VOX, stäng av dess egen VOX och pipljud och håll den på extern strömförsörjning. Donatorradion upptar en radio på PoC-kontot och bryggar den talgrupp den är inställd på. Kräver tillägget Push-to-Talk och en röstkanal.</value>
+  </data>
+  <data name="Feature.relay-recorder" xml:space="preserve">
+    <value>Kanalinspelare</value>
+  </data>
+  <data name="FeaturePurpose.relay-recorder" xml:space="preserve">
+    <value>Spelar in varje sändning på en eller alla push-to-talk-kanaler som ljudfiler, med en logg över vem som talade, på vilken kanal, när och hur länge.</value>
+  </data>
+  <data name="FeatureValue.relay-recorder" xml:space="preserve">
+    <value>Sparar rösttrafiken för regelefterlevnad och utvärdering efter insats, på lokal disk eller i S3-kompatibel lagring.</value>
+  </data>
+  <data name="FeatureExample.relay-recorder" xml:space="preserve">
+    <value>En krisberedskapsmyndighet spelar in alla kanaler under en översvämningsövning och går igenom sändningsloggen vid utvärderingsmötet.</value>
+  </data>
+  <data name="FeatureSetup.relay-recorder" xml:space="preserve">
+    <value>Kräver tillägget Push-to-Talk, en röstkanal och reläets uppdateringstoken. Varje inspelad kanal upptar en röstplats. Inspelningarna innehåller operativ rösttrafik: lagra, skydda och gallra dem enligt er dokumenthanteringspolicy.</value>
+  </data>
+  <data name="Feature.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Tonlarmning via push-to-talk</value>
+  </data>
+  <data name="FeaturePurpose.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Annonserar varje nytt Resgrid-larm på en push-to-talk-kanal: larmtoner, och sedan läses larmet upp av Resgrids talsyntes.</value>
+  </data>
+  <data name="FeatureValue.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Besättningar som lyssnar på en kanal hör utlarmningar som de skulle göra på radion, med Resgrids egna formuleringar och era namn på larmprioriteter.</value>
+  </data>
+  <data name="FeatureExample.relay-dispatch-tone-out" xml:space="preserve">
+    <value>En industrianläggnings räddningsstyrka lyssnar på sin kanal, och varje nytt larm tonlarmas med en hög-låg-signal följd av larmets namn, art, adress och prioritet.</value>
+  </data>
+  <data name="FeatureSetup.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Kräver tillägget Push-to-Talk, en röstkanal och reläets uppdateringstoken. Larm som redan är öppna när reläet startar annonseras inte, och schemalagda larm annonseras när de larmas ut.</value>
+  </data>
+  <data name="Rule.relay-dispatch-code" xml:space="preserve">
+    <value>Avdelningen saknar utlarmningskod för e-post</value>
+  </data>
+  <data name="RuleWhy.relay-dispatch-code" xml:space="preserve">
+    <value>Avdelningen har ingen utlarmningskod för e-post, så e-post till dess utlarmningsadress kan inte skapa något larm, oavsett om Resgrid eller ett relä tar emot den.</value>
+  </data>
+  <data name="RuleNext.relay-dispatch-code" xml:space="preserve">
+    <value>Kontrollera utlarmningsadressen under Larminställningar. Om ingen visas, be Resgrids support, eller administratören för er Resgrid-installation, att tilldela en utlarmningskod.</value>
+  </data>
+  <data name="Rule.relay-group-email-codes" xml:space="preserve">
+    <value>Grupper utan utlarmnings- eller meddelandekod för e-post</value>
+  </data>
+  <data name="RuleWhy.relay-group-email-codes" xml:space="preserve">
+    <value>En eller flera grupper saknar utlarmnings- eller meddelandekod för e-post, så e-post till de gruppadresserna når ingen, varken via Resgrid eller via ett relä. Grupper som har lagts till utanför gruppredigeraren, till exempel genom en import, kan sakna koder.</value>
+  </data>
+  <data name="RuleNext.relay-group-email-codes" xml:space="preserve">
+    <value>Leta under Grupper upp varje grupp vars utlarmnings- eller meddelandeadress saknar kod före @, öppna Redigera och spara; när du sparar tilldelas de saknade koderna.</value>
+  </data>
+  <data name="Rule.relay-voice-channel" xml:space="preserve">
+    <value>Push-to-Talk saknar röstkanal</value>
+  </data>
+  <data name="RuleWhy.relay-voice-channel" xml:space="preserve">
+    <value>Avdelningen har Push-to-Talk men ingen permanent röstkanal, så Resgrid-apparna och ett reläs radiobrygga, inspelare och tonlarmning har ingen kanal att ansluta till.</value>
+  </data>
+  <data name="RuleNext.relay-voice-channel" xml:space="preserve">
+    <value>Öppna sidan för röstkanaler, skapa en kanal och lägg till de medlemmar som använder den.</value>
+  </data>
+  <data name="SetupEvidence.relay-voice" xml:space="preserve">
+    <value>Tillgången till Push-to-Talk och permanenta röstkanaler kontrolleras. Resgrid ser inte om ett relä är installerat, anslutet eller överför ljud; kontrollera det på reläets egen instrumentpanel.</value>
+  </data>
+  <data name="Setting.AllowShiftOverSignup" xml:space="preserve">
+    <value>Tillåt anmälningar utöver gruppens platser</value>
+  </data>
+  <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
+    <value>Låter medlemmar anmäla sig till en passgrupp även när alla platser för dess roller (obligatoriska och valfria) är tagna. De behöver fortfarande en av gruppens roller. Arbetsledare kan alltid tilldela personer utöver platserna.</value>
   </data>
 </root>

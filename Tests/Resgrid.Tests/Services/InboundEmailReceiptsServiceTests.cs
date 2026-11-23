@@ -241,6 +241,19 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task A_finished_step_reports_whether_the_receipt_recorded_it()
+		{
+			var claim = await _service.ClaimApiRequestAsync(InboundEmailKinds.ApiCall, 10, "msg-2@cad.example");
+			await _service.MarkSavedAsync(claim, 701, InboundEmailPendingSteps.CallBroadcast | InboundEmailPendingSteps.AiEnrichment);
+
+			(await _service.CompleteStepAsync(claim, InboundEmailPendingSteps.CallBroadcast)).Should().BeTrue();
+
+			_repository.FailCompleteSteps = 1;
+			(await _service.CompleteStepAsync(claim, InboundEmailPendingSteps.AiEnrichment)).Should().BeFalse("the write failed (logged, not thrown)");
+			(await _service.CompleteStepAsync(InboundEmailReceiptClaim.Untracked, InboundEmailPendingSteps.CallBroadcast)).Should().BeFalse("nothing records an untracked delivery");
+		}
+
+		[Test]
 		public async Task Receipts_past_the_retention_window_are_purged()
 		{
 			var old = Seed(InboundEmailReceiptStates.Completed, null);

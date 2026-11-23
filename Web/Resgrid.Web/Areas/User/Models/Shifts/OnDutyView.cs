@@ -13,6 +13,9 @@ namespace Resgrid.Web.Areas.User.Models.Shifts
 		public Department Department { get; set; }
 		public DateTime LocalNow { get; set; }
 		public List<OnDutyShiftView> Shifts { get; set; } = new List<OnDutyShiftView>();
+
+		/// <summary>The dispatcher desk (M0324); null when nobody is on the desk or it could not be read.</summary>
+		public OnDutyDispatchersView Dispatch { get; set; }
 	}
 
 	public class OnDutyShiftView

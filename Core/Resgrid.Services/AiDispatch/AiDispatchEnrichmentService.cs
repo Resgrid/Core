@@ -46,6 +46,7 @@ namespace Resgrid.Services.AiDispatch
 		private readonly Lazy<IDecisionClient> _decisions;
 		private readonly IEventAggregator _events;
 		private readonly TimeProvider _clock;
+		private readonly IDispatcherDeskConfigService _deskConfig;
 		private readonly Lazy<IIntakeConversationOperations> _conversations;
 		private readonly Lazy<IIntakeScreeningService> _screening;
 
@@ -56,8 +57,9 @@ namespace Resgrid.Services.AiDispatch
 		public AiDispatchEnrichmentService(IEnhancedAiAccessService enhancedAi, IFeatureToggleService flags, IDepartmentsService departments, ICallsService calls,
 			IGeoLocationProvider geo, IDepartmentDataProtectionService protection, IAiDispatchAuditRepository audits, IAiDispatchConfigRepository settings,
 			IAiBackgroundAdmission admission, IAiUsageMeter usage, Lazy<ILlmClient> client, Lazy<IDecisionClient> decisions, IEventAggregator events, TimeProvider clock,
-			Lazy<IIntakeConversationOperations> conversations = null, Lazy<IIntakeScreeningService> screening = null)
+			IDispatcherDeskConfigService deskConfig, Lazy<IIntakeConversationOperations> conversations = null, Lazy<IIntakeScreeningService> screening = null)
 		{
+			_deskConfig = deskConfig;
 			_conversations = conversations;
 			_screening = screening;
 			_enhancedAi = enhancedAi;
@@ -87,7 +89,7 @@ namespace Resgrid.Services.AiDispatch
 			var selfHosted = AiOperatorSettings.IsListedDepartment(AiConfig.SelfHostedDepartmentIds, departmentId);
 			// Intake calls (pending, from an intake channel) are gated by Ai.Intake / Ai.VoiceIntake, not by the department's email format.
 			var intake = AiDispatchChannels.IsIntake(item.Channel);
-			if (intake ? !await IsIntakeAvailableAsync(departmentId, item.Channel) : !await IsAvailableAsync(departmentId) || !await UsesAiFormatAsync(departmentId))
+			if (intake ? !await IsIntakeAvailableAsync(departmentId, item.Channel) : !await IsAvailableAsync(departmentId) || !await IsEmailJobEntitledAsync(item))
 				return "NotEntitled";
 			if (!OperatorConfigured() && !DecisionConfigured())
 				return "Unconfigured";
@@ -170,12 +172,28 @@ namespace Resgrid.Services.AiDispatch
 			}
 		}
 
-		// The department may have switched its import format back since this call was queued.
-		private async Task<bool> UsesAiFormatAsync(int departmentId)
+		// The department may have switched its import format or desk mode back since this call was queued. Each source is entitled by
+		// its own setting only, so neither desk option (setting 128) authorizes the other's calls, nor a plain email job:
+		//  - the desk's overflowed-text pending call (DeskTextOverflow): the EnhancedAi text overflow mode;
+		//  - an emailed call the email call mode held for a dispatcher (HeldForDispatcher): the AI email format or the EnhancedAi email
+		//    call mode (as DispatcherEmailCallService.ShouldEnrichAsync decided at enqueue);
+		//  - every other email job (group dispatch addresses included): the AI email format, as before the desk.
+		private async Task<bool> IsEmailJobEntitledAsync(AiDispatchQueueItem item)
 		{
 			try
 			{
-				return (await _departments.GetDepartmentEmailSettingsAsync(departmentId))?.FormatType == (int)CallEmailTypes.AI;
+				var departmentId = item.DepartmentId;
+				if (!item.HeldForDispatcher && item.Channel == AiDispatchChannels.PostmarkEmail &&
+					IsDeskTextOverflow(item, await _calls.GetCallByIdAsync(item.CallId, true)))
+					return (await _deskConfig.GetConfigAsync(departmentId))?.GetTextOverflowMode() == DispatcherTextOverflowModes.EnhancedAi;
+
+				if ((await _departments.GetDepartmentEmailSettingsAsync(departmentId))?.FormatType == (int)CallEmailTypes.AI)
+					return true;
+
+				if (!item.HeldForDispatcher || item.Channel == AiDispatchChannels.GroupDispatchEmail)
+					return false;
+
+				return (await _deskConfig.GetConfigAsync(departmentId))?.GetEmailCallMode() == DispatcherEmailCallModes.EnhancedAi;
 			}
 			catch (Exception ex)
 			{
@@ -235,7 +253,7 @@ namespace Resgrid.Services.AiDispatch
 				return AiDispatchOutcomes.ProtectionUnsupported;
 
 			var call = await _calls.GetCallByIdAsync(item.CallId, true);
-			if (!IsEnrichable(call, departmentId, item.Channel))
+			if (!IsEnrichable(call, departmentId, HoldsPending(item, call)))
 				return AiDispatchOutcomes.CallNotActive;
 
 			var context = await BuildContextAsync(call, item, cancellationToken);
@@ -360,12 +378,34 @@ namespace Resgrid.Services.AiDispatch
 			}
 		}
 
-		private static bool IsEnrichable(Call call, int departmentId) => IsEnrichable(call, departmentId, AiDispatchChannels.PostmarkEmail);
-
-		/// <summary>Email paths enrich active calls; intake calls are enriched while pending (or once a dispatcher has sent them).</summary>
-		public static bool IsEnrichable(Call call, int departmentId, int channel) =>
+		/// <summary>
+		/// Active calls, and pending ones only when the job's source holds its call pending for a dispatcher
+		/// (<paramref name="pendingAllowed"/>, from <see cref="HoldsPending"/>). Enrichment never dispatches either way.
+		/// </summary>
+		public static bool IsEnrichable(Call call, int departmentId, bool pendingAllowed) =>
 			call != null && call.DepartmentId == departmentId && !call.IsDeleted &&
-			(call.State == (int)CallStates.Active || AiDispatchChannels.IsIntake(channel) && call.State == (int)CallStates.Pending);
+			(call.State == (int)CallStates.Active || pendingAllowed && call.State == (int)CallStates.Pending);
+
+		/// <summary>
+		/// Whether the job's source holds its call pending for a dispatcher, so the call is enriched while it waits: intake calls
+		/// (channels 4-8), an emailed call the dispatcher desk's email call mode held (<see cref="AiDispatchQueueItem.HeldForDispatcher"/>),
+		/// and the pending call the desk made from an overflowed text (<see cref="IsDeskTextOverflow"/>). Every other email job enriches
+		/// active calls only, as before the desk, even when its call is made pending while the model runs.
+		/// </summary>
+		public static bool HoldsPending(AiDispatchQueueItem item, Call call) =>
+			item != null && (AiDispatchChannels.IsIntake(item.Channel) || item.HeldForDispatcher || IsDeskTextOverflow(item, call));
+
+		/// <summary>
+		/// The dispatcher desk's own pending call for an overflowed text or chat (DispatcherRoutingService.CreatePendingCallAsync): queued on
+		/// channel 1 with the call's SourceIdentifier "DQ:{itemId}". Trusted: no Postmark dispatch email call carries a SourceIdentifier,
+		/// and only the desk queues channel 1 for one that does.
+		/// </summary>
+		public static bool IsDeskTextOverflow(AiDispatchQueueItem item, Call call) =>
+			item != null && !item.HeldForDispatcher && item.Channel == AiDispatchChannels.PostmarkEmail && call?.SourceIdentifier != null &&
+			call.SourceIdentifier.StartsWith(DeskCallSourcePrefix, StringComparison.Ordinal);
+
+		/// <summary>The SourceIdentifier prefix of the dispatcher desk's own pending calls ("DQ:{itemId}").</summary>
+		public const string DeskCallSourcePrefix = "DQ:";
 
 		/// <summary>
 		/// Trusted description of the message for the model: where it came from and, read from the call as loaded (a dispatcher may
@@ -374,9 +414,7 @@ namespace Resgrid.Services.AiDispatch
 		public static string IntakeSource(int channel, Call call)
 		{
 			// Intake lines are public (M0326): the reading that the message reports no incident labels the call for the dispatcher.
-			var state = (call?.State == (int)CallStates.Pending
-				? " The call is pending: a dispatcher reviews it and nobody has been dispatched yet."
-				: " A dispatcher has dispatched the call.") + IntakeScreeningHint;
+			var state = CallStateText(call) + IntakeScreeningHint;
 			switch (channel)
 			{
 				case AiDispatchChannels.IntakeVoice:
@@ -402,10 +440,34 @@ namespace Resgrid.Services.AiDispatch
 			}
 		}
 
+		/// <summary>
+		/// The trusted source for a job, from the job's own source and the call as loaded: the dispatcher desk's pending call for an
+		/// overflowed text or chat and an emailed call the desk's email call mode held are pending calls a dispatcher reviews (not
+		/// dispatched automatically, and the desk's one is no email); every other job keeps <see cref="IntakeSource"/>.
+		/// </summary>
+		public static string JobSource(AiDispatchQueueItem item, Call call)
+		{
+			if (item == null)
+				return null;
+
+			if (IsDeskTextOverflow(item, call))
+				return "the text or chat messages a member of the public sent to the department's dispatch desk when no dispatcher was free, " +
+					"oldest first, one per line." + CallStateText(call);
+
+			if (item.HeldForDispatcher && !AiDispatchChannels.IsIntake(item.Channel))
+				return "a dispatch email (CAD page or text) the department received; the call was created from it and held for a dispatcher." +
+					CallStateText(call);
+
+			return IntakeSource(item.Channel, call);
+		}
+
+		private static string CallStateText(Call call) => call?.State == (int)CallStates.Pending
+			? " The call is pending: a dispatcher reviews it and nobody has been dispatched yet."
+			: " A dispatcher has dispatched the call.";
+
 		private async Task<AiDispatchContext> BuildContextAsync(Call call, AiDispatchQueueItem item, CancellationToken cancellationToken)
 		{
 			var departmentId = call.DepartmentId;
-			var channel = item.Channel;
 			var maxCharacters = Math.Clamp(AiDispatchConfig.MaxMessageCharacters, 200, 12000);
 			string transcript = null;
 			if (AiDispatchChannels.IsConversationRefresh(item) && _conversations != null)
@@ -433,7 +495,7 @@ namespace Resgrid.Services.AiDispatch
 			// A conversation refresh reads what the texter said across the whole thread; the call's own name and nature otherwise.
 			return transcript != null
 				? new AiDispatchContext(AiDispatchPrompt.MessageText(null, transcript, maxCharacters), types, priorities, candidates) { Source = IntakeSource(AiDispatchChannels.IntakeConversation, call) }
-				: new AiDispatchContext(AiDispatchPrompt.MessageText(call.Name, call.NatureOfCall, maxCharacters), types, priorities, candidates) { Source = IntakeSource(channel, call) };
+				: new AiDispatchContext(AiDispatchPrompt.MessageText(call.Name, call.NatureOfCall, maxCharacters), types, priorities, candidates) { Source = JobSource(item, call) };
 		}
 
 		private sealed record Admission(AiUsageReservation Reservation, string Outcome);
@@ -465,7 +527,7 @@ namespace Resgrid.Services.AiDispatch
 		{
 			// Re-read so a dispatcher's edit made while the model was thinking always wins.
 			var call = await _calls.GetCallByIdAsync(original.CallId, true);
-			if (!IsEnrichable(call, original.DepartmentId, item.Channel))
+			if (!IsEnrichable(call, original.DepartmentId, HoldsPending(item, call)))
 				return AiDispatchOutcomes.CallNotActive;
 
 			// Intake: the "{channel}: {sender}" fallback name is the placeholder, unless a dispatcher renamed the call meanwhile. Only the
@@ -526,8 +588,9 @@ namespace Resgrid.Services.AiDispatch
 				if (settings.FlagRelatedCalls && enrichment.RelatedCall != null && enrichment.IsDispatch && noted)
 				{
 					audit.RelatedCallId = enrichment.RelatedCall.CallId;
+					// The model's duplicate candidates are active calls: one made pending meanwhile gets no note, whatever this job's source.
 					var related = await _calls.GetCallByIdAsync(enrichment.RelatedCall.CallId, true);
-					if (IsEnrichable(related, call.DepartmentId))
+					if (IsEnrichable(related, call.DepartmentId, pendingAllowed: false))
 						await _calls.SaveCallNoteAsync(Note(related.CallId, managingUserId, $"AI suggestion (Enhanced AI): call {call.Number} may be about this same incident. Please review."), cancellationToken);
 				}
 			}

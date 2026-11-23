@@ -795,4 +795,22 @@
   <data name="Inactive" xml:space="preserve"><value>Inaktiv</value></data>
   <data name="M4SupplierHelp" xml:space="preserve"><value>Fehlt ein Lieferant? Fügen Sie ihn auf der Lieferantenseite hinzu.</value></data>
   <data name="M4PurchaseOrderCurrencyHelp" xml:space="preserve"><value>Wählen Sie die Währung für diese Bestellung. Neue Bestellungen verwenden standardmäßig die Währung Ihrer Abteilung.</value></data>
+  <data name="ParLevels" xml:space="preserve">
+    <value>Mindestbestand je Standort</value>
+  </data>
+  <data name="ParLevelsHint" xml:space="preserve">
+    <value>Ein Standort, der seinen eigenen Mindestbestand erreicht oder unterschreitet, löst für diesen Standort eine Warnung für niedrigen Bestand aus, auch wenn der Gesamtbestand ausreicht. Mindestbestand und Meldebestand oben bleiben die abteilungsweite Prüfung.</value>
+  </data>
+  <data name="ParLevelAddLocation" xml:space="preserve">
+    <value>Standort hinzufügen</value>
+  </data>
+  <data name="ParLevelMinimum" xml:space="preserve">
+    <value>Mindestbestand dort</value>
+  </data>
+  <data name="ParLevelsRemoveHint" xml:space="preserve">
+    <value>Leeren Sie den Mindestbestand eines Standorts, um ihn zu entfernen.</value>
+  </data>
+  <data name="InvalidParLevel" xml:space="preserve">
+    <value>Jeder Standort kann einen Mindestbestand von 0 oder mehr haben.</value>
+  </data>
 </root>

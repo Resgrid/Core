@@ -33,21 +33,88 @@ namespace Resgrid.Tests.Rms
 			HydrantFlowCalculator.FlowGpm(0, 2.5m, 25).Should().Be(0);
 		}
 
+		// Q_R = Q_F × ((S − 20) / (S − R))^0.54, rounded to 10 gpm.
+		[TestCase(1000, 80, 60, 1810, RmsHydrantFlowClass.AA)] // (60/20)^0.54 = 1.8098: observed class A, rated AA
+		[TestCase(800, 60, 40, 1160, RmsHydrantFlowClass.A)]   // (40/20)^0.54 = 1.4540: observed B, rated A
+		[TestCase(1200, 70, 30, 1350, RmsHydrantFlowClass.A)]  // (50/40)^0.54 = 1.1281: same class either way
+		[TestCase(550, 50, 10, 470, RmsHydrantFlowClass.C)]    // residual under 20 psi: (30/40)^0.54 = 0.8561 rates lower, B becomes C
+		[TestCase(980, 65, 45, 1520, RmsHydrantFlowClass.AA)]  // (45/20)^0.54 = 1.5494
+		public void Class_follows_the_rated_flow_at_20_psi_residual(int observed, int staticPsi, int residualPsi, int expectedRated, RmsHydrantFlowClass expectedClass)
+		{
+			HydrantFlowCalculator.RatedFlowGpm(observed, staticPsi, residualPsi).Should().Be(expectedRated);
+			HydrantFlowCalculator.ClassificationFlowGpm(observed, staticPsi, residualPsi).Should().Be(expectedRated);
+			HydrantFlowCalculator.Classify(observed, staticPsi, residualPsi).Should().Be(expectedClass);
+		}
+
+		[TestCase(1000, 20, 10, Description = "static at 20 psi cannot be rated at 20 psi")]
+		[TestCase(1000, 15, 10, Description = "static below 20 psi")]
+		[TestCase(1000, 60, 60, Description = "residual equal to static (no drawdown)")]
+		[TestCase(1000, 60, 70, Description = "residual above static")]
+		[TestCase(1000, 60, 0, Description = "no residual entered")]
+		[TestCase(1000, 60, null, Description = "no residual")]
+		[TestCase(1000, null, 40, Description = "no static")]
+		public void Without_usable_pressures_the_observed_flow_decides_the_class(int observed, int? staticPsi, int? residualPsi)
+		{
+			HydrantFlowCalculator.RatedFlowGpm(observed, staticPsi, residualPsi).Should().BeNull();
+			HydrantFlowCalculator.ClassificationFlowGpm(observed, staticPsi, residualPsi).Should().Be(observed);
+			HydrantFlowCalculator.Classify(observed, staticPsi, residualPsi).Should().Be(RmsHydrantFlowClass.A);
+		}
+
+		[Test]
+		public void No_flow_is_unknown_whatever_the_pressures()
+		{
+			HydrantFlowCalculator.RatedFlowGpm(null, 80, 60).Should().BeNull();
+			HydrantFlowCalculator.RatedFlowGpm(0, 80, 60).Should().BeNull();
+			HydrantFlowCalculator.Classify(null, 80, 60).Should().Be(RmsHydrantFlowClass.Unknown);
+		}
+
+		[Test]
+		public async Task A_hand_entered_flow_is_rated_when_both_pressures_are_known_and_classed_as_given_otherwise()
+		{
+			var rated = await _h.HydrantsService.SaveAsync(Dept, Admin, new RmsHydrant { HydrantNumber = "H-201", Latitude = 45.5m, Longitude = -122.6m, FlowGpm = 800, StaticPressurePsi = 60, ResidualPressurePsi = 40 });
+			rated.FlowGpm.Should().Be(800, "the observed flow is kept");
+			rated.FlowClass.Should().Be((int)RmsHydrantFlowClass.A);
+
+			var given = await _h.HydrantsService.SaveAsync(Dept, Admin, new RmsHydrant { HydrantNumber = "H-202", Latitude = 45.5m, Longitude = -122.6m, FlowGpm = 800 });
+			given.FlowClass.Should().Be((int)RmsHydrantFlowClass.B);
+
+			// Adding the pressures later re-classes from the stored flow.
+			var pressures = new RmsHydrant { RmsHydrantId = given.RmsHydrantId, HydrantNumber = "H-202", Latitude = 45.5m, Longitude = -122.6m, StaticPressurePsi = 60, ResidualPressurePsi = 40 };
+			var reclassed = await _h.HydrantsService.SaveAsync(Dept, Admin, pressures);
+			reclassed.FlowGpm.Should().Be(800);
+			reclassed.FlowClass.Should().Be((int)RmsHydrantFlowClass.A);
+		}
+
+		[Test]
+		public async Task A_flow_test_without_pressures_keeps_the_observed_class()
+		{
+			var hydrant = await _h.HydrantsService.SaveAsync(Dept, Admin, new RmsHydrant { HydrantNumber = "H-301", Latitude = 45.5m, Longitude = -122.6m });
+			var test = await _h.HydrantsService.RecordFlowTestAsync(Dept, Admin, new RmsHydrantFlowTest { RmsHydrantId = hydrant.RmsHydrantId, PitotPressurePsi = 64, OutletDiameterInches = 2.5m, Coefficient = 0.9m });
+
+			test.FlowGpm.Should().Be(1340);
+			test.FlowClass.Should().Be((int)RmsHydrantFlowClass.A);
+			HydrantFlowCalculator.RatedFlowGpm(test.FlowGpm, test.StaticPressurePsi, test.ResidualPressurePsi).Should().BeNull();
+		}
+
 		[Test]
 		public async Task A_flow_test_updates_the_hydrant_and_maintenance_can_return_it_to_service()
 		{
 			var hydrant = await _h.HydrantsService.SaveAsync(Dept, Admin, new RmsHydrant { HydrantNumber = "H-101", Latitude = 45.5m, Longitude = -122.6m, Type = (int)RmsHydrantType.DryBarrel, MainSizeInches = 8 });
 			hydrant.InService.Should().BeTrue();
 			var test = await _h.HydrantsService.RecordFlowTestAsync(Dept, Admin, new RmsHydrantFlowTest { RmsHydrantId = hydrant.RmsHydrantId, StaticPressurePsi = 70, ResidualPressurePsi = 55, PitotPressurePsi = 64, OutletDiameterInches = 2.5m, Coefficient = 0.9m });
+			// Observed 1340 gpm at 55 psi residual from 70 static rates 1340 × (50/15)^0.54 = 2567 → 2570 gpm at 20 psi: class AA
+			// (NFPA 291 classes by the rated flow; the observed flow alone would read A).
 			test.FlowGpm.Should().Be(1340);
+			test.FlowClass.Should().Be((int)RmsHydrantFlowClass.AA);
 			hydrant.FlowGpm.Should().Be(1340);
-			hydrant.FlowClass.Should().Be((int)RmsHydrantFlowClass.A);
+			hydrant.FlowClass.Should().Be((int)RmsHydrantFlowClass.AA);
+			HydrantFlowCalculator.RatedFlowGpm(hydrant.FlowGpm, hydrant.StaticPressurePsi, hydrant.ResidualPressurePsi).Should().Be(2570);
 			hydrant.LastTestedOn.Should().NotBeNull();
 
 			Func<Task> noReason = () => _h.HydrantsService.SetServiceStateAsync(Dept, Admin, hydrant.RmsHydrantId, false, "");
 			await noReason.Should().ThrowAsync<ArgumentException>();
 			await _h.HydrantsService.SetServiceStateAsync(Dept, Admin, hydrant.RmsHydrantId, false, "Sheared by vehicle");
-			(await _h.HydrantsService.GetMapLayerAsync(Dept, Member, null, null, null, null)).Should().ContainSingle(p => p.HydrantNumber == "H-101" && !p.InService && p.FlowClass == (int)RmsHydrantFlowClass.A);
+			(await _h.HydrantsService.GetMapLayerAsync(Dept, Member, null, null, null, null)).Should().ContainSingle(p => p.HydrantNumber == "H-101" && !p.InService && p.FlowClass == (int)RmsHydrantFlowClass.AA && p.FlowGpm == 1340 && p.RatedFlowGpm == 2570);
 			await _h.HydrantsService.RecordMaintenanceAsync(Dept, Admin, new RmsHydrantMaintenance { RmsHydrantId = hydrant.RmsHydrantId, Kind = (int)RmsHydrantMaintenanceKind.Repair, ReturnedToService = true, Notes = "Replaced barrel" });
 			hydrant.InService.Should().BeTrue();
 			hydrant.OutOfServiceReason.Should().BeNull();

@@ -20,7 +20,9 @@ using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Models;
 using Resgrid.Web.Areas.User.Models.Calendar;
+using Resgrid.Web.Areas.User.Models.DispatcherDesk;
 using Resgrid.Web.Areas.User.Models.Shifts;
+using Resgrid.Web.Helpers;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -49,12 +51,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IShiftStaffingService _shiftStaffingService;
 		private readonly IUnitsService _unitsService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> _localizer;
+		private readonly IShiftDispatchersService _shiftDispatchersService;
+		private readonly IDispatchAccessService _dispatchAccessService;
+		private readonly IDispatcherPresenceService _dispatcherPresenceService;
+		private readonly IDispatcherDeskConfigService _dispatcherDeskConfigService;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.DispatcherDesk.DispatcherDesk> _deskLocalizer;
 
 		public ShiftsController(IShiftsService shiftsService, IDepartmentGroupsService departmentGroupsService, IDepartmentsService departmentService,
 			IPersonnelRolesService personnelRolesService, IEventAggregator eventAggregator, IDepartmentSettingsService departmentSettingsService,
 			Model.Services.IAuthorizationService authorizationService, IWorkShiftsService workshiftsService, IShiftStaffingService shiftStaffingService,
-			IUnitsService unitsService, IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer)
+			IUnitsService unitsService, IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer,
+			IShiftDispatchersService shiftDispatchersService, IDispatchAccessService dispatchAccessService,
+			IDispatcherPresenceService dispatcherPresenceService, IDispatcherDeskConfigService dispatcherDeskConfigService,
+			IStringLocalizer<Resgrid.Localization.Areas.User.DispatcherDesk.DispatcherDesk> deskLocalizer)
 		{
+			_shiftDispatchersService = shiftDispatchersService;
+			_dispatchAccessService = dispatchAccessService;
+			_dispatcherPresenceService = dispatcherPresenceService;
+			_dispatcherDeskConfigService = dispatcherDeskConfigService;
+			_deskLocalizer = deskLocalizer;
 			_shiftStaffingService = shiftStaffingService;
 			_unitsService = unitsService;
 			_shiftsService = shiftsService;
@@ -86,6 +101,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var authority = await GetTradeAuthorityAsync(scope);
 			model.HasApprovals = authority.HasApprovals;
+			model.ShowDispatcherDeskSettings = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+			// The Activity report's own rule (DispatcherDeskController.Activity): department admins and desk supervisors, an
+			// on-duty desk supervisor without the Dispatch login included.
+			model.ShowDispatcherActivity = model.ShowDispatcherDeskSettings || await _dispatcherPresenceService.CanSuperviseAsync(DepartmentId, UserId);
+			// The board and the break planner's rule (DispatcherDeskController.DeskAccess.CanView), which admits desk supervisors too.
+			model.ShowDispatcherDesk = model.ShowDispatcherActivity || scope.IsSupervisor ||
+			                           await _dispatchAccessService.CanUseDispatchAsync(DepartmentId, UserId);
 
 			if (authority.HasApprovals)
 			{
@@ -105,6 +127,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			await SetNewShiftScopeAsync(model, await GetScopeAsync());
 			ViewBag.ShiftAssignmentTypes = model.AssignmentType.ToSelectList();
+			model.Dispatch = await BuildDispatchSectionAsync(null, null, true, null);
 
 			return View(model);
 		}
@@ -183,11 +206,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				var newShift = await _shiftsService.SaveShiftAsync(model.Shift, cancellationToken);
 
+				if (newShift != null)
+					await SaveDispatchSectionAsync(newShift, model.Dispatch, form, cancellationToken);
+
 				var number = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
 				_eventAggregator.SendMessage<ShiftCreatedEvent>(new ShiftCreatedEvent() { DepartmentId = DepartmentId, DepartmentNumber = number, Item = newShift });
 
 				return RedirectToAction("Index");
 			}
+
+			model.Dispatch = await BuildDispatchSectionAsync(null, model.Dispatch, true, form);
 
 			return View(model);
 		}
@@ -214,6 +242,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.AssignmentType = (ShiftAssignmentTypes)shift.AssignmentType;
 			model.RequireApproval = shift.RequireApproval == true;
 			await SetEditShiftScopeAsync(model, scope);
+			model.Dispatch = await BuildDispatchSectionAsync(shift, null, shift.AssignmentType == (int)ShiftAssignmentTypes.Assigned, null);
 
 			return View(model);
 		}
@@ -276,6 +305,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					await _shiftsService.UpdateShiftPersonnel(shift, personnel, cancellationToken);
 				}
 
+				await SaveDispatchSectionAsync(shift, model.Dispatch, form, cancellationToken);
+
 				var number = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
 				_eventAggregator.SendMessage<ShiftUpdatedEvent>(new ShiftUpdatedEvent() { DepartmentId = DepartmentId, DepartmentNumber = number, Item = shift });
 
@@ -285,6 +316,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Shift = await _shiftsService.PopulateShiftData(shift, true, true, true, false, false);
 			model.AssignmentType = (ShiftAssignmentTypes)shift.AssignmentType;
 			await SetEditShiftScopeAsync(model, scope);
+			model.Dispatch = await BuildDispatchSectionAsync(shift, model.Dispatch, shift.AssignmentType == (int)ShiftAssignmentTypes.Assigned, form);
 
 			return View(model);
 		}
@@ -506,8 +538,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			var lookups = await GetLookupsAsync();
+			var model = await BuildShiftDayViewAsync(schedule, lookups);
+			model.Dispatch = await BuildDayDispatchAsync(schedule, lookups, model);
 
-			return View(await BuildShiftDayViewAsync(schedule, lookups));
+			return View(model);
 		}
 
 		/// <summary>Signing up changes state, so it is a POST; an old link to it just lands on the day.</summary>
@@ -650,6 +684,170 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		#endregion Shift day
+
+		#region Dispatchers on duty
+
+		/// <summary>An eligible dispatcher signs up to dispatch on a day of a Signup shift (pending when the shift requires approval).</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Shift_View)]
+		public async Task<IActionResult> DispatcherSignup(int shiftDayId, CancellationToken cancellationToken)
+		{
+			var (day, shift) = await GetShiftDayWithShiftAsync(shiftDayId);
+
+			if (day == null || shift == null)
+				return RedirectToAction("Index");
+
+			if (shift.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var result = await _shiftDispatchersService.SignupForDayAsync(DepartmentId, shiftDayId, UserId, cancellationToken);
+
+			if (result != null && result.Success)
+				SetMessage(_deskLocalizer[result.Value != null && result.Value.Status == (int)ShiftDispatcherStatuses.PendingApproval ? "DispatcherSignupPending" : "DispatcherSignedUp"]);
+			else
+				SetDeskError(result);
+
+			return RedirectToAction("ViewShift", new { shiftDayId });
+		}
+
+		/// <summary>A dispatcher withdraws their own sign-up for the day; standing roster members are taken off a day by a shift manager.</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Shift_View)]
+		public async Task<IActionResult> DispatcherWithdraw(int shiftDayId, CancellationToken cancellationToken)
+		{
+			var (day, shift) = await GetShiftDayWithShiftAsync(shiftDayId);
+
+			if (day == null || shift == null)
+				return RedirectToAction("Index");
+
+			if (shift.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var roster = await _shiftDispatchersService.GetDayRosterAsync(DepartmentId, shiftDayId) ?? new List<DispatcherDutyWindow>();
+			var mine = roster.FirstOrDefault(x => x != null && SameUser(x.UserId, UserId) && x.Source == (int)ShiftDispatcherSources.Signup);
+
+			if (mine == null)
+			{
+				SetDeskError(DispatcherDeskErrors.NotPermitted);
+				return RedirectToAction("ViewShift", new { shiftDayId });
+			}
+
+			// The source is rechecked inside the remove so a row a manager re-assigned after the read above is not withdrawn.
+			var result = await _shiftDispatchersService.RemoveFromDayAsync(DepartmentId, shiftDayId, UserId, UserId, null,
+				(int)ShiftDispatcherSources.Signup, cancellationToken);
+
+			if (result != null && result.Success)
+				SetMessage(_deskLocalizer["DispatcherWithdrawn"]);
+			else
+				SetDeskError(result);
+
+			return RedirectToAction("ViewShift", new { shiftDayId });
+		}
+
+		/// <summary>A shift manager puts a dispatcher on one day of the shift.</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Shift_View)]
+		public async Task<IActionResult> DispatcherAssign(int shiftDayId, string userId, bool isSupervisor, CancellationToken cancellationToken)
+		{
+			var (day, shift) = await GetShiftDayWithShiftAsync(shiftDayId);
+
+			if (day == null || shift == null)
+				return RedirectToAction("Index");
+
+			if (shift.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			// Dispatchers are not placed in a group, so their day roster belongs to the whole shift.
+			if (!(await GetScopeAsync()).CanManageShift(shift))
+				return Unauthorized();
+
+			if (String.IsNullOrWhiteSpace(userId))
+			{
+				SetMessage(_deskLocalizer["SelectDispatcherToAdd"], "danger");
+				return RedirectToAction("ViewShift", new { shiftDayId });
+			}
+
+			var result = await _shiftDispatchersService.AssignToDayAsync(DepartmentId, shiftDayId, userId, isSupervisor, UserId, cancellationToken);
+
+			if (result != null && result.Success)
+				SetMessage(_deskLocalizer["DispatcherAddedToDay"]);
+			else
+				SetDeskError(result);
+
+			return RedirectToAction("ViewShift", new { shiftDayId });
+		}
+
+		/// <summary>A shift manager takes a dispatcher off one day (a standing roster member stays on the other days).</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Shift_View)]
+		public async Task<IActionResult> DispatcherRemove(int shiftDayId, string userId, string note, CancellationToken cancellationToken)
+		{
+			var (day, shift) = await GetShiftDayWithShiftAsync(shiftDayId);
+
+			if (day == null || shift == null)
+				return RedirectToAction("Index");
+
+			if (shift.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (!(await GetScopeAsync()).CanManageShift(shift))
+				return Unauthorized();
+
+			if (String.IsNullOrWhiteSpace(userId))
+				return RedirectToAction("ViewShift", new { shiftDayId });
+
+			var result = await _shiftDispatchersService.RemoveFromDayAsync(DepartmentId, shiftDayId, userId, UserId, TrimNote(note), cancellationToken);
+
+			if (result != null && result.Success)
+				SetMessage(_deskLocalizer["DispatcherRemovedFromDay"]);
+			else
+				SetDeskError(result);
+
+			return RedirectToAction("ViewShift", new { shiftDayId });
+		}
+
+		/// <summary>A shift manager approves or denies a pending dispatcher sign-up on the day.</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Shift_View)]
+		public async Task<IActionResult> DispatcherReview(int shiftDayId, string shiftDispatcherId, bool approve, string note, CancellationToken cancellationToken)
+		{
+			var (day, shift) = await GetShiftDayWithShiftAsync(shiftDayId);
+
+			if (day == null || shift == null)
+				return RedirectToAction("Index");
+
+			if (shift.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (!(await GetScopeAsync()).CanManageShift(shift))
+				return Unauthorized();
+
+			// Only a sign-up waiting on this day: the id comes from the form, so it is matched against the day's own roster.
+			var roster = await _shiftDispatchersService.GetDayRosterAsync(DepartmentId, shiftDayId) ?? new List<DispatcherDutyWindow>();
+
+			if (String.IsNullOrWhiteSpace(shiftDispatcherId) ||
+			    !roster.Any(x => x != null && x.IsPending && String.Equals(x.ShiftDispatcherId, shiftDispatcherId, StringComparison.OrdinalIgnoreCase)))
+			{
+				SetDeskError(DispatcherDeskErrors.ItemNotFound);
+				return RedirectToAction("ViewShift", new { shiftDayId });
+			}
+
+			var result = await _shiftDispatchersService.ReviewSignupAsync(DepartmentId, shiftDispatcherId, approve, UserId, TrimNote(note), cancellationToken);
+
+			if (result != null && result.Success)
+				SetMessage(_deskLocalizer[approve ? "DispatcherSignupApproved" : "DispatcherSignupDenied"]);
+			else
+				SetDeskError(result);
+
+			return RedirectToAction("ViewShift", new { shiftDayId });
+		}
+
+		#endregion Dispatchers on duty
 
 		#region Approvals and on duty
 
@@ -976,6 +1174,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				model.Shifts.Add(shiftView);
 			}
+
+			model.Dispatch = await BuildOnDutyDispatchersAsync(lookups);
 
 			return View(model);
 		}
@@ -2880,5 +3080,332 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		#endregion Helpers
+
+		#region Dispatchers on duty helpers
+
+		/// <summary>
+		/// The new / edit shift "Dispatchers on duty" section: the shift's stored settings (or, re-rendering after a failed
+		/// save, what was posted), its break plan and the people who can be on its standing roster.
+		/// </summary>
+		private async Task<ShiftDispatchSectionView> BuildDispatchSectionAsync(Shift shift, ShiftDispatchSectionView posted, bool showStandingRoster, IFormCollection form)
+		{
+			var config = await _dispatcherDeskConfigService.GetConfigAsync(DepartmentId) ?? new DispatcherDeskConfig();
+			var settings = shift != null && posted == null ? await _shiftDispatchersService.GetSettingsForShiftAsync(shift.ShiftId) : null;
+			var section = posted ?? new ShiftDispatchSectionView();
+
+			if (posted == null && settings != null)
+			{
+				section.IsEnabled = settings.IsEnabled;
+				section.IsDispatchOnly = settings.IsDispatchOnly;
+				section.RequiredDispatchers = settings.RequiredDispatchers;
+				section.MinimumOnDesk = settings.MinimumOnDesk;
+				section.AllowSelfScheduledBreaks = settings.AllowSelfScheduledBreaks;
+			}
+
+			section.BreakPlan = form != null
+				? DispatcherDeskForms.ToRows(DispatcherDeskForms.ReadBreakPlan(form))
+				: DispatcherDeskForms.ToRows(settings?.GetBreakPlan());
+			section.ShowStandingRoster = showStandingRoster;
+			section.DepartmentMinimum = config.EffectiveMinimumAvailable();
+			section.DeskEnabled = config.Enabled;
+
+			if (!showStandingRoster)
+				return section;
+
+			// Who is on the standing roster now: the posted choices on a re-render, otherwise the stored rows with no day. What
+			// was on it when the editor first opened travels with the form (see ShiftDispatcherCandidate.WasOnRoster).
+			var current = new List<(string UserId, bool IsSupervisor)>();
+			var was = new List<(string UserId, bool IsSupervisor)>();
+
+			if (form != null)
+			{
+				current = DispatcherDeskForms.ReadStandingRoster(form);
+				was = ReadPreviousStandingRoster(form) ?? new List<(string UserId, bool IsSupervisor)>();
+			}
+			else if (shift != null)
+			{
+				current = (await _shiftDispatchersService.GetRosterForShiftAsync(shift.ShiftId) ?? new List<ShiftDispatcher>())
+					.Where(x => x != null && !x.ShiftDayId.HasValue && x.IsActive())
+					.Select(x => (x.UserId, x.IsSupervisor))
+					.ToList();
+				was = current.ToList();
+			}
+
+			var names = await GetNamesAsync();
+			var selectable = new HashSet<string>((await _departmentService.GetSelectablePersonnelNamesAsync(DepartmentId) ?? new List<PersonName>())
+				.Where(x => x != null).Select(x => x.UserId), StringComparer.OrdinalIgnoreCase);
+			var dispatchers = new HashSet<string>((await _dispatchAccessService.GetDispatchUserIdsAsync(DepartmentId) ?? new List<string>())
+				.Where(x => !String.IsNullOrWhiteSpace(x)), StringComparer.OrdinalIgnoreCase);
+
+			// New picks come from the selectable people with the Dispatch login. Someone already on the roster stays editable while
+			// they still have the login, even when they are no longer selectable (hidden from lists): only a lost login takes
+			// them off on save, as the badge says.
+			var pickable = dispatchers.Where(x => selectable.Contains(x)).ToList();
+
+			foreach (var userId in pickable.Concat(current.Select(x => x.UserId)).Concat(was.Select(x => x.UserId)).Distinct(StringComparer.OrdinalIgnoreCase))
+			{
+				var onRoster = current.FirstOrDefault(x => SameUser(x.UserId, userId));
+				var before = was.FirstOrDefault(x => SameUser(x.UserId, userId));
+
+				section.Candidates.Add(new ShiftDispatcherCandidate
+				{
+					UserId = userId,
+					Name = NameFor(names, userId),
+					OnRoster = onRoster.UserId != null,
+					IsSupervisor = onRoster.UserId != null && onRoster.IsSupervisor,
+					WasOnRoster = before.UserId != null,
+					WasSupervisor = before.UserId != null && before.IsSupervisor,
+					IsEligible = dispatchers.Contains(userId)
+				});
+			}
+
+			section.Candidates = section.Candidates.OrderByDescending(x => x.OnRoster).ThenBy(x => x.Name).ToList();
+
+			return section;
+		}
+
+		/// <summary>
+		/// Saves the posted "Dispatchers on duty" section. Nothing happens unless the page rendered the section, and a shift that
+		/// never took dispatchers gets no settings row until they are turned on. Turning dispatchers off keeps the standing
+		/// roster for when they are turned back on.
+		/// </summary>
+		private async Task SaveDispatchSectionAsync(Shift shift, ShiftDispatchSectionView posted, IFormCollection form, CancellationToken cancellationToken)
+		{
+			if (shift == null || posted == null || form == null || !String.Equals(form["DispatchSectionPosted"], "true", StringComparison.OrdinalIgnoreCase))
+				return;
+
+			var existing = await _shiftDispatchersService.GetSettingsForShiftAsync(shift.ShiftId);
+
+			if (existing == null && !posted.IsEnabled)
+				return;
+
+			var settings = existing ?? new ShiftDispatchSetting();
+			settings.DepartmentId = DepartmentId;
+			settings.ShiftId = shift.ShiftId;
+			settings.IsEnabled = posted.IsEnabled;
+			settings.IsDispatchOnly = posted.IsDispatchOnly;
+			settings.RequiredDispatchers = Math.Max(0, Math.Min(posted.RequiredDispatchers, 100));
+			settings.MinimumOnDesk = Math.Max(0, Math.Min(posted.MinimumOnDesk, 100));
+			settings.AllowSelfScheduledBreaks = posted.AllowSelfScheduledBreaks;
+			settings.SetBreakPlan(DispatcherDeskForms.ReadBreakPlan(form));
+
+			var saved = await _shiftDispatchersService.SaveSettingsAsync(DepartmentId, settings, UserId, cancellationToken);
+
+			if (saved == null || !saved.Success)
+			{
+				SetDeskError(saved);
+				return;
+			}
+
+			if (shift.AssignmentType != (int)ShiftAssignmentTypes.Assigned || !posted.IsEnabled)
+				return;
+
+			// The editor's changes against the roster as it is now (another manager may have added someone since this page opened,
+			// and dispatchers it could not show stay); a form without the opening roster (an older page) replaces it as before.
+			var previous = ReadPreviousStandingRoster(form);
+			var roster = previous != null
+				? await _shiftDispatchersService.UpdateStandingRosterAsync(DepartmentId, shift.ShiftId, previous, DispatcherDeskForms.ReadStandingRoster(form), UserId, cancellationToken)
+				: await _shiftDispatchersService.SetStandingRosterAsync(DepartmentId, shift.ShiftId, DispatcherDeskForms.ReadStandingRoster(form), UserId, cancellationToken);
+
+			if (roster == null || !roster.Success)
+				SetDeskError(roster);
+		}
+
+		internal const string RosterEditField = "dispatchRosterEdit";
+		internal const string RosterWasField = "dispatchRosterWas";
+		internal const string SupervisorWasField = "dispatchSupervisorWas";
+
+		/// <summary>
+		/// The standing roster as the editor showed it when it opened (posted back by the section), or null for a form that does
+		/// not carry it.
+		/// </summary>
+		internal static List<(string UserId, bool IsSupervisor)> ReadPreviousStandingRoster(IFormCollection form)
+		{
+			if (form == null || !String.Equals(form[RosterEditField], "1", StringComparison.Ordinal))
+				return null;
+
+			static IEnumerable<string> values(StringValues raw) => raw
+				.SelectMany(x => (x ?? String.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+				.Where(x => !String.IsNullOrWhiteSpace(x));
+
+			var supervisors = new HashSet<string>(values(form[SupervisorWasField]), StringComparer.OrdinalIgnoreCase);
+
+			return values(form[RosterWasField]).Concat(supervisors)
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.Select(x => (x, supervisors.Contains(x)))
+				.ToList();
+		}
+
+		/// <summary>The day page's "Dispatchers on duty" block; null when the shift takes no dispatchers.</summary>
+		private async Task<ShiftDayDispatchView> BuildDayDispatchAsync(ShiftDaySchedule schedule, ShiftLookups lookups, ShiftDayView day)
+		{
+			try
+			{
+				var settings = await _shiftDispatchersService.GetSettingsForShiftAsync(schedule.Shift.ShiftId);
+
+				if (settings == null || !settings.IsEnabled)
+					return null;
+
+				var shift = schedule.Shift;
+				var canManage = lookups.Scope.CanManageShift(shift);
+				var roster = (await _shiftDispatchersService.GetDayRosterAsync(DepartmentId, schedule.Day.ShiftDayId) ?? new List<DispatcherDutyWindow>())
+					.Where(x => x != null && !String.IsNullOrWhiteSpace(x.UserId))
+					.GroupBy(x => x.UserId, StringComparer.OrdinalIgnoreCase)
+					.Select(x => x.OrderBy(w => w.IsPending).First())
+					.ToList();
+
+				var view = new ShiftDayDispatchView
+				{
+					ShiftDayId = schedule.Day.ShiftDayId,
+					IsDispatchOnly = settings.IsDispatchOnly,
+					RequiredDispatchers = settings.RequiredDispatchers,
+					IsSignupShift = shift.AssignmentType == (int)ShiftAssignmentTypes.Signup,
+					RequireApproval = shift.RequireApproval == true,
+					IsOver = day.IsOver,
+					CanManage = canManage
+				};
+
+				foreach (var window in roster.OrderBy(x => x.IsPending).ThenBy(x => lookups.NameFor(x.UserId)))
+				{
+					var isYou = SameUser(window.UserId, UserId);
+
+					view.Rows.Add(new ShiftDayDispatcherRow
+					{
+						UserId = window.UserId,
+						Name = lookups.NameFor(window.UserId),
+						ShiftDispatcherId = window.ShiftDispatcherId,
+						IsSupervisor = window.IsSupervisor,
+						IsPending = window.IsPending,
+						Source = window.Source,
+						IsYou = isYou,
+						Start = window.StartUtc.TimeConverter(lookups.Department),
+						End = window.EndUtc.TimeConverter(lookups.Department),
+						CanReview = canManage && window.IsPending && !day.IsOver,
+						CanRemove = canManage && !window.IsPending && !day.IsOver,
+						CanWithdraw = isYou && !canManage && window.Source == (int)ShiftDispatcherSources.Signup && !day.IsOver
+					});
+				}
+
+				var onDay = new HashSet<string>(roster.Select(x => x.UserId), StringComparer.OrdinalIgnoreCase);
+
+				view.CanSignup = view.IsSignupShift && !day.IsOver && !onDay.Contains(UserId) &&
+				                 await _shiftDispatchersService.IsEligibleDispatcherAsync(DepartmentId, UserId);
+
+				if (canManage && !day.IsOver)
+				{
+					var selectable = new HashSet<string>((await _departmentService.GetSelectablePersonnelNamesAsync(DepartmentId) ?? new List<PersonName>())
+						.Where(x => x != null).Select(x => x.UserId), StringComparer.OrdinalIgnoreCase);
+
+					view.AssignOptions = (await _dispatchAccessService.GetDispatchUserIdsAsync(DepartmentId) ?? new List<string>())
+						.Where(x => !String.IsNullOrWhiteSpace(x) && selectable.Contains(x) && !onDay.Contains(x))
+						.Distinct(StringComparer.OrdinalIgnoreCase)
+						.Select(x => new ShiftDayOption { Value = x, Text = lookups.NameFor(x) })
+						.OrderBy(x => x.Text)
+						.ToList();
+				}
+
+				return view;
+			}
+			catch (Exception ex)
+			{
+				// The responders' day page must still work when the desk cannot be read.
+				Logging.LogException(ex, $"Dispatcher roster for shift day {schedule?.Day?.ShiftDayId} could not be loaded.");
+				return null;
+			}
+		}
+
+		/// <summary>The On Duty page's dispatcher block: who is on the desk, their state, break and work.</summary>
+		private async Task<OnDutyDispatchersView> BuildOnDutyDispatchersAsync(ShiftLookups lookups)
+		{
+			try
+			{
+				var now = DateTime.UtcNow;
+				var snapshot = await _dispatcherPresenceService.GetDeskAsync(DepartmentId, now);
+
+				if (snapshot == null)
+					return null;
+
+				var queueCount = snapshot.Queue?.Count(x => x != null && x.State == (int)DispatcherQueueItemStates.Queued) ?? 0;
+
+				// Work waiting with nobody on the desk is exactly what this block must show; only an empty desk with an empty
+				// queue has nothing to say.
+				if ((snapshot.Members == null || !snapshot.Members.Any(x => x != null)) && queueCount == 0)
+					return null;
+
+				var view = new OnDutyDispatchersView
+				{
+					DeskEnabled = snapshot.Enabled,
+					MinimumAvailable = snapshot.MinimumAvailable,
+					AvailableCount = snapshot.AvailableCount,
+					BelowMinimum = snapshot.BelowMinimum,
+					QueueCount = queueCount
+				};
+
+				foreach (var member in (snapshot.Members ?? new List<DispatcherDeskMember>()).Where(x => x != null).OrderBy(x => x.DisplayState == DispatcherDisplayStates.Offline).ThenBy(x => x.Name ?? lookups.NameFor(x.UserId)))
+				{
+					var row = new OnDutyDispatcherView
+					{
+						UserId = member.UserId,
+						Name = !String.IsNullOrWhiteSpace(member.Name) ? member.Name : lookups.NameFor(member.UserId),
+						State = member.DisplayState,
+						IsOnDuty = member.IsOnDuty,
+						IsSupervisor = member.IsSupervisor,
+						ShiftName = member.Duty?.ShiftName,
+						DeviceKind = member.Presence?.DeviceKind,
+						AwayReason = member.DisplayState == DispatcherDisplayStates.Away ? member.Presence?.AwayReason : null,
+						OverdueMinutes = member.OverdueMinutes,
+						HeldItems = member.ActiveItemCount,
+						OfferedItems = member.OfferedItemCount
+					};
+
+					if (member.ActiveBreak != null && member.DisplayState == DispatcherDisplayStates.OnBreak)
+					{
+						var dueBack = member.ActiveBreak.ExpectedReturnOn ?? member.ActiveBreak.StartedOn?.AddMinutes(member.ActiveBreak.DurationMinutes);
+
+						row.BreakType = member.ActiveBreak.BreakType;
+
+						if (dueBack.HasValue)
+						{
+							row.BreakDueBack = dueBack.Value.TimeConverter(lookups.Department);
+							row.BreakMinutesLeft = dueBack.Value > now ? (int)Math.Ceiling((dueBack.Value - now).TotalMinutes) : 0;
+						}
+					}
+
+					view.Dispatchers.Add(row);
+				}
+
+				return view;
+			}
+			catch (Exception ex)
+			{
+				// The On Duty page must still show the responders when the desk cannot be read.
+				Logging.LogException(ex, "Dispatcher desk could not be loaded for the On Duty page.");
+				return null;
+			}
+		}
+
+		private static string TrimNote(string note)
+		{
+			if (String.IsNullOrWhiteSpace(note))
+				return null;
+
+			var trimmed = note.Trim();
+			return trimmed.Length <= 500 ? trimmed : trimmed.Substring(0, 500);
+		}
+
+		private void SetDeskError<T>(DispatcherDeskResult<T> result)
+		{
+			SetDeskError(result?.Error ?? DispatcherDeskErrors.InvalidInput);
+		}
+
+		private void SetDeskError(DispatcherDeskErrors error)
+		{
+			if (error == DispatcherDeskErrors.None)
+				error = DispatcherDeskErrors.InvalidInput;
+
+			SetMessage(_deskLocalizer["Error." + error].Value, "danger");
+		}
+
+		#endregion Dispatchers on duty helpers
 	}
 }

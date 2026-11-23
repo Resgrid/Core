@@ -732,6 +732,31 @@
                                                     }
                                                 </div>
                                                 <p class="text-muted">@localizer["M4AverageUnitCost"]: @(details.AverageUnitCost?.ToString(CultureInfo.CurrentCulture) ?? localizer["M4UnknownCost"].Value)</p>
+                                                @* Per-location minimums: each set one is listed (clear it to remove), plus one row to add a location. *@
+                                                @{
+                                                    var itemParLevels = isNew ? new List<InventoryParLevel>() : Model.ParLevels.Where(p => p.ItemId == item.Id).ToList();
+                                                    var parLocationOptions = Choice(Model.Locations.Where(l => itemParLevels.All(p => p.LocationId != l.Id))
+                                                        .Select(x => new InventoryChoice { Id = x.Id, Name = InventoryWorkspaceView.Details<InventoryLabel>(x).Name }));
+                                                }
+                                                <h5>@localizer["ParLevels"]</h5>
+                                                <p class="text-muted">@localizer["ParLevelsHint"]</p>
+                                                <div class="rgw-grid">
+                                                    @for (var parIndex = 0; parIndex < itemParLevels.Count; parIndex++)
+                                                    {
+                                                        @Hide("ParLevels[" + parIndex + "].LocationId", itemParLevels[parIndex].LocationId)
+                                                        @* Number inputs post invariant ("2.5"); without the marker a de-DE request would bind 25. *@
+                                                        @Hide("__Invariant", "ParLevels[" + parIndex + "].MinimumQuantity")
+                                                        <div class="form-group">
+                                                            <label class="control-label" for="@(dialogId)-par-@parIndex">@LocationName(itemParLevels[parIndex].LocationId)</label>
+                                                            <input class="form-control" type="number" min="0" step="any" id="@(dialogId)-par-@parIndex" name="ParLevels[@parIndex].MinimumQuantity"
+                                                                   value="@itemParLevels[parIndex].MinimumQuantity.ToString(CultureInfo.InvariantCulture)" aria-describedby="@(dialogId)-par-help" />
+                                                        </div>
+                                                    }
+                                                    @Field("ParLevels[" + itemParLevels.Count + "].LocationId", "ParLevelAddLocation", null, options: parLocationOptions)
+                                                    @Hide("__Invariant", "ParLevels[" + itemParLevels.Count + "].MinimumQuantity")
+                                                    @Field("ParLevels[" + itemParLevels.Count + "].MinimumQuantity", "ParLevelMinimum", null, "number", min: "0")
+                                                </div>
+                                                <p class="help-block" id="@(dialogId)-par-help">@localizer["ParLevelsRemoveHint"]</p>
                                             </div>
 
                                             <div class="rgw-step" data-title="@localizer["Review"]">

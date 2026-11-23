@@ -113,6 +113,15 @@
             <label asp-for="Content.LocationText">@localizer["LocationText"]</label>
             <input asp-for="Content.LocationText" class="form-control" maxlength="1000" />
         </div>
+        @if (!isRecurrence && canManage)
+        {
+            <div class="form-group rgw-wide">
+                <div class="checkbox">
+                    <label><input asp-for="SetUnitOutOfService" type="checkbox" aria-describedby="setUnitOutOfServiceHelp" /> @localizer["SetUnitOutOfService"]</label>
+                </div>
+                <span class="help-block" id="setUnitOutOfServiceHelp">@localizer["SetUnitOutOfServiceHelp"]</span>
+            </div>
+        }
     </div>
 </div>
 

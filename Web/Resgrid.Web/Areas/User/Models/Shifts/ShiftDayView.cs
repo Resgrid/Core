@@ -48,6 +48,9 @@ namespace Resgrid.Web.Areas.User.Models.Shifts
 		public List<ShiftDayOption> AddGroupOptions { get; set; } = new List<ShiftDayOption>();
 
 		public bool CanAddPerson => CanSupervise && !IsOver && AddPersonnelOptions.Count > 0 && AddGroupOptions.Count > 0;
+
+		/// <summary>The day's "Dispatchers on duty" block; null when the shift takes no dispatchers.</summary>
+		public ShiftDayDispatchView Dispatch { get; set; }
 	}
 
 	public enum ShiftDayUserStatus

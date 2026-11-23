@@ -962,7 +962,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
-			result.Data = result.Data.OrderBy(x => x.GroupName).ThenBy(x => x.Name).ToList();
+			// One row per person per shift day, as the web On Duty page shows them: someone on the roster in two groups (or
+			// standing in one and signed up in another) was listed twice. The first group named wins; the others are joined.
+			result.Data = result.Data
+				.GroupBy(x => (UserId: x.UserId?.ToUpperInvariant(), x.ShiftDayId))
+				.Select(g =>
+				{
+					var first = g.OrderBy(x => string.IsNullOrEmpty(x.GroupId) ? 1 : 0).First();
+					var groups = g.Select(x => x.GroupName).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
+					if (groups.Count > 1)
+						first.GroupName = string.Join(", ", groups);
+					return first;
+				})
+				.OrderBy(x => x.GroupName).ThenBy(x => x.Name).ToList();
 			result.PageSize = result.Data.Count;
 			result.Status = result.Data.Any() ? ResponseHelper.Success : ResponseHelper.NotFound;
 
@@ -1653,6 +1665,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				case ShiftActionErrors.NotPending: return "not_pending";
 				case ShiftActionErrors.AlreadyOnRoster: return "already_on_roster";
 				case ShiftActionErrors.NotEligible: return "not_eligible";
+				case ShiftActionErrors.GroupFull: return "group_full";
+				case ShiftActionErrors.RoleRequired: return "role_required";
 				default: return "invalid_request";
 			}
 		}

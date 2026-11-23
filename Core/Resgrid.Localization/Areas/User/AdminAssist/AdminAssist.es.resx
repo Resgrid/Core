@@ -7755,6 +7755,12 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>Quién elige qué candidato se queda con una solicitud de intercambio de turno y aprueba los intercambios pendientes. Los administradores del departamento siempre pueden; los administradores de grupo, quien cede el turno y los miembros de roles elegidos los decide el departamento.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatcherDeskConfig">
+    <value>Mesa de despachadores</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatcherDeskConfig">
+    <value>Activa el puesto de despacho y define cómo funciona: qué trabajo se ofrece a los despachadores de servicio en la aplicación Dispatch (llamadas pendientes y programadas, mensajes de texto, llamadas telefónicas, correos, chats), cuánto espera una oferta y cuántos elementos puede tener un despachador antes de contar como ocupado, cuántas ofertas perdidas seguidas ponen a un despachador como Ausente, y qué pasa con los mensajes de texto y las llamadas telefónicas cuando nadie está libre (esperar en la cola, Enhanced AI o buzón de voz). También define en qué se convierte una llamada enviada por correo a la dirección de despacho (despachada de inmediato, guardada como pendiente o leída por Enhanced AI en una llamada pendiente) y las reglas de descansos y servicio: recordatorios de descanso, regreso automático de los descansos, el mínimo disponible, rechazar descansos por debajo de él, sin alertas del puesto en descanso, y si los despachadores deben estar en un turno o pueden estar de servicio sin turno (Turnos, Configuración del puesto de despacho). Desactivado por defecto; las llamadas por correo se despachan de inmediato hasta que se cambie Llamadas por correo, lo que se aplica incluso con el envío desactivado.</value>
+  </data>
   <data xml:space="preserve" name="Feature.home-dashboard">
     <value>Panel de inicio personalizable</value>
   </data>
@@ -8000,5 +8006,251 @@
   </data>
   <data name="FeatureSetup.ai-destination-advice" xml:space="preserve">
     <value>Necesita el complemento Enhanced AI con la recomendación de destino con IA activada para su departamento. Agregue primero sus destinos con sus capacidades y reglas de destino. La recomendación aparece al ver y al actualizar la llamada, nada cambia hasta que alguien la aplica, y los departamentos que usan Advanced Data Protection no reciben recomendaciones.</value>
+  </data>
+  <data name="Feature.dispatcher-desk" xml:space="preserve">
+    <value>Puesto de despacho</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk" xml:space="preserve">
+    <value>Un tablero en vivo de los despachadores de servicio y del trabajo que los espera. Las llamadas pendientes y programadas, los mensajes de texto, las llamadas telefónicas, los correos y los chats se ofrecen a un despachador libre cada vez, que los toma en la aplicación Dispatch desde un teléfono o una tableta.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk" xml:space="preserve">
+    <value>El trabajo llega a alguien que está libre: un despachador que tiene trabajo cuenta como ocupado, una oferta que nadie acepta pasa al siguiente despachador y el trabajo que queda esperando alerta a todos los de servicio. Los despachadores pueden atender el puesto desde donde estén, no solo desde una consola.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk" xml:space="preserve">
+    <value>Dos despachadores voluntarios cubren un fin de semana desde sus teléfonos. Un mensaje sobre un árbol caído que corta una carretera se ofrece al que está libre y se convierte en una llamada, mientras el otro está en su descanso para comer y no recibe alertas del puesto hasta que vuelve.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk" xml:space="preserve">
+    <value>Dé a sus despachadores el permiso Inicio de sesión en la aplicación Dispatch y póngalos en la lista de despacho de un turno. Luego abra Turnos, Configuración del puesto de despacho, active Enviar trabajo a los despachadores de servicio, elija qué Enviar al puesto y guarde. Los despachadores inician sesión en el puesto desde la aplicación Dispatch; la página Puesto de despacho muestra quién está disponible, ocupado o en descanso y la cola abierta, y un supervisor del puesto puede terminar un descanso o pasar trabajo a otra persona.</value>
+  </data>
+  <data name="Feature.shift-dispatchers" xml:space="preserve">
+    <value>Despachadores de servicio</value>
+  </data>
+  <data name="FeaturePurpose.shift-dispatchers" xml:space="preserve">
+    <value>Ponga despachadores en turnos asignados y de inscripción, en un turno solo de despacho o junto a los intervinientes, con el número de puestos de despacho que cubrir, un mínimo en el puesto y un supervisor del puesto.</value>
+  </data>
+  <data name="FeatureValue.shift-dispatchers" xml:space="preserve">
+    <value>El puesto solo ofrece trabajo a los despachadores que de verdad están de servicio: los de la lista de un día de turno en curso, salvo que el departamento permita el servicio sin turno. Los puestos de despacho libres se ven en el día de turno, y De servicio ahora muestra a los despachadores con su estado en el puesto y sus descansos.</value>
+  </data>
+  <data name="FeatureExample.shift-dispatchers" xml:space="preserve">
+    <value>Un centro de despacho funciona con turnos A, B y C solo de despacho con dos despachadores cada uno, y un departamento de voluntarios añade un puesto de despachador a su turno de inscripción del fin de semana.</value>
+  </data>
+  <data name="FeatureSetup.shift-dispatchers" xml:space="preserve">
+    <value>Abra Turnos, cree o edite un turno y active Este turno tiene despachadores. Defina Despachadores necesarios y, en un turno asignado, marque a las personas de la Lista de despacho y a un supervisor del puesto; en un turno de inscripción, los despachadores eligen Inscribirse como despachador en el día de turno. Solo se pueden añadir personas con el permiso Inicio de sesión en la aplicación Dispatch.</value>
+  </data>
+  <data name="Feature.dispatcher-breaks" xml:space="preserve">
+    <value>Descansos de despacho</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-breaks" xml:space="preserve">
+    <value>Planifique los descansos y las comidas de los despachadores del día en una sola línea de tiempo de cobertura que muestra quién está de servicio, quién está en descanso y dónde la cobertura bajaría del mínimo.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-breaks" xml:space="preserve">
+    <value>Los descansos quedan escalonados para que el puesto nunca quede vacío: Planificar descansos reparte el plan de descansos de un turno entre sus despachadores sin solapes, y el planificador avisa de descansos que se solapan y de huecos antes de que ocurran. Los despachadores reciben un recordatorio antes de cada descanso y, por defecto, ninguna alerta del puesto durante él.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-breaks" xml:space="preserve">
+    <value>En un turno de 12 horas con tres despachadores, Planificar descansos coloca la comida de 30 minutos y dos descansos de 15 minutos de cada uno en horas distintas, y cada despachador recibe un recordatorio cinco minutos antes de que toque un descanso.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-breaks" xml:space="preserve">
+    <value>Defina un plan de descansos en cada turno, o un plan de descansos predeterminado en Configuración del puesto de despacho. Luego abra Turnos, Descansos de despacho, elija una fecha y un día de turno y use Planificar descansos, o planifique usted mismo descansos sueltos. Los supervisores del puesto y los responsables de turno planifican los descansos de cualquiera; los despachadores planifican los suyos solo en los turnos que lo permiten. Un descanso es una duración, así que si empieza antes también termina antes.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-settings" xml:space="preserve">
+    <value>Configuración del puesto de despacho</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-settings" xml:space="preserve">
+    <value>Active el envío y elija qué trabajo va al puesto, cuánto espera una oferta, qué pasa con los mensajes de texto y las llamadas telefónicas cuando todos los despachadores están ocupados, en qué se convierte una llamada recibida por correo y las reglas de descansos y servicio.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-settings" xml:space="preserve">
+    <value>El departamento decide una sola vez cómo se comporta el puesto, desde lo rápido que pasa al siguiente el trabajo sin respuesta hasta si un descanso puede dejar menos despachadores disponibles que el mínimo.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-settings" xml:space="preserve">
+    <value>Un departamento envía al puesto los mensajes de texto y las llamadas telefónicas, da 60 segundos a cada oferta, deja que Enhanced AI complete una llamada pendiente cuando nadie está libre y guarda las llamadas por correo como pendientes para que un despachador las revise.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-settings" xml:space="preserve">
+    <value>Los administradores del departamento abren Turnos y luego Configuración del puesto de despacho. Active Enviar trabajo a los despachadores de servicio, elija Enviar al puesto, el tiempo de cada oferta y los elementos por despachador, qué pasa cuando todos los despachadores están ocupados, Llamadas por correo y las reglas de descanso, y guarde. Las opciones de Enhanced AI necesitan el complemento Enhanced AI.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-activity" xml:space="preserve">
+    <value>Actividad de despacho</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-activity" xml:space="preserve">
+    <value>La actividad del puesto de hasta 92 días: el trabajo por tipo, los elementos completados, desbordados, cancelados y escalados y el tiempo medio de respuesta, y para cada despachador las ofertas aceptadas, rechazadas y perdidas, el tiempo para aceptar y para completar, y los descansos tomados, perdidos o terminados tarde.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-activity" xml:space="preserve">
+    <value>Vea si el trabajo se atiende rápido, con qué frecuencia se desborda o se escala y si los descansos terminan a tiempo, y ajuste la dotación, los tiempos de oferta o los planes de descanso con las cifras.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-activity" xml:space="preserve">
+    <value>Un supervisor ve que los mensajes de texto se escalaban a menudo los viernes por la tarde y añade un segundo despachador a ese turno.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-activity" xml:space="preserve">
+    <value>Los administradores del departamento y los supervisores del puesto abren Turnos y luego Actividad de despacho, eligen las fechas Desde y Hasta y seleccionan Mostrar.</value>
+  </data>
+  <data name="Feature.intake-spam-screening" xml:space="preserve">
+    <value>Filtro de spam en la entrada</value>
+  </data>
+  <data name="FeaturePurpose.intake-spam-screening" xml:space="preserve">
+    <value>Mantenga el spam y las llamadas automáticas fuera de Llamadas pendientes: descarte una llamada de entrada como spam y bloquee a su remitente, limite cuántas llamadas puede crear un número de teléfono en una hora, pida a quienes llaman por voz que pulsen 1 antes de las preguntas y marque los mensajes que Enhanced AI interpreta como que no son un incidente.</value>
+  </data>
+  <data name="FeatureValue.intake-spam-screening" xml:space="preserve">
+    <value>Los despachadores dedican su tiempo a avisos reales. Los mensajes y llamadas de un remitente bloqueado no crean llamadas ni reciben respuesta, y una llamada filtrada conserva su etiqueta en Llamadas pendientes pero no se ofrece en el puesto de despacho; un despachador sigue decidiendo qué hacer con ella.</value>
+  </data>
+  <data name="FeatureExample.intake-spam-screening" xml:space="preserve">
+    <value>Un número publicitario escribe una y otra vez al número del departamento. Pasado el límite por hora, sus mensajes se añaden como notas a su llamada abierta, y un despachador descarta esa llamada como spam y bloquea el número durante 30 días.</value>
+  </data>
+  <data name="FeatureSetup.intake-spam-screening" xml:space="preserve">
+    <value>En una llamada de entrada pendiente, elija Descartar como spam y deje marcado Bloquear también al remitente; la llamada se cancela y no se avisa a nadie. Los remitentes bloqueados aparecen en la página Canales de entrada, donde Desbloquear levanta un bloqueo antes de tiempo. El límite por hora se aplica a los canales de texto, voz y WhatsApp sin remitentes permitidos, nunca a los de correo, chat o webhook.</value>
+  </data>
+  <data name="Area.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="AreaPurpose.relay" xml:space="preserve">
+    <value>Una aplicación complementaria de código abierto que conecta con Resgrid el correo de CAD y de aviso, los escáneres, las radios bidireccionales y las radios push-to-talk LTE.</value>
+  </data>
+  <data name="AreaValue.relay" xml:space="preserve">
+    <value>Lleve a Resgrid las llamadas, los mensajes y el tráfico de radio de los sistemas que ya tiene, sin reemplazarlos.</value>
+  </data>
+  <data name="AreaExample.relay" xml:space="preserve">
+    <value>El CAD del condado envía cada despacho por correo al relay, que crea la llamada con su tarjeta de respuesta adjunta, mientras una radio de la estación enlazada a un canal de voz permite a los usuarios de la aplicación hablar con las dotaciones en la radio.</value>
+  </data>
+  <data name="ModuleAdoption.relay" xml:space="preserve">
+    <value>Instale Relay en un equipo del departamento: la aplicación de escritorio para Windows, o sin interfaz en Windows, Linux, macOS o Docker. El despacho por correo no requiere complementos; el puente de radio, la grabadora y el tono de alerta requieren el complemento Push-to-Talk y un canal de voz. Relay complementa sus sistemas de radio y de aviso; no los reemplaza.</value>
+  </data>
+  <data name="Feature.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay" xml:space="preserve">
+    <value>Instale y ejecute Relay, elija sus modos y conéctelo a su departamento.</value>
+  </data>
+  <data name="FeatureValue.relay" xml:space="preserve">
+    <value>La aplicación de escritorio para Windows ejecuta varios modos a la vez con un panel en vivo; el host sin interfaz ejecuta un modo por proceso en un servidor o en Docker.</value>
+  </data>
+  <data name="FeatureExample.relay" xml:space="preserve">
+    <value>Un departamento instala la aplicación de escritorio en el PC de la estación, la conecta con una cuenta de miembro dedicada y activa el inicio automático del despacho por correo y del puente de radio.</value>
+  </data>
+  <data name="FeatureSetup.relay" xml:space="preserve">
+    <value>Agregue una cuenta de miembro con la que inicie sesión el relay; luego instale Relay y conéctelo con el token de actualización de esa cuenta. El puente de radio, la grabadora y el tono de alerta requieren este token de usuario; el despacho por correo y la detección de tonos también pueden usar credenciales de cliente. Ejecute «Test connection» antes de iniciar un modo.</value>
+  </data>
+  <data name="Feature.relay-smtp-dispatch" xml:space="preserve">
+    <value>Despacho por correo con Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay-smtp-dispatch" xml:space="preserve">
+    <value>El servidor de correo integrado de Relay convierte el correo de despacho de sistemas CAD, centrales de alarma o pasarelas de aviso en llamadas y mensajes de grupo de Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-smtp-dispatch" xml:space="preserve">
+    <value>El correo al código de despacho del departamento alerta a todo el departamento, el código de despacho de un grupo despacha a ese grupo y su código de mensajes le envía un mensaje. Los adjuntos se agregan a la llamada y un mensaje entregado de nuevo nunca crea una segunda llamada.</value>
+  </data>
+  <data name="FeatureExample.relay-smtp-dispatch" xml:space="preserve">
+    <value>El CAD del condado envía cada salida de la Estación 5 al código de despacho de ese grupo en el dominio de despacho del condado, y el relay crea la llamada con la tarjeta de respuesta en PDF adjunta.</value>
+  </data>
+  <data name="FeatureSetup.relay-smtp-dispatch" xml:space="preserve">
+    <value>Encuentre la dirección de despacho del departamento en Configuración de llamadas y las direcciones de despacho y de mensajes de cada grupo en Grupos. Dirija el correo de sus dominios de despacho a Relay e indique esos dominios en su configuración SMTP. La cuenta del relay necesita el permiso Crear llamadas y, para los adjuntos, Agregar datos de llamada.</value>
+  </data>
+  <data name="Feature.relay-tone-detect" xml:space="preserve">
+    <value>Tonos de aviso a llamadas</value>
+  </data>
+  <data name="FeaturePurpose.relay-tone-detect" xml:space="preserve">
+    <value>En Windows, Relay escucha un escáner o una radio a través de una tarjeta de sonido para detectar avisos de dos tonos y de un tono, y crea una llamada de Resgrid con el audio del despacho grabado.</value>
+  </data>
+  <data name="FeatureValue.relay-tone-detect" xml:space="preserve">
+    <value>Los miembros reciben el aviso en la aplicación Responder con el audio del despachador adjunto, incluso cuando el aviso por radio es el único despacho.</value>
+  </data>
+  <data name="FeatureExample.relay-tone-detect" xml:space="preserve">
+    <value>El escáner de una compañía de voluntarios oye su aviso de dos tonos y el relay crea una llamada para el grupo de esa estación con el audio del despacho adjunto.</value>
+  </data>
+  <data name="FeatureSetup.relay-tone-detect" xml:space="preserve">
+    <value>En Grupos, anote el código de despacho de cada grupo que avise por tonos: un watcher de grupo despacha a ese grupo y un watcher de departamento alerta a todos. Configure los tonos de cada watcher en Relay. La cuenta del relay necesita Crear llamadas y Agregar datos de llamada.</value>
+  </data>
+  <data name="Feature.relay-radio-bridge" xml:space="preserve">
+    <value>Puente de radio</value>
+  </data>
+  <data name="FeaturePurpose.relay-radio-bridge" xml:space="preserve">
+    <value>En Windows, Relay enlaza una radio bidireccional conectada por cable con un canal push-to-talk de Resgrid en ambos sentidos.</value>
+  </data>
+  <data name="FeatureValue.relay-radio-bridge" xml:space="preserve">
+    <value>Las dotaciones en la radio y los miembros en las aplicaciones Responder, Unit y Dispatch se escuchan entre sí, y un tono de emergencia en la radio puede crear una llamada.</value>
+  </data>
+  <data name="FeatureExample.relay-radio-bridge" xml:space="preserve">
+    <value>Un equipo de búsqueda y rescate enlaza su radio base VHF con el canal del equipo, para que los rastreadores con portátiles y los rastreadores con teléfonos hablen entre sí.</value>
+  </data>
+  <data name="FeatureSetup.relay-radio-bridge" xml:space="preserve">
+    <value>Requiere el complemento Push-to-Talk, un canal de voz y el token de actualización del relay. Active la transmisión de la radio con una interfaz PTT USB CM108 o serie, ajuste el silenciador con «Tune» y compruebe el cableado y el retardo de transmisión con «Test transmit».</value>
+  </data>
+  <data name="Feature.relay-lte-donor-radios" xml:space="preserve">
+    <value>Radios donantes push-to-talk LTE</value>
+  </data>
+  <data name="FeaturePurpose.relay-lte-donor-radios" xml:space="preserve">
+    <value>Une un grupo de conversación push-to-talk celular (PoC), como Rapid Radios o Diga-Talk+, a un canal de voz de Resgrid mediante una de sus radios conectada por cable al relay.</value>
+  </data>
+  <data name="FeatureValue.relay-lte-donor-radios" xml:space="preserve">
+    <value>Los usuarios de radios PoC y de las aplicaciones de Resgrid comparten una misma conversación, aunque estos servicios PoC no ofrecen una API ni una pasarela para audio externo.</value>
+  </data>
+  <data name="FeatureExample.relay-lte-donor-radios" xml:space="preserve">
+    <value>Un equipo de seguridad conecta un equipo móvil Diga-Talk+ al relay, de modo que los vigilantes con radios PoC y los supervisores en las aplicaciones de Resgrid se escuchan entre sí.</value>
+  </data>
+  <data name="FeatureSetup.relay-lte-donor-radios" xml:space="preserve">
+    <value>Aplique el perfil de la radio, actívela con una línea PTT física en lugar de VOX, desactive su propio VOX y sus pitidos y manténgala con alimentación externa. La radio donante ocupa una radio de la cuenta PoC y enlaza el grupo de conversación en el que esté configurada. Requiere el complemento Push-to-Talk y un canal de voz.</value>
+  </data>
+  <data name="Feature.relay-recorder" xml:space="preserve">
+    <value>Grabadora de canales</value>
+  </data>
+  <data name="FeaturePurpose.relay-recorder" xml:space="preserve">
+    <value>Graba cada transmisión de uno o de todos los canales push-to-talk como archivos de audio, con un registro de quién habló, en qué canal, cuándo y durante cuánto tiempo.</value>
+  </data>
+  <data name="FeatureValue.relay-recorder" xml:space="preserve">
+    <value>Conserva el tráfico de voz para el cumplimiento normativo y la revisión posterior, en disco local o en almacenamiento compatible con S3.</value>
+  </data>
+  <data name="FeatureExample.relay-recorder" xml:space="preserve">
+    <value>Una agencia de gestión de emergencias graba todos los canales durante un simulacro de inundación y revisa el registro de transmisiones en la reunión de evaluación posterior.</value>
+  </data>
+  <data name="FeatureSetup.relay-recorder" xml:space="preserve">
+    <value>Requiere el complemento Push-to-Talk, un canal de voz y el token de actualización del relay. Cada canal grabado ocupa un puesto de voz. Las grabaciones contienen tráfico de voz operativo: almacénelas, protéjalas y depúrelas según su política de registros.</value>
+  </data>
+  <data name="Feature.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Tono de alerta en push-to-talk</value>
+  </data>
+  <data name="FeaturePurpose.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Anuncia cada nueva llamada de Resgrid en un canal push-to-talk: tonos de alerta y luego la llamada leída en voz alta por la conversión de texto a voz de Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Las dotaciones que escuchan un canal oyen los despachos como lo harían por radio, con la redacción propia de Resgrid y los nombres de sus prioridades de llamada.</value>
+  </data>
+  <data name="FeatureExample.relay-dispatch-tone-out" xml:space="preserve">
+    <value>El equipo de respuesta a emergencias de una planta escucha su canal, y cada nueva llamada se anuncia con una alerta de tono alto-bajo seguida del nombre, la naturaleza, la dirección y la prioridad de la llamada.</value>
+  </data>
+  <data name="FeatureSetup.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Requiere el complemento Push-to-Talk, un canal de voz y el token de actualización del relay. Las llamadas ya abiertas cuando se inicia el relay no se anuncian, y las llamadas programadas se anuncian cuando se despachan.</value>
+  </data>
+  <data name="Rule.relay-dispatch-code" xml:space="preserve">
+    <value>El departamento no tiene código de correo de despacho</value>
+  </data>
+  <data name="RuleWhy.relay-dispatch-code" xml:space="preserve">
+    <value>El departamento no tiene código de correo de despacho, por lo que el correo a su dirección de despacho no puede crear una llamada, tanto si lo recibe Resgrid como un relay.</value>
+  </data>
+  <data name="RuleNext.relay-dispatch-code" xml:space="preserve">
+    <value>Compruebe la dirección de despacho en Configuración de llamadas. Si no aparece ninguna, pida al soporte de Resgrid, o al administrador de su instalación de Resgrid, que asigne un código de despacho.</value>
+  </data>
+  <data name="Rule.relay-group-email-codes" xml:space="preserve">
+    <value>Grupos sin código de correo de despacho o de mensajes</value>
+  </data>
+  <data name="RuleWhy.relay-group-email-codes" xml:space="preserve">
+    <value>Uno o más grupos no tienen código de correo de despacho o de mensajes, por lo que el correo a esas direcciones de grupo no llega a nadie, ni a través de Resgrid ni de un relay. Los grupos creados fuera del editor de grupos, por ejemplo mediante una importación, pueden carecer de códigos.</value>
+  </data>
+  <data name="RuleNext.relay-group-email-codes" xml:space="preserve">
+    <value>En Grupos, busque cada grupo cuya dirección de despacho o de mensajes no tenga código antes de la @, abra Editar y guárdelo; al guardar se asignan los códigos que faltan.</value>
+  </data>
+  <data name="Rule.relay-voice-channel" xml:space="preserve">
+    <value>Push-to-Talk sin canal de voz</value>
+  </data>
+  <data name="RuleWhy.relay-voice-channel" xml:space="preserve">
+    <value>El departamento tiene Push-to-Talk pero ningún canal de voz permanente, por lo que las aplicaciones de Resgrid y el puente de radio, la grabadora y el tono de alerta de un relay no tienen ningún canal al que unirse.</value>
+  </data>
+  <data name="RuleNext.relay-voice-channel" xml:space="preserve">
+    <value>Abra la página de canales de voz, cree un canal y agregue a los miembros que lo usan.</value>
+  </data>
+  <data name="SetupEvidence.relay-voice" xml:space="preserve">
+    <value>Se comprueban la disponibilidad de Push-to-Talk y los canales de voz permanentes. Resgrid no observa si un relay está instalado, conectado o transmitiendo audio; compruébelo en el panel del propio relay.</value>
+  </data>
+  <data name="Setting.AllowShiftOverSignup" xml:space="preserve">
+    <value>Permitir inscripciones por encima de los puestos del grupo</value>
+  </data>
+  <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
+    <value>Permite que los miembros se inscriban en un grupo de turno aunque todos los puestos de sus funciones (obligatorios y opcionales) estén ocupados. Siguen necesitando una de las funciones del grupo. Los supervisores siempre pueden asignar personas por encima de los puestos.</value>
   </data>
 </root>

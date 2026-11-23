@@ -1,0 +1,269 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.DispatcherDesk
+@model Resgrid.Web.Areas.User.Models.DispatcherDesk.DispatcherDeskSettingsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatcherDesk.DispatcherDesk> desk
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> shiftsLocalizer
+@{
+	ViewBag.Title = "Resgrid | " + desk["SettingsTitle"];
+
+	var emailAiLocked = !Model.EnhancedAiAvailable && Model.EmailCallMode != (int)DispatcherEmailCallModes.EnhancedAi;
+	var textAiLocked = !Model.EnhancedAiAvailable && Model.TextOverflowMode != (int)DispatcherTextOverflowModes.EnhancedAi;
+
+	// Enhanced AI stays selectable for a department that already uses it, so a lapsed add-on never silently changes the setting.
+	var textOverflowModes = new List<SelectListItem>
+	{
+		new SelectListItem(desk["TextOverflow.PendingQueue"].Value, ((int)DispatcherTextOverflowModes.PendingQueue).ToString()),
+		new SelectListItem(desk["TextOverflow.EnhancedAi"].Value, ((int)DispatcherTextOverflowModes.EnhancedAi).ToString()) { Disabled = textAiLocked }
+	};
+	var voiceOverflowModes = new List<SelectListItem>
+	{
+		new SelectListItem(desk["VoiceOverflow.EnhancedAiIntake"].Value, ((int)DispatcherVoiceOverflowModes.EnhancedAiIntake).ToString()),
+		new SelectListItem(desk["VoiceOverflow.Voicemail"].Value, ((int)DispatcherVoiceOverflowModes.Voicemail).ToString())
+	};
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@desk["SettingsTitle"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Shifts" asp-action="Index" asp-route-area="User">@shiftsLocalizer["ShiftsHeader"]</a></li>
+			<li><a asp-controller="DispatcherDesk" asp-action="Index" asp-route-area="User">@desk["DeskBoardTitle"]</a></li>
+			<li class="active"><strong>@desk["SettingsTitle"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-primary top-button" asp-controller="DispatcherDesk" asp-action="Index" asp-route-area="User"><i class="fa fa-headphones"></i> @desk["DeskBoardTitle"]</a>
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	@if (!String.IsNullOrWhiteSpace(Model.Message))
+	{
+		<div class="alert alert-success alert-dismissable" role="alert">
+			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+			@Model.Message
+		</div>
+	}
+	<form class="form-horizontal" method="post" asp-controller="DispatcherDesk" asp-action="Settings" asp-route-area="User">
+		<div asp-validation-summary="All" class="text-danger"></div>
+
+		<div class="ibox float-e-margins">
+			<div class="ibox-title"><h5>@desk["SettingsDeskSection"]</h5></div>
+			<div class="ibox-content">
+				<p class="text-muted">@desk["SettingsIntro"]</p>
+				<div class="form-group">
+					<div class="col-sm-offset-3 col-sm-9">
+						<div class="checkbox"><label><input type="checkbox" asp-for="Enabled" /> <strong>@desk["EnabledLabel"]</strong></label></div>
+						<span class="help-block m-b-none">@desk["EnabledHelp"]</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-3 col-sm-9">
+						<div class="checkbox"><label><input type="checkbox" asp-for="RequireShift" /> @desk["RequireShiftLabel"]</label></div>
+						<span class="help-block m-b-none">@desk["RequireShiftHelp"]</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-3 col-sm-9">
+						<div class="checkbox"><label><input type="checkbox" asp-for="AllowUnscheduledDuty" /> @desk["AllowUnscheduledDutyLabel"]</label></div>
+						<span class="help-block m-b-none">@desk["AllowUnscheduledDutyHelp"]</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" asp-for="MaxActiveItemsPerDispatcher">@desk["CapacityLabel"]</label>
+					<div class="col-sm-2"><input type="number" min="1" max="10" class="form-control" asp-for="MaxActiveItemsPerDispatcher" /></div>
+					<div class="col-sm-7"><span class="help-block m-b-none">@desk["CapacityHelp"]</span></div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-3 col-sm-9">
+						<div class="checkbox"><label><input type="checkbox" asp-for="SignOffAtShiftEnd" /> @desk["SignOffAtShiftEndLabel"]</label></div>
+						<span class="help-block m-b-none">@desk["SignOffAtShiftEndHelp"]</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" asp-for="HeartbeatTimeoutMinutes">@desk["HeartbeatTimeoutLabel"]</label>
+					<div class="col-sm-2"><input type="number" min="0" max="1440" class="form-control" asp-for="HeartbeatTimeoutMinutes" /></div>
+					<div class="col-sm-7"><span class="help-block m-b-none">@desk["HeartbeatTimeoutHelp"]</span></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="ibox float-e-margins">
+			<div class="ibox-title"><h5>@desk["SettingsRoutingSection"]</h5></div>
+			<div class="ibox-content">
+				<div class="form-group">
+					<label class="col-sm-3 control-label">@desk["RouteToDeskLabel"]</label>
+					<div class="col-sm-9">
+						<div class="checkbox"><label><input type="checkbox" asp-for="RoutePendingCalls" /> @desk["RoutePendingCallsLabel"]</label></div>
+						<div class="checkbox"><label><input type="checkbox" asp-for="RouteScheduledCalls" /> @desk["RouteScheduledCallsLabel"]</label></div>
+						<div class="checkbox"><label><input type="checkbox" asp-for="RouteText" /> @desk["RouteTextLabel"]</label></div>
+						<div class="checkbox"><label><input type="checkbox" asp-for="RouteVoice" /> @desk["RouteVoiceLabel"]</label></div>
+						<div class="checkbox"><label><input type="checkbox" asp-for="RouteEmail" /> @desk["RouteEmailLabel"]</label></div>
+						<div class="checkbox"><label><input type="checkbox" asp-for="RouteChat" /> @desk["RouteChatLabel"]</label></div>
+						<span class="help-block m-b-none">@desk["RouteToDeskHelp"]</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" asp-for="ScheduledCallLeadMinutes">@desk["ScheduledCallLeadLabel"]</label>
+					<div class="col-sm-2"><input type="number" min="1" max="1440" class="form-control" asp-for="ScheduledCallLeadMinutes" /></div>
+					<div class="col-sm-7"><span class="help-block m-b-none">@desk["ScheduledCallLeadHelp"]</span></div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" asp-for="OfferTimeoutSeconds">@desk["OfferTimeoutLabel"]</label>
+					<div class="col-sm-2"><input type="number" min="15" max="600" class="form-control" asp-for="OfferTimeoutSeconds" /></div>
+					<div class="col-sm-7"><span class="help-block m-b-none">@desk["OfferTimeoutHelp"]</span></div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" asp-for="MissedOffersBeforeAway">@desk["MissedOffersLabel"]</label>
+					<div class="col-sm-2"><input type="number" min="0" max="20" class="form-control" asp-for="MissedOffersBeforeAway" /></div>
+					<div class="col-sm-7"><span class="help-block m-b-none">@desk["MissedOffersHelp"]</span></div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" asp-for="QueueEscalationMinutes">@desk["QueueEscalationLabel"]</label>
+					<div class="col-sm-2"><input type="number" min="0" max="240" class="form-control" asp-for="QueueEscalationMinutes" /></div>
+					<div class="col-sm-7"><span class="help-block m-b-none">@desk["QueueEscalationHelp"]</span></div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" asp-for="ConversationJoinMinutes">@desk["ConversationJoinLabel"]</label>
+					<div class="col-sm-2"><input type="number" min="1" max="1440" class="form-control" asp-for="ConversationJoinMinutes" /></div>
+					<div class="col-sm-7"><span class="help-block m-b-none">@desk["ConversationJoinHelp"]</span></div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-3 col-sm-9">
+						<div class="checkbox"><label><input type="checkbox" asp-for="AcknowledgeTexts" /> @desk["AcknowledgeTextsLabel"]</label></div>
+						<span class="help-block m-b-none">@desk["AcknowledgeTextsHelp"]</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="ibox float-e-margins">
+			<div class="ibox-title"><h5>@desk["SettingsOverflowSection"]</h5></div>
+			<div class="ibox-content">
+				<p class="text-muted">@desk["OverflowIntro"]</p>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" for="TextOverflowMode">@desk["TextOverflowLabel"]</label>
+					<div class="col-sm-5">
+						<select class="form-control" asp-for="TextOverflowMode" asp-items="textOverflowModes"></select>
+					</div>
+					<div class="col-sm-4">
+						@if (!Model.EnhancedAiAvailable)
+						{
+							<span class="help-block m-b-none text-warning">@desk["EnhancedAiUnavailable"]</span>
+						}
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" for="VoiceOverflowMode">@desk["VoiceOverflowLabel"]</label>
+					<div class="col-sm-5">
+						<select class="form-control" asp-for="VoiceOverflowMode" asp-items="voiceOverflowModes"></select>
+					</div>
+					<div class="col-sm-4">
+						@if (!Model.VoiceAiAvailable)
+						{
+							<span class="help-block m-b-none text-warning">@desk["VoiceAiUnavailable"]</span>
+						}
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" asp-for="VoiceHoldSeconds">@desk["VoiceHoldLabel"]</label>
+					<div class="col-sm-2"><input type="number" min="0" max="600" class="form-control" asp-for="VoiceHoldSeconds" /></div>
+					<div class="col-sm-7"><span class="help-block m-b-none">@desk["VoiceHoldHelp"]</span></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="ibox float-e-margins">
+			<div class="ibox-title"><h5>@desk["SettingsEmailSection"]</h5></div>
+			<div class="ibox-content">
+				<p class="text-muted">@desk["EmailCallModeIntro"]</p>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">@desk["EmailCallModeLabel"]</label>
+					<div class="col-sm-9">
+						<div class="radio">
+							<label>
+								<input type="radio" name="EmailCallMode" value="@((int)DispatcherEmailCallModes.AutoDispatch)" checked="@(Model.EmailCallMode == (int)DispatcherEmailCallModes.AutoDispatch)" />
+								<strong>@desk["EmailCallMode.AutoDispatch"]</strong>
+								<span class="help-block m-b-none">@desk["EmailCallMode.AutoDispatchHelp"]</span>
+							</label>
+						</div>
+						<div class="radio">
+							<label>
+								<input type="radio" name="EmailCallMode" value="@((int)DispatcherEmailCallModes.Pending)" checked="@(Model.EmailCallMode == (int)DispatcherEmailCallModes.Pending)" />
+								<strong>@desk["EmailCallMode.Pending"]</strong>
+								<span class="help-block m-b-none">@desk["EmailCallMode.PendingHelp"]</span>
+							</label>
+						</div>
+						<div class="radio @(emailAiLocked ? "disabled" : "")">
+							<label>
+								<input type="radio" name="EmailCallMode" value="@((int)DispatcherEmailCallModes.EnhancedAi)" checked="@(Model.EmailCallMode == (int)DispatcherEmailCallModes.EnhancedAi)" disabled="@emailAiLocked" />
+								<strong>@desk["EmailCallMode.EnhancedAi"]</strong>
+								<span class="help-block m-b-none">@desk["EmailCallMode.EnhancedAiHelp"]</span>
+							</label>
+						</div>
+						@if (!Model.EnhancedAiAvailable)
+						{
+							<span class="help-block m-b-none text-warning"><i class="fa fa-info-circle"></i> @desk["EnhancedAiUnavailable"]</span>
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="ibox float-e-margins">
+			<div class="ibox-title"><h5>@desk["SettingsBreaksSection"]</h5></div>
+			<div class="ibox-content">
+				<div class="form-group">
+					<label class="col-sm-3 control-label" asp-for="MinimumAvailableDispatchers">@desk["MinimumAvailableLabel"]</label>
+					<div class="col-sm-2"><input type="number" min="0" max="100" class="form-control" asp-for="MinimumAvailableDispatchers" /></div>
+					<div class="col-sm-7"><span class="help-block m-b-none">@desk["MinimumAvailableHelp"]</span></div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-3 col-sm-9">
+						<div class="checkbox"><label><input type="checkbox" asp-for="PreventBreakBelowMinimum" /> @desk["PreventBelowMinimumLabel"]</label></div>
+						<span class="help-block m-b-none">@desk["PreventBelowMinimumHelp"]</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" asp-for="BreakReminderMinutes">@desk["BreakReminderLabel"]</label>
+					<div class="col-sm-2"><input type="number" min="0" max="120" class="form-control" asp-for="BreakReminderMinutes" /></div>
+					<div class="col-sm-7"><span class="help-block m-b-none">@desk["BreakReminderHelp"]</span></div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" asp-for="AutoReturnAfterMinutes">@desk["AutoReturnLabel"]</label>
+					<div class="col-sm-2"><input type="number" min="0" max="480" class="form-control" asp-for="AutoReturnAfterMinutes" /></div>
+					<div class="col-sm-7"><span class="help-block m-b-none">@desk["AutoReturnHelp"]</span></div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-3 col-sm-9">
+						<div class="checkbox"><label><input type="checkbox" asp-for="NotifySupervisorsOnOverdueBreak" /> @desk["NotifyOverdueLabel"]</label></div>
+						<div class="checkbox"><label><input type="checkbox" asp-for="SuppressAlertsOnBreak" /> @desk["SuppressAlertsLabel"]</label></div>
+						<span class="help-block m-b-none">@desk["SuppressAlertsHelp"]</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">@desk["DefaultBreakPlanLabel"]</label>
+					<div class="col-sm-9">
+						<p class="help-block m-t-none">@desk["DefaultBreakPlanHelp"]</p>
+						<partial name="_DispatcherBreakPlanEditor" model='new DispatcherBreakPlanEditorModel { Id = "defaultBreakPlan", Rows = Model.DefaultBreakPlan }' />
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="col-sm-offset-3 col-sm-9">
+				<a class="btn btn-white" asp-controller="DispatcherDesk" asp-action="Index" asp-route-area="User">@desk["CancelButton"]</a>
+				<button type="submit" class="btn btn-primary">@desk["SaveSettingsButton"]</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+@section Scripts
+{
+	<script src="~/js/app/internal/dispatcherdesk/resgrid.dispatcherdesk.breakplan.js" asp-append-version="true"></script>
+}

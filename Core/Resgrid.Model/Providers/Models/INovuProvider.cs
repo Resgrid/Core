@@ -238,4 +238,37 @@ public interface INovuProvider
 
 	/// <summary>Chat push to a unit-device subscriber ({depCode}_Unit_{unitId}), e.g. the Unit app on the rig.</summary>
 	Task<bool> SendUnitChatMessage(string title, string body, int unitId, string depCode, string eventCode, string type, int count);
+
+	// Dispatcher desk (M0324): the Dispatch app's own subscriber, {code}_Dispatch_User_{userId}. Only the Dispatch app
+	// registers on it (with the same integrations its tokens use on the shared user subscriber), so desk pushes never reach
+	// the Responder app. Everything else the Dispatch app receives still comes through {code}_User_{userId}.
+
+	/// <summary>Creates the user's Dispatch desk subscriber ({code}_Dispatch_User_{userId}); an existing one counts as created.</summary>
+	Task<bool> CreateDispatchUserSubscriber(string userId, string code, int departmentId, string email, string firstName, string lastName);
+
+	/// <summary>Sets the FCM token of the Dispatch desk subscriber (the Dispatch app on Android), on the Responder FCM integration.</summary>
+	Task<bool> UpdateDispatchUserSubscriberFcm(string userId, string code, string token);
+
+	/// <summary>Sets the APNs token of the Dispatch desk subscriber (the Dispatch app on iOS), on the Responder APNs integration.</summary>
+	Task<bool> UpdateDispatchUserSubscriberApns(string userId, string code, string token);
+
+	/// <summary>Adds a browser or desktop token to the Dispatch desk subscriber's web channel.</summary>
+	Task<bool> AddDispatchUserSubscriberWebPushToken(string userId, string code, string token);
+
+	/// <summary>Removes a browser or desktop token from the Dispatch desk subscriber's web channel.</summary>
+	Task<bool> RemoveDispatchUserSubscriberWebPushToken(string userId, string code, string token);
+
+	/// <summary>Removes an iOS or Android token from the Dispatch desk subscriber's native channels (only this token).</summary>
+	Task<bool> RemoveDispatchUserSubscriberNativeToken(string userId, string code, string token);
+
+	/// <summary>Deletes the user's Dispatch desk subscriber and every device token on it (member removed, department deleted).</summary>
+	Task<bool> DeleteDispatchUserSubscriber(string userId, string code);
+
+	/// <summary>
+	/// Sends one dispatcher desk push to the Dispatch desk subscriber ({depCode}_Dispatch_User_{userId}) on the desk workflow
+	/// (ChatConfig.NovuDispatcherDeskWorkflowId, else the user dispatch workflow).
+	/// </summary>
+	/// <param name="eventCode">What the app opens: DQ:{itemId} or DB:{breakId}.</param>
+	/// <param name="type">The desk sound type as its integer string (PushSoundTypes 28-32).</param>
+	Task<bool> SendDispatchUserDeskPush(string title, string body, string userId, string depCode, string eventCode, string type);
 }

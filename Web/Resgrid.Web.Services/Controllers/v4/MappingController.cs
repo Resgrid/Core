@@ -1305,6 +1305,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var title = "Hydrant " + point.HydrantNumber;
 			var info = "<strong>" + System.Net.WebUtility.HtmlEncode(title) + "</strong><br/>" + (point.InService ? "In service" : "Out of service");
 			if (point.FlowGpm.HasValue) info += "<br/>" + point.FlowGpm.Value.ToString(CultureInfo.InvariantCulture) + " gpm";
+			if (point.RatedFlowGpm.HasValue) info += "<br/>" + point.RatedFlowGpm.Value.ToString(CultureInfo.InvariantCulture) + " gpm @ 20 psi";
 			return new MapMakerInfoData { Id = "hydrant-" + point.HydrantId, Latitude = (double)point.Latitude, Longitude = (double)point.Longitude,
 				Title = title, InfoWindowContent = info, Type = 5, LayerId = "hydrants", LayerName = "Hydrants", Color = point.Color, ImagePath = "hydrant", zIndex = 5 };
 		}

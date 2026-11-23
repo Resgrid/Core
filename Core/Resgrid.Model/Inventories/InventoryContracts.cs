@@ -17,6 +17,17 @@ namespace Resgrid.Model.Inventories
 		public bool IsControlledSubstance { get; set; }
 		public bool IsActive { get; set; } = true;
 		public InventoryItemContent Details { get; set; } = new();
+		/// <summary>
+		/// Per-location minimums to set (a value) or remove (no value) with this save. Locations not listed keep theirs; null
+		/// changes none.
+		/// </summary>
+		public List<InventoryParLevelInput> ParLevels { get; set; }
+	}
+	public sealed class InventoryParLevelInput
+	{
+		public string LocationId { get; set; }
+		/// <summary>Null or blank removes the location's minimum.</summary>
+		public decimal? MinimumQuantity { get; set; }
 	}
 	public sealed class InventoryLocationInput { public string Id { get; set; } public int Revision { get; set; } public InventoryLocationType Type { get; set; } public int? GroupId { get; set; } public int? UnitId { get; set; } public string UserId { get; set; } public string ContainerAssetId { get; set; } public string ParentLocationId { get; set; } public bool IsDefault { get; set; } public string Name { get; set; } }
 	public sealed class InventoryAssetInput { public string Id { get; set; } public string RequestId { get; set; } public string ItemId { get; set; } public string LocationId { get; set; } public string LotId { get; set; } public DateTime? ExpiresOn { get; set; } public InventoryAssetContent Details { get; set; } = new(); }

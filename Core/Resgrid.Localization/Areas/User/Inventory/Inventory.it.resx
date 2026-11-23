@@ -795,4 +795,22 @@
   <data name="Inactive" xml:space="preserve"><value>Non attivo</value></data>
   <data name="M4SupplierHelp" xml:space="preserve"><value>Manca un fornitore? Aggiungilo nella pagina Fornitori.</value></data>
   <data name="M4PurchaseOrderCurrencyHelp" xml:space="preserve"><value>Scegli la valuta per questo ordine. I nuovi ordini utilizzano per impostazione predefinita la valuta del tuo dipartimento.</value></data>
+  <data name="ParLevels" xml:space="preserve">
+    <value>Minimo per ubicazione</value>
+  </data>
+  <data name="ParLevelsHint" xml:space="preserve">
+    <value>Un’ubicazione pari o inferiore al proprio minimo genera un avviso di scorta bassa per quell’ubicazione, anche quando il totale del dipartimento è sufficiente. Il minimo e il punto di riordino sopra restano il controllo per l’intero dipartimento.</value>
+  </data>
+  <data name="ParLevelAddLocation" xml:space="preserve">
+    <value>Aggiungi un’ubicazione</value>
+  </data>
+  <data name="ParLevelMinimum" xml:space="preserve">
+    <value>Minimo lì</value>
+  </data>
+  <data name="ParLevelsRemoveHint" xml:space="preserve">
+    <value>Svuota il minimo di un’ubicazione per rimuoverlo.</value>
+  </data>
+  <data name="InvalidParLevel" xml:space="preserve">
+    <value>Ogni ubicazione può avere un minimo, pari a 0 o superiore.</value>
+  </data>
 </root>

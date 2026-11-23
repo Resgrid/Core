@@ -34,6 +34,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public Func<int, string, Task> ProcessUnitStatusAlertEvent;
 		public Func<int, string, Task> ProcessUnitActiveRolesEvent;
 		public Func<int, string, string, Task> ProcessOutstandingRequirementsEvent;
+		public Func<int, string, string, Task> ProcessDispatcherDeskEvent;
+		public Func<int, string, string, Task> ProcessDispatcherQueueEvent;
 		public Func<int, string, string, Task> ProcessUnitNavigationEvent;
 		public Func<int, string, string, Task> ProcessRecurringCallAlertsEvent;
 		public Func<int, string, string, Task> ProcessAiDestinationAdviceEvent;
@@ -205,6 +207,12 @@ namespace Resgrid.Providers.Bus.Rabbit
 							case EventingTypes.UnitNavigationUpdated:
 								if (ProcessUnitNavigationEvent != null) await ProcessUnitNavigationEvent.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId, eventingMessage.Payload);
 								break;
+							case EventingTypes.DispatcherDeskUpdated:
+								if (ProcessDispatcherDeskEvent != null) await ProcessDispatcherDeskEvent.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId, eventingMessage.Payload);
+								break;
+							case EventingTypes.DispatcherQueueUpdated:
+								if (ProcessDispatcherQueueEvent != null) await ProcessDispatcherQueueEvent.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId, eventingMessage.Payload);
+								break;
 							case EventingTypes.SessionEvent:
 								if (ProcessSessionEvent != null) await ProcessSessionEvent.Invoke(eventingMessage.ItemId, eventingMessage.Payload);
 								break;
@@ -283,6 +291,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public void RegisterForOutstandingRequirementsEvents(Func<int, string, string, Task> outstandingRequirementsEvent) => ProcessOutstandingRequirementsEvent = outstandingRequirementsEvent;
 
 		public void RegisterForUnitNavigationEvents(Func<int, string, string, Task> unitNavigationEvent) => ProcessUnitNavigationEvent = unitNavigationEvent;
+
+		public void RegisterForDispatcherDeskEvents(Func<int, string, string, Task> dispatcherDeskEvent) => ProcessDispatcherDeskEvent = dispatcherDeskEvent;
+
+		public void RegisterForDispatcherQueueEvents(Func<int, string, string, Task> dispatcherQueueEvent) => ProcessDispatcherQueueEvent = dispatcherQueueEvent;
 
 		public void RegisterForRecurringCallAlertsEvents(Func<int, string, string, Task> recurringCallAlertsEvent) => ProcessRecurringCallAlertsEvent = recurringCallAlertsEvent;
 

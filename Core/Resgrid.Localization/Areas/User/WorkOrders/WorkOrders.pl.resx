@@ -405,4 +405,13 @@
   <data name="DepartmentCurrencyHelp" xml:space="preserve"><value>Walutą zarządza się w ustawieniach zleceń pracy. Istniejące zlecenia zachowują zapisaną walutę.</value></data>
   <data name="DepartmentCurrencySettingsHelp" xml:space="preserve"><value>Dotyczy nowych zleceń i ich opłat dostawców. Istniejące koszty i progi zatwierdzania zachowują pierwotną walutę. Jeśli szablon konserwacji używa innej waluty, szacowany koszt nowych zleceń pozostaje pusty do sprawdzenia.</value></data>
   <data name="DepartmentThresholdHelp" xml:space="preserve"><value>Wprowadź próg zatwierdzania w wybranej powyżej walucie jednostki. Progi istniejących zleceń w innych walutach zostają zachowane.</value></data>
+  <data name="SetUnitOutOfService" xml:space="preserve">
+    <value>Wycofaj jednostkę ze służby</value>
+  </data>
+  <data name="SetUnitOutOfServiceHelp" xml:space="preserve">
+    <value>Zapisanie nakłada na jednostkę blokadę bezpieczeństwa. Blokadę zdejmuje się osobno, przez kogoś innego niż osoba wykonująca pracę; zamknięcie zlecenia nie przywraca jednostki do służby.</value>
+  </data>
+  <data name="HoldReasonOrderOutOfService" xml:space="preserve">
+    <value>Wycofana ze służby przez zlecenie pracy.</value>
+  </data>
 </root>

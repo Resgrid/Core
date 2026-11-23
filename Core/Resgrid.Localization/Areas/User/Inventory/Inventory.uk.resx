@@ -795,4 +795,22 @@
   <data name="Inactive" xml:space="preserve"><value>Неактивний</value></data>
   <data name="M4SupplierHelp" xml:space="preserve"><value>Немає потрібного постачальника? Додайте його на сторінці постачальників.</value></data>
   <data name="M4PurchaseOrderCurrencyHelp" xml:space="preserve"><value>Виберіть валюту для цього замовлення. Нові замовлення за замовчуванням використовують валюту вашого підрозділу.</value></data>
+  <data name="ParLevels" xml:space="preserve">
+    <value>Мінімум у кожному місці</value>
+  </data>
+  <data name="ParLevelsHint" xml:space="preserve">
+    <value>Місце, де запас досягає власного мінімуму або нижче, створює сповіщення про низький запас для цього місця, навіть коли загальний запас підрозділу достатній. Мінімум і точка дозамовлення вище залишаються перевіркою для всього підрозділу.</value>
+  </data>
+  <data name="ParLevelAddLocation" xml:space="preserve">
+    <value>Додати місце</value>
+  </data>
+  <data name="ParLevelMinimum" xml:space="preserve">
+    <value>Мінімум там</value>
+  </data>
+  <data name="ParLevelsRemoveHint" xml:space="preserve">
+    <value>Очистьте мінімум місця, щоб видалити його.</value>
+  </data>
+  <data name="InvalidParLevel" xml:space="preserve">
+    <value>Кожне місце може мати один мінімум, 0 або більше.</value>
+  </data>
 </root>

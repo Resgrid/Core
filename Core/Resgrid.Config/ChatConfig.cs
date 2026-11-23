@@ -39,6 +39,17 @@
 		public static string NovuChatWorkflowId = "user-chat-message";
 
 		/// <summary>
+		/// Novu workflow for dispatcher desk pushes (offers, queue alerts, desk messages, break reminders) to the Dispatch
+		/// app's own subscriber, {code}_Dispatch_User_{userId}. Empty uses <see cref="NovuDispatchUserWorkflowId"/>, which
+		/// carries the same payload; set it only once a dedicated workflow exists in Novu.
+		/// </summary>
+		public static string NovuDispatcherDeskWorkflowId = "";
+
+		/// <summary>The workflow desk pushes are triggered on: <see cref="NovuDispatcherDeskWorkflowId"/>, else the user dispatch one.</summary>
+		public static string EffectiveDispatcherDeskWorkflowId() =>
+			string.IsNullOrWhiteSpace(NovuDispatcherDeskWorkflowId) ? NovuDispatchUserWorkflowId : NovuDispatcherDeskWorkflowId;
+
+		/// <summary>
 		/// GIF search provider: "giphy" is the only supported value (Tenor stopped accepting new API
 		/// clients in January 2026 and was removed). Empty disables GIF search.
 		/// </summary>

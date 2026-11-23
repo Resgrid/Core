@@ -2292,4 +2292,10 @@
   <data name="ImportMapPoisHelp" xml:space="preserve">
     <value>Eine KML-, KMZ- oder CSV-Datei als Karten-POIs (Orientierungspunkte) importieren, getrennt von den Hydrantendatensätzen.</value>
   </data>
+  <data name="RatedFlowGpm" xml:space="preserve">
+    <value>Nennwert bei 20 psi (gpm)</value>
+  </data>
+  <data name="RatedFlowHelp" xml:space="preserve">
+    <value>Nenndurchfluss nach NFPA 291: gemessener Durchfluss × ((Ruhedruck − 20) / (Ruhedruck − Fließdruck))^0.54. Die Durchflussklasse wird daraus bestimmt, wenn Ruhe- und Fließdruck eingetragen sind.</value>
+  </data>
 </root>

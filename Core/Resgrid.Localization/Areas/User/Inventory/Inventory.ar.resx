@@ -676,4 +676,22 @@
   <data name="BatchSerial" xml:space="preserve"><value>الدفعة\الرقم التسلسلي</value></data>
   <data name="AddType" xml:space="preserve"><value>إضافة نوع</value></data>
   <data name="EditInventoryTypeHeader" xml:space="preserve"><value>تعديل نوع المخزون</value></data>
+  <data name="ParLevels" xml:space="preserve">
+    <value>الحد الأدنى في كل موقع</value>
+  </data>
+  <data name="ParLevelsHint" xml:space="preserve">
+    <value>يؤدي وصول موقع إلى حده الأدنى أو أقل إلى تنبيه انخفاض المخزون لذلك الموقع، حتى عندما يكون إجمالي القسم كافيًا. يظل الحد الأدنى ونقطة إعادة الطلب أعلاه فحصًا على مستوى القسم.</value>
+  </data>
+  <data name="ParLevelAddLocation" xml:space="preserve">
+    <value>إضافة موقع</value>
+  </data>
+  <data name="ParLevelMinimum" xml:space="preserve">
+    <value>الحد الأدنى هناك</value>
+  </data>
+  <data name="ParLevelsRemoveHint" xml:space="preserve">
+    <value>امسح الحد الأدنى لموقع لإزالته.</value>
+  </data>
+  <data name="InvalidParLevel" xml:space="preserve">
+    <value>يمكن أن يكون لكل موقع حد أدنى واحد، قيمته 0 أو أكثر.</value>
+  </data>
 </root>

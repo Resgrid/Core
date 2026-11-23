@@ -1,0 +1,228 @@
+@model Resgrid.Web.Areas.User.Models.DispatcherDesk.DispatcherDeskIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatcherDesk.DispatcherDesk> desk
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> shiftsLocalizer
+@{
+	ViewBag.Title = "Resgrid | " + desk["DeskBoardTitle"];
+
+	// Text the board script puts on the page (it escapes it there).
+	var strings = new[]
+	{
+		"State.Offline", "State.Available", "State.Busy", "State.Away", "State.OnBreak",
+		"Kind.PendingCall", "Kind.ScheduledCall", "Kind.Text", "Kind.Voice", "Kind.Email", "Kind.Chat", "Kind.Other",
+		"QueueState.Queued", "QueueState.Offered", "QueueState.Accepted",
+		"BreakType.Break", "BreakType.Meal", "BreakType.Personal", "BreakType.Other",
+		"DeskSupervisorBadge", "YouBadge", "OffDutyBadge", "NotSignedInBadge", "EscalatedBadge",
+		"BackInFormat", "OverdueFormat", "DueBackNow", "EndsFormat", "NextBreakLabel", "WorkLoadFormat",
+		"EndBreakButton", "SetAwayButton", "SetAvailableButton", "ReleaseButton", "TransferButton", "ViewCallButton",
+		"NoDispatchersOnDesk", "QueueEmpty", "BoardUpdatedFormat", "BoardLoadFailed", "ActionFailed", "Unassigned",
+		"BelowMinimumFormat", "CoverageSlotFormat", "EndBreakConfirm", "ReleaseConfirm", "NoTransferTargets"
+	}.ToDictionary(x => x, x => desk[x].Value);
+}
+
+@section Styles
+{
+	<link rel="stylesheet" href="~/css/dispatcher-desk.css" asp-append-version="true" />
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-6">
+		<h2>@desk["DeskBoardTitle"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Shifts" asp-action="Index" asp-route-area="User">@shiftsLocalizer["ShiftsHeader"]</a></li>
+			<li class="active"><strong>@desk["DeskBoardTitle"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-6">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-primary top-button" asp-controller="DispatcherDesk" asp-action="Breaks" asp-route-area="User"><i class="fa fa-coffee"></i> @desk["BreaksTitle"]</a>
+			<a class="btn btn-success top-button" asp-controller="Shifts" asp-action="OnDuty" asp-route-area="User">@shiftsLocalizer["OnDutyButton"]</a>
+			@if (Model.CanSupervise || Model.IsAdmin)
+			{
+				<a class="btn btn-info top-button" asp-controller="DispatcherDesk" asp-action="Activity" asp-route-area="User"><i class="fa fa-bar-chart"></i> @desk["ActivityTitle"]</a>
+			}
+			@if (Model.IsAdmin)
+			{
+				<a class="btn btn-white top-button" asp-controller="DispatcherDesk" asp-action="Settings" asp-route-area="User"><i class="fa fa-cog"></i> @desk["SettingsTitle"]</a>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content" id="dispatcherDeskBoard">
+	@if (!Model.DeskEnabled)
+	{
+		<div class="alert alert-info">
+			<i class="fa fa-info-circle"></i> @desk["DeskRoutingOffNotice"]
+			@if (Model.IsAdmin)
+			{
+				<a asp-controller="DispatcherDesk" asp-action="Settings" asp-route-area="User" class="alert-link">@desk["SettingsTitle"]</a>
+			}
+		</div>
+	}
+	<div id="deskBoardAlert" class="alert alert-danger" style="display:none;" role="alert"></div>
+
+	<div class="row">
+		<div class="col-sm-3 col-xs-6">
+			<div class="widget style1 navy-bg desk-stat">
+				<span>@desk["OnDutyStat"]</span>
+				<h2 class="font-bold" id="deskOnDuty">–</h2>
+			</div>
+		</div>
+		<div class="col-sm-3 col-xs-6">
+			<div class="widget style1 lazur-bg desk-stat" id="deskAvailableWidget">
+				<span>@desk["AvailableStat"]</span>
+				<h2 class="font-bold"><span id="deskAvailable">–</span> <small id="deskMinimum" class="desk-stat-minimum"></small></h2>
+			</div>
+		</div>
+		<div class="col-sm-3 col-xs-6">
+			<div class="widget style1 yellow-bg desk-stat">
+				<span>@desk["OnBreakStat"]</span>
+				<h2 class="font-bold" id="deskOnBreak">–</h2>
+			</div>
+		</div>
+		<div class="col-sm-3 col-xs-6">
+			<div class="widget style1 red-bg desk-stat">
+				<span>@desk["WaitingStat"]</span>
+				<h2 class="font-bold" id="deskWaiting">–</h2>
+			</div>
+		</div>
+	</div>
+
+	<div class="ibox float-e-margins">
+		<div class="ibox-title">
+			<h5>@desk["TodayCoverageHeader"]</h5>
+			<div class="ibox-tools">
+				<small class="text-muted" id="deskUpdated"></small>
+			</div>
+		</div>
+		<div class="ibox-content">
+			<div class="desk-coverage-strip" id="deskCoverage" role="img" aria-label="@desk["TodayCoverageHeader"]"></div>
+			<div class="desk-coverage-legend text-muted">
+				<span><i class="desk-swatch desk-swatch-ok"></i> @desk["LegendCovered"]</span>
+				<span><i class="desk-swatch desk-swatch-below"></i> @desk["LegendBelowMinimum"]</span>
+				<span><i class="desk-swatch desk-swatch-overlap"></i> @desk["LegendOverlap"]</span>
+				<span><i class="desk-swatch desk-swatch-none"></i> @desk["LegendNobodyOnDuty"]</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-lg-7">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>@desk["DispatchersHeader"]</h5>
+				</div>
+				<div class="ibox-content">
+					<div class="table-responsive">
+						<table class="table table-striped table-condensed desk-table">
+							<thead>
+								<tr>
+									<th>@desk["DispatcherColumn"]</th>
+									<th>@desk["StateColumn"]</th>
+									<th>@desk["ShiftColumn"]</th>
+									<th>@desk["BreakColumn"]</th>
+									<th>@desk["WorkColumn"]</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody id="deskMembers"></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-5">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>@desk["QueueHeader"]</h5>
+				</div>
+				<div class="ibox-content">
+					<div class="table-responsive">
+						<table class="table table-striped table-condensed desk-table">
+							<thead>
+								<tr>
+									<th>@desk["ItemColumn"]</th>
+									<th>@desk["AgeColumn"]</th>
+									<th>@desk["StateColumn"]</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody id="deskQueue"></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="deskAwayModal" tabindex="-1" role="dialog" aria-labelledby="deskAwayTitle">
+	<div class="modal-dialog modal-sm" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="@desk["CloseButton"]"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="deskAwayTitle">@desk["SetAwayButton"]</h4>
+			</div>
+			<div class="modal-body">
+				<input type="hidden" id="deskAwayUserId" />
+				<label for="deskAwayReason">@desk["AwayReasonLabel"]</label>
+				<input type="text" id="deskAwayReason" class="form-control" maxlength="250" />
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-white" data-dismiss="modal">@desk["CancelButton"]</button>
+				<button type="button" class="btn btn-primary" id="deskAwaySave">@desk["SetAwayButton"]</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="deskTransferModal" tabindex="-1" role="dialog" aria-labelledby="deskTransferTitle">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="@desk["CloseButton"]"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="deskTransferTitle">@desk["TransferButton"]</h4>
+			</div>
+			<div class="modal-body">
+				<input type="hidden" id="deskTransferItemId" />
+				<div class="form-group">
+					<label for="deskTransferTo">@desk["TransferToLabel"]</label>
+					<select id="deskTransferTo" class="form-control"></select>
+				</div>
+				<div class="form-group">
+					<label for="deskTransferNote">@desk["NoteLabel"]</label>
+					<input type="text" id="deskTransferNote" class="form-control" maxlength="500" />
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-white" data-dismiss="modal">@desk["CancelButton"]</button>
+				<button type="button" class="btn btn-primary" id="deskTransferSave">@desk["TransferButton"]</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<form id="deskActionToken">@Html.AntiForgeryToken()</form>
+
+@section Scripts
+{
+	<script src="~/js/app/common/signalr/resgrid.common.signalr.js" asp-append-version="true"></script>
+	<script src="~/js/app/internal/dispatcherdesk/resgrid.dispatcherdesk.common.js" asp-append-version="true"></script>
+	<script src="~/js/app/internal/dispatcherdesk/resgrid.dispatcherdesk.board.js" asp-append-version="true"></script>
+	<script>
+		$(document).ready(function () {
+			resgrid.dispatcherdesk.board.init({
+				boardUrl: '@Url.Action("Board", "DispatcherDesk", new { area = "User" })',
+				endBreakUrl: '@Url.Action("EndBreak", "DispatcherDesk", new { area = "User" })',
+				setAwayUrl: '@Url.Action("SetAway", "DispatcherDesk", new { area = "User" })',
+				setAvailableUrl: '@Url.Action("SetAvailable", "DispatcherDesk", new { area = "User" })',
+				releaseUrl: '@Url.Action("ReleaseItem", "DispatcherDesk", new { area = "User" })',
+				transferUrl: '@Url.Action("TransferItem", "DispatcherDesk", new { area = "User" })',
+				viewCallUrl: '@Url.Action("ViewCall", "Dispatch", new { area = "User" })',
+				pollSeconds: @Model.PollSeconds,
+				strings: @Html.ScriptJson(strings)
+			});
+		});
+	</script>
+}

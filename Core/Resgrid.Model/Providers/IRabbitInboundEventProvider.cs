@@ -45,6 +45,12 @@ namespace Resgrid.Model.Providers
 		/// <summary>A navigating unit's live ETA changed or ended (department id, unit id, ids-and-state payload without the ETA).</summary>
 		void RegisterForUnitNavigationEvents(Func<int, string, string, Task> unitNavigationEvent);
 
+		/// <summary>The dispatcher desk board changed (department id, dispatcher user id or empty, payload { userId, state }).</summary>
+		void RegisterForDispatcherDeskEvents(Func<int, string, string, Task> dispatcherDeskEvent);
+
+		/// <summary>The dispatcher queue changed (department id, queue item id, payload { itemId, state, assignedUserId, kind }).</summary>
+		void RegisterForDispatcherQueueEvents(Func<int, string, string, Task> dispatcherQueueEvent);
+
 		/// <summary>Recurring call alerts changed (department id, schedule id, payload { alertId, kind, raised }).</summary>
 		void RegisterForRecurringCallAlertsEvents(Func<int, string, string, Task> recurringCallAlertsEvent);
 

@@ -90,7 +90,7 @@ NARR: 55 YOM";
 				Mock.Of<IMessageService>(), Mock.Of<IFileService>(), units.Object, _geo.Object, Mock.Of<ICallDispatchStatusService>(),
 				Mock.Of<IDispatchRecommendationService>(), Mock.Of<IFeatureToggleService>(), Mock.Of<Resgrid.Model.AiDispatch.IAiDispatchAdminService>(),
 				Mock.Of<IInboundEmailReceiptsService>(s => s.ClaimAsync(It.IsAny<string>(), It.IsAny<InboundEmailKinds>(), It.IsAny<CancellationToken>()) == Task.FromResult(InboundEmailReceiptClaim.Untracked)),
-				Mock.Of<IIntakeService>(), Mock.Of<Resgrid.Model.Providers.IEmailSender>());
+				Mock.Of<IIntakeService>(), Mock.Of<Resgrid.Model.Providers.IEmailSender>(), Mock.Of<IDispatcherEmailCallService>());
 		}
 
 		private static PostmarkInboundMessage GroupEmail(string subject, string textBody, string htmlBody = null)

@@ -221,6 +221,11 @@
 				</div>
 			}
 
+			@if (Model.Dispatch != null)
+			{
+				<partial name="_ShiftDayDispatchers" model="Model" />
+			}
+
 			@if (Model.CanAddPerson)
 			{
 				<div class="ibox float-e-margins">
@@ -348,6 +353,7 @@
 		$(document).ready(function () {
 			if ($.fn.select2) {
 				$('#addPersonUserId').select2();
+				$('#addDispatcherUserId').select2();
 			}
 		});
 	</script>

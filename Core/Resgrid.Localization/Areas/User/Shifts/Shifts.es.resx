@@ -1109,4 +1109,10 @@
   <data name="ShiftErrorNotEligible" xml:space="preserve">
     <value>Esa persona no cumple los requisitos para este puesto.</value>
   </data>
+  <data name="ShiftErrorGroupFull" xml:space="preserve">
+    <value>Todos los puestos de este grupo para sus funciones están ocupados.</value>
+  </data>
+  <data name="ShiftErrorRoleRequired" xml:space="preserve">
+    <value>Necesita una de las funciones que pide este grupo para inscribirse.</value>
+  </data>
 </root>

@@ -405,4 +405,13 @@
   <data name="DepartmentCurrencyHelp" xml:space="preserve"><value>تُدار العملة في إعدادات أوامر العمل. تحتفظ الأوامر الحالية بعملتها المسجلة.</value></data>
   <data name="DepartmentCurrencySettingsHelp" xml:space="preserve"><value>ينطبق على أوامر العمل الجديدة ورسوم مورديها. تحتفظ التكاليف وحدود الموافقة الحالية بعملتها الأصلية. إذا استخدم قالب الصيانة عملة أخرى، تُترك التكلفة المقدرة في الأوامر الجديدة فارغة للمراجعة.</value></data>
   <data name="DepartmentThresholdHelp" xml:space="preserve"><value>أدخل حد الموافقة بعملة القسم المحددة أعلاه. تُحفظ حدود الأوامر الحالية بالعملات الأخرى.</value></data>
+  <data name="SetUnitOutOfService" xml:space="preserve">
+    <value>إخراج الوحدة من الخدمة</value>
+  </data>
+  <data name="SetUnitOutOfServiceHelp" xml:space="preserve">
+    <value>يؤدي الحفظ إلى وضع الوحدة تحت تعليق السلامة. يُرفع التعليق بشكل منفصل، من قِبل شخص غير الذي أنجز العمل؛ ولا يعيد إغلاق أمر العمل الوحدة إلى الخدمة.</value>
+  </data>
+  <data name="HoldReasonOrderOutOfService" xml:space="preserve">
+    <value>أُخرجت من الخدمة بموجب أمر العمل.</value>
+  </data>
 </root>

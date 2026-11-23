@@ -1,0 +1,967 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AcceptedColumn" xml:space="preserve">
+    <value>Прийнято</value>
+  </data>
+  <data name="AcknowledgeTextsHelp" xml:space="preserve">
+    <value>Відправник отримує автоматичну відповідь, коли його SMS надходить до диспетчера.</value>
+  </data>
+  <data name="AcknowledgeTextsLabel" xml:space="preserve">
+    <value>Автоматично підтверджувати SMS</value>
+  </data>
+  <data name="ActionDone" xml:space="preserve">
+    <value>Готово.</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>Не вдалося. Спробуйте ще раз.</value>
+  </data>
+  <data name="ActivityRangeHelpFormat" xml:space="preserve">
+    <value>До {0} днів.</value>
+  </data>
+  <data name="ActivityTitle" xml:space="preserve">
+    <value>Активність диспетчерів</value>
+  </data>
+  <data name="AddBreakRow" xml:space="preserve">
+    <value>Додати перерву</value>
+  </data>
+  <data name="AddBreakTitle" xml:space="preserve">
+    <value>Запланувати перерву</value>
+  </data>
+  <data name="AddDispatcherButton" xml:space="preserve">
+    <value>Додати диспетчера</value>
+  </data>
+  <data name="AddDispatcherHeader" xml:space="preserve">
+    <value>Додати диспетчера на цей день</value>
+  </data>
+  <data name="AgeColumn" xml:space="preserve">
+    <value>Очікує</value>
+  </data>
+  <data name="AllShiftDays" xml:space="preserve">
+    <value>Усі дні змін</value>
+  </data>
+  <data name="AllowSelfScheduledBreaksHelp" xml:space="preserve">
+    <value>Диспетчери цієї зміни можуть самі планувати й переносити свої перерви. Інакше це можуть робити лише старші пульта та керівники змін.</value>
+  </data>
+  <data name="AllowSelfScheduledBreaksLabel" xml:space="preserve">
+    <value>Диспетчери самі планують перерви</value>
+  </data>
+  <data name="AllowUnscheduledDutyHelp" xml:space="preserve">
+    <value>Диспетчери можуть входити на пульт без зміни (заходи, об'єкти, заміни).</value>
+  </data>
+  <data name="AllowUnscheduledDutyLabel" xml:space="preserve">
+    <value>Дозволити чергування без зміни</value>
+  </data>
+  <data name="AutoReturnHelp" xml:space="preserve">
+    <value>Знову робить диспетчера доступним через стільки хвилин після закінчення тривалості перерви. 0 = ніколи (він залишається на перерві, доки не повернеться або старший її не завершить).</value>
+  </data>
+  <data name="AutoReturnLabel" xml:space="preserve">
+    <value>Автоматичне повернення через (хвилин)</value>
+  </data>
+  <data name="AvailableStat" xml:space="preserve">
+    <value>Доступні</value>
+  </data>
+  <data name="AvgAcceptColumn" xml:space="preserve">
+    <value>Сер. до прийняття</value>
+  </data>
+  <data name="AvgCompleteColumn" xml:space="preserve">
+    <value>Сер. до завершення</value>
+  </data>
+  <data name="AwayReasonLabel" xml:space="preserve">
+    <value>Причина (необов'язково)</value>
+  </data>
+  <data name="BackInFormat" xml:space="preserve">
+    <value>Повернеться через {0}</value>
+  </data>
+  <data name="BelowMinimumFormat" xml:space="preserve">
+    <value>Лише {0} доступно (мінімум {1})</value>
+  </data>
+  <data name="BoardLoadFailed" xml:space="preserve">
+    <value>Не вдалося завантажити табло пульта. Незабаром буде повторна спроба.</value>
+  </data>
+  <data name="BoardUpdatedFormat" xml:space="preserve">
+    <value>Оновлено {0}</value>
+  </data>
+  <data name="BreakColumn" xml:space="preserve">
+    <value>Перерва</value>
+  </data>
+  <data name="BreakLengthColumn" xml:space="preserve">
+    <value>Тривалість (хвилин)</value>
+  </data>
+  <data name="BreakMinutesColumn" xml:space="preserve">
+    <value>Хвилин перерв</value>
+  </data>
+  <data name="BreakPlanEmpty" xml:space="preserve">
+    <value>Перерв не заплановано.</value>
+  </data>
+  <data name="BreakPlanHelp" xml:space="preserve">
+    <value>Ціль = хвилини від початку зміни; залиште порожнім, щоб розподілити перерву рівномірно. «Запланувати перерви» розподіляє їх між диспетчерами дня так, щоб вони за можливості не перетиналися, і ніколи не залишає на посту менше мінімуму.</value>
+  </data>
+  <data name="BreakPlanLabel" xml:space="preserve">
+    <value>План перерв</value>
+  </data>
+  <data name="BreakPlannerButton" xml:space="preserve">
+    <value>Планувальник перерв</value>
+  </data>
+  <data name="BreakReminderHelp" xml:space="preserve">
+    <value>За скільки хвилин до запланованої перерви диспетчер отримує нагадування. 0 = лише коли настає час.</value>
+  </data>
+  <data name="BreakReminderLabel" xml:space="preserve">
+    <value>Нагадування про перерву (хвилин до)</value>
+  </data>
+  <data name="BreakState.Active" xml:space="preserve">
+    <value>Зараз на перерві</value>
+  </data>
+  <data name="BreakState.Completed" xml:space="preserve">
+    <value>Використана</value>
+  </data>
+  <data name="BreakState.Missed" xml:space="preserve">
+    <value>Пропущена</value>
+  </data>
+  <data name="BreakState.Scheduled" xml:space="preserve">
+    <value>Запланована</value>
+  </data>
+  <data name="BreakTargetColumn" xml:space="preserve">
+    <value>Ціль (хвилин від початку)</value>
+  </data>
+  <data name="BreakTargetPlaceholder" xml:space="preserve">
+    <value>Рівномірно</value>
+  </data>
+  <data name="BreakTooltipFormat" xml:space="preserve">
+    <value>{0} · {1} · {2}</value>
+  </data>
+  <data name="BreakType.Break" xml:space="preserve">
+    <value>Перерва</value>
+  </data>
+  <data name="BreakType.Meal" xml:space="preserve">
+    <value>Обід</value>
+  </data>
+  <data name="BreakType.Other" xml:space="preserve">
+    <value>Інше</value>
+  </data>
+  <data name="BreakType.Personal" xml:space="preserve">
+    <value>Особиста</value>
+  </data>
+  <data name="BreakTypeColumn" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="BreaksColumn" xml:space="preserve">
+    <value>Перерви</value>
+  </data>
+  <data name="BreaksMissedColumn" xml:space="preserve">
+    <value>Пропущені перерви</value>
+  </data>
+  <data name="BreaksPlannedFormat" xml:space="preserve">
+    <value>Заплановано перерв: {0}.</value>
+  </data>
+  <data name="BreaksTitle" xml:space="preserve">
+    <value>Перерви диспетчерів</value>
+  </data>
+  <data name="ByDispatcherHeader" xml:space="preserve">
+    <value>За диспетчерами</value>
+  </data>
+  <data name="ByKindHeader" xml:space="preserve">
+    <value>Робота за видами</value>
+  </data>
+  <data name="CancelBreakButton" xml:space="preserve">
+    <value>Видалити перерву</value>
+  </data>
+  <data name="CancelBreakConfirm" xml:space="preserve">
+    <value>Видалити цю заплановану перерву?</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="CapacityHelp" xml:space="preserve">
+    <value>Скільки переданих завдань диспетчер може вести одночасно, перш ніж вважатиметься зайнятим.</value>
+  </data>
+  <data name="CapacityLabel" xml:space="preserve">
+    <value>Завдань на диспетчера</value>
+  </data>
+  <data name="CloseButton" xml:space="preserve">
+    <value>Закрити</value>
+  </data>
+  <data name="CompletedColumn" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="ConversationJoinHelp" xml:space="preserve">
+    <value>Наступне SMS чи повідомлення в чаті від того самого відправника протягом цих хвилин приєднується до тієї ж розмови.</value>
+  </data>
+  <data name="ConversationJoinLabel" xml:space="preserve">
+    <value>Вікно розмови (хвилин)</value>
+  </data>
+  <data name="CountColumn" xml:space="preserve">
+    <value>Завдання</value>
+  </data>
+  <data name="CoverageLane" xml:space="preserve">
+    <value>Покриття</value>
+  </data>
+  <data name="CoverageSlotFormat" xml:space="preserve">
+    <value>{0}: доступно {1}, на перерві {2}, на чергуванні {3}</value>
+  </data>
+  <data name="CoverageTimelineHeader" xml:space="preserve">
+    <value>Шкала покриття</value>
+  </data>
+  <data name="DateLabel" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="DeclinedColumn" xml:space="preserve">
+    <value>Відхилено</value>
+  </data>
+  <data name="DefaultBreakPlanHelp" xml:space="preserve">
+    <value>Перерви, які отримує кожен диспетчер на зміні без власного плану перерв.</value>
+  </data>
+  <data name="DefaultBreakPlanLabel" xml:space="preserve">
+    <value>Типовий план перерв</value>
+  </data>
+  <data name="DeskBoardButton" xml:space="preserve">
+    <value>Табло пульта</value>
+  </data>
+  <data name="DeskBoardTitle" xml:space="preserve">
+    <value>Диспетчерський пульт</value>
+  </data>
+  <data name="DeskRoutingOffNotice" xml:space="preserve">
+    <value>Передавання роботи диспетчерам вимкнено. Графіки та перерви працюють і далі; адміністратор підрозділу може ввімкнути його в налаштуваннях диспетчерського пульта.</value>
+  </data>
+  <data name="DeskSupervisorBadge" xml:space="preserve">
+    <value>Старший</value>
+  </data>
+  <data name="DeskSupervisorColumn" xml:space="preserve">
+    <value>Старший пульта</value>
+  </data>
+  <data name="DispatchOnlyBadge" xml:space="preserve">
+    <value>Лише диспетчерська</value>
+  </data>
+  <data name="DispatchPositionsFilled" xml:space="preserve">
+    <value>Диспетчерські місця заповнено</value>
+  </data>
+  <data name="DispatchedColumn" xml:space="preserve">
+    <value>Направлено</value>
+  </data>
+  <data name="DispatcherAddedToDay" xml:space="preserve">
+    <value>Диспетчера додано на день.</value>
+  </data>
+  <data name="DispatcherColumn" xml:space="preserve">
+    <value>Диспетчер</value>
+  </data>
+  <data name="DispatcherDeskMenu" xml:space="preserve">
+    <value>Диспетчерський пульт</value>
+  </data>
+  <data name="DispatcherRemovedFromDay" xml:space="preserve">
+    <value>Диспетчера знято з дня.</value>
+  </data>
+  <data name="DispatcherSignedUp" xml:space="preserve">
+    <value>Ви записані диспетчером на цей день.</value>
+  </data>
+  <data name="DispatcherSignupApproved" xml:space="preserve">
+    <value>Запис диспетчера схвалено.</value>
+  </data>
+  <data name="DispatcherSignupDenied" xml:space="preserve">
+    <value>Запис диспетчера відхилено.</value>
+  </data>
+  <data name="DispatcherSignupNeedsApproval" xml:space="preserve">
+    <value>На цій зміні записи диспетчерів схвалює керівник змін.</value>
+  </data>
+  <data name="DispatcherSignupPending" xml:space="preserve">
+    <value>Ваш запис диспетчером очікує схвалення.</value>
+  </data>
+  <data name="DispatcherWithdrawn" xml:space="preserve">
+    <value>Ви більше не диспетчер у цей день.</value>
+  </data>
+  <data name="DispatchersHeader" xml:space="preserve">
+    <value>Диспетчери</value>
+  </data>
+  <data name="DispatchersOnDutyHeader" xml:space="preserve">
+    <value>Диспетчери на чергуванні</value>
+  </data>
+  <data name="DispatchersTabIntro" xml:space="preserve">
+    <value>Диспетчери працюють за диспетчерським пультом у застосунку Dispatch. Укажіть, чи має ця зміна диспетчерів, скільки їх потрібно і як плануються їхні перерви.</value>
+  </data>
+  <data name="DueBackNow" xml:space="preserve">
+    <value>Має повернутися зараз</value>
+  </data>
+  <data name="DutyColumn" xml:space="preserve">
+    <value>На чергуванні</value>
+  </data>
+  <data name="EditBreakTitle" xml:space="preserve">
+    <value>Змінити перерву</value>
+  </data>
+  <data name="EmailCallMode.AutoDispatch" xml:space="preserve">
+    <value>Направляти одразу</value>
+  </data>
+  <data name="EmailCallMode.AutoDispatchHelp" xml:space="preserve">
+    <value>Виклик з електронного листа надсилається одразу (як і раніше).</value>
+  </data>
+  <data name="EmailCallMode.EnhancedAi" xml:space="preserve">
+    <value>Enhanced AI в очікувальні</value>
+  </data>
+  <data name="EmailCallMode.EnhancedAiHelp" xml:space="preserve">
+    <value>Enhanced AI перетворює лист на очікувальний виклик (тип, пріоритет, адреса), який диспетчер перевіряє й надсилає. Потрібен Enhanced AI.</value>
+  </data>
+  <data name="EmailCallMode.Pending" xml:space="preserve">
+    <value>Зберігати як очікувальний</value>
+  </data>
+  <data name="EmailCallMode.PendingHelp" xml:space="preserve">
+    <value>Виклик з електронного листа зберігається як очікувальний, щоб диспетчер його перевірив і надіслав.</value>
+  </data>
+  <data name="EmailCallModeIntro" xml:space="preserve">
+    <value>Чим стає виклик, надісланий електронною поштою на диспетчерську адресу підрозділу.</value>
+  </data>
+  <data name="EmailCallModeLabel" xml:space="preserve">
+    <value>Виклики електронною поштою</value>
+  </data>
+  <data name="EnabledHelp" xml:space="preserve">
+    <value>Пропонувати очікувальні та заплановані виклики, SMS, телефонні дзвінки, листи й чати диспетчерам на чергуванні в застосунку Dispatch.</value>
+  </data>
+  <data name="EnabledLabel" xml:space="preserve">
+    <value>Передавати роботу диспетчерам на чергуванні</value>
+  </data>
+  <data name="EndBreakButton" xml:space="preserve">
+    <value>Завершити перерву</value>
+  </data>
+  <data name="EndBreakConfirm" xml:space="preserve">
+    <value>Завершити перерву {0} і зробити доступним?</value>
+  </data>
+  <data name="EndsFormat" xml:space="preserve">
+    <value>до {0}</value>
+  </data>
+  <data name="EnhancedAiUnavailable" xml:space="preserve">
+    <value>Enhanced AI недоступний для цього підрозділу.</value>
+  </data>
+  <data name="Error.AlreadyOnBreak" xml:space="preserve">
+    <value>Цей диспетчер уже на перерві.</value>
+  </data>
+  <data name="Error.AlreadyOnRoster" xml:space="preserve">
+    <value>Ця особа вже є в диспетчерському графіку на той день.</value>
+  </data>
+  <data name="Error.AtCapacity" xml:space="preserve">
+    <value>Цей диспетчер уже веде стільки роботи, скільки може.</value>
+  </data>
+  <data name="Error.BreakNotFound" xml:space="preserve">
+    <value>Перерву не знайдено.</value>
+  </data>
+  <data name="Error.BreakNotStartable" xml:space="preserve">
+    <value>Ця перерва вже почалася або завершилася, і її не можна змінити.</value>
+  </data>
+  <data name="Error.BreakOverlaps" xml:space="preserve">
+    <value>Ця перерва перетинається з іншою перервою того самого диспетчера.</value>
+  </data>
+  <data name="Error.ChannelUnavailable" xml:space="preserve">
+    <value>Цей канал недоступний для цього підрозділу.</value>
+  </data>
+  <data name="Error.CoverageTooLow" xml:space="preserve">
+    <value>Тоді доступних диспетчерів буде менше за мінімум.</value>
+  </data>
+  <data name="Error.DeskDisabled" xml:space="preserve">
+    <value>Диспетчерський пульт вимкнено для цього підрозділу.</value>
+  </data>
+  <data name="Error.DispatchersNotEnabled" xml:space="preserve">
+    <value>Ця зміна не має диспетчерів.</value>
+  </data>
+  <data name="Error.HoldingWork" xml:space="preserve">
+    <value>Диспетчер має роботу; спочатку поверніть її в чергу.</value>
+  </data>
+  <data name="Error.InvalidInput" xml:space="preserve">
+    <value>Деякі введені значення недійсні.</value>
+  </data>
+  <data name="Error.ItemNotAvailable" xml:space="preserve">
+    <value>Це завдання більше недоступне.</value>
+  </data>
+  <data name="Error.ItemNotFound" xml:space="preserve">
+    <value>Завдання не знайдено. Можливо, його вже оброблено.</value>
+  </data>
+  <data name="Error.NoCallbackNumber" xml:space="preserve">
+    <value>Для цього диспетчера не задано номер зворотного дзвінка.</value>
+  </data>
+  <data name="Error.None" xml:space="preserve">
+    <value>Помилок не сталося.</value>
+  </data>
+  <data name="Error.NotADispatcher" xml:space="preserve">
+    <value>Ця особа не може працювати за диспетчерським пультом: потрібен дозвіл на вхід у застосунок Dispatch.</value>
+  </data>
+  <data name="Error.NotAssignedToYou" xml:space="preserve">
+    <value>Це завдання не призначено вам.</value>
+  </data>
+  <data name="Error.NotOnBreak" xml:space="preserve">
+    <value>Цей диспетчер не на перерві.</value>
+  </data>
+  <data name="Error.NotOnDuty" xml:space="preserve">
+    <value>Цей диспетчер зараз не на чергуванні.</value>
+  </data>
+  <data name="Error.NotPermitted" xml:space="preserve">
+    <value>Вам не дозволено це робити.</value>
+  </data>
+  <data name="Error.NotSignedIn" xml:space="preserve">
+    <value>Цей диспетчер не ввійшов на пульт.</value>
+  </data>
+  <data name="Error.ShiftNotFound" xml:space="preserve">
+    <value>Зміну не знайдено.</value>
+  </data>
+  <data name="EscalatedBadge" xml:space="preserve">
+    <value>Ескальовано</value>
+  </data>
+  <data name="FilterDispatchersPlaceholder" xml:space="preserve">
+    <value>Фільтр диспетчерів...</value>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>З</value>
+  </data>
+  <data name="HeartbeatTimeoutHelp" xml:space="preserve">
+    <value>Хвилини без сигналу від застосунку Dispatch, після яких диспетчер перестає отримувати роботу. 0 = ніколи (телефон у режимі сну все одно отримує сповіщення; пропущені пропозиції натомість позначають його відсутнім).</value>
+  </data>
+  <data name="HeartbeatTimeoutLabel" xml:space="preserve">
+    <value>Тайм-аут сигналу (хвилин)</value>
+  </data>
+  <data name="HeldItemsFormat" xml:space="preserve">
+    <value>У роботі: {0}</value>
+  </data>
+  <data name="ItemColumn" xml:space="preserve">
+    <value>Завдання</value>
+  </data>
+  <data name="Kind.Chat" xml:space="preserve">
+    <value>Чат</value>
+  </data>
+  <data name="Kind.Email" xml:space="preserve">
+    <value>Електронний лист</value>
+  </data>
+  <data name="Kind.Other" xml:space="preserve">
+    <value>Інше</value>
+  </data>
+  <data name="Kind.PendingCall" xml:space="preserve">
+    <value>Очікувальний виклик</value>
+  </data>
+  <data name="Kind.ScheduledCall" xml:space="preserve">
+    <value>Запланований виклик</value>
+  </data>
+  <data name="Kind.Text" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="Kind.Voice" xml:space="preserve">
+    <value>Телефонний дзвінок</value>
+  </data>
+  <data name="KindColumn" xml:space="preserve">
+    <value>Вид</value>
+  </data>
+  <data name="LegendBelowMinimum" xml:space="preserve">
+    <value>Нижче мінімуму</value>
+  </data>
+  <data name="LegendCovered" xml:space="preserve">
+    <value>Покрито</value>
+  </data>
+  <data name="LegendDuty" xml:space="preserve">
+    <value>На чергуванні</value>
+  </data>
+  <data name="LegendMissed" xml:space="preserve">
+    <value>Пропущена</value>
+  </data>
+  <data name="LegendNobodyOnDuty" xml:space="preserve">
+    <value>Нікого на чергуванні</value>
+  </data>
+  <data name="LegendOnBreak" xml:space="preserve">
+    <value>Зараз на перерві</value>
+  </data>
+  <data name="LegendOverlap" xml:space="preserve">
+    <value>Перерви перетинаються</value>
+  </data>
+  <data name="LegendPlanned" xml:space="preserve">
+    <value>Запланована перерва</value>
+  </data>
+  <data name="LegendTaken" xml:space="preserve">
+    <value>Використана перерва</value>
+  </data>
+  <data name="MinimumAvailableHelp" xml:space="preserve">
+    <value>Диспетчери, які мають залишатися доступними; планування чи початок перерви нижче цього викликає попередження. 0 = без мінімуму.</value>
+  </data>
+  <data name="MinimumAvailableLabel" xml:space="preserve">
+    <value>Мінімум доступних</value>
+  </data>
+  <data name="MinimumOnDeskHelpFormat" xml:space="preserve">
+    <value>Диспетчери, які мають залишатися доступними протягом цієї зміни. 0 = мінімум підрозділу ({0}).</value>
+  </data>
+  <data name="MinimumOnDeskLabel" xml:space="preserve">
+    <value>Мінімум за пультом</value>
+  </data>
+  <data name="MinutesShortFormat" xml:space="preserve">
+    <value>{0} хв</value>
+  </data>
+  <data name="MissedColumn" xml:space="preserve">
+    <value>Пропущені пропозиції</value>
+  </data>
+  <data name="MissedOffersHelp" xml:space="preserve">
+    <value>Скільки пропозицій поспіль диспетчер може пропустити, перш ніж пульт позначить його відсутнім. 0 = ніколи.</value>
+  </data>
+  <data name="MissedOffersLabel" xml:space="preserve">
+    <value>Пропущених пропозицій до відсутності</value>
+  </data>
+  <data name="NextBreakFormat" xml:space="preserve">
+    <value>{0} на {1} хв</value>
+  </data>
+  <data name="NextBreakLabel" xml:space="preserve">
+    <value>Наступна перерва:</value>
+  </data>
+  <data name="NoActivity" xml:space="preserve">
+    <value>За цей період активності пульта немає.</value>
+  </data>
+  <data name="NoDispatchersInWindow" xml:space="preserve">
+    <value>У цей період жоден диспетчер не чергує і не має перерв.</value>
+  </data>
+  <data name="NoDispatchersOnDay" xml:space="preserve">
+    <value>На цей день ще немає диспетчерів.</value>
+  </data>
+  <data name="NoDispatchersOnDesk" xml:space="preserve">
+    <value>Немає диспетчерів на чергуванні чи в системі.</value>
+  </data>
+  <data name="NoEligibleDispatchers" xml:space="preserve">
+    <value>Ніхто в підрозділі ще не має дозволу на вхід у застосунок Dispatch.</value>
+  </data>
+  <data name="NoTransferTargets" xml:space="preserve">
+    <value>Зараз жоден інший диспетчер на чергуванні не може це взяти.</value>
+  </data>
+  <data name="NoWarnings" xml:space="preserve">
+    <value>Попереджень немає.</value>
+  </data>
+  <data name="NotEligibleBadge" xml:space="preserve">
+    <value>Немає доступу до Dispatch</value>
+  </data>
+  <data name="NotEligibleHelp" xml:space="preserve">
+    <value>Більше не має дозволу на вхід у застосунок Dispatch; вибуває з графіка під час збереження.</value>
+  </data>
+  <data name="NotSignedInBadge" xml:space="preserve">
+    <value>Не в системі</value>
+  </data>
+  <data name="NoteLabel" xml:space="preserve">
+    <value>Примітка</value>
+  </data>
+  <data name="NotifyOverdueLabel" xml:space="preserve">
+    <value>Повідомляти старших, коли диспетчер запізнюється з перерви</value>
+  </data>
+  <data name="OffDutyBadge" xml:space="preserve">
+    <value>Не на чергуванні</value>
+  </data>
+  <data name="OfferTimeoutHelp" xml:space="preserve">
+    <value>Скільки секунд пропозиція чекає, поки диспетчер її прийме, перш ніж перейти до наступного.</value>
+  </data>
+  <data name="OfferTimeoutLabel" xml:space="preserve">
+    <value>Час на пропозицію (секунд)</value>
+  </data>
+  <data name="OfferedColumn" xml:space="preserve">
+    <value>Запропоновано</value>
+  </data>
+  <data name="OfferedItemsFormat" xml:space="preserve">
+    <value>Запропоновано: {0}</value>
+  </data>
+  <data name="OnBreakStat" xml:space="preserve">
+    <value>На перерві</value>
+  </data>
+  <data name="OnDutyStat" xml:space="preserve">
+    <value>На чергуванні</value>
+  </data>
+  <data name="OnRosterColumn" xml:space="preserve">
+    <value>У графіку</value>
+  </data>
+  <data name="OpenDispatchPositionsFormat" xml:space="preserve">
+    <value>Вільних диспетчерських місць: {0}</value>
+  </data>
+  <data name="OverdueBadge" xml:space="preserve">
+    <value>Запізнюється</value>
+  </data>
+  <data name="OverdueColumn" xml:space="preserve">
+    <value>Запізнення з перерви</value>
+  </data>
+  <data name="OverdueFormat" xml:space="preserve">
+    <value>Запізнення {0} хв</value>
+  </data>
+  <data name="OverdueMinutesFormat" xml:space="preserve">
+    <value>Разом {0} хвилин запізнення</value>
+  </data>
+  <data name="OverflowIntro" xml:space="preserve">
+    <value>Що відбувається з поточним SMS чи дзвінком, коли всі диспетчери зайняті або на перерві.</value>
+  </data>
+  <data name="PendingApprovalBadge" xml:space="preserve">
+    <value>Очікує схвалення</value>
+  </data>
+  <data name="PlanBreaksButton" xml:space="preserve">
+    <value>Запланувати перерви</value>
+  </data>
+  <data name="PlanBreaksConfirm" xml:space="preserve">
+    <value>Застосувати план перерв зміни до всіх диспетчерів цього дня?</value>
+  </data>
+  <data name="PlanBreaksReplaceConfirm" xml:space="preserve">
+    <value>Видалити заплановані перерви цього дня й застосувати план зміни знову?</value>
+  </data>
+  <data name="PlannedStartHelp" xml:space="preserve">
+    <value>У часовому поясі підрозділу. Перерва — це тривалість: почата раніше, вона раніше й закінчується.</value>
+  </data>
+  <data name="PlannedStartLabel" xml:space="preserve">
+    <value>Запланований початок</value>
+  </data>
+  <data name="PlannerLoadFailed" xml:space="preserve">
+    <value>Не вдалося завантажити планувальник перерв.</value>
+  </data>
+  <data name="PreventBelowMinimumHelp" xml:space="preserve">
+    <value>Відхиляти, а не попереджати, перерву, яка опустить доступність нижче мінімуму, якщо її не починає старший.</value>
+  </data>
+  <data name="PreventBelowMinimumLabel" xml:space="preserve">
+    <value>Не дозволяти перерви нижче мінімуму</value>
+  </data>
+  <data name="QueueEmpty" xml:space="preserve">
+    <value>Нічого не очікує.</value>
+  </data>
+  <data name="QueueEscalationHelp" xml:space="preserve">
+    <value>Скільки хвилин завдання може чекати без призначення, перш ніж буде сповіщено всіх диспетчерів і старших на чергуванні. 0 = ніколи.</value>
+  </data>
+  <data name="QueueEscalationLabel" xml:space="preserve">
+    <value>Ескалювати очікувальну роботу через (хвилин)</value>
+  </data>
+  <data name="QueueHeader" xml:space="preserve">
+    <value>Відкрита черга</value>
+  </data>
+  <data name="QueueState.Accepted" xml:space="preserve">
+    <value>У роботі</value>
+  </data>
+  <data name="QueueState.Offered" xml:space="preserve">
+    <value>Запропоновано</value>
+  </data>
+  <data name="QueueState.Queued" xml:space="preserve">
+    <value>Очікує</value>
+  </data>
+  <data name="ReleaseButton" xml:space="preserve">
+    <value>Повернути в чергу</value>
+  </data>
+  <data name="ReleaseConfirm" xml:space="preserve">
+    <value>Повернути це завдання в чергу?</value>
+  </data>
+  <data name="RemoveBreakRow" xml:space="preserve">
+    <value>Видалити цю перерву</value>
+  </data>
+  <data name="RemoveDispatcherConfirm" xml:space="preserve">
+    <value>Зняти цього диспетчера з дня?</value>
+  </data>
+  <data name="RemoveFromDayButton" xml:space="preserve">
+    <value>Зняти з дня</value>
+  </data>
+  <data name="ReplacePlannedLabel" xml:space="preserve">
+    <value>Замінити заплановані перерви</value>
+  </data>
+  <data name="RequireShiftHelp" xml:space="preserve">
+    <value>На чергуванні лише диспетчери з диспетчерського графіка поточного дня зміни.</value>
+  </data>
+  <data name="RequireShiftLabel" xml:space="preserve">
+    <value>Диспетчери мають бути на зміні</value>
+  </data>
+  <data name="RequiredDispatchersHelp" xml:space="preserve">
+    <value>Диспетчерські місця, які треба заповнити щодня (місця для запису та цільова укомплектованість). 0 = без цілі.</value>
+  </data>
+  <data name="RequiredDispatchersLabel" xml:space="preserve">
+    <value>Потрібно диспетчерів</value>
+  </data>
+  <data name="RouteChatLabel" xml:space="preserve">
+    <value>Чати (WhatsApp, Slack, Teams, Telegram, Discord, Google Chat)</value>
+  </data>
+  <data name="RouteEmailLabel" xml:space="preserve">
+    <value>Електронні листи (виклики збережено як очікувальні)</value>
+  </data>
+  <data name="RoutePendingCallsLabel" xml:space="preserve">
+    <value>Очікувальні виклики</value>
+  </data>
+  <data name="RouteScheduledCallsLabel" xml:space="preserve">
+    <value>Заплановані виклики (для перевірки перед надсиланням)</value>
+  </data>
+  <data name="RouteTextLabel" xml:space="preserve">
+    <value>SMS-повідомлення</value>
+  </data>
+  <data name="RouteToDeskHelp" xml:space="preserve">
+    <value>Види роботи, які пропонуються диспетчерам. Те, що пульт не приймає, обробляється як і раніше. Непозначений лист або чат усе одно надходить на пульт як очікувальний виклик, поки позначено «Очікувальні виклики».</value>
+  </data>
+  <data name="RouteToDeskLabel" xml:space="preserve">
+    <value>Надсилати на пульт</value>
+  </data>
+  <data name="RouteVoiceLabel" xml:space="preserve">
+    <value>Телефонні дзвінки</value>
+  </data>
+  <data name="SaveBreakButton" xml:space="preserve">
+    <value>Зберегти перерву</value>
+  </data>
+  <data name="SaveSettingsButton" xml:space="preserve">
+    <value>Зберегти налаштування</value>
+  </data>
+  <data name="ScheduledCallLeadHelp" xml:space="preserve">
+    <value>За скільки хвилин до надсилання запланований виклик надходить на пульт для перевірки (він усе одно надішлеться сам).</value>
+  </data>
+  <data name="ScheduledCallLeadLabel" xml:space="preserve">
+    <value>Перевірка запланованих викликів (хвилин до)</value>
+  </data>
+  <data name="SelectDispatcherToAdd" xml:space="preserve">
+    <value>Виберіть диспетчера, щоб додати.</value>
+  </data>
+  <data name="SetAvailableButton" xml:space="preserve">
+    <value>Зробити доступним</value>
+  </data>
+  <data name="SetAwayButton" xml:space="preserve">
+    <value>Позначити відсутнім</value>
+  </data>
+  <data name="SettingsBreaksSection" xml:space="preserve">
+    <value>Перерви та покриття</value>
+  </data>
+  <data name="SettingsDeskSection" xml:space="preserve">
+    <value>Пульт</value>
+  </data>
+  <data name="SettingsEmailSection" xml:space="preserve">
+    <value>Виклики електронною поштою</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Як робота передається диспетчерам на чергуванні в застосунку Dispatch, що відбувається, коли ніхто не вільний, і як обробляються перерви.</value>
+  </data>
+  <data name="SettingsOverflowSection" xml:space="preserve">
+    <value>Коли всі диспетчери зайняті</value>
+  </data>
+  <data name="SettingsRoutingSection" xml:space="preserve">
+    <value>Передавання</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Налаштування диспетчерського пульта збережено.</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Налаштування диспетчерського пульта</value>
+  </data>
+  <data name="ShiftColumn" xml:space="preserve">
+    <value>Зміна</value>
+  </data>
+  <data name="ShiftDayLabel" xml:space="preserve">
+    <value>День зміни</value>
+  </data>
+  <data name="ShiftDispatchEnabledHelp" xml:space="preserve">
+    <value>Диспетчерів можна призначити на цю зміну (призначувана зміна) або вони можуть на неї записатися (зміна із записом), окремо чи поряд із рятувальниками.</value>
+  </data>
+  <data name="ShiftDispatchEnabledLabel" xml:space="preserve">
+    <value>Ця зміна має диспетчерів</value>
+  </data>
+  <data name="ShiftDispatchOnlyHelp" xml:space="preserve">
+    <value>Зміна існує лише для диспетчерів (зміни A, B і C диспетчерського центру).</value>
+  </data>
+  <data name="ShiftDispatchOnlyLabel" xml:space="preserve">
+    <value>Лише диспетчерська зміна</value>
+  </data>
+  <data name="ShowButton" xml:space="preserve">
+    <value>Показати</value>
+  </data>
+  <data name="SignOffAtShiftEndHelp" xml:space="preserve">
+    <value>Диспетчери виходять із пульта наприкінці свого дня зміни; їхня поточна робота повертається в чергу.</value>
+  </data>
+  <data name="SignOffAtShiftEndLabel" xml:space="preserve">
+    <value>Виходити наприкінці зміни</value>
+  </data>
+  <data name="SignupAsDispatcherButton" xml:space="preserve">
+    <value>Записатися диспетчером</value>
+  </data>
+  <data name="SourceAssigned" xml:space="preserve">
+    <value>Призначено</value>
+  </data>
+  <data name="SourceSignup" xml:space="preserve">
+    <value>Записався</value>
+  </data>
+  <data name="StandingRosterHelp" xml:space="preserve">
+    <value>Диспетчери на кожен день цієї зміни. Старший пульта керує перервами та перерозподіляє роботу інших диспетчерів.</value>
+  </data>
+  <data name="StandingRosterLabel" xml:space="preserve">
+    <value>Диспетчерський графік</value>
+  </data>
+  <data name="StatAverageAnswer" xml:space="preserve">
+    <value>Сер. час до прийняття</value>
+  </data>
+  <data name="StatCancelled" xml:space="preserve">
+    <value>Скасовано</value>
+  </data>
+  <data name="StatCompleted" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="StatCreated" xml:space="preserve">
+    <value>Завдання</value>
+  </data>
+  <data name="StatEscalated" xml:space="preserve">
+    <value>Ескальовано</value>
+  </data>
+  <data name="StatOverflowed" xml:space="preserve">
+    <value>Переповнення</value>
+  </data>
+  <data name="State.Available" xml:space="preserve">
+    <value>Доступний</value>
+  </data>
+  <data name="State.Away" xml:space="preserve">
+    <value>Відсутній</value>
+  </data>
+  <data name="State.Busy" xml:space="preserve">
+    <value>Зайнятий</value>
+  </data>
+  <data name="State.Offline" xml:space="preserve">
+    <value>Не в системі</value>
+  </data>
+  <data name="State.OnBreak" xml:space="preserve">
+    <value>На перерві</value>
+  </data>
+  <data name="StateColumn" xml:space="preserve">
+    <value>Стан за пультом</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="SuppressAlertsHelp" xml:space="preserve">
+    <value>Під час перерви диспетчер не отримує сповіщень чи попереджень пульта, лише нагадування про кінець перерви.</value>
+  </data>
+  <data name="SuppressAlertsLabel" xml:space="preserve">
+    <value>Без сповіщень пульта під час перерви</value>
+  </data>
+  <data name="TextOverflow.EnhancedAi" xml:space="preserve">
+    <value>Enhanced AI заповнює очікувальний виклик</value>
+  </data>
+  <data name="TextOverflow.PendingQueue" xml:space="preserve">
+    <value>Залишити в черзі</value>
+  </data>
+  <data name="TextOverflowLabel" xml:space="preserve">
+    <value>SMS-повідомлення</value>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>По</value>
+  </data>
+  <data name="TodayCoverageHeader" xml:space="preserve">
+    <value>Покриття сьогодні</value>
+  </data>
+  <data name="TransferButton" xml:space="preserve">
+    <value>Передати</value>
+  </data>
+  <data name="TransferToLabel" xml:space="preserve">
+    <value>Передати</value>
+  </data>
+  <data name="Unassigned" xml:space="preserve">
+    <value>Не призначено</value>
+  </data>
+  <data name="UnknownPerson" xml:space="preserve">
+    <value>Невідома особа</value>
+  </data>
+  <data name="ViewCallButton" xml:space="preserve">
+    <value>Переглянути виклик</value>
+  </data>
+  <data name="VoiceAiUnavailable" xml:space="preserve">
+    <value>Голосове приймання Enhanced AI недоступне; абоненти натомість залишають повідомлення.</value>
+  </data>
+  <data name="VoiceHoldHelp" xml:space="preserve">
+    <value>Скільки секунд абонент чекає на диспетчера, перш ніж спрацює обробка переповнення. 0 = одразу.</value>
+  </data>
+  <data name="VoiceHoldLabel" xml:space="preserve">
+    <value>Утримувати абонентів (секунд)</value>
+  </data>
+  <data name="VoiceOverflow.EnhancedAiIntake" xml:space="preserve">
+    <value>Голосове приймання Enhanced AI</value>
+  </data>
+  <data name="VoiceOverflow.Voicemail" xml:space="preserve">
+    <value>Голосова пошта в очікувальний виклик</value>
+  </data>
+  <data name="VoiceOverflowLabel" xml:space="preserve">
+    <value>Телефонні дзвінки</value>
+  </data>
+  <data name="WaitingInQueueFormat" xml:space="preserve">
+    <value>Очікує: {0}</value>
+  </data>
+  <data name="WaitingStat" xml:space="preserve">
+    <value>Очікує</value>
+  </data>
+  <data name="Warning.BreaksOverlap" xml:space="preserve">
+    <value>Перерви перетинаються з {1} до {2}: {0}.</value>
+  </data>
+  <data name="Warning.CoverageBelowMinimum" xml:space="preserve">
+    <value>Лише {0} диспетчерів доступно (мінімум {1}) з {2} до {3}.</value>
+  </data>
+  <data name="Warning.NoCoverage" xml:space="preserve">
+    <value>З {0} до {1} нікого не буде доступно.</value>
+  </data>
+  <data name="Warning.OutsideDuty" xml:space="preserve">
+    <value>Перерва виходить за межі дня зміни: {0}.</value>
+  </data>
+  <data name="Warning.StartedEarly" xml:space="preserve">
+    <value>{0} почав перерву на {1} хвилин раніше.</value>
+  </data>
+  <data name="Warning.StartedLate" xml:space="preserve">
+    <value>{0} почав перерву на {1} хвилин пізніше.</value>
+  </data>
+  <data name="Warning.WorkReturnedToQueue" xml:space="preserve">
+    <value>Робота {0} повернулася в чергу.</value>
+  </data>
+  <data name="WarningsHeader" xml:space="preserve">
+    <value>Попередження</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Відкликати</value>
+  </data>
+  <data name="WithdrawDispatcherConfirm" xml:space="preserve">
+    <value>Більше не бути диспетчером у цей день?</value>
+  </data>
+  <data name="WizardDispatchers" xml:space="preserve">
+    <value>Диспетчери</value>
+  </data>
+  <data name="WorkColumn" xml:space="preserve">
+    <value>Робота</value>
+  </data>
+  <data name="WorkLoadFormat" xml:space="preserve">
+    <value>{0} з {1}</value>
+  </data>
+  <data name="YouBadge" xml:space="preserve">
+    <value>Ви</value>
+  </data>
+</root>

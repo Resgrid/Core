@@ -139,6 +139,17 @@ namespace Resgrid.Model.Inventories
 		public string ReferenceId { get; set; }
 	}
 	public sealed class InventoryKit : InventoryMutableRow { }
+	/// <summary>
+	/// An item's minimum at one location (par level). Low stock is checked per location against it, beside the item's
+	/// department-wide ReorderPoint/MinLevel, which stays the fallback for the department total. The minimum is an operational
+	/// column; Content is never written (M0329). Removing one soft deletes it; setting it again revives the same row.
+	/// </summary>
+	public sealed class InventoryParLevel : InventoryMutableRow
+	{
+		public string ItemId { get; set; }
+		public string LocationId { get; set; }
+		public decimal MinimumQuantity { get; set; }
+	}
 	public sealed class InventoryKitItem : InventoryMutableRow { public string KitId { get; set; } public string ItemId { get; set; } public decimal Quantity { get; set; } }
 	public sealed class InventoryItemContent
 	{
@@ -176,7 +187,8 @@ namespace Resgrid.Model.Inventories
 			[typeof(RecordInventoryUsage)] = "RecordInventoryUsages",
 			[typeof(InventoryVendor)] = "InventoryVendors", [typeof(InventoryPurchaseOrder)] = "InventoryPurchaseOrders", [typeof(InventoryPurchaseOrderItem)] = "InventoryPurchaseOrderItems",
 			[typeof(InventoryCount)] = "InventoryCounts", [typeof(InventoryCountItem)] = "InventoryCountItems",
-			[typeof(InventoryAlert)] = "InventoryAlerts", [typeof(InventoryAlertDelivery)] = "InventoryAlertDeliveries"
+			[typeof(InventoryAlert)] = "InventoryAlerts", [typeof(InventoryAlertDelivery)] = "InventoryAlertDeliveries",
+			[typeof(InventoryParLevel)] = "InventoryParLevels"
 		};
 		/// <summary>
 		/// Tables whose Content can hold free text about people (notes, attestations, account numbers) and stays ADP-protected.

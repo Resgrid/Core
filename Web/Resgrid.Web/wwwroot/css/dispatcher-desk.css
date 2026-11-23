@@ -1,0 +1,266 @@
+/* Dispatcher desk (M0324): the live board and the break planner / coverage timeline. */
+
+.desk-stat h2 {
+    margin-top: 4px;
+}
+
+.desk-stat-minimum {
+    color: inherit;
+    opacity: 0.85;
+    font-size: 55%;
+}
+
+.desk-stat-below {
+    background-color: #ed5565 !important;
+    color: #fff !important;
+}
+
+.desk-table td {
+    vertical-align: middle !important;
+}
+
+.desk-table .desk-actions {
+    white-space: nowrap;
+    text-align: right;
+}
+
+.desk-table .desk-actions .btn {
+    margin-left: 2px;
+}
+
+.desk-preview {
+    color: #676a6c;
+    display: block;
+    max-width: 380px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.desk-overdue {
+    color: #ed5565;
+    font-weight: 700;
+}
+
+.desk-kind-icon {
+    width: 18px;
+    text-align: center;
+    color: #1c84c6;
+}
+
+/* Coverage strip: one cell per slot, coloured by how many dispatchers are available. */
+.desk-coverage-strip {
+    display: flex;
+    height: 26px;
+    border: 1px solid #e7eaec;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.desk-coverage-cell {
+    flex: 1 1 0;
+    min-width: 1px;
+    position: relative;
+    background-color: #f3f3f4;
+    border-right: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.desk-coverage-cell.desk-ok {
+    background-color: #1ab394;
+}
+
+.desk-coverage-cell.desk-below {
+    background-color: #ed5565;
+}
+
+.desk-coverage-cell.desk-overlap,
+.desk-swatch-overlap {
+    background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.28) 0, rgba(0, 0, 0, 0.28) 3px, transparent 3px, transparent 7px);
+}
+
+.desk-coverage-cell.desk-now {
+    box-shadow: inset 0 0 0 2px #2f4050;
+}
+
+.desk-coverage-cell .desk-coverage-count {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 4px;
+    font-size: 10px;
+    line-height: 16px;
+    text-align: center;
+    color: #fff;
+    overflow: hidden;
+}
+
+.desk-coverage-legend {
+    margin-top: 6px;
+    font-size: 12px;
+}
+
+.desk-coverage-legend span {
+    margin-right: 14px;
+    white-space: nowrap;
+}
+
+.desk-swatch {
+    display: inline-block;
+    width: 14px;
+    height: 10px;
+    vertical-align: middle;
+    border: 1px solid #e7eaec;
+}
+
+.desk-swatch-ok { background-color: #1ab394; }
+.desk-swatch-below { background-color: #ed5565; }
+.desk-swatch-overlap { background-color: #1ab394; }
+.desk-swatch-none { background-color: #f3f3f4; }
+.desk-swatch-duty { background-color: #d6e9f8; }
+.desk-swatch-planned { background-color: #23c6c8; }
+.desk-swatch-active { background-color: #f8ac59; }
+.desk-swatch-taken { background-color: #a7b1c2; }
+.desk-swatch-missed { background-color: #fff; border: 2px dashed #ed5565; }
+
+/* Break planner timeline: names on the left, bars positioned by percentage of the window on the right. */
+.desk-timeline {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.desk-timeline-inner {
+    min-width: 720px;
+}
+
+.desk-timeline-row {
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid #f1f1f1;
+    min-height: 34px;
+}
+
+.desk-timeline-name {
+    flex: 0 0 180px;
+    padding: 6px 8px 6px 0;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.desk-timeline-track {
+    flex: 1 1 auto;
+    position: relative;
+    min-height: 34px;
+}
+
+.desk-timeline-axis .desk-timeline-track {
+    min-height: 22px;
+}
+
+.desk-timeline-tick {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-left: 1px solid #e7eaec;
+    font-size: 10px;
+    color: #999;
+    padding-left: 2px;
+    white-space: nowrap;
+}
+
+.desk-timeline-gridline {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-left: 1px dotted #eee;
+    pointer-events: none;
+}
+
+.desk-timeline-now {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-left: 2px solid #ed5565;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.desk-bar {
+    position: absolute;
+    border-radius: 3px;
+    font-size: 10px;
+    line-height: 18px;
+    color: #fff;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 0 3px;
+    box-sizing: border-box;
+}
+
+.desk-bar-duty {
+    top: 6px;
+    bottom: 6px;
+    background-color: #d6e9f8;
+    color: #2f4050;
+    z-index: 1;
+}
+
+.desk-bar-duty.desk-bar-pending {
+    background-image: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0, rgba(255, 255, 255, 0.7) 4px, transparent 4px, transparent 8px);
+}
+
+.desk-bar-break {
+    top: 8px;
+    bottom: 8px;
+    z-index: 2;
+    cursor: default;
+}
+
+.desk-bar-break.desk-editable {
+    cursor: pointer;
+}
+
+.desk-bar-planned { background-color: #23c6c8; }
+.desk-bar-active { background-color: #f8ac59; }
+.desk-bar-taken { background-color: #a7b1c2; }
+.desk-bar-overdue { background-color: #ed5565; }
+
+.desk-bar-missed {
+    background-color: #fff;
+    border: 2px dashed #ed5565;
+    color: #ed5565;
+}
+
+/* The planned slot of a break that was taken at another time, behind the actual one. */
+.desk-bar-ghost {
+    background-color: transparent;
+    border: 1px dashed #23c6c8;
+    z-index: 1;
+}
+
+.desk-timeline-coverage .desk-timeline-track {
+    display: flex;
+    min-height: 26px;
+}
+
+.desk-timeline-coverage .desk-coverage-cell {
+    height: 26px;
+}
+
+.desk-timeline-legend {
+    margin-top: 8px;
+    font-size: 12px;
+}
+
+.desk-timeline-legend span {
+    margin-right: 14px;
+    white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+    .desk-timeline-name {
+        flex-basis: 110px;
+    }
+}

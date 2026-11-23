@@ -42,6 +42,10 @@ namespace Resgrid.Tests.Web.User
 		private Mock<IWorkShiftsService> _workshifts;
 		private Mock<IShiftStaffingService> _staffing;
 		private Mock<IUnitsService> _units;
+		private Mock<IShiftDispatchersService> _dispatchers;
+		private Mock<IDispatchAccessService> _dispatchAccess;
+		private Mock<IDispatcherPresenceService> _presence;
+		private Mock<IDispatcherDeskConfigService> _deskConfig;
 		private ShiftManagementScope _scope;
 		private ShiftsController _controller;
 
@@ -69,6 +73,10 @@ namespace Resgrid.Tests.Web.User
 			_workshifts = new Mock<IWorkShiftsService>();
 			_staffing = new Mock<IShiftStaffingService>();
 			_units = new Mock<IUnitsService>();
+			_dispatchers = new Mock<IShiftDispatchersService>();
+			_dispatchAccess = new Mock<IDispatchAccessService>();
+			_presence = new Mock<IDispatcherPresenceService>();
+			_deskConfig = new Mock<IDispatcherDeskConfigService>();
 
 			_scope = new ShiftManagementScope { AllGroups = true };
 			_authorization.Setup(x => x.GetShiftManagementScopeAsync(Me, DepartmentId)).ReturnsAsync(() => _scope);
@@ -83,8 +91,12 @@ namespace Resgrid.Tests.Web.User
 			var strings = new Mock<IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts>>();
 			strings.Setup(x => x[It.IsAny<string>()]).Returns((string key) => new LocalizedString(key, key));
 
+			var deskStrings = new Mock<IStringLocalizer<Resgrid.Localization.Areas.User.DispatcherDesk.DispatcherDesk>>();
+			deskStrings.Setup(x => x[It.IsAny<string>()]).Returns((string key) => new LocalizedString(key, key));
+
 			_controller = new ShiftsController(_shifts.Object, _groups.Object, _departments.Object, _roles.Object, _events.Object,
-				_settings.Object, _authorization.Object, _workshifts.Object, _staffing.Object, _units.Object, strings.Object)
+				_settings.Object, _authorization.Object, _workshifts.Object, _staffing.Object, _units.Object, strings.Object,
+				_dispatchers.Object, _dispatchAccess.Object, _presence.Object, _deskConfig.Object, deskStrings.Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = _http },
 				TempData = new TempDataDictionary(_http, Mock.Of<ITempDataProvider>())
@@ -835,5 +847,430 @@ namespace Resgrid.Tests.Web.User
 		}
 
 		#endregion Staffing and calendar
+
+		#region Dispatchers on duty
+
+		private static IFormCollection DispatchForm(params (string Key, StringValues Value)[] extra)
+		{
+			var values = new Dictionary<string, StringValues> { { "DispatchSectionPosted", "true" } };
+
+			foreach (var (key, value) in extra)
+				values[key] = value;
+
+			return new FormCollection(values);
+		}
+
+		/// <summary>Copies what reaches SaveSettingsAsync (the controller reuses the loaded row, so the instance is not enough).</summary>
+		private ShiftDispatchSetting CaptureSavedSettings()
+		{
+			var holder = new ShiftDispatchSetting();
+			_dispatchers.Setup(x => x.SaveSettingsAsync(DepartmentId, It.IsAny<ShiftDispatchSetting>(), Me, It.IsAny<CancellationToken>()))
+				.Callback((int _, ShiftDispatchSetting s, string __, CancellationToken ___) =>
+				{
+					holder.ShiftDispatchSettingId = s.ShiftDispatchSettingId;
+					holder.ShiftId = s.ShiftId;
+					holder.DepartmentId = s.DepartmentId;
+					holder.IsEnabled = s.IsEnabled;
+					holder.IsDispatchOnly = s.IsDispatchOnly;
+					holder.RequiredDispatchers = s.RequiredDispatchers;
+					holder.MinimumOnDesk = s.MinimumOnDesk;
+					holder.AllowSelfScheduledBreaks = s.AllowSelfScheduledBreaks;
+					holder.BreakPlanJson = s.BreakPlanJson;
+				})
+				.ReturnsAsync((int _, ShiftDispatchSetting s, string __, CancellationToken ___) => DispatcherDeskResult<ShiftDispatchSetting>.Ok(s));
+
+			return holder;
+		}
+
+		[Test]
+		public async Task EditShiftDetails_saves_the_dispatch_settings_break_plan_and_standing_roster()
+		{
+			var shift = SetupShift(5, DepartmentId, 10);
+			shift.AssignmentType = (int)ShiftAssignmentTypes.Assigned;
+			_shifts.Setup(x => x.UpdateShiftAsync(shift, It.IsAny<CancellationToken>())).ReturnsAsync(shift);
+			_events.Setup(x => x.SendMessage(It.IsAny<ShiftUpdatedEvent>()));
+			var saved = CaptureSavedSettings();
+			List<(string UserId, bool IsSupervisor)> roster = null;
+			_dispatchers.Setup(x => x.SetStandingRosterAsync(DepartmentId, 5, It.IsAny<IEnumerable<(string UserId, bool IsSupervisor)>>(), Me, It.IsAny<CancellationToken>()))
+				.Callback((int _, int __, IEnumerable<(string UserId, bool IsSupervisor)> people, string ___, CancellationToken ____) => roster = people.ToList())
+				.ReturnsAsync(DispatcherDeskResult<List<ShiftDispatcher>>.Ok(new List<ShiftDispatcher>()));
+
+			var model = new EditShiftView
+			{
+				Shift = new Shift { ShiftId = 5 },
+				Dispatch = new ShiftDispatchSectionView { IsEnabled = true, IsDispatchOnly = true, RequiredDispatchers = 2, MinimumOnDesk = 1, AllowSelfScheduledBreaks = true }
+			};
+			var form = DispatchForm(
+				("breakPlanType_1", "2"), ("breakPlanMinutes_1", "30"), ("breakPlanOffset_1", "240"),
+				("breakPlanType_0", "1"), ("breakPlanMinutes_0", "15"), ("breakPlanOffset_0", ""),
+				("breakPlanType_2", "9"), ("breakPlanMinutes_2", "0"),
+				("dispatchRoster", new StringValues(new[] { Colleague, Other })), ("dispatchSupervisor", Other));
+
+			(await _controller.EditShiftDetails(model, form, CancellationToken.None)).Should().BeOfType<RedirectToActionResult>();
+
+			saved.ShiftId.Should().Be(5);
+			saved.DepartmentId.Should().Be(DepartmentId);
+			saved.IsEnabled.Should().BeTrue();
+			saved.IsDispatchOnly.Should().BeTrue();
+			saved.RequiredDispatchers.Should().Be(2);
+			saved.MinimumOnDesk.Should().Be(1);
+			saved.AllowSelfScheduledBreaks.Should().BeTrue();
+			saved.GetBreakPlan().Should().BeEquivalentTo(new[]
+			{
+				new DispatcherBreakPlanEntry { BreakType = (int)DispatcherBreakTypes.Break, DurationMinutes = 15, TargetOffsetMinutes = null },
+				new DispatcherBreakPlanEntry { BreakType = (int)DispatcherBreakTypes.Meal, DurationMinutes = 30, TargetOffsetMinutes = 240 }
+			}, o => o.WithStrictOrdering(), "rows keep their order and a row with no length is dropped");
+			roster.Should().BeEquivalentTo(new[] { (Colleague, false), (Other, true) });
+			Message.Should().BeNull();
+		}
+
+		[Test]
+		public async Task EditShiftDetails_leaves_dispatch_alone_without_the_section_or_for_a_shift_that_never_took_dispatchers()
+		{
+			var shift = SetupShift(5, DepartmentId, 10);
+			_shifts.Setup(x => x.UpdateShiftAsync(shift, It.IsAny<CancellationToken>())).ReturnsAsync(shift);
+			_events.Setup(x => x.SendMessage(It.IsAny<ShiftUpdatedEvent>()));
+
+			var model = new EditShiftView { Shift = new Shift { ShiftId = 5 }, Dispatch = new ShiftDispatchSectionView { IsEnabled = true } };
+			await _controller.EditShiftDetails(model, Form(new Dictionary<string, StringValues> { { "dispatchRoster", Colleague } }), CancellationToken.None);
+
+			model.Dispatch = new ShiftDispatchSectionView { IsEnabled = false };
+			await _controller.EditShiftDetails(model, DispatchForm(), CancellationToken.None);
+
+			_dispatchers.Verify(x => x.SaveSettingsAsync(It.IsAny<int>(), It.IsAny<ShiftDispatchSetting>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+			_dispatchers.Verify(x => x.SetStandingRosterAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<IEnumerable<(string, bool)>>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task EditShiftDetails_turning_dispatchers_off_keeps_the_roster_and_a_signup_shift_has_none()
+		{
+			var shift = SetupShift(5, DepartmentId, 10);
+			shift.AssignmentType = (int)ShiftAssignmentTypes.Assigned;
+			_shifts.Setup(x => x.UpdateShiftAsync(shift, It.IsAny<CancellationToken>())).ReturnsAsync(shift);
+			_events.Setup(x => x.SendMessage(It.IsAny<ShiftUpdatedEvent>()));
+			_dispatchers.Setup(x => x.GetSettingsForShiftAsync(5)).ReturnsAsync(new ShiftDispatchSetting { ShiftDispatchSettingId = "s1", ShiftId = 5, DepartmentId = DepartmentId, IsEnabled = true });
+			var saved = CaptureSavedSettings();
+
+			var model = new EditShiftView { Shift = new Shift { ShiftId = 5 }, Dispatch = new ShiftDispatchSectionView { IsEnabled = false } };
+			await _controller.EditShiftDetails(model, DispatchForm(("dispatchRoster", Colleague)), CancellationToken.None);
+
+			saved.ShiftDispatchSettingId.Should().Be("s1", "the shift's settings row is updated, not duplicated");
+			saved.IsEnabled.Should().BeFalse();
+
+			shift.AssignmentType = (int)ShiftAssignmentTypes.Signup;
+			model.Dispatch = new ShiftDispatchSectionView { IsEnabled = true };
+			await _controller.EditShiftDetails(model, DispatchForm(("dispatchRoster", Colleague)), CancellationToken.None);
+
+			saved.IsEnabled.Should().BeTrue();
+			_dispatchers.Verify(x => x.SetStandingRosterAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<IEnumerable<(string, bool)>>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never,
+				"only an Assigned shift with dispatchers on has a standing roster");
+		}
+
+		[Test]
+		public async Task EditShiftDetails_reports_a_refused_roster()
+		{
+			var shift = SetupShift(5, DepartmentId, 10);
+			shift.AssignmentType = (int)ShiftAssignmentTypes.Assigned;
+			_shifts.Setup(x => x.UpdateShiftAsync(shift, It.IsAny<CancellationToken>())).ReturnsAsync(shift);
+			_events.Setup(x => x.SendMessage(It.IsAny<ShiftUpdatedEvent>()));
+			CaptureSavedSettings();
+			_dispatchers.Setup(x => x.SetStandingRosterAsync(DepartmentId, 5, It.IsAny<IEnumerable<(string UserId, bool IsSupervisor)>>(), Me, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(DispatcherDeskResult<List<ShiftDispatcher>>.Fail(DispatcherDeskErrors.NotADispatcher));
+
+			var model = new EditShiftView { Shift = new Shift { ShiftId = 5 }, Dispatch = new ShiftDispatchSectionView { IsEnabled = true } };
+			await _controller.EditShiftDetails(model, DispatchForm(("dispatchRoster", Other)), CancellationToken.None);
+
+			Message.Should().Be("Error.NotADispatcher");
+			_controller.TempData["ShiftsMessageType"].Should().Be("danger");
+		}
+
+		[Test]
+		public async Task NewShift_saves_the_dispatch_settings_against_the_new_shift()
+		{
+			_shifts.Setup(x => x.SaveShiftAsync(It.IsAny<Shift>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((Shift shift, CancellationToken _) =>
+				{
+					shift.ShiftId = 77;
+					return shift;
+				});
+			_events.Setup(x => x.SendMessage(It.IsAny<ShiftCreatedEvent>()));
+			var saved = CaptureSavedSettings();
+			_dispatchers.Setup(x => x.SetStandingRosterAsync(DepartmentId, 77, It.IsAny<IEnumerable<(string UserId, bool IsSupervisor)>>(), Me, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(DispatcherDeskResult<List<ShiftDispatcher>>.Ok(new List<ShiftDispatcher>()));
+
+			var model = new NewShiftView
+			{
+				Shift = new Shift(),
+				AssignmentType = ShiftAssignmentTypes.Assigned,
+				Dispatch = new ShiftDispatchSectionView { IsEnabled = true, RequiredDispatchers = 500 }
+			};
+			var form = DispatchForm(("Shift_Name", "Dispatch A"), ("Shift_Code", "DA"), ("Shift_StartTime", "07:00"), ("Shift_EndTime", "19:00"), ("dispatchSupervisor", Colleague));
+
+			(await _controller.NewShift(model, form, CancellationToken.None)).Should().BeOfType<RedirectToActionResult>();
+
+			saved.ShiftId.Should().Be(77);
+			saved.RequiredDispatchers.Should().Be(100, "the posted count is bounded");
+			_dispatchers.Verify(x => x.SetStandingRosterAsync(DepartmentId, 77,
+				It.Is<IEnumerable<(string UserId, bool IsSupervisor)>>(r => r.Single().UserId == Colleague && r.Single().IsSupervisor), Me, It.IsAny<CancellationToken>()), Times.Once,
+				"ticking only the supervisor box puts the person on the roster");
+		}
+
+		[Test]
+		public async Task Dispatcher_day_roster_tools_need_the_whole_shift()
+		{
+			_scope = new ShiftManagementScope { GroupIds = new HashSet<int> { 10 } };
+			SetupShift(5, DepartmentId, 10, 11);
+			_shifts.Setup(x => x.GetShiftDayByIdAsync(70)).ReturnsAsync(new ShiftDay { ShiftDayId = 70, ShiftId = 5 });
+
+			AssertUnauthorized(await _controller.DispatcherAssign(70, Colleague, false, CancellationToken.None));
+			AssertUnauthorized(await _controller.DispatcherRemove(70, Colleague, null, CancellationToken.None));
+			AssertUnauthorized(await _controller.DispatcherReview(70, "sd1", true, null, CancellationToken.None));
+
+			_dispatchers.Verify(x => x.AssignToDayAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+			_dispatchers.Verify(x => x.RemoveFromDayAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+			_dispatchers.Verify(x => x.ReviewSignupAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+
+			_scope = new ShiftManagementScope { GroupIds = new HashSet<int> { 10, 11 } };
+			_dispatchers.Setup(x => x.AssignToDayAsync(DepartmentId, 70, Colleague, true, Me, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(DispatcherDeskResult<ShiftDispatcher>.Ok(new ShiftDispatcher()));
+
+			(await _controller.DispatcherAssign(70, Colleague, true, CancellationToken.None)).Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("ViewShift");
+			Message.Should().Be("DispatcherAddedToDay");
+		}
+
+		[Test]
+		public async Task Dispatcher_day_actions_refuse_another_departments_day()
+		{
+			SetupShift(5, 999, 10);
+			_shifts.Setup(x => x.GetShiftDayByIdAsync(70)).ReturnsAsync(new ShiftDay { ShiftDayId = 70, ShiftId = 5 });
+
+			AssertUnauthorized(await _controller.DispatcherSignup(70, CancellationToken.None));
+			AssertUnauthorized(await _controller.DispatcherWithdraw(70, CancellationToken.None));
+			AssertUnauthorized(await _controller.DispatcherAssign(70, Colleague, false, CancellationToken.None));
+			_dispatchers.Verify(x => x.SignupForDayAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task DispatcherReview_only_reviews_a_pending_signup_on_that_day()
+		{
+			SetupShift(5, DepartmentId, 10);
+			_shifts.Setup(x => x.GetShiftDayByIdAsync(70)).ReturnsAsync(new ShiftDay { ShiftDayId = 70, ShiftId = 5 });
+			_dispatchers.Setup(x => x.GetDayRosterAsync(DepartmentId, 70)).ReturnsAsync(new List<DispatcherDutyWindow>
+			{
+				new DispatcherDutyWindow { UserId = Colleague, ShiftDispatcherId = "sd1", IsPending = true },
+				new DispatcherDutyWindow { UserId = Other, ShiftDispatcherId = "sd2", IsPending = false }
+			});
+			_dispatchers.Setup(x => x.ReviewSignupAsync(DepartmentId, "sd1", false, Me, "no cover", It.IsAny<CancellationToken>()))
+				.ReturnsAsync(DispatcherDeskResult<ShiftDispatcher>.Ok(new ShiftDispatcher()));
+
+			await _controller.DispatcherReview(70, "sd2", true, null, CancellationToken.None);
+			Message.Should().Be("Error.ItemNotFound", "an approved row is not a sign-up to review");
+			await _controller.DispatcherReview(70, "elsewhere", true, null, CancellationToken.None);
+
+			await _controller.DispatcherReview(70, "sd1", false, "no cover", CancellationToken.None);
+			Message.Should().Be("DispatcherSignupDenied");
+
+			_dispatchers.Verify(x => x.ReviewSignupAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task DispatcherWithdraw_takes_back_only_your_own_signup()
+		{
+			SetupShift(5, DepartmentId, 10);
+			_shifts.Setup(x => x.GetShiftDayByIdAsync(70)).ReturnsAsync(new ShiftDay { ShiftDayId = 70, ShiftId = 5 });
+			var roster = new List<DispatcherDutyWindow> { new DispatcherDutyWindow { UserId = Me, Source = (int)ShiftDispatcherSources.Assigned } };
+			_dispatchers.Setup(x => x.GetDayRosterAsync(DepartmentId, 70)).ReturnsAsync(() => roster);
+			_dispatchers.Setup(x => x.RemoveFromDayAsync(DepartmentId, 70, Me, Me, null, (int)ShiftDispatcherSources.Signup, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(DispatcherDeskResult<bool>.Ok(true));
+
+			await _controller.DispatcherWithdraw(70, CancellationToken.None);
+			Message.Should().Be("Error.NotPermitted", "a standing roster member is taken off a day by a shift manager");
+
+			roster = new List<DispatcherDutyWindow> { new DispatcherDutyWindow { UserId = Me, Source = (int)ShiftDispatcherSources.Signup } };
+			await _controller.DispatcherWithdraw(70, CancellationToken.None);
+
+			Message.Should().Be("DispatcherWithdrawn");
+			_dispatchers.Verify(x => x.RemoveFromDayAsync(DepartmentId, 70, Me, Me, null, (int)ShiftDispatcherSources.Signup, It.IsAny<CancellationToken>()), Times.Once,
+				"the withdrawal asks the service to recheck that the row is still a sign-up");
+		}
+
+		[Test]
+		public async Task DispatcherSignup_reports_a_pending_signup()
+		{
+			SetupShift(5, DepartmentId, 10);
+			_shifts.Setup(x => x.GetShiftDayByIdAsync(70)).ReturnsAsync(new ShiftDay { ShiftDayId = 70, ShiftId = 5 });
+			_dispatchers.Setup(x => x.SignupForDayAsync(DepartmentId, 70, Me, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(DispatcherDeskResult<ShiftDispatcher>.Ok(new ShiftDispatcher { Status = (int)ShiftDispatcherStatuses.PendingApproval }));
+
+			await _controller.DispatcherSignup(70, CancellationToken.None);
+
+			Message.Should().Be("DispatcherSignupPending");
+		}
+
+		[Test]
+		public async Task ViewShift_shows_the_day_dispatch_roster_and_offers_signup_to_an_eligible_dispatcher()
+		{
+			_scope = ShiftManagementScope.None();
+			var shift = SetupShift(5, DepartmentId, 10);
+			shift.AssignmentType = (int)ShiftAssignmentTypes.Signup;
+			var day = shift.Days.First();
+			day.Day = DateTime.UtcNow.Date.AddDays(3);
+			day.Shift = shift;
+			_shifts.Setup(x => x.GetShiftDayScheduleAsync(70)).ReturnsAsync(new ShiftDaySchedule { Shift = shift, Day = day });
+			_dispatchers.Setup(x => x.GetSettingsForShiftAsync(5)).ReturnsAsync(new ShiftDispatchSetting { ShiftId = 5, IsEnabled = true, RequiredDispatchers = 2 });
+			_dispatchers.Setup(x => x.GetDayRosterAsync(DepartmentId, 70)).ReturnsAsync(new List<DispatcherDutyWindow>
+			{
+				new DispatcherDutyWindow { UserId = Other, ShiftDispatcherId = "sd2", IsPending = true, Source = (int)ShiftDispatcherSources.Signup },
+				new DispatcherDutyWindow { UserId = Colleague, ShiftDispatcherId = "sd1", IsSupervisor = true }
+			});
+			_dispatchers.Setup(x => x.IsEligibleDispatcherAsync(DepartmentId, Me)).ReturnsAsync(true);
+
+			var model = (await _controller.ViewShift(70)).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<ShiftDayView>().Subject;
+
+			model.Dispatch.Should().NotBeNull();
+			model.Dispatch.Rows.Select(x => x.ShiftDispatcherId).Should().Equal(new[] { "sd1", "sd2" }, "approved dispatchers first");
+			model.Dispatch.OpenPositions.Should().Be(1, "a pending sign-up does not fill a position");
+			model.Dispatch.CanSignup.Should().BeTrue();
+			model.Dispatch.CanManage.Should().BeFalse();
+			model.Dispatch.Rows.Should().OnlyContain(x => !x.CanReview && !x.CanRemove);
+		}
+
+		[Test]
+		public async Task ViewShift_has_no_dispatch_block_for_a_shift_without_dispatchers()
+		{
+			var shift = SetupShift(5, DepartmentId, 10);
+			var day = shift.Days.First();
+			day.Shift = shift;
+			_shifts.Setup(x => x.GetShiftDayScheduleAsync(70)).ReturnsAsync(new ShiftDaySchedule { Shift = shift, Day = day });
+			_dispatchers.Setup(x => x.GetSettingsForShiftAsync(5)).ReturnsAsync(new ShiftDispatchSetting { ShiftId = 5, IsEnabled = false });
+
+			var model = (await _controller.ViewShift(70)).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<ShiftDayView>().Subject;
+
+			model.Dispatch.Should().BeNull();
+			_dispatchers.Verify(x => x.GetDayRosterAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
+		public async Task OnDuty_lists_the_desk_with_break_countdowns()
+		{
+			var now = DateTime.UtcNow;
+			_presence.Setup(x => x.GetDeskAsync(DepartmentId, It.IsAny<DateTime>())).ReturnsAsync(new DispatcherDeskSnapshot
+			{
+				Enabled = true,
+				MinimumAvailable = 2,
+				AvailableCount = 1,
+				Members = new List<DispatcherDeskMember>
+				{
+					new DispatcherDeskMember { UserId = Colleague, Name = "Col League", DisplayState = DispatcherDisplayStates.Available, IsOnDuty = true, ActiveItemCount = 1 },
+					new DispatcherDeskMember
+					{
+						UserId = Other, Name = "Oth Er", DisplayState = DispatcherDisplayStates.OnBreak, IsOnDuty = true,
+						ActiveBreak = new DispatcherBreak { BreakType = (int)DispatcherBreakTypes.Meal, DurationMinutes = 30, StartedOn = now.AddMinutes(-20), ExpectedReturnOn = now.AddMinutes(10) }
+					}
+				},
+				Queue = new List<DispatcherQueueItem> { new DispatcherQueueItem { State = (int)DispatcherQueueItemStates.Queued } }
+			});
+
+			var model = (await _controller.OnDuty()).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<OnDutyView>().Subject;
+
+			model.Dispatch.Should().NotBeNull();
+			model.Dispatch.BelowMinimum.Should().BeTrue();
+			model.Dispatch.QueueCount.Should().Be(1);
+			var onBreak = model.Dispatch.Dispatchers.Single(x => x.UserId == Other);
+			onBreak.BreakType.Should().Be((int)DispatcherBreakTypes.Meal);
+			onBreak.BreakMinutesLeft.Should().BeInRange(9, 10);
+			model.Dispatch.Dispatchers.Single(x => x.UserId == Colleague).HeldItems.Should().Be(1);
+		}
+
+		[Test]
+		public async Task OnDuty_still_shows_the_shifts_when_the_desk_cannot_be_read()
+		{
+			_presence.Setup(x => x.GetDeskAsync(DepartmentId, It.IsAny<DateTime>())).ThrowsAsync(new InvalidOperationException("desk down"));
+
+			var model = (await _controller.OnDuty()).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<OnDutyView>().Subject;
+
+			model.Dispatch.Should().BeNull();
+		}
+
+		[Test]
+		public async Task OnDuty_shows_waiting_work_when_nobody_is_on_the_desk()
+		{
+			// PR 589: the block used to vanish with no members, hiding the "waiting in queue" label exactly when it matters.
+			_presence.Setup(x => x.GetDeskAsync(DepartmentId, It.IsAny<DateTime>())).ReturnsAsync(new DispatcherDeskSnapshot
+			{
+				Enabled = true,
+				Members = new List<DispatcherDeskMember>(),
+				Queue = new List<DispatcherQueueItem> { new DispatcherQueueItem { State = (int)DispatcherQueueItemStates.Queued } }
+			});
+
+			var model = (await _controller.OnDuty()).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<OnDutyView>().Subject;
+
+			model.Dispatch.Should().NotBeNull();
+			model.Dispatch.QueueCount.Should().Be(1);
+			model.Dispatch.Dispatchers.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task OnDuty_leaves_the_desk_block_out_with_no_dispatchers_and_no_work()
+		{
+			_presence.Setup(x => x.GetDeskAsync(DepartmentId, It.IsAny<DateTime>())).ReturnsAsync(new DispatcherDeskSnapshot
+			{
+				Enabled = true,
+				Members = new List<DispatcherDeskMember>(),
+				Queue = new List<DispatcherQueueItem>()
+			});
+
+			var model = (await _controller.OnDuty()).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<OnDutyView>().Subject;
+
+			model.Dispatch.Should().BeNull();
+		}
+
+		[Test]
+		public async Task Index_shows_the_desk_menu_and_activity_to_an_on_duty_desk_supervisor_without_the_dispatch_login()
+		{
+			// PR 589: the Activity action admits CanSuperviseAsync callers; the menu hid it behind the Dispatch login.
+			_scope = ShiftManagementScope.None();
+			_shifts.Setup(x => x.GetAllShiftsByDepartmentAsync(DepartmentId)).ReturnsAsync(new List<Shift>());
+			_dispatchAccess.Setup(x => x.CanUseDispatchAsync(DepartmentId, Me)).ReturnsAsync(false);
+			_presence.Setup(x => x.CanSuperviseAsync(DepartmentId, Me)).ReturnsAsync(true);
+
+			var model = (await _controller.Index()).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<ShiftsIndexModel>().Subject;
+
+			model.ShowDispatcherActivity.Should().BeTrue();
+			model.ShowDispatcherDesk.Should().BeTrue("the board and the planner admit desk supervisors too");
+			model.ShowDispatcherDeskSettings.Should().BeFalse();
+		}
+
+		[Test]
+		public async Task EditShiftDetails_applies_only_the_editors_roster_changes()
+		{
+			// PR 589: a form opened before another manager added someone must not take them off by submitting its old roster.
+			var shift = SetupShift(5, DepartmentId, 10);
+			shift.AssignmentType = (int)ShiftAssignmentTypes.Assigned;
+			_shifts.Setup(x => x.UpdateShiftAsync(shift, It.IsAny<CancellationToken>())).ReturnsAsync(shift);
+			_events.Setup(x => x.SendMessage(It.IsAny<ShiftUpdatedEvent>()));
+			CaptureSavedSettings();
+			List<(string UserId, bool IsSupervisor)> previous = null, wanted = null;
+			_dispatchers.Setup(x => x.UpdateStandingRosterAsync(DepartmentId, 5, It.IsAny<IEnumerable<(string UserId, bool IsSupervisor)>>(),
+					It.IsAny<IEnumerable<(string UserId, bool IsSupervisor)>>(), Me, It.IsAny<CancellationToken>()))
+				.Callback((int _, int __, IEnumerable<(string UserId, bool IsSupervisor)> before, IEnumerable<(string UserId, bool IsSupervisor)> after, string ___, CancellationToken ____) =>
+				{
+					previous = before.ToList();
+					wanted = after.ToList();
+				})
+				.ReturnsAsync(DispatcherDeskResult<List<ShiftDispatcher>>.Ok(new List<ShiftDispatcher>()));
+
+			var model = new EditShiftView { Shift = new Shift { ShiftId = 5 }, Dispatch = new ShiftDispatchSectionView { IsEnabled = true } };
+			var form = DispatchForm(("dispatchRosterEdit", "1"), ("dispatchRosterWas", new StringValues(new[] { Colleague, Other })), ("dispatchSupervisorWas", Other),
+				("dispatchRoster", Colleague), ("dispatchSupervisor", Colleague));
+
+			(await _controller.EditShiftDetails(model, form, CancellationToken.None)).Should().BeOfType<RedirectToActionResult>();
+
+			previous.Should().BeEquivalentTo(new[] { (Colleague, false), (Other, true) });
+			wanted.Should().BeEquivalentTo(new[] { (Colleague, true) });
+			_dispatchers.Verify(x => x.SetStandingRosterAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<IEnumerable<(string, bool)>>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		#endregion Dispatchers on duty
 	}
 }

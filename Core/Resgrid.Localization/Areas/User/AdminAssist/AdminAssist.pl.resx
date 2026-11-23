@@ -7755,6 +7755,12 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>Kto wybiera, który zgłoszony przejmuje prośbę o zamianę zmiany, i zatwierdza oczekujące zamiany. Administratorzy jednostki zawsze mogą; administratorzy grup, osoba oddająca zmianę i członkowie wybranych ról zależą od wyboru jednostki.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatcherDeskConfig">
+    <value>Stanowisko dyspozytorów</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatcherDeskConfig">
+    <value>Włącza stanowisko dyspozytorskie i określa, jak działa: jaka praca jest proponowana dyspozytorom na dyżurze w aplikacji Dispatch (oczekujące i zaplanowane zgłoszenia, SMS-y, połączenia telefoniczne, e-maile, czaty), jak długo czeka propozycja i ile pozycji może mieć dyspozytor, zanim liczy się jako zajęty, po ilu przegapionych z rzędu propozycjach dyspozytor zostaje oznaczony jako Nieobecny oraz co dzieje się z SMS-ami i połączeniami telefonicznymi, gdy nikt nie jest wolny (czekanie w kolejce, Enhanced AI lub poczta głosowa). Określa też, czym staje się zgłoszenie wysłane e-mailem na adres dysponowania (wysłane od razu, zapisane jako oczekujące lub odczytane przez Enhanced AI do zgłoszenia oczekującego), oraz zasady przerw i dyżuru: przypomnienia o przerwach, automatyczny powrót z przerw, minimum dostępnych, odmawianie przerw poniżej niego, brak alertów stanowiska w czasie przerwy oraz to, czy dyspozytorzy muszą być na zmianie, czy mogą pełnić dyżur bez zmiany (Zmiany, Ustawienia stanowiska dyspozytorskiego). Domyślnie wyłączone; zgłoszenia z e-maili są wysyłane od razu, dopóki nie zmieni się ustawienia Zgłoszenia e-mailem, co obowiązuje także przy wyłączonym przekazywaniu.</value>
+  </data>
   <data xml:space="preserve" name="Feature.home-dashboard">
     <value>Konfigurowalny pulpit startowy</value>
   </data>
@@ -8000,5 +8006,251 @@
   </data>
   <data name="FeatureSetup.ai-destination-advice" xml:space="preserve">
     <value>Wymaga dodatku Enhanced AI z włączoną dla jednostki poradą AI dotyczącą miejsca docelowego. Najpierw dodaj miejsca docelowe z ich możliwościami oraz reguły miejsc docelowych. Porada pojawia się przy podglądzie i aktualizacji zgłoszenia, nic się nie zmienia, dopóki ktoś jej nie zastosuje, a jednostki korzystające z Advanced Data Protection nie otrzymują porad.</value>
+  </data>
+  <data name="Feature.dispatcher-desk" xml:space="preserve">
+    <value>Stanowisko dyspozytorskie</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk" xml:space="preserve">
+    <value>Bieżąca tablica dyspozytorów na dyżurze i pracy, która na nich czeka. Oczekujące i zaplanowane zgłoszenia, SMS-y, połączenia telefoniczne, e-maile i czaty są proponowane po kolei jednemu wolnemu dyspozytorowi, który przyjmuje je w aplikacji Dispatch na telefonie lub tablecie.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk" xml:space="preserve">
+    <value>Praca trafia do kogoś, kto jest wolny: dyspozytor, który ma pracę, liczy się jako zajęty, propozycja, której nikt nie przyjmie, przechodzi do następnego dyspozytora, a praca, która czeka zbyt długo, alarmuje wszystkich na dyżurze. Dyspozytorzy mogą obsługiwać stanowisko z dowolnego miejsca, nie tylko przy konsoli.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk" xml:space="preserve">
+    <value>Dwóch ochotniczych dyspozytorów obsługuje weekend ze swoich telefonów. SMS o drzewie leżącym w poprzek drogi trafia do tego, który jest wolny, i staje się zgłoszeniem, a drugi jest na przerwie na posiłek i do powrotu nie dostaje alertów stanowiska.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk" xml:space="preserve">
+    <value>Nadaj dyspozytorom uprawnienie Logowanie do aplikacji dysponowania i dodaj ich do grafiku dyspozytorskiego zmiany. Następnie otwórz Zmiany, Ustawienia stanowiska dyspozytorskiego, włącz Przekazuj pracę dyspozytorom na dyżurze, wybierz, co Wysyłaj na stanowisko, i zapisz. Dyspozytorzy logują się na stanowisko w aplikacji Dispatch; strona Stanowisko dyspozytorskie pokazuje, kto jest dostępny, zajęty lub na przerwie, oraz otwartą kolejkę, a nadzorujący stanowisko może zakończyć przerwę lub przekazać pracę komuś innemu.</value>
+  </data>
+  <data name="Feature.shift-dispatchers" xml:space="preserve">
+    <value>Dyspozytorzy na dyżurze</value>
+  </data>
+  <data name="FeaturePurpose.shift-dispatchers" xml:space="preserve">
+    <value>Dodawaj dyspozytorów do zmian przydzielanych i z zapisami, do zmiany tylko dla dyspozytorów lub obok ratowników, z liczbą stanowisk dyspozytorskich do obsadzenia, minimum na stanowisku i nadzorującym stanowisko.</value>
+  </data>
+  <data name="FeatureValue.shift-dispatchers" xml:space="preserve">
+    <value>Stanowisko proponuje pracę tylko dyspozytorom, którzy naprawdę są na dyżurze: tym z grafiku trwającego teraz dnia zmiany, chyba że jednostka pozwala na dyżur bez zmiany. Wolne stanowiska dyspozytorskie widać przy dniu zmiany, a Teraz na służbie pokazuje dyspozytorów z ich stanem na stanowisku i przerwami.</value>
+  </data>
+  <data name="FeatureExample.shift-dispatchers" xml:space="preserve">
+    <value>Centrum dyspozytorskie prowadzi zmiany A, B i C tylko dla dyspozytorów, po dwóch dyspozytorów na każdej, a jednostka ochotnicza dodaje jedno stanowisko dyspozytora do weekendowej zmiany z zapisami.</value>
+  </data>
+  <data name="FeatureSetup.shift-dispatchers" xml:space="preserve">
+    <value>Otwórz Zmiany, utwórz lub edytuj zmianę i włącz Ta zmiana ma dyspozytorów. Ustaw Potrzebni dyspozytorzy, a na zmianie przydzielanej zaznacz osoby w Grafiku dyspozytorskim i wskaż nadzorującego stanowisko; na zmianie z zapisami dyspozytorzy wybierają Zapisz się jako dyspozytor przy dniu zmiany. Dodać można tylko osoby z uprawnieniem Logowanie do aplikacji dysponowania.</value>
+  </data>
+  <data name="Feature.dispatcher-breaks" xml:space="preserve">
+    <value>Przerwy dyspozytorów</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-breaks" xml:space="preserve">
+    <value>Planuj przerwy i posiłki dyspozytorów danego dnia na jednej osi pokrycia, która pokazuje, kto jest na dyżurze, kto ma przerwę i gdzie obsada spadłaby poniżej minimum.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-breaks" xml:space="preserve">
+    <value>Przerwy pozostają rozłożone w czasie, więc stanowisko nigdy nie zostaje puste: Zaplanuj przerwy rozkłada plan przerw zmiany na jej dyspozytorów bez nakładania się, a planer ostrzega o nakładających się przerwach i lukach, zanim do nich dojdzie. Dyspozytorzy dostają przypomnienie przed każdą przerwą i domyślnie nie dostają w jej trakcie alertów stanowiska.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-breaks" xml:space="preserve">
+    <value>Na 12-godzinnej zmianie z trzema dyspozytorami Zaplanuj przerwy ustawia każdemu 30-minutowy posiłek i dwie 15-minutowe przerwy o różnych porach, a każdy dyspozytor dostaje przypomnienie pięć minut przed przerwą.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-breaks" xml:space="preserve">
+    <value>Ustaw plan przerw dla każdej zmiany albo domyślny plan przerw w Ustawieniach stanowiska dyspozytorskiego. Następnie otwórz Zmiany, Przerwy dyspozytorów, wybierz datę i dzień zmiany i użyj Zaplanuj przerwy albo zaplanuj pojedyncze przerwy samodzielnie. Nadzorujący stanowisko i kierownicy zmian planują przerwy wszystkich; dyspozytorzy planują własne tylko na zmianach, które na to pozwalają. Przerwa to czas trwania, więc przerwa rozpoczęta wcześniej także wcześniej się kończy.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-settings" xml:space="preserve">
+    <value>Ustawienia stanowiska dyspozytorskiego</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-settings" xml:space="preserve">
+    <value>Włącz przekazywanie i wybierz, jaka praca trafia na stanowisko, jak długo czeka propozycja, co dzieje się z SMS-ami i połączeniami telefonicznymi, gdy wszyscy dyspozytorzy są zajęci, czym staje się zgłoszenie z e-maila oraz zasady przerw i dyżuru.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-settings" xml:space="preserve">
+    <value>Jednostka raz decyduje, jak działa stanowisko: od tego, jak szybko nieprzyjęta praca przechodzi dalej, po to, czy przerwa może zostawić mniej dostępnych dyspozytorów niż minimum.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-settings" xml:space="preserve">
+    <value>Jednostka wysyła na stanowisko SMS-y i połączenia telefoniczne, daje każdej propozycji 60 sekund, pozwala Enhanced AI wypełnić zgłoszenie oczekujące, gdy nikt nie jest wolny, i zapisuje zgłoszenia z e-maili jako oczekujące do sprawdzenia przez dyspozytora.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-settings" xml:space="preserve">
+    <value>Administratorzy jednostki otwierają Zmiany, a następnie Ustawienia stanowiska dyspozytorskiego. Włącz Przekazuj pracę dyspozytorom na dyżurze, wybierz Wysyłaj na stanowisko, czas propozycji i liczbę pozycji na dyspozytora, co się dzieje, gdy wszyscy dyspozytorzy są zajęci, Zgłoszenia e-mailem oraz zasady przerw, a potem zapisz. Opcje Enhanced AI wymagają dodatku Enhanced AI.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-activity" xml:space="preserve">
+    <value>Aktywność dyspozytorów</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-activity" xml:space="preserve">
+    <value>Aktywność stanowiska z okresu do 92 dni: praca według rodzaju, pozycje zakończone, przepełnione, anulowane i eskalowane oraz średni czas odpowiedzi, a dla każdego dyspozytora propozycje przyjęte, odrzucone i przegapione, czas do przyjęcia i do zakończenia oraz przerwy wykorzystane, pominięte lub zakończone z opóźnieniem.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-activity" xml:space="preserve">
+    <value>Sprawdź, czy praca jest szybko przyjmowana, jak często się przepełnia lub eskaluje i czy przerwy kończą się na czas, a potem na podstawie liczb dostosuj obsadę, czas propozycji lub plany przerw.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-activity" xml:space="preserve">
+    <value>Nadzorujący widzi, że SMS-y w piątkowe wieczory często były eskalowane, i dodaje do tej zmiany drugiego dyspozytora.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-activity" xml:space="preserve">
+    <value>Administratorzy jednostki i nadzorujący stanowisko otwierają Zmiany, a następnie Aktywność dyspozytorów, wybierają daty Od i Do i klikają Pokaż.</value>
+  </data>
+  <data name="Feature.intake-spam-screening" xml:space="preserve">
+    <value>Filtrowanie spamu w przyjmowaniu zgłoszeń</value>
+  </data>
+  <data name="FeaturePurpose.intake-spam-screening" xml:space="preserve">
+    <value>Trzymaj spam i automatyczne połączenia z dala od Zgłoszeń oczekujących: odrzuć zgłoszenie z kanału jako spam i zablokuj nadawcę, ogranicz, ile zgłoszeń jeden numer telefonu może utworzyć w ciągu godziny, poproś dzwoniących o naciśnięcie 1 przed pytaniami i oznaczaj wiadomości, które Enhanced AI odczytuje jako niebędące zdarzeniem.</value>
+  </data>
+  <data name="FeatureValue.intake-spam-screening" xml:space="preserve">
+    <value>Dyspozytorzy poświęcają czas prawdziwym zgłoszeniom. SMS-y i połączenia zablokowanego nadawcy nie tworzą zgłoszeń i nie dostają odpowiedzi, a odfiltrowane zgłoszenie zachowuje swoje oznaczenie w Zgłoszeniach oczekujących, ale nie jest proponowane na stanowisku dyspozytorskim; o tym, co się z nim stanie, nadal decyduje dyspozytor.</value>
+  </data>
+  <data name="FeatureExample.intake-spam-screening" xml:space="preserve">
+    <value>Numer reklamowy ciągle pisze na numer jednostki. Po przekroczeniu limitu godzinowego jego SMS-y są dodawane jako notatki do jego otwartego zgłoszenia, a dyspozytor odrzuca to zgłoszenie jako spam i blokuje numer na 30 dni.</value>
+  </data>
+  <data name="FeatureSetup.intake-spam-screening" xml:space="preserve">
+    <value>Przy oczekującym zgłoszeniu z kanału wybierz Odrzuć jako spam i zostaw zaznaczone Zablokuj też nadawcę; zgłoszenie zostaje anulowane i nikt nie jest powiadamiany. Zablokowani nadawcy są wymienieni na stronie Kanały przyjmowania zgłoszeń, gdzie Odblokuj wcześniej znosi blokadę. Limit godzinowy dotyczy kanałów SMS, głosowych i WhatsApp bez dozwolonych nadawców, nigdy kanałów e-mail, czatu ani webhooków.</value>
+  </data>
+  <data name="Area.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="AreaPurpose.relay" xml:space="preserve">
+    <value>Aplikacja towarzysząca open source, która łączy z Resgrid e-maile z CAD i systemów powiadamiania, skanery, radiotelefony oraz radiotelefony push-to-talk LTE.</value>
+  </data>
+  <data name="AreaValue.relay" xml:space="preserve">
+    <value>Przenieś do Resgrid zgłoszenia, wiadomości i ruch radiowy z systemów, które już masz, bez ich zastępowania.</value>
+  </data>
+  <data name="AreaExample.relay" xml:space="preserve">
+    <value>CAD powiatu wysyła każde dysponowanie e-mailem do relaya, który tworzy zgłoszenie z załączoną kartą działań, a radiotelefon stacji połączony z kanałem głosowym pozwala użytkownikom aplikacji rozmawiać z zastępami przez radio.</value>
+  </data>
+  <data name="ModuleAdoption.relay" xml:space="preserve">
+    <value>Zainstaluj Relay na komputerze oddziału: jako aplikację desktopową dla Windows albo bez interfejsu w systemie Windows, Linux, macOS lub w Dockerze. Dysponowanie e-mailem nie wymaga dodatku; mostek radiowy, rejestrator i alarmowanie tonami wymagają dodatku Push-to-Talk i kanału głosowego. Relay uzupełnia systemy radiowe i powiadamiania, ale ich nie zastępuje.</value>
+  </data>
+  <data name="Feature.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay" xml:space="preserve">
+    <value>Zainstaluj i uruchom Relay, wybierz jego tryby i połącz go ze swoim oddziałem.</value>
+  </data>
+  <data name="FeatureValue.relay" xml:space="preserve">
+    <value>Aplikacja desktopowa dla Windows uruchamia kilka trybów jednocześnie z pulpitem na żywo; host bez interfejsu uruchamia jeden tryb na proces na serwerze lub w Dockerze.</value>
+  </data>
+  <data name="FeatureExample.relay" xml:space="preserve">
+    <value>Oddział instaluje aplikację desktopową na komputerze w stacji, loguje ją dedykowanym kontem członka i włącza automatyczne uruchamianie dysponowania e-mailem oraz mostka radiowego.</value>
+  </data>
+  <data name="FeatureSetup.relay" xml:space="preserve">
+    <value>Dodaj konto członka, którym będzie logował się relay, a następnie zainstaluj Relay i połącz go za pomocą tokenu odświeżania tego konta. Mostek radiowy, rejestrator i alarmowanie tonami wymagają tego tokenu użytkownika; dysponowanie e-mailem i wykrywanie tonów mogą też używać poświadczeń klienta. Przed uruchomieniem trybu użyj „Test connection”.</value>
+  </data>
+  <data name="Feature.relay-smtp-dispatch" xml:space="preserve">
+    <value>Dysponowanie e-mailem przez Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay-smtp-dispatch" xml:space="preserve">
+    <value>Wbudowany serwer pocztowy Relay zamienia e-maile dyspozytorskie z systemów CAD, central alarmowych lub bramek powiadamiania w zgłoszenia i wiadomości grupowe Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-smtp-dispatch" xml:space="preserve">
+    <value>E-mail na kod dyspozytorski oddziału alarmuje cały oddział, kod dyspozytorski grupy dysponuje tę grupę, a jej kod wiadomości wysyła do niej wiadomość. Załączniki trafiają do zgłoszenia, a ponownie dostarczona wiadomość nigdy nie tworzy drugiego zgłoszenia.</value>
+  </data>
+  <data name="FeatureExample.relay-smtp-dispatch" xml:space="preserve">
+    <value>CAD powiatu wysyła każde zdarzenie Stacji 5 na kod dyspozytorski tej grupy w domenie dyspozytorskiej powiatu, a relay tworzy zgłoszenie z załączoną kartą działań w PDF.</value>
+  </data>
+  <data name="FeatureSetup.relay-smtp-dispatch" xml:space="preserve">
+    <value>Adres dyspozytorski oddziału znajdziesz w Ustawieniach zgłoszeń, a adresy dyspozytorskie i adresy wiadomości każdej grupy w Grupach. Skieruj pocztę swoich domen dyspozytorskich do Relay i wpisz te domeny w jego ustawieniach SMTP. Konto relaya potrzebuje uprawnienia Tworzenie zgłoszeń, a dla załączników Dodawanie danych zgłoszenia.</value>
+  </data>
+  <data name="Feature.relay-tone-detect" xml:space="preserve">
+    <value>Tony alarmowe na zgłoszenia</value>
+  </data>
+  <data name="FeaturePurpose.relay-tone-detect" xml:space="preserve">
+    <value>W systemie Windows Relay nasłuchuje skanera lub radiotelefonu przez kartę dźwiękową, wykrywa alarmy dwutonowe i jednotonowe oraz tworzy zgłoszenie Resgrid z nagranym dźwiękiem dysponowania.</value>
+  </data>
+  <data name="FeatureValue.relay-tone-detect" xml:space="preserve">
+    <value>Członkowie otrzymują alarm w aplikacji Responder z dołączonym nagraniem dyspozytora, nawet gdy alarm radiowy jest jedynym dysponowaniem.</value>
+  </data>
+  <data name="FeatureExample.relay-tone-detect" xml:space="preserve">
+    <value>Skaner ochotniczej jednostki słyszy jej alarm dwutonowy, a relay tworzy zgłoszenie dla grupy tej stacji z dołączonym nagraniem dysponowania.</value>
+  </data>
+  <data name="FeatureSetup.relay-tone-detect" xml:space="preserve">
+    <value>W Grupach zanotuj kod dyspozytorski każdej grupy, którą alarmujesz tonami: watcher grupy dysponuje tę grupę, a watcher oddziału alarmuje wszystkich. Wprowadź tony każdego watchera w Relay. Konto relaya potrzebuje uprawnień Tworzenie zgłoszeń i Dodawanie danych zgłoszenia.</value>
+  </data>
+  <data name="Feature.relay-radio-bridge" xml:space="preserve">
+    <value>Mostek radiowy</value>
+  </data>
+  <data name="FeaturePurpose.relay-radio-bridge" xml:space="preserve">
+    <value>W systemie Windows Relay łączy podłączony kablem radiotelefon z kanałem push-to-talk Resgrid w obu kierunkach.</value>
+  </data>
+  <data name="FeatureValue.relay-radio-bridge" xml:space="preserve">
+    <value>Zastępy na radiu i członkowie w aplikacjach Responder, Unit i Dispatch słyszą się nawzajem, a ton alarmowy w radiu może utworzyć zgłoszenie.</value>
+  </data>
+  <data name="FeatureExample.relay-radio-bridge" xml:space="preserve">
+    <value>Zespół poszukiwawczo-ratowniczy łączy swoją bazową radiostację VHF z kanałem zespołu, dzięki czemu ratownicy z radiotelefonami ręcznymi i ratownicy z telefonami rozmawiają ze sobą.</value>
+  </data>
+  <data name="FeatureSetup.relay-radio-bridge" xml:space="preserve">
+    <value>Wymaga dodatku Push-to-Talk, kanału głosowego i tokenu odświeżania relaya. Kluczuj radiotelefon przez interfejs PTT CM108 USB lub szeregowy, ustaw blokadę szumów przyciskiem „Tune” i sprawdź okablowanie oraz opóźnienie nadawania przyciskiem „Test transmit”.</value>
+  </data>
+  <data name="Feature.relay-lte-donor-radios" xml:space="preserve">
+    <value>Radiotelefony pośredniczące push-to-talk LTE</value>
+  </data>
+  <data name="FeaturePurpose.relay-lte-donor-radios" xml:space="preserve">
+    <value>Łączy komórkową grupę rozmówną push-to-talk (PoC), np. Rapid Radios lub Diga-Talk+, z kanałem głosowym Resgrid za pomocą jednego z jej radiotelefonów podłączonego kablem do relaya.</value>
+  </data>
+  <data name="FeatureValue.relay-lte-donor-radios" xml:space="preserve">
+    <value>Użytkownicy radiotelefonów PoC i aplikacji Resgrid prowadzą jedną wspólną rozmowę, choć te usługi PoC nie udostępniają API ani bramki dla zewnętrznego dźwięku.</value>
+  </data>
+  <data name="FeatureExample.relay-lte-donor-radios" xml:space="preserve">
+    <value>Zespół ochrony podłącza jeden przewoźny radiotelefon Diga-Talk+ do relaya, dzięki czemu ochroniarze z radiotelefonami PoC i przełożeni w aplikacjach Resgrid słyszą się nawzajem.</value>
+  </data>
+  <data name="FeatureSetup.relay-lte-donor-radios" xml:space="preserve">
+    <value>Zastosuj profil radiotelefonu, kluczuj go fizyczną linią PTT zamiast VOX, wyłącz jego własny VOX i sygnały dźwiękowe i zasilaj go zewnętrznie. Radiotelefon pośredniczący zajmuje jedno urządzenie na koncie PoC i łączy grupę rozmówną, na którą jest ustawiony. Wymaga dodatku Push-to-Talk i kanału głosowego.</value>
+  </data>
+  <data name="Feature.relay-recorder" xml:space="preserve">
+    <value>Rejestrator kanałów</value>
+  </data>
+  <data name="FeaturePurpose.relay-recorder" xml:space="preserve">
+    <value>Nagrywa każdą transmisję na jednym lub wszystkich kanałach push-to-talk jako pliki audio, z dziennikiem tego, kto mówił, na którym kanale, kiedy i jak długo.</value>
+  </data>
+  <data name="FeatureValue.relay-recorder" xml:space="preserve">
+    <value>Przechowuje ruch głosowy na potrzeby zgodności i analizy po akcji, na dysku lokalnym lub w magazynie zgodnym z S3.</value>
+  </data>
+  <data name="FeatureExample.relay-recorder" xml:space="preserve">
+    <value>Agencja zarządzania kryzysowego nagrywa wszystkie kanały podczas ćwiczeń powodziowych i przegląda dziennik transmisji na spotkaniu podsumowującym.</value>
+  </data>
+  <data name="FeatureSetup.relay-recorder" xml:space="preserve">
+    <value>Wymaga dodatku Push-to-Talk, kanału głosowego i tokenu odświeżania relaya. Każdy nagrywany kanał zajmuje jedno miejsce głosowe. Nagrania zawierają operacyjny ruch głosowy: przechowuj je, chroń i usuwaj zgodnie z zasadami prowadzenia dokumentacji.</value>
+  </data>
+  <data name="Feature.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Alarmowanie tonami przez push-to-talk</value>
+  </data>
+  <data name="FeaturePurpose.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Ogłasza każde nowe zgłoszenie Resgrid na kanale push-to-talk: najpierw tony alarmowe, potem zgłoszenie odczytane przez syntezator mowy Resgrid.</value>
+  </data>
+  <data name="FeatureValue.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Zastępy nasłuchujące kanału słyszą dysponowania tak jak przez radio, w sformułowaniach Resgrid i z nazwami priorytetów zgłoszeń twojego oddziału.</value>
+  </data>
+  <data name="FeatureExample.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Zakładowy zespół ratowniczy nasłuchuje swojego kanału, a każde nowe zgłoszenie jest ogłaszane tonem wysoki-niski, po którym następują nazwa, rodzaj, adres i priorytet zgłoszenia.</value>
+  </data>
+  <data name="FeatureSetup.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Wymaga dodatku Push-to-Talk, kanału głosowego i tokenu odświeżania relaya. Zgłoszenia otwarte już w chwili uruchomienia relaya nie są ogłaszane, a zgłoszenia zaplanowane są ogłaszane w momencie ich zadysponowania.</value>
+  </data>
+  <data name="Rule.relay-dispatch-code" xml:space="preserve">
+    <value>Brak kodu e-mail dyspozytorskiego oddziału</value>
+  </data>
+  <data name="RuleWhy.relay-dispatch-code" xml:space="preserve">
+    <value>Oddział nie ma kodu e-mail dyspozytorskiego, więc e-mail na jego adres dyspozytorski nie może utworzyć zgłoszenia, niezależnie od tego, czy odbiera go Resgrid, czy relay.</value>
+  </data>
+  <data name="RuleNext.relay-dispatch-code" xml:space="preserve">
+    <value>Sprawdź adres dyspozytorski w Ustawieniach zgłoszeń. Jeśli żaden nie jest widoczny, poproś pomoc techniczną Resgrid lub administratora swojej instalacji Resgrid o przypisanie kodu dyspozytorskiego.</value>
+  </data>
+  <data name="Rule.relay-group-email-codes" xml:space="preserve">
+    <value>Grupy bez kodu e-mail dyspozytorskiego lub kodu wiadomości</value>
+  </data>
+  <data name="RuleWhy.relay-group-email-codes" xml:space="preserve">
+    <value>Co najmniej jedna grupa nie ma kodu e-mail dyspozytorskiego lub kodu wiadomości, więc e-maile na adresy tych grup do nikogo nie docierają, ani przez Resgrid, ani przez relay. Grupy utworzone poza edytorem grup, np. przez import, mogą nie mieć kodów.</value>
+  </data>
+  <data name="RuleNext.relay-group-email-codes" xml:space="preserve">
+    <value>W Grupach znajdź każdą grupę, której adres dyspozytorski lub adres wiadomości nie ma kodu przed znakiem @, otwórz Edytuj i zapisz; zapisanie przypisuje brakujące kody.</value>
+  </data>
+  <data name="Rule.relay-voice-channel" xml:space="preserve">
+    <value>Push-to-Talk bez kanału głosowego</value>
+  </data>
+  <data name="RuleWhy.relay-voice-channel" xml:space="preserve">
+    <value>Oddział ma Push-to-Talk, ale nie ma stałego kanału głosowego, więc aplikacje Resgrid oraz mostek radiowy, rejestrator i alarmowanie tonami relaya nie mają kanału, do którego mogłyby dołączyć.</value>
+  </data>
+  <data name="RuleNext.relay-voice-channel" xml:space="preserve">
+    <value>Otwórz stronę kanałów głosowych, utwórz kanał i dodaj członków, którzy z niego korzystają.</value>
+  </data>
+  <data name="SetupEvidence.relay-voice" xml:space="preserve">
+    <value>Sprawdzana jest dostępność Push-to-Talk i stałe kanały głosowe. Resgrid nie widzi, czy relay jest zainstalowany, połączony lub przesyła dźwięk; sprawdź to na pulpicie samego relaya.</value>
+  </data>
+  <data name="Setting.AllowShiftOverSignup" xml:space="preserve">
+    <value>Zezwalaj na zapisy ponad miejsca w grupie</value>
+  </data>
+  <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
+    <value>Pozwala członkom zapisać się do grupy zmiany, nawet gdy wszystkie miejsca jej ról (wymagane i opcjonalne) są zajęte. Nadal potrzebują jednej z ról grupy. Przełożeni zawsze mogą przydzielać osoby ponad liczbę miejsc.</value>
   </data>
 </root>

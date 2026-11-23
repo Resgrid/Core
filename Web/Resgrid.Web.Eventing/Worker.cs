@@ -59,6 +59,9 @@ namespace Resgrid.Web.Eventing
 														  IncidentCommandUpdated);
 
 			_rabbitInboundEventProvider.RegisterForChatEvents(ChatEventReceived);
+			// Dispatcher desk (M0324): ids and states only, never message content; the Dispatch app refetches through v4 DispatcherDesk.
+			_rabbitInboundEventProvider.RegisterForDispatcherDeskEvents((departmentId, userId, payload) => _eventingHub.Clients.Group(departmentId.ToString()).SendAsync("dispatcherDeskUpdated", userId ?? "", payload));
+			_rabbitInboundEventProvider.RegisterForDispatcherQueueEvents((departmentId, itemId, payload) => _eventingHub.Clients.Group(departmentId.ToString()).SendAsync("dispatcherQueueUpdated", itemId, payload));
 			_rabbitInboundEventProvider.RegisterForChecklistEvents((departmentId, id) => _eventingHub.Clients.Group(departmentId.ToString()).SendAsync("checklistUpdated", id));
 			_rabbitInboundEventProvider.RegisterForSessionEvents(SessionEventReceived);
 			_rabbitInboundEventProvider.RegisterForUnitStatusAlertEvents((departmentId, id) => _eventingHub.Clients.Group(departmentId.ToString()).SendAsync("unitStatusAlertUpdated", id));

@@ -350,6 +350,9 @@ namespace Resgrid.Model.Services
 
 		Task<bool> GetAllowSignupsForMultipleShiftGroupsAsync(int departmentId);
 
+		/// <summary>Members may sign up for a shift group past its role slots (<see cref="DepartmentSettingTypes.AllowShiftOverSignup"/>); false when unset.</summary>
+		Task<bool> GetAllowShiftOverSignupAsync(int departmentId);
+
 		/// <summary>Who may decide shift trade requests; the default when the department has not set it.</summary>
 		Task<ShiftTradeApproverSettings> GetShiftTradeApproverSettingsAsync(int departmentId);
 

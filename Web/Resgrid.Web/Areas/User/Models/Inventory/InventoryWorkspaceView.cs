@@ -25,6 +25,8 @@ namespace Resgrid.Web.Areas.User.Models.Inventory
 		public List<InventoryRow> Rows { get; set; } = new();
 		public List<InventoryItem> Items { get; set; } = new();
 		public List<InventoryLocation> Locations { get; set; } = new();
+		/// <summary>Per-location minimums of the items on the Items page (GetParLevelsAsync).</summary>
+		public List<InventoryParLevel> ParLevels { get; set; } = new();
 		public List<InventoryCategory> Categories { get; set; } = new();
 		public List<InventoryAsset> Assets { get; set; } = new();
 		public List<InventoryLot> Lots { get; set; } = new();

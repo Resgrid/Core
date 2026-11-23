@@ -7677,6 +7677,12 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>Who may pick which applicant takes a shift trade request and approve trades waiting for approval. Department admins always may; group admins, the person trading out and members of chosen roles are the department’s choice.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatcherDeskConfig">
+    <value>Dispatcher desk</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatcherDeskConfig">
+    <value>Turns the dispatcher desk on and sets how it works: which work is offered to the dispatchers on duty in the Dispatch app (pending and scheduled calls, texts, phone calls, emails, chats), how long an offer waits and how many items a dispatcher holds before counting as busy, how many missed offers in a row set a dispatcher Away, and what happens to texts and phone calls when nobody is free (wait in the queue, Enhanced AI, or voicemail). It also sets what a call emailed to the dispatch address becomes (dispatched at once, saved as pending, or read by Enhanced AI into a pending call) and the break and duty rules: break reminders, automatic return from breaks, the minimum available, refusing breaks below it, no desk alerts on break, and whether dispatchers must be on a shift or may go on duty without one (Shifts, Dispatcher Desk Settings). Off by default; emailed calls are dispatched at once until Emailed calls is changed, which applies even while routing is off.</value>
+  </data>
   <data xml:space="preserve" name="Feature.home-dashboard">
     <value>Customizable home dashboard</value>
   </data>
@@ -7922,5 +7928,251 @@
   </data>
   <data name="FeatureSetup.ai-destination-advice" xml:space="preserve">
     <value>Needs the Enhanced AI add-on with AI destination advice turned on for your department. Add your destinations with their capabilities and destination rules first. The advice shows on View Call and Update Call, nothing changes until someone applies it, and departments using Advanced Data Protection do not get advice.</value>
+  </data>
+  <data name="Feature.dispatcher-desk" xml:space="preserve">
+    <value>Dispatcher Desk</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk" xml:space="preserve">
+    <value>A live board of the dispatchers on duty and the work waiting for them. Pending and scheduled calls, texts, phone calls, emails and chats are offered to one free dispatcher at a time, who takes them in the Dispatch app on a phone or tablet.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk" xml:space="preserve">
+    <value>Work goes to someone who is free: a dispatcher holding work counts as busy, an offer nobody takes moves on to the next dispatcher, and work left waiting alerts everyone on duty. Dispatchers can work the desk from wherever they are, not only from a console.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk" xml:space="preserve">
+    <value>Two volunteer dispatchers cover a weekend from their phones. A text about a tree down across a road is offered to the one who is free and becomes a call, while the other is on a meal break and gets no desk alerts until they are back.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk" xml:space="preserve">
+    <value>Give your dispatchers the Dispatch app login permission and put them on a shift's dispatch roster. Then open Shifts, Dispatcher Desk Settings, turn on Route work to on-duty dispatchers, choose what to Send to the desk and save. Dispatchers sign in to the desk in the Dispatch app; the Dispatcher Desk page shows who is available, busy or on break and the open queue, and a desk supervisor can end a break or move work to someone else.</value>
+  </data>
+  <data name="Feature.shift-dispatchers" xml:space="preserve">
+    <value>Dispatchers on duty</value>
+  </data>
+  <data name="FeaturePurpose.shift-dispatchers" xml:space="preserve">
+    <value>Put dispatchers on Assigned and Sign-up shifts, on a dispatch-only shift or beside the responders, with the number of dispatch positions to fill, a minimum on the desk and a desk supervisor.</value>
+  </data>
+  <data name="FeatureValue.shift-dispatchers" xml:space="preserve">
+    <value>The desk offers work only to dispatchers who are really on duty: those on the roster of a shift day running now, unless the department allows duty without a shift. Open dispatch positions show on the shift day, and On Duty Now lists the dispatchers with their desk state and breaks.</value>
+  </data>
+  <data name="FeatureExample.shift-dispatchers" xml:space="preserve">
+    <value>A dispatch center runs dispatch-only A, B and C shifts with two dispatchers each, and a volunteer department adds one dispatcher position to its weekend sign-up shift.</value>
+  </data>
+  <data name="FeatureSetup.shift-dispatchers" xml:space="preserve">
+    <value>Open Shifts, create or edit a shift and turn on This shift takes dispatchers. Set Dispatchers needed and, on an Assigned shift, tick the people on the Dispatch roster and mark a desk supervisor; on a Sign-up shift, dispatchers choose Sign up as dispatcher on the shift day. Only people with the Dispatch app login permission can be added.</value>
+  </data>
+  <data name="Feature.dispatcher-breaks" xml:space="preserve">
+    <value>Dispatcher Breaks</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-breaks" xml:space="preserve">
+    <value>Plan breaks and meals for the day's dispatchers on one coverage timeline that shows who is on duty, who is on a break and where coverage would drop below the minimum.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-breaks" xml:space="preserve">
+    <value>Breaks stay staggered so the desk is never left empty: Plan breaks spreads a shift's break plan across its dispatchers without overlaps, and the planner warns about overlapping breaks and gaps before they happen. Dispatchers are reminded before each break and, by default, get no desk alerts while on it.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-breaks" xml:space="preserve">
+    <value>On a 12-hour shift with three dispatchers, Plan breaks places each one's 30-minute meal and two 15-minute breaks at different times, and each dispatcher is reminded five minutes before a break is due.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-breaks" xml:space="preserve">
+    <value>Set a break plan on each shift, or a default break plan in Dispatcher Desk Settings. Then open Shifts, Dispatcher Breaks, choose a date and a shift day and use Plan breaks, or plan single breaks yourself. Desk supervisors and shift managers plan anyone's breaks; dispatchers plan their own only on shifts that allow it. A break is a length, so a break started early also ends early.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-settings" xml:space="preserve">
+    <value>Dispatcher Desk Settings</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-settings" xml:space="preserve">
+    <value>Turn routing on and choose which work goes to the desk, how long an offer waits, what happens to texts and phone calls when every dispatcher is busy, what an emailed call becomes, and the rules for breaks and duty.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-settings" xml:space="preserve">
+    <value>The department decides once how the desk behaves, from how quickly unanswered work moves on to whether a break may leave fewer dispatchers available than the minimum.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-settings" xml:space="preserve">
+    <value>A department sends texts and phone calls to the desk, gives each offer 60 seconds, lets Enhanced AI fill in a pending call when nobody is free, and saves emailed calls as pending for a dispatcher to review.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-settings" xml:space="preserve">
+    <value>Department administrators open Shifts, then Dispatcher Desk Settings. Turn on Route work to on-duty dispatchers, choose Send to the desk, the offer timeout and items per dispatcher, what happens when every dispatcher is busy, Emailed calls and the break rules, then save. The Enhanced AI choices need the Enhanced AI add-on.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-activity" xml:space="preserve">
+    <value>Dispatcher Activity</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-activity" xml:space="preserve">
+    <value>Desk activity for up to 92 days: work by kind, completed, overflowed, cancelled and escalated items and the average time to answer, and for each dispatcher the offers accepted, declined and missed, the time to accept and complete, and breaks taken, missed or returned from late.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-activity" xml:space="preserve">
+    <value>See whether work is answered quickly, how often it overflows or escalates and whether breaks run on time, then adjust staffing, offer timeouts or break plans from the numbers.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-activity" xml:space="preserve">
+    <value>A supervisor sees that texts often escalated on Friday evenings and adds a second dispatcher to that shift.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-activity" xml:space="preserve">
+    <value>Department administrators and desk supervisors open Shifts, then Dispatcher Activity, choose the From and To dates and select Show.</value>
+  </data>
+  <data name="Feature.intake-spam-screening" xml:space="preserve">
+    <value>Intake spam screening</value>
+  </data>
+  <data name="FeaturePurpose.intake-spam-screening" xml:space="preserve">
+    <value>Keep spam and robocalls out of Pending Calls: dismiss an intake call as spam and block its sender, limit how many calls one phone number can create in an hour, ask voice callers to press 1 before the questions start, and label messages that Enhanced AI reads as not an incident.</value>
+  </data>
+  <data name="FeatureValue.intake-spam-screening" xml:space="preserve">
+    <value>Dispatchers spend their time on real reports. A blocked sender's texts and calls create no calls and get no reply, and a screened call keeps its label in Pending Calls but is not offered on the dispatcher desk; a dispatcher still decides what happens to it.</value>
+  </data>
+  <data name="FeatureExample.intake-spam-screening" xml:space="preserve">
+    <value>A marketing number keeps texting the department's number. Past the hourly limit its texts are added to its open call as notes, and a dispatcher dismisses that call as spam and blocks the number for 30 days.</value>
+  </data>
+  <data name="FeatureSetup.intake-spam-screening" xml:space="preserve">
+    <value>On a pending intake call, choose Dismiss as spam and keep Also block the sender ticked; the call is cancelled and nobody is notified. Blocked senders are listed on the Intake Channels page, where Unblock lifts a block early. The hourly limit applies to text, voice and WhatsApp channels without allowed senders, never to email, chat or webhook channels.</value>
+  </data>
+  <data name="Area.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="AreaPurpose.relay" xml:space="preserve">
+    <value>An open-source companion app that connects CAD and paging email, scanners, two-way radios and LTE push-to-talk radios to Resgrid.</value>
+  </data>
+  <data name="AreaValue.relay" xml:space="preserve">
+    <value>Bring calls, messages and radio traffic from the systems you already have into Resgrid without replacing them.</value>
+  </data>
+  <data name="AreaExample.relay" xml:space="preserve">
+    <value>The county CAD emails each dispatch to the relay, which creates the call with its run card attached, while a station radio bridged to a voice channel lets app users talk with crews on the radio.</value>
+  </data>
+  <data name="ModuleAdoption.relay" xml:space="preserve">
+    <value>Install Relay on a department computer: the Windows desktop app, or headless on Windows, Linux, macOS or Docker. Email dispatch needs no add-on; the radio bridge, recorder and tone-out need the Push-to-Talk add-on and a voice channel. Relay supplements your radio and paging systems; it does not replace them.</value>
+  </data>
+  <data name="Feature.relay" xml:space="preserve">
+    <value>Resgrid Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay" xml:space="preserve">
+    <value>Install and run Relay, choose its modes and connect it to your department.</value>
+  </data>
+  <data name="FeatureValue.relay" xml:space="preserve">
+    <value>The Windows desktop app runs several modes side by side with a live dashboard; the headless host runs one mode per process on a server or in Docker.</value>
+  </data>
+  <data name="FeatureExample.relay" xml:space="preserve">
+    <value>A department installs the desktop app on its station PC, signs it in with a dedicated member account and turns on Auto-start for email dispatch and the radio bridge.</value>
+  </data>
+  <data name="FeatureSetup.relay" xml:space="preserve">
+    <value>Add a member account for the relay to sign in as, then install Relay and connect it with that account's refresh token. The radio bridge, recorder and tone-out require this user token; email dispatch and tone detection can also use client credentials. Run Test connection before starting a mode.</value>
+  </data>
+  <data name="Feature.relay-smtp-dispatch" xml:space="preserve">
+    <value>Email dispatch through Relay</value>
+  </data>
+  <data name="FeaturePurpose.relay-smtp-dispatch" xml:space="preserve">
+    <value>Relay's built-in mail server turns dispatch email from CAD, alarm panels or paging gateways into Resgrid calls and group messages.</value>
+  </data>
+  <data name="FeatureValue.relay-smtp-dispatch" xml:space="preserve">
+    <value>Mail to the department dispatch code pages the department, a group's dispatch code dispatches that group and a group's message code sends it a message. Attachments go onto the call, and a redelivered message never creates a second call.</value>
+  </data>
+  <data name="FeatureExample.relay-smtp-dispatch" xml:space="preserve">
+    <value>The county CAD sends each Station 5 run to that group's dispatch code at the county's dispatch domain, and the relay creates the call with the run card PDF attached.</value>
+  </data>
+  <data name="FeatureSetup.relay-smtp-dispatch" xml:space="preserve">
+    <value>Find the department dispatch address on Call Settings and each group's dispatch and message addresses on Groups. Point your dispatch domains' mail at Relay and list those domains in its SMTP settings. The relay's account needs the Create calls permission, and Add Call Data for attachments.</value>
+  </data>
+  <data name="Feature.relay-tone-detect" xml:space="preserve">
+    <value>Paging tones to calls</value>
+  </data>
+  <data name="FeaturePurpose.relay-tone-detect" xml:space="preserve">
+    <value>On Windows, Relay listens to a scanner or radio through a sound card for two-tone and single-tone pages and creates a Resgrid call with the recorded dispatch audio.</value>
+  </data>
+  <data name="FeatureValue.relay-tone-detect" xml:space="preserve">
+    <value>Members get the page in the Responder app with the dispatcher's audio attached, even when the radio page is the only dispatch.</value>
+  </data>
+  <data name="FeatureExample.relay-tone-detect" xml:space="preserve">
+    <value>A volunteer company's scanner hears its two-tone page, and the relay creates a call for that station's group with the dispatch audio attached.</value>
+  </data>
+  <data name="FeatureSetup.relay-tone-detect" xml:space="preserve">
+    <value>On Groups, note the dispatch code of each group you tone out: a group watcher dispatches that group, and a department watcher pages everyone. Enter each watcher's tones in Relay. The relay's account needs Create calls and Add Call Data.</value>
+  </data>
+  <data name="Feature.relay-radio-bridge" xml:space="preserve">
+    <value>Radio bridge</value>
+  </data>
+  <data name="FeaturePurpose.relay-radio-bridge" xml:space="preserve">
+    <value>On Windows, Relay bridges a cabled two-way radio to a Resgrid push-to-talk channel in both directions.</value>
+  </data>
+  <data name="FeatureValue.relay-radio-bridge" xml:space="preserve">
+    <value>Crews on the radio and members in the Responder, Unit and Dispatch apps hear each other, and an emergency tone on the radio can create a call.</value>
+  </data>
+  <data name="FeatureExample.relay-radio-bridge" xml:space="preserve">
+    <value>A SAR team bridges its VHF base radio to the team channel, so searchers with handhelds and searchers with phones talk to each other.</value>
+  </data>
+  <data name="FeatureSetup.relay-radio-bridge" xml:space="preserve">
+    <value>Needs the Push-to-Talk add-on, a voice channel and the relay's refresh token. Key the radio through a CM108 USB or serial PTT interface, set the squelch with Tune and check the wiring and key-up delay with Test transmit.</value>
+  </data>
+  <data name="Feature.relay-lte-donor-radios" xml:space="preserve">
+    <value>LTE push-to-talk donor radios</value>
+  </data>
+  <data name="FeaturePurpose.relay-lte-donor-radios" xml:space="preserve">
+    <value>Joins a cellular push-to-talk (PoC) talk group, such as Rapid Radios or Diga-Talk+, to a Resgrid voice channel through one of its radios cabled to the relay.</value>
+  </data>
+  <data name="FeatureValue.relay-lte-donor-radios" xml:space="preserve">
+    <value>PoC radio users and Resgrid app users share one conversation, although these PoC services offer no API or gateway for outside audio.</value>
+  </data>
+  <data name="FeatureExample.relay-lte-donor-radios" xml:space="preserve">
+    <value>A security team cables one Diga-Talk+ mobile to the relay, so guards on PoC radios and supervisors in the Resgrid apps hear each other.</value>
+  </data>
+  <data name="FeatureSetup.relay-lte-donor-radios" xml:space="preserve">
+    <value>Apply the radio's profile, key it with a hard PTT line rather than VOX, turn off its own VOX and beeps, and keep it on external power. The donor radio uses one radio on the PoC account and bridges the talk group it is set to. Needs the Push-to-Talk add-on and a voice channel.</value>
+  </data>
+  <data name="Feature.relay-recorder" xml:space="preserve">
+    <value>Channel recorder</value>
+  </data>
+  <data name="FeaturePurpose.relay-recorder" xml:space="preserve">
+    <value>Records every transmission on one or all push-to-talk channels as audio files, with a log of who spoke, on which channel, when and for how long.</value>
+  </data>
+  <data name="FeatureValue.relay-recorder" xml:space="preserve">
+    <value>Keeps voice traffic for compliance and after-action review, on local disk or S3-compatible storage.</value>
+  </data>
+  <data name="FeatureExample.relay-recorder" xml:space="preserve">
+    <value>An emergency management agency records every channel during a flood exercise and reviews the transmission log at the after-action meeting.</value>
+  </data>
+  <data name="FeatureSetup.relay-recorder" xml:space="preserve">
+    <value>Needs the Push-to-Talk add-on, a voice channel and the relay's refresh token. Each recorded channel occupies a voice seat. Recordings contain operational voice traffic: store, protect and prune them under your records policy.</value>
+  </data>
+  <data name="Feature.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Tone-out on push-to-talk</value>
+  </data>
+  <data name="FeaturePurpose.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Announces each new Resgrid call on a push-to-talk channel: alert tones, then the call read aloud by Resgrid's text-to-speech.</value>
+  </data>
+  <data name="FeatureValue.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Crews who monitor a channel hear dispatches the way they would on the radio, in Resgrid's own wording with your call priority names.</value>
+  </data>
+  <data name="FeatureExample.relay-dispatch-tone-out" xml:space="preserve">
+    <value>A plant's emergency response team monitors its channel, and each new call is toned out with a hi-lo alert followed by the call name, nature, address and priority.</value>
+  </data>
+  <data name="FeatureSetup.relay-dispatch-tone-out" xml:space="preserve">
+    <value>Needs the Push-to-Talk add-on, a voice channel and the relay's refresh token. Calls already open when the relay starts are not announced, and scheduled calls are announced when they are dispatched.</value>
+  </data>
+  <data name="Rule.relay-dispatch-code" xml:space="preserve">
+    <value>No department dispatch email code</value>
+  </data>
+  <data name="RuleWhy.relay-dispatch-code" xml:space="preserve">
+    <value>The department has no dispatch email code, so mail to its department dispatch address cannot create a call, whether Resgrid or a relay receives it.</value>
+  </data>
+  <data name="RuleNext.relay-dispatch-code" xml:space="preserve">
+    <value>Check the dispatch address on Call Settings. If none is shown, ask Resgrid support, or the administrator of your Resgrid installation, to assign a dispatch code.</value>
+  </data>
+  <data name="Rule.relay-group-email-codes" xml:space="preserve">
+    <value>Groups without dispatch or message email codes</value>
+  </data>
+  <data name="RuleWhy.relay-group-email-codes" xml:space="preserve">
+    <value>One or more groups have no dispatch or message email code, so mail to those group addresses reaches no one, through Resgrid or a relay. Groups added outside the group editor, for example by an import, can lack codes.</value>
+  </data>
+  <data name="RuleNext.relay-group-email-codes" xml:space="preserve">
+    <value>On Groups, find each group whose dispatch or message address has no code before the @, open Edit and save it; saving assigns the missing codes.</value>
+  </data>
+  <data name="Rule.relay-voice-channel" xml:space="preserve">
+    <value>Push-to-Talk has no voice channel</value>
+  </data>
+  <data name="RuleWhy.relay-voice-channel" xml:space="preserve">
+    <value>The department has Push-to-Talk but no standing voice channel, so the Resgrid apps and a relay's radio bridge, recorder and tone-out have no channel to join.</value>
+  </data>
+  <data name="RuleNext.relay-voice-channel" xml:space="preserve">
+    <value>Open Voice channels, create a channel and add the members who use it.</value>
+  </data>
+  <data name="SetupEvidence.relay-voice" xml:space="preserve">
+    <value>Push-to-Talk availability and standing voice channels are checked. Resgrid does not observe whether a relay is installed, connected or passing audio; check that on the relay's own dashboard.</value>
+  </data>
+  <data name="Setting.AllowShiftOverSignup" xml:space="preserve">
+    <value>Allow Signups Past Group Slots</value>
+  </data>
+  <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
+    <value>Let members sign up for a shift group even when every slot its roles offer (required and optional) is taken. They still need one of the group's roles. Supervisors can always assign people past the slots.</value>
   </data>
 </root>

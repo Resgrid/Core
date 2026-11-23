@@ -132,7 +132,7 @@ namespace Resgrid.Tests.AiDispatch
 
 			_service = new AiDispatchEnrichmentService(_access.Object, _flags.Object, _departments.Object, _calls.Object, Mock.Of<IGeoLocationProvider>(), _protection.Object,
 				_audits.Object, settings.Object, _admission.Object, _usage.Object, new Lazy<ILlmClient>(() => _llm.Object),
-				new Lazy<IDecisionClient>(() => Mock.Of<IDecisionClient>()), Mock.Of<IEventAggregator>(), new FixedClock(),
+				new Lazy<IDecisionClient>(() => Mock.Of<IDecisionClient>()), Mock.Of<IEventAggregator>(), new FixedClock(), Mock.Of<IDispatcherDeskConfigService>(),
 				screening: new Lazy<IIntakeScreeningService>(() => _screening.Object));
 		}
 
@@ -301,6 +301,29 @@ namespace Resgrid.Tests.AiDispatch
 		}
 
 		[Test]
+		public void calls_the_desk_holds_pending_are_described_as_waiting_for_a_dispatcher_not_dispatched_automatically()
+		{
+			var pending = new Call { State = (int)CallStates.Pending, SourceIdentifier = "DQ:item-1" };
+
+			// The desk's pending call for an overflowed text or chat (channel 1, "DQ:"): messages to the desk, not a dispatch email.
+			var overflow = AiDispatchEnrichmentService.JobSource(new AiDispatchQueueItem { Channel = AiDispatchChannels.PostmarkEmail }, pending);
+			overflow.Should().Contain("dispatch desk").And.Contain("nobody has been dispatched yet");
+			overflow.Should().NotContain("dispatched automatically").And.NotContain("email");
+
+			// An emailed call the email call mode held for a dispatcher.
+			var held = AiDispatchEnrichmentService.JobSource(new AiDispatchQueueItem { Channel = AiDispatchChannels.ImapImport, HeldForDispatcher = true },
+				new Call { State = (int)CallStates.Pending });
+			held.Should().Contain("held for a dispatcher").And.Contain("nobody has been dispatched yet");
+			held.Should().NotContain("dispatched automatically");
+
+			// A dispatch email job keeps its description; intake jobs keep theirs.
+			AiDispatchEnrichmentService.JobSource(new AiDispatchQueueItem { Channel = AiDispatchChannels.PostmarkEmail }, new Call { State = (int)CallStates.Active })
+				.Should().Be(AiDispatchEnrichmentService.IntakeSource(AiDispatchChannels.PostmarkEmail, new Call { State = (int)CallStates.Active }));
+			AiDispatchEnrichmentService.JobSource(new AiDispatchQueueItem { Channel = AiDispatchChannels.IntakeSms }, pending)
+				.Should().Be(AiDispatchEnrichmentService.IntakeSource(AiDispatchChannels.IntakeSms, pending));
+		}
+
+		[Test]
 		public async Task a_rename_made_before_the_worker_read_the_call_is_kept()
 		{
 			var savedKey = AiConfig.AuditHmacKey;
@@ -431,14 +454,16 @@ namespace Resgrid.Tests.AiDispatch
 		}
 
 		[Test]
-		public async Task the_email_channels_still_refuse_pending_calls_and_need_the_ai_format()
+		public async Task the_email_channels_still_need_the_ai_format()
 		{
 			_access.Setup(a => a.CanUseAsync(DepartmentId, FeatureFlagKeys.AiDispatchTemplate)).ReturnsAsync(true);
 
 			(await Enrich(AiDispatchChannels.PostmarkEmail)).Should().Be("NotEntitled", "the department's email format is not AI");
 
+			// Pending email calls are the dispatcher desk's (held for a dispatcher), so only a closed one is refused here.
 			_departments.Setup(d => d.GetDepartmentEmailSettingsAsync(DepartmentId)).ReturnsAsync(new DepartmentCallEmail { DepartmentId = DepartmentId, FormatType = (int)CallEmailTypes.AI });
-			(await Enrich(AiDispatchChannels.PostmarkEmail)).Should().Be(AiDispatchOutcomes.CallNotActive, "email enrichment only touches active calls");
+			_call.State = (int)CallStates.Closed;
+			(await Enrich(AiDispatchChannels.PostmarkEmail)).Should().Be(AiDispatchOutcomes.CallNotActive, "email enrichment never touches closed calls");
 		}
 
 		[Test]

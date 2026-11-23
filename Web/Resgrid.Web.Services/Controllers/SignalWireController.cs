@@ -51,6 +51,7 @@ namespace Resgrid.Web.Services.Controllers
 	private readonly ITextDepartmentSwitchService _textDepartmentSwitchService;
 	private readonly IDispatchRecommendationService _dispatchRecommendationService;
 	private readonly IFeatureToggleService _featureToggleService;
+	private readonly Resgrid.Web.Services.Twilio.IDispatcherInboundTextHandler _dispatcherInboundTextHandler;
 
 	public SignalWireController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 		ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
@@ -59,8 +60,9 @@ namespace Resgrid.Web.Services.Controllers
 		IDepartmentGroupsService departmentGroupsService, ICustomStateService customStateService, IUnitsService unitsService,
 		ICommunicationTestService communicationTestService, IChatbotIngressService chatbotIngressService, IUsersService usersService,
 		ITextDepartmentSwitchService textDepartmentSwitchService, IDispatchRecommendationService dispatchRecommendationService,
-		IFeatureToggleService featureToggleService)
+		IFeatureToggleService featureToggleService, Resgrid.Web.Services.Twilio.IDispatcherInboundTextHandler dispatcherInboundTextHandler)
 	{
+		_dispatcherInboundTextHandler = dispatcherInboundTextHandler;
 		_departmentSettingsService = departmentSettingsService;
 		_numbersService = numbersService;
 		_limitsService = limitsService;
@@ -201,6 +203,16 @@ namespace Resgrid.Web.Services.Controllers
 				else
 				{
 					departmentId = await _departmentSettingsService.GetDepartmentIdByTextToCallNumberAsync(textMessage.To);
+				}
+
+				// Dispatcher desk (plan D9): no profile, to a department number whose desk takes texts (or a reply to a desk conversation).
+				// No department means "the master number" to the handler (join the sender's open conversation in any department): only
+				// a text sent to the SignalWire master number may do that, never one to a number whose department mapping is gone.
+				if (profile == null && (departmentId.HasValue || IsMasterNumber(textMessage.To)) && await _dispatcherInboundTextHandler.HandleAsync(departmentId,
+					textMessage.Msisdn, textMessage.To, textMessage.Text, textMessage.MessageId, cancellationToken))
+				{
+					messageEvent.Processed = true;
+					return new ContentResult { Content = response, ContentType = "application/xml", StatusCode = 200 };
 				}
 
 				// STOP from an unverified sender: honor the opt-out immediately — turning off messages must
@@ -393,6 +405,17 @@ namespace Resgrid.Web.Services.Controllers
 			return Ok();
 		}
 
+
+		/// <summary>
+		/// The text was sent to the SignalWire master Resgrid number (digits compared, as the master-number branch of
+		/// <see cref="Receive"/> does).
+		/// </summary>
+		internal static bool IsMasterNumber(string calledNumber)
+		{
+			var to = Resgrid.Web.Services.Twilio.DeskPhoneNumbers.DigitsOnly(calledNumber);
+			var master = Resgrid.Web.Services.Twilio.DeskPhoneNumbers.DigitsOnly(Config.NumberProviderConfig.SignalWireResgridNumber);
+			return to.Length > 0 && master.Length > 0 && string.Equals(to, master, StringComparison.Ordinal);
+		}
 
 		/// <summary>
 		/// Builds the call for an inbound Text-To-Call message. When the department has a

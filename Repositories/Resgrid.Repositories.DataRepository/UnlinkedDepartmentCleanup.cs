@@ -32,7 +32,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			"CallLocationIndexStates", "CallNumberSequences", "DocumentNumberSequences", "DepartmentApiKeys", "ScheduledTasks", "UserStates",
 			"UdfDefinitions", "ChatbotSessions", "ChatbotMessageLog", "ChatbotDepartmentConfigs", "AiDispatchAudits", "DepartmentAiDispatchConfigs",
-			"AiBillingAccounts", "AdpBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "RoadClosures", "PoiImports", "PoiCapabilityAssignments", "PoiCapabilities", "PoiAvailabilities", "DestinationRules", "RecurringCallAlerts", "RecurringCallOccurrences", "RecurringCalls", "CallPersonnelReleases", "CallBroadcastOutbox", "IntakeConversationMessages", "IntakeConversations", "IntakeBlockedSenders", "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions", "DepartmentPhoneNumbers", "AiDestinationReviews", "AiDestinationAdvices", "DedicatedNumberBillingAccounts", "UserDashboards", "DepartmentDashboardTemplates",
+			"AiBillingAccounts", "AdpBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "RoadClosures", "PoiImports", "PoiCapabilityAssignments", "PoiCapabilities", "PoiAvailabilities", "DestinationRules", "RecurringCallAlerts", "RecurringCallOccurrences", "RecurringCalls", "CallPersonnelReleases", "CallBroadcastOutbox", "IntakeConversationMessages", "IntakeConversations", "IntakeBlockedSenders", "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions", "DepartmentPhoneNumbers", "AiDestinationReviews", "AiDestinationAdvices", "DedicatedNumberBillingAccounts", "DispatcherConversationMessages", "DispatcherQueueEvents", "DispatcherQueueItems", "DispatcherPresences", "DispatcherBreaks", "ShiftDispatchers", "ShiftDispatchSettings", "UserDashboards", "DepartmentDashboardTemplates",
 			"CallOutstandingRequirements", "RunCardDecisions", "RunCardTargets", "ResponsePackages", "RunCardActivations",
 			"RunCards", "StationCoverageRequirements", "ModerationActions", "ModerationReports", "ModerationRequests", "MessageRecipients", "Messages",
 			"DepartmentMemberSensitiveData", "DepartmentMemberEmergencyContacts", "UserExternalIdentityLinks", "DepartmentSecurityPolicies",
@@ -103,6 +103,9 @@ namespace Resgrid.Repositories.DataRepository
 			// carrier before this purge and returns them (IDepartmentPhoneNumbersService.ReleaseAtCarrierAsync) right after it commits.
 			await Delete("IntakeConversationMessages", "IntakeConversations", "IntakeBlockedSenders", "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions", "AiDestinationReviews", "AiDestinationAdvices",
 				"DepartmentPhoneNumbers", "DedicatedNumberBillingAccounts");
+
+			// Dispatcher desk (M0324): routed work with its history and conversations, desk sessions, breaks and the dispatch roster; no foreign keys
+			await Delete("DispatcherConversationMessages", "DispatcherQueueEvents", "DispatcherQueueItems", "DispatcherPresences", "DispatcherBreaks", "ShiftDispatchers", "ShiftDispatchSettings");
 
 			// Home dashboard boards and department templates (layouts only)
 			await Delete("UserDashboards", "DepartmentDashboardTemplates");

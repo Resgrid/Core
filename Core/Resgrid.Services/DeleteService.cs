@@ -233,7 +233,7 @@ namespace Resgrid.Services
 
 		/// <summary>
 		/// Nothing tells a removed member's phones and browsers that the membership is gone, so their Novu subscribers in
-		/// each department they left (Responder/Dispatch user and IC user) are deleted, taking every device token with
+		/// each department they left (Responder/Dispatch user, IC user and Dispatch desk) are deleted, taking every device token with
 		/// them. Best-effort and never throws: the membership is already gone. A reactivated member's apps create the
 		/// subscribers again the next time they register.
 		/// </summary>
@@ -252,8 +252,9 @@ namespace Resgrid.Services
 
 					var userRemoved = await _novuProvider.DeleteUserSubscriber(userId, department.Code);
 					var icRemoved = await _novuProvider.DeleteICUserSubscriber(userId, department.Code);
+					var dispatchRemoved = await _novuProvider.DeleteDispatchUserSubscriber(userId, department.Code);
 
-					if (!userRemoved || !icRemoved)
+					if (!userRemoved || !icRemoved || !dispatchRemoved)
 						Logging.LogError($"DeleteService::The push subscribers of removed member {userId} in DepartmentId {departmentId} could not all be removed; their devices may keep receiving the department's pushes.");
 				}
 				catch (Exception ex)
@@ -697,7 +698,7 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>
-		/// Deletes the department's Novu subscribers (Responder/Dispatch user, IC user and unit), taking every phone's
+		/// Deletes the department's Novu subscribers (Responder/Dispatch user, IC user, Dispatch desk and unit), taking every phone's
 		/// and browser's token with them, so nothing keeps receiving a deleted department's pushes. Best-effort and
 		/// never throws: the department is already gone, and nothing is left to name these subscribers on a retry.
 		/// </summary>
@@ -711,6 +712,7 @@ namespace Resgrid.Services
 			{
 				deletes.Add(($"{subscribers.Code}_User_{userId}", () => _novuProvider.DeleteUserSubscriber(userId, subscribers.Code)));
 				deletes.Add(($"{subscribers.Code}_IC_User_{userId}", () => _novuProvider.DeleteICUserSubscriber(userId, subscribers.Code)));
+				deletes.Add(($"{subscribers.Code}_Dispatch_User_{userId}", () => _novuProvider.DeleteDispatchUserSubscriber(userId, subscribers.Code)));
 			}
 			foreach (var unitId in subscribers.UnitIds)
 				deletes.Add(($"{subscribers.Code}_Unit_{unitId}", () => _novuProvider.DeleteUnitSubscriber(unitId, subscribers.Code)));

@@ -2153,7 +2153,7 @@
   <data name="MoreMenu" xml:space="preserve"><value>Mehr</value></data>
   <data name="InventoryUsage" xml:space="preserve"><value>Bestandsverbrauch</value></data>
   <data name="DeploymentReports" xml:space="preserve"><value>Einsatzberichte</value></data>
-  <data name="DeploymentReportingIntro" xml:space="preserve"><value>Schreibgeschützter Einsatzverlauf, Berichte und Exporte. Einsätze werden unter Personal und Geschäftsbetrieb verwaltet.</value></data>
+  <data name="DeploymentReportingIntro" xml:space="preserve"><value>Schreibgeschützter Einsatzverlauf, Berichte und Exporte. Einsätze werden unter Business Ops verwaltet.</value></data>
   <data name="DeploymentExportResources" xml:space="preserve"><value>Ressourcen als CSV exportieren</value></data>
   <data name="DeploymentOpenWorkspace" xml:space="preserve"><value>Einsatzverwaltung öffnen</value></data>
   <data name="DeploymentExternalOrders" xml:space="preserve"><value>Externe Aufträge</value></data>

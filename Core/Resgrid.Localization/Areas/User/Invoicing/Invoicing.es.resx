@@ -22,9 +22,9 @@
   <data name="InvoicesLower" xml:space="preserve"><value>facturas</value></data>
   <data name="Invoice" xml:space="preserve"><value>Factura</value></data>
   <data name="InvoicingIntro" xml:space="preserve"><value>Facturas de clientes, pagos y cuentas por cobrar.</value></data>
-  <data name="ReadOnlyNotice" xml:space="preserve"><value>El complemento Business Operations no está activo para este departamento. Las facturas existentes siguen siendo legibles; crear o cambiar algo requiere un complemento activo.</value></data>
-  <data name="BusinessOperations" xml:space="preserve"><value>Business Operations</value></data>
-  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Facturación, tarifas y perfiles de facturación. Las páginas también requieren el complemento Business Operations.</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>El complemento Business Ops no está activo para este departamento. Las facturas existentes siguen siendo legibles; crear o cambiar algo requiere un complemento activo.</value></data>
+  <data name="BusinessOperations" xml:space="preserve"><value>Business Ops</value></data>
+  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Facturación, tarifas y perfiles de facturación. Las páginas también requieren el complemento Business Ops.</value></data>
   <data name="RateCards" xml:space="preserve"><value>Tarifas</value></data>
   <data name="RateCard" xml:space="preserve"><value>Tarifa</value></data>
   <data name="RateCardsIntro" xml:space="preserve"><value>Tarifas aplicadas al añadir llamadas a una factura.</value></data>
@@ -131,7 +131,7 @@
   <data name="Saved" xml:space="preserve"><value>Guardado.</value></data>
   <data name="InvalidInput" xml:space="preserve"><value>Los valores enviados no son válidos.</value></data>
   <data name="NameRequired" xml:space="preserve"><value>Se requiere un nombre.</value></data>
-  <data name="AddonRequired" xml:space="preserve"><value>Esto requiere un complemento Business Operations activo.</value></data>
+  <data name="AddonRequired" xml:space="preserve"><value>Esto requiere un complemento Business Ops activo.</value></data>
   <data name="TotalsUpdateOnSave" xml:space="preserve"><value>El descuento y el impuesto se recalculan al guardar.</value></data>
   <data name="PreviewAndSend" xml:space="preserve"><value>Previsualizar y enviar</value></data>
   <data name="BackToInvoices" xml:space="preserve"><value>Volver a las facturas</value></data>
@@ -232,7 +232,7 @@
   <data name="NotAvailableInRegion" xml:space="preserve"><value>No disponible en esta región</value></data>
   <data name="Enabled" xml:space="preserve"><value>Habilitado</value></data>
   <data name="Disabled" xml:space="preserve"><value>Deshabilitado</value></data>
-  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Complemento Business Operations</value></data>
+  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Complemento Business Ops</value></data>
   <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>Un complemento mensual para departamentos que facturan a clientes y gestionan contratos. Solo el miembro administrador del departamento puede comprarlo o cancelarlo.</value></data>
   <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Facturación de clientes, tarifas, pagos y antigüedad de cuentas por cobrar</value></data>
   <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Tablas de tarifas de contratistas, contratos y recuperación de costes</value></data>
@@ -244,7 +244,7 @@
   <data name="SubscriptionCancelled" xml:space="preserve"><value>Renovación cancelada; el acceso continúa hasta el final del periodo pagado.</value></data>
   <data name="Buy" xml:space="preserve"><value>Comprar</value></data>
   <data name="CancelSubscription" xml:space="preserve"><value>Cancelar renovación</value></data>
-  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>¿Cancelar la renovación de Business Operations?</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>¿Cancelar la renovación de Business Ops?</value></data>
   <data name="BillingUnavailable" xml:space="preserve"><value>La facturación no está disponible en este momento. Inténtelo más tarde.</value></data>
   <data name="ManageSubscription" xml:space="preserve"><value>Gestionar suscripción</value></data>
   <data name="ModuleSettings" xml:space="preserve"><value>Configuración de módulos</value></data>
@@ -341,7 +341,7 @@
   <data name="TooManyRequests" xml:space="preserve"><value>Demasiadas solicitudes. Espere un minuto e inténtelo de nuevo.</value></data>
   <data name="payments_not_available_in_region" xml:space="preserve"><value>El cobro en línea no está disponible en esta región.</value></data>
   <data name="payments_flag_off" xml:space="preserve"><value>Los pagos en línea no están habilitados para este departamento.</value></data>
-  <data name="payments_addon_required" xml:space="preserve"><value>Los pagos en línea requieren un complemento Business Operations activo.</value></data>
+  <data name="payments_addon_required" xml:space="preserve"><value>Los pagos en línea requieren un complemento Business Ops activo.</value></data>
   <data name="payments_not_enabled_for_department" xml:space="preserve"><value>El pago en línea está desactivado en su configuración de facturación.</value></data>
   <data name="payments_no_connection" xml:space="preserve"><value>No hay ninguna cuenta de Stripe conectada.</value></data>
   <data name="payments_connection_not_ready" xml:space="preserve"><value>La cuenta de Stripe conectada aún no puede recibir cobros. Complete los requisitos de Stripe e inténtelo de nuevo.</value></data>

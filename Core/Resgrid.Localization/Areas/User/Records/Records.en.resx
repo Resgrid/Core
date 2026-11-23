@@ -2153,7 +2153,7 @@
   <data name="MoreMenu" xml:space="preserve"><value>More</value></data>
   <data name="InventoryUsage" xml:space="preserve"><value>Inventory usage</value></data>
   <data name="DeploymentReports" xml:space="preserve"><value>Deployment reports</value></data>
-  <data name="DeploymentReportingIntro" xml:space="preserve"><value>Read-only deployment history, reports and exports. Manage deployments in Workforce &amp; Business Ops.</value></data>
+  <data name="DeploymentReportingIntro" xml:space="preserve"><value>Read-only deployment history, reports and exports. Manage deployments in Business Ops.</value></data>
   <data name="DeploymentExportResources" xml:space="preserve"><value>Export resource CSV</value></data>
   <data name="DeploymentOpenWorkspace" xml:space="preserve"><value>Open deployment workspace</value></data>
   <data name="HydrantImportBack" xml:space="preserve"><value>Back to hydrants</value></data>

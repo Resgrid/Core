@@ -2153,7 +2153,7 @@
   <data name="MoreMenu" xml:space="preserve"><value>Más</value></data>
   <data name="InventoryUsage" xml:space="preserve"><value>Uso de inventario</value></data>
   <data name="DeploymentReports" xml:space="preserve"><value>Informes de despliegues</value></data>
-  <data name="DeploymentReportingIntro" xml:space="preserve"><value>Historial, informes y exportaciones de despliegues de solo lectura. Gestione los despliegues en Personal y operaciones empresariales.</value></data>
+  <data name="DeploymentReportingIntro" xml:space="preserve"><value>Historial, informes y exportaciones de despliegues de solo lectura. Gestione los despliegues en Business Ops.</value></data>
   <data name="DeploymentExportResources" xml:space="preserve"><value>Exportar recursos CSV</value></data>
   <data name="DeploymentOpenWorkspace" xml:space="preserve"><value>Abrir gestión del despliegue</value></data>
   <data name="DeploymentExternalOrders" xml:space="preserve"><value>Órdenes externas</value></data>

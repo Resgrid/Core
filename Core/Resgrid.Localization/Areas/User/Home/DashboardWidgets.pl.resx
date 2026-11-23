@@ -2032,7 +2032,7 @@
     <value>Wersje robocze</value>
   </data>
   <data name="W.invoicing.receivables.ReadOnly" xml:space="preserve">
-    <value>Tylko do odczytu: dodatek Business Operations wygasł.</value>
+    <value>Tylko do odczytu: dodatek Business Ops wygasł.</value>
   </data>
   <data name="W.invoicing.receivables.Bucket.Current" xml:space="preserve">
     <value>Bieżące</value>
@@ -2083,7 +2083,7 @@
     <value>Płatności online nie są włączone dla Twojego oddziału.</value>
   </data>
   <data name="W.invoicing.onlinePayments.Blocked.payments_addon_required" xml:space="preserve">
-    <value>Płatności online wymagają dodatku Business Operations.</value>
+    <value>Płatności online wymagają dodatku Business Ops.</value>
   </data>
   <data name="W.invoicing.onlinePayments.Blocked.payments_not_enabled_for_department" xml:space="preserve">
     <value>Płatności online są wyłączone w ustawieniach Fakturowania.</value>
@@ -2746,7 +2746,7 @@
     <value>Readiness Pro</value>
   </data>
   <data name="W.admin.plan.Addon.BusinessOperations" xml:space="preserve">
-    <value>Business Operations</value>
+    <value>Business Ops</value>
   </data>
   <data name="W.admin.plan.Addon.EnhancedAi" xml:space="preserve">
     <value>Enhanced AI</value>

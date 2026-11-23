@@ -638,7 +638,7 @@
   <data name="WorkerKindVolunteer" xml:space="preserve"><value>Волонтер</value></data>
   <data name="Workers" xml:space="preserve"><value>Працівники</value></data>
   <data name="WorkersIntro" xml:space="preserve"><value>Кожна особа, якій підрозділ платить або про яку звітує, — члени та зовнішні працівники — з періодами працевлаштування.</value></data>
-  <data name="Workforce" xml:space="preserve"><value>Персонал</value></data>
+  <data name="Workforce" xml:space="preserve"><value>Праця та витрати</value></data>
   <data name="WorksheetIntro" xml:space="preserve"><value>Значення рівня роботодавця, які ви вводите на порталі CRD разом із завантаженим файлом.</value></data>
   <data name="WorksheetNoStore" xml:space="preserve"><value>Подається без кешування й аудитується; закрийте вкладку після завершення. Resgrid ніколи не входить на портал.</value></data>
   <data name="Year" xml:space="preserve"><value>Рік</value></data>

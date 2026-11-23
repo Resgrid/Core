@@ -2153,7 +2153,7 @@
   <data name="MoreMenu" xml:space="preserve"><value>Περισσότερα</value></data>
   <data name="InventoryUsage" xml:space="preserve"><value>Χρήση αποθεμάτων</value></data>
   <data name="DeploymentReports" xml:space="preserve"><value>Αναφορές αναπτύξεων</value></data>
-  <data name="DeploymentReportingIntro" xml:space="preserve"><value>Ιστορικό, αναφορές και εξαγωγές αναπτύξεων μόνο για ανάγνωση. Διαχειριστείτε τις αναπτύξεις στο Προσωπικό και επιχειρησιακές λειτουργίες.</value></data>
+  <data name="DeploymentReportingIntro" xml:space="preserve"><value>Ιστορικό, αναφορές και εξαγωγές αναπτύξεων μόνο για ανάγνωση. Διαχειριστείτε τις αναπτύξεις στο Business Ops.</value></data>
   <data name="DeploymentExportResources" xml:space="preserve"><value>Εξαγωγή πόρων CSV</value></data>
   <data name="DeploymentOpenWorkspace" xml:space="preserve"><value>Άνοιγμα διαχείρισης ανάπτυξης</value></data>
   <data name="DeploymentExternalOrders" xml:space="preserve"><value>Εξωτερικές εντολές</value></data>

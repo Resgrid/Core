@@ -2032,7 +2032,7 @@
     <value>Utkast</value>
   </data>
   <data name="W.invoicing.receivables.ReadOnly" xml:space="preserve">
-    <value>Skrivskyddat: tillägget Business Operations har upphört.</value>
+    <value>Skrivskyddat: tillägget Business Ops har upphört.</value>
   </data>
   <data name="W.invoicing.receivables.Bucket.Current" xml:space="preserve">
     <value>Ej förfallet</value>
@@ -2083,7 +2083,7 @@
     <value>Onlinebetalningar är inte aktiverade för din avdelning.</value>
   </data>
   <data name="W.invoicing.onlinePayments.Blocked.payments_addon_required" xml:space="preserve">
-    <value>Onlinebetalningar kräver tillägget Business Operations.</value>
+    <value>Onlinebetalningar kräver tillägget Business Ops.</value>
   </data>
   <data name="W.invoicing.onlinePayments.Blocked.payments_not_enabled_for_department" xml:space="preserve">
     <value>Onlinebetalningar är avstängda i faktureringsinställningarna.</value>
@@ -2746,7 +2746,7 @@
     <value>Readiness Pro</value>
   </data>
   <data name="W.admin.plan.Addon.BusinessOperations" xml:space="preserve">
-    <value>Business Operations</value>
+    <value>Business Ops</value>
   </data>
   <data name="W.admin.plan.Addon.EnhancedAi" xml:space="preserve">
     <value>Enhanced AI</value>

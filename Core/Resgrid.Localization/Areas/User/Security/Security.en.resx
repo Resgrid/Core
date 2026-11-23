@@ -343,11 +343,11 @@
   <data name="AuditLogTypeCalOesMarsInvoiceRejected" xml:space="preserve"><value>Cal OES MARS Invoice Rejected</value></data>
   <data name="AuditLogTypeCalOesMarsPaymentReconciled" xml:space="preserve"><value>Cal OES MARS Payment Reconciled</value></data>
   <data name="AuditLogTypeCalOesMarsWorkItemDeleted" xml:space="preserve"><value>Cal OES MARS Work Item Deleted</value></data>
-  <data name="AuditLogTypeWorkforceEmployerProfileChanged" xml:space="preserve"><value>Workforce Employer Profile Changed</value></data>
-  <data name="AuditLogTypeWorkforceEstablishmentChanged" xml:space="preserve"><value>Workforce Establishment Changed</value></data>
-  <data name="AuditLogTypeWorkforceEmploymentChanged" xml:space="preserve"><value>Workforce Employment Changed</value></data>
-  <data name="AuditLogTypeWorkforceCompensationChanged" xml:space="preserve"><value>Workforce Compensation Changed</value></data>
-  <data name="AuditLogTypeWorkforceAnnualPayFactImported" xml:space="preserve"><value>Workforce Annual Pay Data Imported</value></data>
+  <data name="AuditLogTypeWorkforceEmployerProfileChanged" xml:space="preserve"><value>Employer Profile Changed</value></data>
+  <data name="AuditLogTypeWorkforceEstablishmentChanged" xml:space="preserve"><value>Establishment Changed</value></data>
+  <data name="AuditLogTypeWorkforceEmploymentChanged" xml:space="preserve"><value>Employment Changed</value></data>
+  <data name="AuditLogTypeWorkforceCompensationChanged" xml:space="preserve"><value>Compensation Changed</value></data>
+  <data name="AuditLogTypeWorkforceAnnualPayFactImported" xml:space="preserve"><value>Annual Pay Data Imported</value></data>
   <data name="AuditLogTypePayDataDemographicChanged" xml:space="preserve"><value>Pay Data Demographics Changed</value></data>
   <data name="AuditLogTypePayDataReportCreated" xml:space="preserve"><value>Pay Data Report Created</value></data>
   <data name="AuditLogTypePayDataReportValidated" xml:space="preserve"><value>Pay Data Report Validated</value></data>

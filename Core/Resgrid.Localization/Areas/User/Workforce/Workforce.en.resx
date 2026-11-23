@@ -137,7 +137,7 @@
   <data name="Created" xml:space="preserve"><value>Created</value></data>
   <data name="Currency" xml:space="preserve"><value>Currency</value></data>
   <data name="CurrentResponse" xml:space="preserve"><value>Current response</value></data>
-  <data name="DashboardIntro" xml:space="preserve"><value>Protected workforce pay data, internal field costing and California pay data reporting.</value></data>
+  <data name="DashboardIntro" xml:space="preserve"><value>Protected pay data, internal field costing and California pay data reporting.</value></data>
   <data name="Date" xml:space="preserve"><value>Date</value></data>
   <data name="Days" xml:space="preserve"><value>Days</value></data>
   <data name="DaysWorked" xml:space="preserve"><value>Days worked</value></data>
@@ -293,11 +293,11 @@
   <data name="Line" xml:space="preserve"><value>Line</value></data>
   <data name="Lines" xml:space="preserve"><value>Lines</value></data>
   <data name="LinesHelp" xml:space="preserve"><value>Personnel lines carry no rate in the clear; the priced detail is a protected field shown only with a current grant.</value></data>
-  <data name="LinesRequireCompensationView" xml:space="preserve"><value>Lines are visible with View workforce compensation; the summary above is the aggregate view.</value></data>
+  <data name="LinesRequireCompensationView" xml:space="preserve"><value>Lines are visible with View compensation; the summary above is the aggregate view.</value></data>
   <data name="MajorActivity" xml:space="preserve"><value>Major activity</value></data>
   <data name="ManagePayDataReporting" xml:space="preserve"><value>Manage California pay data reporting</value></data>
   <data name="ManagePayDataReportingNote" xml:space="preserve"><value>The CRD report wizard: runs, employee snapshots, overrides, aggregation, validation, remarks, certification observation, corrections and the compliance officer's demographic records. Every member always answers their own response without it.</value></data>
-  <data name="ManageWorkforceCompensation" xml:space="preserve"><value>Manage workforce and compensation</value></data>
+  <data name="ManageWorkforceCompensation" xml:space="preserve"><value>Manage labor and compensation</value></data>
   <data name="ManageWorkforceCompensationNote" xml:space="preserve"><value>Employer identity, establishments, workers, employment periods, job assignments, compensation profiles and components, work entries and annual pay fact imports. Values still need a current Protected Data Grant.</value></data>
   <data name="MappingProvenance" xml:space="preserve"><value>Mapping provenance</value></data>
   <data name="Margin" xml:space="preserve"><value>Contribution margin</value></data>
@@ -609,7 +609,7 @@
   <data name="Version" xml:space="preserve"><value>Version</value></data>
   <data name="ViewInternalCosts" xml:space="preserve"><value>View internal costs</value></data>
   <data name="ViewInternalCostsNote" xml:space="preserve"><value>Aggregate field-cost summaries and margins for bids, calls and deployments — categories and totals, never a line, rate or person — plus resource cost profiles and usage readings.</value></data>
-  <data name="ViewWorkforceCompensation" xml:space="preserve"><value>View workforce compensation</value></data>
+  <data name="ViewWorkforceCompensation" xml:space="preserve"><value>View compensation</value></data>
   <data name="ViewWorkforceCompensationNote" xml:space="preserve"><value>Read compensation profiles, work entries, annual pay facts and cost-run lines. Values still need a current Protected Data Grant.</value></data>
   <data name="Void" xml:space="preserve"><value>Void</value></data>
   <data name="W2Box1" xml:space="preserve"><value>W-2 Box 1</value></data>
@@ -638,7 +638,7 @@
   <data name="WorkerKindVolunteer" xml:space="preserve"><value>Volunteer</value></data>
   <data name="Workers" xml:space="preserve"><value>Workers</value></data>
   <data name="WorkersIntro" xml:space="preserve"><value>Every person the department pays or reports on — members and external workers — with their employment periods.</value></data>
-  <data name="Workforce" xml:space="preserve"><value>Workforce</value></data>
+  <data name="Workforce" xml:space="preserve"><value>Labor &amp; Costing</value></data>
   <data name="WorksheetIntro" xml:space="preserve"><value>The employer-level values you type into the CRD portal alongside the uploaded file.</value></data>
   <data name="WorksheetNoStore" xml:space="preserve"><value>Served no-store and audited; close the tab when done. Resgrid never signs in to the portal.</value></data>
   <data name="Year" xml:space="preserve"><value>Year</value></data>

@@ -638,7 +638,7 @@
   <data name="WorkerKindVolunteer" xml:space="preserve"><value>Frivillig</value></data>
   <data name="Workers" xml:space="preserve"><value>Arbetstagare</value></data>
   <data name="WorkersIntro" xml:space="preserve"><value>Varje person avdelningen betalar eller rapporterar — medlemmar och externa arbetstagare — med anställningsperioder.</value></data>
-  <data name="Workforce" xml:space="preserve"><value>Personal</value></data>
+  <data name="Workforce" xml:space="preserve"><value>Arbete och kostnader</value></data>
   <data name="WorksheetIntro" xml:space="preserve"><value>Arbetsgivarvärdena du anger i CRD-portalen vid sidan av den uppladdade filen.</value></data>
   <data name="WorksheetNoStore" xml:space="preserve"><value>Levereras utan cache och granskas; stäng fliken när du är klar. Resgrid loggar aldrig in på portalen.</value></data>
   <data name="Year" xml:space="preserve"><value>År</value></data>

@@ -97,7 +97,7 @@ namespace Resgrid.Model
 			new DepartmentTermDefinition(Readiness, DepartmentTermCategories.Module, "Readiness"),
 			new DepartmentTermDefinition(WorkOrders, DepartmentTermCategories.Module, "Work Orders", "Work Order"),
 			new DepartmentTermDefinition(Checklists, DepartmentTermCategories.Module, "Checklists", "Checklist"),
-			new DepartmentTermDefinition(WorkforceBusiness, DepartmentTermCategories.Module, "Workforce & Business"),
+			new DepartmentTermDefinition(WorkforceBusiness, DepartmentTermCategories.Module, "Business Ops"),
 
 			new DepartmentTermDefinition(RecordTypeKey(RmsDefinitionKeys.Run), DepartmentTermCategories.RecordType, "Run"),
 			new DepartmentTermDefinition(RecordTypeKey(RmsDefinitionKeys.Training), DepartmentTermCategories.RecordType, "Training"),

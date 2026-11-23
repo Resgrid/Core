@@ -25,7 +25,7 @@
     <value>Automatisering och integrationer</value>
   </data>
   <data xml:space="preserve" name="Area.business">
-    <value>Workforce and Business Operations</value>
+    <value>Business Ops</value>
   </data>
   <data xml:space="preserve" name="Area.calls">
     <value>Utlarmning och larm</value>
@@ -664,7 +664,7 @@
     <value>Enhanced AI</value>
   </data>
   <data xml:space="preserve" name="Feature.addon-business">
-    <value>Business Operations</value>
+    <value>Business Ops</value>
   </data>
   <data xml:space="preserve" name="Feature.addon-ptt">
     <value>Push-to-Talk</value>
@@ -1105,7 +1105,7 @@
     <value>Arbetsflöden</value>
   </data>
   <data xml:space="preserve" name="Feature.workforce">
-    <value>Personal</value>
+    <value>Arbete och kostnader</value>
   </data>
   <data xml:space="preserve" name="Feature.workforce-annual-facts">
     <value>Årliga löneuppgifter</value>
@@ -1156,7 +1156,7 @@
     <value>AI-hjälp utöver den kostnadsfria kvoten för Admin Assist.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.addon-business">
-    <value>Tillägget Workforce and Business Operations: fakturering, betalningar, avtal, anbud, MARS-ersättning och personalkostnader.</value>
+    <value>Tillägget Business Ops: fakturering, betalningar, avtal, anbud, MARS-ersättning och personalkostnader.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.addon-ptt">
     <value>Tillägget Push-to-Talk: röstkanaler i Resgrid-apparna.</value>
@@ -2872,7 +2872,7 @@
     <value>Tillgänglighet för AI</value>
   </data>
   <data xml:space="preserve" name="Module.BusinessOperationsDisabled">
-    <value>Tillgänglighet för Business Operations</value>
+    <value>Tillgänglighet för Business Ops</value>
   </data>
   <data xml:space="preserve" name="Module.CalendarDisabled">
     <value>Tillgänglighet för kalender</value>
@@ -2956,7 +2956,7 @@
     <value>Ha målsystemen och autentiseringsuppgifterna redo, och bestäm vem som äger varje automatisering.</value>
   </data>
   <data xml:space="preserve" name="ModuleAdoption.business">
-    <value>Kräver tillägget Workforce and Business Operations. Onlinebetalningar kräver även ett eget konto hos en betalningsleverantör.</value>
+    <value>Kräver tillägget Business Ops. Onlinebetalningar kräver även ett eget konto hos en betalningsleverantör.</value>
   </data>
   <data xml:space="preserve" name="ModuleAdoption.calls">
     <value>Samla era larmtyper, statusarna medlemmar rapporterar under insats, samt uppgifterna för eventuella CAD- eller personsökningssystem som ska skapa larm.</value>
@@ -5704,7 +5704,7 @@
     <value>Kräver Advanced Data Protection</value>
   </data>
   <data xml:space="preserve" name="Ui.AddonRequired.BusinessOperations">
-    <value>Kräver Workforce and Business Operations</value>
+    <value>Kräver Business Ops</value>
   </data>
   <data xml:space="preserve" name="Ui.AddonRequired.EnhancedAi">
     <value>Kräver Enhanced AI</value>
@@ -7759,7 +7759,7 @@
     <value>Larmoperatörsplats</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.DispatcherDeskConfig">
-    <value>Slår på operatörsplatsen och anger hur den fungerar: vilket arbete som erbjuds operatörerna i tjänst i Dispatch-appen (väntande och schemalagda larm, sms, telefonsamtal, e-post, chattar), hur länge ett erbjudande väntar och hur många poster en operatör kan hålla innan hen räknas som upptagen, hur många missade erbjudanden i rad som gör en operatör Borta, och vad som händer med sms och telefonsamtal när ingen är ledig (vänta i kön, Enhanced AI eller röstbrevlåda). Anger också vad ett larm som mejlas till larmadressen blir (skickas direkt, sparas som väntande eller läses av Enhanced AI till ett väntande larm) och reglerna för raster och tjänst: rastpåminnelser, automatisk återgång från raster, minsta antal tillgängliga, att neka raster under det, inga aviseringar från platsen under rast, och om operatörer måste vara på ett skift eller får gå i tjänst utan skift (Skift, Inställningar för operatörsplatsen). Av som standard; larm via e-post skickas direkt tills Larm via e-post ändras, vilket gäller även när tilldelningen är avstängd.</value>
+    <value>Slår på operatörsplatsen och anger hur den fungerar: vilket arbete som erbjuds operatörerna i tjänst i Dispatch-appen (väntande och schemalagda larm, sms, telefonsamtal, e-post, chattar), hur länge ett erbjudande väntar och hur många poster en operatör kan hålla innan hen räknas som upptagen, hur många missade erbjudanden i rad som gör en operatör Borta, och vad som händer med sms och telefonsamtal när ingen är ledig (vänta i kön, Enhanced AI eller röstbrevlåda). Anger också vad ett larm som mejlas till larmadressen blir (skickas direkt, sparas som väntande eller läses av Enhanced AI till ett väntande larm) och reglerna för raster och tjänst: rastpåminnelser, automatisk återgång från raster, minsta antal tillgängliga, att neka raster under det, inga aviseringar från platsen under rast, och om operatörer måste vara på ett skift eller får gå i tjänst utan skift (Skift, Operatörsplats, Inställningar för operatörsplatsen). Av som standard; larm via e-post skickas direkt tills Larm via e-post ändras, vilket gäller även när tilldelningen är avstängd.</value>
   </data>
   <data xml:space="preserve" name="Feature.home-dashboard">
     <value>Anpassningsbar startöversikt</value>
@@ -8020,7 +8020,7 @@
     <value>Två frivilliga operatörer täcker en helg från sina telefoner. Ett sms om ett träd som fallit över en väg erbjuds den som är ledig och blir ett larm, medan den andra har matrast och inte får några aviseringar från platsen förrän hen är tillbaka.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk" xml:space="preserve">
-    <value>Ge operatörerna behörigheten Inloggning i Dispatch-appen och lägg in dem i ett skifts operatörsschema. Öppna sedan Skift, Inställningar för operatörsplatsen, slå på Tilldela arbete till operatörer i tjänst, välj vad som ska Skicka till operatörsplatsen och spara. Operatörerna loggar in på platsen i Dispatch-appen; sidan Operatörsplats visar vem som är tillgänglig, upptagen eller har rast och den öppna kön, och en arbetsledare på platsen kan avsluta en rast eller flytta arbete till någon annan.</value>
+    <value>Ge operatörerna behörigheten Inloggning i Dispatch-appen och lägg in dem i ett skifts operatörsschema. Öppna sedan Skift, Operatörsplats, Inställningar för operatörsplatsen, slå på Tilldela arbete till operatörer i tjänst, välj vad som ska Skicka till operatörsplatsen och spara. Operatörerna loggar in på platsen i Dispatch-appen; sidan Operatörsplats visar vem som är tillgänglig, upptagen eller har rast och den öppna kön, och en arbetsledare på platsen kan avsluta en rast eller flytta arbete till någon annan.</value>
   </data>
   <data name="Feature.shift-dispatchers" xml:space="preserve">
     <value>Operatörer i tjänst</value>
@@ -8050,7 +8050,7 @@
     <value>På ett 12-timmarsskift med tre operatörer lägger Planera raster var och ens 30 minuter långa måltid och två raster på 15 minuter vid olika tider, och varje operatör påminns fem minuter innan en rast ska börja.</value>
   </data>
   <data name="FeatureSetup.dispatcher-breaks" xml:space="preserve">
-    <value>Ange en rastplan på varje skift, eller en standardrastplan i Inställningar för operatörsplatsen. Öppna sedan Skift, Operatörsraster, välj ett datum och en skiftdag och använd Planera raster, eller planera enstaka raster själv. Arbetsledare på platsen och skiftansvariga planerar allas raster; operatörer planerar sina egna bara på skift som tillåter det. En rast är en längd, så en rast som börjar tidigt slutar också tidigt.</value>
+    <value>Ange en rastplan på varje skift, eller en standardrastplan i Inställningar för operatörsplatsen. Öppna sedan Skift, Operatörsplats, Operatörsraster, välj ett datum och en skiftdag och använd Planera raster, eller planera enstaka raster själv. Arbetsledare på platsen och skiftansvariga planerar allas raster; operatörer planerar sina egna bara på skift som tillåter det. En rast är en längd, så en rast som börjar tidigt slutar också tidigt.</value>
   </data>
   <data name="Feature.dispatcher-desk-settings" xml:space="preserve">
     <value>Inställningar för operatörsplatsen</value>
@@ -8065,7 +8065,7 @@
     <value>En avdelning skickar sms och telefonsamtal till platsen, ger varje erbjudande 60 sekunder, låter Enhanced AI fylla i ett väntande larm när ingen är ledig och sparar larm via e-post som väntande så att en operatör kan granska dem.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk-settings" xml:space="preserve">
-    <value>Avdelningsadministratörer öppnar Skift och sedan Inställningar för operatörsplatsen. Slå på Tilldela arbete till operatörer i tjänst, välj Skicka till operatörsplatsen, tiden för erbjudanden och poster per operatör, vad som händer när alla operatörer är upptagna, Larm via e-post och rastreglerna, och spara. Valen med Enhanced AI kräver tillägget Enhanced AI.</value>
+    <value>Avdelningsadministratörer öppnar Skift och sedan Operatörsplats, Inställningar för operatörsplatsen. Slå på Tilldela arbete till operatörer i tjänst, välj Skicka till operatörsplatsen, tiden för erbjudanden och poster per operatör, vad som händer när alla operatörer är upptagna, Larm via e-post och rastreglerna, och spara. Valen med Enhanced AI kräver tillägget Enhanced AI.</value>
   </data>
   <data name="Feature.dispatcher-desk-activity" xml:space="preserve">
     <value>Operatörsaktivitet</value>
@@ -8080,7 +8080,7 @@
     <value>En arbetsledare ser att sms ofta eskalerades på fredagskvällar och lägger till en andra operatör på det skiftet.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk-activity" xml:space="preserve">
-    <value>Avdelningsadministratörer och arbetsledare på platsen öppnar Skift och sedan Operatörsaktivitet, väljer datumen Från och Till och väljer Visa.</value>
+    <value>Avdelningsadministratörer och arbetsledare på platsen öppnar Skift och sedan Operatörsplats, Operatörsaktivitet, väljer datumen Från och Till och väljer Visa.</value>
   </data>
   <data name="Feature.intake-spam-screening" xml:space="preserve">
     <value>Skräpfiltrering vid mottagning</value>

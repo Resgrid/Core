@@ -2153,7 +2153,7 @@
   <data name="MoreMenu" xml:space="preserve"><value>Більше</value></data>
   <data name="InventoryUsage" xml:space="preserve"><value>Використання запасів</value></data>
   <data name="DeploymentReports" xml:space="preserve"><value>Звіти про розгортання</value></data>
-  <data name="DeploymentReportingIntro" xml:space="preserve"><value>Історія розгортань, звіти та експорт лише для читання. Керуйте розгортаннями в розділі персоналу та бізнес-операцій.</value></data>
+  <data name="DeploymentReportingIntro" xml:space="preserve"><value>Історія розгортань, звіти та експорт лише для читання. Керуйте розгортаннями в розділі Business Ops.</value></data>
   <data name="DeploymentExportResources" xml:space="preserve"><value>Експортувати ресурси CSV</value></data>
   <data name="DeploymentOpenWorkspace" xml:space="preserve"><value>Відкрити керування розгортанням</value></data>
   <data name="DeploymentExternalOrders" xml:space="preserve"><value>Зовнішні замовлення</value></data>

@@ -114,6 +114,8 @@ namespace Resgrid.Tests.Localization
 			"IntakeChannels|Type.Telegram", "IntakeChannels|Type.Discord", "IntakeChannels|Type.GoogleChat",
 			// The Private Inbound Dispatch Number add-on name (renamed from Dedicated Number 2026-11-20), kept in English like the other add-ons.
 			"DashboardWidgets|W.admin.plan.Addon.DedicatedNumber", "DedicatedNumber|PageTitle",
+			// Business Ops (renamed from Workforce & Business Operations 2026-11-22): the module and add-on name, kept in English like the other add-ons.
+			"HomeDashboard|Category.Business", "DashboardWidgets|W.admin.plan.Addon.BusinessOperations",
 			// Dispatcher desk (2026-11-19): a break bar's tooltip is "type · state · time", format only.
 			"DispatcherDesk|BreakTooltipFormat",
 		};
@@ -140,10 +142,6 @@ namespace Resgrid.Tests.Localization
 			"HomeDashboard|de|TemplateWidgets", "HomeDashboard|es|TemplateWidgets", "HomeDashboard|fr|TemplateWidgets",
 			"DashboardWidgets|de|W.admin.dataProtection.Migration", "DashboardWidgets|fr|W.admin.dataProtection.Migration",
 			"DashboardWidgets|de|W.admin.dataProtection.MigrationKind", "DashboardWidgets|de|W.admin.import.Title",
-			"DashboardWidgets|de|W.admin.plan.Addon.BusinessOperations", "DashboardWidgets|es|W.admin.plan.Addon.BusinessOperations",
-			"DashboardWidgets|fr|W.admin.plan.Addon.BusinessOperations", "DashboardWidgets|pl|W.admin.plan.Addon.BusinessOperations",
-			"DashboardWidgets|sv|W.admin.plan.Addon.BusinessOperations", "DashboardWidgets|uk|W.admin.plan.Addon.BusinessOperations",
-			"DashboardWidgets|el|W.admin.plan.Addon.BusinessOperations", "DashboardWidgets|ar|W.admin.plan.Addon.BusinessOperations",
 			"DashboardWidgets|de|W.admin.plan.Addons", "DashboardWidgets|fr|W.admin.plan.Personnel", "DashboardWidgets|de|W.admin.security.Mfa",
 			"DashboardWidgets|de|W.admin.security.Passkeys", "DashboardWidgets|it|W.admin.security.Sso", "DashboardWidgets|fr|W.ai.assistant.Title",
 			"DashboardWidgets|fr|W.aiDispatch.triage.Total", "DashboardWidgets|de|W.calendar.agenda.Optional",

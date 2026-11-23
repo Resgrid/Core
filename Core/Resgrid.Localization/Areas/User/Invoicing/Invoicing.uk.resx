@@ -22,9 +22,9 @@
   <data name="InvoicesLower" xml:space="preserve"><value>рахунків</value></data>
   <data name="Invoice" xml:space="preserve"><value>Рахунок</value></data>
   <data name="InvoicingIntro" xml:space="preserve"><value>Рахунки клієнтам, платежі та дебіторська заборгованість.</value></data>
-  <data name="ReadOnlyNotice" xml:space="preserve"><value>Доповнення Business Operations не активне для цього підрозділу. Наявні рахунки залишаються доступними для читання; створення або зміни потребують активного доповнення.</value></data>
-  <data name="BusinessOperations" xml:space="preserve"><value>Business Operations</value></data>
-  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Виставлення рахунків, тарифи та профілі оплати. Сторінки також потребують доповнення Business Operations.</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>Доповнення Business Ops не активне для цього підрозділу. Наявні рахунки залишаються доступними для читання; створення або зміни потребують активного доповнення.</value></data>
+  <data name="BusinessOperations" xml:space="preserve"><value>Business Ops</value></data>
+  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Виставлення рахунків, тарифи та профілі оплати. Сторінки також потребують доповнення Business Ops.</value></data>
   <data name="RateCards" xml:space="preserve"><value>Тарифи</value></data>
   <data name="RateCard" xml:space="preserve"><value>Тариф</value></data>
   <data name="RateCardsIntro" xml:space="preserve"><value>Тарифи, що застосовуються під час додавання викликів до рахунку.</value></data>
@@ -131,7 +131,7 @@
   <data name="Saved" xml:space="preserve"><value>Збережено.</value></data>
   <data name="InvalidInput" xml:space="preserve"><value>Надіслані значення недійсні.</value></data>
   <data name="NameRequired" xml:space="preserve"><value>Потрібна назва.</value></data>
-  <data name="AddonRequired" xml:space="preserve"><value>Потрібне активне доповнення Business Operations.</value></data>
+  <data name="AddonRequired" xml:space="preserve"><value>Потрібне активне доповнення Business Ops.</value></data>
   <data name="TotalsUpdateOnSave" xml:space="preserve"><value>Знижка й податок перераховуються під час збереження.</value></data>
   <data name="PreviewAndSend" xml:space="preserve"><value>Перегляд і надсилання</value></data>
   <data name="BackToInvoices" xml:space="preserve"><value>Назад до рахунків</value></data>
@@ -232,7 +232,7 @@
   <data name="NotAvailableInRegion" xml:space="preserve"><value>Недоступно в цьому регіоні</value></data>
   <data name="Enabled" xml:space="preserve"><value>Увімкнено</value></data>
   <data name="Disabled" xml:space="preserve"><value>Вимкнено</value></data>
-  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Доповнення Business Operations</value></data>
+  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Доповнення Business Ops</value></data>
   <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>Щомісячне доповнення для підрозділів, які виставляють рахунки клієнтам і керують контрактами. Придбати або скасувати його може лише керівний член підрозділу.</value></data>
   <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Виставлення рахунків клієнтам, тарифи, платежі та прострочення заборгованості</value></data>
   <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Тарифні сітки підрядників, контракти та відшкодування витрат</value></data>
@@ -244,7 +244,7 @@
   <data name="SubscriptionCancelled" xml:space="preserve"><value>Поновлення скасовано; доступ триває до кінця оплаченого періоду.</value></data>
   <data name="Buy" xml:space="preserve"><value>Придбати</value></data>
   <data name="CancelSubscription" xml:space="preserve"><value>Скасувати поновлення</value></data>
-  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Скасувати поновлення Business Operations?</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Скасувати поновлення Business Ops?</value></data>
   <data name="BillingUnavailable" xml:space="preserve"><value>Оплата наразі недоступна. Спробуйте пізніше.</value></data>
   <data name="ManageSubscription" xml:space="preserve"><value>Керувати підпискою</value></data>
   <data name="ModuleSettings" xml:space="preserve"><value>Налаштування модулів</value></data>
@@ -341,7 +341,7 @@
   <data name="TooManyRequests" xml:space="preserve"><value>Забагато запитів. Зачекайте хвилину та спробуйте ще раз.</value></data>
   <data name="payments_not_available_in_region" xml:space="preserve"><value>Онлайн-збір платежів недоступний у цьому регіоні.</value></data>
   <data name="payments_flag_off" xml:space="preserve"><value>Онлайн-платежі не ввімкнено для цього підрозділу.</value></data>
-  <data name="payments_addon_required" xml:space="preserve"><value>Онлайн-платежі потребують активного доповнення Business Operations.</value></data>
+  <data name="payments_addon_required" xml:space="preserve"><value>Онлайн-платежі потребують активного доповнення Business Ops.</value></data>
   <data name="payments_not_enabled_for_department" xml:space="preserve"><value>Онлайн-оплату вимкнено у ваших налаштуваннях виставлення рахунків.</value></data>
   <data name="payments_no_connection" xml:space="preserve"><value>Рахунок Stripe не підключено.</value></data>
   <data name="payments_connection_not_ready" xml:space="preserve"><value>Підключений рахунок Stripe ще не може приймати платежі. Виконайте вимоги Stripe і спробуйте знову.</value></data>

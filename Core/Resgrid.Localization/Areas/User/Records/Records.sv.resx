@@ -2153,7 +2153,7 @@
   <data name="MoreMenu" xml:space="preserve"><value>Mer</value></data>
   <data name="InventoryUsage" xml:space="preserve"><value>Lagerförbrukning</value></data>
   <data name="DeploymentReports" xml:space="preserve"><value>Insatsrapporter</value></data>
-  <data name="DeploymentReportingIntro" xml:space="preserve"><value>Insatshistorik, rapporter och exporter med läsbehörighet. Hantera insatser i Personal och verksamhetsdrift.</value></data>
+  <data name="DeploymentReportingIntro" xml:space="preserve"><value>Insatshistorik, rapporter och exporter med läsbehörighet. Hantera insatser i Business Ops.</value></data>
   <data name="DeploymentExportResources" xml:space="preserve"><value>Exportera resurser som CSV</value></data>
   <data name="DeploymentOpenWorkspace" xml:space="preserve"><value>Öppna insatshanteringen</value></data>
   <data name="DeploymentExternalOrders" xml:space="preserve"><value>Externa order</value></data>

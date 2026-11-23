@@ -638,7 +638,7 @@
   <data name="WorkerKindVolunteer" xml:space="preserve"><value>Εθελοντής</value></data>
   <data name="Workers" xml:space="preserve"><value>Εργαζόμενοι</value></data>
   <data name="WorkersIntro" xml:space="preserve"><value>Κάθε πρόσωπο που το τμήμα πληρώνει ή δηλώνει — μέλη και εξωτερικοί εργαζόμενοι — με τις περιόδους απασχόλησης.</value></data>
-  <data name="Workforce" xml:space="preserve"><value>Εργατικό δυναμικό</value></data>
+  <data name="Workforce" xml:space="preserve"><value>Εργασία και κόστος</value></data>
   <data name="WorksheetIntro" xml:space="preserve"><value>Οι τιμές επιπέδου εργοδότη που πληκτρολογείτε στην πύλη CRD μαζί με το ανεβασμένο αρχείο.</value></data>
   <data name="WorksheetNoStore" xml:space="preserve"><value>Παρέχεται χωρίς αποθήκευση και ελέγχεται· κλείστε την καρτέλα όταν τελειώσετε. Το Resgrid δεν συνδέεται ποτέ στην πύλη.</value></data>
   <data name="Year" xml:space="preserve"><value>Έτος</value></data>

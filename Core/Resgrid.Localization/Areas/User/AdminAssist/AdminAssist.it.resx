@@ -25,7 +25,7 @@
     <value>Automazione e integrazioni</value>
   </data>
   <data xml:space="preserve" name="Area.business">
-    <value>Workforce and Business Operations</value>
+    <value>Business Ops</value>
   </data>
   <data xml:space="preserve" name="Area.calls">
     <value>Centrale operativa e chiamate</value>
@@ -664,7 +664,7 @@
     <value>Enhanced AI</value>
   </data>
   <data xml:space="preserve" name="Feature.addon-business">
-    <value>Business Operations</value>
+    <value>Business Ops</value>
   </data>
   <data xml:space="preserve" name="Feature.addon-ptt">
     <value>Push-to-Talk</value>
@@ -1105,7 +1105,7 @@
     <value>Flussi di lavoro</value>
   </data>
   <data xml:space="preserve" name="Feature.workforce">
-    <value>Personale</value>
+    <value>Manodopera e costi</value>
   </data>
   <data xml:space="preserve" name="Feature.workforce-annual-facts">
     <value>Dati Retributivi Annuali</value>
@@ -1156,7 +1156,7 @@
     <value>Assistenza IA oltre la soglia gratuita di Admin Assist.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.addon-business">
-    <value>Il componente aggiuntivo Workforce and Business Operations: fatturazione, pagamenti, contratti, offerte, rimborso MARS e costificazione del personale.</value>
+    <value>Il componente aggiuntivo Business Ops: fatturazione, pagamenti, contratti, offerte, rimborso MARS e costificazione del personale.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.addon-ptt">
     <value>Il componente aggiuntivo Push-to-Talk: canali vocali nelle app Resgrid.</value>
@@ -2872,7 +2872,7 @@
     <value>Disponibilità IA</value>
   </data>
   <data xml:space="preserve" name="Module.BusinessOperationsDisabled">
-    <value>Disponibilità Business Operations</value>
+    <value>Disponibilità Business Ops</value>
   </data>
   <data xml:space="preserve" name="Module.CalendarDisabled">
     <value>Disponibilità Calendario</value>
@@ -2956,7 +2956,7 @@
     <value>Prepara i sistemi di destinazione e le credenziali, e decidi chi è responsabile di ogni automazione.</value>
   </data>
   <data xml:space="preserve" name="ModuleAdoption.business">
-    <value>Richiede il componente aggiuntivo Workforce and Business Operations. I pagamenti online richiedono anche un tuo account presso un provider di pagamento.</value>
+    <value>Richiede il componente aggiuntivo Business Ops. I pagamenti online richiedono anche un tuo account presso un provider di pagamento.</value>
   </data>
   <data xml:space="preserve" name="ModuleAdoption.calls">
     <value>Raccogli i tuoi tipi di chiamata, gli stati segnalati dai membri durante la risposta e i dettagli di qualsiasi sistema CAD o paging che deve creare chiamate.</value>
@@ -5704,7 +5704,7 @@
     <value>Richiede Advanced Data Protection</value>
   </data>
   <data xml:space="preserve" name="Ui.AddonRequired.BusinessOperations">
-    <value>Richiede Workforce and Business Operations</value>
+    <value>Richiede Business Ops</value>
   </data>
   <data xml:space="preserve" name="Ui.AddonRequired.EnhancedAi">
     <value>Richiede Enhanced AI</value>
@@ -7759,7 +7759,7 @@
     <value>Postazione operatori di centrale</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.DispatcherDeskConfig">
-    <value>Attiva la postazione di centrale e stabilisce come funziona: quale lavoro viene offerto agli operatori in servizio nell'app Dispatch (chiamate in attesa e programmate, SMS, telefonate, e-mail, chat), quanto attende un'offerta e quanti elementi può tenere un operatore prima di contare come occupato, quante offerte perse di fila rendono un operatore Assente, e cosa succede a SMS e telefonate quando nessuno è libero (attesa in coda, Enhanced AI o segreteria). Stabilisce anche cosa diventa una chiamata inviata via e-mail all'indirizzo di allertamento (inviata subito, salvata in attesa o letta da Enhanced AI in una chiamata in attesa) e le regole di pause e servizio: promemoria delle pause, rientro automatico dalle pause, il minimo disponibile, il rifiuto delle pause sotto di esso, nessun avviso della postazione in pausa e se gli operatori devono essere in un turno o possono essere in servizio senza turno (Turni, Impostazioni della postazione di centrale). Disattivato per impostazione predefinita; le chiamate via e-mail vengono inviate subito finché non si cambia Chiamate via e-mail, il che vale anche con l'instradamento disattivato.</value>
+    <value>Attiva la postazione di centrale e stabilisce come funziona: quale lavoro viene offerto agli operatori in servizio nell'app Dispatch (chiamate in attesa e programmate, SMS, telefonate, e-mail, chat), quanto attende un'offerta e quanti elementi può tenere un operatore prima di contare come occupato, quante offerte perse di fila rendono un operatore Assente, e cosa succede a SMS e telefonate quando nessuno è libero (attesa in coda, Enhanced AI o segreteria). Stabilisce anche cosa diventa una chiamata inviata via e-mail all'indirizzo di allertamento (inviata subito, salvata in attesa o letta da Enhanced AI in una chiamata in attesa) e le regole di pause e servizio: promemoria delle pause, rientro automatico dalle pause, il minimo disponibile, il rifiuto delle pause sotto di esso, nessun avviso della postazione in pausa e se gli operatori devono essere in un turno o possono essere in servizio senza turno (Turni, Postazione di centrale, Impostazioni della postazione di centrale). Disattivato per impostazione predefinita; le chiamate via e-mail vengono inviate subito finché non si cambia Chiamate via e-mail, il che vale anche con l'instradamento disattivato.</value>
   </data>
   <data xml:space="preserve" name="Feature.home-dashboard">
     <value>Dashboard iniziale personalizzabile</value>
@@ -8020,7 +8020,7 @@
     <value>Due operatori volontari coprono un fine settimana dal telefono. Un SMS su un albero caduto di traverso su una strada viene offerto a quello libero e diventa una chiamata, mentre l'altro è in pausa pranzo e non riceve avvisi della postazione finché non rientra.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk" xml:space="preserve">
-    <value>Dai ai tuoi operatori il permesso Accesso App Dispatch e mettili nell'elenco di centrale di un turno. Poi apri Turni, Impostazioni della postazione di centrale, attiva Instrada il lavoro agli operatori in servizio, scegli cosa Invia alla postazione e salva. Gli operatori accedono alla postazione nell'app Dispatch; la pagina Postazione di centrale mostra chi è disponibile, occupato o in pausa e la coda aperta, e un supervisore della postazione può terminare una pausa o passare il lavoro a un altro.</value>
+    <value>Dai ai tuoi operatori il permesso Accesso App Dispatch e mettili nell'elenco di centrale di un turno. Poi apri Turni, Postazione di centrale, Impostazioni della postazione di centrale, attiva Instrada il lavoro agli operatori in servizio, scegli cosa Invia alla postazione e salva. Gli operatori accedono alla postazione nell'app Dispatch; la pagina Postazione di centrale mostra chi è disponibile, occupato o in pausa e la coda aperta, e un supervisore della postazione può terminare una pausa o passare il lavoro a un altro.</value>
   </data>
   <data name="Feature.shift-dispatchers" xml:space="preserve">
     <value>Operatori in servizio</value>
@@ -8050,7 +8050,7 @@
     <value>In un turno di 12 ore con tre operatori, Pianifica pause colloca per ciascuno il pasto di 30 minuti e due pause di 15 minuti in orari diversi, e ogni operatore riceve un promemoria cinque minuti prima di una pausa.</value>
   </data>
   <data name="FeatureSetup.dispatcher-breaks" xml:space="preserve">
-    <value>Imposta un piano delle pause su ogni turno, oppure un piano delle pause predefinito nelle Impostazioni della postazione di centrale. Poi apri Turni, Pause degli operatori, scegli una data e un giorno di turno e usa Pianifica pause, oppure pianifica tu le singole pause. I supervisori della postazione e i responsabili di turno pianificano le pause di tutti; gli operatori pianificano le proprie solo nei turni che lo consentono. Una pausa è una durata, quindi se inizia prima finisce anche prima.</value>
+    <value>Imposta un piano delle pause su ogni turno, oppure un piano delle pause predefinito nelle Impostazioni della postazione di centrale. Poi apri Turni, Postazione di centrale, Pause degli operatori, scegli una data e un giorno di turno e usa Pianifica pause, oppure pianifica tu le singole pause. I supervisori della postazione e i responsabili di turno pianificano le pause di tutti; gli operatori pianificano le proprie solo nei turni che lo consentono. Una pausa è una durata, quindi se inizia prima finisce anche prima.</value>
   </data>
   <data name="Feature.dispatcher-desk-settings" xml:space="preserve">
     <value>Impostazioni della postazione di centrale</value>
@@ -8065,7 +8065,7 @@
     <value>Un dipartimento invia SMS e telefonate alla postazione, concede 60 secondi a ogni offerta, lascia che Enhanced AI compili una chiamata in attesa quando nessuno è libero e salva le chiamate via e-mail come in attesa perché un operatore le verifichi.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk-settings" xml:space="preserve">
-    <value>Gli amministratori del dipartimento aprono Turni, poi Impostazioni della postazione di centrale. Attiva Instrada il lavoro agli operatori in servizio, scegli Invia alla postazione, il tempo di ogni offerta e gli elementi per operatore, cosa succede quando tutti gli operatori sono occupati, Chiamate via e-mail e le regole delle pause, poi salva. Le opzioni Enhanced AI richiedono il componente aggiuntivo Enhanced AI.</value>
+    <value>Gli amministratori del dipartimento aprono Turni, poi Postazione di centrale, Impostazioni della postazione di centrale. Attiva Instrada il lavoro agli operatori in servizio, scegli Invia alla postazione, il tempo di ogni offerta e gli elementi per operatore, cosa succede quando tutti gli operatori sono occupati, Chiamate via e-mail e le regole delle pause, poi salva. Le opzioni Enhanced AI richiedono il componente aggiuntivo Enhanced AI.</value>
   </data>
   <data name="Feature.dispatcher-desk-activity" xml:space="preserve">
     <value>Attività degli operatori</value>
@@ -8080,7 +8080,7 @@
     <value>Un supervisore vede che gli SMS venivano spesso escalati il venerdì sera e aggiunge un secondo operatore a quel turno.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk-activity" xml:space="preserve">
-    <value>Gli amministratori del dipartimento e i supervisori della postazione aprono Turni, poi Attività degli operatori, scelgono le date Dal e Al e selezionano Mostra.</value>
+    <value>Gli amministratori del dipartimento e i supervisori della postazione aprono Turni, poi Postazione di centrale, Attività degli operatori, scelgono le date Dal e Al e selezionano Mostra.</value>
   </data>
   <data name="Feature.intake-spam-screening" xml:space="preserve">
     <value>Filtro antispam in ricezione</value>

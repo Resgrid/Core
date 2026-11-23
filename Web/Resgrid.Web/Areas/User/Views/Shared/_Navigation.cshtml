@@ -13,7 +13,6 @@
 @inject Resgrid.Model.Services.IIncidentBackOfficeAccessService incidentBackOfficeAccess
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> incidentBackOfficeLocalizer
 @inject Resgrid.Model.Services.IDispatchAccessService dispatchAccess
-@inject Resgrid.Model.Services.IDispatcherPresenceService dispatcherPresence
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatcherDesk.DispatcherDesk> dispatcherDeskLocalizer
 @{
 	// Chat.System flag gates every chat surface (chat, assistant, moderation). When it is off
@@ -63,10 +62,6 @@
 		ClaimsAuthorizationHelper.CanCreateShift() ||
 		await dispatchAccess.CanUseDispatchAsync(ClaimsAuthorizationHelper.GetDepartmentId(), ClaimsAuthorizationHelper.GetUserId()));
 	var onDispatcherDeskPage = Html.IsController("DispatcherDesk");
-	// The Activity report is for department admins and desk supervisors only (DispatcherDeskController.Activity refuses others);
-	// checked only for members who get the desk group at all.
-	var showDispatcherActivity = showDispatcherDesk && (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() ||
-		await dispatcherPresence.CanSuperviseAsync(ClaimsAuthorizationHelper.GetDepartmentId(), ClaimsAuthorizationHelper.GetUserId()));
 }
 <nav class="navbar-default navbar-static-side module-navigation" role="navigation">
 	<div class="nav-header">
@@ -136,8 +131,8 @@
 			@if (showDispatcherDesk)
 			{
 				// The Dispatcher Desk lives under the Shifts module: Shifts becomes a group holding the shift pages' entry and the
-				// desk pages (the dispatch roster and breaks are part of shifts).
-				var deskAction = (string)ViewContext.RouteData.Values["action"];
+				// desk board. Breaks, Activity and Desk Settings are reached from the board's top buttons, so every desk page
+				// highlights the one desk entry.
 				var shiftsName = await departmentTerms.NameAsync(DepartmentTerms.Shifts);
 				var onShiftsPage = Html.IsController("Shifts");
 				<li class="sidebar-module-group @(onShiftsPage || onDispatcherDeskPage ? "active mm-active" : null)">
@@ -150,24 +145,9 @@
 						<li class="@(onShiftsPage ? "active" : null)">
 							<a asp-controller="Shifts" asp-action="Index" asp-route-area="User"><i class="fa fa-calendar"></i> @shiftsName</a>
 						</li>
-						<li class="@(onDispatcherDeskPage && String.Equals(deskAction, "Index", StringComparison.OrdinalIgnoreCase) ? "active" : null)">
+						<li class="@(onDispatcherDeskPage ? "active" : null)">
 							<a asp-controller="DispatcherDesk" asp-action="Index" asp-route-area="User"><i class="fa fa-headphones"></i> @dispatcherDeskLocalizer["DeskBoardTitle"]</a>
 						</li>
-						<li class="@(onDispatcherDeskPage && String.Equals(deskAction, "Breaks", StringComparison.OrdinalIgnoreCase) ? "active" : null)">
-							<a asp-controller="DispatcherDesk" asp-action="Breaks" asp-route-area="User"><i class="fa fa-coffee"></i> @dispatcherDeskLocalizer["BreaksTitle"]</a>
-						</li>
-						@if (showDispatcherActivity)
-						{
-							<li class="@(onDispatcherDeskPage && String.Equals(deskAction, "Activity", StringComparison.OrdinalIgnoreCase) ? "active" : null)">
-								<a asp-controller="DispatcherDesk" asp-action="Activity" asp-route-area="User"><i class="fa fa-bar-chart"></i> @dispatcherDeskLocalizer["ActivityTitle"]</a>
-							</li>
-						}
-						@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-						{
-							<li class="@(onDispatcherDeskPage && String.Equals(deskAction, "Settings", StringComparison.OrdinalIgnoreCase) ? "active" : null)">
-								<a asp-controller="DispatcherDesk" asp-action="Settings" asp-route-area="User"><i class="fa fa-cog"></i> @dispatcherDeskLocalizer["SettingsTitle"]</a>
-							</li>
-						}
 					</ul>
 				</li>
 			}

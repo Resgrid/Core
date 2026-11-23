@@ -539,11 +539,8 @@ namespace Resgrid.Web.Helpers
 			{ DepartmentTerms.Checklists, new ResourceKey(ResourceSource.Common, "TermChecklist") }
 		};
 
-		/// <summary>English names a module also ships under (the navigation says "Workforce & Business Ops").</summary>
-		private static readonly Dictionary<string, string[]> ExtraEnglishNames = new Dictionary<string, string[]>(StringComparer.Ordinal)
-		{
-			{ DepartmentTerms.WorkforceBusiness, new[] { "Workforce & Business Ops" } }
-		};
+		/// <summary>English names a module also ships under, besides its catalog name. Empty while every module ships under one name.</summary>
+		private static readonly Dictionary<string, string[]> ExtraEnglishNames = new Dictionary<string, string[]>(StringComparer.Ordinal);
 
 		/// <summary>"Resource.Name|termKey" for every string that is a module's name.</summary>
 		private static readonly HashSet<string> ModuleNameStrings = new HashSet<string>(

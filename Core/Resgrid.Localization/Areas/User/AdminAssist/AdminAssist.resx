@@ -25,7 +25,7 @@
     <value>Automation and integrations</value>
   </data>
   <data xml:space="preserve" name="Area.business">
-    <value>Workforce and business operations</value>
+    <value>Business Ops</value>
   </data>
   <data xml:space="preserve" name="Area.calls">
     <value>Dispatch and calls</value>
@@ -151,7 +151,7 @@
     <value>Workflows that act on department events, custom fields, and API or MCP integrations.</value>
   </data>
   <data xml:space="preserve" name="AreaPurpose.business">
-    <value>Invoicing and payments, rates, contracts and bids, MARS reimbursement, and workforce costing.</value>
+    <value>Invoicing and payments, rates, contracts and bids, MARS reimbursement, and labor costing.</value>
   </data>
   <data xml:space="preserve" name="AreaPurpose.calls">
     <value>How calls are created, classified and dispatched: call types, response statuses, dispatch settings and CAD or email call intake.</value>
@@ -664,7 +664,7 @@
     <value>Enhanced AI</value>
   </data>
   <data xml:space="preserve" name="Feature.addon-business">
-    <value>Business Operations</value>
+    <value>Business Ops</value>
   </data>
   <data xml:space="preserve" name="Feature.addon-ptt">
     <value>Push-to-Talk</value>
@@ -1105,7 +1105,7 @@
     <value>Workflows</value>
   </data>
   <data xml:space="preserve" name="Feature.workforce">
-    <value>Workforce</value>
+    <value>Labor &amp; Costing</value>
   </data>
   <data xml:space="preserve" name="Feature.workforce-annual-facts">
     <value>Annual Pay Facts</value>
@@ -1156,7 +1156,7 @@
     <value>AI assistance beyond the free Admin Assist allowance.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.addon-business">
-    <value>The Workforce and Business Operations add-on: invoicing, payments, contracts, bids, MARS reimbursement and workforce costing.</value>
+    <value>The Business Ops add-on: invoicing, payments, contracts, bids, MARS reimbursement and labor costing.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.addon-ptt">
     <value>The Push-to-Talk add-on: voice channels in the Resgrid apps.</value>
@@ -1597,7 +1597,7 @@
     <value>Automations triggered by department events.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.workforce">
-    <value>Workforce compensation and field cost runs.</value>
+    <value>Compensation and field cost runs.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.workforce-annual-facts">
     <value>Annual earnings and hours used for pay data reporting.</value>
@@ -2818,7 +2818,7 @@
     <value>AI availability</value>
   </data>
   <data xml:space="preserve" name="Module.BusinessOperationsDisabled">
-    <value>Business Operations availability</value>
+    <value>Business Ops availability</value>
   </data>
   <data xml:space="preserve" name="Module.CalendarDisabled">
     <value>Calendar availability</value>
@@ -2902,7 +2902,7 @@
     <value>Have the destination systems and credentials ready, and decide who owns each automation.</value>
   </data>
   <data xml:space="preserve" name="ModuleAdoption.business">
-    <value>Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.</value>
+    <value>Requires the Business Ops add-on. Online payments also need your own payment-provider account.</value>
   </data>
   <data xml:space="preserve" name="ModuleAdoption.calls">
     <value>Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.</value>
@@ -2956,7 +2956,7 @@
     <value>Controls availability of optional AI assistance. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.</value>
   </data>
   <data xml:space="preserve" name="ModuleHelp.BusinessOperationsDisabled">
-    <value>Controls availability of business operations. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.</value>
+    <value>Controls availability of Business Ops. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.</value>
   </data>
   <data xml:space="preserve" name="ModuleHelp.CalendarDisabled">
     <value>Controls availability of calendar events. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.</value>
@@ -3277,7 +3277,7 @@
     <value>Manage Workflow Credentials</value>
   </data>
   <data xml:space="preserve" name="Permission.ManageWorkforceCompensation">
-    <value>Manage Workforce Compensation</value>
+    <value>Manage Labor and Compensation</value>
   </data>
   <data xml:space="preserve" name="Permission.PublishRecordDefinitions">
     <value>Publish Record Definitions</value>
@@ -3358,7 +3358,7 @@
     <value>View Workflow Runs</value>
   </data>
   <data xml:space="preserve" name="Permission.ViewWorkforceCompensation">
-    <value>View Workforce Compensation</value>
+    <value>View Compensation</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AddCallData">
     <value>Allows adding notes, images, files and video feeds to calls on the web and in the apps. People must also be able to see the call, and attaching a file on the web additionally needs call edit rights (department administrators or the member who logged the call). With the group-only box ticked, only department administrators and people whose group was dispatched on the call may add to it — also when the rule is Everyone. With no saved rule anyone who can see the call may.</value>
@@ -3496,7 +3496,7 @@
     <value>Allows creating, sending, editing and voiding invoices, generating invoices from deployments, downloading the invoice packet, recording payments and managing rate cards and billing profiles. It includes viewing. With no saved rule only department administrators may. Needs Customer Invoicing turned on; changes need an active Business Ops add-on.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageMutualAidReimbursement">
-    <value>Allows preparing, handing off and reconciling Cal OES MARS reimbursement work. Building the salary survey also needs View Workforce Compensation, and classifications with fewer than three members are left out. Rostered members can still fill in their own F-42 and expenses, but printed packets show them no reimbursement rates or totals. With no saved rule only department administrators may. Needs Cal OES MARS turned on and an active Business Ops add-on.</value>
+    <value>Allows preparing, handing off and reconciling Cal OES MARS reimbursement work. Building the salary survey also needs View Compensation, and classifications with fewer than three members are left out. Rostered members can still fill in their own F-42 and expenses, but printed packets show them no reimbursement rates or totals. With no saved rule only department administrators may. Needs Cal OES MARS turned on and an active Business Ops add-on.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManagePayDataReporting">
     <value>Allows building California pay data reports in the wizard and seeing the per-worker snapshots behind them. Freezing and exporting a report needs Export Pay Data Reporting. Every member still answers their own demographic questions. Needs the pay data reporting module, an active Business Ops add-on and Advanced Data Protection enabled. With no saved rule only department administrators may.</value>
@@ -3571,7 +3571,7 @@
     <value>Decides which members a person can see in personnel lists, profiles, grids, dispatch pickers, reports, search, the apps' roster and status feeds. With the group-only box ticked, group administrators and role holders see only their own group (department administrators always see everyone). With no saved rule everyone sees everyone.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewInternalCosts">
-    <value>Allows seeing the department's internal costs: resource cost profiles, usage, field cost runs and margin cards. Running, freezing or deleting cost runs, editing cost profiles and changing other people's usage also need Manage Workforce Compensation. With no saved rule only department administrators may. Needs Internal Costing turned on and an active Business Ops add-on.</value>
+    <value>Allows seeing the department's internal costs: resource cost profiles, usage, field cost runs and margin cards. Running, freezing or deleting cost runs, editing cost profiles and changing other people's usage also need Manage Labor and Compensation. With no saved rule only department administrators may. Needs Internal Costing turned on and an active Business Ops add-on.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewInvoicing">
     <value>Allows viewing invoices, aging, rate cards and contact billing profiles without changing them, including the invoice lists on deployments and contracts. The invoice packet (with time reports, receipts and compliance documents) needs Manage Invoicing. With no saved rule only department administrators may. Viewing keeps working if the Business Ops add-on lapses.</value>
@@ -3604,7 +3604,7 @@
     <value>Allows viewing workflow run history, logs, health and pending runs. What a run sent (its rendered output and result) is shown only to people who may edit workflows. With no saved rule every member can view runs and only department administrators can cancel or clear them; saving Department admins hides runs from everyone else, and saving Everyone lets everyone cancel and clear.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewWorkforceCompensation">
-    <value>Allows viewing the workforce roster and compensation records without changing them, and is needed to build the Cal OES MARS salary survey. Amounts show redacted without a Protected Data Grant. Available on the web only. With no saved rule only department administrators may.</value>
+    <value>Allows viewing the worker roster and compensation records without changing them, and is needed to build the Cal OES MARS salary survey. Amounts show redacted without a Protected Data Grant. Available on the web only. With no saved rule only department administrators may.</value>
   </data>
   <data xml:space="preserve" name="Plan.AddStep">
     <value>Add step</value>
@@ -5650,7 +5650,7 @@
     <value>Requires Advanced Data Protection</value>
   </data>
   <data xml:space="preserve" name="Ui.AddonRequired.BusinessOperations">
-    <value>Requires Workforce and Business Operations</value>
+    <value>Requires Business Ops</value>
   </data>
   <data xml:space="preserve" name="Ui.AddonRequired.EnhancedAi">
     <value>Requires Enhanced AI</value>
@@ -7681,7 +7681,7 @@
     <value>Dispatcher desk</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.DispatcherDeskConfig">
-    <value>Turns the dispatcher desk on and sets how it works: which work is offered to the dispatchers on duty in the Dispatch app (pending and scheduled calls, texts, phone calls, emails, chats), how long an offer waits and how many items a dispatcher holds before counting as busy, how many missed offers in a row set a dispatcher Away, and what happens to texts and phone calls when nobody is free (wait in the queue, Enhanced AI, or voicemail). It also sets what a call emailed to the dispatch address becomes (dispatched at once, saved as pending, or read by Enhanced AI into a pending call) and the break and duty rules: break reminders, automatic return from breaks, the minimum available, refusing breaks below it, no desk alerts on break, and whether dispatchers must be on a shift or may go on duty without one (Shifts, Dispatcher Desk Settings). Off by default; emailed calls are dispatched at once until Emailed calls is changed, which applies even while routing is off.</value>
+    <value>Turns the dispatcher desk on and sets how it works: which work is offered to the dispatchers on duty in the Dispatch app (pending and scheduled calls, texts, phone calls, emails, chats), how long an offer waits and how many items a dispatcher holds before counting as busy, how many missed offers in a row set a dispatcher Away, and what happens to texts and phone calls when nobody is free (wait in the queue, Enhanced AI, or voicemail). It also sets what a call emailed to the dispatch address becomes (dispatched at once, saved as pending, or read by Enhanced AI into a pending call) and the break and duty rules: break reminders, automatic return from breaks, the minimum available, refusing breaks below it, no desk alerts on break, and whether dispatchers must be on a shift or may go on duty without one (Shifts, Dispatcher Desk, Dispatcher Desk Settings). Off by default; emailed calls are dispatched at once until Emailed calls is changed, which applies even while routing is off.</value>
   </data>
   <data xml:space="preserve" name="Feature.home-dashboard">
     <value>Customizable home dashboard</value>
@@ -7942,7 +7942,7 @@
     <value>Two volunteer dispatchers cover a weekend from their phones. A text about a tree down across a road is offered to the one who is free and becomes a call, while the other is on a meal break and gets no desk alerts until they are back.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk" xml:space="preserve">
-    <value>Give your dispatchers the Dispatch app login permission and put them on a shift's dispatch roster. Then open Shifts, Dispatcher Desk Settings, turn on Route work to on-duty dispatchers, choose what to Send to the desk and save. Dispatchers sign in to the desk in the Dispatch app; the Dispatcher Desk page shows who is available, busy or on break and the open queue, and a desk supervisor can end a break or move work to someone else.</value>
+    <value>Give your dispatchers the Dispatch app login permission and put them on a shift's dispatch roster. Then open Shifts, Dispatcher Desk, Dispatcher Desk Settings, turn on Route work to on-duty dispatchers, choose what to Send to the desk and save. Dispatchers sign in to the desk in the Dispatch app; the Dispatcher Desk page shows who is available, busy or on break and the open queue, and a desk supervisor can end a break or move work to someone else.</value>
   </data>
   <data name="Feature.shift-dispatchers" xml:space="preserve">
     <value>Dispatchers on duty</value>
@@ -7972,7 +7972,7 @@
     <value>On a 12-hour shift with three dispatchers, Plan breaks places each one's 30-minute meal and two 15-minute breaks at different times, and each dispatcher is reminded five minutes before a break is due.</value>
   </data>
   <data name="FeatureSetup.dispatcher-breaks" xml:space="preserve">
-    <value>Set a break plan on each shift, or a default break plan in Dispatcher Desk Settings. Then open Shifts, Dispatcher Breaks, choose a date and a shift day and use Plan breaks, or plan single breaks yourself. Desk supervisors and shift managers plan anyone's breaks; dispatchers plan their own only on shifts that allow it. A break is a length, so a break started early also ends early.</value>
+    <value>Set a break plan on each shift, or a default break plan in Dispatcher Desk Settings. Then open Shifts, Dispatcher Desk, Dispatcher Breaks, choose a date and a shift day and use Plan breaks, or plan single breaks yourself. Desk supervisors and shift managers plan anyone's breaks; dispatchers plan their own only on shifts that allow it. A break is a length, so a break started early also ends early.</value>
   </data>
   <data name="Feature.dispatcher-desk-settings" xml:space="preserve">
     <value>Dispatcher Desk Settings</value>
@@ -7987,7 +7987,7 @@
     <value>A department sends texts and phone calls to the desk, gives each offer 60 seconds, lets Enhanced AI fill in a pending call when nobody is free, and saves emailed calls as pending for a dispatcher to review.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk-settings" xml:space="preserve">
-    <value>Department administrators open Shifts, then Dispatcher Desk Settings. Turn on Route work to on-duty dispatchers, choose Send to the desk, the offer timeout and items per dispatcher, what happens when every dispatcher is busy, Emailed calls and the break rules, then save. The Enhanced AI choices need the Enhanced AI add-on.</value>
+    <value>Department administrators open Shifts, then Dispatcher Desk, Dispatcher Desk Settings. Turn on Route work to on-duty dispatchers, choose Send to the desk, the offer timeout and items per dispatcher, what happens when every dispatcher is busy, Emailed calls and the break rules, then save. The Enhanced AI choices need the Enhanced AI add-on.</value>
   </data>
   <data name="Feature.dispatcher-desk-activity" xml:space="preserve">
     <value>Dispatcher Activity</value>
@@ -8002,7 +8002,7 @@
     <value>A supervisor sees that texts often escalated on Friday evenings and adds a second dispatcher to that shift.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk-activity" xml:space="preserve">
-    <value>Department administrators and desk supervisors open Shifts, then Dispatcher Activity, choose the From and To dates and select Show.</value>
+    <value>Department administrators and desk supervisors open Shifts, then Dispatcher Desk, Dispatcher Activity, choose the From and To dates and select Show.</value>
   </data>
   <data name="Feature.intake-spam-screening" xml:space="preserve">
     <value>Intake spam screening</value>

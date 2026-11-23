@@ -25,7 +25,7 @@
     <value>Automatyzacja i integracje</value>
   </data>
   <data xml:space="preserve" name="Area.business">
-    <value>Workforce and business operations</value>
+    <value>Business Ops</value>
   </data>
   <data xml:space="preserve" name="Area.calls">
     <value>Dyspozytornia i zgłoszenia</value>
@@ -664,7 +664,7 @@
     <value>Enhanced AI</value>
   </data>
   <data xml:space="preserve" name="Feature.addon-business">
-    <value>Business Operations</value>
+    <value>Business Ops</value>
   </data>
   <data xml:space="preserve" name="Feature.addon-ptt">
     <value>Push-to-Talk</value>
@@ -1105,7 +1105,7 @@
     <value>Przepływy pracy</value>
   </data>
   <data xml:space="preserve" name="Feature.workforce">
-    <value>Kadry</value>
+    <value>Robocizna i koszty</value>
   </data>
   <data xml:space="preserve" name="Feature.workforce-annual-facts">
     <value>Roczne dane płacowe</value>
@@ -1156,7 +1156,7 @@
     <value>Pomoc AI wykraczająca poza bezpłatny limit Admin Assist.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.addon-business">
-    <value>Dodatek Workforce and Business Operations: fakturowanie, płatności, umowy, oferty, zwroty kosztów MARS oraz kosztorysowanie pracy personelu.</value>
+    <value>Dodatek Business Ops: fakturowanie, płatności, umowy, oferty, zwroty kosztów MARS oraz kosztorysowanie pracy personelu.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.addon-ptt">
     <value>Dodatek Push-to-Talk: kanały głosowe w aplikacjach Resgrid.</value>
@@ -2872,7 +2872,7 @@
     <value>Dostępność AI</value>
   </data>
   <data xml:space="preserve" name="Module.BusinessOperationsDisabled">
-    <value>Dostępność Business Operations</value>
+    <value>Dostępność Business Ops</value>
   </data>
   <data xml:space="preserve" name="Module.CalendarDisabled">
     <value>Dostępność kalendarza</value>
@@ -2956,7 +2956,7 @@
     <value>Przygotuj systemy docelowe i dane uwierzytelniające oraz zdecyduj, kto jest odpowiedzialny za każdą automatyzację.</value>
   </data>
   <data xml:space="preserve" name="ModuleAdoption.business">
-    <value>Wymaga dodatku Workforce and Business Operations. Płatności online wymagają również własnego konta u dostawcy płatności.</value>
+    <value>Wymaga dodatku Business Ops. Płatności online wymagają również własnego konta u dostawcy płatności.</value>
   </data>
   <data xml:space="preserve" name="ModuleAdoption.calls">
     <value>Zbierz swoje typy zgłoszeń, statusy zgłaszane przez członków podczas reagowania oraz szczegóły systemu CAD lub pagera, który ma tworzyć zgłoszenia.</value>
@@ -5704,7 +5704,7 @@
     <value>Wymaga Advanced Data Protection</value>
   </data>
   <data xml:space="preserve" name="Ui.AddonRequired.BusinessOperations">
-    <value>Wymaga Workforce and Business Operations</value>
+    <value>Wymaga Business Ops</value>
   </data>
   <data xml:space="preserve" name="Ui.AddonRequired.EnhancedAi">
     <value>Wymaga Enhanced AI</value>
@@ -7759,7 +7759,7 @@
     <value>Stanowisko dyspozytorów</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.DispatcherDeskConfig">
-    <value>Włącza stanowisko dyspozytorskie i określa, jak działa: jaka praca jest proponowana dyspozytorom na dyżurze w aplikacji Dispatch (oczekujące i zaplanowane zgłoszenia, SMS-y, połączenia telefoniczne, e-maile, czaty), jak długo czeka propozycja i ile pozycji może mieć dyspozytor, zanim liczy się jako zajęty, po ilu przegapionych z rzędu propozycjach dyspozytor zostaje oznaczony jako Nieobecny oraz co dzieje się z SMS-ami i połączeniami telefonicznymi, gdy nikt nie jest wolny (czekanie w kolejce, Enhanced AI lub poczta głosowa). Określa też, czym staje się zgłoszenie wysłane e-mailem na adres dysponowania (wysłane od razu, zapisane jako oczekujące lub odczytane przez Enhanced AI do zgłoszenia oczekującego), oraz zasady przerw i dyżuru: przypomnienia o przerwach, automatyczny powrót z przerw, minimum dostępnych, odmawianie przerw poniżej niego, brak alertów stanowiska w czasie przerwy oraz to, czy dyspozytorzy muszą być na zmianie, czy mogą pełnić dyżur bez zmiany (Zmiany, Ustawienia stanowiska dyspozytorskiego). Domyślnie wyłączone; zgłoszenia z e-maili są wysyłane od razu, dopóki nie zmieni się ustawienia Zgłoszenia e-mailem, co obowiązuje także przy wyłączonym przekazywaniu.</value>
+    <value>Włącza stanowisko dyspozytorskie i określa, jak działa: jaka praca jest proponowana dyspozytorom na dyżurze w aplikacji Dispatch (oczekujące i zaplanowane zgłoszenia, SMS-y, połączenia telefoniczne, e-maile, czaty), jak długo czeka propozycja i ile pozycji może mieć dyspozytor, zanim liczy się jako zajęty, po ilu przegapionych z rzędu propozycjach dyspozytor zostaje oznaczony jako Nieobecny oraz co dzieje się z SMS-ami i połączeniami telefonicznymi, gdy nikt nie jest wolny (czekanie w kolejce, Enhanced AI lub poczta głosowa). Określa też, czym staje się zgłoszenie wysłane e-mailem na adres dysponowania (wysłane od razu, zapisane jako oczekujące lub odczytane przez Enhanced AI do zgłoszenia oczekującego), oraz zasady przerw i dyżuru: przypomnienia o przerwach, automatyczny powrót z przerw, minimum dostępnych, odmawianie przerw poniżej niego, brak alertów stanowiska w czasie przerwy oraz to, czy dyspozytorzy muszą być na zmianie, czy mogą pełnić dyżur bez zmiany (Zmiany, Stanowisko dyspozytorskie, Ustawienia stanowiska dyspozytorskiego). Domyślnie wyłączone; zgłoszenia z e-maili są wysyłane od razu, dopóki nie zmieni się ustawienia Zgłoszenia e-mailem, co obowiązuje także przy wyłączonym przekazywaniu.</value>
   </data>
   <data xml:space="preserve" name="Feature.home-dashboard">
     <value>Konfigurowalny pulpit startowy</value>
@@ -8020,7 +8020,7 @@
     <value>Dwóch ochotniczych dyspozytorów obsługuje weekend ze swoich telefonów. SMS o drzewie leżącym w poprzek drogi trafia do tego, który jest wolny, i staje się zgłoszeniem, a drugi jest na przerwie na posiłek i do powrotu nie dostaje alertów stanowiska.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk" xml:space="preserve">
-    <value>Nadaj dyspozytorom uprawnienie Logowanie do aplikacji dysponowania i dodaj ich do grafiku dyspozytorskiego zmiany. Następnie otwórz Zmiany, Ustawienia stanowiska dyspozytorskiego, włącz Przekazuj pracę dyspozytorom na dyżurze, wybierz, co Wysyłaj na stanowisko, i zapisz. Dyspozytorzy logują się na stanowisko w aplikacji Dispatch; strona Stanowisko dyspozytorskie pokazuje, kto jest dostępny, zajęty lub na przerwie, oraz otwartą kolejkę, a nadzorujący stanowisko może zakończyć przerwę lub przekazać pracę komuś innemu.</value>
+    <value>Nadaj dyspozytorom uprawnienie Logowanie do aplikacji dysponowania i dodaj ich do grafiku dyspozytorskiego zmiany. Następnie otwórz Zmiany, Stanowisko dyspozytorskie, Ustawienia stanowiska dyspozytorskiego, włącz Przekazuj pracę dyspozytorom na dyżurze, wybierz, co Wysyłaj na stanowisko, i zapisz. Dyspozytorzy logują się na stanowisko w aplikacji Dispatch; strona Stanowisko dyspozytorskie pokazuje, kto jest dostępny, zajęty lub na przerwie, oraz otwartą kolejkę, a nadzorujący stanowisko może zakończyć przerwę lub przekazać pracę komuś innemu.</value>
   </data>
   <data name="Feature.shift-dispatchers" xml:space="preserve">
     <value>Dyspozytorzy na dyżurze</value>
@@ -8050,7 +8050,7 @@
     <value>Na 12-godzinnej zmianie z trzema dyspozytorami Zaplanuj przerwy ustawia każdemu 30-minutowy posiłek i dwie 15-minutowe przerwy o różnych porach, a każdy dyspozytor dostaje przypomnienie pięć minut przed przerwą.</value>
   </data>
   <data name="FeatureSetup.dispatcher-breaks" xml:space="preserve">
-    <value>Ustaw plan przerw dla każdej zmiany albo domyślny plan przerw w Ustawieniach stanowiska dyspozytorskiego. Następnie otwórz Zmiany, Przerwy dyspozytorów, wybierz datę i dzień zmiany i użyj Zaplanuj przerwy albo zaplanuj pojedyncze przerwy samodzielnie. Nadzorujący stanowisko i kierownicy zmian planują przerwy wszystkich; dyspozytorzy planują własne tylko na zmianach, które na to pozwalają. Przerwa to czas trwania, więc przerwa rozpoczęta wcześniej także wcześniej się kończy.</value>
+    <value>Ustaw plan przerw dla każdej zmiany albo domyślny plan przerw w Ustawieniach stanowiska dyspozytorskiego. Następnie otwórz Zmiany, Stanowisko dyspozytorskie, Przerwy dyspozytorów, wybierz datę i dzień zmiany i użyj Zaplanuj przerwy albo zaplanuj pojedyncze przerwy samodzielnie. Nadzorujący stanowisko i kierownicy zmian planują przerwy wszystkich; dyspozytorzy planują własne tylko na zmianach, które na to pozwalają. Przerwa to czas trwania, więc przerwa rozpoczęta wcześniej także wcześniej się kończy.</value>
   </data>
   <data name="Feature.dispatcher-desk-settings" xml:space="preserve">
     <value>Ustawienia stanowiska dyspozytorskiego</value>
@@ -8065,7 +8065,7 @@
     <value>Jednostka wysyła na stanowisko SMS-y i połączenia telefoniczne, daje każdej propozycji 60 sekund, pozwala Enhanced AI wypełnić zgłoszenie oczekujące, gdy nikt nie jest wolny, i zapisuje zgłoszenia z e-maili jako oczekujące do sprawdzenia przez dyspozytora.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk-settings" xml:space="preserve">
-    <value>Administratorzy jednostki otwierają Zmiany, a następnie Ustawienia stanowiska dyspozytorskiego. Włącz Przekazuj pracę dyspozytorom na dyżurze, wybierz Wysyłaj na stanowisko, czas propozycji i liczbę pozycji na dyspozytora, co się dzieje, gdy wszyscy dyspozytorzy są zajęci, Zgłoszenia e-mailem oraz zasady przerw, a potem zapisz. Opcje Enhanced AI wymagają dodatku Enhanced AI.</value>
+    <value>Administratorzy jednostki otwierają Zmiany, a następnie Stanowisko dyspozytorskie, Ustawienia stanowiska dyspozytorskiego. Włącz Przekazuj pracę dyspozytorom na dyżurze, wybierz Wysyłaj na stanowisko, czas propozycji i liczbę pozycji na dyspozytora, co się dzieje, gdy wszyscy dyspozytorzy są zajęci, Zgłoszenia e-mailem oraz zasady przerw, a potem zapisz. Opcje Enhanced AI wymagają dodatku Enhanced AI.</value>
   </data>
   <data name="Feature.dispatcher-desk-activity" xml:space="preserve">
     <value>Aktywność dyspozytorów</value>
@@ -8080,7 +8080,7 @@
     <value>Nadzorujący widzi, że SMS-y w piątkowe wieczory często były eskalowane, i dodaje do tej zmiany drugiego dyspozytora.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk-activity" xml:space="preserve">
-    <value>Administratorzy jednostki i nadzorujący stanowisko otwierają Zmiany, a następnie Aktywność dyspozytorów, wybierają daty Od i Do i klikają Pokaż.</value>
+    <value>Administratorzy jednostki i nadzorujący stanowisko otwierają Zmiany, a następnie Stanowisko dyspozytorskie, Aktywność dyspozytorów, wybierają daty Od i Do i klikają Pokaż.</value>
   </data>
   <data name="Feature.intake-spam-screening" xml:space="preserve">
     <value>Filtrowanie spamu w przyjmowaniu zgłoszeń</value>

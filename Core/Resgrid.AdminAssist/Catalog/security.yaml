@@ -3402,7 +3402,7 @@
       "DocumentationId": "permission.ManageMutualAidReimbursement",
       "DefaultValue": "No permission row: department admins only; no group lock. Rostered members still reach their own F-42 and expense drafts",
       "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
-      "EvidenceSource": "ClaimsLogic.AddRecordClaims (MutualAidReimbursement:View, Update, Submit, Reconcile) → MutualAidReimbursement_* policies on v4 CalOesMarsController and manager checks in MVC CalOesMarsController; the salary survey also needs View Workforce Compensation and suppresses classifications under three members; Print/Packet hide reimbursement lines from rostered non-viewers",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (MutualAidReimbursement:View, Update, Submit, Reconcile) → MutualAidReimbursement_* policies on v4 CalOesMarsController and manager checks in MVC CalOesMarsController; the salary survey also needs View Compensation and suppresses classifications under three members; Print/Packet hide reimbursement lines from rostered non-viewers",
       "Availability": "available"
     },
     {
@@ -3498,7 +3498,7 @@
       "DocumentationId": "permission.ViewInternalCosts",
       "DefaultValue": "No permission row: department admins only; no group lock. Rostered members still file their own resource usage",
       "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
-      "EvidenceSource": "ClaimsLogic.AddRecordClaims (InternalCosts:View) → InternalCosts_View policy on v4 FieldCostController and CanViewInternalCosts in MVC WorkforceController, deployment and bid cost cards; cost-run run/freeze/delete, usage approval and changing others' usage also need Workforce_Update (Manage Workforce Compensation)",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (InternalCosts:View) → InternalCosts_View policy on v4 FieldCostController and CanViewInternalCosts in MVC WorkforceController, deployment and bid cost cards; cost-run run/freeze/delete, usage approval and changing others' usage also need Workforce_Update (Manage Labor and Compensation)",
       "Availability": "available"
     },
     {
@@ -8479,7 +8479,7 @@
       "Id": "permission.ManageWorkforceCompensation",
       "Locale": "en",
       "TitleKey": "Permission.ManageWorkforceCompensation",
-      "Body": "Manage Workforce Compensation. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
+      "Body": "Manage Labor and Compensation. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-manageworkforcecompensation",
       "PackVersion": "2026.09.25.2",
@@ -8490,7 +8490,7 @@
       "Id": "permission.ViewWorkforceCompensation",
       "Locale": "en",
       "TitleKey": "Permission.ViewWorkforceCompensation",
-      "Body": "View Workforce Compensation. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
+      "Body": "View Compensation. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-viewworkforcecompensation",
       "PackVersion": "2026.09.25.2",

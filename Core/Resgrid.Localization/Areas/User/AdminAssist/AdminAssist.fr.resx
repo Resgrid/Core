@@ -25,7 +25,7 @@
     <value>Automatisation et intégrations</value>
   </data>
   <data xml:space="preserve" name="Area.business">
-    <value>Workforce and business operations</value>
+    <value>Business Ops</value>
   </data>
   <data xml:space="preserve" name="Area.calls">
     <value>Régulation et appels</value>
@@ -664,7 +664,7 @@
     <value>Enhanced AI</value>
   </data>
   <data xml:space="preserve" name="Feature.addon-business">
-    <value>Business Operations</value>
+    <value>Business Ops</value>
   </data>
   <data xml:space="preserve" name="Feature.addon-ptt">
     <value>Push-to-Talk</value>
@@ -1105,7 +1105,7 @@
     <value>Flux de travail</value>
   </data>
   <data xml:space="preserve" name="Feature.workforce">
-    <value>Effectifs</value>
+    <value>Main-d'œuvre et coûts</value>
   </data>
   <data xml:space="preserve" name="Feature.workforce-annual-facts">
     <value>Données annuelles de rémunération</value>
@@ -1156,7 +1156,7 @@
     <value>Assistance par IA au-delà du quota gratuit d'Admin Assist.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.addon-business">
-    <value>Le module complémentaire Workforce and Business Operations : facturation, paiements, contrats, devis, remboursement MARS et calcul des coûts de main-d'œuvre.</value>
+    <value>Le module complémentaire Business Ops : facturation, paiements, contrats, devis, remboursement MARS et calcul des coûts de main-d'œuvre.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.addon-ptt">
     <value>Le module complémentaire Push-to-Talk : canaux vocaux dans les applications Resgrid.</value>
@@ -2872,7 +2872,7 @@
     <value>Disponibilité de l'IA</value>
   </data>
   <data xml:space="preserve" name="Module.BusinessOperationsDisabled">
-    <value>Disponibilité de Business Operations</value>
+    <value>Disponibilité de Business Ops</value>
   </data>
   <data xml:space="preserve" name="Module.CalendarDisabled">
     <value>Disponibilité du calendrier</value>
@@ -2956,7 +2956,7 @@
     <value>Préparez les systèmes de destination et les identifiants, puis décidez qui est responsable de chaque automatisation.</value>
   </data>
   <data xml:space="preserve" name="ModuleAdoption.business">
-    <value>Nécessite le module complémentaire Workforce and Business Operations. Les paiements en ligne nécessitent également votre propre compte auprès d'un fournisseur de paiement.</value>
+    <value>Nécessite le module complémentaire Business Ops. Les paiements en ligne nécessitent également votre propre compte auprès d'un fournisseur de paiement.</value>
   </data>
   <data xml:space="preserve" name="ModuleAdoption.calls">
     <value>Rassemblez vos types d'appel, les statuts signalés par les membres pendant leur intervention, ainsi que les détails de tout système CAD ou de radiomessagerie devant créer des appels.</value>
@@ -5704,7 +5704,7 @@
     <value>Nécessite Advanced Data Protection</value>
   </data>
   <data xml:space="preserve" name="Ui.AddonRequired.BusinessOperations">
-    <value>Nécessite Workforce and Business Operations</value>
+    <value>Nécessite Business Ops</value>
   </data>
   <data xml:space="preserve" name="Ui.AddonRequired.EnhancedAi">
     <value>Nécessite Enhanced AI</value>
@@ -7759,7 +7759,7 @@
     <value>Poste des répartiteurs</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.DispatcherDeskConfig">
-    <value>Active le poste de répartition et définit son fonctionnement : le travail proposé aux répartiteurs en service dans l'application Dispatch (appels en attente et planifiés, SMS, appels téléphoniques, courriels, discussions), la durée d'attente d'une proposition et le nombre d'éléments qu'un répartiteur détient avant de compter comme occupé, le nombre de propositions manquées d'affilée qui passe un répartiteur Absent, et ce que deviennent les SMS et les appels téléphoniques quand personne n'est libre (attente dans la file, Enhanced AI ou messagerie vocale). Définit aussi ce que devient un appel envoyé par courriel à l'adresse d'alerte (envoyé immédiatement, enregistré en attente ou lu par Enhanced AI dans un appel en attente) et les règles des pauses et du service : rappels de pause, retour automatique de pause, le minimum disponible, le refus des pauses en dessous, aucune alerte du poste en pause, et si les répartiteurs doivent être sur un quart ou peuvent être en service sans quart (Quarts, Paramètres du poste de répartition). Désactivé par défaut ; les appels reçus par courriel sont envoyés immédiatement tant qu'Appels reçus par courriel n'est pas modifié, ce qui vaut même quand l'acheminement est désactivé.</value>
+    <value>Active le poste de répartition et définit son fonctionnement : le travail proposé aux répartiteurs en service dans l'application Dispatch (appels en attente et planifiés, SMS, appels téléphoniques, courriels, discussions), la durée d'attente d'une proposition et le nombre d'éléments qu'un répartiteur détient avant de compter comme occupé, le nombre de propositions manquées d'affilée qui passe un répartiteur Absent, et ce que deviennent les SMS et les appels téléphoniques quand personne n'est libre (attente dans la file, Enhanced AI ou messagerie vocale). Définit aussi ce que devient un appel envoyé par courriel à l'adresse d'alerte (envoyé immédiatement, enregistré en attente ou lu par Enhanced AI dans un appel en attente) et les règles des pauses et du service : rappels de pause, retour automatique de pause, le minimum disponible, le refus des pauses en dessous, aucune alerte du poste en pause, et si les répartiteurs doivent être sur un quart ou peuvent être en service sans quart (Quarts, Poste de répartition, Paramètres du poste de répartition). Désactivé par défaut ; les appels reçus par courriel sont envoyés immédiatement tant qu'Appels reçus par courriel n'est pas modifié, ce qui vaut même quand l'acheminement est désactivé.</value>
   </data>
   <data xml:space="preserve" name="Feature.home-dashboard">
     <value>Tableau de bord d'accueil personnalisable</value>
@@ -8020,7 +8020,7 @@
     <value>Deux répartiteurs bénévoles couvrent un week-end depuis leur téléphone. Un SMS signalant un arbre tombé en travers d'une route est proposé à celui qui est libre et devient un appel, pendant que l'autre est en pause repas et ne reçoit aucune alerte du poste jusqu'à son retour.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk" xml:space="preserve">
-    <value>Donnez à vos répartiteurs la permission Connexion à l'application Dispatch et placez-les sur la liste de répartition d'un quart. Ouvrez ensuite Quarts, Paramètres du poste de répartition, activez Acheminer le travail vers les répartiteurs en service, choisissez quoi Envoyer au poste et enregistrez. Les répartiteurs se connectent au poste dans l'application Dispatch ; la page Poste de répartition montre qui est disponible, occupé ou en pause et la file ouverte, et un superviseur du poste peut terminer une pause ou confier le travail à quelqu'un d'autre.</value>
+    <value>Donnez à vos répartiteurs la permission Connexion à l'application Dispatch et placez-les sur la liste de répartition d'un quart. Ouvrez ensuite Quarts, Poste de répartition, Paramètres du poste de répartition, activez Acheminer le travail vers les répartiteurs en service, choisissez quoi Envoyer au poste et enregistrez. Les répartiteurs se connectent au poste dans l'application Dispatch ; la page Poste de répartition montre qui est disponible, occupé ou en pause et la file ouverte, et un superviseur du poste peut terminer une pause ou confier le travail à quelqu'un d'autre.</value>
   </data>
   <data name="Feature.shift-dispatchers" xml:space="preserve">
     <value>Répartiteurs en service</value>
@@ -8050,7 +8050,7 @@
     <value>Sur un quart de 12 heures avec trois répartiteurs, Planifier les pauses place pour chacun un repas de 30 minutes et deux pauses de 15 minutes à des heures différentes, et chaque répartiteur reçoit un rappel cinq minutes avant une pause.</value>
   </data>
   <data name="FeatureSetup.dispatcher-breaks" xml:space="preserve">
-    <value>Définissez un plan des pauses sur chaque quart, ou un plan de pauses par défaut dans Paramètres du poste de répartition. Ouvrez ensuite Quarts, Pauses des répartiteurs, choisissez un jour et un jour de quart et utilisez Planifier les pauses, ou planifiez vous-même des pauses une à une. Les superviseurs du poste et les responsables de quart planifient les pauses de tous ; les répartiteurs planifient les leurs uniquement sur les quarts qui le permettent. Une pause est une durée : commencée plus tôt, elle finit aussi plus tôt.</value>
+    <value>Définissez un plan des pauses sur chaque quart, ou un plan de pauses par défaut dans Paramètres du poste de répartition. Ouvrez ensuite Quarts, Poste de répartition, Pauses des répartiteurs, choisissez un jour et un jour de quart et utilisez Planifier les pauses, ou planifiez vous-même des pauses une à une. Les superviseurs du poste et les responsables de quart planifient les pauses de tous ; les répartiteurs planifient les leurs uniquement sur les quarts qui le permettent. Une pause est une durée : commencée plus tôt, elle finit aussi plus tôt.</value>
   </data>
   <data name="Feature.dispatcher-desk-settings" xml:space="preserve">
     <value>Paramètres du poste de répartition</value>
@@ -8065,7 +8065,7 @@
     <value>Un service envoie les SMS et les appels téléphoniques au poste, laisse 60 secondes à chaque proposition, laisse Enhanced AI remplir un appel en attente quand personne n'est libre et enregistre les appels reçus par courriel comme en attente pour qu'un répartiteur les vérifie.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk-settings" xml:space="preserve">
-    <value>Les administrateurs du service ouvrent Quarts, puis Paramètres du poste de répartition. Activez Acheminer le travail vers les répartiteurs en service, choisissez Envoyer au poste, le délai d'une proposition et les éléments par répartiteur, ce qui se passe quand tous les répartiteurs sont occupés, Appels reçus par courriel et les règles des pauses, puis enregistrez. Les choix Enhanced AI nécessitent le module complémentaire Enhanced AI.</value>
+    <value>Les administrateurs du service ouvrent Quarts, puis Poste de répartition, Paramètres du poste de répartition. Activez Acheminer le travail vers les répartiteurs en service, choisissez Envoyer au poste, le délai d'une proposition et les éléments par répartiteur, ce qui se passe quand tous les répartiteurs sont occupés, Appels reçus par courriel et les règles des pauses, puis enregistrez. Les choix Enhanced AI nécessitent le module complémentaire Enhanced AI.</value>
   </data>
   <data name="Feature.dispatcher-desk-activity" xml:space="preserve">
     <value>Activité de répartition</value>
@@ -8080,7 +8080,7 @@
     <value>Un superviseur constate que les SMS étaient souvent escaladés le vendredi soir et ajoute un deuxième répartiteur à ce quart.</value>
   </data>
   <data name="FeatureSetup.dispatcher-desk-activity" xml:space="preserve">
-    <value>Les administrateurs du service et les superviseurs du poste ouvrent Quarts, puis Activité de répartition, choisissent les dates Du et Au et sélectionnent Afficher.</value>
+    <value>Les administrateurs du service et les superviseurs du poste ouvrent Quarts, puis Poste de répartition, Activité de répartition, choisissent les dates Du et Au et sélectionnent Afficher.</value>
   </data>
   <data name="Feature.intake-spam-screening" xml:space="preserve">
     <value>Filtrage du spam à l'entrée</value>

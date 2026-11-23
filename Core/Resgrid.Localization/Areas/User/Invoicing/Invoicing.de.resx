@@ -22,9 +22,9 @@
   <data name="InvoicesLower" xml:space="preserve"><value>Rechnungen</value></data>
   <data name="Invoice" xml:space="preserve"><value>Rechnung</value></data>
   <data name="InvoicingIntro" xml:space="preserve"><value>Kundenrechnungen, Zahlungen und Forderungen.</value></data>
-  <data name="ReadOnlyNotice" xml:space="preserve"><value>Das Business-Operations-Add-on ist für diese Abteilung nicht aktiv. Bestehende Rechnungen bleiben lesbar; Erstellen oder Ändern erfordert ein aktives Add-on.</value></data>
-  <data name="BusinessOperations" xml:space="preserve"><value>Business Operations</value></data>
-  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Rechnungsstellung, Preislisten und Abrechnungsprofile. Die Seiten benötigen zusätzlich das Business-Operations-Add-on.</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>Das Business-Ops-Add-on ist für diese Abteilung nicht aktiv. Bestehende Rechnungen bleiben lesbar; Erstellen oder Ändern erfordert ein aktives Add-on.</value></data>
+  <data name="BusinessOperations" xml:space="preserve"><value>Business Ops</value></data>
+  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Rechnungsstellung, Preislisten und Abrechnungsprofile. Die Seiten benötigen zusätzlich das Business-Ops-Add-on.</value></data>
   <data name="RateCards" xml:space="preserve"><value>Preislisten</value></data>
   <data name="RateCard" xml:space="preserve"><value>Preisliste</value></data>
   <data name="RateCardsIntro" xml:space="preserve"><value>Abrechnungssätze, die beim Hinzufügen von Einsätzen zu einer Rechnung angewendet werden.</value></data>
@@ -131,7 +131,7 @@
   <data name="Saved" xml:space="preserve"><value>Gespeichert.</value></data>
   <data name="InvalidInput" xml:space="preserve"><value>Die übermittelten Werte sind ungültig.</value></data>
   <data name="NameRequired" xml:space="preserve"><value>Ein Name ist erforderlich.</value></data>
-  <data name="AddonRequired" xml:space="preserve"><value>Dafür ist ein aktives Business-Operations-Add-on erforderlich.</value></data>
+  <data name="AddonRequired" xml:space="preserve"><value>Dafür ist ein aktives Business-Ops-Add-on erforderlich.</value></data>
   <data name="TotalsUpdateOnSave" xml:space="preserve"><value>Rabatt und Steuer werden beim Speichern neu berechnet.</value></data>
   <data name="PreviewAndSend" xml:space="preserve"><value>Vorschau &amp; Versand</value></data>
   <data name="BackToInvoices" xml:space="preserve"><value>Zurück zu den Rechnungen</value></data>
@@ -232,7 +232,7 @@
   <data name="NotAvailableInRegion" xml:space="preserve"><value>In dieser Region nicht verfügbar</value></data>
   <data name="Enabled" xml:space="preserve"><value>Aktiviert</value></data>
   <data name="Disabled" xml:space="preserve"><value>Deaktiviert</value></data>
-  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Business-Operations-Add-on</value></data>
+  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Business-Ops-Add-on</value></data>
   <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>Ein monatliches Add-on für Abteilungen, die Kunden abrechnen und Verträge verwalten. Nur das verwaltende Mitglied der Abteilung kann es kaufen oder kündigen.</value></data>
   <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Kundenrechnungen, Preislisten, Zahlungen und Forderungsanalyse</value></data>
   <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Auftragnehmer-Preistabellen, Verträge und Kostenerstattung</value></data>
@@ -244,7 +244,7 @@
   <data name="SubscriptionCancelled" xml:space="preserve"><value>Verlängerung gekündigt; der Zugang bleibt bis zum Ende des bezahlten Zeitraums bestehen.</value></data>
   <data name="Buy" xml:space="preserve"><value>Kaufen</value></data>
   <data name="CancelSubscription" xml:space="preserve"><value>Verlängerung kündigen</value></data>
-  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Die Verlängerung von Business Operations kündigen?</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Die Verlängerung von Business Ops kündigen?</value></data>
   <data name="BillingUnavailable" xml:space="preserve"><value>Die Abrechnung ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut.</value></data>
   <data name="ManageSubscription" xml:space="preserve"><value>Abonnement verwalten</value></data>
   <data name="ModuleSettings" xml:space="preserve"><value>Moduleinstellungen</value></data>
@@ -341,7 +341,7 @@
   <data name="TooManyRequests" xml:space="preserve"><value>Zu viele Anfragen. Bitte warten Sie eine Minute und versuchen Sie es erneut.</value></data>
   <data name="payments_not_available_in_region" xml:space="preserve"><value>Die Online-Zahlungsannahme ist in dieser Region nicht verfügbar.</value></data>
   <data name="payments_flag_off" xml:space="preserve"><value>Online-Zahlungen sind für diese Abteilung nicht freigeschaltet.</value></data>
-  <data name="payments_addon_required" xml:space="preserve"><value>Online-Zahlungen erfordern ein aktives Business-Operations-Add-on.</value></data>
+  <data name="payments_addon_required" xml:space="preserve"><value>Online-Zahlungen erfordern ein aktives Business-Ops-Add-on.</value></data>
   <data name="payments_not_enabled_for_department" xml:space="preserve"><value>Die Online-Zahlung ist in Ihren Abrechnungseinstellungen deaktiviert.</value></data>
   <data name="payments_no_connection" xml:space="preserve"><value>Kein Stripe-Konto verbunden.</value></data>
   <data name="payments_connection_not_ready" xml:space="preserve"><value>Das verbundene Stripe-Konto kann noch keine Zahlungen annehmen. Erfüllen Sie die Anforderungen von Stripe und versuchen Sie es erneut.</value></data>

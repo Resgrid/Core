@@ -2815,7 +2815,7 @@
     <value>Drafts</value>
   </data>
   <data name="W.invoicing.receivables.ReadOnly" xml:space="preserve">
-    <value>Read-only: the Business Operations add-on has lapsed.</value>
+    <value>Read-only: the Business Ops add-on has lapsed.</value>
   </data>
   <data name="W.invoicing.receivables.Bucket.Current" xml:space="preserve">
     <value>Current</value>
@@ -2866,7 +2866,7 @@
     <value>Online payments are not enabled for your department.</value>
   </data>
   <data name="W.invoicing.onlinePayments.Blocked.payments_addon_required" xml:space="preserve">
-    <value>Online payments need the Business Operations add-on.</value>
+    <value>Online payments need the Business Ops add-on.</value>
   </data>
   <data name="W.invoicing.onlinePayments.Blocked.payments_not_enabled_for_department" xml:space="preserve">
     <value>Online payments are turned off in Invoicing settings.</value>
@@ -3529,7 +3529,7 @@
     <value>Readiness Pro</value>
   </data>
   <data name="W.admin.plan.Addon.BusinessOperations" xml:space="preserve">
-    <value>Business Operations</value>
+    <value>Business Ops</value>
   </data>
   <data name="W.admin.plan.Addon.EnhancedAi" xml:space="preserve">
     <value>Enhanced AI</value>

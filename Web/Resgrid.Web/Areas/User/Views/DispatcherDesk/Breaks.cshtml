@@ -35,7 +35,7 @@
 	</div>
 	<div class="col-sm-6">
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-			<a class="btn btn-primary top-button" asp-controller="DispatcherDesk" asp-action="Index" asp-route-area="User"><i class="fa fa-headphones"></i> @desk["DeskBoardTitle"]</a>
+			<a class="btn btn-primary top-button" asp-controller="DispatcherDesk" asp-action="Index" asp-route-area="User">@desk["DeskBoardTitle"]</a>
 			@if (Model.ShiftDayId.HasValue)
 			{
 				<a class="btn btn-white top-button" asp-controller="Shifts" asp-action="ViewShift" asp-route-area="User" asp-route-shiftDayId="@Model.ShiftDayId">@shiftsLocalizer["ViewShiftHeader"]</a>

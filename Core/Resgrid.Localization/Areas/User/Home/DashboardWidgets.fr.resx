@@ -2032,7 +2032,7 @@
     <value>Brouillons</value>
   </data>
   <data name="W.invoicing.receivables.ReadOnly" xml:space="preserve">
-    <value>Lecture seule : le module complémentaire Business Operations a expiré.</value>
+    <value>Lecture seule : le module complémentaire Business Ops a expiré.</value>
   </data>
   <data name="W.invoicing.receivables.Bucket.Current" xml:space="preserve">
     <value>Courant</value>
@@ -2083,7 +2083,7 @@
     <value>Les paiements en ligne ne sont pas activés pour votre département.</value>
   </data>
   <data name="W.invoicing.onlinePayments.Blocked.payments_addon_required" xml:space="preserve">
-    <value>Les paiements en ligne nécessitent le module complémentaire Business Operations.</value>
+    <value>Les paiements en ligne nécessitent le module complémentaire Business Ops.</value>
   </data>
   <data name="W.invoicing.onlinePayments.Blocked.payments_not_enabled_for_department" xml:space="preserve">
     <value>Les paiements en ligne sont désactivés dans les paramètres de facturation.</value>
@@ -2746,7 +2746,7 @@
     <value>Readiness Pro</value>
   </data>
   <data name="W.admin.plan.Addon.BusinessOperations" xml:space="preserve">
-    <value>Business Operations</value>
+    <value>Business Ops</value>
   </data>
   <data name="W.admin.plan.Addon.EnhancedAi" xml:space="preserve">
     <value>Enhanced AI</value>

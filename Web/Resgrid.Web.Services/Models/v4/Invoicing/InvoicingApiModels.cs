@@ -19,7 +19,7 @@ namespace Resgrid.Web.Services.Models.v4.Invoicing
 		public bool InvoicingEnabled { get; set; }
 		/// <summary>The caller may create, edit, send and void invoices and record payments.</summary>
 		public bool CanManage { get; set; }
-		public string ProductName { get; set; } = "Business Operations";
+		public string ProductName { get; set; } = "Business Ops";
 		public string BillingInterval { get; set; } = "month";
 		public InvoicingOffer[] Offers { get; set; } = new[]
 		{

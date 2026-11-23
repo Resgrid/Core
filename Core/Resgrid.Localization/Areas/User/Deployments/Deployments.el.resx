@@ -266,7 +266,7 @@
   <data name="AdpProtectedDeployment" xml:space="preserve"><value>Προστατευμένη αποστολή</value></data>
   <data name="AdpProtectedTimeReport" xml:space="preserve"><value>Προστατευμένη αναφορά χρόνου</value></data>
   <data name="DeploymentReports" xml:space="preserve"><value>Αναφορές αναπτύξεων</value></data>
-  <data name="ReportingIntro" xml:space="preserve"><value>Ιστορικό, αναφορές και εξαγωγές αναπτύξεων μόνο για ανάγνωση. Διαχειριστείτε τις αναπτύξεις στο Προσωπικό και επιχειρησιακές λειτουργίες.</value></data>
+  <data name="ReportingIntro" xml:space="preserve"><value>Ιστορικό, αναφορές και εξαγωγές αναπτύξεων μόνο για ανάγνωση. Διαχειριστείτε τις αναπτύξεις στο Business Ops.</value></data>
   <data name="ExportSummary" xml:space="preserve"><value>Εξαγωγή σύνοψης CSV</value></data>
   <data name="PrintReport" xml:space="preserve"><value>Εκτύπωση αναφοράς</value></data>
   <data name="ExportData" xml:space="preserve"><value>Εξαγωγή αναφοράς JSON</value></data>

@@ -386,6 +386,45 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task A_page_recorded_again_under_its_id_is_the_first_one_not_a_second()
+		{
+			var id = Guid.NewGuid().ToString();
+			var first = await _service.RecordOnceAsync(id, _call, new[] { Medic }, null, null, null, "dispatcher");
+			(await _service.SendPendingForCallAsync(_call, first)).Should().Be(1);
+
+			var again = await _service.RecordOnceAsync(id, _call, new[] { Medic }, null, null, null, "dispatcher");
+
+			again.Persisted.Should().BeTrue();
+			again.CallBroadcastOutboxId.Should().Be(id);
+			_outbox.Rows.Should().ContainSingle("a retried request never records a second page for the same work");
+			(await _service.SendPendingForCallAsync(_call, again)).Should().Be(0, "the page already went out");
+			_queued.Should().ContainSingle();
+		}
+
+		[Test]
+		public async Task A_page_whose_insert_reply_was_lost_is_found_and_counts_as_recorded()
+		{
+			_outbox.FailAfterInsert = true;
+
+			var recorded = await _service.RecordOnceAsync(Guid.NewGuid().ToString(), _call, new[] { Medic }, null, null, null, "dispatcher");
+
+			recorded.Persisted.Should().BeTrue("the row is there, so worker 12 holds the page");
+			_outbox.Rows.Should().ContainSingle();
+		}
+
+		[Test]
+		public async Task A_page_that_could_not_be_recorded_under_its_id_says_so()
+		{
+			_outbox.FailInserts = true;
+
+			var recorded = await _service.RecordOnceAsync(Guid.NewGuid().ToString(), _call, new[] { Medic }, null, null, null, "dispatcher");
+
+			recorded.Should().NotBeNull();
+			recorded.Persisted.Should().BeFalse("its caller retries the work instead");
+			_outbox.Rows.Should().BeEmpty();
+		}
+
+		[Test]
 		public async Task Nothing_added_records_nothing()
 		{
 			(await _service.RecordAsync(_call, new string[0], new int[0], null, null, "dispatcher")).Should().BeNull();

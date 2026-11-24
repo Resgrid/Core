@@ -147,8 +147,8 @@ namespace Resgrid.Tests.Repositories
 			var source = new Mock<IMigrationSource>();
 			// M0325 adds the release warning columns (plan §8 D12) to the M0323 table.
 			source.Setup(s => s.GetMigrations()).Returns(IsPostgres
-				? new IMigration[] { new M0323_AddIntakeChannelsAndDedicatedNumbersPg(), new M0325_AddIntakeConversationsPg() }
-				: new IMigration[] { new M0323_AddIntakeChannelsAndDedicatedNumbers(), new M0325_AddIntakeConversations() });
+				? new IMigration[] { new M0323_AddIntakeChannelsAndDedicatedNumbersPg(), new M0325_AddIntakeConversationsPg(), new M0332_AddVoiceIntakeRecordingPg() }
+				: new IMigration[] { new M0323_AddIntakeChannelsAndDedicatedNumbers(), new M0325_AddIntakeConversations(), new M0332_AddVoiceIntakeRecording() });
 			_runner = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r =>
 			{
 				if (IsPostgres) r.AddPostgres(); else r.AddSqlServer();
@@ -441,6 +441,7 @@ namespace Resgrid.Tests.Repositories
 			row.ReleaseAfter = Base.AddDays(9);
 			row.SmsIntakeEnabled = false;
 			row.VoiceIntakeEnabled = true;
+			row.VoiceRecordingEnabled = true;
 			row.LastError = "The carrier did not release the number; it will be retried.";
 			await SaveAsync(row);
 			stored = (await numbers.GetByStatusesAsync(new[] { (int)DepartmentPhoneNumberStatuses.Lapsed })).Single();
@@ -448,6 +449,7 @@ namespace Resgrid.Tests.Repositories
 			stored.AddonInactiveSince.Should().Be(Base.AddDays(1));
 			stored.SmsIntakeEnabled.Should().BeFalse();
 			stored.VoiceIntakeEnabled.Should().BeTrue();
+			stored.VoiceRecordingEnabled.Should().BeTrue("M0332 column round-trips");
 			stored.LastError.Should().Be(row.LastError);
 
 			row.Status = (int)DepartmentPhoneNumberStatuses.Active;

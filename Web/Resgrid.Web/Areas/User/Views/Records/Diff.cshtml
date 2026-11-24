@@ -19,7 +19,7 @@
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
 			@if (ClaimsAuthorizationHelper.CanExportRecords())
 			{
-				<a class="btn btn-info" asp-controller="Records" asp-action="PrintDiff" asp-route-area="User" asp-route-id="@Model.RecordId" asp-route-from="@Model.From.RmsRevisionId" asp-route-to="@Model.To.RmsRevisionId"><i class="fa fa-file-pdf-o"></i> @localizer["PrintPdf"]</a>
+				<a class="btn btn-info" asp-controller="Records" asp-action="PrintDiff" asp-route-area="User" asp-route-id="@Model.RecordId" asp-route-from="@Model.From.RmsRevisionId" asp-route-to="@Model.To.RmsRevisionId">@localizer["PrintPdf"]</a>
 			}
 		</div>
 	</div>

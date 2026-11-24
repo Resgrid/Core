@@ -1669,6 +1669,20 @@ Call Numbering Config. How new call numbers are written: the call number pattern
 
 Default: legacy pattern {YY}-{SEQ}, unpadded. Source: DepartmentSettingTypes.CallNumberingConfig.
 
+<a id="setting-emailcallupdates"></a>
+## Updates from your CAD
+
+Updates from your CAD. Update the existing call when your CAD sends a corrected or follow-up email for the same call ID. The call ID comes from the email format, from the text after a label, or from a pattern. Each field (address and map location, priority, call type, name, nature, notes) is updated or only noted; a value changed in Resgrid is kept by default; everyone is paged again when the address or priority changes by default; units an update adds are paged. An email for a call closed within the window (60 minutes by default) is noted on it, and configured close or cancel phrases close or cancel the matched call through the normal close rules. Active911, R&R, Ottawa/Kingston/Toronto and Parkland County 2 keep their built-in behaviour until the page is saved.
+
+Default: off (built-in behaviour for the four formats above). Source: DepartmentSettingTypes.EmailCallUpdates.
+
+<a id="setting-emaillabeledfields"></a>
+## Labels for the Labeled fields format
+
+Labels for the Labeled fields format. Used when your email format is "Labeled fields". Enter the label your CAD writes in front of each value. Separate alternatives with |. A value runs to the end of its line or to the next known label on the same line. Call types and priorities are matched by name, units by unit name.
+
+Default: no labels. Source: DepartmentSettingTypes.EmailLabeledFields.
+
 <a id="field-callnumberingconfig-pattern"></a>
 ## Call Numbering Config / Pattern
 
@@ -2029,7 +2043,7 @@ New Call Create and dispatch a call. Consistent call types and statuses make dis
 <a id="call-locations"></a>
 ## Call locations, destinations and routes
 
-Call locations, destinations and routes A call's location can be picked from a point of interest, its destination can be a point of interest or a free address, coordinates or what3words, and it can carry a pre-defined route that the unit working it runs in the app, stop by stop. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. Add the places you pick up from and deliver to as points of interest, and create active route plans with a start and an end for runs you repeat. On New Call, pick the location's point of interest, the destination and a route; a blank call location takes the route start and a blank destination the route end. It works on new, pending, scheduled and recurring calls, on Update Call and in the Omni Dispatch app. Picking a point of interest fills the address and the map pin, which can still be changed. A destination POI and a free destination location are exclusive: choosing one clears the other. Plus codes are only looked up, never stored. The route picker lists only active route plans whose start and end can be found, and is hidden when there are none; a route never overwrites a location or destination already filled. When a unit makes the call its active call, the Omni Unit app starts the route run, leads the unit to the route start first and checks in at each stop; View Call lists the call's route runs. The New Call Form Fields rule for Destination covers a destination POI and a free destination alike.
+Call locations, destinations and routes A call's location can be picked from a point of interest, its destination can be a point of interest or a free address, coordinates or what3words, and it can carry a pre-defined route that the unit working it runs in the app, stop by stop. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. Add the places you pick up from and deliver to as points of interest, and create active route plans with a start and an end for runs you repeat. On New Call, pick the location's point of interest, the destination and a route; a blank call location takes the route start and a blank destination the route end. It works on new, pending, scheduled and recurring calls, on Update Call and in the Omni Dispatch app. Picking a point of interest fills the address and the map pin, which can still be changed. A destination POI and a free destination location are exclusive: choosing one clears the other. A plus code only finds a point and is never stored: on New Call, Update Call and Add Archived Call, Find Plus Code under the location places the call pin and fills a blank address, Find Plus Code under the destination location places the destination, and a save with a code still typed in looks it up first. A short code on its own is read near the department's map centre. The New Call Form Fields rule for Plus Code can hide the location's plus code but never require it; require GPS Coordinates instead. The route picker lists only active route plans whose start and end can be found, and is hidden when there are none; a route never overwrites a location or destination already filled. When a unit makes the call its active call, the Omni Unit app starts the route run, leads the unit to the route start first and checks in at each stop; View Call lists the call's route runs. The New Call Form Fields rule for Destination covers a destination POI and a free destination alike.
 
 <a id="archived-calls"></a>
 ## Archived Calls

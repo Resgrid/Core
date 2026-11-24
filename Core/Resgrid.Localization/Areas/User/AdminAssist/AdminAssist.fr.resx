@@ -5763,6 +5763,9 @@
   <data xml:space="preserve" name="Ui.Ask.Answered">
     <value>Éléments de preuve vérifiés associés</value>
   </data>
+  <data xml:space="preserve" name="Ui.Ask.Matched">
+    <value>Documentation associée issue de la recherche (non sélectionnée par l’IA)</value>
+  </data>
   <data xml:space="preserve" name="Ui.Ask.Boundary">
     <value>Trouvez des conseils de configuration, de mise en place et de modules complémentaires. Les réponses contiennent des fiches d’éléments de preuve actuelles et des sources de référence. Cette fonctionnalité ne peut pas modifier de paramètres, envoyer des messages, acheter des modules complémentaires ni prendre de décisions cliniques ou tactiques. Chaque question est évaluée indépendamment ; indiquez le nom du paramètre ou de la fonctionnalité.</value>
   </data>
@@ -5818,7 +5821,7 @@
     <value>Référence uniquement</value>
   </data>
   <data xml:space="preserve" name="Ui.Ask.Privacy">
-    <value>Votre historique est privé à votre compte et à votre département. Les questions sont chiffrées au repos et conservées 30 jours par défaut, sous réserve de rétentions approuvées. Seuls les concepts publics correspondants et les métadonnées autorisées parviennent au modèle local. Ne saisissez pas de détails sur les patients, de récits d’incidents, de mots de passe ni de jetons.</value>
+    <value>Votre historique est privé à votre compte et à votre département. Les questions sont chiffrées au repos et conservées 30 jours par défaut, sous réserve de rétentions approuvées. Votre question est envoyée au modèle d’IA pour trouver les conseils correspondants ; avec la Protection avancée des données, seuls ses mots qui figurent aussi dans la documentation publique de Resgrid sont envoyés. Ne saisissez jamais d’informations personnelles ou de santé (PII ou PHI), de détails sur les patients, de récits d’incidents, de mots de passe ni de jetons.</value>
   </data>
   <data xml:space="preserve" name="Ui.Ask.ProposedValue">
     <value>Valeur proposée (aperçu uniquement)</value>
@@ -8252,5 +8255,17 @@
   </data>
   <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
     <value>Permet aux membres de s'inscrire dans un groupe de garde même lorsque toutes les places de ses rôles (obligatoires et facultatives) sont prises. Ils doivent toujours avoir l'un des rôles du groupe. Les superviseurs peuvent toujours affecter des personnes au-delà des places.</value>
+  </data>
+  <data name="Setting.EmailCallUpdates" xml:space="preserve">
+    <value>Mises à jour de votre CAD</value>
+  </data>
+  <data name="SettingHelp.EmailCallUpdates" xml:space="preserve">
+    <value>Mettre à jour l'appel existant quand votre CAD envoie un e-mail corrigé ou de suivi pour le même identifiant d'appel.</value>
+  </data>
+  <data name="Setting.EmailLabeledFields" xml:space="preserve">
+    <value>Libellés pour le format « Labeled fields »</value>
+  </data>
+  <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
+    <value>Utilisés quand votre format d'e-mail est « Labeled fields ». Saisissez le libellé que votre CAD écrit devant chaque valeur. Séparez les variantes par |.</value>
   </data>
 </root>

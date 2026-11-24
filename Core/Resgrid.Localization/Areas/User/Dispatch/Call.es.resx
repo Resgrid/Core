@@ -1222,6 +1222,9 @@
   <data name="DestinationPlusCodePlaceholder" xml:space="preserve">
     <value>Código plus</value>
   </data>
+  <data name="PlusCodePlaceholder" xml:space="preserve">
+    <value>Código plus</value>
+  </data>
   <data name="FindPlusCode" xml:space="preserve">
     <value>Buscar código plus</value>
   </data>
@@ -1305,5 +1308,38 @@
   </data>
   <data name="CallRouteNoRuns" xml:space="preserve">
     <value>Ninguna unidad ha iniciado esta ruta todavía.</value>
+  </data>
+  <data name="FacilityMaps" xml:space="preserve">
+    <value>Mapas de instalaciones</value>
+  </data>
+  <data name="FacilityMapsNone" xml:space="preserve">
+    <value>Ninguno</value>
+  </data>
+  <data name="FacilityMapsFloor" xml:space="preserve">
+    <value>Planta o capa</value>
+  </data>
+  <data name="FacilityMapsHint" xml:space="preserve">
+    <value>Haga clic en una sala para fijar la ubicación de la llamada.</value>
+  </data>
+  <data name="StrikeAlarm" xml:space="preserve">
+    <value>Activar alarma {0}</value>
+  </data>
+  <data name="StrikeAlarmConfirm" xml:space="preserve">
+    <value>¿Escalar esta llamada a la alarma {0}? Se despacharán los recursos de la siguiente alarma del plan de respuesta.</value>
+  </data>
+  <data name="EscalateRunCardsDisabled" xml:space="preserve">
+    <value>Los planes de respuesta no están habilitados para este departamento.</value>
+  </data>
+  <data name="EscalateCallNotFound" xml:space="preserve">
+    <value>Llamada no encontrada.</value>
+  </data>
+  <data name="EscalateCallNotActive" xml:space="preserve">
+    <value>Solo se pueden escalar las llamadas activas.</value>
+  </data>
+  <data name="EscalateNoRunCard" xml:space="preserve">
+    <value>Ningún plan de respuesta coincide con esta llamada; no hay nada que escalar.</value>
+  </data>
+  <data name="EscalateNoResources" xml:space="preserve">
+    <value>El plan de respuesta no tiene recursos adicionales para la siguiente alarma.</value>
   </data>
 </root>

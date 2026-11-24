@@ -46,7 +46,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 		public async Task CompleteAsync(AiUsageReservation reservation, int tokens, string outcome, CancellationToken ct)
 		{
-			if (tokens < 0 || tokens > reservation.Tokens || outcome is not ("Answered" or "Abstained" or "Unavailable" or "Cancelled" or "InvalidOutput")) throw new ArgumentException("Invalid usage completion.");
+			if (tokens < 0 || tokens > reservation.Tokens || outcome is not ("Answered" or "Matched" or "Abstained" or "Unavailable" or "Cancelled" or "InvalidOutput")) throw new ArgumentException("Invalid usage completion.");
 			await ExecuteAsync($"UPDATE {Tbl("AiUsageLedger")} SET {Col("UsedTokens")}={P}Tokens,{Col("Outcome")}={P}Outcome WHERE {Col("Id")}={P}Id AND {Col("DepartmentId")}={P}DepartmentId AND {Col("UserId")}={P}UserId AND {Col("Outcome")} IS NULL",
 				new { reservation.Id, reservation.DepartmentId, reservation.UserId, Tokens = tokens, Outcome = outcome }, ct);
 		}

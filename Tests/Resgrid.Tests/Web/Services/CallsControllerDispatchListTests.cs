@@ -680,5 +680,67 @@ namespace Resgrid.Tests.Web.Services
 			_broadcasts.Should().Be(1, "the full broadcast pages everyone; the added member is not paged twice");
 			_outbox.Single().State.Should().Be((int)CallBroadcastOutboxStates.Superseded);
 		}
+
+		// The indoor location (a room on a custom/indoor map) on EditCall: a client without an indoor picker sends null and
+		// leaves it; "" clears it; a value sets the room and its floor.
+		private Call StoredCallInRoom() => new Call
+		{
+			CallId = CallId,
+			DepartmentId = DepartmentId,
+			State = (int)CallStates.Active,
+			Name = "Fall from height",
+			NatureOfCall = "Ironworker suspended",
+			IndoorMapZoneId = "zone-14",
+			IndoorMapFloorId = "floor-1",
+			Dispatches = new List<CallDispatch>(),
+			GroupDispatches = new List<CallDispatchGroup>(),
+			RoleDispatches = new List<CallDispatchRole>(),
+			UnitDispatches = new List<CallDispatchUnit>()
+		};
+
+		[Test]
+		public async Task EditCall_without_an_indoor_location_keeps_the_calls_room()
+		{
+			_stored = StoredCallInRoom();
+
+			await Controller().EditCall(new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Fall from height", Nature = "Ironworker suspended", DispatchList = "" },
+				CancellationToken.None);
+
+			_stored.IndoorMapZoneId.Should().Be("zone-14");
+			_stored.IndoorMapFloorId.Should().Be("floor-1");
+		}
+
+		[Test]
+		public async Task EditCall_with_an_empty_indoor_location_clears_the_room_and_floor()
+		{
+			_stored = StoredCallInRoom();
+
+			await Controller().EditCall(new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Fall from height", Nature = "Ironworker suspended", DispatchList = "",
+				IndoorMapZoneId = "", IndoorMapFloorId = "" }, CancellationToken.None);
+
+			_stored.IndoorMapZoneId.Should().BeNull();
+			_stored.IndoorMapFloorId.Should().BeNull();
+		}
+
+		[Test]
+		public async Task EditCall_with_an_indoor_location_moves_the_call_to_that_room()
+		{
+			_stored = StoredCallInRoom();
+
+			await Controller().EditCall(new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Fall from height", Nature = "Ironworker suspended", DispatchList = "",
+				IndoorMapZoneId = "zone-20", IndoorMapFloorId = "floor-2" }, CancellationToken.None);
+
+			_stored.IndoorMapZoneId.Should().Be("zone-20");
+			_stored.IndoorMapFloorId.Should().Be("floor-2");
+		}
+
+		[Test]
+		public void A_call_result_carries_the_indoor_location()
+		{
+			var result = CallsController.ConvertCall(StoredCallInRoom(), null, null, "Eastern Standard Time");
+
+			result.IndoorMapZoneId.Should().Be("zone-14");
+			result.IndoorMapFloorId.Should().Be("floor-1");
+		}
 	}
 }

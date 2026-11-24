@@ -408,4 +408,10 @@
   <data name="TermChecklist" xml:space="preserve">
     <value>قائمة تحقق</value>
   </data>
+  <data name="AiPromptPiiWarning" xml:space="preserve">
+    <value>لا تُدرج أبدًا معلومات شخصية (PII) أو معلومات صحية (PHI) في طلبات الذكاء الاصطناعي: لا أسماء ولا أرقام هواتف ولا عناوين ولا تفاصيل مرضى ولا روايات حوادث. قد يُرسل ما تكتبه هنا إلى نموذج ذكاء اصطناعي.</value>
+  </data>
+  <data name="ToggleMenu" xml:space="preserve">
+    <value>إظهار القائمة أو إخفاؤها</value>
+  </data>
 </root>

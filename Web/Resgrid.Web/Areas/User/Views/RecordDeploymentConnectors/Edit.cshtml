@@ -44,14 +44,14 @@
 	{
 		<div class="col-sm-4">
 			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-				<form method="post" style="display:inline" asp-controller="RecordDeploymentConnectors" asp-action="Run" asp-route-area="User" asp-route-id="@c.RmsExternalOrderConnectorId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default" @(c.IsReadyToRun ? "" : "disabled")><i class="fa fa-refresh"></i> @localizer["ConnectorRunNow"]</button></form>
+				<form method="post" style="display:inline" asp-controller="RecordDeploymentConnectors" asp-action="Run" asp-route-area="User" asp-route-id="@c.RmsExternalOrderConnectorId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default" @(c.IsReadyToRun ? "" : "disabled")>@localizer["ConnectorRunNow"]</button></form>
 				@if (c.IsEnabled)
 				{
-					<form method="post" style="display:inline" asp-controller="RecordDeploymentConnectors" asp-action="SetEnabled" asp-route-area="User" asp-route-id="@c.RmsExternalOrderConnectorId" asp-route-enabled="false">@Html.AntiForgeryToken()<button type="submit" class="btn btn-warning"><i class="fa fa-pause"></i> @localizer["ConnectorDisable"]</button></form>
+					<form method="post" style="display:inline" asp-controller="RecordDeploymentConnectors" asp-action="SetEnabled" asp-route-area="User" asp-route-id="@c.RmsExternalOrderConnectorId" asp-route-enabled="false">@Html.AntiForgeryToken()<button type="submit" class="btn btn-warning">@localizer["ConnectorDisable"]</button></form>
 				}
 				else
 				{
-					<form method="post" style="display:inline" asp-controller="RecordDeploymentConnectors" asp-action="SetEnabled" asp-route-area="User" asp-route-id="@c.RmsExternalOrderConnectorId" asp-route-enabled="true">@Html.AntiForgeryToken()<button type="submit" class="btn btn-primary"><i class="fa fa-play"></i> @localizer["ConnectorEnable"]</button></form>
+					<form method="post" style="display:inline" asp-controller="RecordDeploymentConnectors" asp-action="SetEnabled" asp-route-area="User" asp-route-id="@c.RmsExternalOrderConnectorId" asp-route-enabled="true">@Html.AntiForgeryToken()<button type="submit" class="btn btn-primary">@localizer["ConnectorEnable"]</button></form>
 				}
 			</div>
 		</div>

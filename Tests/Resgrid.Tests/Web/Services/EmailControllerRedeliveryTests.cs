@@ -44,6 +44,7 @@ NARR: SMOKE SHOWING";
 		private List<Message> _messages;
 		private int _broadcastFailures;
 		private int _broadcastAttempts;
+		private Action _onBroadcast;
 		private bool _failNextSaveAfterRow;
 		private bool _unreadable;
 		private int _sendFailures;
@@ -51,6 +52,8 @@ NARR: SMOKE SHOWING";
 		private MockInboundEmailReceiptsRepository _receipts;
 		private Mock<IQueueService> _queue;
 		private EmailController _controller;
+		private FakeCallEmailUpdatesRepository _ledger;
+		private EmailCallUpdateConfig _storedCad;
 
 		[SetUp]
 		public void SetUp()
@@ -60,14 +63,20 @@ NARR: SMOKE SHOWING";
 			_messages = new List<Message>();
 			_broadcastFailures = 0;
 			_broadcastAttempts = 0;
+			_onBroadcast = null;
 			_failNextSaveAfterRow = false;
 			_unreadable = false;
 			_sendFailures = 0;
 			_sendAttempts = 0;
 			_receipts = new MockInboundEmailReceiptsRepository();
+			_ledger = new FakeCallEmailUpdatesRepository();
+			_ledger.Calls = () => _saved;
 
+			_storedCad = null;
 			var settings = new Mock<IDepartmentSettingsService>();
 			settings.Setup(s => s.GetDepartmentIdForDispatchEmailAsync(DispatchCode)).ReturnsAsync(DepartmentId);
+			settings.Setup(s => s.GetEmailCallUpdateConfigAsync(It.IsAny<int>(), It.IsAny<int?>(), It.IsAny<bool>()))
+				.ReturnsAsync((int d, int? format, bool b) => _storedCad ?? (format.HasValue ? EmailCallUpdatePresets.ForFormat(format.Value) : null) ?? new EmailCallUpdateConfig());
 
 			var departments = new Mock<IDepartmentsService>();
 			departments.Setup(d => d.GetAllUsersForDepartmentAsync(DepartmentId, It.IsAny<bool>(), It.IsAny<bool>()))
@@ -120,6 +129,7 @@ NARR: SMOKE SHOWING";
 				.ReturnsAsync((CallQueueItem item, CancellationToken ct) =>
 				{
 					_broadcastAttempts++;
+					_onBroadcast?.Invoke();
 					if (_broadcastFailures > 0)
 					{
 						_broadcastFailures--;
@@ -165,7 +175,34 @@ NARR: SMOKE SHOWING";
 				Mock.Of<ICommunicationService>(), Mock.Of<IDistributionListsService>(), Mock.Of<IUsersService>(), Mock.Of<IEmailService>(), groups.Object,
 				messages.Object, Mock.Of<IFileService>(), units.Object, Mock.Of<IGeoLocationProvider>(), Mock.Of<ICallDispatchStatusService>(),
 				Mock.Of<IDispatchRecommendationService>(), Mock.Of<IFeatureToggleService>(), Mock.Of<Resgrid.Model.AiDispatch.IAiDispatchAdminService>(),
-				new InboundEmailReceiptsService(_receipts, TimeProvider.System), Mock.Of<IIntakeService>(), Mock.Of<Resgrid.Model.Providers.IEmailSender>(), Mock.Of<IDispatcherEmailCallService>());
+				new InboundEmailReceiptsService(_receipts, TimeProvider.System), Mock.Of<IIntakeService>(), Mock.Of<Resgrid.Model.Providers.IEmailSender>(), Mock.Of<IDispatcherEmailCallService>(),
+				new UnreadableAwareEmailCallUpdates(EmailCallUpdateServices.Create(calls.Object, _ledger, () => _storedCad, departments: departments.Object), () => _unreadable));
+		}
+
+		/// <summary>The engine, except that it finds no call while the test marks the email unreadable (the format cannot read it).</summary>
+		private sealed class UnreadableAwareEmailCallUpdates : IEmailCallUpdateService
+		{
+			private readonly IEmailCallUpdateService _inner;
+			private readonly Func<bool> _unreadable;
+
+			public UnreadableAwareEmailCallUpdates(IEmailCallUpdateService inner, Func<bool> unreadable)
+			{
+				_inner = inner;
+				_unreadable = unreadable;
+			}
+
+			public Task<CallEmailParseResult> ParseAsync(int formatType, CallEmail email, string managingUserId, List<IdentityUser> users, Department department,
+				List<Unit> units, int priority, List<DepartmentCallPriority> priorities, List<CallType> callTypes, CancellationToken cancellationToken = default) =>
+				_unreadable() ? Task.FromResult<CallEmailParseResult>(null) : _inner.ParseAsync(formatType, email, managingUserId, users, department, units, priority, priorities, callTypes, cancellationToken);
+
+			public Task<EmailCallUpdateResult> ProcessAsync(EmailCallUpdateRequest request, Func<Call, Task<Call>> createCall, CancellationToken cancellationToken = default) =>
+				_inner.ProcessAsync(request, createCall, cancellationToken);
+
+			public Task RecordCreatedAsync(EmailCallUpdateRequest request, Call saved, string cadCallId) => _inner.RecordCreatedAsync(request, saved, cadCallId);
+
+			public Task<EmailCallUpdatePreview> PreviewAsync(int departmentId, int formatType, string subject, string body, EmailCallUpdateConfig config = null,
+				EmailLabeledFieldsConfig labeledFields = null, CancellationToken cancellationToken = default) =>
+				_inner.PreviewAsync(departmentId, formatType, subject, body, config, labeledFields, cancellationToken);
 		}
 
 		private static PostmarkInboundMessage Email(string messageId, string to = null)
@@ -286,6 +323,125 @@ NARR: SMOKE SHOWING";
 		}
 
 		[Test]
+		public async Task A_close_email_the_format_cannot_read_still_closes_the_open_call()
+		{
+			// Saved CAD update settings: the call ID after "ID", and "CLOSED" closes. An Active911 close page has no "active" in its
+			// subject, so the format reads no call from it; the engine must still see it before the 403.
+			_storedCad = new EmailCallUpdateConfig
+			{
+				Enabled = true, IdSource = (int)CadCallIdSources.Label, IdLabel = "ID", IdSearchIn = (int)CadCallIdSearchAreas.SubjectThenBody,
+				ClosePhrases = "CLOSED", NotifyOnClose = true
+			};
+
+			(await ReceiveAsync(Email(Guid.NewGuid().ToString()))).Should().Be(200);
+			_saved.Should().ContainSingle();
+			_saved[0].State = (int)CallStates.Active;
+
+			_unreadable = true;
+			var close = Email(Guid.NewGuid().ToString());
+			close.Subject = "CLOSED 9-1-1";
+			close.TextBody = "ID: 2026-000777-FIRE";
+
+			(await ReceiveAsync(close)).Should().Be(200, "the close was applied, so Postmark must stop");
+
+			_saved.Should().ContainSingle("a close never creates a call");
+			_saved[0].State.Should().Be((int)CallStates.Closed);
+			_ledger.Rows.Should().Contain(r => r.CallId == _saved[0].CallId && r.Outcome == (int)CallEmailUpdateOutcomes.Closed);
+		}
+
+		[Test]
+		public async Task A_call_whose_first_page_failed_still_gets_its_cad_baseline_once()
+		{
+			_storedCad = new EmailCallUpdateConfig
+			{
+				Enabled = true, IdSource = (int)CadCallIdSources.Label, IdLabel = "ID", IdSearchIn = (int)CadCallIdSearchAreas.SubjectThenBody
+			};
+			var id = Guid.NewGuid().ToString();
+			_broadcastFailures = 1;
+
+			(await ReceiveAsync(Email(id))).Should().Be(400, "the page never went out");
+			(await ReceiveAsync(Email(id))).Should().Be(200, "the retry resumes the saved call");
+
+			_saved.Should().ContainSingle();
+			_ledger.Rows.Should().ContainSingle(r => r.CallId == _saved[0].CallId && r.Outcome == (int)CallEmailUpdateOutcomes.Created,
+				"the baseline is recorded from the call as first saved, even though the engine never saw the create path return, and the resume adds no second one");
+			_ledger.Rows.Single().CadCallId.Should().Be("2026-000777-FIRE");
+			_ledger.Rows.Single().FieldHashes.Should().NotBeNullOrWhiteSpace("later CAD emails compare against these values");
+		}
+
+		[Test]
+		public async Task A_call_whose_save_threw_after_its_row_still_gets_its_cad_baseline_once()
+		{
+			_storedCad = new EmailCallUpdateConfig
+			{
+				Enabled = true, IdSource = (int)CadCallIdSources.Label, IdLabel = "ID", IdSearchIn = (int)CadCallIdSearchAreas.SubjectThenBody
+			};
+			var id = Guid.NewGuid().ToString();
+			_failNextSaveAfterRow = true;
+
+			(await ReceiveAsync(Email(id))).Should().Be(400, "the save threw after the call row was in");
+			(await ReceiveAsync(Email(id))).Should().Be(200, "the retry resumes the saved call");
+
+			_saved.Should().ContainSingle();
+			_ledger.Rows.Should().ContainSingle(r => r.CallId == _saved[0].CallId && r.Outcome == (int)CallEmailUpdateOutcomes.Created,
+				"the call SaveCallAsync left behind gets its baseline before the failure goes to the retry, which resumes without the engine");
+			_ledger.Rows.Single().CadCallId.Should().Be("2026-000777-FIRE");
+		}
+
+		[Test]
+		public async Task A_settings_change_during_a_failed_first_page_does_not_link_the_call_to_another_cad_id()
+		{
+			_storedCad = new EmailCallUpdateConfig
+			{
+				Enabled = true, IdSource = (int)CadCallIdSources.Label, IdLabel = "ID", IdSearchIn = (int)CadCallIdSearchAreas.SubjectThenBody
+			};
+			// An administrator switches the ID label to ADDR1 while the first page is failing: the baseline keeps the ID this delivery used.
+			_onBroadcast = () => _storedCad = new EmailCallUpdateConfig
+			{
+				Enabled = true, IdSource = (int)CadCallIdSources.Label, IdLabel = "ADDR1", IdSearchIn = (int)CadCallIdSearchAreas.SubjectThenBody
+			};
+			_broadcastFailures = 1;
+
+			(await ReceiveAsync(Email(Guid.NewGuid().ToString()))).Should().Be(400, "the page never went out");
+
+			_ledger.Rows.Should().ContainSingle(r => r.CallId == _saved[0].CallId && r.Outcome == (int)CallEmailUpdateOutcomes.Created)
+				.Which.CadCallId.Should().Be("2026-000777-FIRE", "the ID the engine chose for this delivery, not one read from the changed settings");
+		}
+
+		[Test]
+		public async Task A_close_email_for_a_call_resgrid_never_had_creates_nothing()
+		{
+			_storedCad = new EmailCallUpdateConfig
+			{
+				Enabled = true, IdSource = (int)CadCallIdSources.Label, IdLabel = "ID", IdSearchIn = (int)CadCallIdSearchAreas.SubjectThenBody, ClosePhrases = "CLOSED"
+			};
+			_unreadable = true;
+			var close = Email(Guid.NewGuid().ToString());
+			close.Subject = "CLOSED 9-1-1";
+			close.TextBody = "ID: 2026-999999-FIRE";
+
+			(await ReceiveAsync(close)).Should().Be(200);
+
+			_saved.Should().BeEmpty();
+			_ledger.Rows.Should().Contain(r => r.Outcome == (int)CallEmailUpdateOutcomes.CloseUnmatched);
+		}
+
+		[Test]
+		public async Task An_unreadable_email_that_is_not_a_close_is_still_refused()
+		{
+			_storedCad = new EmailCallUpdateConfig
+			{
+				Enabled = true, IdSource = (int)CadCallIdSources.Label, IdLabel = "ID", IdSearchIn = (int)CadCallIdSearchAreas.SubjectThenBody, ClosePhrases = "CLOSED"
+			};
+			_unreadable = true;
+
+			(await ReceiveAsync(Email(Guid.NewGuid().ToString()))).Should().Be(403);
+
+			_saved.Should().BeEmpty();
+			_ledger.Rows.Should().BeEmpty("the engine never saw it");
+		}
+
+		[Test]
 		public async Task Addresses_no_department_owns_are_refused_so_postmark_stops()
 		{
 			(await ReceiveAsync(Email(Guid.NewGuid().ToString(), "nobody@" + Resgrid.Config.InboundEmailConfig.DispatchDomain))).Should().Be(403);
@@ -295,12 +451,14 @@ NARR: SMOKE SHOWING";
 		}
 
 		[Test]
-		public async Task Without_a_provider_message_id_every_delivery_is_processed_as_before()
+		public async Task Without_a_provider_message_id_every_delivery_is_processed_and_the_repeat_updates_the_call()
 		{
 			(await ReceiveAsync(Email(null))).Should().Be(200);
 			(await ReceiveAsync(Email(null))).Should().Be(200);
 
-			_saved.Should().HaveCount(2);
+			// Both deliveries are processed (no receipt to dedupe them), but the second carries the same CAD call ID, so the
+			// Active911 format's built-in CAD update behaviour updates the first call instead of creating another.
+			_saved.Should().HaveCount(1);
 			_receipts.Receipts.Should().BeEmpty();
 		}
 

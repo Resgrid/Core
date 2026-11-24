@@ -21,9 +21,9 @@
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
 			@if (Model.CanAdminister)
 			{
-				<a class="btn btn-primary" asp-controller="RecordHydrants" asp-action="Import" asp-route-area="User"><i class="fa fa-upload"></i> @L["ImportHydrants"]</a>
-				<a class="btn btn-white" title="@L["ImportMapPoisHelp"]" asp-controller="Mapping" asp-action="ImportPOIs" asp-route-area="User"><i class="fa fa-map-marker"></i> @L["ImportMapPois"]</a>
-				<a class="btn btn-success" asp-controller="RecordHydrants" asp-action="Edit" asp-route-area="User"><i class="fa fa-plus"></i> @L["NewHydrant"]</a>
+				<a class="btn btn-primary" asp-controller="RecordHydrants" asp-action="Import" asp-route-area="User">@L["ImportHydrants"]</a>
+				<a class="btn btn-white" title="@L["ImportMapPoisHelp"]" asp-controller="Mapping" asp-action="ImportPOIs" asp-route-area="User">@L["ImportMapPois"]</a>
+				<a class="btn btn-success" asp-controller="RecordHydrants" asp-action="Edit" asp-route-area="User">@L["NewHydrant"]</a>
 			}
 		</div>
 	</div>

@@ -84,6 +84,13 @@ namespace Resgrid.Model
 		/// <summary>Callers who are not members reach Enhanced AI voice intake (needs Enhanced AI + Ai.VoiceIntake).</summary>
 		public bool VoiceIntakeEnabled { get; set; }
 
+		/// <summary>
+		/// Voice intake calls are recorded (M0332): the caller hears that the call is recorded and must press 1 to accept before the guided
+		/// questions start (the gate runs even with IntakeConfig.VoiceGateEnabled off), and the recording is attached to the pending call as
+		/// a file when the call ends. Off by default: recording consent rules differ by country and state, so an admin turns it on.
+		/// </summary>
+		public bool VoiceRecordingEnabled { get; set; }
+
 		public string ProvisionedByUserId { get; set; }
 
 		public DateTime? ProvisionedOn { get; set; }

@@ -30,10 +30,33 @@ namespace Resgrid.Model
 		Abandoned = 6
 	}
 
+	/// <summary>Where a voice intake call recording is (M0332; persisted on VoiceIntakeSessions.RecordingState, append only).</summary>
+	public enum VoiceIntakeRecordingStates
+	{
+		/// <summary>Not recorded (recording off for the number, or the caller never accepted it).</summary>
+		None = 0,
+
+		/// <summary>Recording was started at the carrier after the caller accepted; it ends when the call does.</summary>
+		Requested = 1,
+
+		/// <summary>The carrier finished the recording; it is waiting to be attached to the call.</summary>
+		Completed = 2,
+
+		/// <summary>The recording is a file on the call (<see cref="VoiceIntakeSession.RecordingCallAttachmentId"/>).</summary>
+		Attached = 3,
+
+		/// <summary>Nothing to keep: no call was created (the caller hung up first), the recording was empty, or it never started.</summary>
+		Discarded = 4,
+
+		/// <summary>It could not be attached after IntakeConfig.VoiceRecordingMaxAttempts; the carrier copy is kept until the session purge.</summary>
+		Failed = 5
+	}
+
 	/// <summary>
 	/// One phone call taken by Enhanced AI voice intake (M0323), keyed by the carrier's call id so Twilio's webhook retries
 	/// resume the same session. Answers are transcripts (protected content): kept only until the pending call is created and
-	/// purged after <c>IntakeConfig.VoiceSessionRetentionHours</c> by worker 80.
+	/// purged after <c>IntakeConfig.VoiceSessionRetentionHours</c> by worker 80 (a session whose call recording is still at the carrier
+	/// keeps its row, answers cleared, until worker 80 has deleted that copy).
 	/// </summary>
 	[Table("VoiceIntakeSessions")]
 	public class VoiceIntakeSession : IEntity
@@ -69,6 +92,30 @@ namespace Resgrid.Model
 		public DateTime StartedOn { get; set; }
 
 		public DateTime? CompletedOn { get; set; }
+
+		/// <summary>
+		/// Call recording (M0332): a <see cref="VoiceIntakeRecordingStates"/> value. Recording starts only after the caller pressed 1 at a gate
+		/// that said the call is recorded, on a number with <see cref="DepartmentPhoneNumber.VoiceRecordingEnabled"/>.
+		/// </summary>
+		public int RecordingState { get; set; }
+
+		/// <summary>Twilio RecordingSid ("RE…"); null until the carrier confirmed the recording (start answer or status callback).</summary>
+		[MaxLength(64)]
+		public string RecordingSid { get; set; }
+
+		public int? RecordingDurationSeconds { get; set; }
+
+		/// <summary>Attach attempts made (the callback's and worker 80's); the recording is Failed after IntakeConfig.VoiceRecordingMaxAttempts.</summary>
+		public int RecordingAttempts { get; set; }
+
+		/// <summary>Lease of the attempt in progress, so the callback and worker 80 never attach the same recording at once.</summary>
+		public DateTime? RecordingClaimedOn { get; set; }
+
+		/// <summary>The call file the recording became.</summary>
+		public int? RecordingCallAttachmentId { get; set; }
+
+		/// <summary>When the carrier's copy was deleted (after it was attached or discarded); null while Twilio still holds it.</summary>
+		public DateTime? RecordingCarrierDeletedOn { get; set; }
 
 		[NotMapped]
 		[JsonIgnore]

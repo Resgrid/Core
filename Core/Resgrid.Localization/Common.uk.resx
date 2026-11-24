@@ -834,4 +834,10 @@
   <data name="TermChecklist" xml:space="preserve">
     <value>Контрольний список</value>
   </data>
+  <data name="AiPromptPiiWarning" xml:space="preserve">
+    <value>Ніколи не додавайте персональні дані (PII) чи медичні дані (PHI) до запитів до ШІ: жодних імен, номерів телефонів, адрес, даних пацієнтів чи описів подій. Те, що ви тут введете, може бути надіслано моделі ШІ.</value>
+  </data>
+  <data name="ToggleMenu" xml:space="preserve">
+    <value>Показати або приховати меню</value>
+  </data>
 </root>

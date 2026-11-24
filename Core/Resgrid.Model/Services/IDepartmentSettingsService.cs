@@ -456,6 +456,25 @@ namespace Resgrid.Model.Services
 		/// <summary>Stores the destination suggestion setting (mode limited to the known ones, window clamped).</summary>
 		Task<DepartmentSetting> SetDestinationSuggestionConfigAsync(int departmentId, DestinationSuggestionConfig config, CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>
+		/// The CAD email update behaviour (<see cref="DepartmentSettingTypes.EmailCallUpdates"/>) for an email in
+		/// <paramref name="formatType"/>: the saved setting, else that format's built-in preset (<see cref="EmailCallUpdatePresets"/>,
+		/// flagged <see cref="EmailCallUpdateConfig.IsBuiltInPreset"/>), else off. Cached.
+		/// </summary>
+		Task<EmailCallUpdateConfig> GetEmailCallUpdateConfigAsync(int departmentId, int? formatType, bool bypassCache = false);
+
+		/// <summary>The saved CAD email update setting, or null when the department never saved one. Cached.</summary>
+		Task<EmailCallUpdateConfig> GetStoredEmailCallUpdateConfigAsync(int departmentId, bool bypassCache = false);
+
+		/// <summary>Stores the CAD email update setting (normalised; a saved row replaces any built-in preset).</summary>
+		Task<DepartmentSetting> SetEmailCallUpdateConfigAsync(int departmentId, EmailCallUpdateConfig config, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>The labels for the Labeled Fields email format (<see cref="DepartmentSettingTypes.EmailLabeledFields"/>); empty when unset. Cached.</summary>
+		Task<EmailLabeledFieldsConfig> GetEmailLabeledFieldsConfigAsync(int departmentId, bool bypassCache = false);
+
+		/// <summary>Stores the Labeled Fields email format's labels (normalised).</summary>
+		Task<DepartmentSetting> SetEmailLabeledFieldsConfigAsync(int departmentId, EmailLabeledFieldsConfig config, CancellationToken cancellationToken = default(CancellationToken));
+
 		/// <summary>Department-wide dispatch recommendation mode (Off / StationBased / ClosestUnit). Cached.</summary>
 		Task<DispatchRecommendationModes> GetDispatchRecommendationModeAsync(int departmentId, bool bypassCache = false);
 

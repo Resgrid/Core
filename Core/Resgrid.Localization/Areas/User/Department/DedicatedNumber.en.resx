@@ -109,6 +109,15 @@
   <data name="VoiceIntakeHelp" xml:space="preserve">
     <value>Callers who are not members answer guided questions and a pending call is created. Needs the Enhanced AI add-on with AI voice intake.</value>
   </data>
+  <data name="VoiceRecording" xml:space="preserve">
+    <value>Record voice intake calls</value>
+  </data>
+  <data name="VoiceRecordingHelp" xml:space="preserve">
+    <value>Callers are told that the call is recorded and must press 1 to accept before they can leave a request. Recording starts only after they accept, and the recording is added to the pending call as a file when the call ends. If the caller hangs up before the pending call is created, the recording is not kept.</value>
+  </data>
+  <data name="VoiceRecordingLegal" xml:space="preserve">
+    <value>Call recording and consent laws differ by country and state. Check what applies where you operate before turning this on.</value>
+  </data>
   <data name="VoiceIntakeUnavailable" xml:space="preserve">
     <value>AI voice intake is not available for your department yet. This setting takes effect once it is.</value>
   </data>

@@ -364,4 +364,16 @@
   <data name="Screening.DismissedAsSpam" xml:space="preserve">
     <value>Avfärdad som skräp</value>
   </data>
+  <data name="CadUpdates" xml:space="preserve">
+    <value>Ta emot uppdateringar från CAD</value>
+  </data>
+  <data name="CadUpdatesHelp" xml:space="preserve">
+    <value>Om ett e-postmeddelande innehåller larm-ID:t från CAD för ett larm som organisationen redan har, uppdateras det larmet i stället för att ett väntande larm skapas.</value>
+  </data>
+  <data name="CadUpdatesUnavailable" xml:space="preserve">
+    <value>Slå först på Uppdateringar från ert CAD.</value>
+  </data>
+  <data name="CadUpdatesSettingsLink" xml:space="preserve">
+    <value>Öppna inställningarna</value>
+  </data>
 </root>

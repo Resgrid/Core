@@ -22,7 +22,7 @@
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
 			@if (Model.CanAdminister && isOpen)
 			{
-				<a class="btn btn-primary" asp-controller="RecordAlarmRequests" asp-action="Edit" asp-route-area="User" asp-route-id="@r.RmsCrrAlarmRequestId"><i class="fa fa-pencil"></i> @L["Edit"]</a>
+				<a class="btn btn-primary" asp-controller="RecordAlarmRequests" asp-action="Edit" asp-route-area="User" asp-route-id="@r.RmsCrrAlarmRequestId">@L["Edit"]</a>
 			}
 		</div>
 	</div>

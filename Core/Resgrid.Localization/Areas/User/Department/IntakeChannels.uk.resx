@@ -364,4 +364,16 @@
   <data name="Screening.DismissedAsSpam" xml:space="preserve">
     <value>Відхилено як спам</value>
   </data>
+  <data name="CadUpdates" xml:space="preserve">
+    <value>Приймати оновлення з CAD</value>
+  </data>
+  <data name="CadUpdatesHelp" xml:space="preserve">
+    <value>Лист з ідентифікатором виклику в CAD для виклику, який підрозділ уже має, оновлює цей виклик замість створення виклику в очікуванні.</value>
+  </data>
+  <data name="CadUpdatesUnavailable" xml:space="preserve">
+    <value>Спочатку увімкніть Оновлення з вашого CAD.</value>
+  </data>
+  <data name="CadUpdatesSettingsLink" xml:space="preserve">
+    <value>Відкрити налаштування</value>
+  </data>
 </root>

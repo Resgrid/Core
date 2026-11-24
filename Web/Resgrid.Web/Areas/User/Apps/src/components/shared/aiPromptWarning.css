@@ -1,0 +1,20 @@
+/* Notice above every AI prompt box (AiPromptWarning.tsx). Amber like the site's alert-warning, compact enough for the chat drawer. */
+.rg-ai-prompt-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 8px;
+  padding: 7px 10px;
+  border: 1px solid #f0d58c;
+  border-left: 3px solid #f8ac59;
+  border-radius: 3px;
+  background: #fcf8e3;
+  color: #6b4f0f;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.rg-ai-prompt-warning .fa {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: #c27c0e;
+}

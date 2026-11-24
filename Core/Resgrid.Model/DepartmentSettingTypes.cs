@@ -269,5 +269,19 @@
 		/// the group's slots). See <see cref="ShiftSignupEligibility"/>.
 		/// </summary>
 		AllowShiftOverSignup = 129,
+
+		/// <summary>
+		/// ProtoBuf <see cref="EmailCallUpdateConfig"/>, Department → Call Settings ("Updates from your CAD"): an inbound dispatch email
+		/// carrying the CAD call ID of a call Resgrid already has updates, closes or cancels that call instead of creating a new one,
+		/// with per-field policies and a re-page rule. Missing = off, except the formats with a built-in preset
+		/// (<see cref="EmailCallUpdatePresets"/>). Read through <c>IDepartmentSettingsService.GetEmailCallUpdateConfigAsync</c>.
+		/// </summary>
+		EmailCallUpdates = 130,
+
+		/// <summary>
+		/// ProtoBuf <see cref="EmailLabeledFieldsConfig"/>, Department → Call Settings: the labels the department's CAD writes in front
+		/// of each value, for the <see cref="CallEmailTypes.LabeledFields"/> email format. Missing = no labels.
+		/// </summary>
+		EmailLabeledFields = 131,
 	}
 }

@@ -25,8 +25,8 @@
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
 			@if (Model.CanAdminister)
 			{
-				<a class="btn btn-primary" asp-controller="RecordOccupancies" asp-action="Edit" asp-route-area="User" asp-route-id="@o.RmsOccupancyId"><i class="fa fa-pencil"></i> @L["Edit"]</a>
-				if (Model.PermitsOn) { <a class="btn btn-default" asp-controller="RecordPermits" asp-action="Edit" asp-route-area="User" asp-route-occupancyId="@o.RmsOccupancyId"><i class="fa fa-file-text-o"></i> @L["NewPermit"]</a> }
+				<a class="btn btn-primary" asp-controller="RecordOccupancies" asp-action="Edit" asp-route-area="User" asp-route-id="@o.RmsOccupancyId">@L["Edit"]</a>
+				if (Model.PermitsOn) { <a class="btn btn-default" asp-controller="RecordPermits" asp-action="Edit" asp-route-area="User" asp-route-occupancyId="@o.RmsOccupancyId">@L["NewPermit"]</a> }
 			}
 		</div>
 	</div>

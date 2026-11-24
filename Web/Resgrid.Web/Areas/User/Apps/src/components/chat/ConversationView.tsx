@@ -23,6 +23,7 @@ import MessageBubble from './atoms/MessageBubble';
 import TypingRow from './atoms/TypingRow';
 import Lightbox from './atoms/Lightbox';
 import { AuthErrorNotice, ConnectionBanner } from './atoms/StatusBanners';
+import AiPromptWarning from '../shared/AiPromptWarning';
 
 const EMPTY_MESSAGES: ChatMessageDto[] = [];
 const EMPTY_TYPING: TypingEntry[] = [];
@@ -345,6 +346,7 @@ export default function ConversationView(props: ConversationViewProps) {
         allowImages={!isBot}
         allowEmoji={!isBot}
         placeholder={isBot ? 'Ask the assistant…' : 'Write a message…'}
+        notice={isBot ? <AiPromptWarning /> : undefined}
       />
 
       {lightboxUrl && <Lightbox url={lightboxUrl} onClose={handleCloseLightbox} />}

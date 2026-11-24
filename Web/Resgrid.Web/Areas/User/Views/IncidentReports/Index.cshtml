@@ -20,10 +20,10 @@
 	</div>
 	<div class="col-sm-8">
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-			<a class="btn btn-default" asp-controller="Records" asp-action="Index" asp-route-area="User"><i class="fa fa-arrow-left"></i> @localizer["BackToRecords"]</a>
+			<a class="btn btn-default" asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["BackToRecords"]</a>
 			@if (Model.IsDepartmentAdmin && Model.NerisWorkflowsEnabled)
 			{
-				<a class="btn btn-inverse" asp-controller="IncidentReports" asp-action="Settings" asp-route-area="User"><i class="fa fa-cog"></i> @localizer["NerisSettingsHeader"]</a>
+				<a class="btn btn-inverse" asp-controller="IncidentReports" asp-action="Settings" asp-route-area="User">@localizer["NerisSettingsHeader"]</a>
 			}
 		</div>
 	</div>

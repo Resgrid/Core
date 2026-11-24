@@ -128,9 +128,9 @@
 		<div class="title-action">
 			@if (ViewBag.AdminAssistAvailable == true)
 			{
-				<a class="btn btn-white" asp-controller="AdminAssist" asp-action="SetupReport" asp-route-area="User"><i class="fa fa-list-alt" aria-hidden="true"></i> @aa["Ui.report"]</a>
+				<a class="btn btn-white" asp-controller="AdminAssist" asp-action="SetupReport" asp-route-area="User">@aa["Ui.report"]</a>
 			}
-			<button type="submit" form="operating-profile-form" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @aa["Profile.Save"]</button>
+			<button type="submit" form="operating-profile-form" class="btn btn-primary">@aa["Profile.Save"]</button>
 		</div>
 	</div>
 </div>

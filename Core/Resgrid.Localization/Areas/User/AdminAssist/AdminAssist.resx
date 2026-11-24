@@ -5709,6 +5709,9 @@
   <data xml:space="preserve" name="Ui.Ask.Answered">
     <value>Related verified evidence</value>
   </data>
+  <data xml:space="preserve" name="Ui.Ask.Matched">
+    <value>Related documentation from search (not selected by AI)</value>
+  </data>
   <data xml:space="preserve" name="Ui.Ask.Boundary">
     <value>Find configuration, setup and add-on guidance. Answers contain current evidence cards and reference sources. Ask cannot change settings, send messages, purchase add-ons or make clinical or tactical decisions. Each question is evaluated independently; include the setting or feature name.</value>
   </data>
@@ -5764,7 +5767,7 @@
     <value>Reference only</value>
   </data>
   <data xml:space="preserve" name="Ui.Ask.Privacy">
-    <value>Your history is private to your account and department. Questions are encrypted at rest and retained for 30 days by default, subject to approved holds. Only matched public concepts and authorized metadata reach the local model. Do not enter patient details, incident narratives, passwords or tokens.</value>
+    <value>Your history is private to your account and department. Questions are encrypted at rest and retained for 30 days by default, subject to approved holds. Your question is sent to the AI model to find matching guidance; with Advanced Data Protection, only its words that also appear in Resgrid's public documentation are sent. Never enter personal or health information (PII or PHI), patient details, incident narratives, passwords or tokens.</value>
   </data>
   <data xml:space="preserve" name="Ui.Ask.ProposedValue">
     <value>Proposed value (preview only)</value>
@@ -8174,5 +8177,17 @@
   </data>
   <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
     <value>Let members sign up for a shift group even when every slot its roles offer (required and optional) is taken. They still need one of the group's roles. Supervisors can always assign people past the slots.</value>
+  </data>
+  <data name="Setting.EmailCallUpdates" xml:space="preserve">
+    <value>Updates from your CAD</value>
+  </data>
+  <data name="SettingHelp.EmailCallUpdates" xml:space="preserve">
+    <value>Update the existing call when your CAD sends a corrected or follow-up email for the same call ID.</value>
+  </data>
+  <data name="Setting.EmailLabeledFields" xml:space="preserve">
+    <value>Labels for the Labeled fields format</value>
+  </data>
+  <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
+    <value>Used when your email format is "Labeled fields". Enter the label your CAD writes in front of each value. Separate alternatives with |.</value>
   </data>
 </root>

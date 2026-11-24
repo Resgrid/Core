@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { type PlanSource } from './PlansPanel';
 import { apiFetchJson, ApiError } from '../../runtime/api';
 import { Chip, Ibox, ProgressBar } from './SetupVisuals';
+import AiPromptWarning from '../shared/AiPromptWarning';
 
 type Evidence = { id: string; kind: string; titleKey: string; textKeys: string[]; numbers: Record<string, number>; state: string; destination?: string; citationId: string; catalogVersion: string; asOfUtc: string; publicText?: string };
 type Answer = { conversationId: string | null; revision: number; outcome: string; evidence: Evidence[]; inputTokens: number; outputTokens: number };
@@ -13,8 +14,10 @@ type Tone = 'ok' | 'fail' | 'unknown' | 'info' | 'muted';
 const endpoint = 'api/v4/AdminAssist/';
 const topics = ['setup', 'settings', 'permissions', 'addons', 'reference'];
 const taskTone: Record<string, Tone> = { AccessAvailable: 'ok', ChecksPassed: 'ok', ConfigurationPresent: 'ok', Learned: 'ok', Blocked: 'fail', Pending: 'info', Unknown: 'unknown' };
+// Matched = local reference-search results shown when the model abstained (Advanced Data Protection departments).
 const outcomeVisual = (outcome: string): { icon: string; tone: Tone } =>
-  outcome === 'Answered' ? { icon: 'fa-check-circle', tone: 'ok' } : outcome === 'Abstained' ? { icon: 'fa-info-circle', tone: 'muted' } : { icon: 'fa-exclamation-circle', tone: 'unknown' };
+  outcome === 'Answered' ? { icon: 'fa-check-circle', tone: 'ok' } : outcome === 'Matched' ? { icon: 'fa-search', tone: 'info' }
+    : outcome === 'Abstained' ? { icon: 'fa-info-circle', tone: 'muted' } : { icon: 'fa-exclamation-circle', tone: 'unknown' };
 
 export default function AskPanel({ t, localLink, settings, onPlan }: { onPlan?: (source: PlanSource) => void; settings: { id: string; labelKey: string; valueType: string }[]; t: (key: string) => string; localLink: (url?: string | null) => string | undefined }) {
   const ui = (key: string) => t(`Ui.${key}`);
@@ -172,8 +175,9 @@ export default function AskPanel({ t, localLink, settings, onPlan }: { onPlan?: 
             </div>}
           </div>
           <label htmlFor="rgaa-ask-question" className="sr-only">{ui('Ask.Question')}</label>
+          <AiPromptWarning id="rgaa-ask-warning" />
           <div className="rgaa-ask__input">
-            <textarea id="rgaa-ask-question" className="form-control" rows={3} required maxLength={2000} value={question} disabled={busy} placeholder={ui('Ask.Question')}
+            <textarea id="rgaa-ask-question" className="form-control" rows={3} required maxLength={2000} value={question} disabled={busy} placeholder={ui('Ask.Question')} aria-describedby="rgaa-ask-warning"
               onChange={e => setQuestion(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); if (canAsk) e.currentTarget.form?.requestSubmit(); } }} />
             <div className="rgaa-ask__send">

@@ -5763,6 +5763,9 @@
   <data xml:space="preserve" name="Ui.Ask.Answered">
     <value>Zugehörige geprüfte Nachweise</value>
   </data>
+  <data xml:space="preserve" name="Ui.Ask.Matched">
+    <value>Passende Dokumentation aus der Suche (nicht von der KI ausgewählt)</value>
+  </data>
   <data xml:space="preserve" name="Ui.Ask.Boundary">
     <value>Finden Sie Hinweise zu Konfiguration, Einrichtung und Erweiterungen. Antworten enthalten aktuelle Nachweiskarten und Referenzquellen. Ask kann keine Einstellungen ändern, Nachrichten senden, Erweiterungen kaufen oder klinische bzw. taktische Entscheidungen treffen. Jede Frage wird unabhängig bewertet; geben Sie den Namen der Einstellung oder Funktion an.</value>
   </data>
@@ -5818,7 +5821,7 @@
     <value>Nur Referenz</value>
   </data>
   <data xml:space="preserve" name="Ui.Ask.Privacy">
-    <value>Ihr Verlauf ist privat für Ihr Konto und Ihre Abteilung. Fragen werden ruhend verschlüsselt und standardmäßig 30 Tage aufbewahrt, vorbehaltlich genehmigter Aufbewahrungspflichten. Nur abgeglichene öffentliche Begriffe und autorisierte Metadaten erreichen das lokale Modell. Geben Sie keine Patientendetails, Einsatzschilderungen, Passwörter oder Tokens ein.</value>
+    <value>Ihr Verlauf ist privat für Ihr Konto und Ihre Abteilung. Fragen werden ruhend verschlüsselt und standardmäßig 30 Tage aufbewahrt, vorbehaltlich genehmigter Aufbewahrungspflichten. Ihre Frage wird an das KI-Modell gesendet, um passende Hinweise zu finden; mit Erweitertem Datenschutz werden nur ihre Wörter gesendet, die auch in der öffentlichen Resgrid-Dokumentation vorkommen. Geben Sie niemals personenbezogene Daten oder Gesundheitsdaten (PII oder PHI), Patientendetails, Einsatzschilderungen, Passwörter oder Tokens ein.</value>
   </data>
   <data xml:space="preserve" name="Ui.Ask.ProposedValue">
     <value>Vorgeschlagener Wert (nur Vorschau)</value>
@@ -8252,5 +8255,17 @@
   </data>
   <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
     <value>Mitglieder können sich für eine Schichtgruppe anmelden, auch wenn alle Plätze ihrer Rollen (Pflicht und optional) belegt sind. Sie benötigen weiterhin eine der Rollen der Gruppe. Vorgesetzte können Personen jederzeit über die Plätze hinaus einteilen.</value>
+  </data>
+  <data name="Setting.EmailCallUpdates" xml:space="preserve">
+    <value>Aktualisierungen aus Ihrem CAD</value>
+  </data>
+  <data name="SettingHelp.EmailCallUpdates" xml:space="preserve">
+    <value>Den bestehenden Einsatz aktualisieren, wenn Ihr CAD eine korrigierte oder nachfolgende E-Mail mit derselben Einsatz-ID sendet.</value>
+  </data>
+  <data name="Setting.EmailLabeledFields" xml:space="preserve">
+    <value>Bezeichnungen für das Format "Labeled fields"</value>
+  </data>
+  <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
+    <value>Wird verwendet, wenn Ihr E-Mail-Format "Labeled fields" ist. Geben Sie die Bezeichnung ein, die Ihr CAD vor jeden Wert schreibt. Trennen Sie Alternativen mit |.</value>
   </data>
 </root>

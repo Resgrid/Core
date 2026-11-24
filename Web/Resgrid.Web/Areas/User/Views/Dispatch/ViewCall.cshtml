@@ -10,6 +10,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.RecurringCalls> recurringLocalizer
 @inject Resgrid.Model.Services.IFeatureToggleService featureToggleService
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.IntakeChannels> intakeLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.CadUpdates> cadUpdatesLocalizer
 @inject Resgrid.Model.Services.IIntakeService intakeService
 @inject Resgrid.Model.Services.IAuthorizationService dismissAuthorization
 @{
@@ -22,14 +23,14 @@
 <link rel="stylesheet" href="~/lib/jplayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css" />
 <link rel="stylesheet" type="text/css" href="~/lib/slick-carousel/slick/slick.css" />
 <link rel="stylesheet" href="~/lib/plyr/dist/plyr.css" />
+<link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 <style>
     /* The theme restates `.dropdown-menu { left: 0 }` after Bootstrap, which undoes `.dropdown-menu-right`. */
     .top-page-buttons .call-reports-menu { left: auto; right: 0; }
-    /* `.buttons-actions a { color: white !important }` is meant for the heading's coloured buttons; on the
-       white menu it would hide the item text. */
-    .call-reports-menu > li > a { color: inherit !important; white-space: nowrap; }
-    /* Starting an incident report is a POST, so that item is a form; its button takes the menu link's box. */
-    .call-reports-menu > li > form { margin: 0; }
+    .call-reports-menu > li > a { white-space: nowrap; }
+    /* Starting an incident report is a POST, so that item is a form; its button takes the menu link's box
+       (block, over the heading's inline-block forms). */
+    .call-reports-menu > li > form { display: block; margin: 0; }
     .call-reports-menu > li > form > button {
         display: block;
         width: calc(100% - 8px);
@@ -52,8 +53,20 @@
 @Html.HiddenFor(m => m.Latitude)
 @Html.HiddenFor(m => m.Longitude)
 
-<div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-sm-4">
+@{
+    var canReOpen = ViewData["CanReOpenCall"] is bool canReOpenCall && canReOpenCall;
+    var canStrikeAlarm = ClaimsAuthorizationHelper.CanCreateCall() && Model.Call.State == 0 && Model.Call.ActiveRunCardId.HasValue;
+    // The level the strike escalates to, worked out as DispatchController.EscalateCall does (a call below 1 counts as 1).
+    var nextAlarmLevel = Math.Max(1, Model.Call.AlarmLevel) + 1;
+    // A crew that leaves a smoke or CO alarm on this call records it from here (CRR module, prevention administrators).
+    var canCreateCallRecord = Model.RecordsUsable && ClaimsAuthorizationHelper.CanCreateRecord();
+    var alarmMenuOn = Model.RecordsUsable && ClaimsAuthorizationHelper.CanAdministerRecordsPrevention()
+        && await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsPreventionCrr, Model.Call.DepartmentId);
+}
+@* The standard page heading (module-workspace.css): the actions sit beside the title and wrap as one
+   right-aligned row, whatever the call offers (strike alarm, dispatch now, reopen ...). *@
+<div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">
+    <div class="col-sm-12">
         <h2>@localizer["ViewCallHeader"]</h2>
         <ol class="breadcrumb">
             <li>
@@ -67,51 +80,37 @@
             </li>
         </ol>
     </div>
-    <div class="col-sm-8">
-        <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-            <div class="buttons-actions">
-                @if (ViewData["CanReOpenCall"] is bool canReOpenCall && canReOpenCall)
+    <div class="col-sm-12 rgw-heading-actions">
+        <div class="btn-toolbar top-page-buttons rgw-header-actions">
+                @if (canReOpen)
                 {
                     @* ReOpenCall is POST + antiforgery and needs the close-call rule; resgrid.dispatch.viewcall.js posts this token. *@
                     <button class="btn btn-danger" id="reOpenCallButton" disabled>@localizer["ReopenCall"]</button>
-                    <form id="reOpenCallForm">@Html.AntiForgeryToken()</form>
-                }
-                @if (Model.CanReleaseResources)
-                {
-                    @* ReleaseUnitFromCall is POST + antiforgery; resgrid.dispatch.viewcall.js posts this token. *@
-                    <form id="releaseUnitForm">@Html.AntiForgeryToken()</form>
                 }
                 @if (ViewData["IsWaitingForDispatch"] is bool isWaitingForDispatch && isWaitingForDispatch && ClaimsAuthorizationHelper.CanCreateCall())
                 {
-                    <form method="post" asp-controller="Dispatch" asp-action="DispatchCallNow" asp-route-area="User" style="display:inline;"
+                    <form method="post" asp-controller="Dispatch" asp-action="DispatchCallNow" asp-route-area="User"
                           onsubmit="return confirm('@JsEncoder.Encode(localizer["DispatchNowConfirm"])');">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="callId" value="@Model.Call.CallId" />
-                        <button type="submit" class="btn btn-success"><i class="fa fa-paper-plane"></i> @localizer["DispatchNow"]</button>
+                        <button type="submit" class="btn btn-success">@localizer["DispatchNow"]</button>
                     </form>
                 }
                 @if (ClaimsAuthorizationHelper.CanCreateCall())
                 {
-                    if (Model.Call.State == 0 && Model.Call.ActiveRunCardId.HasValue)
+                    if (canStrikeAlarm)
                     {
-                        <button class="btn btn-danger" id="strikeNextAlarmButton" data-call-id="@Model.Call.CallId">Strike Alarm @(Model.Call.AlarmLevel + 1)</button>
-                        <form id="escalateCallForm">@Html.AntiForgeryToken()</form>
+                        <button class="btn btn-danger" id="strikeNextAlarmButton" data-call-id="@Model.Call.CallId">@string.Format(System.Globalization.CultureInfo.CurrentCulture, localizer["StrikeAlarm"].Value, nextAlarmLevel)</button>
                     }
                     <a class="btn btn-primary" asp-controller="Dispatch" asp-action="UpdateCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@localizer["UpdateCallHeader"]</a>
                     <a style="text-decoration:none;" class="btn btn-warning" asp-controller="Dispatch" asp-action="CloseCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@localizer["CloseCallHeader"]</a>
                     @* Repeat on a schedule: a new recurring call filled in from this one. *@
-                    <a id="repeatCallButton" class="btn btn-default" asp-controller="RecurringCalls" asp-action="New" asp-route-area="User" asp-route-fromCallId="@Model.Call.CallId" title="@recurringLocalizer["RepeatCallHelp"]"><i class="fa fa-repeat"></i> @recurringLocalizer["RepeatCall"]</a>
-                }
-                @{
-                    // A crew that leaves a smoke or CO alarm on this call records it from here (CRR module, prevention administrators).
-                    var canCreateCallRecord = Model.RecordsUsable && ClaimsAuthorizationHelper.CanCreateRecord();
-                    var alarmMenuOn = Model.RecordsUsable && ClaimsAuthorizationHelper.CanAdministerRecordsPrevention()
-                        && await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsPreventionCrr, Model.Call.DepartmentId);
+                    <a id="repeatCallButton" class="btn btn-default" asp-controller="RecurringCalls" asp-action="New" asp-route-area="User" asp-route-fromCallId="@Model.Call.CallId" title="@recurringLocalizer["RepeatCallHelp"]">@recurringLocalizer["RepeatCall"]</a>
                 }
                 @if (canCreateCallRecord || alarmMenuOn)
                 {
                     <div class="btn-group">
-                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-file-text-o"></i> @localizer["ReportsMenu"] <span class="caret"></span></button>
+                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@localizer["ReportsMenu"] <span class="caret"></span></button>
                         <ul class="dropdown-menu dropdown-menu-right call-reports-menu">
                             @if (canCreateCallRecord)
                             {
@@ -127,10 +126,24 @@
                         </ul>
                     </div>
                 }
-            </div>
         </div>
     </div>
 </div>
+@* Antiforgery tokens the page's scripts post with (reopen and release in resgrid.dispatch.viewcall.js, strike
+   alarm below). Kept out of the heading: a form in the button row is a block box and pushed the buttons after
+   it onto a second row. *@
+@if (canReOpen)
+{
+    <form id="reOpenCallForm" hidden>@Html.AntiForgeryToken()</form>
+}
+@if (Model.CanReleaseResources)
+{
+    <form id="releaseUnitForm" hidden>@Html.AntiForgeryToken()</form>
+}
+@if (canStrikeAlarm)
+{
+    <form id="escalateCallForm" hidden>@Html.AntiForgeryToken()</form>
+}
 
 @{
     // ADP reveal (plan 7.2): one descriptor shared by the banner in the body and the
@@ -342,7 +355,8 @@
                             <dl class="dl-horizontal">
                                 <dt>@localizer["IncidentIdLabel"]:</dt>
                                 <dd><span data-adp-field="calls.incidentnumber">@Model.Call.IncidentNumber</span></dd>
-                                <dt>@localizer["CallIdentifierLabel"]:</dt>
+                                @* An emailed call's external identifier is the CAD's call ID, the key CAD email updates match on (cad-email-call-updates-plan.md §6). *@
+                                <dt>@(Model.Call.CallSource == (int)CallSources.EmailImport ? cadUpdatesLocalizer["CadCallIdLabel"] : localizer["CallIdentifierLabel"]):</dt>
                                 <dd><span data-adp-field="calls.externalidentifier">@Model.Call.ExternalIdentifier</span></dd>
                                 <dt>@localizer["ReferenceIdLabel"]:</dt>
                                 <dd><span data-adp-field="calls.referencenumber">@Model.Call.ReferenceNumber</span></dd>
@@ -1341,7 +1355,7 @@
             // RenderBody, so a handler registered inline never gets attached.
             $(function () {
                 $('#strikeNextAlarmButton').on('click', function () {
-                    if (!confirm('Escalate this call to alarm level @(Model.Call.AlarmLevel + 1)? The run card\'s next-alarm resources will be dispatched.')) {
+                    if (!confirm('@JsEncoder.Encode(string.Format(System.Globalization.CultureInfo.CurrentCulture, localizer["StrikeAlarmConfirm"].Value, nextAlarmLevel))')) {
                         return;
                     }
 

@@ -5763,6 +5763,9 @@
   <data xml:space="preserve" name="Ui.Ask.Answered">
     <value>Relaterat verifierat underlag</value>
   </data>
+  <data xml:space="preserve" name="Ui.Ask.Matched">
+    <value>Relaterad dokumentation från sökningen (inte vald av AI)</value>
+  </data>
   <data xml:space="preserve" name="Ui.Ask.Boundary">
     <value>Hitta vägledning om konfiguration, installation och tillägg. Svar innehåller aktuella underlagskort och referenskällor. Ask kan inte ändra inställningar, skicka meddelanden, köpa tillägg eller fatta kliniska eller taktiska beslut. Varje fråga bedöms separat; ange inställnings- eller funktionsnamnet.</value>
   </data>
@@ -5818,7 +5821,7 @@
     <value>Endast referens</value>
   </data>
   <data xml:space="preserve" name="Ui.Ask.Privacy">
-    <value>Din historik är privat för ditt konto och din avdelning. Frågor krypteras i vila och sparas i 30 dagar som standard, med förbehåll för godkända spärrar. Endast matchade offentliga begrepp och auktoriserad metadata når den lokala modellen. Ange inte patientuppgifter, insatsbeskrivningar, lösenord eller token.</value>
+    <value>Din historik är privat för ditt konto och din avdelning. Frågor krypteras i vila och sparas i 30 dagar som standard, med förbehåll för godkända spärrar. Din fråga skickas till AI-modellen för att hitta matchande vägledning; med Avancerat dataskydd skickas bara de ord i frågan som också finns i Resgrids offentliga dokumentation. Ange aldrig personuppgifter eller hälsouppgifter (PII eller PHI), patientuppgifter, insatsbeskrivningar, lösenord eller token.</value>
   </data>
   <data xml:space="preserve" name="Ui.Ask.ProposedValue">
     <value>Föreslaget värde (endast förhandsgranskning)</value>
@@ -8252,5 +8255,17 @@
   </data>
   <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
     <value>Låter medlemmar anmäla sig till en passgrupp även när alla platser för dess roller (obligatoriska och valfria) är tagna. De behöver fortfarande en av gruppens roller. Arbetsledare kan alltid tilldela personer utöver platserna.</value>
+  </data>
+  <data name="Setting.EmailCallUpdates" xml:space="preserve">
+    <value>Uppdateringar från ert CAD</value>
+  </data>
+  <data name="SettingHelp.EmailCallUpdates" xml:space="preserve">
+    <value>Uppdatera det befintliga larmet när ert CAD skickar ett rättat eller kompletterande e-postmeddelande med samma larm-ID.</value>
+  </data>
+  <data name="Setting.EmailLabeledFields" xml:space="preserve">
+    <value>Etiketter för formatet "Labeled fields"</value>
+  </data>
+  <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
+    <value>Används när ert e-postformat är "Labeled fields". Ange etiketten som ert CAD skriver framför varje värde. Skilj alternativ åt med |.</value>
   </data>
 </root>

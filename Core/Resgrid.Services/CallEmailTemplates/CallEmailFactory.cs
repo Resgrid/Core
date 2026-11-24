@@ -41,6 +41,89 @@ namespace Resgrid.Services.CallEmailTemplates
 			// AI dispatch, Enrich mode: the call is exactly what GenericTemplate builds and is dispatched as today; the
 			// aidispatchtriage worker enriches it afterwards. A lapsed entitlement therefore still produces a normal call.
 			_templates.Add((int)CallEmailTypes.AI, new GenericTemplate());
+			// "Key: Value" CAD emails with department-mapped labels (cad-email-call-updates-plan.md Phase 2).
+			_templates.Add((int)CallEmailTypes.LabeledFields, new LabeledFieldsTemplate());
+		}
+
+		public async Task<CallEmailParseResult> ParseCallEmailAsync(CallEmailTypes type, CallEmail email, string managingUser, List<IdentityUser> users,
+			Department department, List<Unit> units, int priority, List<DepartmentCallPriority> activePriorities, List<CallType> callTypes,
+			IGeoLocationProvider geolocationProvider, EmailLabeledFieldsConfig labeledFields)
+		{
+			if (!_templates.TryGetValue((int)type, out var template))
+				return null;
+
+			try
+			{
+				CallEmailParseResult result;
+				if (template is ICallEmailParser parser)
+				{
+					result = await parser.ParseAsync(email, managingUser, users, department, units, priority, activePriorities, callTypes, geolocationProvider, labeledFields);
+				}
+				else
+				{
+					// Templates no longer match calls; an empty list makes sure none ever hands back an existing call.
+					var call = await template.GenerateCall(email, managingUser, users, department, new List<Call>(), units, priority, activePriorities, callTypes, geolocationProvider);
+					result = Describe(call, priority);
+				}
+
+				if (result?.Call == null)
+					return result;
+
+				EnsureRequiredValues(result.Call, email);
+
+				if (template is ICallEmailMatchKeyTemplate keyed)
+				{
+					var parsedCall = result.Call;
+					result.MatchKey = keyed.GetMatchKey(parsedCall);
+					result.MatchKeyIsComposite = true;
+					result.LegacyMatch = existing => keyed.IsSameIncident(parsedCall, existing);
+				}
+
+				return result;
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, string.Format("Email Text: {0}", email?.Body));
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// The parse result of a template that only builds a call: its key is the incident number or external identifier it read,
+		/// and a field counts as read when the template filled it (the priority only when it differs from the department default the
+		/// template was given, since every template starts from that default).
+		/// </summary>
+		public static CallEmailParseResult Describe(Call call, int defaultPriority)
+		{
+			var result = new CallEmailParseResult { Call = call };
+			if (call == null)
+				return result;
+
+			var fields = CallEmailParsedFields.None;
+			if (!String.IsNullOrWhiteSpace(call.Address))
+				fields |= CallEmailParsedFields.Address;
+			if (!String.IsNullOrWhiteSpace(call.GeoLocationData) && call.GeoLocationData.Trim().Length > 1)
+				fields |= CallEmailParsedFields.Coordinates;
+			if (!String.IsNullOrWhiteSpace(call.W3W))
+				fields |= CallEmailParsedFields.What3Words;
+			if (call.Priority != defaultPriority)
+				fields |= CallEmailParsedFields.Priority;
+			if (!String.IsNullOrWhiteSpace(call.Type) || call.CallTypeId.HasValue)
+				fields |= CallEmailParsedFields.Type;
+			if (!String.IsNullOrWhiteSpace(call.Name))
+				fields |= CallEmailParsedFields.Name;
+			if (!String.IsNullOrWhiteSpace(call.NatureOfCall))
+				fields |= CallEmailParsedFields.Nature;
+			if (!String.IsNullOrWhiteSpace(call.Notes))
+				fields |= CallEmailParsedFields.Notes;
+			// Units, groups and roles only: every format puts the whole roster on Dispatches, which is not something the email said.
+			if ((call.UnitDispatches != null && call.UnitDispatches.Count > 0) || (call.GroupDispatches != null && call.GroupDispatches.Count > 0) ||
+				(call.RoleDispatches != null && call.RoleDispatches.Count > 0))
+				fields |= CallEmailParsedFields.Resources;
+
+			result.ParsedFields = fields;
+			result.MatchKey = CadEmailText.NormalizeId(call.ExternalIdentifier) ?? CadEmailText.NormalizeId(call.IncidentNumber);
+			return result;
 		}
 
 		public async Task<Call> GenerateCallFromEmailText(CallEmailTypes type, CallEmail email, string managingUser, List<IdentityUser> users,

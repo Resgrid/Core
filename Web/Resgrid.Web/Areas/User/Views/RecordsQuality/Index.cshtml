@@ -17,8 +17,8 @@
 	</div>
 	<div class="col-sm-6">
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-			<a class="btn btn-default" asp-controller="RecordsQuality" asp-action="Trends" asp-route-area="User"><i class="fa fa-line-chart"></i> @L["Trends"]</a>
-			@if (Model.CanManageRubrics) { <a class="btn btn-success" asp-controller="RecordsQuality" asp-action="Rubric" asp-route-area="User"><i class="fa fa-plus"></i> @L["NewRubric"]</a> }
+			<a class="btn btn-default" asp-controller="RecordsQuality" asp-action="Trends" asp-route-area="User">@L["Trends"]</a>
+			@if (Model.CanManageRubrics) { <a class="btn btn-success" asp-controller="RecordsQuality" asp-action="Rubric" asp-route-area="User">@L["NewRubric"]</a> }
 		</div>
 	</div>
 </div>

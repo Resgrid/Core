@@ -5763,6 +5763,9 @@
   <data xml:space="preserve" name="Ui.Ask.Answered">
     <value>Powiązane zweryfikowane dane</value>
   </data>
+  <data xml:space="preserve" name="Ui.Ask.Matched">
+    <value>Powiązana dokumentacja z wyszukiwania (niewybrana przez AI)</value>
+  </data>
   <data xml:space="preserve" name="Ui.Ask.Boundary">
     <value>Znajdź wskazówki dotyczące konfiguracji, ustawień i dodatków. Odpowiedzi zawierają aktualne karty danych potwierdzających oraz źródła referencyjne. Funkcja Zapytaj nie może zmieniać ustawień, wysyłać wiadomości, kupować dodatków ani podejmować decyzji klinicznych lub taktycznych. Każde pytanie jest oceniane niezależnie — podaj nazwę ustawienia lub funkcji.</value>
   </data>
@@ -5818,7 +5821,7 @@
     <value>Tylko informacje referencyjne</value>
   </data>
   <data xml:space="preserve" name="Ui.Ask.Privacy">
-    <value>Twoja historia jest prywatna i dostępna tylko dla Twojego konta i oddziału. Pytania są domyślnie szyfrowane w spoczynku i przechowywane przez 30 dni, z zastrzeżeniem zatwierdzonych wstrzymań. Do modelu lokalnego trafiają wyłącznie dopasowane pojęcia publiczne oraz autoryzowane metadane. Nie wprowadzaj danych pacjentów, opisów zdarzeń, haseł ani tokenów.</value>
+    <value>Twoja historia jest prywatna i dostępna tylko dla Twojego konta i oddziału. Pytania są domyślnie szyfrowane w spoczynku i przechowywane przez 30 dni, z zastrzeżeniem zatwierdzonych wstrzymań. Twoje pytanie jest wysyłane do modelu AI, aby znaleźć pasujące wskazówki; przy Zaawansowanej ochronie danych wysyłane są tylko te jego słowa, które występują także w publicznej dokumentacji Resgrid. Nigdy nie wprowadzaj danych osobowych ani danych o zdrowiu (PII lub PHI), danych pacjentów, opisów zdarzeń, haseł ani tokenów.</value>
   </data>
   <data xml:space="preserve" name="Ui.Ask.ProposedValue">
     <value>Proponowana wartość (tylko podgląd)</value>
@@ -8252,5 +8255,17 @@
   </data>
   <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
     <value>Pozwala członkom zapisać się do grupy zmiany, nawet gdy wszystkie miejsca jej ról (wymagane i opcjonalne) są zajęte. Nadal potrzebują jednej z ról grupy. Przełożeni zawsze mogą przydzielać osoby ponad liczbę miejsc.</value>
+  </data>
+  <data name="Setting.EmailCallUpdates" xml:space="preserve">
+    <value>Aktualizacje z Twojego CAD</value>
+  </data>
+  <data name="SettingHelp.EmailCallUpdates" xml:space="preserve">
+    <value>Aktualizuj istniejące zgłoszenie, gdy Twój CAD wyśle poprawiony lub kolejny e-mail z tym samym identyfikatorem zgłoszenia.</value>
+  </data>
+  <data name="Setting.EmailLabeledFields" xml:space="preserve">
+    <value>Etykiety dla formatu "Labeled fields"</value>
+  </data>
+  <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
+    <value>Używane, gdy Twój format e-maili to "Labeled fields". Wpisz etykietę, którą Twój CAD umieszcza przed każdą wartością. Oddziel warianty znakiem |.</value>
   </data>
 </root>

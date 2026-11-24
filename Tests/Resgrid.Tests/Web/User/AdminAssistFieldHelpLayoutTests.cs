@@ -149,6 +149,7 @@ namespace Resgrid.Tests.Web.User
 			screens.Except(checkedHere).Except(NotRenderedHere.Keys).Should().BeEmpty("a new screen with field help needs a layout check here");
 		}
 
+		[TestCase("CadUpdates/Index", "Resgrid.Web.Areas.User.Models.Departments.CallSettings.CadUpdatesView")]
 		[TestCase("Department/CallSettings", "Resgrid.Web.Areas.User.Models.Departments.CallSettings.CallSettingsView")]
 		[TestCase("Department/DispatchSettings", "Resgrid.Web.Areas.User.Models.Departments.DispatchSettingsView")]
 		[TestCase("Department/DocumentNumbering", "Resgrid.Web.Areas.User.Models.Departments.DocumentNumberingView")]

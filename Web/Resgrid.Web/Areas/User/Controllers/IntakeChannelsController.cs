@@ -36,11 +36,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IIntakeScreeningService _screening;
 		private readonly Resgrid.Model.Services.IAuthorizationService _authorization;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Department.IntakeChannels> _localizer;
+		private readonly IDepartmentSettingsService _departmentSettings;
 
 		public IntakeChannelsController(IIntakeChannelsService channels, IIntakeService intake, ICallsService calls, IFeatureToggleService flags,
 			IEventAggregator events, IIntakeScreeningService screening, Resgrid.Model.Services.IAuthorizationService authorization,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Department.IntakeChannels> localizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Department.IntakeChannels> localizer, IDepartmentSettingsService departmentSettings)
 		{
+			_departmentSettings = departmentSettings;
 			_screening = screening;
 			_authorization = authorization;
 			_channels = channels;
@@ -241,6 +243,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					DefaultPriority = model.DefaultPriority,
 					DefaultCallTypeId = model.DefaultCallTypeId,
 					SendAcknowledgement = model.SendAcknowledgement,
+					CadUpdates = model.CadUpdates,
 					IsEnabled = model.IsEnabled
 				}, UserId, cancellationToken);
 			}
@@ -391,8 +394,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.TemplateFormats = Enum.GetValues(typeof(CallEmailTypes)).Cast<CallEmailTypes>()
 				.Where(f => f != CallEmailTypes.AI)
 				.Select(f => new KeyValuePair<int, string>((int)f, f.ToString())).ToList();
+
+			// The channel uses the department's CAD update settings (saved, or the built-in behaviour of the channel's format), so whether it
+			// may accept CAD updates follows the format picked on the page: the formats it is on for go to the page, which re-checks on a change.
+			var cadFormat = model.ProcessingMode == (int)IntakeProcessingModes.Template ? model.TemplateFormat ?? (int)CallEmailTypes.Generic : (int)CallEmailTypes.Generic;
+			var storedCad = await _departmentSettings.GetStoredEmailCallUpdateConfigAsync(DepartmentId);
+			model.CadUpdateFormats = model.TemplateFormats.Select(f => f.Key).Append((int)CallEmailTypes.Generic).Distinct()
+				.Where(f => CadUpdatesOn(storedCad, f)).ToList();
+			model.CadUpdatesAvailable = model.CadUpdateFormats.Contains(cadFormat);
 			return model;
 		}
+
+		/// <summary>As IDepartmentSettingsService.GetEmailCallUpdateConfigAsync reads it: the saved settings, else the format's built-in behaviour.</summary>
+		public static bool CadUpdatesOn(EmailCallUpdateConfig stored, int formatType) =>
+			(stored ?? EmailCallUpdatePresets.ForFormat(formatType) ?? new EmailCallUpdateConfig()).Enabled;
 
 		private static IntakeChannelEditView ToView(IntakeChannel channel) => new IntakeChannelEditView
 		{
@@ -406,6 +421,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			DefaultPriority = channel.DefaultPriority,
 			DefaultCallTypeId = channel.DefaultCallTypeId,
 			SendAcknowledgement = channel.SendAcknowledgement,
+			CadUpdates = channel.CadUpdates,
 			IsEnabled = channel.IsEnabled
 		};
 

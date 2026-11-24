@@ -109,6 +109,15 @@
   <data name="VoiceIntakeHelp" xml:space="preserve">
     <value>Las personas que llaman y no son miembros responden preguntas guiadas y se crea una llamada pendiente. Requiere el complemento Enhanced AI con la recepción por voz con IA.</value>
   </data>
+  <data name="VoiceRecording" xml:space="preserve">
+    <value>Grabar las llamadas de recepción por voz</value>
+  </data>
+  <data name="VoiceRecordingHelp" xml:space="preserve">
+    <value>Se informa a quien llama de que la llamada se graba y debe pulsar 1 para aceptar antes de poder dejar un aviso. La grabación empieza solo después de que acepte y, al terminar la llamada, se añade como archivo a la llamada pendiente. Si la persona cuelga antes de que se cree la llamada pendiente, la grabación no se conserva.</value>
+  </data>
+  <data name="VoiceRecordingLegal" xml:space="preserve">
+    <value>Las leyes sobre grabación de llamadas y consentimiento varían según el país y el estado. Compruebe qué se aplica en su zona antes de activarlo.</value>
+  </data>
   <data name="VoiceIntakeUnavailable" xml:space="preserve">
     <value>La recepción por voz con IA aún no está disponible para su departamento. Este ajuste se aplicará cuando lo esté.</value>
   </data>

@@ -1,0 +1,26 @@
+@model Resgrid.Web.Areas.User.Models.ModuleTabsView
+@*
+    A module's section strip, the one way modules show their own navigation: under the page heading
+    (inside .rgw-module-navigation), every section visible and the current one highlighted. Styled by
+    module-workspace.css. With Model.Post each section is a POST form (for pages that carry the
+    protected-data grant on every request); otherwise a plain link.
+*@
+<ul class="nav nav-pills rgw-module-tabs" aria-label="@Model.Label">
+    @foreach (var tab in Model.Tabs)
+    {
+        <li class="nav-item @(tab.Active ? "active" : null)">
+            @if (Model.Post)
+            {
+                <form asp-area="@tab.Area" asp-controller="@tab.Controller" asp-action="@tab.Action" asp-all-route-data="@tab.RouteValues" method="post" class="@Model.FormClass">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" aria-current="@(tab.Active ? "page" : "false")"><i class="fa @tab.Icon" aria-hidden="true"></i> @tab.Label</button>
+                </form>
+            }
+            else
+            {
+                <a asp-area="@tab.Area" asp-controller="@tab.Controller" asp-action="@tab.Action" asp-all-route-data="@tab.RouteValues" target="@tab.Target"
+                   aria-current="@(tab.Active ? "page" : "false")"><i class="fa @tab.Icon" aria-hidden="true"></i> @tab.Label</a>
+            }
+        </li>
+    }
+</ul>

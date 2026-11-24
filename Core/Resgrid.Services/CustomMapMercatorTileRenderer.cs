@@ -26,8 +26,12 @@ namespace Resgrid.Services
 		private const int TileSize = 256;
 		private const int MaxReconstructedSide = 4096;
 
-		// Decoded sources are expensive (megabytes each); keep a handful of recently used layers in memory.
-		private static readonly MemoryCache Sources = new MemoryCache(new MemoryCacheOptions { SizeLimit = 6 });
+		// Decoded sources are expensive (4 bytes a pixel); keep recently used layers in memory, up to this many megapixels
+		// (about 256 MB). Entries are never disposed when they leave the cache: a full cache rejects a new entry by
+		// "evicting" it at once, and an entry can be evicted while another request is still cropping it, so disposing
+		// there handed out (or pulled away) a disposed image and every tile of that layer failed. The GC frees them.
+		internal const int SourceCacheMegapixels = 64;
+		private static readonly MemoryCache Sources = new MemoryCache(new MemoryCacheOptions { SizeLimit = SourceCacheMegapixels });
 
 		private readonly ICustomMapService _customMapService;
 		private readonly ICustomMapTilesRepository _customMapTilesRepository;
@@ -128,9 +132,8 @@ namespace Resgrid.Services
 			{
 				Sources.Set(key, source, new MemoryCacheEntryOptions
 				{
-					Size = 1,
-					SlidingExpiration = TimeSpan.FromMinutes(30),
-					PostEvictionCallbacks = { new PostEvictionCallbackRegistration { EvictionCallback = (_, value, _, _) => (value as IDisposable)?.Dispose() } }
+					Size = Math.Max(1, (long)Math.Ceiling(source.Width * (double)source.Height / 1_000_000d)),
+					SlidingExpiration = TimeSpan.FromMinutes(30)
 				});
 			}
 

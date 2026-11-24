@@ -63,6 +63,8 @@ namespace Resgrid.Tests.Localization
 			// Dispatcher desk on the web (M0324, 2026-11-19): shift "Dispatchers on duty", desk board, break planner, desk
 			// settings and activity report shipped fully translated.
 			"Areas/User/DispatcherDesk/DispatcherDesk",
+			// Inventory -> Import (opening counts, catalog seeding and the export to edit; 2026-11-23) shipped fully translated.
+			"Areas/User/Inventory/InventoryImport",
 		};
 
 		private static string LocalizationRoot()

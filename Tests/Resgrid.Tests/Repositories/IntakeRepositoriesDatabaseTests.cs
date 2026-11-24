@@ -118,8 +118,8 @@ namespace Resgrid.Tests.Repositories
 
 			var source = new Mock<IMigrationSource>();
 			source.Setup(s => s.GetMigrations()).Returns(IsPostgres
-				? new IMigration[] { new M0323_AddIntakeChannelsAndDedicatedNumbersPg(), new M0326_AddIntakeSpamScreeningPg() }
-				: new IMigration[] { new M0323_AddIntakeChannelsAndDedicatedNumbers(), new M0326_AddIntakeSpamScreening() });
+				? new IMigration[] { new M0323_AddIntakeChannelsAndDedicatedNumbersPg(), new M0326_AddIntakeSpamScreeningPg(), new M0330_AddCallEmailUpdatesPg(), new M0332_AddVoiceIntakeRecordingPg() }
+				: new IMigration[] { new M0323_AddIntakeChannelsAndDedicatedNumbers(), new M0326_AddIntakeSpamScreening(), new M0330_AddCallEmailUpdates(), new M0332_AddVoiceIntakeRecording() });
 			_runner = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r =>
 			{
 				if (IsPostgres) r.AddPostgres(); else r.AddSqlServer();
@@ -533,8 +533,249 @@ namespace Resgrid.Tests.Repositories
 
 			await repository.TryInsertAsync(Session("CA2", Base.AddDays(-3)));
 			(await repository.CountStartedAsync(55, Base.AddHours(-1), Base.AddHours(1))).Should().Be(1);
-			(await repository.PurgeStartedBeforeAsync(Base.AddDays(-2))).Should().Be(1);
+			(await repository.PurgeStartedBeforeAsync(Base.AddDays(-2), true)).Should().Be(1);
 			(await repository.GetByProviderCallIdAsync("CA2")).Should().BeNull();
+		}
+
+		[Test]
+		public async Task the_purge_keeps_a_session_whose_recording_is_still_at_the_carrier_but_drops_its_answers()
+		{
+			var repository = Sessions();
+			VoiceIntakeSession Old(string callSid) => new VoiceIntakeSession
+			{
+				VoiceIntakeSessionId = Guid.NewGuid().ToString("D"), DepartmentId = 55, ProviderCallId = callSid, FromNumber = "+15305550199", ToNumber = "+17755550100",
+				Step = (int)VoiceIntakeSteps.Completed, AnswersJson = "{\"Nature\":\"Fire\"}", StartedOn = Base.AddDays(-3)
+			};
+
+			// A recording deleted at Twilio, one still there, and a session never recorded.
+			var deleted = Old("CAPURGE1");
+			var pending = Old("CAPURGE2");
+			var plain = Old("CAPURGE3");
+			foreach (var s in new[] { deleted, pending, plain })
+				(await repository.TryInsertAsync(s)).Should().BeTrue();
+			foreach (var s in new[] { deleted, pending })
+			{
+				await repository.TryBeginRecordingAsync(s.ProviderCallId);
+				await repository.CompleteRecordingAsync(s.ProviderCallId, "RE-" + s.ProviderCallId, 30, (int)VoiceIntakeRecordingStates.Completed);
+				await repository.SetRecordingStateAsync(s.VoiceIntakeSessionId, (int)VoiceIntakeRecordingStates.Failed, null);
+			}
+			await repository.MarkRecordingCarrierDeletedAsync(deleted.VoiceIntakeSessionId, Base);
+
+			(await repository.PurgeStartedBeforeAsync(Base.AddDays(-2), true)).Should().Be(2);
+
+			(await repository.GetByProviderCallIdAsync("CAPURGE1")).Should().BeNull();
+			(await repository.GetByProviderCallIdAsync("CAPURGE3")).Should().BeNull();
+			var kept = await repository.GetByProviderCallIdAsync("CAPURGE2");
+			kept.Should().NotBeNull("worker 80 still needs the sid to delete Twilio's copy");
+			kept.RecordingSid.Should().Be("RE-CAPURGE2");
+			kept.AnswersJson.Should().BeNull("the transcript expires all the same");
+			(await repository.GetRecordingWorkAsync(Base.AddHours(-48), true, 10)).Select(s => s.ProviderCallId).Should().Equal("CAPURGE2");
+
+			// Once the copy is gone the next purge takes the session; a host that keeps the copies purges by age alone.
+			await repository.MarkRecordingCarrierDeletedAsync(kept.VoiceIntakeSessionId, Base);
+			(await repository.PurgeStartedBeforeAsync(Base.AddDays(-2), true)).Should().Be(1);
+
+			var held = Old("CAPURGE4");
+			await repository.TryInsertAsync(held);
+			await repository.TryBeginRecordingAsync("CAPURGE4");
+			await repository.CompleteRecordingAsync("CAPURGE4", "RE-CAPURGE4", 30, (int)VoiceIntakeRecordingStates.Completed);
+			(await repository.PurgeStartedBeforeAsync(Base.AddDays(-2), false)).Should().Be(1);
+			(await repository.GetByProviderCallIdAsync("CAPURGE4")).Should().BeNull();
+		}
+
+		[Test]
+		public async Task the_attach_lease_fences_every_write_after_the_claim_and_the_timeout_discard_needs_an_unconfirmed_start()
+		{
+			var repository = Sessions();
+			var session = new VoiceIntakeSession
+			{
+				VoiceIntakeSessionId = Guid.NewGuid().ToString("D"), DepartmentId = 55, ProviderCallId = "CAFENCE1", FromNumber = "+15305550199", ToNumber = "+17755550100",
+				Step = (int)VoiceIntakeSteps.Completed, StartedOn = Base
+			};
+			(await repository.TryInsertAsync(session)).Should().BeTrue();
+			var id = session.VoiceIntakeSessionId;
+
+			// The timeout discard: only Requested with no sid.
+			await repository.TryBeginRecordingAsync("CAFENCE1");
+			await repository.CompleteRecordingAsync("CAFENCE1", "RE-FENCE", 12, (int)VoiceIntakeRecordingStates.Completed);
+			(await repository.TryDiscardUnconfirmedRecordingAsync(id)).Should().BeFalse("a callback completed it");
+			(await repository.GetByProviderCallIdAsync("CAFENCE1")).RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Completed);
+
+			var unconfirmed = new VoiceIntakeSession
+			{
+				VoiceIntakeSessionId = Guid.NewGuid().ToString("D"), DepartmentId = 55, ProviderCallId = "CAFENCE2", FromNumber = "+15305550199", ToNumber = "+17755550100",
+				Step = (int)VoiceIntakeSteps.Location, StartedOn = Base
+			};
+			await repository.TryInsertAsync(unconfirmed);
+			await repository.TryBeginRecordingAsync("CAFENCE2");
+			(await repository.TryDiscardUnconfirmedRecordingAsync(unconfirmed.VoiceIntakeSessionId)).Should().BeTrue();
+			(await repository.GetByProviderCallIdAsync("CAFENCE2")).RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Discarded);
+			(await repository.SetRecordingSidAsync("CAFENCE2", "RE-LATE")).Should().BeTrue("a late first sid is stored for the carrier delete");
+
+			// The lease (sub-millisecond stamps, as the clock gives them): a stale attempt's renewal and writes fail once it is taken over.
+			var first = Base.AddMinutes(1).AddTicks(1234567);
+			(await repository.TryClaimRecordingAsync(id, (int)VoiceIntakeRecordingStates.Completed, first, Base)).Should().BeTrue();
+			var renewed = first.AddSeconds(40).AddTicks(7654321);
+			(await repository.RenewRecordingClaimAsync(id, first, renewed)).Should().BeTrue();
+			(await repository.RenewRecordingClaimAsync(id, first, renewed.AddSeconds(1))).Should().BeFalse("the lease is no longer the first stamp");
+
+			var takeover = renewed.AddMinutes(6);
+			(await repository.TryClaimRecordingAsync(id, (int)VoiceIntakeRecordingStates.Completed, takeover, renewed.AddSeconds(1))).Should().BeTrue("stale");
+			(await repository.SetClaimedRecordingStateAsync(id, renewed, (int)VoiceIntakeRecordingStates.Attached, 7001)).Should().BeFalse("the stale attempt lost its lease");
+			var stored = await repository.GetByProviderCallIdAsync("CAFENCE1");
+			stored.RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Completed);
+			stored.RecordingCallAttachmentId.Should().BeNull();
+
+			(await repository.SetClaimedRecordingStateAsync(id, takeover, (int)VoiceIntakeRecordingStates.Attached, 7002)).Should().BeTrue();
+			stored = await repository.GetByProviderCallIdAsync("CAFENCE1");
+			stored.RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Attached);
+			stored.RecordingCallAttachmentId.Should().Be(7002);
+			stored.RecordingClaimedOn.Should().BeNull();
+			(await repository.RenewRecordingClaimAsync(id, takeover, takeover.AddMinutes(1))).Should().BeFalse("no lease is held any more");
+		}
+
+		[Test]
+		public async Task a_voice_session_recording_moves_only_from_the_state_each_step_expects()
+		{
+			var repository = Sessions();
+			var session = new VoiceIntakeSession
+			{
+				VoiceIntakeSessionId = Guid.NewGuid().ToString("D"), DepartmentId = 55, ProviderCallId = "CAREC1", FromNumber = "+15305550199", ToNumber = "+17755550100",
+				Step = (int)VoiceIntakeSteps.Nature, AnswersJson = "{\"Nature\":\"Fire\"}", StartedOn = Base
+			};
+			(await repository.TryInsertAsync(session)).Should().BeTrue();
+
+			// M0332 defaults: a session inserted without the recording columns is not recorded.
+			var stored = await repository.GetByProviderCallIdAsync("CAREC1");
+			stored.RecordingState.Should().Be((int)VoiceIntakeRecordingStates.None);
+			stored.RecordingAttempts.Should().Be(0);
+			stored.RecordingSid.Should().BeNull();
+
+			// Start: once per call.
+			(await repository.TryBeginRecordingAsync("carec1")).Should().BeTrue();
+			(await repository.TryBeginRecordingAsync("CAREC1")).Should().BeFalse("a repeated gate webhook never starts a second recording");
+			(await repository.SetRecordingSidAsync("CAREC1", "RE1")).Should().BeTrue();
+			(await repository.SetRecordingSidAsync("CAREC1", "RE2")).Should().BeFalse("the first sid stays");
+
+			// The guided questions' progress writes leave the recording columns alone (and the other way round).
+			stored = await repository.GetByProviderCallIdAsync("CAREC1");
+			stored.Step = (int)VoiceIntakeSteps.Completed;
+			stored.CallId = 900;
+			stored.AnswersJson = null;
+			stored.CompletedOn = Base.AddMinutes(3);
+			(await repository.UpdateProgressAsync(stored, (int)VoiceIntakeSteps.Nature, 0)).Should().BeTrue();
+
+			// Status callback: Requested → Completed once; the stored sid wins over the callback's.
+			(await repository.CompleteRecordingAsync("CAREC1", "RE9", 161, (int)VoiceIntakeRecordingStates.Completed)).Should().BeTrue();
+			(await repository.CompleteRecordingAsync("CAREC1", "RE9", 161, (int)VoiceIntakeRecordingStates.Completed)).Should().BeFalse("a repeated callback");
+			stored = await repository.GetByProviderCallIdAsync("CAREC1");
+			stored.RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Completed);
+			stored.RecordingSid.Should().Be("RE1");
+			stored.RecordingDurationSeconds.Should().Be(161);
+			stored.CallId.Should().Be(900);
+			stored.Step.Should().Be((int)VoiceIntakeSteps.Completed);
+
+			// The attach lease: one holder; a stale lease is taken over; each claim counts an attempt.
+			var id = session.VoiceIntakeSessionId;
+			(await repository.TryClaimRecordingAsync(id, (int)VoiceIntakeRecordingStates.Completed, Base.AddMinutes(5), Base)).Should().BeTrue();
+			(await repository.TryClaimRecordingAsync(id, (int)VoiceIntakeRecordingStates.Completed, Base.AddMinutes(6), Base.AddMinutes(1))).Should().BeFalse("the lease is held");
+			(await repository.TryClaimRecordingAsync(id, (int)VoiceIntakeRecordingStates.Requested, Base.AddMinutes(20), Base.AddMinutes(15))).Should().BeFalse("wrong state");
+			(await repository.TryClaimRecordingAsync(id, (int)VoiceIntakeRecordingStates.Completed, Base.AddMinutes(20), Base.AddMinutes(15))).Should().BeTrue("the lease is stale");
+			(await repository.GetByProviderCallIdAsync("CAREC1")).RecordingAttempts.Should().Be(2);
+
+			// Worker 80 sees it while Completed.
+			var purgeBefore = Base.AddHours(-48);
+			(await repository.GetRecordingWorkAsync(purgeBefore, true, 10)).Select(s => s.VoiceIntakeSessionId).Should().Equal(id);
+
+			(await repository.SetRecordingStateAsync(id, (int)VoiceIntakeRecordingStates.Attached, 7000)).Should().BeTrue();
+			(await repository.SetRecordingStateAsync(id, (int)VoiceIntakeRecordingStates.Attached, null)).Should().BeTrue();
+			stored = await repository.GetByProviderCallIdAsync("CAREC1");
+			stored.RecordingCallAttachmentId.Should().Be(7000, "a later write without an attachment keeps the one recorded");
+			stored.RecordingClaimedOn.Should().BeNull();
+
+			// Attached with Twilio's copy left: work only when carrier copies are deleted.
+			(await repository.GetRecordingWorkAsync(purgeBefore, false, 10)).Should().BeEmpty();
+			var work = (await repository.GetRecordingWorkAsync(purgeBefore, true, 10)).Should().ContainSingle().Subject;
+			work.AnswersJson.Should().BeNull("the work list never reads the answers");
+			work.RecordingSid.Should().Be("RE1");
+
+			(await repository.MarkRecordingCarrierDeletedAsync(id, Base.AddMinutes(21))).Should().BeTrue();
+			(await repository.MarkRecordingCarrierDeletedAsync(id, Base.AddMinutes(22))).Should().BeFalse();
+			(await repository.GetRecordingWorkAsync(purgeBefore, true, 10)).Should().BeEmpty();
+
+			// A Failed recording's copy is work only once its session is about to be purged.
+			var failed = new VoiceIntakeSession
+			{
+				VoiceIntakeSessionId = Guid.NewGuid().ToString("D"), DepartmentId = 55, ProviderCallId = "CAREC2", Step = (int)VoiceIntakeSteps.Completed, StartedOn = Base.AddHours(-50)
+			};
+			await repository.TryInsertAsync(failed);
+			await repository.TryBeginRecordingAsync("CAREC2");
+			await repository.CompleteRecordingAsync("CAREC2", "RE3", null, (int)VoiceIntakeRecordingStates.Completed);
+			await repository.SetRecordingStateAsync(failed.VoiceIntakeSessionId, (int)VoiceIntakeRecordingStates.Failed, null);
+			(await repository.GetRecordingWorkAsync(Base.AddHours(-51), true, 10)).Should().BeEmpty();
+			(await repository.GetRecordingWorkAsync(Base.AddHours(-48), true, 10)).Select(s => s.ProviderCallId).Should().Equal("CAREC2");
+		}
+
+		[Test]
+		public async Task a_recording_without_a_call_is_discarded_only_while_the_session_still_has_none()
+		{
+			var repository = Sessions();
+			var session = new VoiceIntakeSession
+			{
+				VoiceIntakeSessionId = Guid.NewGuid().ToString("D"), DepartmentId = 55, ProviderCallId = "CANOCALL1", FromNumber = "+15305550199", ToNumber = "+17755550100",
+				Step = (int)VoiceIntakeSteps.Location, StartedOn = Base
+			};
+			(await repository.TryInsertAsync(session)).Should().BeTrue();
+			await repository.TryBeginRecordingAsync("CANOCALL1");
+			await repository.CompleteRecordingAsync("CANOCALL1", "RE-NOCALL", 9, (int)VoiceIntakeRecordingStates.Completed);
+
+			// Intake saves the pending call after worker 80 read the session without one: the discard no longer applies.
+			var stored = await repository.GetByProviderCallIdAsync("CANOCALL1");
+			stored.CallId = 900;
+			(await repository.UpdateProgressAsync(stored, (int)VoiceIntakeSteps.Location, 0)).Should().BeTrue();
+			(await repository.TryDiscardWithoutCallAsync(session.VoiceIntakeSessionId)).Should().BeFalse("the session has a call now");
+			(await repository.GetByProviderCallIdAsync("CANOCALL1")).RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Completed);
+
+			var orphan = new VoiceIntakeSession
+			{
+				VoiceIntakeSessionId = Guid.NewGuid().ToString("D"), DepartmentId = 55, ProviderCallId = "CANOCALL2", FromNumber = "+15305550199", ToNumber = "+17755550100",
+				Step = (int)VoiceIntakeSteps.Abandoned, StartedOn = Base
+			};
+			await repository.TryInsertAsync(orphan);
+			await repository.TryBeginRecordingAsync("CANOCALL2");
+			(await repository.TryDiscardWithoutCallAsync(orphan.VoiceIntakeSessionId)).Should().BeFalse("only a completed recording is discarded this way");
+			await repository.CompleteRecordingAsync("CANOCALL2", "RE-NOCALL2", 9, (int)VoiceIntakeRecordingStates.Completed);
+			(await repository.TryDiscardWithoutCallAsync(orphan.VoiceIntakeSessionId)).Should().BeTrue();
+			(await repository.GetByProviderCallIdAsync("CANOCALL2")).RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Discarded);
+		}
+
+		[Test]
+		public async Task recordings_to_attach_come_before_carrier_copies_whose_deletes_keep_failing()
+		{
+			var repository = Sessions();
+			async Task<string> Recorded(string callSid, DateTime startedOn, VoiceIntakeRecordingStates state)
+			{
+				var row = new VoiceIntakeSession
+				{
+					VoiceIntakeSessionId = Guid.NewGuid().ToString("D"), DepartmentId = 55, ProviderCallId = callSid, FromNumber = "+15305550199", ToNumber = "+17755550100",
+					Step = (int)VoiceIntakeSteps.Completed, StartedOn = startedOn
+				};
+				await repository.TryInsertAsync(row);
+				await repository.TryBeginRecordingAsync(callSid);
+				await repository.CompleteRecordingAsync(callSid, "RE-" + callSid, 9, (int)VoiceIntakeRecordingStates.Completed);
+				if (state != VoiceIntakeRecordingStates.Completed)
+					await repository.SetRecordingStateAsync(row.VoiceIntakeSessionId, (int)state, null);
+				return callSid;
+			}
+
+			// Two older copies left at the carrier (their deletes failing), one newer recording still to attach.
+			await Recorded("CAORDER1", Base.AddHours(-3), VoiceIntakeRecordingStates.Attached);
+			await Recorded("CAORDER2", Base.AddHours(-2), VoiceIntakeRecordingStates.Discarded);
+			await Recorded("CAORDER3", Base.AddHours(-1), VoiceIntakeRecordingStates.Completed);
+
+			(await repository.GetRecordingWorkAsync(Base.AddHours(-48), true, 1)).Select(s => s.ProviderCallId).Should().Equal(new[] { "CAORDER3" },
+				"a full batch of failing cleanups never starves the attach");
+			(await repository.GetRecordingWorkAsync(Base.AddHours(-48), true, 10)).Select(s => s.ProviderCallId).Should().Equal("CAORDER3", "CAORDER1", "CAORDER2");
 		}
 	}
 }

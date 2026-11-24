@@ -110,6 +110,11 @@ export interface RgMap {
   addMarker(position: LatLng, options?: MarkerOptions): MarkerHandle;
   addLine(id: string, data: LatLng[] | Geometry | FeatureCollection, options?: ShapeOptions): LayerHandle;
   addGeoJson(id: string, data: FeatureCollection | Geometry, options?: ShapeOptions): LayerHandle;
+  /**
+   * An XYZ raster (a custom map / floor plan image as tiles) inside optional bounds [west, south, east, north],
+   * drawn under the kit's shapes and markers.
+   */
+  addRasterOverlay(id: string, tiles: string, options?: { bounds?: [number, number, number, number] | null; opacity?: number }): { remove(): void };
   onClick(handler: (position: LatLng) => void): void;
   /** Places a page element (legend, toggle) in a map corner. */
   addControl(element: HTMLElement, position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'): { remove(): void };
@@ -521,7 +526,8 @@ async function createMapLibre(element: HTMLElement, options: CreateMapOptions, c
 
       let instance: import('maplibre-gl').Marker;
       if (marker.html || marker.iconUrl) {
-        wrapper.style.position = 'relative';
+        // No inline position here: maplibre-gl.css places .maplibregl-marker absolutely and moves it with a transform.
+        // position:relative put every such marker back in normal flow, stacked down the map and off its point.
         instance = new maplibre.Marker({ element: wrapper, anchor: 'top-left', offset: [-anchorX, -anchorY], draggable: !!marker.draggable });
       } else {
         instance = new maplibre.Marker({ draggable: !!marker.draggable });
@@ -585,6 +591,23 @@ async function createMapLibre(element: HTMLElement, options: CreateMapOptions, c
     },
     addLine: (id, data, shape = {}) => addShapes(id, toFeatureCollection(data as FeatureCollection | Geometry | LatLng[]), { weight: 4, ...shape }, true),
     addGeoJson: (id, data, shape = {}) => addShapes(id, toFeatureCollection(data), shape, false),
+    addRasterOverlay: (id, tiles, overlay = {}) => {
+      const key = `rg-raster-${id}`;
+      const remove = () => {
+        if (map.getLayer(key)) {
+          map.removeLayer(key);
+        }
+        if (map.getSource(key)) {
+          map.removeSource(key);
+        }
+      };
+      remove();
+      map.addSource(key, { type: 'raster', tiles: [tiles], tileSize: 256, maxzoom: 22, ...(overlay.bounds ? { bounds: overlay.bounds } : {}) });
+      // Under the kit's own shapes (rg-<id>-fill/line/circle) so routes, areas and zones stay visible on top.
+      const beforeId = map.getStyle()?.layers?.find((layer) => /^rg-(?!raster-)/.test(layer.id))?.id;
+      map.addLayer({ id: key, type: 'raster', source: key, paint: { 'raster-opacity': overlay.opacity ?? 0.85 } }, beforeId);
+      return { remove };
+    },
     onClick: (handler) => {
       map.on('click', (event) => handler([event.lngLat.lat, event.lngLat.lng]));
     },
@@ -838,6 +861,14 @@ function createLeaflet(element: HTMLElement, options: CreateMapOptions, config: 
     },
     addLine: (id, data, shape = {}) => addShapes(id, toFeatureCollection(data as FeatureCollection | Geometry | LatLng[]), shape, true),
     addGeoJson: (id, data, shape = {}) => addShapes(id, toFeatureCollection(data), shape, false),
+    addRasterOverlay: (_id, tiles, overlay = {}) => {
+      const layer = L.tileLayer(tiles, {
+        maxZoom: 22,
+        opacity: overlay.opacity ?? 0.85,
+        ...(overlay.bounds ? { bounds: L.latLngBounds([overlay.bounds[1], overlay.bounds[0]], [overlay.bounds[3], overlay.bounds[2]]) } : {}),
+      }).addTo(map);
+      return { remove: () => layer.remove() };
+    },
     onClick: (handler) => {
       map.on('click', (event: { latlng: { lat: number; lng: number } }) => handler([event.latlng.lat, event.latlng.lng]));
     },

@@ -364,4 +364,16 @@
   <data name="Screening.DismissedAsSpam" xml:space="preserve">
     <value>Dismissed as spam</value>
   </data>
+  <data name="CadUpdates" xml:space="preserve">
+    <value>Accept CAD updates</value>
+  </data>
+  <data name="CadUpdatesHelp" xml:space="preserve">
+    <value>An email carrying the CAD call ID of a call the department already has updates that call instead of creating a pending call.</value>
+  </data>
+  <data name="CadUpdatesUnavailable" xml:space="preserve">
+    <value>Turn on Updates from your CAD first.</value>
+  </data>
+  <data name="CadUpdatesSettingsLink" xml:space="preserve">
+    <value>Open the settings</value>
+  </data>
 </root>

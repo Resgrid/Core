@@ -46,9 +46,9 @@
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
 			@if (Model.CanAdminister)
 			{
-				<a class="btn btn-success" asp-controller="RecordCrr" asp-action="Edit" asp-route-area="User"><i class="fa fa-plus"></i> @L["NewCrrActivity"]</a>
+				<a class="btn btn-success" asp-controller="RecordCrr" asp-action="Edit" asp-route-area="User">@L["NewCrrActivity"]</a>
 			}
-			<a class="btn btn-default" asp-controller="RecordAlarmRequests" asp-action="Index" asp-route-area="User"><i class="fa fa-bell-o"></i> @L["AlarmRequests"] <span class="badge">@Model.Summary.OpenAlarmRequests</span></a>
+			<a class="btn btn-default" asp-controller="RecordAlarmRequests" asp-action="Index" asp-route-area="User">@L["AlarmRequests"] <span class="badge">@Model.Summary.OpenAlarmRequests</span></a>
 		</div>
 	</div>
 </div>

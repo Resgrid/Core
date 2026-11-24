@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ImportButton" xml:space="preserve">
+    <value>Importuj</value>
+  </data>
+  <data name="ImportTitle" xml:space="preserve">
+    <value>Importuj inwentarz</value>
+  </data>
+  <data name="ImportIntro" xml:space="preserve">
+    <value>Wypełnij katalog i stany początkowe z arkusza kalkulacyjnego: pozycje, kategorie, lokalizacje, partie, sprzęt z numerami seryjnymi, koszty i stany magazynowe.</value>
+  </data>
+  <data name="ImportLocked" xml:space="preserve">
+    <value>Zastosowanie importu zapisuje chronione notatki magazynowe. Odblokuj dane chronione, a następnie prześlij ponownie.</value>
+  </data>
+  <data name="ImportNotMigrated" xml:space="preserve">
+    <value>Inwentarz nie został jeszcze skonfigurowany dla tego oddziału. Najpierw go skonfiguruj, a potem wróć do importu.</value>
+  </data>
+  <data name="ImportBackToInventory" xml:space="preserve">
+    <value>Powrót do inwentarza</value>
+  </data>
+  <data name="ImportNoPermission" xml:space="preserve">
+    <value>Import wymaga uprawnienia do korygowania inwentarza.</value>
+  </data>
+  <data name="ImportApplied" xml:space="preserve">
+    <value>Import zakończony.</value>
+  </data>
+  <data name="ImportAlreadyApplied" xml:space="preserve">
+    <value>Ten plik został już zaimportowany. Oto wyniki tamtego importu; nic nie zostało zapisane dwukrotnie.</value>
+  </data>
+  <data name="ImportViewOnHand" xml:space="preserve">
+    <value>Zobacz stan magazynowy</value>
+  </data>
+  <data name="ImportViewHistory" xml:space="preserve">
+    <value>Zobacz historię</value>
+  </data>
+  <data name="ImportAnother" xml:space="preserve">
+    <value>Importuj kolejny plik</value>
+  </data>
+  <data name="ImportReviewIntro" xml:space="preserve">
+    <value>Sprawdź, co zrobi import. Nic nie zostało jeszcze zapisane.</value>
+  </data>
+  <data name="ImportIgnoredColumns" xml:space="preserve">
+    <value>Te kolumny nie zostały rozpoznane i zostały pominięte: {0}</value>
+  </data>
+  <data name="ImportErrorsFound" xml:space="preserve">
+    <value>Wiersze wymagające poprawy: {0}. Popraw plik i ponownie wyświetl podgląd; nic nie zostało zapisane.</value>
+  </data>
+  <data name="ImportReadyToApply" xml:space="preserve">
+    <value>Wszystkie wiersze są poprawne. Zastosuj import, aby zapisać te zmiany.</value>
+  </data>
+  <data name="ImportTotalItemsCreated" xml:space="preserve">
+    <value>Nowe pozycje</value>
+  </data>
+  <data name="ImportTotalItemsUpdated" xml:space="preserve">
+    <value>Zaktualizowane pozycje</value>
+  </data>
+  <data name="ImportTotalLocations" xml:space="preserve">
+    <value>Nowe lokalizacje</value>
+  </data>
+  <data name="ImportTotalCategories" xml:space="preserve">
+    <value>Nowe kategorie</value>
+  </data>
+  <data name="ImportTotalLots" xml:space="preserve">
+    <value>Nowe partie</value>
+  </data>
+  <data name="ImportTotalAssets" xml:space="preserve">
+    <value>Nowe egzemplarze sprzętu</value>
+  </data>
+  <data name="ImportTotalReceipts" xml:space="preserve">
+    <value>Wiersze dodające zapas</value>
+  </data>
+  <data name="ImportTotalDecreases" xml:space="preserve">
+    <value>Wiersze usuwające zapas</value>
+  </data>
+  <data name="ImportTotalUnchanged" xml:space="preserve">
+    <value>Wiersze już zgodne</value>
+  </data>
+  <data name="ImportTotalPar" xml:space="preserve">
+    <value>Ustawione minima w lokalizacjach</value>
+  </data>
+  <data name="ImportTotalMovements" xml:space="preserve">
+    <value>Zaksięgowane ruchy magazynowe</value>
+  </data>
+  <data name="ImportAddedValue" xml:space="preserve">
+    <value>Dodana wartość</value>
+  </data>
+  <data name="ImportUncosted" xml:space="preserve">
+    <value>Wiersze bez kosztu: {0}</value>
+  </data>
+  <data name="ImportOnlyProblems" xml:space="preserve">
+    <value>Tylko wiersze wymagające uwagi</value>
+  </data>
+  <data name="ImportStartOver" xml:space="preserve">
+    <value>Zacznij od nowa</value>
+  </data>
+  <data name="ImportApplyButton" xml:space="preserve">
+    <value>Zastosuj import</value>
+  </data>
+  <data name="ImportRow" xml:space="preserve">
+    <value>Wiersz</value>
+  </data>
+  <data name="ImportItem" xml:space="preserve">
+    <value>Pozycja</value>
+  </data>
+  <data name="ImportLocation" xml:space="preserve">
+    <value>Lokalizacja</value>
+  </data>
+  <data name="ImportCurrent" xml:space="preserve">
+    <value>Obecny stan</value>
+  </data>
+  <data name="ImportNew" xml:space="preserve">
+    <value>Po imporcie</value>
+  </data>
+  <data name="ImportChange" xml:space="preserve">
+    <value>Zmiana</value>
+  </data>
+  <data name="ImportUnitCost" xml:space="preserve">
+    <value>Koszt jednostkowy</value>
+  </data>
+  <data name="ImportOutcome" xml:space="preserve">
+    <value>Wynik</value>
+  </data>
+  <data name="ImportItemNone" xml:space="preserve">
+    <value>Pozycja</value>
+  </data>
+  <data name="ImportItemCreate" xml:space="preserve">
+    <value>Nowa pozycja</value>
+  </data>
+  <data name="ImportItemUpdate" xml:space="preserve">
+    <value>Aktualizuje pozycję</value>
+  </data>
+  <data name="ImportItemExisting" xml:space="preserve">
+    <value>Istniejąca pozycja</value>
+  </data>
+  <data name="ImportNewCategory" xml:space="preserve">
+    <value>nowa kategoria</value>
+  </data>
+  <data name="ImportChangedFields" xml:space="preserve">
+    <value>Zmiany: {0}</value>
+  </data>
+  <data name="ImportNewLocation" xml:space="preserve">
+    <value>Nowa lokalizacja</value>
+  </data>
+  <data name="ImportNewLot" xml:space="preserve">
+    <value>nowa partia</value>
+  </data>
+  <data name="ImportParLevel" xml:space="preserve">
+    <value>Minimum w lokalizacji</value>
+  </data>
+  <data name="ImportNeedsFixing" xml:space="preserve">
+    <value>Wymaga poprawy</value>
+  </data>
+  <data name="ImportStockNone" xml:space="preserve">
+    <value>Tylko katalog</value>
+  </data>
+  <data name="ImportStockReceive" xml:space="preserve">
+    <value>Dodaje zapas</value>
+  </data>
+  <data name="ImportStockDecrease" xml:space="preserve">
+    <value>Usuwa zapas</value>
+  </data>
+  <data name="ImportStockUnchanged" xml:space="preserve">
+    <value>Już zgodne</value>
+  </data>
+  <data name="ImportStockCreateAsset" xml:space="preserve">
+    <value>Nowy egzemplarz</value>
+  </data>
+  <data name="ImportStockAssetExists" xml:space="preserve">
+    <value>Już zarejestrowany</value>
+  </data>
+  <data name="ImportStepFile" xml:space="preserve">
+    <value>1. Przygotuj plik</value>
+  </data>
+  <data name="ImportStepFileHelp" xml:space="preserve">
+    <value>Zacznij od pustego szablonu albo pobierz to, co już jest zarejestrowane, uzupełnij ilości i koszty, a następnie zaimportuj plik z powrotem.</value>
+  </data>
+  <data name="ImportDownloadTemplate" xml:space="preserve">
+    <value>Pusty szablon</value>
+  </data>
+  <data name="ImportDownloadCurrent" xml:space="preserve">
+    <value>Bieżący inwentarz</value>
+  </data>
+  <data name="ImportDownloadCurrentHelp" xml:space="preserve">
+    <value>Twoje pozycje oraz zapasy i sprzęt w lokalizacjach, które widzisz, przygotowane do importu. Substancje kontrolowane są pominięte.</value>
+  </data>
+  <data name="ImportStepUpload" xml:space="preserve">
+    <value>2. Prześlij i wyświetl podgląd</value>
+  </data>
+  <data name="ImportFile" xml:space="preserve">
+    <value>Arkusz kalkulacyjny zapisany jako CSV</value>
+  </data>
+  <data name="ImportFileHelp" xml:space="preserve">
+    <value>Rozdzielany przecinkami, średnikami lub tabulatorami, do {0} wierszy i 1 MB. Podziel większy inwentarz na kilka plików; importowanie ich jeden po drugim jest bezpieczne.</value>
+  </data>
+  <data name="ImportPreviewButton" xml:space="preserve">
+    <value>Podgląd importu</value>
+  </data>
+  <data name="ImportHowItWorks" xml:space="preserve">
+    <value>Jak działa import</value>
+  </data>
+  <data name="ImportRuleCount" xml:space="preserve">
+    <value>{0} to stan po imporcie. Każda lokalizacja jest ustawiana na ilość z pliku: zapas jest dodawany lub usuwany, aby się zgadzał, więc poprawiony plik można zaimportować ponownie bez podwajania czegokolwiek.</value>
+  </data>
+  <data name="ImportRuleItems" xml:space="preserve">
+    <value>Pozycje są dopasowywane według kolumny {0}. Tworzone są nowe pozycje, kategorie, lokalizacje i partie, a wartości z pliku aktualizują istniejące pozycje. Plik nigdy nie zmienia sposobu ewidencji istniejącej pozycji.</value>
+  </data>
+  <data name="ImportRuleCatalogRows" xml:space="preserve">
+    <value>Wiersz z pustymi kolumnami {0} i {1} tylko tworzy lub aktualizuje pozycję; jej zapas pozostaje bez zmian.</value>
+  </data>
+  <data name="ImportRuleLocations" xml:space="preserve">
+    <value>Kolumna {0} wskazuje lokalizację magazynową lub ścieżkę, np. Magazyn &gt; Półka A. Wypełnij {1} lub {2}, aby umieścić zapas w magazynie tej stacji lub jednostki; {0} wskazuje wtedy skrytkę wewnątrz niego. Gdy kolumna {0} jest pusta, używana jest lokalizacja domyślna.</value>
+  </data>
+  <data name="ImportRuleSerialized" xml:space="preserve">
+    <value>Sprzęt z numerami seryjnymi wymaga jednego wiersza na egzemplarz, z wypełnioną kolumną {0}. Numer seryjny, który jest już zarejestrowany, pozostaje tam, gdzie jest.</value>
+  </data>
+  <data name="ImportRuleLots" xml:space="preserve">
+    <value>Pozycje z datą ważności są ewidencjonowane według partii: podaj {0} i datę w {1}. Partia jest tworzona przy pierwszym wystąpieniu.</value>
+  </data>
+  <data name="ImportRuleCost" xml:space="preserve">
+    <value>{0} to cena jednej jednostki miary pozycji dla danego wiersza. Wycenia zapas dodawany przez wiersz i staje się domyślnym kosztem pozycji, jeśli ta jeszcze go nie ma.</value>
+  </data>
+  <data name="ImportRuleControlled" xml:space="preserve">
+    <value>Substancje kontrolowane nie są importowane: ich zapas wymaga przyjęcia potwierdzonego przez świadka.</value>
+  </data>
+  <data name="ImportRuleAllOrNothing" xml:space="preserve">
+    <value>Nic nie jest zapisywane, dopóki nie zastosujesz importu, a plik jest stosowany w całości albo wcale. Jeśli coś zmieni się między podglądem a zastosowaniem, najpierw zobaczysz nowy podgląd.</value>
+  </data>
+  <data name="ImportColumns" xml:space="preserve">
+    <value>Kolumny</value>
+  </data>
+  <data name="ImportColumnsHelp" xml:space="preserve">
+    <value>Kolumny mogą być w dowolnej kolejności, a wymagana jest tylko kolumna {0}. Nagłówki są dopasowywane bez względu na wielkość liter i spacje, a popularne nazwy, takie jak Qty, SKU czy Serial, są rozpoznawane. Kolumny tak/nie przyjmują Yes lub No, {1} przyjmuje Bulk lub Serialized, a daty zapisuje się jako 2027-03-31.</value>
+  </data>
+  <data name="ImportColumnName" xml:space="preserve">
+    <value>Kolumna</value>
+  </data>
+  <data name="ImportColumnMeaning" xml:space="preserve">
+    <value>Zawartość</value>
+  </data>
+  <data name="ImportColumnItem" xml:space="preserve">
+    <value>Nazwa pozycji. Pozycje są dopasowywane po nazwie; nowa nazwa tworzy pozycję. Wymagana.</value>
+  </data>
+  <data name="ImportColumnCode" xml:space="preserve">
+    <value>Twój własny kod pozycji lub numer części, np. MED-0042.</value>
+  </data>
+  <data name="ImportColumnBarcode" xml:space="preserve">
+    <value>Kod kreskowy wydrukowany na pozycji. Nie może należeć do innej pozycji.</value>
+  </data>
+  <data name="ImportColumnCategory" xml:space="preserve">
+    <value>Kategoria, np. Medyczne, lub ścieżka, np. Medyczne &gt; Drogi oddechowe. Brakujące kategorie są tworzone.</value>
+  </data>
+  <data name="ImportColumnDescription" xml:space="preserve">
+    <value>Dłuższy opis pozycji.</value>
+  </data>
+  <data name="ImportColumnUnitOfMeasure" xml:space="preserve">
+    <value>Jak liczona jest pozycja: sztuka, opakowanie, para, ml. Nowa pozycja bez tej wartości jest liczona w "unit".</value>
+  </data>
+  <data name="ImportColumnTracking" xml:space="preserve">
+    <value>Bulk (liczone ilościowo) lub Serialized (jeden egzemplarz na numer seryjny). Nowa pozycja z numerami seryjnymi jest Serialized.</value>
+  </data>
+  <data name="ImportColumnRequiresLot" xml:space="preserve">
+    <value>Yes, gdy zapas pozycji jest ewidencjonowany według partii.</value>
+  </data>
+  <data name="ImportColumnRequiresExpiration" xml:space="preserve">
+    <value>Yes, gdy pozycja ma datę ważności. Pozycje Bulk z datą ważności są ewidencjonowane według partii.</value>
+  </data>
+  <data name="ImportColumnUnitCost" xml:space="preserve">
+    <value>Cena jednej jednostki miary pozycji dla zapasu z tego wiersza, np. 12.50.</value>
+  </data>
+  <data name="ImportColumnCurrency" xml:space="preserve">
+    <value>Trzyliterowy kod waluty dla kosztów pozycji, np. USD lub EUR.</value>
+  </data>
+  <data name="ImportColumnMinLevel" xml:space="preserve">
+    <value>Minimum dla całego oddziału, poniżej którego stan pozycji uznaje się za niski.</value>
+  </data>
+  <data name="ImportColumnMaxLevel" xml:space="preserve">
+    <value>Największa ilość, jaką oddział chce mieć na stanie.</value>
+  </data>
+  <data name="ImportColumnReorderPoint" xml:space="preserve">
+    <value>Ilość dla całego oddziału, która uruchamia ponowne zamówienie.</value>
+  </data>
+  <data name="ImportColumnReorderQuantity" xml:space="preserve">
+    <value>Ile zamówić przy ponownym zamówieniu.</value>
+  </data>
+  <data name="ImportColumnLocation" xml:space="preserve">
+    <value>Gdzie jest zapas: nazwa lokalizacji lub ścieżka, np. Magazyn &gt; Półka A. Brakujące lokalizacje są tworzone.</value>
+  </data>
+  <data name="ImportColumnStation" xml:space="preserve">
+    <value>Nazwa stacji: zapas jest w magazynie tej stacji.</value>
+  </data>
+  <data name="ImportColumnUnit" xml:space="preserve">
+    <value>Nazwa jednostki: zapas jest w magazynie tej jednostki.</value>
+  </data>
+  <data name="ImportColumnQuantity" xml:space="preserve">
+    <value>Ile jest na stanie w lokalizacji po imporcie. Puste pole pozostawia zapas bez zmian.</value>
+  </data>
+  <data name="ImportColumnParLevel" xml:space="preserve">
+    <value>Minimum do utrzymania w lokalizacji z tego wiersza.</value>
+  </data>
+  <data name="ImportColumnLot" xml:space="preserve">
+    <value>Numer partii. Brakujące partie są tworzone.</value>
+  </data>
+  <data name="ImportColumnExpires" xml:space="preserve">
+    <value>Data ważności partii lub egzemplarza, np. 2027-03-31.</value>
+  </data>
+  <data name="ImportColumnSerialNumber" xml:space="preserve">
+    <value>Jeden egzemplarz z numerem seryjnym na wiersz. Numery seryjne już zarejestrowane pozostają bez zmian.</value>
+  </data>
+  <data name="ImportColumnAssetTag" xml:space="preserve">
+    <value>Numer inwentarzowy egzemplarza.</value>
+  </data>
+  <data name="ImportColumnNote" xml:space="preserve">
+    <value>Notatka zapisywana z ruchem magazynowym księgowanym przez ten wiersz.</value>
+  </data>
+  <data name="ErrorUnknown" xml:space="preserve">
+    <value>Nie udało się tego wykonać</value>
+  </data>
+  <data name="ErrorImportFileRequired" xml:space="preserve">
+    <value>Wybierz plik do przesłania.</value>
+  </data>
+  <data name="ErrorImportFileTooLarge" xml:space="preserve">
+    <value>Plik jest większy niż 1 MB. Podziel go na kilka plików.</value>
+  </data>
+  <data name="ErrorImportFileInvalid" xml:space="preserve">
+    <value>Nie udało się odczytać pliku jako CSV. Zapisz arkusz jako CSV i spróbuj ponownie.</value>
+  </data>
+  <data name="ErrorImportFileEmpty" xml:space="preserve">
+    <value>Plik ma nagłówek, ale nie ma wierszy.</value>
+  </data>
+  <data name="ErrorImportTooManyRows" xml:space="preserve">
+    <value>Plik ma więcej wierszy, niż przyjmuje jeden import. Podziel go na kilka plików.</value>
+  </data>
+  <data name="ErrorImportDuplicateColumn" xml:space="preserve">
+    <value>Dwie kolumny w pliku oznaczają to samo. Usuń jedną z nich.</value>
+  </data>
+  <data name="ErrorImportItemColumnRequired" xml:space="preserve">
+    <value>Plik musi mieć kolumnę Item z nazwą każdej pozycji.</value>
+  </data>
+  <data name="ErrorImportHasErrors" xml:space="preserve">
+    <value>Niektóre wiersze wymagają poprawy, zanim plik będzie można zaimportować.</value>
+  </data>
+  <data name="ErrorImportPreviewChanged" xml:space="preserve">
+    <value>Inwentarz zmienił się po podglądzie. Sprawdź zaktualizowany podgląd poniżej i zastosuj ponownie.</value>
+  </data>
+  <data name="ErrorMigrationRequired" xml:space="preserve">
+    <value>Inwentarz nie został jeszcze skonfigurowany dla tego oddziału.</value>
+  </data>
+  <data name="ErrorInventoryDisabled" xml:space="preserve">
+    <value>Inwentarz jest wyłączony dla tego oddziału.</value>
+  </data>
+  <data name="ErrorPermissionRequired" xml:space="preserve">
+    <value>Nie masz uprawnień do korygowania zapasów w tym miejscu.</value>
+  </data>
+  <data name="ErrorMembershipRequired" xml:space="preserve">
+    <value>Nie jesteś aktywnym członkiem tego oddziału.</value>
+  </data>
+  <data name="ErrorOperationUnavailable" xml:space="preserve">
+    <value>Ta funkcja jest teraz niedostępna.</value>
+  </data>
+  <data name="ErrorRequestConflict" xml:space="preserve">
+    <value>Ten import rozpoczął ktoś inny. Zacznij od nowa, przesyłając plik ponownie.</value>
+  </data>
+  <data name="ErrorRequestInProgress" xml:space="preserve">
+    <value>Ten import jest nadal stosowany.</value>
+  </data>
+  <data name="ErrorInsufficientStock" xml:space="preserve">
+    <value>Część tego zapasu jest zarezerwowana dla zleceń pracy i nie można jej aż tak zmniejszyć.</value>
+  </data>
+  <data name="ErrorRevisionConflict" xml:space="preserve">
+    <value>Ktoś zmienił ten rekord w tym samym czasie. Ponownie wyświetl podgląd pliku.</value>
+  </data>
+  <data name="ErrorInvalidIdentifier" xml:space="preserve">
+    <value>Żądanie importu jest nieprawidłowe. Zacznij od nowa, przesyłając plik ponownie.</value>
+  </data>
+  <data name="ErrorCostReconciliationRequired" xml:space="preserve">
+    <value>Historia kosztów pozycji wymaga uzgodnienia, zanim będzie można zmniejszyć jej zapas.</value>
+  </data>
+  <data name="ErrorImportRowUnreadable" xml:space="preserve">
+    <value>Nie udało się odczytać tego wiersza; sprawdź cudzysłowy.</value>
+  </data>
+  <data name="ErrorImportRowColumns" xml:space="preserve">
+    <value>Ten wiersz ma więcej wartości, niż nagłówek ma kolumn.</value>
+  </data>
+  <data name="ErrorImportValueTooLong" xml:space="preserve">
+    <value>Ta wartość jest za długa.</value>
+  </data>
+  <data name="ErrorImportInvalidNumber" xml:space="preserve">
+    <value>To nie jest liczba.</value>
+  </data>
+  <data name="ErrorImportInvalidYesNo" xml:space="preserve">
+    <value>Wpisz Yes lub No.</value>
+  </data>
+  <data name="ErrorImportInvalidTracking" xml:space="preserve">
+    <value>Wpisz Bulk lub Serialized.</value>
+  </data>
+  <data name="ErrorImportInvalidDate" xml:space="preserve">
+    <value>To nie jest data; wpisz ją jako 2027-03-31.</value>
+  </data>
+  <data name="ErrorImportItemRequired" xml:space="preserve">
+    <value>Brak nazwy pozycji.</value>
+  </data>
+  <data name="ErrorImportItemConflict" xml:space="preserve">
+    <value>Inny wiersz nadaje tej pozycji inną wartość.</value>
+  </data>
+  <data name="ErrorImportControlledSubstance" xml:space="preserve">
+    <value>Substancji kontrolowanych nie można importować; zarejestruj je przez przyjęcie potwierdzone przez świadka.</value>
+  </data>
+  <data name="ErrorImportItemTrackingMismatch" xml:space="preserve">
+    <value>Nie odpowiada to sposobowi ewidencji istniejącej pozycji; zamiast tego edytuj pozycję.</value>
+  </data>
+  <data name="ErrorImportUnitNotFound" xml:space="preserve">
+    <value>Żadna jednostka nie ma tej nazwy.</value>
+  </data>
+  <data name="ErrorImportUnitAmbiguous" xml:space="preserve">
+    <value>Więcej niż jedna jednostka ma tę nazwę.</value>
+  </data>
+  <data name="ErrorImportStationNotFound" xml:space="preserve">
+    <value>Żadna stacja nie ma tej nazwy.</value>
+  </data>
+  <data name="ErrorImportStationAmbiguous" xml:space="preserve">
+    <value>Więcej niż jedna stacja ma tę nazwę.</value>
+  </data>
+  <data name="ErrorImportStationOrUnit" xml:space="preserve">
+    <value>Podaj stację albo jednostkę, nie obie.</value>
+  </data>
+  <data name="ErrorImportLocationAmbiguous" xml:space="preserve">
+    <value>Więcej niż jedna lokalizacja ma tę nazwę; podaj jej ścieżkę, stację lub jednostkę.</value>
+  </data>
+  <data name="ErrorImportLocationRequired" xml:space="preserve">
+    <value>Podaj lokalizację; oddział nie ma lokalizacji domyślnej.</value>
+  </data>
+  <data name="ErrorImportSerialRequired" xml:space="preserve">
+    <value>Ta pozycja ma numery seryjne; podaj jeden numer seryjny na wiersz.</value>
+  </data>
+  <data name="ErrorImportSerialOnBulkItem" xml:space="preserve">
+    <value>Ta pozycja jest liczona ilościowo i nie ma numerów seryjnych.</value>
+  </data>
+  <data name="ErrorImportDuplicateLine" xml:space="preserve">
+    <value>Inny wiersz już liczy tę pozycję w tej lokalizacji i partii.</value>
+  </data>
+  <data name="ErrorImportLotExpiryMismatch" xml:space="preserve">
+    <value>Ta partia jest zarejestrowana z inną datą ważności.</value>
+  </data>
+  <data name="ErrorInvalidText" xml:space="preserve">
+    <value>Tej wartości brakuje, jest za długa lub niedozwolona.</value>
+  </data>
+  <data name="ErrorInvalidItem" xml:space="preserve">
+    <value>Ta wartość pozycji jest nieprawidłowa.</value>
+  </data>
+  <data name="ErrorInvalidCost" xml:space="preserve">
+    <value>Koszty muszą wynosić zero lub więcej, z maksymalnie sześcioma miejscami po przecinku.</value>
+  </data>
+  <data name="ErrorInvalidCurrency" xml:space="preserve">
+    <value>Wpisz trzyliterowy kod waluty, np. USD.</value>
+  </data>
+  <data name="ErrorInvalidQuantity" xml:space="preserve">
+    <value>Ilości muszą wynosić zero lub więcej, z maksymalnie sześcioma miejscami po przecinku.</value>
+  </data>
+  <data name="ErrorInvalidParLevel" xml:space="preserve">
+    <value>Minima w lokalizacjach muszą wynosić zero lub więcej, z maksymalnie sześcioma miejscami po przecinku.</value>
+  </data>
+  <data name="ErrorDuplicateItem" xml:space="preserve">
+    <value>Inna pozycja ma już ten kod kreskowy.</value>
+  </data>
+  <data name="ErrorDuplicateSerial" xml:space="preserve">
+    <value>Ten numer seryjny występuje więcej niż raz dla tej pozycji.</value>
+  </data>
+  <data name="ErrorLotRequired" xml:space="preserve">
+    <value>Ta pozycja jest ewidencjonowana według partii; podaj numer partii.</value>
+  </data>
+  <data name="ErrorExpiryRequired" xml:space="preserve">
+    <value>Ta pozycja ma datę ważności; podaj ją.</value>
+  </data>
+  <data name="ErrorExpiryRequiresLotTracking" xml:space="preserve">
+    <value>Pozycja liczona ilościowo z datą ważności musi być ewidencjonowana według partii.</value>
+  </data>
+  <data name="ErrorLotMismatch" xml:space="preserve">
+    <value>Ta partia nie może przyjąć zapasu tej pozycji.</value>
+  </data>
+  <data name="ErrorLotCostMismatch" xml:space="preserve">
+    <value>Ta partia ma już inny koszt.</value>
+  </data>
+  <data name="ErrorItemUnavailable" xml:space="preserve">
+    <value>Ta pozycja jest nieaktywna; aktywuj ją przed zmianą jej zapasu.</value>
+  </data>
+  <data name="ErrorItemCurrencyLocked" xml:space="preserve">
+    <value>Waluty pozycji nie można zmienić, gdy ma ona już ruchy magazynowe.</value>
+  </data>
+  <data name="ErrorSerializedQuantity" xml:space="preserve">
+    <value>Egzemplarz z numerem seryjnym to jeden wiersz; pozostaw ilość pustą lub wpisz 1.</value>
+  </data>
+  <data name="ErrorInvalidAsset" xml:space="preserve">
+    <value>Ta wartość egzemplarza jest nieprawidłowa.</value>
+  </data>
+  <data name="ErrorLocationUnavailable" xml:space="preserve">
+    <value>Nie możesz umieścić zapasu w tej lokalizacji.</value>
+  </data>
+  <data name="ErrorInvalidLocationHierarchy" xml:space="preserve">
+    <value>Ta ścieżka lokalizacji jest nieprawidłowa.</value>
+  </data>
+  <data name="ErrorInvalidCategoryHierarchy" xml:space="preserve">
+    <value>Ta ścieżka kategorii jest nieprawidłowa.</value>
+  </data>
+  <data name="ErrorHolderRequired" xml:space="preserve">
+    <value>Stacja lub jednostka tej lokalizacji jest nieprawidłowa.</value>
+  </data>
+  <data name="ErrorKitMustBeSerialized" xml:space="preserve">
+    <value>Zestaw musi mieć numer seryjny.</value>
+  </data>
+  <data name="ErrorProtectedDataRequired" xml:space="preserve">
+    <value>Odblokuj dane chronione, aby kontynuować.</value>
+  </data>
+  <data name="ErrorImportUnitOfMeasureDefaulted" xml:space="preserve">
+    <value>Nie podano jednostki miary, więc nowa pozycja otrzymuje domyślną. W razie potrzeby zmień ją w pozycji.</value>
+  </data>
+  <data name="ErrorImportLocationIgnored" xml:space="preserve">
+    <value>Lokalizacja jest pomijana: ten wiersz nie ma ilości, numeru seryjnego ani minimum w lokalizacji.</value>
+  </data>
+  <data name="ErrorImportAssetElsewhere" xml:space="preserve">
+    <value>Ten numer seryjny jest zarejestrowany w innej lokalizacji; nie zostanie przeniesiony.</value>
+  </data>
+  <data name="ErrorImportAssetRetired" xml:space="preserve">
+    <value>Ten numer seryjny jest zarejestrowany jako zagubiony, zużyty lub wycofany; nie zostanie zmieniony.</value>
+  </data>
+</root>

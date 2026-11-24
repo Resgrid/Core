@@ -58,7 +58,7 @@
 				<a class="btn btn-default" title="@string.Format(localizer["ExportHelp"].Value, Model.MaxExportRows)"
 				   asp-controller="Search" asp-action="Export" asp-route-area="User"
 				   asp-route-q="@Model.Query" asp-route-type="@Model.Type" asp-route-from="@Model.From" asp-route-to="@Model.To" asp-route-sort="@Model.Sort">
-					<i class="fa fa-download"></i> @localizer["ExportCsv"]
+					@localizer["ExportCsv"]
 				</a>
 			</div>
 		</div>

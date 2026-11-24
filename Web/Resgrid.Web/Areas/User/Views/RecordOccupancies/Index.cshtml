@@ -21,8 +21,8 @@
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
 			@if (Model.CanAdminister)
 			{
-				<a class="btn btn-success" asp-controller="RecordOccupancies" asp-action="Edit" asp-route-area="User"><i class="fa fa-plus"></i> @L["NewOccupancy"]</a>
-				<a class="btn btn-default" asp-controller="RecordOccupancies" asp-action="Crosswalk" asp-route-area="User"><i class="fa fa-exchange"></i> @L["PreplanCrosswalk"]</a>
+				<a class="btn btn-success" asp-controller="RecordOccupancies" asp-action="Edit" asp-route-area="User">@L["NewOccupancy"]</a>
+				<a class="btn btn-default" asp-controller="RecordOccupancies" asp-action="Crosswalk" asp-route-area="User">@L["PreplanCrosswalk"]</a>
 			}
 		</div>
 	</div>

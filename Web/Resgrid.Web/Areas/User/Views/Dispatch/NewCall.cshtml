@@ -10,7 +10,8 @@
     var showAddress = Model.IsFieldVisible(NewCallFieldKeys.Address);
     var showGeolocation = Model.IsFieldVisible(NewCallFieldKeys.Geolocation);
     var showWhat3Words = Model.IsFieldVisible(NewCallFieldKeys.What3Words);
-    var showLocation = showAddress || showGeolocation || showWhat3Words;
+    var showPlusCode = Model.IsFieldVisible(NewCallFieldKeys.PlusCode);
+    var showLocation = showAddress || showGeolocation || showWhat3Words || showPlusCode;
     var showLinkedCall = Model.IsFieldVisible(NewCallFieldKeys.LinkedCall);
     var showDispatchPersonnel = Model.IsFieldVisible(NewCallFieldKeys.DispatchPersonnel);
     var showDispatchGroups = Model.IsFieldVisible(NewCallFieldKeys.DispatchGroups);
@@ -281,9 +282,10 @@
                                             }
                                         </div>
                                     }
+                                    <partial name="_CallLocationPlusCode" model="Model" />
                                     @if (showGeolocation)
                                     {
-                                        <div class="row" style="@(showAddress || showWhat3Words ? "margin-top: 8px;" : "")">
+                                        <div class="row" style="@(showAddress || showWhat3Words || showPlusCode ? "margin-top: 8px;" : "")">
                                             <div class="col-md-11">
                                                 <div class="input-group input-group-sm">
                                                     <span class="input-group-addon">@localizer["LatitudeShort"]</span>
@@ -306,7 +308,7 @@
                         }
                         @if (!showGeolocation)
                         {
-                            @* No pin entry, but an address or what3words lookup still resolves a point here so the run card
+                            @* No pin entry, but an address, what3words or plus code lookup still resolves a point here so the run card
                                recommendation, nearest units and personnel ETAs keep working, as the address would be geocoded
                                on save anyway. *@
                             <input type="hidden" asp-for="Latitude">
@@ -711,6 +713,7 @@
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.runcarddecision.js"></script>
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.nearestboard.js"></script>
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.destinations.js"></script>
+    <script src="~/js/app/internal/dispatch/resgrid.dispatch.facilitymaps.js" asp-append-version="true"></script>
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.newcall.js"></script>
     <partial name="_CallLocationsScript" model="Model" />
 
@@ -816,6 +819,10 @@
                 var data = e.params.data;
                 $('#IndoorMapZoneId').val(data.id);
                 $('#IndoorMapFloorId').val(data.floorId);
+                // Moves the pin to the room and shows its floor on the call map.
+                if (resgrid.dispatch.facilitymaps) {
+                    resgrid.dispatch.facilitymaps.zonePicked(data);
+                }
             });
 
             $('#indoorZoneSearch').on('select2:clear', function () {

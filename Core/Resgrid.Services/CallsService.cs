@@ -58,6 +58,9 @@ namespace Resgrid.Services
 		// Lazy: the destination rules service reads call types back through this service (plan D8).
 		private readonly Lazy<IDestinationAutoFillService> _destinationAutoFill;
 
+		// Lazy: only the Labeled Fields email format reads it (the department's labels).
+		private readonly Lazy<IDepartmentSettingsService> _departmentSettings;
+
 		// Lazy: the destination advisor reads the call and saves notes back through this service (plan D4).
 		private readonly Lazy<IAiDestinationAdvisorService> _aiDestinationAdvisor;
 
@@ -77,8 +80,10 @@ namespace Resgrid.Services
 			Lazy<IProtectedWriteService> protectedWriteService, Lazy<ISearchProjectionService> searchProjections = null,
 			Lazy<ICallLocationHistoryService> callLocationHistory = null, ITypeIconsRepository typeIconsRepository = null,
 			ICallPersonnelReleasesRepository callPersonnelReleasesRepository = null, Lazy<ICallRoutesService> callRoutes = null,
-			Lazy<IDestinationAutoFillService> destinationAutoFill = null, Lazy<IAiDestinationAdvisorService> aiDestinationAdvisor = null)
+			Lazy<IDestinationAutoFillService> destinationAutoFill = null, Lazy<IAiDestinationAdvisorService> aiDestinationAdvisor = null,
+			Lazy<IDepartmentSettingsService> departmentSettings = null)
 		{
+			_departmentSettings = departmentSettings;
 			_callRoutes = callRoutes;
 			_destinationAutoFill = destinationAutoFill;
 			_aiDestinationAdvisor = aiDestinationAdvisor;
@@ -563,6 +568,15 @@ namespace Resgrid.Services
 
 		public async Task<Call> GenerateCallFromEmail(int type, CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units, int priority, List<DepartmentCallPriority> activePriorities, List<CallType> callTypes)
 		{
+			// Labeled Fields reads nothing without the department's labels (intake, Twilio and SignalWire text-to-call come through here).
+			if (type == (int)CallEmailTypes.LabeledFields && department != null && _departmentSettings != null)
+			{
+				var labels = await _departmentSettings.Value.GetEmailLabeledFieldsConfigAsync(department.DepartmentId);
+				var parsed = await _callEmailFactory.ParseCallEmailAsync(CallEmailTypes.LabeledFields, email, managingUser, users, department, units, priority,
+					activePriorities, callTypes, _geoLocationProvider, labels);
+				return parsed?.Call;
+			}
+
 			return await _callEmailFactory.GenerateCallFromEmailText((CallEmailTypes)type, email, managingUser, users, department, activeCalls, units, priority, activePriorities, callTypes, _geoLocationProvider);
 		}
 

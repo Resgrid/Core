@@ -20,6 +20,15 @@ namespace Resgrid.Model.Services
 			IEnumerable<int> roleIds, string createdByUserId);
 
 		/// <summary>
+		/// <see cref="RecordAsync"/> under an id the caller derives from its own durable work item (a retried request records the same
+		/// page under the same id): when an entry with that id already exists it is returned as it is — never a second page for the
+		/// same work. Never throws: an entry it could neither find nor write is not <see cref="CallBroadcastOutboxEntry.Persisted"/>.
+		/// Null when nothing was added.
+		/// </summary>
+		Task<CallBroadcastOutboxEntry> RecordOnceAsync(string callBroadcastOutboxId, Call call, IEnumerable<string> userIds, IEnumerable<int> groupIds,
+			IEnumerable<int> unitIds, IEnumerable<int> roleIds, string createdByUserId);
+
+		/// <summary>
 		/// Sends the call's unsent pages now: <paramref name="recorded"/> and any an earlier edit left behind, built from
 		/// <paramref name="call"/> (the caller's saved, populated call). Never throws; returns how many the queue accepted.
 		/// </summary>

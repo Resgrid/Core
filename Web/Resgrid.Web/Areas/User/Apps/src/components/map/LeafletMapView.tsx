@@ -11,6 +11,7 @@ import {
   getPoiIconClass,
   getPoiMarkerShapePath,
   isPoiMarker,
+  selectFitPositions,
   type MapMarkerInfo,
   type MapRendererProps,
 } from './mapTypes';
@@ -28,6 +29,7 @@ interface MarkerState {
   markerType: MapMarkerInfo['Type'];
   infoWindowContent: string;
   hideLabels: boolean;
+  isPoi: boolean;
 }
 
 function createMarkerIcon(marker: MapMarkerInfo): L.Icon | L.DivIcon {
@@ -101,7 +103,7 @@ function fitMapToMarkers(
     return;
   }
 
-  const visiblePositions = Array.from(markers.values()).map(({ latitude, longitude }) => [
+  const visiblePositions = selectFitPositions(markers.values()).map(({ latitude, longitude }) => [
     latitude,
     longitude,
   ] as L.LatLngTuple);
@@ -131,11 +133,14 @@ export default function LeafletMapView({
   fitBoundsKey,
   fitMaxZoom,
   keepMarkersInView = false,
+  customOverlays,
+  focusRequest,
 }: MapRendererProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markerRefs = useRef<Map<string, MarkerState>>(new Map());
   const layerRefs = useRef<Map<string, L.GeoJSON>>(new Map());
+  const customOverlayRefs = useRef<L.Layer[]>([]);
   // Read by the keep-in-view re-fit, which must not re-run when only the map data changes.
   const mapDataRef = useRef(mapData);
   mapDataRef.current = mapData;
@@ -171,6 +176,8 @@ export default function LeafletMapView({
       markerRefs.current.clear();
       layerRefs.current.forEach((layer) => layer.remove());
       layerRefs.current.clear();
+      customOverlayRefs.current.forEach((layer) => layer.remove());
+      customOverlayRefs.current = [];
       map.remove();
       mapRef.current = null;
     };
@@ -226,6 +233,7 @@ export default function LeafletMapView({
           markerType: markerInfo.Type,
           infoWindowContent: markerInfo.InfoWindowContent,
           hideLabels,
+          isPoi: isPoiMarker(markerInfo),
         });
 
         continue;
@@ -323,6 +331,68 @@ export default function LeafletMapView({
       layerRefs.current.set(layer.id, geoJsonLayer);
     }
   }, [layerVisibility, layers]);
+
+  // Custom / indoor maps switched on in the Layers panel: the layer image as tiles inside its bounds, then the
+  // regions (rooms, zones) with their names. Kept in the tile pane / overlay pane, under the markers.
+  useEffect(() => {
+    const map = mapRef.current;
+
+    if (!map) {
+      return;
+    }
+
+    customOverlayRefs.current.forEach((layer) => layer.remove());
+    customOverlayRefs.current = [];
+
+    for (const overlay of customOverlays ?? []) {
+      if (overlay.tileUrl) {
+        const tiles = L.tileLayer(overlay.tileUrl, {
+          maxZoom: 22,
+          opacity: overlay.opacity,
+          ...(overlay.bounds ? { bounds: L.latLngBounds([overlay.bounds[1], overlay.bounds[0]], [overlay.bounds[3], overlay.bounds[2]]) } : {}),
+        });
+        tiles.addTo(map);
+        customOverlayRefs.current.push(tiles);
+      }
+
+      if (overlay.regions && overlay.regions.features.length > 0) {
+        const regions = L.geoJSON(overlay.regions as GeoJsonObject, {
+          style: (feature) => {
+            const color = getFeatureColor(feature?.properties, '#1c7ed6');
+            return { color, opacity: 0.9, fillColor: color, fillOpacity: 0.08, weight: 1.5 };
+          },
+          onEachFeature: (feature, mapLayer) => {
+            const popupHtml = getFeaturePopupHtml(overlay.name, feature?.properties);
+            if (popupHtml) {
+              mapLayer.bindPopup(popupHtml);
+            }
+          },
+        });
+        regions.addTo(map);
+        // Department layers share the overlay pane's SVG and draw in the order they were added, so regions added after
+        // them would cover them and take their clicks. Send the regions to the back, last first, so they keep their own
+        // order (a room above the hall around it) under every department shape (MapRendererProps.customOverlays).
+        const regionPaths = regions.getLayers();
+        for (let index = regionPaths.length - 1; index >= 0; index--) {
+          (regionPaths[index] as L.Path).bringToBack?.();
+        }
+        customOverlayRefs.current.push(regions);
+      }
+    }
+    // The map is replaced (and these overlays removed with it) when its tiles or attribution change, so they are
+    // installed again on the new map even when the overlays themselves did not change.
+  }, [customOverlays, resolvedMapConfig.attribution, resolvedMapConfig.tileUrl]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+
+    if (!map || !focusRequest) {
+      return;
+    }
+
+    const [west, south, east, north] = focusRequest.bounds;
+    map.fitBounds(L.latLngBounds([south, west], [north, east]), { padding: [24, 24], maxZoom: 19 });
+  }, [focusRequest?.key]);
 
   return <div ref={mapContainerRef} className="rg-map__canvas" />;
 }

@@ -78,9 +78,41 @@ var resgrid;
                 }
                 return span.prop('outerHTML');
             }
+            // WCAG relative luminance of one 0-255 channel.
+            function channelLuminance(value) {
+                var c = value / 255;
+                return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+            }
+            // Dark or white text, whichever contrasts more with the background (WCAG contrast ratio), for a status with no text
+            // colour of its own. A brightness threshold alone put white on pure green (#00ff00, about 1.4:1). Dark is weighed as
+            // black (on mid-grey #808080 white is 3.9:1, black 5.3:1) and drawn as the theme's #262626 where that still reads at
+            // 4.5:1 (the WCAG minimum for normal text), else black.
+            function readableTextColor(background) {
+                var hex = hexOr(background, null);
+                if (!hex) {
+                    return null;
+                }
+                hex = hex.slice(1);
+                if (hex.length === 3) {
+                    hex = hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2);
+                }
+                var r = parseInt(hex.substr(0, 2), 16);
+                var g = parseInt(hex.substr(2, 2), 16);
+                var b = parseInt(hex.substr(4, 2), 16);
+                var luminance = 0.2126 * channelLuminance(r) + 0.7152 * channelLuminance(g) + 0.0722 * channelLuminance(b);
+                var againstWhite = 1.05 / (luminance + 0.05);
+                var againstBlack = (luminance + 0.05) / 0.05;
+                if (againstWhite >= againstBlack) {
+                    return '#ffffff';
+                }
+                var againstDark = (luminance + 0.05) / (channelLuminance(0x26) + 0.05);
+                return againstDark >= 4.5 ? '#262626' : '#000000';
+            }
             // A status in its own colours, as everywhere else; older built-in statuses carry a label class instead of a
             // colour. Set through .css() so a colour never lands in the markup unchecked. The border keeps a white or very
-            // light status visible on the table's white rows.
+            // light status visible on the table's white rows. A status without a text colour (the built-in ones, mapped from
+            // a label class: Standing By is #777) would keep the theme's grey label text, unreadable on a mid-grey or dark
+            // background, so it gets dark or white text by the background instead.
             function statusLabel(value, color, textColor) {
                 var label = $('<span class="label">').text(value === null || value === undefined ? '' : String(value));
                 var background = $.trim(color || '');
@@ -90,8 +122,9 @@ var resgrid;
                     label.addClass('label-default');
                     if (background) {
                         label.css({ 'background-color': background, 'border': '1px solid rgba(0, 0, 0, 0.2)' });
-                        if (textColor) {
-                            label.css('color', textColor);
+                        var foreground = $.trim(textColor || '') || readableTextColor(background);
+                        if (foreground) {
+                            label.css('color', foreground);
                         }
                     }
                 }
@@ -275,7 +308,7 @@ var resgrid;
                     { data: 'Name', title: getText('name', 'Name'), render: personNameCell },
                     {
                         data: 'Status', title: getText('status', 'Status'),
-                        render: function (data, type, row) { return type === 'display' ? (data ? statusLabel(data, row.StatusColor) : '') : (data || ''); }
+                        render: function (data, type, row) { return type === 'display' ? (data ? statusLabel(data, row.StatusColor, row.StatusTextColor) : '') : (data || ''); }
                     },
                     {
                         data: 'Staffing', title: text('staffingHeader'),

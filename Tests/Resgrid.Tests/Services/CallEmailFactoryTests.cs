@@ -567,14 +567,17 @@ namespace Resgrid.Tests.Services
 			}
 
 			[Test]
-			public async Task should_update_the_open_call_with_the_same_incident_number()
+			public async Task should_leave_matching_an_open_call_with_the_same_incident_number_to_the_cad_update_engine()
 			{
+				// The template only reads the email: whether a page with an open call's incident number updates that call is
+				// EmailCallUpdateService's decision (cad-email-call-updates-plan.md D1; EmailCallUpdateServiceTests).
 				var openCall = new Call { CallId = 78, Name = "Medical Fall", IncidentNumber = "00117-2026-00000474" };
 
 				var call = await ImportForBagley(BagleyEmail("Medical Fall"), new List<Call> { openCall });
 
-				call.Should().BeSameAs(openCall);
-				call.LastDispatchedOn.Should().NotBeNull();
+				call.Should().NotBeSameAs(openCall);
+				call.CallId.Should().Be(0);
+				call.IncidentNumber.Should().Be("00117-2026-00000474", "the engine matches on the incident number the template read");
 			}
 
 			[Test]

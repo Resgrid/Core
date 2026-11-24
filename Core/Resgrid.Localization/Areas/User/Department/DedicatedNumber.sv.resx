@@ -109,6 +109,15 @@
   <data name="VoiceIntakeHelp" xml:space="preserve">
     <value>Uppringare som inte är medlemmar svarar på guidade frågor och ett väntande ärende skapas. Kräver tillägget Enhanced AI med AI-röstmottagning.</value>
   </data>
+  <data name="VoiceRecording" xml:space="preserve">
+    <value>Spela in samtal till röstmottagningen</value>
+  </data>
+  <data name="VoiceRecordingHelp" xml:space="preserve">
+    <value>Uppringare får veta att samtalet spelas in och måste trycka 1 för att godkänna innan de kan lämna en rapport. Inspelningen startar först när de har godkänt, och när samtalet avslutas läggs inspelningen till som en fil på det väntande ärendet. Om uppringaren lägger på innan det väntande ärendet har skapats sparas ingen inspelning.</value>
+  </data>
+  <data name="VoiceRecordingLegal" xml:space="preserve">
+    <value>Lagar om samtalsinspelning och samtycke skiljer sig mellan länder och delstater. Kontrollera vad som gäller där ni verkar innan ni slår på detta.</value>
+  </data>
   <data name="VoiceIntakeUnavailable" xml:space="preserve">
     <value>AI-röstmottagning är inte tillgänglig för er avdelning ännu. Inställningen gäller när den blir det.</value>
   </data>

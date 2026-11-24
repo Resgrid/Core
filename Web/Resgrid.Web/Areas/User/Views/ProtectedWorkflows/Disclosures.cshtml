@@ -20,7 +20,7 @@
         <div class="title-action">
             <a class="btn btn-default" asp-action="DisclosuresCsv" asp-route-workflowId="@Model.WorkflowId" asp-route-callId="@Model.CallId"
                asp-route-from="@(Model.From?.ToString("yyyy-MM-dd"))" asp-route-to="@(Model.To?.ToString("yyyy-MM-dd"))">
-                <i class="fa fa-download"></i> @pwLocalizer["ExportCsv"]
+                @pwLocalizer["ExportCsv"]
             </a>
         </div>
     </div>

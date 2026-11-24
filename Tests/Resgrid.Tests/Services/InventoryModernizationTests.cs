@@ -51,6 +51,8 @@ namespace Resgrid.Tests.Services
 		private Mock<IRmsInventoryUsageAdapter> _recordUsageAdapter;
 		private Mock<IContactsService> _contacts;
 		private Dictionary<string, Contact> _companyContacts;
+		private Mock<IUnitsService> _unitsMock;
+		private Mock<IDepartmentGroupsService> _groupsMock;
 
 		[SetUp]
 		public void SetUp()
@@ -66,9 +68,9 @@ namespace Resgrid.Tests.Services
 			_auth.Setup(x => x.IsEnabledAsync(Department)).ReturnsAsync(true);
 			_read = new Mock<IProtectedReadService>(); _read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult()));
 			_write = new Mock<IProtectedWriteService>(); _write.SetReturnsDefault(Task.FromResult(ProtectedWriteResult.Allowed()));
-			var units = new Mock<IUnitsService>();
+			var units = _unitsMock = new Mock<IUnitsService>();
 			units.Setup(x => x.GetUnitByIdAsync(It.IsAny<int>())).ReturnsAsync((int id) => new Unit { UnitId = id, DepartmentId = Department, StationGroupId = 10 });
-			var groups = new Mock<IDepartmentGroupsService>();
+			var groups = _groupsMock = new Mock<IDepartmentGroupsService>();
 			groups.Setup(x => x.GetGroupByIdAsync(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync((int id, bool b) => new DepartmentGroup { DepartmentGroupId = id, DepartmentId = Department });
 			groups.Setup(x => x.GetGroupForUserAsync(It.IsAny<string>(), Department)).ReturnsAsync(new DepartmentGroup { DepartmentGroupId = 10, DepartmentId = Department });
 			var audit = new Mock<IAuditLogsRepository>();

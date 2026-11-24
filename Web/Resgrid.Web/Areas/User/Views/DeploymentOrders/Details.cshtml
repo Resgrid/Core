@@ -36,8 +36,8 @@
 	</div>
 	<div class="col-sm-4">
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-			@if (Model.Deployment.Record != null) { <a class="btn btn-default" asp-controller="RecordDeployments" asp-action="Details" asp-route-area="User" asp-route-id="@o.RmsExternalOrderId"><i class="fa fa-file-text-o"></i> @localizer["DeploymentRecord"]</a> }
-			@if (!string.IsNullOrEmpty(o.ArtifactFileName)) { <a class="btn btn-default" asp-controller="DeploymentOrders" asp-action="Artifact" asp-route-area="User" asp-route-id="@o.RmsExternalOrderId"><i class="fa fa-download"></i> @localizer["DeploymentArtifact"]</a> }
+			@if (Model.Deployment.Record != null) { <a class="btn btn-default" asp-controller="RecordDeployments" asp-action="Details" asp-route-area="User" asp-route-id="@o.RmsExternalOrderId">@localizer["DeploymentRecord"]</a> }
+			@if (!string.IsNullOrEmpty(o.ArtifactFileName)) { <a class="btn btn-default" asp-controller="DeploymentOrders" asp-action="Artifact" asp-route-area="User" asp-route-id="@o.RmsExternalOrderId">@localizer["DeploymentArtifact"]</a> }
 		</div>
 	</div>
 </div>

@@ -25,6 +25,11 @@
 		OttawaCounty = 21,
 		OttawaKingstonToronto = 22,
 		/// <summary>AI dispatch (registry §4D). Enrich mode: the call is built by GenericTemplate and dispatched as today, then enriched off-thread by the aidispatchtriage worker.</summary>
-		AI = 23
+		AI = 23,
+		/// <summary>
+		/// "Key: Value" CAD emails: the department maps its CAD's labels to call fields (<see cref="DepartmentSettingTypes.EmailLabeledFields"/>).
+		/// Without labels it reads an email like <see cref="Generic"/>.
+		/// </summary>
+		LabeledFields = 24
 	}
 }

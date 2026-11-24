@@ -384,13 +384,15 @@ namespace Resgrid.Services
 			return row;
 		}
 
-		public async Task<DepartmentPhoneNumber> UpdateIntakeOptionsAsync(int departmentId, bool smsIntakeEnabled, bool voiceIntakeEnabled, string userId,
-			CancellationToken cancellationToken = default)
+		public async Task<DepartmentPhoneNumber> UpdateIntakeOptionsAsync(int departmentId, bool smsIntakeEnabled, bool voiceIntakeEnabled, bool voiceRecordingEnabled,
+			string userId, CancellationToken cancellationToken = default)
 		{
 			var row = await GetActiveForDepartmentAsync(departmentId) ?? throw new DedicatedNumberException(DedicatedNumberErrors.NoActiveNumber);
 
 			row.SmsIntakeEnabled = smsIntakeEnabled;
 			row.VoiceIntakeEnabled = voiceIntakeEnabled;
+			// Kept as set even with voice intake off: it applies again when voice intake is turned back on.
+			row.VoiceRecordingEnabled = voiceRecordingEnabled;
 			row.UpdatedOn = DateTime.UtcNow;
 			await _repository.UpdateAsync(row, cancellationToken, true);
 

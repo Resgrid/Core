@@ -61,24 +61,8 @@ namespace Resgrid.Services
 		public async Task<CallBroadcastOutboxEntry> RecordAsync(Call call, IEnumerable<string> userIds, IEnumerable<int> groupIds, IEnumerable<int> unitIds,
 			IEnumerable<int> roleIds, string createdByUserId)
 		{
-			if (call == null || call.CallId <= 0)
-				return null;
-
-			var now = DateTime.UtcNow;
-			var entry = new CallBroadcastOutboxEntry
-			{
-				CallBroadcastOutboxId = Guid.NewGuid().ToString(),
-				DepartmentId = call.DepartmentId,
-				CallId = call.CallId,
-				State = (int)CallBroadcastOutboxStates.Pending,
-				Attempts = 0,
-				NextAttemptOn = now.Add(InProcessGrace),
-				CreatedByUserId = createdByUserId,
-				CreatedOn = now
-			};
-			entry.SetRecipients(userIds, groupIds, unitIds, roleIds);
-
-			if (!entry.HasRecipients)
+			var entry = NewEntry(Guid.NewGuid().ToString(), call, userIds, groupIds, unitIds, roleIds, createdByUserId);
+			if (entry == null)
 				return null;
 
 			try
@@ -95,6 +79,81 @@ namespace Resgrid.Services
 			}
 
 			return entry;
+		}
+
+		public async Task<CallBroadcastOutboxEntry> RecordOnceAsync(string callBroadcastOutboxId, Call call, IEnumerable<string> userIds, IEnumerable<int> groupIds,
+			IEnumerable<int> unitIds, IEnumerable<int> roleIds, string createdByUserId)
+		{
+			if (string.IsNullOrWhiteSpace(callBroadcastOutboxId))
+				return await RecordAsync(call, userIds, groupIds, unitIds, roleIds, createdByUserId);
+
+			var entry = NewEntry(callBroadcastOutboxId, call, userIds, groupIds, unitIds, roleIds, createdByUserId);
+			if (entry == null)
+				return null;
+
+			var recorded = await FindRecordedAsync(callBroadcastOutboxId, call.CallId);
+			if (recorded != null)
+				return recorded;
+
+			try
+			{
+				await _outboxRepository.InsertEntryAsync(entry, CancellationToken.None);
+				entry.Persisted = true;
+				return entry;
+			}
+			catch (Exception ex)
+			{
+				// An insert that reports a failure may still have gone in (a lost commit reply): read it back before calling it unrecorded.
+				recorded = await FindRecordedAsync(callBroadcastOutboxId, call.CallId);
+				if (recorded != null)
+					return recorded;
+
+				Logging.LogException(ex, $"Could not record the page {callBroadcastOutboxId} for call {call.CallId}; its caller retries it.");
+				entry.Persisted = false;
+				return entry;
+			}
+		}
+
+		/// <summary>The entry already recorded under the id, or null (none, or it could not be read).</summary>
+		private async Task<CallBroadcastOutboxEntry> FindRecordedAsync(string callBroadcastOutboxId, int callId)
+		{
+			try
+			{
+				var existing = await _outboxRepository.GetEntryAsync(callBroadcastOutboxId, CancellationToken.None);
+				if (existing == null)
+					return null;
+
+				existing.Persisted = true;
+				return existing;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Could not read the page {callBroadcastOutboxId} for call {callId}.");
+				return null;
+			}
+		}
+
+		private static CallBroadcastOutboxEntry NewEntry(string callBroadcastOutboxId, Call call, IEnumerable<string> userIds, IEnumerable<int> groupIds,
+			IEnumerable<int> unitIds, IEnumerable<int> roleIds, string createdByUserId)
+		{
+			if (call == null || call.CallId <= 0)
+				return null;
+
+			var now = DateTime.UtcNow;
+			var entry = new CallBroadcastOutboxEntry
+			{
+				CallBroadcastOutboxId = callBroadcastOutboxId,
+				DepartmentId = call.DepartmentId,
+				CallId = call.CallId,
+				State = (int)CallBroadcastOutboxStates.Pending,
+				Attempts = 0,
+				NextAttemptOn = now.Add(InProcessGrace),
+				CreatedByUserId = createdByUserId,
+				CreatedOn = now
+			};
+			entry.SetRecipients(userIds, groupIds, unitIds, roleIds);
+
+			return entry.HasRecipients ? entry : null;
 		}
 
 		public async Task<int> SendPendingForCallAsync(Call call, CallBroadcastOutboxEntry recorded = null)

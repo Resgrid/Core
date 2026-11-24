@@ -109,6 +109,15 @@
   <data name="VoiceIntakeHelp" xml:space="preserve">
     <value>Anrufer, die keine Mitglieder sind, beantworten geführte Fragen, und ein ausstehender Einsatz wird erstellt. Erfordert das Add-on Enhanced AI mit KI-Sprachannahme.</value>
   </data>
+  <data name="VoiceRecording" xml:space="preserve">
+    <value>Sprachannahme-Anrufe aufzeichnen</value>
+  </data>
+  <data name="VoiceRecordingHelp" xml:space="preserve">
+    <value>Anrufer werden darauf hingewiesen, dass der Anruf aufgezeichnet wird, und müssen 1 drücken, um zuzustimmen, bevor sie eine Meldung abgeben können. Die Aufzeichnung beginnt erst nach der Zustimmung und wird nach dem Ende des Anrufs als Datei an den ausstehenden Einsatz angehängt. Legt der Anrufer auf, bevor der ausstehende Einsatz erstellt wurde, wird die Aufzeichnung nicht aufbewahrt.</value>
+  </data>
+  <data name="VoiceRecordingLegal" xml:space="preserve">
+    <value>Gesetze zur Anrufaufzeichnung und Einwilligung unterscheiden sich je nach Land und Bundesland. Prüfen Sie vor dem Einschalten, was in Ihrem Einsatzgebiet gilt.</value>
+  </data>
   <data name="VoiceIntakeUnavailable" xml:space="preserve">
     <value>Die KI-Sprachannahme ist für Ihre Abteilung noch nicht verfügbar. Diese Einstellung wirkt, sobald sie verfügbar ist.</value>
   </data>

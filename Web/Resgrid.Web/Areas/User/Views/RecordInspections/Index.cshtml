@@ -21,10 +21,10 @@
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
 			@if (Model.CanAdminister)
 			{
-				<a class="btn btn-default" asp-controller="RecordInspections" asp-action="Programs" asp-route-area="User"><i class="fa fa-list-ol"></i> @L["InspectionPrograms"]</a>
-				<form method="post" style="display:inline" asp-controller="RecordInspections" asp-action="GenerateDue" asp-route-area="User">@Html.AntiForgeryToken()<button class="btn btn-default"><i class="fa fa-refresh"></i> @L["GenerateDue"]</button></form>
+				<a class="btn btn-default" asp-controller="RecordInspections" asp-action="Programs" asp-route-area="User">@L["InspectionPrograms"]</a>
+				<form method="post" style="display:inline" asp-controller="RecordInspections" asp-action="GenerateDue" asp-route-area="User">@Html.AntiForgeryToken()<button class="btn btn-default">@L["GenerateDue"]</button></form>
 			}
-			<a class="btn btn-default" asp-controller="RecordInspections" asp-action="CodeSets" asp-route-area="User"><i class="fa fa-book"></i> @L["CodeSets"]</a>
+			<a class="btn btn-default" asp-controller="RecordInspections" asp-action="CodeSets" asp-route-area="User">@L["CodeSets"]</a>
 		</div>
 	</div>
 </div>

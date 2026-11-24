@@ -1767,6 +1767,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 							callEmailTypes.Add(ai);
 						}
 						break;
+					case CallEmailTypes.LabeledFields:
+						// "Key: Value" CAD emails read with the department's own labels (Call Settings → Updates from your CAD).
+						callEmailTypes.Add(new CallEmailTypesForJson { Id = (int)v, Name = "Labeled fields (your CAD's labels)", Code = v.ToString() });
+						break;
 				}
 			}
 

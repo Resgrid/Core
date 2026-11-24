@@ -5763,6 +5763,9 @@
   <data xml:space="preserve" name="Ui.Ask.Answered">
     <value>أدلة ذات صلة تم التحقق منها</value>
   </data>
+  <data xml:space="preserve" name="Ui.Ask.Matched">
+    <value>وثائق ذات صلة من البحث (لم يخترها الذكاء الاصطناعي)</value>
+  </data>
   <data xml:space="preserve" name="Ui.Ask.Boundary">
     <value>ابحث عن إرشادات الإعداد والتهيئة والإضافات. تحتوي الإجابات على بطاقات أدلة حالية ومصادر مرجعية. لا يمكن لخاصية "اسأل" تغيير الإعدادات أو إرسال الرسائل أو شراء الإضافات أو اتخاذ قرارات سريرية أو تكتيكية. يُقيَّم كل سؤال بشكل مستقل؛ أدرج اسم الإعداد أو الميزة.</value>
   </data>
@@ -5818,7 +5821,7 @@
     <value>مرجع فقط</value>
   </data>
   <data xml:space="preserve" name="Ui.Ask.Privacy">
-    <value>سجلك خاص بحسابك وقسمك. تُشفَّر الأسئلة أثناء التخزين ويُحتفظ بها لمدة 30 يومًا بشكل افتراضي، مع مراعاة الحجوزات المعتمدة. لا يصل إلى النموذج المحلي سوى المفاهيم العامة المطابقة والبيانات الوصفية المعتمدة. لا تُدخل تفاصيل المرضى أو روايات الحوادث أو كلمات المرور أو الرموز.</value>
+    <value>سجلك خاص بحسابك وقسمك. تُشفَّر الأسئلة أثناء التخزين ويُحتفظ بها لمدة 30 يومًا بشكل افتراضي، مع مراعاة الحجوزات المعتمدة. يُرسل سؤالك إلى نموذج الذكاء الاصطناعي للعثور على الإرشادات المطابقة؛ ومع حماية البيانات المتقدمة لا تُرسل إلا كلماته التي تظهر أيضًا في وثائق Resgrid العامة. لا تُدخل أبدًا معلومات شخصية أو صحية (PII أو PHI) أو تفاصيل المرضى أو روايات الحوادث أو كلمات المرور أو الرموز.</value>
   </data>
   <data xml:space="preserve" name="Ui.Ask.ProposedValue">
     <value>القيمة المقترحة (معاينة فقط)</value>
@@ -8252,5 +8255,17 @@
   </data>
   <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
     <value>يسمح للأعضاء بالتسجيل في مجموعة مناوبة حتى عندما تكون جميع الأماكن التي تقدمها أدوارها (المطلوبة والاختيارية) مشغولة. يظل العضو بحاجة إلى أحد أدوار المجموعة. يمكن للمشرفين دائمًا تعيين أشخاص بعد امتلاء الأماكن.</value>
+  </data>
+  <data name="Setting.EmailCallUpdates" xml:space="preserve">
+    <value>التحديثات من نظام CAD لديك</value>
+  </data>
+  <data name="SettingHelp.EmailCallUpdates" xml:space="preserve">
+    <value>تحديث البلاغ الموجود عندما يرسل نظام CAD لديك رسالة بريد مصحَّحة أو لاحقة بمعرّف البلاغ نفسه.</value>
+  </data>
+  <data name="Setting.EmailLabeledFields" xml:space="preserve">
+    <value>التسميات لتنسيق "Labeled fields"</value>
+  </data>
+  <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
+    <value>تُستخدم عندما يكون تنسيق البريد لديك "Labeled fields". أدخل التسمية التي يكتبها نظام CAD لديك قبل كل قيمة. افصل بين البدائل بالرمز |.</value>
   </data>
 </root>

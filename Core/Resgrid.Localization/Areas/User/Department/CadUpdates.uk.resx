@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Оновлення з вашого CAD</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Коли ваш CAD надсилає ще один лист щодо виклику, який він уже надсилав (виправлена адреса, підвищення рівня, закриття), Resgrid може оновити виклик, створений із першого листа, замість створення нового. Resgrid розпізнає той самий виклик за ідентифікатором виклику в CAD.</value>
+  </data>
+  <data name="CallSettingsLinkHelp" xml:space="preserve">
+    <value>Оновлювати наявний виклик, коли ваш CAD надсилає виправлений або наступний лист із тим самим ідентифікатором виклику.</value>
+  </data>
+  <data name="CurrentFormat" xml:space="preserve">
+    <value>Ваш формат листів</value>
+  </data>
+  <data name="BuiltInNotice" xml:space="preserve">
+    <value>Ваш формат листів уже зіставляв наступні листи з відкритими викликами ще до появи цієї сторінки, тому Resgrid використовує цю вбудовану поведінку: нотатки виклику замінюються, і більше нічого не змінюється. Збережіть цю сторінку, щоб це змінити.</value>
+  </data>
+  <data name="UseBuiltIn" xml:space="preserve">
+    <value>Повернутися до вбудованої поведінки</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Оновлювати наявні виклики</value>
+  </data>
+  <data name="EnabledHelp" xml:space="preserve">
+    <value>Вимкнено: кожен лист створює новий виклик.</value>
+  </data>
+  <data name="IdSourceHeader" xml:space="preserve">
+    <value>Пошук ідентифікатора виклику в CAD</value>
+  </data>
+  <data name="IdSource" xml:space="preserve">
+    <value>Зчитувати ідентифікатор виклику</value>
+  </data>
+  <data name="IdSourceFromFormat" xml:space="preserve">
+    <value>З формату листів</value>
+  </data>
+  <data name="IdSourceLabel" xml:space="preserve">
+    <value>Після мітки</value>
+  </data>
+  <data name="IdSourcePattern" xml:space="preserve">
+    <value>За шаблоном (для досвідчених)</value>
+  </data>
+  <data name="IdSourceHelp" xml:space="preserve">
+    <value>"З формату листів" працює для форматів, які зчитують номер інциденту. Інакше введіть мітку, яку ваш CAD пише перед ідентифікатором виклику.</value>
+  </data>
+  <data name="FormatHasNoKey" xml:space="preserve">
+    <value>Ваш формат листів не зчитує ідентифікатор виклику. Використайте мітку або шаблон.</value>
+  </data>
+  <data name="IdLabel" xml:space="preserve">
+    <value>Мітка</value>
+  </data>
+  <data name="IdLabelHelp" xml:space="preserve">
+    <value>Resgrid бере перше слово після цього тексту в тому самому рядку, наприклад "Call ID:".</value>
+  </data>
+  <data name="IdPattern" xml:space="preserve">
+    <value>Шаблон</value>
+  </data>
+  <data name="IdPatternHelp" xml:space="preserve">
+    <value>Регулярний вираз рівно з однією групою захоплення навколо ідентифікатора виклику.</value>
+  </data>
+  <data name="IdSearchIn" xml:space="preserve">
+    <value>Де шукати</value>
+  </data>
+  <data name="SearchSubjectThenBody" xml:space="preserve">
+    <value>У темі, потім у тексті</value>
+  </data>
+  <data name="SearchSubject" xml:space="preserve">
+    <value>Лише в темі</value>
+  </data>
+  <data name="SearchBody" xml:space="preserve">
+    <value>Лише в тексті</value>
+  </data>
+  <data name="FieldsHeader" xml:space="preserve">
+    <value>Що може змінювати оновлення</value>
+  </data>
+  <data name="FieldsIntro" xml:space="preserve">
+    <value>Лише нотатка: виклик зберігає своє значення, а нове значення з CAD записується в нотатку про оновлення у виклику.</value>
+  </data>
+  <data name="FieldLocation" xml:space="preserve">
+    <value>Адреса та розташування на мапі</value>
+  </data>
+  <data name="FieldPriority" xml:space="preserve">
+    <value>Пріоритет</value>
+  </data>
+  <data name="FieldType" xml:space="preserve">
+    <value>Тип виклику</value>
+  </data>
+  <data name="FieldName" xml:space="preserve">
+    <value>Назва виклику</value>
+  </data>
+  <data name="FieldNature" xml:space="preserve">
+    <value>Характер виклику</value>
+  </data>
+  <data name="FieldNotes" xml:space="preserve">
+    <value>Нотатки виклику</value>
+  </data>
+  <data name="PolicyUpdate" xml:space="preserve">
+    <value>Оновлювати</value>
+  </data>
+  <data name="PolicyNoteOnly" xml:space="preserve">
+    <value>Лише нотатка</value>
+  </data>
+  <data name="TextReplace" xml:space="preserve">
+    <value>Замінювати</value>
+  </data>
+  <data name="TextAppend" xml:space="preserve">
+    <value>Додавати в кінець</value>
+  </data>
+  <data name="DispatcherEditsWin" xml:space="preserve">
+    <value>Зберігати зміни, зроблені в Resgrid</value>
+  </data>
+  <data name="DispatcherEditsWinHelp" xml:space="preserve">
+    <value>Якщо хтось змінив поле в Resgrid, пізніший лист із CAD його не перезаписує. Значення з CAD потрапляє в нотатку про оновлення.</value>
+  </data>
+  <data name="PagingHeader" xml:space="preserve">
+    <value>Сповіщення</value>
+  </data>
+  <data name="RepageWhen" xml:space="preserve">
+    <value>Повторно сповіщати всіх у виклику</value>
+  </data>
+  <data name="RepageNever" xml:space="preserve">
+    <value>Ніколи</value>
+  </data>
+  <data name="RepageLocationOrPriority" xml:space="preserve">
+    <value>Коли змінилася адреса або пріоритет</value>
+  </data>
+  <data name="RepageAnyChange" xml:space="preserve">
+    <value>Коли змінилося будь-що</value>
+  </data>
+  <data name="RepageEveryUpdate" xml:space="preserve">
+    <value>При кожному оновленні (надсилається як наступна тривога)</value>
+  </data>
+  <data name="PageAddedResources" xml:space="preserve">
+    <value>Сповіщати одиниці та групи, які додає оновлення</value>
+  </data>
+  <data name="ClosedHeader" xml:space="preserve">
+    <value>Закриті виклики</value>
+  </data>
+  <data name="ClosedMatchMinutes" xml:space="preserve">
+    <value>Скільки хвилин закритий виклик ще зіставляється</value>
+  </data>
+  <data name="ClosedMatchMinutesHelp" xml:space="preserve">
+    <value>Лист щодо виклику, закритого протягом цього часу, записується в цей виклик як нотатка. Виклик не відкривається повторно. 0: створюється новий виклик.</value>
+  </data>
+  <data name="ClosePhrases" xml:space="preserve">
+    <value>Фрази закриття</value>
+  </data>
+  <data name="ClosePhrasesHelp" xml:space="preserve">
+    <value>По одній у рядку. Лист, що містить одну з них, закриває виклик із тим самим ідентифікатором виклику. Залиште порожнім, щоб ніколи не закривати виклики з листів.</value>
+  </data>
+  <data name="CancelPhrases" xml:space="preserve">
+    <value>Фрази скасування</value>
+  </data>
+  <data name="CancelPhrasesHelp" xml:space="preserve">
+    <value>По одній у рядку. Лист, що містить одну з них, скасовує виклик із тим самим ідентифікатором виклику.</value>
+  </data>
+  <data name="NotifyOnClose" xml:space="preserve">
+    <value>Надсилати сповіщення про закриття</value>
+  </data>
+  <data name="LabelsHeader" xml:space="preserve">
+    <value>Мітки для формату "Labeled fields"</value>
+  </data>
+  <data name="LabelsIntro" xml:space="preserve">
+    <value>Використовуються, коли ваш формат листів — "Labeled fields". Введіть мітку, яку ваш CAD пише перед кожним значенням. Розділяйте варіанти символом |.</value>
+  </data>
+  <data name="Label.CallId" xml:space="preserve">
+    <value>Ідентифікатор виклику</value>
+  </data>
+  <data name="Label.Name" xml:space="preserve">
+    <value>Назва виклику</value>
+  </data>
+  <data name="Label.Nature" xml:space="preserve">
+    <value>Характер виклику</value>
+  </data>
+  <data name="Label.Address" xml:space="preserve">
+    <value>Адреса</value>
+  </data>
+  <data name="Label.City" xml:space="preserve">
+    <value>Місто</value>
+  </data>
+  <data name="Label.CrossStreets" xml:space="preserve">
+    <value>Перехресні вулиці</value>
+  </data>
+  <data name="Label.Coordinates" xml:space="preserve">
+    <value>Координати (широта, довгота)</value>
+  </data>
+  <data name="Label.Latitude" xml:space="preserve">
+    <value>Широта</value>
+  </data>
+  <data name="Label.Longitude" xml:space="preserve">
+    <value>Довгота</value>
+  </data>
+  <data name="Label.Type" xml:space="preserve">
+    <value>Тип виклику</value>
+  </data>
+  <data name="Label.Priority" xml:space="preserve">
+    <value>Пріоритет</value>
+  </data>
+  <data name="Label.Units" xml:space="preserve">
+    <value>Одиниці</value>
+  </data>
+  <data name="Label.Notes" xml:space="preserve">
+    <value>Нотатки</value>
+  </data>
+  <data name="TestHeader" xml:space="preserve">
+    <value>Перевірка на листі</value>
+  </data>
+  <data name="TestIntro" xml:space="preserve">
+    <value>Вставте лист, який надіслав ваш CAD. Нічого не створюється: Resgrid показує, що він зчитує з налаштуваннями цієї сторінки, збереженими чи ні.</value>
+  </data>
+  <data name="TestSubject" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="TestBody" xml:space="preserve">
+    <value>Текст</value>
+  </data>
+  <data name="TestButton" xml:space="preserve">
+    <value>Перевірити</value>
+  </data>
+  <data name="TestCallId" xml:space="preserve">
+    <value>Ідентифікатор виклику в CAD</value>
+  </data>
+  <data name="TestNoCallId" xml:space="preserve">
+    <value>Ідентифікатор виклику не знайдено</value>
+  </data>
+  <data name="TestClose" xml:space="preserve">
+    <value>Розпізнано як</value>
+  </data>
+  <data name="TestCloseNone" xml:space="preserve">
+    <value>Новий виклик або оновлення</value>
+  </data>
+  <data name="TestCloseClose" xml:space="preserve">
+    <value>Закриття виклику</value>
+  </data>
+  <data name="TestCloseCancel" xml:space="preserve">
+    <value>Скасування виклику</value>
+  </data>
+  <data name="TestNoCall" xml:space="preserve">
+    <value>Ваш формат листів не знайшов виклику в цьому листі.</value>
+  </data>
+  <data name="TestFailed" xml:space="preserve">
+    <value>Не вдалося виконати перевірку.</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Збережено.</value>
+  </data>
+  <data name="SettingsInvalid" xml:space="preserve">
+    <value>Деякі значення не вдалося прочитати. Перевірте сторінку та збережіть ще раз.</value>
+  </data>
+  <data name="CadUpdatesLabelRequired" xml:space="preserve">
+    <value>Введіть мітку, яку ваш CAD пише перед ідентифікатором виклику.</value>
+  </data>
+  <data name="CadUpdatesPatternRequired" xml:space="preserve">
+    <value>Введіть шаблон.</value>
+  </data>
+  <data name="CadUpdatesPatternOneGroup" xml:space="preserve">
+    <value>Шаблон має містити рівно одну групу захоплення, наприклад Call ID: (\S+)</value>
+  </data>
+  <data name="CadUpdatesPatternInvalid" xml:space="preserve">
+    <value>Шаблон не є дійсним регулярним виразом.</value>
+  </data>
+  <data name="CadCallIdLabel" xml:space="preserve">
+    <value>Ідентифікатор виклику в CAD</value>
+  </data>
+</root>

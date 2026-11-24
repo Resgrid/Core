@@ -1164,6 +1164,9 @@
   <data name="DestinationPlusCodePlaceholder" xml:space="preserve">
     <value>Pluskod</value>
   </data>
+  <data name="PlusCodePlaceholder" xml:space="preserve">
+    <value>Pluskod</value>
+  </data>
   <data name="FindPlusCode" xml:space="preserve">
     <value>Hitta pluskod</value>
   </data>
@@ -1247,5 +1250,38 @@
   </data>
   <data name="CallRouteNoRuns" xml:space="preserve">
     <value>Ingen enhet har startat den här rutten ännu.</value>
+  </data>
+  <data name="FacilityMaps" xml:space="preserve">
+    <value>Anläggningskartor</value>
+  </data>
+  <data name="FacilityMapsNone" xml:space="preserve">
+    <value>Ingen</value>
+  </data>
+  <data name="FacilityMapsFloor" xml:space="preserve">
+    <value>Våning eller lager</value>
+  </data>
+  <data name="FacilityMapsHint" xml:space="preserve">
+    <value>Klicka på ett rum för att ange larmets plats.</value>
+  </data>
+  <data name="StrikeAlarm" xml:space="preserve">
+    <value>Utlös larm {0}</value>
+  </data>
+  <data name="StrikeAlarmConfirm" xml:space="preserve">
+    <value>Höja ärendet till larm {0}? Insatsplanens resurser för nästa larmnivå larmas ut.</value>
+  </data>
+  <data name="EscalateRunCardsDisabled" xml:space="preserve">
+    <value>Insatsplaner är inte aktiverade för den här avdelningen.</value>
+  </data>
+  <data name="EscalateCallNotFound" xml:space="preserve">
+    <value>Ärendet hittades inte.</value>
+  </data>
+  <data name="EscalateCallNotActive" xml:space="preserve">
+    <value>Bara aktiva ärenden kan höjas till nästa larmnivå.</value>
+  </data>
+  <data name="EscalateNoRunCard" xml:space="preserve">
+    <value>Ingen insatsplan passar ärendet; det finns inget att höja.</value>
+  </data>
+  <data name="EscalateNoResources" xml:space="preserve">
+    <value>Insatsplanen har inga fler resurser för nästa larmnivå.</value>
   </data>
 </root>

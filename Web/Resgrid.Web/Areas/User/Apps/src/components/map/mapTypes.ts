@@ -146,6 +146,10 @@ export interface MapRendererProps {
   fitMaxZoom?: number;
   /** Re-fit to every marker when one moves outside the visible map, so a moving crew never drifts off screen. */
   keepMarkersInView?: boolean;
+  /** Custom / indoor map layers switched on in the Layers panel, drawn under the department layers and markers. */
+  customOverlays?: CustomMapOverlay[];
+  /** Move the camera to these bounds ([west, south, east, north]) once per new key, e.g. "Zoom to" a custom map. */
+  focusRequest?: { key: number; bounds: [number, number, number, number] } | null;
 }
 
 const defaultPoiMarkerShape = 'MAP_PIN';
@@ -458,4 +462,135 @@ export function getMarkerIconUrl(marker: Pick<MapMarkerInfo, 'ImagePath' | 'Icon
     : 'pin';
 
   return `/images/Mapping/${imagePath}.png`;
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Custom maps (site plans, campus maps) and indoor maps (building floors) drawn over the department map.
+
+/** A custom or indoor map as GetCustomMaps lists it (CustomMapType: 0 indoor, 1 outdoor, 2 event, 3 custom). */
+export interface CustomMapSummary {
+  IndoorMapId: string;
+  Name: string;
+  Description?: string | null;
+  MapType: number;
+  DefaultFloorId?: string | null;
+  BoundsNELat?: number | null;
+  BoundsNELon?: number | null;
+  BoundsSWLat?: number | null;
+  BoundsSWLon?: number | null;
+}
+
+/** One layer (floor) of a custom map, from GetCustomMap/{id}. */
+export interface CustomMapLayerInfo {
+  IndoorMapFloorId: string;
+  IndoorMapId: string;
+  Name: string;
+  FloorOrder: number;
+  HasImage: boolean;
+  Opacity?: number | null;
+  BoundsNELat?: number | null;
+  BoundsNELon?: number | null;
+  BoundsSWLat?: number | null;
+  BoundsSWLon?: number | null;
+  MercatorTileUrl?: string | null;
+}
+
+/** What a renderer draws for one switched-on custom map: its chosen layer as tiles plus the layer's regions. */
+export interface CustomMapOverlay {
+  /** The layer (floor) id. */
+  id: string;
+  mapId: string;
+  /** "Map name - layer name", shown in region popups. */
+  name: string;
+  /** XYZ tile template ({z}/{x}/{y}), same-origin through the web API facade; null when the layer has no image. */
+  tileUrl: string | null;
+  /** [west, south, east, north], or null when the layer and its map have no usable bounds. */
+  bounds: [number, number, number, number] | null;
+  opacity: number;
+  /** GeoJSON of the layer's regions (rooms, zones, muster areas); null until loaded. */
+  regions: FeatureCollection | null;
+}
+
+export const customMapTypeLabels: Record<number, string> = { 0: 'Indoor', 1: 'Outdoor', 2: 'Event', 3: 'Custom' };
+
+/**
+ * The API returns an absolute, signed tile template on the API host. The website reaches the API through its
+ * same-origin facade (cookie session, no CORS, which WebGL textures would need), so keep the path and query and
+ * put them under the facade base. Braces stay unencoded for the renderer to fill in.
+ */
+export function toSameOriginApiUrl(absoluteApiUrl: string | null | undefined, apiBaseUrl: string): string | null {
+  if (!absoluteApiUrl) {
+    return null;
+  }
+
+  const at = absoluteApiUrl.toLowerCase().indexOf('/api/v4/');
+  if (at < 0) {
+    return null;
+  }
+
+  return `${apiBaseUrl.replace(/\/+$/, '')}${absoluteApiUrl.slice(at)}`;
+}
+
+/** A bound as a number; a missing one (null, undefined, blank) is not 0, which Number() would make it. */
+function boundValue(value: number | string | null | undefined): number {
+  return value === null || value === undefined || (typeof value === 'string' && value.trim() === '') ? Number.NaN : Number(value);
+}
+
+/**
+ * [west, south, east, north] of a custom map or layer, or null unless all four bounds are there and enclose an area. A missing
+ * bound never reads as 0 (south -34, west 150, east 151 and no north would otherwise pass as a box up to the equator).
+ */
+export function customMapBounds(source: Pick<CustomMapLayerInfo, 'BoundsNELat' | 'BoundsNELon' | 'BoundsSWLat' | 'BoundsSWLon'> | null | undefined) {
+  const n = boundValue(source?.BoundsNELat);
+  const e = boundValue(source?.BoundsNELon);
+  const s = boundValue(source?.BoundsSWLat);
+  const w = boundValue(source?.BoundsSWLon);
+  // Zero bounds mean "not set"; the server will not render tiles for them either.
+  if (![n, e, s, w].every(Number.isFinite) || n <= s || e <= w) {
+    return null;
+  }
+  return [w, s, e, n] as [number, number, number, number];
+}
+
+/** The layer to show: the one asked for, else the map's default floor, else the lowest floor. */
+export function chooseCustomMapLayer(
+  layers: CustomMapLayerInfo[],
+  requestedLayerId: string | null | undefined,
+  defaultFloorId: string | null | undefined,
+): CustomMapLayerInfo | null {
+  if (!layers.length) {
+    return null;
+  }
+  const byId = (id: string | null | undefined) => (id ? layers.find((layer) => layer.IndoorMapFloorId === id) : undefined);
+  return byId(requestedLayerId) ?? byId(defaultFloorId) ?? [...layers].sort((a, b) => a.FloorOrder - b.FloorOrder)[0];
+}
+
+export function buildCustomMapOverlay(
+  map: CustomMapSummary,
+  layer: CustomMapLayerInfo,
+  apiBaseUrl: string,
+  regions: FeatureCollection | null,
+): CustomMapOverlay {
+  const opacity = Number(layer.Opacity);
+  return {
+    id: layer.IndoorMapFloorId,
+    mapId: map.IndoorMapId,
+    name: layer.Name && layer.Name !== map.Name ? `${map.Name} - ${layer.Name}` : map.Name,
+    tileUrl: layer.HasImage ? toSameOriginApiUrl(layer.MercatorTileUrl, apiBaseUrl) : null,
+    // A layer without bounds of its own is drawn over its map's bounds (the tile renderer does the same).
+    bounds: customMapBounds(layer) ?? customMapBounds(map),
+    opacity: Number.isFinite(opacity) && opacity > 0 ? Math.min(opacity, 1) : 0.85,
+    regions,
+  };
+}
+
+/**
+ * Where the camera fits on load: the operational markers (calls, units, personnel, stations) when there are at
+ * least two of them, otherwise every marker. Reference points (POIs such as hospitals in the next city, hydrant
+ * sets) still show, but must not pull the first view away from where the department works.
+ */
+export function selectFitPositions<T extends { latitude: number; longitude: number; isPoi: boolean }>(markers: Iterable<T>): T[] {
+  const all = Array.from(markers);
+  const operational = all.filter((marker) => !marker.isPoi);
+  return operational.length >= 2 ? operational : all;
 }

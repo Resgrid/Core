@@ -217,6 +217,20 @@
             department's email format can read), 400 on a failure worth retrying.
             </returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.AnswerUpdateAsync(Resgrid.Model.InboundEmailReceiptClaim,Resgrid.Model.Services.EmailCallUpdateResult,Microsoft.AspNetCore.Mvc.ActionResult)">
+            <summary>
+            Postmark's answer once the CAD update engine handled a dispatch email: the create path's own answer for a new call; 409 (the
+            claim goes back, Postmark delivers again) while another email with the same CAD call ID is being handled; otherwise 200.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.CloseWithoutCallAsync(System.Int32,Resgrid.Model.Department,System.Int32,Resgrid.Model.CallEmail,System.Int32,Resgrid.Model.CallEmailUpdateSources,System.Threading.CancellationToken)">
+            <summary>
+            A close or cancel email the department's format reads as no call (an Active911 "CLOSED …" page has no "active" in its subject)
+            still goes to the CAD update engine, as intake does, which closes the open call carrying its CAD call ID or notes the close on a
+            call already closed. Nothing is ever created from it. Null when the email is not a close the department's CAD update
+            settings recognise, or carries no CAD call ID they can read without the format (the caller answers 403).
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.EmailController.DuplicateDeliveryResult(Resgrid.Model.InboundEmailReceiptClaim)">
             <summary>
             The answer to a delivery of an email this API already handled, or is handling right now; null when the delivery should
@@ -232,6 +246,21 @@
             The call row is written before its dispatch rows and the broadcast, so a failure after that (including the provider
             dropping the connection) leaves a new call behind. Recording its id lets the provider's retry finish this call instead of
             creating another one.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.SaveNewCallAsync(Resgrid.Model.Services.EmailCallUpdateRequest,Resgrid.Model.Call,System.Threading.CancellationToken)">
+            <summary>
+            The CAD update baseline of a new call whose page, desk entry or receipt step failed after the save. The engine records the
+            baseline only once the create path returns, and the provider's retry resumes the saved call without the engine, so without
+            this later CAD emails could not tell a dispatcher's edit from the CAD's. Taken from the call as this delivery saved it (the
+            CAD's values, before anyone could edit it). The CAD call ID comes from the settings the engine read for this delivery
+            (<see cref="P:Resgrid.Model.Services.EmailCallUpdateRequest.Config"/>), never re-read, so a settings change in between cannot link the call to another ID.
+            Nothing for an email that carries no CAD call ID. Never throws.
+            </summary>
+            <summary>
+            Saves a new email call. The call row can be committed before SaveCallAsync throws (its protected-write and attachment checks run
+            after the insert), so a call left behind that way still gets its CAD baseline before the failure reaches the delivery's retry,
+            exactly as a failure after the save does (the retry resumes the saved call without the update engine).
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.EmailController.ResumeCallAsync(Resgrid.Model.InboundEmailReceiptClaim,System.Boolean,System.Int32,PostmarkDotNet.PostmarkInboundMessage,System.Threading.CancellationToken)">
@@ -413,13 +442,15 @@
         <member name="M:Resgrid.Web.Services.Controllers.TwilioController.IvrUnavailableAsync">
             <summary>The member IVR cannot continue (the department could not be confirmed): one message and a hang-up.</summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.DedicatedNumberVoiceAsync(Resgrid.Model.DepartmentPhoneNumber,System.String,System.String,System.Boolean)">
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.DedicatedNumberVoiceAsync(Resgrid.Model.DepartmentPhoneNumber,System.String,System.String,System.Boolean,System.Boolean)">
             <summary>
             A call to a department's dedicated number (plan D2, D6): members get the member IVR in the number's department; others
             get Enhanced AI voice intake when the number has it on, the department is entitled and under the monthly limit, else
             the "please text this number" message. With IntakeConfig.VoiceGateEnabled (M0326) the caller first presses 1
             (<see cref="M:Resgrid.Web.Services.Controllers.TwilioController.VoiceIntakeGate"/>), so most auto-dialers and recordings never start a session or use the monthly limit
             (one that sends "1" still passes; the sender block list and limits still apply to it).
+            A number that records its intake calls (M0332) always plays the gate, which then says the call is recorded: the caller's 1 is
+            the consent (<paramref name="recordingAccepted"/>, carried by the gate's action URL), and the recording starts only after it.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.TwilioController.VoiceIntakeGate">
@@ -427,6 +458,23 @@
             The voice intake gate's &lt;Gather input="dtmf"&gt; action (M0326). Only "1" goes on, and the call is routed again (a block,
             the monthly limit or the add-on may have changed meanwhile) before the guided questions start; anything else hangs up.
             </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.VoiceIntakeRecordingCallback">
+            <summary>
+            Twilio's recording status callback for voice intake (M0332; POST, after the call ended): "completed" attaches the MP3 to the
+            pending call as a file, "absent" / "failed" keeps nothing. 204 once the callback is handled or its sid is stored (what is not
+            attached now, worker 80 retries); 503 when it could not be read in at all, or nothing durable holds the recording yet, so Twilio
+            sends it again (the callback URL carries the 5xx retry override; a repeated callback is a no-op).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.SpeaksAnything(Twilio.TwiML.TwiML)">
+            <summary>True when the TwiML element holds something the caller hears (a &lt;Play&gt; or &lt;Say&gt;), however deeply nested.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.AudioCount(Twilio.TwiML.TwiML)">
+            <summary>How many &lt;Play&gt; / &lt;Say&gt; verbs the TwiML element holds, however deeply nested.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.DepartmentNameAsync(System.Int32)">
+            <summary>The department's name for the recorded-call gate; null (the prompt says "the department") when it cannot be read.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.TwilioController.VoiceIntakeAnswer(System.Int32)">
             <summary>
@@ -11215,6 +11263,16 @@
             Free destination what3words address (M0322).
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.IndoorMapZoneId">
+            <summary>
+            The indoor map zone (room or region on a custom/indoor map) picked as the call location; null when none.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.IndoorMapFloorId">
+            <summary>
+            The floor / custom map layer the indoor zone is on; null when none.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.LocationPoiId">
             <summary>
             The POI the call location was picked from (M0322); null when none.
@@ -11769,13 +11827,16 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.IndoorMapZoneId">
             <summary>
-            Optional. Indoor map zone the incident is in. Blank keeps the stored zone; leave it out (null) when the client
-            has no indoor location picker, which also leaves the department's indoor location requirement unenforced.
+            Optional. Indoor map zone the incident is in. Null (left out) keeps the stored zone and floor — leave it out when the
+            client has no indoor location picker, which also leaves the department's indoor location requirement unenforced; an
+            empty string clears both, the same as <see cref="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.RoutePlanId"/>.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.IndoorMapFloorId">
             <summary>
-            Optional. Floor of <see cref="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.IndoorMapZoneId"/>.
+            Optional. Floor of <see cref="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.IndoorMapZoneId"/>, read only when that zone is sent. With a non-empty zone the floor is
+            replaced by this value: left out or blank stores no floor (it does not keep the stored one), so send the floor again
+            with the zone to keep it. With the zone left out (null) both stay; with an empty zone both are cleared.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.ProtocolIds">

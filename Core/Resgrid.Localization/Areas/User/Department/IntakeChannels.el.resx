@@ -364,4 +364,16 @@
   <data name="Screening.DismissedAsSpam" xml:space="preserve">
     <value>Απορρίφθηκε ως ανεπιθύμητο</value>
   </data>
+  <data name="CadUpdates" xml:space="preserve">
+    <value>Αποδοχή ενημερώσεων από το CAD</value>
+  </data>
+  <data name="CadUpdatesHelp" xml:space="preserve">
+    <value>Όταν ένα email φέρει το αναγνωριστικό κλήσης του CAD μιας κλήσης που ο φορέας έχει ήδη, ενημερώνει αυτή την κλήση αντί να δημιουργήσει κλήση σε αναμονή.</value>
+  </data>
+  <data name="CadUpdatesUnavailable" xml:space="preserve">
+    <value>Ενεργοποιήστε πρώτα τις Ενημερώσεις από το CAD σας.</value>
+  </data>
+  <data name="CadUpdatesSettingsLink" xml:space="preserve">
+    <value>Άνοιγμα ρυθμίσεων</value>
+  </data>
 </root>

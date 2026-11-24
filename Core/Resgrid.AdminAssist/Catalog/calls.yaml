@@ -20,6 +20,72 @@
   ],
   "Settings": [
     {
+      "Id": "setting.EmailCallUpdates",
+      "AreaId": "calls",
+      "LabelKey": "Setting.EmailCallUpdates",
+      "HelpKey": "SettingHelp.EmailCallUpdates",
+      "Binding": "DepartmentSettingTypes.EmailCallUpdates",
+      "ValueType": "protobuf",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "CadUpdates",
+        "Action": "Index",
+        "Field": "Enabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-23T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.EmailCallUpdates",
+      "DefaultValue": "off; Active911, R&R, Ottawa/Kingston/Toronto and Parkland County 2 use their built-in behaviour",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.EmailLabeledFields",
+      "AreaId": "calls",
+      "LabelKey": "Setting.EmailLabeledFields",
+      "HelpKey": "SettingHelp.EmailLabeledFields",
+      "Binding": "DepartmentSettingTypes.EmailLabeledFields",
+      "ValueType": "protobuf",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "CadUpdates",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-23T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.EmailLabeledFields",
+      "DefaultValue": "no labels (the Labeled fields format then reads an email like Generic)",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
       "Id": "setting.RssFeedKeyForActiveCalls",
       "AreaId": "calls",
       "LabelKey": "Setting.RssFeedKeyForActiveCalls",
@@ -3160,6 +3226,28 @@
   "Packs": [],
   "Articles": [
     {
+      "Id": "setting.EmailCallUpdates",
+      "Locale": "en",
+      "TitleKey": "Setting.EmailCallUpdates",
+      "Body": "Updates from your CAD. Update the existing call when your CAD sends a corrected or follow-up email for the same call ID.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-emailcallupdates",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-23T00:00:00Z"
+    },
+    {
+      "Id": "setting.EmailLabeledFields",
+      "Locale": "en",
+      "TitleKey": "Setting.EmailLabeledFields",
+      "Body": "Labels for the Labeled fields format. Used when your email format is \"Labeled fields\". Enter the label your CAD writes in front of each value. Separate alternatives with |.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-emaillabeledfields",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-23T00:00:00Z"
+    },
+    {
       "Id": "setting.CallNumberingConfig",
       "Locale": "en",
       "TitleKey": "Setting.CallNumberingConfig",
@@ -4010,12 +4098,12 @@
       "Id": "call-locations",
       "Locale": "en",
       "TitleKey": "Feature.call-locations",
-      "Body": "Call locations, destinations and routes A call's location can be picked from a point of interest, its destination can be a point of interest or a free address, coordinates or what3words, and it can carry a pre-defined route that the unit working it runs in the app, stop by stop. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. Add the places you pick up from and deliver to as points of interest, and create active route plans with a start and an end for runs you repeat. On New Call, pick the location's point of interest, the destination and a route; a blank call location takes the route start and a blank destination the route end. It works on new, pending, scheduled and recurring calls, on Update Call and in the Omni Dispatch app. Picking a point of interest fills the address and the map pin, which can still be changed. A destination POI and a free destination location are exclusive: choosing one clears the other. Plus codes are only looked up, never stored. The route picker lists only active route plans whose start and end can be found, and is hidden when there are none; a route never overwrites a location or destination already filled. When a unit makes the call its active call, the Omni Unit app starts the route run, leads the unit to the route start first and checks in at each stop; View Call lists the call's route runs. The New Call Form Fields rule for Destination covers a destination POI and a free destination alike.",
+      "Body": "Call locations, destinations and routes A call's location can be picked from a point of interest, its destination can be a point of interest or a free address, coordinates or what3words, and it can carry a pre-defined route that the unit working it runs in the app, stop by stop. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. Add the places you pick up from and deliver to as points of interest, and create active route plans with a start and an end for runs you repeat. On New Call, pick the location's point of interest, the destination and a route; a blank call location takes the route start and a blank destination the route end. It works on new, pending, scheduled and recurring calls, on Update Call and in the Omni Dispatch app. Picking a point of interest fills the address and the map pin, which can still be changed. A destination POI and a free destination location are exclusive: choosing one clears the other. A plus code only finds a point and is never stored: on New Call, Update Call and Add Archived Call, Find Plus Code under the location places the call pin and fills a blank address, Find Plus Code under the destination location places the destination, and a save with a code still typed in looks it up first. A short code on its own is read near the department's map centre. The New Call Form Fields rule for Plus Code can hide the location's plus code but never require it; require GPS Coordinates instead. The route picker lists only active route plans whose start and end can be found, and is hidden when there are none; a route never overwrites a location or destination already filled. When a unit makes the call its active call, the Omni Unit app starts the route run, leads the unit to the route start first and checks in at each stop; View Call lists the call's route runs. The New Call Form Fields rule for Destination covers a destination POI and a free destination alike.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "call-locations",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-11-19T00:00:00Z"
+      "ReviewedOn": "2026-11-23T00:00:00Z"
     },
     {
       "Id": "archived-calls",

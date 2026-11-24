@@ -52,8 +52,8 @@
 			@if (Model.CanExport)
 			{
 				<a class="btn btn-info" asp-controller="Records" asp-action="Export" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId">@localizer["Export"]</a>
-				<a class="btn btn-info" href="javascript:window.print()"><i class="fa fa-print"></i> @localizer["Print"]</a>
-				<a class="btn btn-info" asp-controller="Records" asp-action="Print" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId"><i class="fa fa-file-pdf-o"></i> @localizer["PrintPdf"]</a>
+				<a class="btn btn-info" href="javascript:window.print()">@localizer["Print"]</a>
+				<a class="btn btn-info" asp-controller="Records" asp-action="Print" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId">@localizer["PrintPdf"]</a>
 			}
 		</div>
 	</div>

@@ -12,7 +12,7 @@ using TimeZoneConverter;
 
 namespace Resgrid.Services.CallEmailTemplates
 {
-	public class ParklandCounty2Template : ICallEmailTemplate
+	public class ParklandCounty2Template : ICallEmailTemplate, ICallEmailMatchKeyTemplate
 	{
 		public async Task<Call> GenerateCall(CallEmail email, string managingUser, List<IdentityUser> users, Department department, List<Call> activeCalls, List<Unit> units,
 			int priority, List<DepartmentCallPriority> activePriorities, List<CallType> callTypes, IGeoLocationProvider geolocationProvider)
@@ -126,23 +126,42 @@ namespace Resgrid.Services.CallEmailTemplates
 				}
 			}
 
-			// Search for an active call
-			if (activeCalls != null && activeCalls.Any())
-			{
-				var activeCall = activeCalls.FirstOrDefault(x => x.Name == c.Name && x.LoggedOn == c.LoggedOn);
-
-				if (activeCall != null)
-				{
-					activeCall.Priority = c.Priority;
-					activeCall.Notes = c.Notes;
-					activeCall.LastDispatchedOn = DateTime.UtcNow;
-					activeCall.IncreaseDispatchCount();
-
-					return activeCall;
-				}
-			}
-			
+			// Always a new call: a follow-up page (the same name and call time) updates the open call through the CAD update engine
+			// (EmailCallUpdateService, cad-email-call-updates-plan.md D1) with this format's preset: priority and notes taken, the
+			// page sent again as the next alarm.
 			return c;
+		}
+
+		/// <summary>
+		/// This format has no incident number: a page belongs to the incident with the same name and call time. The key is a hash of
+		/// both (the whole name and the time, so a long name still keeps the time), because it is stored in the update ledger, which
+		/// keeps no email text. Calls opened under the earlier readable key are still found by <see cref="IsSameIncident"/>.
+		/// </summary>
+		public string GetMatchKey(Call parsed)
+		{
+			if (parsed == null || string.IsNullOrWhiteSpace(parsed.Name) || parsed.LoggedOn == DateTime.MinValue)
+				return null;
+
+			// The full time (ticks), as IsSameIncident compares it: two calls with one name inside the same second (a Date: line with
+			// fractional seconds, or two unreadable emails stamped with their receipt time) must not share a key.
+			var stamp = parsed.LoggedOn.Ticks.ToString(System.Globalization.CultureInfo.InvariantCulture);
+			return "PC2-" + ExactHash(parsed.Name.Trim() + "|" + stamp).Substring(0, 32);
+		}
+
+		/// <summary>
+		/// SHA-256 of the exact text (no case folding or whitespace collapsing, unlike <see cref="CadEmailText.Hash"/>): the key must keep
+		/// apart names <see cref="IsSameIncident"/> keeps apart, such as "C - Fire" and "C - FIRE".
+		/// </summary>
+		private static string ExactHash(string value)
+		{
+			var bytes = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(value));
+			return Convert.ToHexString(bytes).ToLowerInvariant();
+		}
+
+		/// <summary>The comparison this format used to find its own open calls before the update ledger existed.</summary>
+		public bool IsSameIncident(Call parsed, Call existing)
+		{
+			return parsed != null && existing != null && existing.Name == parsed.Name && existing.LoggedOn == parsed.LoggedOn;
 		}
 
 		private int PriorityMapping(string priority, bool is2ndPage, int priorityDefault)

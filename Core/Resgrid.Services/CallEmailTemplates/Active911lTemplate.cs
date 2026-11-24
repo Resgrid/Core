@@ -117,25 +117,8 @@ namespace Resgrid.Services.CallEmailTemplates
 				c.Dispatches.Add(cd);
 			}
 
-			// Search for an active call. Only by an incident number: a message without one must not attach to whichever open
-			// call also has none.
-			if (activeCalls != null && activeCalls.Any() && !String.IsNullOrWhiteSpace(c.IncidentNumber))
-			{
-				var activeCall = activeCalls.FirstOrDefault(x => x.IncidentNumber == c.IncidentNumber);
-
-				if (activeCall != null)
-				{
-					if (department == null || department.DepartmentId != 7966)
-						activeCall.Notes = c.Notes;
-					else
-						c.NatureOfCall = sb.ToString();
-
-					activeCall.LastDispatchedOn = DateTime.UtcNow;
-
-					return activeCall;
-				}
-			}
-
+			// Always a new call: whether a follow-up page updates an open call with the same ID is the CAD update engine's decision
+			// (EmailCallUpdateService, cad-email-call-updates-plan.md D1), keyed on the incident number read above.
 			return c;
 		}
 

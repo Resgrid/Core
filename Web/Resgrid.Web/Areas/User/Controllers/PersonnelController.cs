@@ -961,12 +961,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 					{
 						person.Status = status.ButtonText;
 						person.StatusColor = status.ButtonClassToColor();
+						person.StatusTextColor = UnitStatusColors.ToHexColor(status.TextColor);
 					}
 				}
 				else
 				{
 					person.Status = defaultStatus?.ButtonText ?? "Standing By";
 					person.StatusColor = defaultStatus?.ButtonClassToColor() ?? "#777";
+					person.StatusTextColor = UnitStatusColors.ToHexColor(defaultStatus?.TextColor);
 				}
 
 				// The ETA is worked out from the member's last status position, so it needs Security > See Personnel Locations.

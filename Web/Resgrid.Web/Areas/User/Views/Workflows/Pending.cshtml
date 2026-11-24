@@ -21,7 +21,7 @@
                 <form asp-action="ClearPending" method="post" style="display:inline;"
                       onsubmit="return confirm('@JsEncoder.Encode(localizer["ClearAllPendingConfirm"])');">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-danger"><i class="fa fa-times"></i> @localizer["ClearAllPending"]</button>
+                    <button type="submit" class="btn btn-danger">@localizer["ClearAllPending"]</button>
                 </form>
             }
         </div>

@@ -1,5 +1,6 @@
 // Call locations on the call forms (M0322): New Call, Update Call and Add Archived Call.
 //  - Location from a POI: picking one of the department's points of interest fills the address and the call pin.
+//  - Location from a plus code: a found code places the call pin (and a blank address); the code itself is never stored.
 //  - A free destination (address, coordinates, what3words, plus code) for a destination that is not a POI. One destination
 //    only: a destination POI clears and disables the free fields, and a free destination disables the POI.
 //  - A pre-defined route: picking one fills a blank call location (route start) and a blank destination (route end) and draws
@@ -108,10 +109,136 @@ var resgrid;
                 }
             }
 
+            // The call location's plus code (_CallLocationPlusCode): like the destination's, it only finds the point and is never
+            // stored. A result applies only while its number is still the latest and the input still reads the code looked up.
+            var callPlusCodeLookup = 0;
+
+            // The page's address lookup for the point a found call plus code placed ({ request, settled }), until it settles: a save
+            // (Find, then Save at once) waits for it, so the form never posts that point with the old or a blank address.
+            var callAddressPending = null;
+
+            function callPlusCodeInput() {
+                return $('#CallPlusCode');
+            }
+
+            /**
+             * The call is placed outside any room (a map click outside the rooms, a dragged pin, an address, What3Words or plus code,
+             * a typed point, a POI): an indoor location picked earlier would be saved with a point outside that room, so its zone,
+             * floor and Indoor Location pick go.
+             */
+            function clearIndoorLocation() {
+                var zone = $('#IndoorMapZoneId');
+                var floor = $('#IndoorMapFloorId');
+                if (!zone.val() && !floor.val()) {
+                    return;
+                }
+                zone.val('');
+                floor.val('');
+                var search = $('#indoorZoneSearch');
+                if (search.length && search.val()) {
+                    search.val(null).trigger('change');
+                }
+            }
+
+            /**
+             * The call location was set another way (a POI, a map click, an address or What3Words search, a typed pin, a dragged
+             * marker, a room): a call plus code still being looked up no longer applies, and one still typed in is dropped so the
+             * save does not look it up again and move the call back. Unless keepRoom (a room was just picked for that point), the
+             * indoor location goes too; a map click inside a room clears it first and the room's pick then sets it again.
+             */
+            function callLocationChanged(keepRoom) {
+                callPlusCodeLookup++;
+                callAddressPending = null;
+                callPlusCodeInput().val('');
+                if (!keepRoom) {
+                    clearIndoorLocation();
+                }
+            }
+            calllocations.callLocationChanged = callLocationChanged;
+
+            /**
+             * Looks the typed call plus code up and, when found, places the call there (the pin, and the address through the
+             * page's reverse geocode unless the dispatcher typed one) and empties the code. onFound runs after that, once the
+             * page's address lookup has answered (or failed), so a save waiting on the code is not sent without that address.
+             */
+            function lookupCallPlusCode(code, onFound) {
+                var request = ++callPlusCodeLookup;
+                var isCurrent = function () {
+                    return request === callPlusCodeLookup && $.trim(callPlusCodeInput().val() || '') === code;
+                };
+
+                fetch('/api/web-bff/api/v4/Geocoding/PlusCodeLookup?code=' + encodeURIComponent(code))
+                    .then(function (r) {
+                        if (!r.ok) { throw new Error('PlusCodeLookup failed with HTTP status ' + r.status); }
+                        return r.json();
+                    })
+                    .then(function (result) {
+                        if (!isCurrent()) {
+                            return;
+                        }
+
+                        if (result && result.Data && result.Data.Latitude != null && result.Data.Longitude != null &&
+                            isPoint(Number(result.Data.Latitude), Number(result.Data.Longitude))) {
+                            var lat = Number(result.Data.Latitude);
+                            var lng = Number(result.Data.Longitude);
+
+                            clearIndoorLocation();
+                            setCallLocation(lat, lng);
+                            callPlusCodeInput().val('');
+
+                            var page = pageScript();
+                            var addressLookup = page && typeof page.geocodeCoordinates === 'function' ? page.geocodeCoordinates(lat, lng) : null;
+
+                            // Tracked until it settles, whether this lookup came from Find or from a save: a save sent meanwhile
+                            // waits for it (onFormSubmit). A location set another way while the address was being looked up wins:
+                            // the save then waits for the dispatcher again instead of going on with a place they did not save.
+                            var waiting = { request: request, settled: Promise.resolve(addressLookup).then(function () { }, function () { }) };
+                            callAddressPending = waiting;
+                            waiting.settled.then(function () {
+                                if (callAddressPending === waiting) {
+                                    callAddressPending = null;
+                                }
+                                if (typeof onFound === 'function' && request === callPlusCodeLookup) {
+                                    onFound();
+                                }
+                            });
+                        } else {
+                            alert(text('plusCodeNotFound', 'No location was found for that plus code.'));
+                        }
+                    })
+                    .catch(function (err) {
+                        console.error('Call plus code lookup error:', err);
+                        if (isCurrent()) {
+                            alert(text('plusCodeNotFound', 'No location was found for that plus code.'));
+                        }
+                    });
+            }
+
+            function findCallPlusCode(evt) {
+                evt.preventDefault();
+
+                var code = $.trim(callPlusCodeInput().val() || '');
+                if (code.length < 1) {
+                    return;
+                }
+
+                lookupCallPlusCode(code);
+            }
+
             function onLocationPoiChanged() {
                 var select = $(this);
                 if (!select.val()) {
                     return;
+                }
+
+                // A picked POI is the call's location now: a plus code lookup still on its way no longer applies, and a code still
+                // typed in goes too (the save would otherwise look it up and move the call off the POI). Through the page's own hook,
+                // so an address lookup for an earlier point cannot land over the POI either.
+                var page = pageScript();
+                if (page && typeof page.callLocationChanged === 'function') {
+                    page.callLocationChanged();
+                } else {
+                    callLocationChanged();
                 }
 
                 var option = select.find('option:selected');
@@ -361,14 +488,35 @@ var resgrid;
             }
 
             /**
-             * A plus code is only a way to find the destination point, never saved: a form sent with one still typed in would
-             * silently save no destination. The save waits for the lookup instead; found, the point takes its place and the form
-             * goes on (with the button that was pressed); not found, the dispatcher is told and the form stays.
+             * A plus code is only a way to find the call or destination point, never saved: a form sent with one still typed in
+             * would silently save without that point. The save waits for the lookup instead (the call's code first, then the
+             * destination's on the resubmit); found, the point takes its place and the form goes on (with the button that was
+             * pressed); not found, the dispatcher is told and the form stays.
              */
             function onFormSubmit(evt) {
-                var input = $('#DestinationPlusCode');
-                var code = $.trim(input.val() || '');
-                if (code === '' || input.prop('disabled')) {
+                var callInput = callPlusCodeInput();
+                var callCode = $.trim(callInput.val() || '');
+                var destinationInput = $('#DestinationPlusCode');
+                var destinationCode = $.trim(destinationInput.val() || '');
+
+                var lookup = null;
+                var pendingAddress = callAddressPending;
+                if (callCode !== '' && !callInput.prop('disabled')) {
+                    lookup = function (resume) { lookupCallPlusCode(callCode, resume); };
+                } else if (pendingAddress && pendingAddress.request === callPlusCodeLookup) {
+                    // A call plus code Find already placed: its address is still being looked up.
+                    lookup = function (resume) {
+                        pendingAddress.settled.then(function () {
+                            if (pendingAddress.request === callPlusCodeLookup) {
+                                resume();
+                            }
+                        });
+                    };
+                } else if (destinationCode !== '' && !destinationInput.prop('disabled')) {
+                    lookup = function (resume) { lookupPlusCode(destinationCode, resume); };
+                }
+
+                if (!lookup) {
                     return true;
                 }
 
@@ -376,7 +524,7 @@ var resgrid;
                 var form = this;
                 var submitter = evt.originalEvent && evt.originalEvent.submitter ? evt.originalEvent.submitter : null;
 
-                lookupPlusCode(code, function () {
+                lookup(function () {
                     if (typeof form.requestSubmit === 'function') {
                         if (submitter) {
                             form.requestSubmit(submitter);
@@ -687,7 +835,15 @@ var resgrid;
                 // a lookup's own .val() fires no input event, so it never cancels itself.
                 freeInputs().on('input', invalidateDestinationLookups);
                 $('#DestinationLatitude, #DestinationLongitude').on('change', syncDestination);
-                $('#DestinationPlusCode').closest('form').on('submit', onFormSubmit);
+                // One handler per form (closest() returns each form once) for whichever plus code inputs the policy shows.
+                $('#CallPlusCode, #DestinationPlusCode').closest('form').on('submit', onFormSubmit);
+                callPlusCodeInput().on('keypress', function (event) {
+                    if (event.keyCode === 13) {
+                        $('#callPlusCodeButton').click();
+                        return false;
+                    }
+                });
+                $('#callPlusCodeButton').on('click', findCallPlusCode);
                 $('#Call_DestinationAddress').on('keypress', function (event) {
                     if (event.keyCode === 13) {
                         $('#destinationSearchButton').click();

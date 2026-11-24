@@ -122,7 +122,7 @@ namespace Resgrid.Tests.Web.User
 
 			(await controller.Provision(Number, CancellationToken.None)).Should().BeOfType<RedirectResult>().Which.Url.Should().Be("/Public/Unauthorized");
 			(await controller.Release("any", true, CancellationToken.None)).Should().BeOfType<RedirectResult>();
-			(await controller.UpdateIntake(true, true, CancellationToken.None)).Should().BeOfType<RedirectResult>();
+			(await controller.UpdateIntake(true, true, true, CancellationToken.None)).Should().BeOfType<RedirectResult>();
 			(await controller.Reactivate(CancellationToken.None)).Should().BeOfType<RedirectResult>();
 
 			_numbers.Verify(n => n.ProvisionAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);

@@ -46,9 +46,12 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task<DepartmentPhoneNumber> ProvisionAsync(int departmentId, string phoneNumber, string userId, CancellationToken cancellationToken = default);
 
-		/// <summary>Turns SMS / voice intake on the department's Active number on or off.</summary>
-		Task<DepartmentPhoneNumber> UpdateIntakeOptionsAsync(int departmentId, bool smsIntakeEnabled, bool voiceIntakeEnabled, string userId,
-			CancellationToken cancellationToken = default);
+		/// <summary>
+		/// Turns SMS / voice intake, and the recording of voice intake calls (M0332; the caller must accept it at the gate), on the
+		/// department's Active number on or off.
+		/// </summary>
+		Task<DepartmentPhoneNumber> UpdateIntakeOptionsAsync(int departmentId, bool smsIntakeEnabled, bool voiceIntakeEnabled, bool voiceRecordingEnabled,
+			string userId, CancellationToken cancellationToken = default);
 
 		/// <summary>Marks the department's Active number Lapsed (add-on ended) with a release date; intake stops.</summary>
 		Task MarkLapsedAsync(int departmentId, DateTime releaseAfterUtc, CancellationToken cancellationToken = default);

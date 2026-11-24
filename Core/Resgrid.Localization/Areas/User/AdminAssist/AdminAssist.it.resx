@@ -5763,6 +5763,9 @@
   <data xml:space="preserve" name="Ui.Ask.Answered">
     <value>Evidenze verificate correlate</value>
   </data>
+  <data xml:space="preserve" name="Ui.Ask.Matched">
+    <value>Documentazione correlata dalla ricerca (non selezionata dall’IA)</value>
+  </data>
   <data xml:space="preserve" name="Ui.Ask.Boundary">
     <value>Trova indicazioni su configurazione, impostazione e componenti aggiuntivi. Le risposte contengono schede di evidenza attuali e fonti di riferimento. Ask non può modificare le impostazioni, inviare messaggi, acquistare componenti aggiuntivi o prendere decisioni cliniche o tattiche. Ogni domanda viene valutata in modo indipendente; includi il nome dell'impostazione o della funzionalità.</value>
   </data>
@@ -5818,7 +5821,7 @@
     <value>Solo riferimento</value>
   </data>
   <data xml:space="preserve" name="Ui.Ask.Privacy">
-    <value>La tua cronologia è privata per il tuo account e il tuo dipartimento. Le domande sono cifrate a riposo e conservate per 30 giorni per impostazione predefinita, salvo blocchi approvati. Solo i concetti pubblici corrispondenti e i metadati autorizzati raggiungono il modello locale. Non inserire dettagli sui pazienti, resoconti degli interventi, password o token.</value>
+    <value>La tua cronologia è privata per il tuo account e il tuo dipartimento. Le domande sono cifrate a riposo e conservate per 30 giorni per impostazione predefinita, salvo blocchi approvati. La tua domanda viene inviata al modello di IA per trovare indicazioni pertinenti; con la Protezione avanzata dei dati vengono inviate solo le sue parole presenti anche nella documentazione pubblica di Resgrid. Non inserire mai dati personali o sanitari (PII o PHI), dettagli sui pazienti, resoconti degli interventi, password o token.</value>
   </data>
   <data xml:space="preserve" name="Ui.Ask.ProposedValue">
     <value>Valore proposto (solo anteprima)</value>
@@ -8252,5 +8255,17 @@
   </data>
   <data name="SettingHelp.AllowShiftOverSignup" xml:space="preserve">
     <value>Consente ai membri di iscriversi a un gruppo del turno anche quando tutti i posti dei suoi ruoli (obbligatori e facoltativi) sono occupati. Serve comunque uno dei ruoli del gruppo. I supervisori possono sempre assegnare persone oltre i posti.</value>
+  </data>
+  <data name="Setting.EmailCallUpdates" xml:space="preserve">
+    <value>Aggiornamenti dal tuo CAD</value>
+  </data>
+  <data name="SettingHelp.EmailCallUpdates" xml:space="preserve">
+    <value>Aggiorna la chiamata esistente quando il tuo CAD invia un'email corretta o successiva per lo stesso ID chiamata.</value>
+  </data>
+  <data name="Setting.EmailLabeledFields" xml:space="preserve">
+    <value>Etichette per il formato "Labeled fields"</value>
+  </data>
+  <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
+    <value>Usate quando il tuo formato email è "Labeled fields". Inserisci l'etichetta che il tuo CAD scrive prima di ogni valore. Separa le alternative con |.</value>
   </data>
 </root>

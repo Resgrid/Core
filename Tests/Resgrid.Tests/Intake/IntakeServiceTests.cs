@@ -835,16 +835,19 @@ namespace Resgrid.Tests.Intake
 			(await _service.GetMonthlyCountAsync(DepartmentId, IntakeChannelTypes.Voice, FixedClock.Now)).Should().Be(37);
 		}
 
-		[Test]
-		public async Task purge_uses_the_configured_retention()
+		[TestCase(true)]
+		[TestCase(false)]
+		public async Task purge_uses_the_configured_retention(bool deleteCarrierCopy)
 		{
-			var saved = (IntakeConfig.MessageRetentionDays, IntakeConfig.VoiceSessionRetentionHours);
+			var saved = (IntakeConfig.MessageRetentionDays, IntakeConfig.VoiceSessionRetentionHours, IntakeConfig.VoiceRecordingDeleteCarrierCopy);
 			try
 			{
 				IntakeConfig.MessageRetentionDays = 90;
 				IntakeConfig.VoiceSessionRetentionHours = 48;
+				// Sessions whose recording worker 80 still deletes at Twilio are kept (answers cleared) only when it deletes the copies at all.
+				IntakeConfig.VoiceRecordingDeleteCarrierCopy = deleteCarrierCopy;
 				_messages.Setup(m => m.PurgeReceivedBeforeAsync(FixedClock.Now.AddDays(-90), It.IsAny<CancellationToken>())).ReturnsAsync(4);
-				_sessions.Setup(s => s.PurgeStartedBeforeAsync(FixedClock.Now.AddHours(-48), It.IsAny<CancellationToken>())).ReturnsAsync(2);
+				_sessions.Setup(s => s.PurgeStartedBeforeAsync(FixedClock.Now.AddHours(-48), deleteCarrierCopy, It.IsAny<CancellationToken>())).ReturnsAsync(2);
 
 				var result = await _service.PurgeExpiredAsync(FixedClock.Now);
 
@@ -853,7 +856,7 @@ namespace Resgrid.Tests.Intake
 			}
 			finally
 			{
-				(IntakeConfig.MessageRetentionDays, IntakeConfig.VoiceSessionRetentionHours) = saved;
+				(IntakeConfig.MessageRetentionDays, IntakeConfig.VoiceSessionRetentionHours, IntakeConfig.VoiceRecordingDeleteCarrierCopy) = saved;
 			}
 		}
 

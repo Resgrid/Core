@@ -54,6 +54,7 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly IIntakeService _intakeService;
 		private readonly IEmailSender _emailSender;
 		private readonly IDispatcherEmailCallService _dispatcherEmailCallService;
+		private readonly IEmailCallUpdateService _emailCallUpdateService;
 
 		public EmailController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 			ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
@@ -63,8 +64,10 @@ namespace Resgrid.Web.Services.Controllers
 			IFileService fileService, IUnitsService unitsService, IGeoLocationProvider geoLocationProvider, ICallDispatchStatusService callDispatchStatusService,
 			IDispatchRecommendationService dispatchRecommendationService, IFeatureToggleService featureToggleService,
 			Resgrid.Model.AiDispatch.IAiDispatchAdminService aiDispatchAdminService, IInboundEmailReceiptsService inboundEmailReceiptsService,
-			IIntakeService intakeService, IEmailSender emailSender, IDispatcherEmailCallService dispatcherEmailCallService)
+			IIntakeService intakeService, IEmailSender emailSender, IDispatcherEmailCallService dispatcherEmailCallService,
+			IEmailCallUpdateService emailCallUpdateService)
 		{
+			_emailCallUpdateService = emailCallUpdateService;
 			_intakeService = intakeService;
 			_emailSender = emailSender;
 			_dispatcherEmailCallService = dispatcherEmailCallService;
@@ -357,6 +360,9 @@ namespace Resgrid.Web.Services.Controllers
 									callEmail.Body = message.TextBody;
 
 								callEmail.TextBody = message.TextBody;
+								callEmail.MessageId = message.MessageID;
+								callEmail.From = message.FromFull?.Email?.Trim();
+								callEmail.SentOn = CallEmail.ParseSentOn(message.Date);
 
 								foreach (var attachment in message.Attachments)
 								{
@@ -388,7 +394,6 @@ namespace Resgrid.Web.Services.Controllers
 									emailSettings.Department = await _departmentsService.GetDepartmentByIdAsync(departmentId.Value);
 								}
 
-								var activeCalls = await _callsService.GetLatest10ActiveCallsByDepartmentAsync(emailSettings.Department.DepartmentId);
 								var units = await _unitsService.GetUnitsForDepartmentAsync(emailSettings.Department.DepartmentId);
 								var priorities = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(emailSettings.Department.DepartmentId);
 								var callTypes = await _callsService.GetCallTypesForDepartmentAsync(emailSettings.Department.DepartmentId);
@@ -396,14 +401,40 @@ namespace Resgrid.Web.Services.Controllers
 								// The default priority, else the department's High priority, else the built-in High (CallPriorityMatch).
 								int defaultPriority = CallPriorityMatch.DefaultForImport(priorities);
 
-								call = await _callsService.GenerateCallFromEmail(emailSettings.FormatType, callEmail,
-																				 emailSettings.Department.ManagingUserId,
-																				 departmentUsers, emailSettings.Department, activeCalls, units,
-																				 defaultPriority, priorities, callTypes);
+								var parsed = await _emailCallUpdateService.ParseAsync(emailSettings.FormatType, callEmail, emailSettings.Department.ManagingUserId,
+									departmentUsers, emailSettings.Department, units, defaultPriority, priorities, callTypes, cancellationToken);
 
-								if (call != null && call.CallId <= 0)
+								if (parsed?.Call == null)
+								{
+									// A close or cancel the format does not read as a call still closes the call carrying its CAD call ID.
+									var closeOnly = await CloseWithoutCallAsync(departmentId.Value, emailSettings.Department, emailSettings.FormatType, callEmail,
+										defaultPriority, CallEmailUpdateSources.DispatchAddress, cancellationToken);
+									if (closeOnly != null)
+										return await AnswerUpdateAsync(receipt, closeOnly, null);
+
+									// The department's email format found no call in this email, and would read it the same way again.
+									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+									return NotProcessable();
+								}
+
+								// A new call is dispatched as it always was; the CAD update engine decides whether one is needed, or whether
+								// this email updates, closes or is noted on the call that already carries its CAD call ID (cad-email-call-updates-plan.md).
+								ActionResult createdResult = null;
+								var updateRequest = new EmailCallUpdateRequest
+								{
+									DepartmentId = departmentId.Value,
+									Department = emailSettings.Department,
+									FormatType = emailSettings.FormatType,
+									Email = callEmail,
+									Parsed = parsed,
+									Source = CallEmailUpdateSources.DispatchAddress,
+									// Read once: the engine and the baseline recovery below pick the CAD call ID from the same settings.
+									Config = await _departmentSettingsService.GetEmailCallUpdateConfigAsync(departmentId.Value, emailSettings.FormatType)
+								};
+								async Task<Call> createDispatchCall(Call newCall)
 								{
 									// New Call Dispatch as normal, unless the department's email call mode holds it pending for a dispatcher (D10)
+									call = newCall;
 									isNewCall = true;
 									call.DepartmentId = departmentId.Value;
 									var emailCallMode = await _dispatcherEmailCallService.GetModeAsync(departmentId.Value);
@@ -422,51 +453,42 @@ namespace Resgrid.Web.Services.Controllers
 										call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
 									}
 
-									var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
-									await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedCall.CallId, pendingSteps);
-									saveRecorded = true;
-
-									var onDesk = true;
-									if (holdAsPending)
-										onDesk = await _dispatcherEmailCallService.OnPendingCallSavedAsync(savedCall, message.FromFull?.Email, callEmail.Subject, cancellationToken);
-									else
-										await QueueCallBroadcastAsync(savedCall, cancellationToken);
-
-									var aiQueued = enrich && await QueueAiDispatchEnrichmentAsync(savedCall, 1, message.FromFull?.Email, cancellationToken, heldForDispatcher: holdAsPending);
-
-									if (!onDesk)
-										return await DeskHandOffOwedAsync(receipt, aiQueued);
-
-									if (enrich && !aiQueued)
-										return await AiEnrichmentOwedAsync(receipt, pendingSteps, pagedNow: !holdAsPending);
-
-									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
-									return Ok(savedCall);
-								}
-								else if (call != null && call.CallId > 0)
-								{
-									// Existing Call, just update
-									if (!String.IsNullOrWhiteSpace(call.Address) && (String.IsNullOrWhiteSpace(call.GeoLocationData) || call.GeoLocationData.Length <= 1))
+									var savedCall = await SaveNewCallAsync(updateRequest, call, cancellationToken);
+									try
 									{
-										call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
+										await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedCall.CallId, pendingSteps);
+										saveRecorded = true;
+
+										var onDesk = true;
+										if (holdAsPending)
+											onDesk = await _dispatcherEmailCallService.OnPendingCallSavedAsync(savedCall, message.FromFull?.Email, callEmail.Subject, cancellationToken);
+										else
+											await QueueCallBroadcastAsync(savedCall, cancellationToken);
+
+										var aiQueued = enrich && await QueueAiDispatchEnrichmentAsync(savedCall, 1, message.FromFull?.Email, cancellationToken, heldForDispatcher: holdAsPending);
+
+										if (!onDesk)
+											createdResult = await DeskHandOffOwedAsync(receipt, aiQueued);
+										else if (enrich && !aiQueued)
+											createdResult = await AiEnrichmentOwedAsync(receipt, pendingSteps, pagedNow: !holdAsPending);
+										else
+										{
+											await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+											createdResult = Ok(savedCall);
+										}
+									}
+									catch
+									{
+										await RecordBaselineAfterFailureAsync(updateRequest, savedCall);
+										throw;
 									}
 
-									var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
-
-									// If our Dispatch Count changed, i.e. 2nd Alarm to 3rd Alarm, redispatch (a pending call waits for its dispatcher)
-									if (call.DidDispatchCountChange() && call.State != (int)CallStates.Pending)
-									{
-										await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedCall.CallId, InboundEmailPendingSteps.CallBroadcast);
-										await QueueCallBroadcastAsync(savedCall, cancellationToken);
-									}
-
-									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
-									return Ok(savedCall);
+									return savedCall;
 								}
 
-								// The department's email format found no call in this email, and would read it the same way again.
-								await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
-								return NotProcessable();
+								var update = await _emailCallUpdateService.ProcessAsync(updateRequest, createDispatchCall, cancellationToken);
+
+								return await AnswerUpdateAsync(receipt, update, createdResult);
 							}
 							catch (Exception ex)
 							{
@@ -608,6 +630,9 @@ namespace Resgrid.Web.Services.Controllers
 									callEmail.Body = message.TextBody;
 
 								callEmail.TextBody = message.TextBody;
+								callEmail.MessageId = message.MessageID;
+								callEmail.From = message.FromFull?.Email?.Trim();
+								callEmail.SentOn = CallEmail.ParseSentOn(message.Date);
 
 								foreach (var attachment in message.Attachments)
 								{
@@ -639,59 +664,88 @@ namespace Resgrid.Web.Services.Controllers
 								else
 									emailSettings.Department = await _departmentsService.GetDepartmentByIdAsync(departmentGroup.DepartmentId);
 
-								var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(emailSettings.Department.DepartmentId);
 								var units = await _unitsService.GetAllUnitsForGroupAsync(departmentGroup.DepartmentGroupId);
 								var callTypes = await _callsService.GetCallTypesForDepartmentAsync(emailSettings.Department.DepartmentId);
 								var priorities = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(emailSettings.Department.DepartmentId);
 								// The default priority, else the department's High priority, else the built-in High (CallPriorityMatch).
 								int defaultPriority = CallPriorityMatch.DefaultForImport(priorities);
 
-								call = await _callsService.GenerateCallFromEmail(emailSettings.FormatType, callEmail,
-																				 emailSettings.Department.ManagingUserId,
-																				 users.Where(x => departmentGroupUsers.Select(y => y.UserId).Contains(x.Id)).ToList(),
-																				 emailSettings.Department, activeCalls, units, defaultPriority, priorities, callTypes);
+								var parsed = await _emailCallUpdateService.ParseAsync(emailSettings.FormatType, callEmail, emailSettings.Department.ManagingUserId,
+									users.Where(x => departmentGroupUsers.Select(y => y.UserId).Contains(x.Id)).ToList(),
+									emailSettings.Department, units, defaultPriority, priorities, callTypes, cancellationToken);
 
-								if (call != null)
+								if (parsed?.Call == null)
 								{
+									// A close or cancel the format does not read as a call still closes the call carrying its CAD call ID.
+									var closeOnly = await CloseWithoutCallAsync(departmentGroup.DepartmentId, emailSettings.Department, emailSettings.FormatType, callEmail,
+										defaultPriority, CallEmailUpdateSources.GroupDispatchAddress, cancellationToken);
+									if (closeOnly != null)
+										return await AnswerUpdateAsync(receipt, closeOnly, null);
+
+									// The department's email format found no call in this email, and would read it the same way again.
+									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+									return NotProcessable();
+								}
+
+								ActionResult createdResult = null;
+								var updateRequest = new EmailCallUpdateRequest
+								{
+									DepartmentId = departmentGroup.DepartmentId,
+									Department = emailSettings.Department,
+									FormatType = emailSettings.FormatType,
+									Email = callEmail,
+									Parsed = parsed,
+									Source = CallEmailUpdateSources.GroupDispatchAddress,
+									// Read once: the engine and the baseline recovery below pick the CAD call ID from the same settings.
+									Config = await _departmentSettingsService.GetEmailCallUpdateConfigAsync(departmentGroup.DepartmentId, emailSettings.FormatType)
+								};
+								async Task<Call> createGroupCall(Call newCall)
+								{
+									call = newCall;
+									isNewCall = true;
 									call.DepartmentId = departmentGroup.DepartmentId;
 
 									// As on the department address: an address with no usable coordinates is placed on the map.
 									if (!String.IsNullOrWhiteSpace(call.Address) && (String.IsNullOrWhiteSpace(call.GeoLocationData) || call.GeoLocationData.Length <= 1))
 										call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
 
-									// The incident-number formats hand back an open call for a follow-up page. As on the department address,
-									// that updates the call and only alerts again when its dispatch count changed (2nd alarm and so on).
-									var isUpdate = call.CallId > 0;
-									isNewCall = !isUpdate;
-
-									if (!isUpdate || call.DidDispatchCountChange())
-										pendingSteps = InboundEmailPendingSteps.CallBroadcast;
-
-									if (!isUpdate && emailSettings.FormatType == (int)CallEmailTypes.AI)
+									pendingSteps = InboundEmailPendingSteps.CallBroadcast;
+									if (emailSettings.FormatType == (int)CallEmailTypes.AI)
 										pendingSteps |= InboundEmailPendingSteps.AiEnrichment;
 
-									var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
-
-									if (pendingSteps != InboundEmailPendingSteps.None)
+									var savedCall = await SaveNewCallAsync(updateRequest, call, cancellationToken);
+									try
+									{
 										await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedCall.CallId, pendingSteps);
-									saveRecorded = true;
+										saveRecorded = true;
 
-									// Group-scoped: the units and members above were narrowed to this
-									// group, so run card enrichment stays out of it.
-									if (pendingSteps.HasFlag(InboundEmailPendingSteps.CallBroadcast))
+										// Group-scoped: the units and members above were narrowed to this
+										// group, so run card enrichment stays out of it.
 										await QueueCallBroadcastAsync(savedCall, cancellationToken, false);
 
-									if (pendingSteps.HasFlag(InboundEmailPendingSteps.AiEnrichment) &&
-										!await QueueAiDispatchEnrichmentAsync(savedCall, 2, message.FromFull?.Email, cancellationToken))
-										return await AiEnrichmentOwedAsync(receipt, pendingSteps, pagedNow: pendingSteps.HasFlag(InboundEmailPendingSteps.CallBroadcast));
+										if (pendingSteps.HasFlag(InboundEmailPendingSteps.AiEnrichment) &&
+											!await QueueAiDispatchEnrichmentAsync(savedCall, 2, message.FromFull?.Email, cancellationToken))
+										{
+											createdResult = await AiEnrichmentOwedAsync(receipt, pendingSteps, pagedNow: true);
+											return savedCall;
+										}
 
-									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
-									return Ok(savedCall);
+										await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+										createdResult = Ok(savedCall);
+									}
+									catch
+									{
+										await RecordBaselineAfterFailureAsync(updateRequest, savedCall);
+										throw;
+									}
+
+									return savedCall;
 								}
 
-								// The department's email format found no call in this email, and would read it the same way again.
-								await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
-								return NotProcessable();
+								// A follow-up page for an open call (same CAD call ID) updates it instead (cad-email-call-updates-plan.md).
+								var update = await _emailCallUpdateService.ProcessAsync(updateRequest, createGroupCall, cancellationToken);
+
+								return await AnswerUpdateAsync(receipt, update, createdResult);
 							}
 							catch (Exception ex)
 							{
@@ -787,6 +841,56 @@ namespace Resgrid.Web.Services.Controllers
 		}
 
 		/// <summary>
+		/// Postmark's answer once the CAD update engine handled a dispatch email: the create path's own answer for a new call; 409 (the
+		/// claim goes back, Postmark delivers again) while another email with the same CAD call ID is being handled; otherwise 200.
+		/// </summary>
+		private async Task<ActionResult> AnswerUpdateAsync(InboundEmailReceiptClaim receipt, EmailCallUpdateResult update, ActionResult createdResult)
+		{
+			if (update.Outcome == CallEmailUpdateOutcomes.Busy)
+			{
+				await _inboundEmailReceiptsService.ReleaseAsync(receipt);
+				return StatusCode(StatusCodes.Status409Conflict);
+			}
+
+			if (update.CreatedNewCall && createdResult != null)
+				return createdResult;
+
+			await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+
+			// Ok(null) is answered 204, which Postmark retries for hours: a close email that matched no call has no call to return.
+			return update.Call != null ? Ok(update.Call) : Ok();
+		}
+
+		/// <summary>
+		/// A close or cancel email the department's format reads as no call (an Active911 "CLOSED …" page has no "active" in its subject)
+		/// still goes to the CAD update engine, as intake does, which closes the open call carrying its CAD call ID or notes the close on a
+		/// call already closed. Nothing is ever created from it. Null when the email is not a close the department's CAD update
+		/// settings recognise, or carries no CAD call ID they can read without the format (the caller answers 403).
+		/// </summary>
+		private async Task<EmailCallUpdateResult> CloseWithoutCallAsync(int departmentId, Department department, int formatType, CallEmail callEmail,
+			int defaultPriority, CallEmailUpdateSources source, CancellationToken cancellationToken)
+		{
+			var config = await _departmentSettingsService.GetEmailCallUpdateConfigAsync(departmentId, formatType);
+			var parsed = CadEmailText.CloseOnlyParse(config, callEmail, departmentId, defaultPriority);
+			if (parsed == null)
+				return null;
+
+			var update = await _emailCallUpdateService.ProcessAsync(new EmailCallUpdateRequest
+			{
+				DepartmentId = departmentId,
+				Department = department,
+				FormatType = formatType,
+				Email = callEmail,
+				Parsed = parsed,
+				Source = source,
+				Config = config
+			}, unsaved => Task.FromResult<Call>(null), cancellationToken);
+
+			// The create path only runs without a usable ID; it creates nothing here, and the email is answered as unreadable.
+			return update.CreatedNewCall ? null : update;
+		}
+
+		/// <summary>
 		/// The answer to a delivery of an email this API already handled, or is handling right now; null when the delivery should
 		/// be processed. A completed email is acknowledged with a 200 so Postmark stops; one still in flight gets a 409 so Postmark
 		/// delivers it again later, when it is either finished or its attempt has died and can be taken over.
@@ -819,6 +923,53 @@ namespace Resgrid.Web.Services.Controllers
 		{
 			if (isNewCall && !saveRecorded && call != null && call.CallId > 0)
 				await _inboundEmailReceiptsService.MarkSavedAsync(receipt, call.CallId, pendingSteps);
+		}
+
+		/// <summary>
+		/// The CAD update baseline of a new call whose page, desk entry or receipt step failed after the save. The engine records the
+		/// baseline only once the create path returns, and the provider's retry resumes the saved call without the engine, so without
+		/// this later CAD emails could not tell a dispatcher's edit from the CAD's. Taken from the call as this delivery saved it (the
+		/// CAD's values, before anyone could edit it). The CAD call ID comes from the settings the engine read for this delivery
+		/// (<see cref="EmailCallUpdateRequest.Config"/>), never re-read, so a settings change in between cannot link the call to another ID.
+		/// Nothing for an email that carries no CAD call ID. Never throws.
+		/// </summary>
+		/// <summary>
+		/// Saves a new email call. The call row can be committed before SaveCallAsync throws (its protected-write and attachment checks run
+		/// after the insert), so a call left behind that way still gets its CAD baseline before the failure reaches the delivery's retry,
+		/// exactly as a failure after the save does (the retry resumes the saved call without the update engine).
+		/// </summary>
+		private async Task<Call> SaveNewCallAsync(EmailCallUpdateRequest updateRequest, Call call, CancellationToken cancellationToken)
+		{
+			try
+			{
+				return await _callsService.SaveCallAsync(call, cancellationToken);
+			}
+			catch
+			{
+				await RecordBaselineAfterFailureAsync(updateRequest, call);
+				throw;
+			}
+		}
+
+		private async Task RecordBaselineAfterFailureAsync(EmailCallUpdateRequest request, Call savedCall)
+		{
+			try
+			{
+				if (savedCall == null || savedCall.CallId <= 0)
+					return;
+
+				var config = request.Config;
+				if (config == null || !config.Enabled)
+					return;
+
+				var cadCallId = CadEmailText.ExtractCallId(config, request.Email, request.Parsed?.MatchKey);
+				if (cadCallId != null)
+					await _emailCallUpdateService.RecordCreatedAsync(request, savedCall, cadCallId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Recording the CAD update baseline of call {savedCall?.CallId} after its delivery failed.");
+			}
 		}
 
 		/// <summary>
@@ -1035,7 +1186,8 @@ namespace Resgrid.Web.Services.Controllers
 				SenderName = message.FromFull?.Name?.Trim(),
 				Subject = message.Subject,
 				Body = body,
-				ReceivedOnUtc = DateTime.UtcNow
+				ReceivedOnUtc = DateTime.UtcNow,
+				SentOnUtc = CallEmail.ParseSentOn(message.Date)
 			}, cancellationToken);
 
 			if (result == null || result.State == IntakeMessageStates.Refused && (result.Reason == "NoChannel" || result.Reason == "IntakeDisabled"))

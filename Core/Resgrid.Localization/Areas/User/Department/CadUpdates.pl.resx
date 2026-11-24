@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Aktualizacje z Twojego CAD</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Gdy Twój CAD wyśle kolejny e-mail dotyczący zgłoszenia, które już wysłał (poprawiony adres, eskalacja, zamknięcie), Resgrid może zaktualizować zgłoszenie utworzone z pierwszego e-maila zamiast tworzyć nowe. Resgrid rozpoznaje to samo zgłoszenie po identyfikatorze zgłoszenia z CAD.</value>
+  </data>
+  <data name="CallSettingsLinkHelp" xml:space="preserve">
+    <value>Aktualizuj istniejące zgłoszenie, gdy Twój CAD wyśle poprawiony lub kolejny e-mail z tym samym identyfikatorem zgłoszenia.</value>
+  </data>
+  <data name="CurrentFormat" xml:space="preserve">
+    <value>Twój format e-maili</value>
+  </data>
+  <data name="BuiltInNotice" xml:space="preserve">
+    <value>Twój format e-maili dopasowywał kolejne e-maile do otwartych zgłoszeń jeszcze przed powstaniem tej strony, więc Resgrid używa tego wbudowanego działania: notatki zgłoszenia są zastępowane i nic więcej się nie zmienia. Zapisz tę stronę, aby to zmienić.</value>
+  </data>
+  <data name="UseBuiltIn" xml:space="preserve">
+    <value>Wróć do wbudowanego działania</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Aktualizuj istniejące zgłoszenia</value>
+  </data>
+  <data name="EnabledHelp" xml:space="preserve">
+    <value>Wyłączone: każdy e-mail tworzy nowe zgłoszenie.</value>
+  </data>
+  <data name="IdSourceHeader" xml:space="preserve">
+    <value>Znajdowanie identyfikatora zgłoszenia z CAD</value>
+  </data>
+  <data name="IdSource" xml:space="preserve">
+    <value>Odczytuj identyfikator zgłoszenia</value>
+  </data>
+  <data name="IdSourceFromFormat" xml:space="preserve">
+    <value>Z formatu e-maili</value>
+  </data>
+  <data name="IdSourceLabel" xml:space="preserve">
+    <value>Po etykiecie</value>
+  </data>
+  <data name="IdSourcePattern" xml:space="preserve">
+    <value>Według wzorca (zaawansowane)</value>
+  </data>
+  <data name="IdSourceHelp" xml:space="preserve">
+    <value>"Z formatu e-maili" działa w formatach, które odczytują numer zdarzenia. W przeciwnym razie wpisz etykietę, którą Twój CAD umieszcza przed identyfikatorem zgłoszenia.</value>
+  </data>
+  <data name="FormatHasNoKey" xml:space="preserve">
+    <value>Twój format e-maili nie odczytuje identyfikatora zgłoszenia. Użyj etykiety lub wzorca.</value>
+  </data>
+  <data name="IdLabel" xml:space="preserve">
+    <value>Etykieta</value>
+  </data>
+  <data name="IdLabelHelp" xml:space="preserve">
+    <value>Resgrid bierze pierwsze słowo po tym tekście w tym samym wierszu, na przykład "Call ID:".</value>
+  </data>
+  <data name="IdPattern" xml:space="preserve">
+    <value>Wzorzec</value>
+  </data>
+  <data name="IdPatternHelp" xml:space="preserve">
+    <value>Wyrażenie regularne z dokładnie jedną grupą przechwytującą wokół identyfikatora zgłoszenia.</value>
+  </data>
+  <data name="IdSearchIn" xml:space="preserve">
+    <value>Gdzie szukać</value>
+  </data>
+  <data name="SearchSubjectThenBody" xml:space="preserve">
+    <value>W temacie, a potem w treści</value>
+  </data>
+  <data name="SearchSubject" xml:space="preserve">
+    <value>Tylko w temacie</value>
+  </data>
+  <data name="SearchBody" xml:space="preserve">
+    <value>Tylko w treści</value>
+  </data>
+  <data name="FieldsHeader" xml:space="preserve">
+    <value>Co może zmienić aktualizacja</value>
+  </data>
+  <data name="FieldsIntro" xml:space="preserve">
+    <value>Tylko notatka: zgłoszenie zachowuje swoją wartość, a nowa wartość z CAD jest zapisywana w notatce aktualizacji zgłoszenia.</value>
+  </data>
+  <data name="FieldLocation" xml:space="preserve">
+    <value>Adres i położenie na mapie</value>
+  </data>
+  <data name="FieldPriority" xml:space="preserve">
+    <value>Priorytet</value>
+  </data>
+  <data name="FieldType" xml:space="preserve">
+    <value>Typ zgłoszenia</value>
+  </data>
+  <data name="FieldName" xml:space="preserve">
+    <value>Nazwa zgłoszenia</value>
+  </data>
+  <data name="FieldNature" xml:space="preserve">
+    <value>Charakter zgłoszenia</value>
+  </data>
+  <data name="FieldNotes" xml:space="preserve">
+    <value>Notatki zgłoszenia</value>
+  </data>
+  <data name="PolicyUpdate" xml:space="preserve">
+    <value>Aktualizuj</value>
+  </data>
+  <data name="PolicyNoteOnly" xml:space="preserve">
+    <value>Tylko notatka</value>
+  </data>
+  <data name="TextReplace" xml:space="preserve">
+    <value>Zastąp</value>
+  </data>
+  <data name="TextAppend" xml:space="preserve">
+    <value>Dodaj na końcu</value>
+  </data>
+  <data name="DispatcherEditsWin" xml:space="preserve">
+    <value>Zachowaj zmiany wprowadzone w Resgrid</value>
+  </data>
+  <data name="DispatcherEditsWinHelp" xml:space="preserve">
+    <value>Jeśli ktoś zmienił pole w Resgrid, późniejszy e-mail z CAD go nie nadpisze. Wartość z CAD trafia do notatki aktualizacji.</value>
+  </data>
+  <data name="PagingHeader" xml:space="preserve">
+    <value>Powiadamianie</value>
+  </data>
+  <data name="RepageWhen" xml:space="preserve">
+    <value>Ponownie powiadom wszystkich w zgłoszeniu</value>
+  </data>
+  <data name="RepageNever" xml:space="preserve">
+    <value>Nigdy</value>
+  </data>
+  <data name="RepageLocationOrPriority" xml:space="preserve">
+    <value>Gdy zmieni się adres lub priorytet</value>
+  </data>
+  <data name="RepageAnyChange" xml:space="preserve">
+    <value>Gdy cokolwiek się zmieni</value>
+  </data>
+  <data name="RepageEveryUpdate" xml:space="preserve">
+    <value>Przy każdej aktualizacji (wysyłane jako kolejny alarm)</value>
+  </data>
+  <data name="PageAddedResources" xml:space="preserve">
+    <value>Powiadamiaj jednostki i grupy dodane przez aktualizację</value>
+  </data>
+  <data name="ClosedHeader" xml:space="preserve">
+    <value>Zamknięte zgłoszenia</value>
+  </data>
+  <data name="ClosedMatchMinutes" xml:space="preserve">
+    <value>Przez ile minut zamknięte zgłoszenie jest nadal dopasowywane</value>
+  </data>
+  <data name="ClosedMatchMinutesHelp" xml:space="preserve">
+    <value>E-mail dotyczący zgłoszenia zamkniętego w tym czasie jest zapisywany w nim jako notatka. Zgłoszenie nie jest ponownie otwierane. 0: tworzone jest nowe zgłoszenie.</value>
+  </data>
+  <data name="ClosePhrases" xml:space="preserve">
+    <value>Frazy zamykające</value>
+  </data>
+  <data name="ClosePhrasesHelp" xml:space="preserve">
+    <value>Jedna w wierszu. E-mail zawierający jedną z nich zamyka zgłoszenie o tym samym identyfikatorze zgłoszenia. Pozostaw puste, aby nigdy nie zamykać zgłoszeń e-mailem.</value>
+  </data>
+  <data name="CancelPhrases" xml:space="preserve">
+    <value>Frazy anulujące</value>
+  </data>
+  <data name="CancelPhrasesHelp" xml:space="preserve">
+    <value>Jedna w wierszu. E-mail zawierający jedną z nich anuluje zgłoszenie o tym samym identyfikatorze zgłoszenia.</value>
+  </data>
+  <data name="NotifyOnClose" xml:space="preserve">
+    <value>Wyślij powiadomienie o zamknięciu</value>
+  </data>
+  <data name="LabelsHeader" xml:space="preserve">
+    <value>Etykiety dla formatu "Labeled fields"</value>
+  </data>
+  <data name="LabelsIntro" xml:space="preserve">
+    <value>Używane, gdy Twój format e-maili to "Labeled fields". Wpisz etykietę, którą Twój CAD umieszcza przed każdą wartością. Oddziel warianty znakiem |.</value>
+  </data>
+  <data name="Label.CallId" xml:space="preserve">
+    <value>Identyfikator zgłoszenia</value>
+  </data>
+  <data name="Label.Name" xml:space="preserve">
+    <value>Nazwa zgłoszenia</value>
+  </data>
+  <data name="Label.Nature" xml:space="preserve">
+    <value>Charakter zgłoszenia</value>
+  </data>
+  <data name="Label.Address" xml:space="preserve">
+    <value>Adres</value>
+  </data>
+  <data name="Label.City" xml:space="preserve">
+    <value>Miasto</value>
+  </data>
+  <data name="Label.CrossStreets" xml:space="preserve">
+    <value>Ulice poprzeczne</value>
+  </data>
+  <data name="Label.Coordinates" xml:space="preserve">
+    <value>Współrzędne (szerokość, długość geograficzna)</value>
+  </data>
+  <data name="Label.Latitude" xml:space="preserve">
+    <value>Szerokość geograficzna</value>
+  </data>
+  <data name="Label.Longitude" xml:space="preserve">
+    <value>Długość geograficzna</value>
+  </data>
+  <data name="Label.Type" xml:space="preserve">
+    <value>Typ zgłoszenia</value>
+  </data>
+  <data name="Label.Priority" xml:space="preserve">
+    <value>Priorytet</value>
+  </data>
+  <data name="Label.Units" xml:space="preserve">
+    <value>Jednostki</value>
+  </data>
+  <data name="Label.Notes" xml:space="preserve">
+    <value>Notatki</value>
+  </data>
+  <data name="TestHeader" xml:space="preserve">
+    <value>Test na e-mailu</value>
+  </data>
+  <data name="TestIntro" xml:space="preserve">
+    <value>Wklej e-mail wysłany przez Twój CAD. Nic nie zostanie utworzone: Resgrid pokaże, co odczytuje przy ustawieniach z tej strony, zapisanych lub nie.</value>
+  </data>
+  <data name="TestSubject" xml:space="preserve">
+    <value>Temat</value>
+  </data>
+  <data name="TestBody" xml:space="preserve">
+    <value>Treść</value>
+  </data>
+  <data name="TestButton" xml:space="preserve">
+    <value>Testuj</value>
+  </data>
+  <data name="TestCallId" xml:space="preserve">
+    <value>Identyfikator zgłoszenia z CAD</value>
+  </data>
+  <data name="TestNoCallId" xml:space="preserve">
+    <value>Nie znaleziono identyfikatora zgłoszenia</value>
+  </data>
+  <data name="TestClose" xml:space="preserve">
+    <value>Odczytano jako</value>
+  </data>
+  <data name="TestCloseNone" xml:space="preserve">
+    <value>Nowe zgłoszenie lub aktualizacja</value>
+  </data>
+  <data name="TestCloseClose" xml:space="preserve">
+    <value>Zamknięcie zgłoszenia</value>
+  </data>
+  <data name="TestCloseCancel" xml:space="preserve">
+    <value>Anulowanie zgłoszenia</value>
+  </data>
+  <data name="TestNoCall" xml:space="preserve">
+    <value>Twój format e-maili nie znalazł zgłoszenia w tym e-mailu.</value>
+  </data>
+  <data name="TestFailed" xml:space="preserve">
+    <value>Nie udało się uruchomić testu.</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Zapisz</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Zapisano.</value>
+  </data>
+  <data name="SettingsInvalid" xml:space="preserve">
+    <value>Nie udało się odczytać niektórych wartości. Sprawdź stronę i zapisz ponownie.</value>
+  </data>
+  <data name="CadUpdatesLabelRequired" xml:space="preserve">
+    <value>Wpisz etykietę, którą Twój CAD umieszcza przed identyfikatorem zgłoszenia.</value>
+  </data>
+  <data name="CadUpdatesPatternRequired" xml:space="preserve">
+    <value>Wpisz wzorzec.</value>
+  </data>
+  <data name="CadUpdatesPatternOneGroup" xml:space="preserve">
+    <value>Wzorzec musi mieć dokładnie jedną grupę przechwytującą, na przykład Call ID: (\S+)</value>
+  </data>
+  <data name="CadUpdatesPatternInvalid" xml:space="preserve">
+    <value>Wzorzec nie jest prawidłowym wyrażeniem regularnym.</value>
+  </data>
+  <data name="CadCallIdLabel" xml:space="preserve">
+    <value>Identyfikator zgłoszenia z CAD</value>
+  </data>
+</root>

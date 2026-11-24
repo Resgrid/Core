@@ -47,7 +47,12 @@
 .rgw-module-tabs > li,
 .rgw-module-tabs > li.active { float: none; margin: 0; border: 0; background: transparent; }
 .rgw-module-tabs > li + li { margin-left: 0; }
-.rgw-module-tabs > li > a {
+/* A section is a link, or a POST form's button where navigation must carry the protected-data grant
+   (Shared/_ModuleTabs with Post); both draw the same pill. */
+.rgw-module-tabs > li > form { margin: 0; }
+.rgw-module-tabs > li > form > button { display: block; font: inherit; line-height: 1.42857143; cursor: pointer; }
+.rgw-module-tabs > li > a,
+.rgw-module-tabs > li > form > button {
     border: 1px solid #cbdfe9;
     border-radius: 3px;
     background: #edf5fa;
@@ -56,14 +61,20 @@
     padding: 9px 14px;
 }
 .rgw-module-tabs > li > a:hover,
-.rgw-module-tabs > li > a:focus { background: #d9eaf5; border-color: #1c84c6; color: #18577f; }
+.rgw-module-tabs > li > a:focus,
+.rgw-module-tabs > li > form > button:hover,
+.rgw-module-tabs > li > form > button:focus { background: #d9eaf5; border-color: #1c84c6; color: #18577f; }
 .rgw-module-tabs > li.active > a,
 .rgw-module-tabs > li.active > a:hover,
-.rgw-module-tabs > li.active > a:focus { background: #1ab394; border-color: #1ab394; color: #fff; }
+.rgw-module-tabs > li.active > a:focus,
+.rgw-module-tabs > li.active > form > button,
+.rgw-module-tabs > li.active > form > button:hover,
+.rgw-module-tabs > li.active > form > button:focus { background: #1ab394; border-color: #1ab394; color: #fff; }
 .rgw-module-tabs i { margin-right: 5px; }
 
 /* Override md-skin's sidebar-sized links only inside the module header. */
-.rgw-page-heading .rgw-module-tabs > li > a {
+.rgw-page-heading .rgw-module-tabs > li > a,
+.rgw-page-heading .rgw-module-tabs > li > form > button {
     padding: 6px 10px;
     min-height: 34px;
     color: #245b7c;
@@ -71,7 +82,10 @@
 }
 .rgw-page-heading .rgw-module-tabs > li.active > a,
 .rgw-page-heading .rgw-module-tabs > li.active > a:hover,
-.rgw-page-heading .rgw-module-tabs > li.active > a:focus { color: #fff; }
+.rgw-page-heading .rgw-module-tabs > li.active > a:focus,
+.rgw-page-heading .rgw-module-tabs > li.active > form > button,
+.rgw-page-heading .rgw-module-tabs > li.active > form > button:hover,
+.rgw-page-heading .rgw-module-tabs > li.active > form > button:focus { color: #fff; }
 
 /* Secondary actions have a blue tint; primary/success/warning/danger keep the
    existing theme colors. This also covers controls added dynamically by builders. */
@@ -96,7 +110,8 @@
 .rgw-page .btn:focus-visible,
 .rgw-page ~ .modal .btn:focus-visible,
 .rgw-page-heading .btn:focus-visible,
-.rgw-module-tabs > li > a:focus-visible { outline: 2px solid #1c84c6; outline-offset: 2px; }
+.rgw-module-tabs > li > a:focus-visible,
+.rgw-module-tabs > li > form > button:focus-visible { outline: 2px solid #1c84c6; outline-offset: 2px; }
 .rgw-page .ibox-title { border-top-color: #1ab394; }
 .rgw-page .table > thead > tr > th { background: #f3f7fa; color: #475c6b; }
 .rgw-page .btn-group { display: inline-flex; flex-wrap: wrap; }

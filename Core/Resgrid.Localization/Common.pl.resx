@@ -834,4 +834,10 @@
   <data name="TermChecklist" xml:space="preserve">
     <value>Lista kontrolna</value>
   </data>
+  <data name="AiPromptPiiWarning" xml:space="preserve">
+    <value>Nigdy nie umieszczaj danych osobowych (PII) ani danych o zdrowiu (PHI) w zapytaniach do AI: żadnych imion i nazwisk, numerów telefonów, adresów, danych pacjentów ani opisów zdarzeń. To, co tu wpiszesz, może zostać wysłane do modelu AI.</value>
+  </data>
+  <data name="ToggleMenu" xml:space="preserve">
+    <value>Pokaż lub ukryj menu</value>
+  </data>
 </root>

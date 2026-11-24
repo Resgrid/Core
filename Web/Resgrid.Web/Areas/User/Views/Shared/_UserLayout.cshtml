@@ -147,6 +147,8 @@
         window.rgIsDepartmentAdmin = "@(ClaimsAuthorizationHelper.IsUserDepartmentAdmin().ToString().ToLowerInvariant())";
         window.rgUserDisplayName = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ClaimsAuthorizationHelper.GetFullName() ?? ""));
         window.rgModerationI18n = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(moderationLocalizer.GetAllStrings(true).ToDictionary(x => x.Name, x => x.Value)));
+        // Shown above every AI prompt box (components/shared/AiPromptWarning.tsx).
+        window.rgAiPromptWarning = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(commonLocalizer["AiPromptPiiWarning"].Value));
         @if (Resgrid.Config.WebPushConfig.IsConfigured())
         {
             // Browser push (runtime/webPush.ts): public Firebase web app identifiers, plus who is signed in

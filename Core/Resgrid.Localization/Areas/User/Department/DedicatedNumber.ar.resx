@@ -109,6 +109,15 @@
   <data name="VoiceIntakeHelp" xml:space="preserve">
     <value>يجيب المتصلون من غير الأعضاء عن أسئلة موجّهة ويُنشأ بلاغ معلق. يتطلب إضافة Enhanced AI مع الاستقبال الصوتي بالذكاء الاصطناعي.</value>
   </data>
+  <data name="VoiceRecording" xml:space="preserve">
+    <value>تسجيل مكالمات الاستقبال الصوتي</value>
+  </data>
+  <data name="VoiceRecordingHelp" xml:space="preserve">
+    <value>يُبلَّغ المتصلون بأن المكالمة مسجَّلة، وعليهم الضغط على 1 للموافقة قبل أن يتمكنوا من ترك بلاغ. يبدأ التسجيل بعد الموافقة فقط، ويُضاف التسجيل كملف إلى البلاغ المعلق عند انتهاء المكالمة. إذا أنهى المتصل المكالمة قبل إنشاء البلاغ المعلق، فلا يُحتفظ بالتسجيل.</value>
+  </data>
+  <data name="VoiceRecordingLegal" xml:space="preserve">
+    <value>تختلف قوانين تسجيل المكالمات والموافقة عليها من بلد إلى آخر ومن ولاية إلى أخرى. تحقق مما ينطبق في منطقة عملك قبل التفعيل.</value>
+  </data>
   <data name="VoiceIntakeUnavailable" xml:space="preserve">
     <value>الاستقبال الصوتي بالذكاء الاصطناعي غير متاح لقسمك بعد. يسري هذا الإعداد عند إتاحته.</value>
   </data>

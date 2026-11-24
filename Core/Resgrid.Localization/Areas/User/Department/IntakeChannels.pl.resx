@@ -364,4 +364,16 @@
   <data name="Screening.DismissedAsSpam" xml:space="preserve">
     <value>Odrzucone jako spam</value>
   </data>
+  <data name="CadUpdates" xml:space="preserve">
+    <value>Przyjmuj aktualizacje z CAD</value>
+  </data>
+  <data name="CadUpdatesHelp" xml:space="preserve">
+    <value>E-mail zawierający identyfikator z CAD zgłoszenia, które Twoja jednostka już ma, aktualizuje to zgłoszenie zamiast tworzyć oczekujące zgłoszenie.</value>
+  </data>
+  <data name="CadUpdatesUnavailable" xml:space="preserve">
+    <value>Najpierw włącz Aktualizacje z Twojego CAD.</value>
+  </data>
+  <data name="CadUpdatesSettingsLink" xml:space="preserve">
+    <value>Otwórz ustawienia</value>
+  </data>
 </root>

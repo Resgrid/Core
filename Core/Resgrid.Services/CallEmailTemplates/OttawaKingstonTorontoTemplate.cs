@@ -78,20 +78,8 @@ namespace Resgrid.Services.CallEmailTemplates
 					}
 				}
 
-				// Search for an active call
-				if (activeCalls != null && activeCalls.Any())
-				{
-					var activeCall = activeCalls.FirstOrDefault(x => x.IncidentNumber == c.IncidentNumber);
-
-					if (activeCall != null)
-					{
-						activeCall.Notes = c.Notes;
-						activeCall.LastDispatchedOn = DateTime.UtcNow;
-
-						return activeCall;
-					}
-				}
-
+				// Always a new call: matching a follow-up page to an open call is the CAD update engine's decision
+				// (EmailCallUpdateService, cad-email-call-updates-plan.md D1), keyed on the incident number.
 				return c;
 			}
 			catch (Exception ex)
@@ -111,20 +99,8 @@ namespace Resgrid.Services.CallEmailTemplates
 					}
 				}
 
-				// Search for an active call
-				if (activeCalls != null && activeCalls.Any())
-				{
-					var activeCall = activeCalls.FirstOrDefault(x => x.IncidentNumber == c.IncidentNumber);
-
-					if (activeCall != null)
-					{
-						activeCall.Notes = c.Notes;
-						activeCall.LastDispatchedOn = DateTime.UtcNow;
-
-						return activeCall;
-					}
-				}
-
+				// No incident number could be read, so this never matches an open call (B8: it used to attach to any open call
+				// that also had none).
 				return c;
 			}
 		}

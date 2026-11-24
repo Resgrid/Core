@@ -20,8 +20,8 @@
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
 			@if (Model.CanAdminister)
 			{
-				<a class="btn btn-success" asp-controller="RecordPermits" asp-action="Edit" asp-route-area="User"><i class="fa fa-plus"></i> @L["NewPermit"]</a>
-				<a class="btn btn-default" asp-controller="RecordPermits" asp-action="Types" asp-route-area="User"><i class="fa fa-tags"></i> @L["PermitTypes"]</a>
+				<a class="btn btn-success" asp-controller="RecordPermits" asp-action="Edit" asp-route-area="User">@L["NewPermit"]</a>
+				<a class="btn btn-default" asp-controller="RecordPermits" asp-action="Types" asp-route-area="User">@L["PermitTypes"]</a>
 			}
 		</div>
 	</div>

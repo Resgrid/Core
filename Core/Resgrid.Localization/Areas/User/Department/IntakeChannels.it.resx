@@ -364,4 +364,16 @@
   <data name="Screening.DismissedAsSpam" xml:space="preserve">
     <value>Scartata come spam</value>
   </data>
+  <data name="CadUpdates" xml:space="preserve">
+    <value>Accetta aggiornamenti dal CAD</value>
+  </data>
+  <data name="CadUpdatesHelp" xml:space="preserve">
+    <value>Se un'email riporta l'ID chiamata del CAD di una chiamata che il dipartimento ha già, aggiorna quella chiamata invece di creare una chiamata in attesa.</value>
+  </data>
+  <data name="CadUpdatesUnavailable" xml:space="preserve">
+    <value>Attiva prima Aggiornamenti dal tuo CAD.</value>
+  </data>
+  <data name="CadUpdatesSettingsLink" xml:space="preserve">
+    <value>Apri le impostazioni</value>
+  </data>
 </root>

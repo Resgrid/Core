@@ -1,15 +1,20 @@
+@using Resgrid.Web.Areas.User.Models
 @using Resgrid.Web.Areas.User.Models.Inventory
 @model InventoryWorkspaceView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.InventoryImport> importLocalizer
 @*
-    Page heading shared by the three inventory screens, laid out the same way as the rest of
-    the application: title and breadcrumb on the left, module buttons in a top-page-buttons
-    group on the right. ViewData["Module"] selects which one is current ("Inventory",
-    "Purchasing" or "Operations") and ViewData["Intro"] is an optional one line description.
+    Page heading shared by the inventory screens, on the standard module heading (module-workspace.css):
+    title, breadcrumb and description, with the module's sections in a strip underneath. Every section
+    shows and the current one is highlighted, so the heading looks the same on each screen.
 
-    The module switch has to be a POST for the same reason the tab strip does: under
-    Advanced Data Protection the request carries the reveal grant, and only the POST
-    forms that inventory-modern.js binds get one attached.
+    ViewData["Module"] selects the current section ("Inventory", "Purchasing", "Operations" or "Import")
+    and ViewData["Intro"] is an optional one line description. Import is offered to members who can
+    adjust stock (Model.CanWrite).
+
+    The sections are POST forms rather than links for the same reason the tab strip is: under Advanced
+    Data Protection the request carries the reveal grant, and only the POST forms that
+    inventory-modern.js binds get one attached.
 *@
 @{
     var module = (string)ViewData["Module"] ?? "Inventory";
@@ -17,12 +22,21 @@
     {
         ["Inventory"] = localizer["Inventory"].Value,
         ["Purchasing"] = localizer["M4Purchasing"].Value,
-        ["Operations"] = localizer["M5Operations"].Value
+        ["Operations"] = localizer["M5Operations"].Value,
+        ["Import"] = importLocalizer["ImportTitle"].Value
     };
     var intro = (string)ViewData["Intro"];
+    var sections = new ModuleTabsView { Post = true, FormClass = "inventory-navigation", Label = localizer["Inventory"].Value };
+    sections.Tabs.Add(new ModuleTab(localizer["Inventory"].Value, "fa-cubes", "Inventory", "Reopen", module == "Inventory"));
+    sections.Tabs.Add(new ModuleTab(localizer["M4Purchasing"].Value, "fa-shopping-cart", "Inventory", "ReopenPurchasing", module == "Purchasing"));
+    sections.Tabs.Add(new ModuleTab(localizer["M5Operations"].Value, "fa-clipboard", "Inventory", "ReopenOperations", module == "Operations"));
+    if (Model?.CanWrite == true || module == "Import")
+    {
+        sections.Tabs.Add(new ModuleTab(importLocalizer["ImportButton"].Value, "fa-upload", "Inventory", "ReopenImport", module == "Import"));
+    }
 }
-<div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-sm-5">
+<div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">
+    <div class="col-sm-12">
         <h2>@titles[module]</h2>
         <ol class="breadcrumb">
             <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
@@ -41,29 +55,7 @@
             <small class="text-muted">@intro</small>
         }
     </div>
-    <div class="col-sm-7">
-        <div class="top-page-buttons rgw-modules">
-            @if (module != "Inventory")
-            {
-                <form asp-action="Reopen" method="post" class="inventory-navigation">
-                    @Html.AntiForgeryToken()
-                    <button class="btn btn-default" type="submit"><i class="fa fa-cubes"></i> @localizer["Inventory"]</button>
-                </form>
-            }
-            @if (module != "Purchasing")
-            {
-                <form asp-action="ReopenPurchasing" method="post" class="inventory-navigation">
-                    @Html.AntiForgeryToken()
-                    <button class="btn btn-default" type="submit"><i class="fa fa-shopping-cart"></i> @localizer["M4Purchasing"]</button>
-                </form>
-            }
-            @if (module != "Operations")
-            {
-                <form asp-action="ReopenOperations" method="post" class="inventory-navigation">
-                    @Html.AntiForgeryToken()
-                    <button class="btn btn-default" type="submit"><i class="fa fa-clipboard"></i> @localizer["M5Operations"]</button>
-                </form>
-            }
-        </div>
+    <div class="col-sm-12 rgw-module-navigation">
+        @await Html.PartialAsync("_ModuleTabs", sections)
     </div>
 </div>

@@ -109,6 +109,15 @@
   <data name="VoiceIntakeHelp" xml:space="preserve">
     <value>Les appelants qui ne sont pas membres répondent à des questions guidées et un appel en attente est créé. Nécessite le module Enhanced AI avec la réception vocale par IA.</value>
   </data>
+  <data name="VoiceRecording" xml:space="preserve">
+    <value>Enregistrer les appels de réception vocale</value>
+  </data>
+  <data name="VoiceRecordingHelp" xml:space="preserve">
+    <value>Les appelants sont informés que l'appel est enregistré et doivent appuyer sur 1 pour accepter avant de pouvoir laisser un signalement. L'enregistrement ne commence qu'après leur accord et il est ajouté comme fichier à l'appel en attente à la fin de l'appel. Si l'appelant raccroche avant la création de l'appel en attente, l'enregistrement n'est pas conservé.</value>
+  </data>
+  <data name="VoiceRecordingLegal" xml:space="preserve">
+    <value>Les lois sur l'enregistrement des appels et le consentement varient selon le pays et la région. Vérifiez ce qui s'applique là où vous intervenez avant de l'activer.</value>
+  </data>
   <data name="VoiceIntakeUnavailable" xml:space="preserve">
     <value>La réception vocale par IA n'est pas encore disponible pour votre service. Ce réglage s'appliquera dès qu'elle le sera.</value>
   </data>

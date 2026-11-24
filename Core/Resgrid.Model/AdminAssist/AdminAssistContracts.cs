@@ -13,6 +13,12 @@ namespace Resgrid.Model.AdminAssist
 	public interface IAdminAssistReferenceSearch
 	{
 		IReadOnlyList<AdminAssistSearchHit> Search(string query, string locale, int take = 20);
+		/// <summary>
+		/// The analyzed words of <paramref name="text"/> that also occur in the reviewed public reference corpus, in order and
+		/// distinct. Words found nowhere in the corpus (names, addresses, identifiers) are dropped, so the result is safe to show a
+		/// model for a department whose free text must not leave the application.
+		/// </summary>
+		IReadOnlyList<string> ReviewedTerms(string text, int max = 24);
 	}
 	public interface IAdminAssistEvidenceSource
 	{

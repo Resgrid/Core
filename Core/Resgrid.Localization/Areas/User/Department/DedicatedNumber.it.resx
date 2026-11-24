@@ -109,6 +109,15 @@
   <data name="VoiceIntakeHelp" xml:space="preserve">
     <value>Chi chiama senza essere membro risponde a domande guidate e viene creata una chiamata in attesa. Richiede il componente Enhanced AI con la ricezione vocale IA.</value>
   </data>
+  <data name="VoiceRecording" xml:space="preserve">
+    <value>Registra le chiamate di ricezione vocale</value>
+  </data>
+  <data name="VoiceRecordingHelp" xml:space="preserve">
+    <value>Chi chiama viene informato che la chiamata è registrata e deve premere 1 per accettare prima di poter lasciare una segnalazione. La registrazione inizia solo dopo l'accettazione e, al termine della chiamata, viene aggiunta come file alla chiamata in attesa. Se chi chiama riaggancia prima che la chiamata in attesa sia creata, la registrazione non viene conservata.</value>
+  </data>
+  <data name="VoiceRecordingLegal" xml:space="preserve">
+    <value>Le leggi sulla registrazione delle chiamate e sul consenso variano da paese a paese e da stato a stato. Verificate cosa si applica nella vostra zona prima di attivarla.</value>
+  </data>
   <data name="VoiceIntakeUnavailable" xml:space="preserve">
     <value>La ricezione vocale IA non è ancora disponibile per il tuo dipartimento. Questa impostazione avrà effetto quando lo sarà.</value>
   </data>

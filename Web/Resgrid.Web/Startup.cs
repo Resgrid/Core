@@ -526,7 +526,9 @@ namespace Resgrid.Web
 					"lib/bstreeview/dist/css/bstreeview.min.css",
 					"lib/selectize/selectize/dist/css/selectize.default.css", "lib/claviska/jquery-minicolors/jquery.minicolors.css", "lib/algolia/autocomplete-theme-classic/dist/theme.css",
 					"lib/bootstrap-select/dist/css/bootstrap-select.css", "clib/data-tables/datatables.css", "lib/jquery-datetimepicker/build/jquery.datetimepicker.min.css",
-					"lib/deltablot/dropzone/dist/dropzone.css", "css/style.css");
+					"lib/deltablot/dropzone/dist/dropzone.css", "css/style.css",
+					// Top bar and page heading buttons; after the theme so its rules win ties.
+					"css/app-header.css");
 
 				// Internal app js bundle
 				pipeline.AddJavaScriptBundle("/js/int-bundle.js",

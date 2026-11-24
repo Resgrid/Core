@@ -892,4 +892,10 @@
   <data name="TermChecklist" xml:space="preserve">
     <value>Λίστα ελέγχου</value>
   </data>
+  <data name="AiPromptPiiWarning" xml:space="preserve">
+    <value>Μην συμπεριλαμβάνετε ποτέ προσωπικά δεδομένα (PII) ή δεδομένα υγείας (PHI) σε αιτήματα προς την ΤΝ: όχι ονόματα, αριθμούς τηλεφώνου, διευθύνσεις, στοιχεία ασθενών ή περιγραφές συμβάντων. Ό,τι πληκτρολογείτε εδώ μπορεί να σταλεί σε μοντέλο ΤΝ.</value>
+  </data>
+  <data name="ToggleMenu" xml:space="preserve">
+    <value>Εμφάνιση ή απόκρυψη του μενού</value>
+  </data>
 </root>

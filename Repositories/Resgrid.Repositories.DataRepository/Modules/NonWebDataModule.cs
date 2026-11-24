@@ -185,6 +185,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<CallBroadcastOutboxRepository>().As<ICallBroadcastOutboxRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PoiAvailabilitiesRepository>().As<IPoiAvailabilitiesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DestinationRulesRepository>().As<IDestinationRulesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CallEmailUpdatesRepository>().As<ICallEmailUpdatesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<AiDestinationAdvicesRepository>().As<IAiDestinationAdvicesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<AiDestinationReviewsRepository>().As<IAiDestinationReviewsRepository>().InstancePerLifetimeScope();
 			// Intake channels, messages and voice intake sessions (M0323).

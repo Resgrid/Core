@@ -72,6 +72,7 @@ namespace Resgrid.Web.Services.Controllers
 	private readonly IIntakeScreeningService _intakeScreening;
 	private readonly IDispatcherInboundTextHandler _dispatcherInboundTextHandler;
 	private readonly IDispatcherInboundVoiceHandler _dispatcherInboundVoiceHandler;
+	private readonly IVoiceIntakeRecordingService _voiceIntakeRecording;
 
 	public TwilioController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 		ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
@@ -86,8 +87,10 @@ namespace Resgrid.Web.Services.Controllers
 		IDepartmentPhoneNumbersService departmentPhoneNumbersService, IIntakeService intakeService, IVoiceIntakeService voiceIntakeService,
 		ITextMessageProvider textMessageProvider, IIntakeConversationService intakeConversations, IIntakeConversationOperations intakeConversationOperations,
 		IIntakeScreeningService intakeScreening,
-		IDispatcherInboundTextHandler dispatcherInboundTextHandler, IDispatcherInboundVoiceHandler dispatcherInboundVoiceHandler)
+		IDispatcherInboundTextHandler dispatcherInboundTextHandler, IDispatcherInboundVoiceHandler dispatcherInboundVoiceHandler,
+		IVoiceIntakeRecordingService voiceIntakeRecording)
 	{
+		_voiceIntakeRecording = voiceIntakeRecording;
 		_intakeScreening = intakeScreening;
 		_intakeConversations = intakeConversations;
 		_intakeConversationOperations = intakeConversationOperations;
@@ -1590,7 +1593,7 @@ namespace Resgrid.Web.Services.Controllers
 			// voice intake (or the "please text" message). Calls to the master number keep the profile-based IVR below.
 			var (dedicatedNumber, lookupFailed) = await FindDedicatedNumberAsync(request.To);
 			if (dedicatedNumber != null)
-				return await DedicatedNumberVoiceAsync(dedicatedNumber, request.CallSid, request.From, passedGate: false);
+				return await DedicatedNumberVoiceAsync(dedicatedNumber, request.CallSid, request.From, passedGate: false, recordingAccepted: false);
 
 			// The number table could not be read and the call is not to the master number: it may be a dedicated number, whose menu must never
 			// name (or act in) the caller's own department. One message and a hang-up; the master number keeps its profile IVR.
@@ -1661,8 +1664,11 @@ namespace Resgrid.Web.Services.Controllers
 		/// the "please text this number" message. With IntakeConfig.VoiceGateEnabled (M0326) the caller first presses 1
 		/// (<see cref="VoiceIntakeGate"/>), so most auto-dialers and recordings never start a session or use the monthly limit
 		/// (one that sends "1" still passes; the sender block list and limits still apply to it).
+		/// A number that records its intake calls (M0332) always plays the gate, which then says the call is recorded: the caller's 1 is
+		/// the consent (<paramref name="recordingAccepted"/>, carried by the gate's action URL), and the recording starts only after it.
 		/// </summary>
-		private async Task<ActionResult> DedicatedNumberVoiceAsync(DepartmentPhoneNumber number, string callSid, string fromNumber, bool passedGate)
+		private async Task<ActionResult> DedicatedNumberVoiceAsync(DepartmentPhoneNumber number, string callSid, string fromNumber, bool passedGate,
+			bool recordingAccepted)
 		{
 			var response = new VoiceResponse();
 			VoiceIntakeRouting routing;
@@ -1706,7 +1712,10 @@ namespace Resgrid.Web.Services.Controllers
 
 				case VoiceIntakeRoutes.Intake:
 					// M0326 gate: "press 1" before any session exists. Nothing pressed = the closing prompt and a hang-up, nothing recorded.
-					if (Config.IntakeConfig.VoiceGateEnabled && !passedGate)
+					// M0332: a recording number always asks, and says the call is recorded; "rec=1" in the (signed) action URL tells the gate
+					// action this caller heard that, so a number switched on meanwhile never records someone who was not told.
+					var recorded = VoiceIntakeRecording.IsEnabledFor(number);
+					if ((Config.IntakeConfig.VoiceGateEnabled || recorded) && !passedGate)
 					{
 						var gate = new Gather(
 							input: new List<Gather.InputEnum> { Gather.InputEnum.Dtmf },
@@ -1717,7 +1726,25 @@ namespace Resgrid.Web.Services.Controllers
 						{
 							ActionOnEmptyResult = false
 						};
-						await AppendVoicePromptAsync(gate, TwilioVoicePromptCatalog.VoiceIntakeGate, number.DepartmentId);
+						if (recorded)
+						{
+							// The recording notice plays on its own, BEFORE the gate listens: Twilio takes digits while a <Gather>'s nested audio
+							// plays, so a 1 pressed early would accept a notice the caller had not heard to the end. The gate after it is silent.
+							// The consent path ("rec=1") only when the notice is there as audio: a TTS failure or an expired TTS budget with the
+							// <Say> fallback off leaves it silent, and a caller who was never told is never recorded (they still go on, unrecorded,
+							// with their 1).
+							var heard = AudioCount(response);
+							await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.VoiceIntakeRecordedGate(await DepartmentNameAsync(number.DepartmentId)), number.DepartmentId);
+							if (AudioCount(response) > heard)
+								gate.Action = new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceIntakeGate?rec=1");
+							else
+								Framework.Logging.LogError($"[Twilio Voice] CallSid={callSid} dedicated number of department {number.DepartmentId}: the recording notice could not be played; this call is not recorded.");
+						}
+						else
+						{
+							await AppendVoicePromptAsync(gate, TwilioVoicePromptCatalog.VoiceIntakeGate, number.DepartmentId);
+						}
+
 						response.Append(gate);
 						await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.VoiceIntakeNothingHeard, number.DepartmentId);
 						response.Hangup();
@@ -1735,6 +1762,25 @@ namespace Resgrid.Web.Services.Controllers
 						Framework.Logging.LogException(ex, $"[Twilio Voice] CallSid={callSid} voice intake session start failed.");
 						turn = null;
 					}
+
+					// The caller accepted the recording at the gate and the questions start: record from here until the call ends (the
+					// service starts it once per CallSid and fails open, so a recording that cannot start never stops the request).
+					if (recordingAccepted && recorded && turn?.Gather == true)
+					{
+						try
+						{
+							await _voiceIntakeRecording.StartAsync(number, callSid, HttpContext?.RequestAborted ?? CancellationToken.None);
+						}
+						catch (OperationCanceledException)
+						{
+							// The caller hung up while the gate answered: nothing to say, nothing recorded.
+						}
+						catch (Exception ex)
+						{
+							Framework.Logging.LogException(ex, $"[Twilio Voice] CallSid={callSid} the call recording could not be started.");
+						}
+					}
+
 					return await RenderVoiceIntakeTurnAsync(turn, number.DepartmentId);
 
 				case VoiceIntakeRoutes.Blocked:
@@ -1790,7 +1836,79 @@ namespace Resgrid.Web.Services.Controllers
 				return CreateVoiceContentResult(closing);
 			}
 
-			return await DedicatedNumberVoiceAsync(number, callSid, from, passedGate: true);
+			// "rec" is in the action URL the gate built (Twilio signs the whole URL): this caller heard that the call is recorded.
+			var recordingAccepted = string.Equals(Request.Query["rec"].ToString(), "1", StringComparison.Ordinal);
+			return await DedicatedNumberVoiceAsync(number, callSid, from, passedGate: true, recordingAccepted: recordingAccepted);
+		}
+
+		/// <summary>
+		/// Twilio's recording status callback for voice intake (M0332; POST, after the call ended): "completed" attaches the MP3 to the
+		/// pending call as a file, "absent" / "failed" keeps nothing. 204 once the callback is handled or its sid is stored (what is not
+		/// attached now, worker 80 retries); 503 when it could not be read in at all, or nothing durable holds the recording yet, so Twilio
+		/// sends it again (the callback URL carries the 5xx retry override; a repeated callback is a no-op).
+		/// </summary>
+		[HttpPost("VoiceIntakeRecording")]
+		[ValidateRequest]
+		public async Task<ActionResult> VoiceIntakeRecordingCallback()
+		{
+			string Field(string name) => Request.HasFormContentType && Request.Form.ContainsKey(name) ? Request.Form[name].ToString() : Request.Query[name].ToString();
+
+			var status = new VoiceRecordingStatus
+			{
+				AccountSid = Field("AccountSid"),
+				CallSid = Field("CallSid"),
+				RecordingSid = Field("RecordingSid"),
+				Status = Field("RecordingStatus"),
+				DurationSeconds = int.TryParse(Field("RecordingDuration"), NumberStyles.Integer, CultureInfo.InvariantCulture, out var seconds) ? seconds : (int?)null
+			};
+
+			if (string.IsNullOrWhiteSpace(status.CallSid))
+				return BadRequest();
+
+			try
+			{
+				// Not the request's token: Twilio stops waiting after 15 seconds, the attach (download + save) should still finish.
+				var outcome = await _voiceIntakeRecording.HandleStatusAsync(status, CancellationToken.None);
+				Framework.Logging.LogInfo($"[Twilio Voice] CallSid={status.CallSid} recording {status.RecordingSid} {status.Status}: {outcome}.");
+				if (outcome == VoiceRecordingOutcomes.RetryLater)
+					return StatusCode(Microsoft.AspNetCore.Http.StatusCodes.Status503ServiceUnavailable);
+			}
+			catch (Exception ex)
+			{
+				// The session could not be read or written: its sid may be stored nowhere (a start that timed out stores none), and worker 80
+				// would later discard that session with no way back to the recording. Twilio sends the callback again.
+				Framework.Logging.LogException(ex, $"[Twilio Voice] CallSid={status.CallSid} recording status callback failed; Twilio retries it.");
+				return StatusCode(Microsoft.AspNetCore.Http.StatusCodes.Status503ServiceUnavailable);
+			}
+
+			return NoContent();
+		}
+
+		/// <summary>True when the TwiML element holds something the caller hears (a &lt;Play&gt; or &lt;Say&gt;), however deeply nested.</summary>
+		public static bool SpeaksAnything(TwiML element) => AudioCount(element) > 0;
+
+		/// <summary>How many &lt;Play&gt; / &lt;Say&gt; verbs the TwiML element holds, however deeply nested.</summary>
+		public static int AudioCount(TwiML element)
+		{
+			if (element == null)
+				return 0;
+
+			var xml = System.Xml.Linq.XDocument.Parse(element.ToString());
+			return xml.Root == null ? 0 : xml.Root.Descendants().Count(e => e.Name.LocalName == "Play" || e.Name.LocalName == "Say");
+		}
+
+		/// <summary>The department's name for the recorded-call gate; null (the prompt says "the department") when it cannot be read.</summary>
+		private async Task<string> DepartmentNameAsync(int departmentId)
+		{
+			try
+			{
+				return (await _departmentsService.GetDepartmentByIdAsync(departmentId, false))?.Name;
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"[Twilio Voice] department {departmentId} name could not be read for the voice intake gate.");
+				return null;
+			}
 		}
 
 		/// <summary>

@@ -109,6 +109,15 @@
   <data name="VoiceIntakeHelp" xml:space="preserve">
     <value>Dzwoniący, którzy nie są członkami, odpowiadają na pytania i tworzone jest oczekujące zgłoszenie. Wymaga dodatku Enhanced AI z głosowym przyjmowaniem zgłoszeń przez AI.</value>
   </data>
+  <data name="VoiceRecording" xml:space="preserve">
+    <value>Nagrywaj głosowe zgłoszenia</value>
+  </data>
+  <data name="VoiceRecordingHelp" xml:space="preserve">
+    <value>Dzwoniący słyszą, że rozmowa jest nagrywana, i muszą nacisnąć 1, aby wyrazić zgodę, zanim zostawią zgłoszenie. Nagrywanie zaczyna się dopiero po wyrażeniu zgody, a po zakończeniu rozmowy nagranie jest dodawane jako plik do oczekującego zgłoszenia. Jeśli dzwoniący rozłączy się przed utworzeniem oczekującego zgłoszenia, nagranie nie jest zachowywane.</value>
+  </data>
+  <data name="VoiceRecordingLegal" xml:space="preserve">
+    <value>Przepisy dotyczące nagrywania rozmów i zgody różnią się w zależności od kraju i regionu. Przed włączeniem sprawdź, co obowiązuje na Twoim terenie.</value>
+  </data>
   <data name="VoiceIntakeUnavailable" xml:space="preserve">
     <value>Głosowe przyjmowanie zgłoszeń przez AI nie jest jeszcze dostępne dla Twojego oddziału. To ustawienie zacznie działać, gdy będzie.</value>
   </data>

@@ -1719,7 +1719,7 @@ namespace Resgrid.Web.Services.Controllers
 					{
 						var gate = new Gather(
 							input: new List<Gather.InputEnum> { Gather.InputEnum.Dtmf },
-							action: new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceIntakeGate{(recorded ? "?rec=1" : "")}"),
+							action: new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceIntakeGate"),
 							method: "POST",
 							timeout: Math.Clamp(Config.IntakeConfig.VoiceGateTimeoutSeconds, 3, 30),
 							numDigits: 1)
@@ -1730,6 +1730,18 @@ namespace Resgrid.Web.Services.Controllers
 							? TwilioVoicePromptCatalog.VoiceIntakeRecordedGate(await DepartmentNameAsync(number.DepartmentId))
 							: TwilioVoicePromptCatalog.VoiceIntakeGate;
 						await AppendVoicePromptAsync(gate, gatePrompt, number.DepartmentId);
+
+						// The consent path ("rec=1") only when the recording notice is in the gate as audio: a TTS failure or an expired TTS budget
+						// with the <Say> fallback off leaves the gate silent, and a caller who was never told is never recorded (they still go on,
+						// unrecorded, with their 1).
+						if (recorded)
+						{
+							if (SpeaksAnything(gate))
+								gate.Action = new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceIntakeGate?rec=1");
+							else
+								Framework.Logging.LogError($"[Twilio Voice] CallSid={callSid} dedicated number of department {number.DepartmentId}: the recording notice could not be played; this call is not recorded.");
+						}
+
 						response.Append(gate);
 						await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.VoiceIntakeNothingHeard, number.DepartmentId);
 						response.Hangup();
@@ -1860,6 +1872,16 @@ namespace Resgrid.Web.Services.Controllers
 			}
 
 			return NoContent();
+		}
+
+		/// <summary>True when the TwiML element holds something the caller hears (a &lt;Play&gt; or &lt;Say&gt;), however deeply nested.</summary>
+		public static bool SpeaksAnything(TwiML element)
+		{
+			if (element == null)
+				return false;
+
+			var xml = System.Xml.Linq.XDocument.Parse(element.ToString());
+			return xml.Root != null && xml.Root.Descendants().Any(e => e.Name.LocalName == "Play" || e.Name.LocalName == "Say");
 		}
 
 		/// <summary>The department's name for the recorded-call gate; null (the prompt says "the department") when it cannot be read.</summary>

@@ -420,6 +420,15 @@ namespace Resgrid.Web.Services.Controllers
 								// A new call is dispatched as it always was; the CAD update engine decides whether one is needed, or whether
 								// this email updates, closes or is noted on the call that already carries its CAD call ID (cad-email-call-updates-plan.md).
 								ActionResult createdResult = null;
+								var updateRequest = new EmailCallUpdateRequest
+								{
+									DepartmentId = departmentId.Value,
+									Department = emailSettings.Department,
+									FormatType = emailSettings.FormatType,
+									Email = callEmail,
+									Parsed = parsed,
+									Source = CallEmailUpdateSources.DispatchAddress
+								};
 								async Task<Call> createDispatchCall(Call newCall)
 								{
 									// New Call Dispatch as normal, unless the department's email call mode holds it pending for a dispatcher (D10)
@@ -443,39 +452,39 @@ namespace Resgrid.Web.Services.Controllers
 									}
 
 									var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
-									await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedCall.CallId, pendingSteps);
-									saveRecorded = true;
-
-									var onDesk = true;
-									if (holdAsPending)
-										onDesk = await _dispatcherEmailCallService.OnPendingCallSavedAsync(savedCall, message.FromFull?.Email, callEmail.Subject, cancellationToken);
-									else
-										await QueueCallBroadcastAsync(savedCall, cancellationToken);
-
-									var aiQueued = enrich && await QueueAiDispatchEnrichmentAsync(savedCall, 1, message.FromFull?.Email, cancellationToken, heldForDispatcher: holdAsPending);
-
-									if (!onDesk)
-										createdResult = await DeskHandOffOwedAsync(receipt, aiQueued);
-									else if (enrich && !aiQueued)
-										createdResult = await AiEnrichmentOwedAsync(receipt, pendingSteps, pagedNow: !holdAsPending);
-									else
+									try
 									{
-										await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
-										createdResult = Ok(savedCall);
+										await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedCall.CallId, pendingSteps);
+										saveRecorded = true;
+
+										var onDesk = true;
+										if (holdAsPending)
+											onDesk = await _dispatcherEmailCallService.OnPendingCallSavedAsync(savedCall, message.FromFull?.Email, callEmail.Subject, cancellationToken);
+										else
+											await QueueCallBroadcastAsync(savedCall, cancellationToken);
+
+										var aiQueued = enrich && await QueueAiDispatchEnrichmentAsync(savedCall, 1, message.FromFull?.Email, cancellationToken, heldForDispatcher: holdAsPending);
+
+										if (!onDesk)
+											createdResult = await DeskHandOffOwedAsync(receipt, aiQueued);
+										else if (enrich && !aiQueued)
+											createdResult = await AiEnrichmentOwedAsync(receipt, pendingSteps, pagedNow: !holdAsPending);
+										else
+										{
+											await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+											createdResult = Ok(savedCall);
+										}
+									}
+									catch
+									{
+										await RecordBaselineAfterFailureAsync(updateRequest, savedCall);
+										throw;
 									}
 
 									return savedCall;
 								}
 
-								var update = await _emailCallUpdateService.ProcessAsync(new EmailCallUpdateRequest
-								{
-									DepartmentId = departmentId.Value,
-									Department = emailSettings.Department,
-									FormatType = emailSettings.FormatType,
-									Email = callEmail,
-									Parsed = parsed,
-									Source = CallEmailUpdateSources.DispatchAddress
-								}, createDispatchCall, cancellationToken);
+								var update = await _emailCallUpdateService.ProcessAsync(updateRequest, createDispatchCall, cancellationToken);
 
 								return await AnswerUpdateAsync(receipt, update, createdResult);
 							}
@@ -677,6 +686,15 @@ namespace Resgrid.Web.Services.Controllers
 								}
 
 								ActionResult createdResult = null;
+								var updateRequest = new EmailCallUpdateRequest
+								{
+									DepartmentId = departmentGroup.DepartmentId,
+									Department = emailSettings.Department,
+									FormatType = emailSettings.FormatType,
+									Email = callEmail,
+									Parsed = parsed,
+									Source = CallEmailUpdateSources.GroupDispatchAddress
+								};
 								async Task<Call> createGroupCall(Call newCall)
 								{
 									call = newCall;
@@ -692,35 +710,36 @@ namespace Resgrid.Web.Services.Controllers
 										pendingSteps |= InboundEmailPendingSteps.AiEnrichment;
 
 									var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
-									await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedCall.CallId, pendingSteps);
-									saveRecorded = true;
-
-									// Group-scoped: the units and members above were narrowed to this
-									// group, so run card enrichment stays out of it.
-									await QueueCallBroadcastAsync(savedCall, cancellationToken, false);
-
-									if (pendingSteps.HasFlag(InboundEmailPendingSteps.AiEnrichment) &&
-										!await QueueAiDispatchEnrichmentAsync(savedCall, 2, message.FromFull?.Email, cancellationToken))
+									try
 									{
-										createdResult = await AiEnrichmentOwedAsync(receipt, pendingSteps, pagedNow: true);
-										return savedCall;
+										await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedCall.CallId, pendingSteps);
+										saveRecorded = true;
+
+										// Group-scoped: the units and members above were narrowed to this
+										// group, so run card enrichment stays out of it.
+										await QueueCallBroadcastAsync(savedCall, cancellationToken, false);
+
+										if (pendingSteps.HasFlag(InboundEmailPendingSteps.AiEnrichment) &&
+											!await QueueAiDispatchEnrichmentAsync(savedCall, 2, message.FromFull?.Email, cancellationToken))
+										{
+											createdResult = await AiEnrichmentOwedAsync(receipt, pendingSteps, pagedNow: true);
+											return savedCall;
+										}
+
+										await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+										createdResult = Ok(savedCall);
+									}
+									catch
+									{
+										await RecordBaselineAfterFailureAsync(updateRequest, savedCall);
+										throw;
 									}
 
-									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
-									createdResult = Ok(savedCall);
 									return savedCall;
 								}
 
 								// A follow-up page for an open call (same CAD call ID) updates it instead (cad-email-call-updates-plan.md).
-								var update = await _emailCallUpdateService.ProcessAsync(new EmailCallUpdateRequest
-								{
-									DepartmentId = departmentGroup.DepartmentId,
-									Department = emailSettings.Department,
-									FormatType = emailSettings.FormatType,
-									Email = callEmail,
-									Parsed = parsed,
-									Source = CallEmailUpdateSources.GroupDispatchAddress
-								}, createGroupCall, cancellationToken);
+								var update = await _emailCallUpdateService.ProcessAsync(updateRequest, createGroupCall, cancellationToken);
 
 								return await AnswerUpdateAsync(receipt, update, createdResult);
 							}
@@ -848,18 +867,9 @@ namespace Resgrid.Web.Services.Controllers
 			int defaultPriority, CallEmailUpdateSources source, CancellationToken cancellationToken)
 		{
 			var config = await _departmentSettingsService.GetEmailCallUpdateConfigAsync(departmentId, formatType);
-			if (config == null || !config.Enabled || CadEmailText.DetectClose(config, callEmail) == CadEmailCloseKinds.None)
+			var parsed = CadEmailText.CloseOnlyParse(config, callEmail, departmentId, defaultPriority);
+			if (parsed == null)
 				return null;
-
-			// An ID the format reads (FromFormat) is not there: the format found nothing in this email.
-			if (CadEmailText.ExtractCallId(config, callEmail, null) == null)
-				return null;
-
-			var body = CadEmailText.BodyText(callEmail);
-			var parsed = new CallEmailParseResult
-			{
-				Call = new Call { DepartmentId = departmentId, Name = callEmail.Subject, NatureOfCall = body, Priority = defaultPriority }
-			};
 
 			var update = await _emailCallUpdateService.ProcessAsync(new EmailCallUpdateRequest
 			{
@@ -909,6 +919,33 @@ namespace Resgrid.Web.Services.Controllers
 		{
 			if (isNewCall && !saveRecorded && call != null && call.CallId > 0)
 				await _inboundEmailReceiptsService.MarkSavedAsync(receipt, call.CallId, pendingSteps);
+		}
+
+		/// <summary>
+		/// The CAD update baseline of a new call whose page, desk entry or receipt step failed after the save. The engine records the
+		/// baseline only once the create path returns, and the provider's retry resumes the saved call without the engine, so without
+		/// this later CAD emails could not tell a dispatcher's edit from the CAD's. Taken from the call as this delivery saved it (the
+		/// CAD's values, before anyone could edit it). Nothing for an email that carries no CAD call ID. Never throws.
+		/// </summary>
+		private async Task RecordBaselineAfterFailureAsync(EmailCallUpdateRequest request, Call savedCall)
+		{
+			try
+			{
+				if (savedCall == null || savedCall.CallId <= 0)
+					return;
+
+				var config = await _departmentSettingsService.GetEmailCallUpdateConfigAsync(request.DepartmentId, request.FormatType);
+				if (config == null || !config.Enabled)
+					return;
+
+				var cadCallId = CadEmailText.ExtractCallId(config, request.Email, request.Parsed?.MatchKey);
+				if (cadCallId != null)
+					await _emailCallUpdateService.RecordCreatedAsync(request, savedCall, cadCallId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Recording the CAD update baseline of call {savedCall?.CallId} after its delivery failed.");
+			}
 		}
 
 		/// <summary>

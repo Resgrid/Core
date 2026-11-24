@@ -137,13 +137,77 @@ namespace Resgrid.Tests.Services
 			var key = template.GetMatchKey(first);
 
 			key.Length.Should().BeLessThanOrEqualTo(CallEmailUpdate.MaxCadCallIdLength);
-			key.Should().EndWith("|20260514165316");
 			CadEmailText.NormalizeId(key).Should().Be(key, "the engine reads the key through NormalizeId");
 			template.GetMatchKey(second).Should().NotBe(key, "another call time is another incident");
 			template.GetMatchKey(otherName).Should().NotBe(key, "another name is another incident");
 			template.GetMatchKey(new Call { Name = name, LoggedOn = first.LoggedOn }).Should().Be(key, "the key is deterministic");
-			template.GetMatchKey(new Call { Name = "72C01 - Water Rescue", LoggedOn = first.LoggedOn }).Should().Be("72C01 - Water Rescue|20260514165316",
-				"a key that fits is unchanged");
+		}
+
+		[Test]
+		public void A_parkland_key_keeps_no_email_text()
+		{
+			var template = new ParklandCounty2Template();
+			var call = new Call { Name = "72C01 - Water Rescue", LoggedOn = new DateTime(2026, 5, 14, 16, 53, 16, DateTimeKind.Utc) };
+
+			var key = template.GetMatchKey(call);
+
+			key.Should().StartWith("PC2-").And.NotContain("Water").And.NotContain("72C01").And.NotContain("2026051416");
+			key.Should().Be(template.GetMatchKey(new Call { Name = " 72C01 - Water Rescue ", LoggedOn = call.LoggedOn }), "the name is read trimmed");
+			template.IsSameIncident(new Call { Name = call.Name, LoggedOn = call.LoggedOn }, call).Should().BeTrue(
+				"a call opened under the earlier readable key is still found by name and time");
+		}
+
+		[Test]
+		public void Spaces_between_label_separators_are_skipped()
+		{
+			var labels = new EmailLabeledFieldsConfig { Latitude = "Latitude", Longitude = "Longitude", Address = "Address" };
+
+			var values = LabeledFieldsTemplate.ReadLabeledValues(labels, null, "Longitude: = -122.33\nLatitude : 47.6\nAddress: # 12 Oak St");
+
+			values[LabeledEmailFields.Longitude].Should().Be("-122.33", "the sign after \": =\" is the number's");
+			values[LabeledEmailFields.Latitude].Should().Be("47.6");
+			values[LabeledEmailFields.Address].Should().Be("12 Oak St");
+			LabeledFieldsTemplate.ReadLabeledValues(labels, null, "Longitude:-122.33")[LabeledEmailFields.Longitude].Should().Be("-122.33");
+		}
+
+		[Test]
+		public void Only_a_recognised_close_with_a_readable_id_is_routed_without_a_call()
+		{
+			var config = new EmailCallUpdateConfig
+			{
+				Enabled = true, IdSource = (int)CadCallIdSources.Label, IdLabel = "ID", IdSearchIn = (int)CadCallIdSearchAreas.SubjectThenBody, ClosePhrases = "CLOSED"
+			};
+			var close = Email("ID: 2026-000777-FIRE", "CLOSED 9-1-1");
+
+			var parsed = CadEmailText.CloseOnlyParse(config, close, 10, 3);
+			parsed.Should().NotBeNull();
+			parsed.Call.DepartmentId.Should().Be(10);
+			parsed.Call.Name.Should().Be("CLOSED 9-1-1");
+			parsed.Call.Priority.Should().Be(3);
+
+			CadEmailText.CloseOnlyParse(config, Email("ID: 2026-000777-FIRE", "Units responding"), 10, 3).Should().BeNull("not a close");
+			CadEmailText.CloseOnlyParse(config, Email("No identifier here", "CLOSED 9-1-1"), 10, 3).Should().BeNull("no CAD call ID to match");
+			CadEmailText.CloseOnlyParse(new EmailCallUpdateConfig { Enabled = true, IdSource = (int)CadCallIdSources.FromFormat, ClosePhrases = "CLOSED" }, close, 10, 3)
+				.Should().BeNull("an ID only the format reads is not there when the format found nothing");
+			CadEmailText.CloseOnlyParse(new EmailCallUpdateConfig { Enabled = false, IdSource = (int)CadCallIdSources.Label, IdLabel = "ID", ClosePhrases = "CLOSED" }, close, 10, 3)
+				.Should().BeNull("CAD updates are off");
+		}
+
+		[Test]
+		public void A_mailbox_call_keeps_the_units_the_format_resolved()
+		{
+			var parsed = new Call
+			{
+				Name = "Structure Fire", DepartmentId = 4,
+				Dispatches = new List<CallDispatch> { new CallDispatch { UserId = "member" } },
+				UnitDispatches = new List<CallDispatchUnit> { new CallDispatchUnit { UnitId = 9 }, new CallDispatchUnit { UnitId = 9 }, new CallDispatchUnit { UnitId = 12 } }
+			};
+
+			var copy = CallEmailImporterLogic.CreateNewCallFromCall(parsed);
+
+			copy.UnitDispatches.Select(u => u.UnitId).Should().Equal(new[] { 9, 12 });
+			copy.UnitDispatches.Should().NotContain(u => parsed.UnitDispatches.Contains(u), "fresh rows, not the parse's");
+			copy.Dispatches.Select(d => d.UserId).Should().Equal(new[] { "member" });
 		}
 
 		[Test]

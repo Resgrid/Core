@@ -62,15 +62,17 @@ namespace Resgrid.Services.Intake
 		// Lazy: the desk's routing reaches back into intake (its conversations and screenings) through its own lazies.
 		private readonly Lazy<IDispatcherRoutingService> _dispatcherRouting;
 		private readonly Lazy<IEmailCallUpdateService> _emailCallUpdates;
+		private readonly IUnitsService _units;
 
 		public IntakeService(IIntakeChannelsRepository channels, IIntakeMessagesRepository messages, IVoiceIntakeSessionsRepository sessions,
 			IDepartmentsService departments, IDepartmentSettingsService departmentSettings, IFeatureToggleService flags, ICallsService calls,
 			INumbersService numbers, IGeoLocationProvider geo, IEventAggregator events, IQueueService queue, ICommunicationService communication,
 			ICacheProvider cache, IIntakeConversationService conversations, IIntakeConversationOperations conversationOperations,
 			IIntakeBlockedSendersRepository blocked, TimeProvider clock, Lazy<IDispatcherRoutingService> dispatcherRouting,
-			Lazy<IEmailCallUpdateService> emailCallUpdates = null)
+			Lazy<IEmailCallUpdateService> emailCallUpdates = null, IUnitsService units = null)
 		{
 			_emailCallUpdates = emailCallUpdates;
+			_units = units;
 			_blocked = blocked;
 			_dispatcherRouting = dispatcherRouting;
 			_channels = channels;
@@ -395,9 +397,12 @@ namespace Resgrid.Services.Intake
 			var callTypes = await _calls.GetCallTypesForDepartmentAsync(channel.DepartmentId) ?? new List<CallType>();
 			var priority = channel.DefaultPriority ?? CallPriorityMatch.DefaultForImport(priorities);
 
-			// No members or units go in, as for every intake template read: intake never dispatches anyone itself.
+			// The department's units, so a follow-up naming one ("Units: Engine 4") adds it to the matched call (and pages it when the
+			// department pages added resources). No members go in, and the pending call a first email makes is still built by
+			// BuildCallAsync with no one on it: intake never dispatches anyone itself.
+			var units = _units != null ? await _units.GetUnitsForDepartmentAsync(channel.DepartmentId) ?? new List<Unit>() : new List<Unit>();
 			var parsed = await _emailCallUpdates.Value.ParseAsync(format, email, department.ManagingUserId, new List<IdentityUser>(), department,
-				new List<Unit>(), priority, priorities, callTypes, cancellationToken);
+				units, priority, priorities, callTypes, cancellationToken);
 			if (parsed?.Call == null)
 				parsed = new CallEmailParseResult { Call = new Call { Name = email.Subject, NatureOfCall = body, Priority = priority } };
 
@@ -492,7 +497,8 @@ namespace Resgrid.Services.Intake
 			return new IntakePurgeResult
 			{
 				Messages = await _messages.PurgeReceivedBeforeAsync(messagesBefore, cancellationToken),
-				VoiceSessions = await _sessions.PurgeStartedBeforeAsync(sessionsBefore, cancellationToken),
+				// A session whose call recording worker 80 still has to delete at Twilio keeps its sid (and loses its transcript) until it does.
+				VoiceSessions = await _sessions.PurgeStartedBeforeAsync(sessionsBefore, IntakeConfig.VoiceRecordingDeleteCarrierCopy, cancellationToken),
 				// A lifted or expired block is kept as long as the messages it refused, then goes.
 				BlockedSenders = await _blocked.PurgeEndedBeforeAsync(messagesBefore, cancellationToken)
 			};

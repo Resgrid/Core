@@ -168,8 +168,16 @@ namespace Resgrid.Workers.Framework.Logic
 							var parsed = await emailCallUpdates.ParseAsync(item.EmailSettings.FormatType, email, item.EmailSettings.Department.ManagingUserId,
 								departmentUsers, item.EmailSettings.Department, units, defaultPriority, priorities, callTypes);
 
+							// A close or cancel the format does not read as a call still closes the call carrying its CAD call ID, as on the
+							// dispatch address; it never creates one. Anything else the format found nothing in is skipped, as before.
+							EmailCallUpdateConfig closeOnlyConfig = null;
 							if (parsed?.Call == null)
-								continue;
+							{
+								closeOnlyConfig = await _departmentSettingsService.GetEmailCallUpdateConfigAsync(item.EmailSettings.DepartmentId, item.EmailSettings.FormatType);
+								parsed = CadEmailText.CloseOnlyParse(closeOnlyConfig, email, item.EmailSettings.DepartmentId, defaultPriority);
+								if (parsed == null)
+									continue;
+							}
 
 							parsed.Call.DepartmentId = item.EmailSettings.DepartmentId;
 							var delivery = DeliveryKey(email, parsed.Call);
@@ -189,15 +197,17 @@ namespace Resgrid.Workers.Framework.Logic
 								Email = email,
 								Parsed = parsed,
 								Source = CallEmailUpdateSources.MailboxImport,
+								Config = closeOnlyConfig,
 								LockTimeout = BusyLockTimeout
 							};
 
-							var update = await emailCallUpdates.ProcessAsync(request, call => createImportedCall(call, sender));
+							Func<Call, Task<Call>> create = closeOnlyConfig == null ? call => createImportedCall(call, sender) : call => Task.FromResult<Call>(null);
+							var update = await emailCallUpdates.ProcessAsync(request, create);
 
 							// Another email for the same CAD call held the lock: it is handling that incident, so this one never becomes a second
 							// call (that would page the incident twice). The message is already off the mail server, so it is tried again here.
 							for (var attempt = 1; update.Outcome == CallEmailUpdateOutcomes.Busy && attempt < BusyAttempts; attempt++)
-								update = await emailCallUpdates.ProcessAsync(request, call => createImportedCall(call, sender));
+								update = await emailCallUpdates.ProcessAsync(request, create);
 
 							if (update.Outcome == CallEmailUpdateOutcomes.Busy)
 							{
@@ -247,7 +257,8 @@ namespace Resgrid.Workers.Framework.Logic
 			}
 		}
 
-		private Call CreateNewCallFromCall(Call call)
+		/// <summary>A fresh copy of the parsed call to save (no row instance is shared with the parse): its members, units and attachments.</summary>
+		public static Call CreateNewCallFromCall(Call call)
 		{
 			Call newCall = new Call();
 			newCall.Number = call.Number;
@@ -287,6 +298,20 @@ namespace Resgrid.Workers.Framework.Logic
 					cd.UserId = callDispatch.UserId;
 
 					newCall.Dispatches.Add(cd);
+				}
+			}
+
+			// Units the format resolved (a Labeled Fields "Units: Engine 4", Parkland's units) stay assigned on the imported call.
+			if (call.UnitDispatches != null && call.UnitDispatches.Any())
+			{
+				newCall.UnitDispatches = new List<CallDispatchUnit>();
+
+				foreach (var unitDispatch in call.UnitDispatches)
+				{
+					if (newCall.UnitDispatches.Any(x => x.UnitId == unitDispatch.UnitId))
+						continue;
+
+					newCall.UnitDispatches.Add(new CallDispatchUnit { UnitId = unitDispatch.UnitId, LastDispatchedOn = unitDispatch.LastDispatchedOn });
 				}
 			}
 

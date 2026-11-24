@@ -166,7 +166,9 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string IndoorMapZoneId { get; set; }
 
 		/// <summary>
-		/// Optional. Floor of <see cref="IndoorMapZoneId"/>.
+		/// Optional. Floor of <see cref="IndoorMapZoneId"/>, read only when that zone is sent. With a non-empty zone the floor is
+		/// replaced by this value: left out or blank stores no floor (it does not keep the stored one), so send the floor again
+		/// with the zone to keep it. With the zone left out (null) both stay; with an empty zone both are cleared.
 		/// </summary>
 		public string IndoorMapFloorId { get; set; }
 

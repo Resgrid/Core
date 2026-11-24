@@ -503,10 +503,25 @@ namespace Resgrid.Repositories.DataRepository
 				new { DepartmentId = departmentId, FromOn = DatabaseTimestamp(from), BeforeOn = DatabaseTimestamp(before) });
 		}
 
-		public Task<int> PurgeStartedBeforeAsync(DateTime before, CancellationToken cancellationToken = default)
+		public async Task<int> PurgeStartedBeforeAsync(DateTime before, bool keepCarrierCleanup, CancellationToken cancellationToken = default)
 		{
-			return ExecuteAsync($"DELETE FROM {Tbl(Table)} WHERE {Col("StartedOn")} < {P}Before", new { Before = DatabaseTimestamp(before) }, cancellationToken);
+			var parameters = new { Before = DatabaseTimestamp(before) };
+			if (!keepCarrierCleanup)
+				return await ExecuteAsync($"DELETE FROM {Tbl(Table)} WHERE {Col("StartedOn")} < {P}Before", parameters, cancellationToken);
+
+			// A recording still at the carrier keeps its session (the sid worker 80 deletes it by); its transcript expires all the same.
+			var carrierCopyLeft = $"({Col("RecordingSid")} IS NOT NULL AND {Col("RecordingCarrierDeletedOn")} IS NULL)";
+			await ExecuteAsync(
+				$"UPDATE {Tbl(Table)} SET {Col("AnswersJson")} = NULL WHERE {Col("StartedOn")} < {P}Before AND {carrierCopyLeft} AND {Col("AnswersJson")} IS NOT NULL",
+				parameters, cancellationToken);
+			return await ExecuteAsync($"DELETE FROM {Tbl(Table)} WHERE {Col("StartedOn")} < {P}Before AND NOT {carrierCopyLeft}", parameters, cancellationToken);
 		}
+
+		/// <summary>
+		/// An attach lease stamp, whole seconds: the lease is compared for equality, and a sub-second DateTime sent as a SQL Server datetime
+		/// parameter is rounded to 1/300 s on the way in, then compared with the datetime2 column at full precision (never equal).
+		/// </summary>
+		private static DateTime LeaseStamp(DateTime value) => DatabaseTimestamp(new DateTime(value.Ticks - value.Ticks % TimeSpan.TicksPerSecond, value.Kind));
 
 		public async Task<bool> TryBeginRecordingAsync(string providerCallId, CancellationToken cancellationToken = default)
 		{
@@ -568,7 +583,7 @@ namespace Resgrid.Repositories.DataRepository
 				$"UPDATE {Tbl(Table)} SET {Col("RecordingClaimedOn")} = {P}ClaimedOn, {Col("RecordingAttempts")} = {Col("RecordingAttempts")} + 1 " +
 				$"WHERE {Col("VoiceIntakeSessionId")} = {P}Id AND {Col("RecordingState")} = {P}Expected " +
 				$"AND ({Col("RecordingClaimedOn")} IS NULL OR {Col("RecordingClaimedOn")} < {P}StaleBefore)",
-				new { Id = voiceIntakeSessionId, Expected = expectedState, ClaimedOn = DatabaseTimestamp(claimedOn), StaleBefore = DatabaseTimestamp(staleBefore) },
+				new { Id = voiceIntakeSessionId, Expected = expectedState, ClaimedOn = LeaseStamp(claimedOn), StaleBefore = DatabaseTimestamp(staleBefore) },
 				cancellationToken);
 
 			return updated == 1;
@@ -583,6 +598,56 @@ namespace Resgrid.Repositories.DataRepository
 				$"UPDATE {Tbl(Table)} SET {Col("RecordingState")} = {P}State, {Col("RecordingClaimedOn")} = NULL, " +
 				$"{Col("RecordingCallAttachmentId")} = COALESCE({P}AttachmentId, {Col("RecordingCallAttachmentId")}) WHERE {Col("VoiceIntakeSessionId")} = {P}Id",
 				new { Id = voiceIntakeSessionId, State = state, AttachmentId = callAttachmentId },
+				cancellationToken);
+
+			return updated == 1;
+		}
+
+		public async Task<bool> SetClaimedRecordingStateAsync(string voiceIntakeSessionId, DateTime claimedOn, int state, int? callAttachmentId,
+			CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(voiceIntakeSessionId))
+				return false;
+
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl(Table)} SET {Col("RecordingState")} = {P}State, {Col("RecordingClaimedOn")} = NULL, " +
+				$"{Col("RecordingCallAttachmentId")} = COALESCE({P}AttachmentId, {Col("RecordingCallAttachmentId")}) " +
+				$"WHERE {Col("VoiceIntakeSessionId")} = {P}Id AND {Col("RecordingClaimedOn")} = {P}ClaimedOn",
+				new { Id = voiceIntakeSessionId, State = state, AttachmentId = callAttachmentId, ClaimedOn = LeaseStamp(claimedOn) },
+				cancellationToken);
+
+			return updated == 1;
+		}
+
+		public async Task<bool> RenewRecordingClaimAsync(string voiceIntakeSessionId, DateTime claimedOn, DateTime renewedOn, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(voiceIntakeSessionId))
+				return false;
+
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl(Table)} SET {Col("RecordingClaimedOn")} = {P}RenewedOn " +
+				$"WHERE {Col("VoiceIntakeSessionId")} = {P}Id AND {Col("RecordingClaimedOn")} = {P}ClaimedOn AND {Col("RecordingState")} = {P}Completed",
+				new
+				{
+					Id = voiceIntakeSessionId,
+					ClaimedOn = LeaseStamp(claimedOn),
+					RenewedOn = LeaseStamp(renewedOn),
+					Completed = (int)VoiceIntakeRecordingStates.Completed
+				},
+				cancellationToken);
+
+			return updated == 1;
+		}
+
+		public async Task<bool> TryDiscardUnconfirmedRecordingAsync(string voiceIntakeSessionId, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(voiceIntakeSessionId))
+				return false;
+
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl(Table)} SET {Col("RecordingState")} = {P}Discarded, {Col("RecordingClaimedOn")} = NULL " +
+				$"WHERE {Col("VoiceIntakeSessionId")} = {P}Id AND {Col("RecordingState")} = {P}Requested AND {Col("RecordingSid")} IS NULL",
+				new { Id = voiceIntakeSessionId, Discarded = (int)VoiceIntakeRecordingStates.Discarded, Requested = (int)VoiceIntakeRecordingStates.Requested },
 				cancellationToken);
 
 			return updated == 1;

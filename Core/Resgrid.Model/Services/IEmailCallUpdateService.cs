@@ -114,9 +114,10 @@ namespace Resgrid.Model.Services
 		/// call; the created call carries the ID. Otherwise it updates, closes or notes the matched call itself, pages per the
 		/// department's rule and raises the refresh. Returns <see cref="CallEmailUpdateOutcomes.Busy"/> (nothing done) when another
 		/// email with the same ID held the lock too long, and <see cref="CallEmailUpdateOutcomes.AlreadyHandled"/> (nothing done, the
-		/// call it touched) for a redelivery of an email with the same provider message id that was already handled. Exceptions from
-		/// <paramref name="createCall"/> propagate, and so does a ledger write that fails before the call is changed (nothing was done;
-		/// retry the email).
+		/// call it touched) for a redelivery of an email with the same provider message id that was already handled. A redelivery of one
+		/// that was interrupted after its call was saved finishes only what it had left (the page, resource rows, release, notice, note)
+		/// and answers Updated, Closed or Cancelled. Exceptions from <paramref name="createCall"/> propagate, and so do a ledger write that
+		/// fails before the call is changed (nothing was done; retry the email) and a failed call save (retry the email).
 		/// </summary>
 		Task<EmailCallUpdateResult> ProcessAsync(EmailCallUpdateRequest request, Func<Call, Task<Call>> createCall, CancellationToken cancellationToken = default);
 

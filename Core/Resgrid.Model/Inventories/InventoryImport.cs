@@ -134,5 +134,7 @@ namespace Resgrid.Model.Inventories
 	{
 		public const int MaxRows = 1000;
 		public const int MaxFileBytes = 1024 * 1024;
+		/// <summary>The longest cell, and the longest note a posting accepts.</summary>
+		public const int MaxTextLength = 16000;
 	}
 }

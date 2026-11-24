@@ -219,6 +219,23 @@ namespace Resgrid.Tests.AdminAssist
 		}
 
 		[Test]
+		public async Task Protection_starting_mid_turn_stops_the_question_before_the_next_round()
+		{
+			// Arrange: Disabled when the turn starts and at round 1, queued for enrollment by round 2.
+			var f = new ServiceFixture(Abstain);
+			f.Protection.SetupSequence(p => p.GetStateAsync(7, true))
+				.ReturnsAsync(DepartmentDataProtectionState.Disabled).ReturnsAsync(DepartmentDataProtectionState.Disabled)
+				.ReturnsAsync(DepartmentDataProtectionState.EnrollmentQueued);
+			f.Client.Setup(c => c.CompleteAsync(It.IsAny<LlmRequest>(), It.IsAny<CancellationToken>())).Callback<LlmRequest, CancellationToken>((r, _) => f.Sent.Add(r))
+				.ReturnsAsync(new LlmResult(null, new[] { new LlmToolCall("a", "get_setup_report", "{}") }, 400, 20, "tool_calls"));
+			// Act
+			var answer = await WithAuditKey(() => f.Service.AskAsync(Actor, new("How do I configure Run Cards for Jane Doe?"), CancellationToken.None));
+			// Assert
+			Assert.That(f.Sent, Has.Count.EqualTo(1), "no round after protection started");
+			Assert.That(answer.Outcome, Is.EqualTo("Unavailable"));
+		}
+
+		[Test]
 		public async Task Unreadable_adp_state_fails_closed_to_terms()
 		{
 			// Arrange

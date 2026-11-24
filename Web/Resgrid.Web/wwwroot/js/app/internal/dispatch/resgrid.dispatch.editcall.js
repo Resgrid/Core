@@ -179,7 +179,8 @@ var resgrid;
                         if (resgrid.dispatch.facilitymaps) {
                             resgrid.dispatch.facilitymaps.mapReady(map, {
                                 setLocation: function (lat, lng) {
-                                    callLocationChanged();
+                                    // A room was picked (a click in it or the Indoor Location search): its zone stays.
+                                    callLocationChanged(true);
                                     resgrid.dispatch.editcall.setMarkerLocation(lat.toString(), lng.toString());
                                     $("#Latitude").val(lat.toString());
                                     $("#Longitude").val(lng.toString());
@@ -786,12 +787,13 @@ var resgrid;
             editcall.geocodeCoordinates = geocodeCoordinates;
             /**
              * The dispatcher placed the call another way (map click, search, pin, dragged marker, room): an address lookup for an
-             * earlier point and a call plus code still typed or being looked up (resgrid.dispatch.calllocations) no longer apply.
+             * earlier point and a call plus code still typed or being looked up (resgrid.dispatch.calllocations) no longer apply, and
+             * neither does the indoor location unless keepRoom (the facility map's room pick placed the call in that room).
              */
-            function callLocationChanged() {
+            function callLocationChanged(keepRoom) {
                 reverseGeocodeRequest++;
                 if (resgrid.dispatch.calllocations && typeof resgrid.dispatch.calllocations.callLocationChanged === 'function') {
-                    resgrid.dispatch.calllocations.callLocationChanged();
+                    resgrid.dispatch.calllocations.callLocationChanged(keepRoom === true);
                 }
             }
             editcall.callLocationChanged = callLocationChanged;

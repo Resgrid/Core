@@ -135,7 +135,7 @@ namespace Resgrid.Services
 					if (columns[i] == null) continue;
 					var value = Clean(fields[i]);
 					if (value == null) continue;
-					if (value.Length > 16000) { row.ParseError = "ImportValueTooLong"; row.ParseColumn = columns[i]; continue; }
+					if (value.Length > InventoryImportLimits.MaxTextLength) { row.ParseError = "ImportValueTooLong"; row.ParseColumn = columns[i]; continue; }
 					if (!Assign(row, columns[i], value, numbers, culture ?? CultureInfo.InvariantCulture)) row.ParseColumn = columns[i];
 				}
 			}
@@ -167,11 +167,12 @@ namespace Resgrid.Services
 		/// <summary>
 		/// RFC 4180 records, one per spreadsheet row (a quoted value may span lines; a blank line is an empty record). A quote
 		/// that does not open a value is kept as text, so an unquoted inch mark (Gauze 4"x4") reads as written. A quote left
-		/// open at the end of the file makes that last record unreadable.
+		/// open at the end of the file makes that last record unreadable, and so does text after a quoted value closes
+		/// (<c>"12"34</c> is not 1234): only spaces may follow the closing quote before the delimiter or the line end.
 		/// </summary>
 		private static IEnumerable<(List<string> Fields, bool Malformed)> Records(string text, char delimiter)
 		{
-			var fields = new List<string>(); var field = new StringBuilder(); var quoted = false; var opened = false;
+			var fields = new List<string>(); var field = new StringBuilder(); var quoted = false; var opened = false; var closed = false; var malformed = false;
 			for (var i = 0; i < text.Length; i++)
 			{
 				var c = text[i];
@@ -179,15 +180,20 @@ namespace Resgrid.Services
 				{
 					if (c != '"') { field.Append(c); continue; }
 					if (i + 1 < text.Length && text[i + 1] == '"') { field.Append('"'); i++; continue; }
-					quoted = false; continue;
+					quoted = false; closed = true; continue;
+				}
+				if (closed && c != delimiter && c != '\r' && c != '\n')
+				{
+					if (!char.IsWhiteSpace(c)) malformed = true;
+					continue;
 				}
 				if (c == '"' && !opened && field.ToString().Trim().Length == 0) { field.Clear(); quoted = opened = true; continue; }
-				if (c == delimiter) { fields.Add(field.ToString()); field.Clear(); opened = false; continue; }
+				if (c == delimiter) { fields.Add(field.ToString()); field.Clear(); opened = closed = false; continue; }
 				if (c == '\r' || c == '\n')
 				{
 					if (c == '\r' && i + 1 < text.Length && text[i + 1] == '\n') i++;
-					fields.Add(field.ToString()); field.Clear(); opened = false;
-					yield return (fields, false); fields = new List<string>();
+					fields.Add(field.ToString()); field.Clear(); opened = closed = false;
+					yield return (fields, malformed); fields = new List<string>(); malformed = false;
 					continue;
 				}
 				field.Append(c);
@@ -195,7 +201,7 @@ namespace Resgrid.Services
 			if (quoted || field.Length > 0 || fields.Count > 0 || opened)
 			{
 				fields.Add(field.ToString());
-				yield return (fields, quoted);
+				yield return (fields, quoted || malformed);
 			}
 		}
 
@@ -265,8 +271,15 @@ namespace Resgrid.Services
 			while (start < end && !IsNumberChar(s[start])) start++;
 			while (end > start && !IsNumberChar(s[end - 1])) end--;
 			if (start >= end || s.Take(start).Any(char.IsDigit) || s.Skip(end).Any(char.IsDigit)) return false;
+			// Accounting parentheses are a minus sign: "($12.50)" is -12.50, which the cost and quantity checks then refuse.
+			var opens = s.Take(start).Count(c => c == '('); var closes = s.Skip(end).Count(c => c == ')');
+			if (opens > 1 || closes > 1 || opens != closes) return false;
+			var negative = opens == 1;
 			s = s[start..end];
-			return TryPattern(s, decimalSeparator, groupSeparator, out result) || TryPattern(s, groupSeparator, decimalSeparator, out result);
+			if (negative && (s[0] == '-' || s[0] == '+')) return false;
+			if (!TryPattern(s, decimalSeparator, groupSeparator, out result) && !TryPattern(s, groupSeparator, decimalSeparator, out result)) return false;
+			if (negative) result = -result;
+			return true;
 		}
 
 		private static bool IsNumberChar(char c) => char.IsDigit(c) || c is '-' or '+' or '.' or ',';
@@ -292,16 +305,34 @@ namespace Resgrid.Services
 
 		private static readonly string[] DateFormats = { "yyyy-MM-dd", "yyyy-M-d", "yyyy/MM/dd", "yyyy/M/d", "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-ddTHH:mm:ss'Z'", "yyyy-MM-dd HH:mm:ss" };
 
-		/// <summary>ISO dates first, then the uploader's own date format. The date is kept as midnight UTC, like the lot form.</summary>
+		/// <summary>
+		/// ISO dates first, then the uploader's own date format. The date is kept as midnight UTC, like the lot form. The cell must
+		/// carry the whole date: the culture parser would fill a missing date or year from today ("12:00 PM", "5/12"), so the same
+		/// file would read differently on another day.
+		/// </summary>
 		public static bool TryDate(string value, CultureInfo culture, out DateTime result)
 		{
 			if (DateTime.TryParseExact(value, DateFormats, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out var date)
-				|| culture != null && DateTime.TryParse(value, culture, DateTimeStyles.AllowWhiteSpaces, out date))
+				|| culture != null && DateTime.TryParse(value, culture, DateTimeStyles.AllowWhiteSpaces | DateTimeStyles.NoCurrentDateDefault, out date) && NamesYear(value, date.Year))
 			{
 				result = DateTime.SpecifyKind(date.Date, DateTimeKind.Utc);
 				return date.Year is >= 1900 and <= 2200;
 			}
 			result = default; return false;
+		}
+
+		/// <summary>Whether the text holds the year as a number of its own (four digits, or the last two).</summary>
+		private static bool NamesYear(string value, int year)
+		{
+			var number = 0; var digits = 0;
+			bool Matches() => digits == 4 && number == year || digits == 2 && number == year % 100;
+			foreach (var c in value + " ")
+			{
+				if (char.IsDigit(c)) { number = number * 10 + (int)char.GetNumericValue(c); digits++; continue; }
+				if (digits > 0 && Matches()) return true;
+				number = 0; digits = 0;
+			}
+			return false;
 		}
 
 		public static string Number(decimal? value) => value?.ToString("0.######", CultureInfo.InvariantCulture);

@@ -81,7 +81,7 @@ namespace Resgrid.Services.Intake
 
 				if (string.IsNullOrWhiteSpace(recordingSid))
 				{
-					await _sessions.SetRecordingStateAsync(session.VoiceIntakeSessionId, (int)VoiceIntakeRecordingStates.Discarded, null, CancellationToken.None);
+					await _sessions.TryDiscardUnconfirmedRecordingAsync(session.VoiceIntakeSessionId, CancellationToken.None);
 					return false;
 				}
 
@@ -119,8 +119,21 @@ namespace Resgrid.Services.Intake
 			var state = completed ? VoiceIntakeRecordingStates.Completed : VoiceIntakeRecordingStates.Discarded;
 			if (!await _sessions.CompleteRecordingAsync(callSid, status.RecordingSid, status.DurationSeconds, (int)state, CancellationToken.None))
 			{
-				// Not Requested: a repeated callback (the first one moved it on), or a recording the gate never asked for.
-				if (session.RecordingState != (int)VoiceIntakeRecordingStates.None)
+				// Not Requested (read again: the first read may predate a worker 80 discard): a repeated callback, a recording the gate never
+				// asked for, or the first sid of one worker 80 already discarded as never started.
+				var stored = await _sessions.GetByProviderCallIdAsync(callSid) ?? session;
+				if (stored.RecordingState == (int)VoiceIntakeRecordingStates.Discarded && string.IsNullOrWhiteSpace(stored.RecordingSid) &&
+					!string.IsNullOrWhiteSpace(status.RecordingSid))
+				{
+					// The session gave this recording up before its sid arrived: it is kept nowhere, so Twilio's copy goes too. The sid is stored
+					// first, so a delete that fails now is retried by worker 80 (and the session purge keeps it until then).
+					Framework.Logging.LogInfo($"[Voice Recording] CallSid={callSid}: recording {status.RecordingSid} arrived after the session gave it up; deleting it.");
+					await _sessions.SetRecordingSidAsync(callSid, status.RecordingSid, CancellationToken.None);
+					await DeleteCarrierCopyAsync(stored.VoiceIntakeSessionId, status.RecordingSid);
+					return VoiceRecordingOutcomes.Discarded;
+				}
+
+				if (stored.RecordingState != (int)VoiceIntakeRecordingStates.None)
 					return VoiceRecordingOutcomes.Duplicate;
 
 				await DeleteCarrierCopyAsync(null, status.RecordingSid);
@@ -157,8 +170,9 @@ namespace Resgrid.Services.Intake
 
 							if (string.IsNullOrWhiteSpace(row.RecordingSid))
 							{
-								// The start was never confirmed and no callback came: as far as anything shows, nothing was recorded.
-								if (await _sessions.SetRecordingStateAsync(row.VoiceIntakeSessionId, (int)VoiceIntakeRecordingStates.Discarded, null, CancellationToken.None))
+								// The start was never confirmed and no callback came: as far as anything shows, nothing was recorded. Only while that
+								// is still so: a callback that bound the sid (and completed it) since this row was read keeps its recording.
+								if (await _sessions.TryDiscardUnconfirmedRecordingAsync(row.VoiceIntakeSessionId, CancellationToken.None))
 									changed++;
 								break;
 							}
@@ -211,7 +225,10 @@ namespace Resgrid.Services.Intake
 				return VoiceRecordingOutcomes.Discarded;
 			}
 
-			if (!await _sessions.TryClaimRecordingAsync(session.VoiceIntakeSessionId, (int)VoiceIntakeRecordingStates.Completed, nowUtc,
+			// The lease: every write after this one holds only while the lease is still this attempt's (a stalled attempt taken over after
+			// LeaseMinutes changes nothing, saves nothing and deletes nothing).
+			var claim = nowUtc;
+			if (!await _sessions.TryClaimRecordingAsync(session.VoiceIntakeSessionId, (int)VoiceIntakeRecordingStates.Completed, claim,
 				nowUtc.AddMinutes(-LeaseMinutes), CancellationToken.None))
 				return VoiceRecordingOutcomes.Waiting;
 
@@ -221,7 +238,8 @@ namespace Resgrid.Services.Intake
 				var call = await _calls.GetCallByIdAsync(session.CallId.Value);
 				if (call == null || call.IsDeleted || call.DepartmentId != session.DepartmentId)
 				{
-					await _sessions.SetRecordingStateAsync(session.VoiceIntakeSessionId, (int)VoiceIntakeRecordingStates.Discarded, null, CancellationToken.None);
+					if (!await _sessions.SetClaimedRecordingStateAsync(session.VoiceIntakeSessionId, claim, (int)VoiceIntakeRecordingStates.Discarded, null, CancellationToken.None))
+						return LeaseLost(session);
 					await DeleteCarrierCopyAsync(session.VoiceIntakeSessionId, session.RecordingSid);
 					return VoiceRecordingOutcomes.Discarded;
 				}
@@ -231,42 +249,53 @@ namespace Resgrid.Services.Intake
 				{
 					case VoiceRecordingDownloadStatuses.NotFound:
 						Framework.Logging.LogError($"[Voice Recording] call {call.CallId}: Twilio has no recording {session.RecordingSid}; nothing attached.");
-						await _sessions.SetRecordingStateAsync(session.VoiceIntakeSessionId, (int)VoiceIntakeRecordingStates.Discarded, null, CancellationToken.None);
+						if (!await _sessions.SetClaimedRecordingStateAsync(session.VoiceIntakeSessionId, claim, (int)VoiceIntakeRecordingStates.Discarded, null, CancellationToken.None))
+							return LeaseLost(session);
 						await _sessions.MarkRecordingCarrierDeletedAsync(session.VoiceIntakeSessionId, nowUtc, CancellationToken.None);
 						return VoiceRecordingOutcomes.Discarded;
 
 					case VoiceRecordingDownloadStatuses.TooLarge:
 						Framework.Logging.LogError($"[Voice Recording] call {call.CallId}: recording {session.RecordingSid} is larger than IntakeConfig.VoiceRecordingMaxBytes; kept at Twilio until the session purge.");
-						await _sessions.SetRecordingStateAsync(session.VoiceIntakeSessionId, (int)VoiceIntakeRecordingStates.Failed, null, CancellationToken.None);
+						if (!await _sessions.SetClaimedRecordingStateAsync(session.VoiceIntakeSessionId, claim, (int)VoiceIntakeRecordingStates.Failed, null, CancellationToken.None))
+							return LeaseLost(session);
 						return VoiceRecordingOutcomes.Failed;
 
 					case VoiceRecordingDownloadStatuses.Downloaded:
 						break;
 
 					default:
-						return await ReleaseOrFailAsync(session, attempt, call.CallId, "the carrier could not hand it over");
+						return await ReleaseOrFailAsync(session, claim, attempt, call.CallId, "the carrier could not hand it over");
 				}
 
+				// The download can take a while: renew the lease right before the save, so a takeover cannot start while this attempt writes
+				// the file (and an attempt that already lost it never writes one).
+				var renewed = Later(_clock.GetUtcNow().UtcDateTime, claim);
+				if (!await _sessions.RenewRecordingClaimAsync(session.VoiceIntakeSessionId, claim, renewed, CancellationToken.None))
+					return LeaseLost(session);
+				claim = renewed;
+
+				// A file an earlier attempt saved before it died is completed rather than added again: saved once more by its id, which runs
+				// the protected-write step that attempt may not have finished (ADP seals the file only after the first insert).
 				var fileName = VoiceIntakeRecording.FileName(session);
-				var existing = attempt > 1 ? await FindAttachedAsync(call.CallId, fileName, download.Data.Length, session.StartedOn) : null;
-				var attachmentId = existing?.CallAttachmentId;
-				if (!attachmentId.HasValue)
+				var stamp = RecordingStamp(session);
+				var existing = await FindAttachedAsync(call.CallId, fileName, download.Data.Length, stamp);
+				var saved = await _calls.SaveCallAttachmentAsync(new CallAttachment
 				{
-					var saved = await _calls.SaveCallAttachmentAsync(new CallAttachment
-					{
-						CallId = call.CallId,
-						CallAttachmentType = (int)CallAttachmentTypes.File,
-						FileName = fileName,
-						Name = DisplayName(session.RecordingDurationSeconds),
-						Data = download.Data,
-						Size = download.Data.Length,
-						UserId = call.ReportingUserId,
-						Timestamp = nowUtc
-					}, CancellationToken.None);
-					attachmentId = saved?.CallAttachmentId;
-				}
+					CallAttachmentId = existing?.CallAttachmentId ?? 0,
+					CallId = call.CallId,
+					CallAttachmentType = (int)CallAttachmentTypes.File,
+					FileName = fileName,
+					Name = DisplayName(session.RecordingDurationSeconds),
+					Data = download.Data,
+					Size = download.Data.Length,
+					UserId = call.ReportingUserId,
+					// When the recorded call began, to the second: the file's identity on a retry even where ADP seals its name.
+					Timestamp = stamp
+				}, CancellationToken.None);
+				var attachmentId = saved?.CallAttachmentId ?? existing?.CallAttachmentId;
 
-				await _sessions.SetRecordingStateAsync(session.VoiceIntakeSessionId, (int)VoiceIntakeRecordingStates.Attached, attachmentId, CancellationToken.None);
+				if (!await _sessions.SetClaimedRecordingStateAsync(session.VoiceIntakeSessionId, claim, (int)VoiceIntakeRecordingStates.Attached, attachmentId, CancellationToken.None))
+					return LeaseLost(session);
 				Framework.Logging.LogInfo($"[Voice Recording] call {call.CallId}: caller recording attached as file {attachmentId} ({download.Data.Length} bytes).");
 				await DeleteCarrierCopyAsync(session.VoiceIntakeSessionId, session.RecordingSid);
 				return VoiceRecordingOutcomes.Attached;
@@ -274,33 +303,49 @@ namespace Resgrid.Services.Intake
 			catch (Exception ex) when (ex is not OperationCanceledException || !cancellationToken.IsCancellationRequested)
 			{
 				Framework.Logging.LogException(ex, $"[Voice Recording] call {session.CallId}: recording {session.RecordingSid} could not be attached (attempt {attempt}).");
-				return await ReleaseOrFailAsync(session, attempt, session.CallId.Value, ex.GetType().Name);
+				return await ReleaseOrFailAsync(session, claim, attempt, session.CallId.Value, ex.GetType().Name);
 			}
 		}
 
-		private async Task<VoiceRecordingOutcomes> ReleaseOrFailAsync(VoiceIntakeSession session, int attempt, int callId, string reason)
+		private async Task<VoiceRecordingOutcomes> ReleaseOrFailAsync(VoiceIntakeSession session, DateTime claim, int attempt, int callId, string reason)
 		{
 			if (attempt >= Math.Max(1, IntakeConfig.VoiceRecordingMaxAttempts))
 			{
 				Framework.Logging.LogError($"[Voice Recording] call {callId}: recording {session.RecordingSid} was not attached after {attempt} attempts ({reason}); kept at Twilio until the session purge.");
-				await _sessions.SetRecordingStateAsync(session.VoiceIntakeSessionId, (int)VoiceIntakeRecordingStates.Failed, null, CancellationToken.None);
+				if (!await _sessions.SetClaimedRecordingStateAsync(session.VoiceIntakeSessionId, claim, (int)VoiceIntakeRecordingStates.Failed, null, CancellationToken.None))
+					return LeaseLost(session);
 				return VoiceRecordingOutcomes.Failed;
 			}
 
-			await _sessions.SetRecordingStateAsync(session.VoiceIntakeSessionId, (int)VoiceIntakeRecordingStates.Completed, null, CancellationToken.None);
+			if (!await _sessions.SetClaimedRecordingStateAsync(session.VoiceIntakeSessionId, claim, (int)VoiceIntakeRecordingStates.Completed, null, CancellationToken.None))
+				return LeaseLost(session);
+			return VoiceRecordingOutcomes.Waiting;
+		}
+
+		/// <summary>Another attempt took the lease over: this one stops, and that one finishes the recording.</summary>
+		private static VoiceRecordingOutcomes LeaseLost(VoiceIntakeSession session)
+		{
+			Framework.Logging.LogInfo($"[Voice Recording] session {session.VoiceIntakeSessionId}: the attach lease was taken over by another attempt; this one stops.");
 			return VoiceRecordingOutcomes.Waiting;
 		}
 
 		/// <summary>
-		/// A retried attempt whose earlier one saved the file but died before recording it: the same session's file is on the call already
-		/// (its name, or under ADP where names are sealed, the same size saved after the call began).
+		/// The session's file on the call already, from an earlier attempt that saved it but died before recording it: its name, or (under
+		/// ADP, where names are sealed) its size and the exact timestamp the recording is saved with. Nothing else on the call carries that
+		/// timestamp: it is the second the call began, before the pending call (and so any other file on it) existed.
 		/// </summary>
-		private async Task<CallAttachment> FindAttachedAsync(int callId, string fileName, int size, DateTime startedOn)
+		private async Task<CallAttachment> FindAttachedAsync(int callId, string fileName, int size, DateTime stamp)
 		{
 			var files = await _attachments.GetCallDispatchesByCallIdAsync(callId);
 			return files?.FirstOrDefault(a => a != null && !a.IsDeleted && a.CallAttachmentType == (int)CallAttachmentTypes.File &&
-				(string.Equals(a.FileName, fileName, StringComparison.OrdinalIgnoreCase) || (a.Size == size && a.Timestamp >= startedOn)));
+				(string.Equals(a.FileName, fileName, StringComparison.OrdinalIgnoreCase) || (a.Size == size && a.Timestamp == stamp)));
 		}
+
+		/// <summary>The recording file's timestamp: when the session began, whole seconds (exact in every engine's datetime type).</summary>
+		public static DateTime RecordingStamp(VoiceIntakeSession session) =>
+			new DateTime(session.StartedOn.Ticks - session.StartedOn.Ticks % TimeSpan.TicksPerSecond, DateTimeKind.Utc);
+
+		private static DateTime Later(DateTime a, DateTime b) => a > b ? a : b;
 
 		/// <summary>Deletes Twilio's copy (when the host says so) and records it on the session. True when it is gone.</summary>
 		private async Task<bool> DeleteCarrierCopyAsync(string voiceIntakeSessionId, string recordingSid)

@@ -28,6 +28,9 @@ const form = `
   <a id="callPlusCodeButton" href="#">Find Plus Code</a>
   <input id="Latitude" name="Latitude" value="39.7392">
   <input id="Longitude" name="Longitude" value="-104.9903">
+  <select id="indoorZoneSearch"><option value="z14" selected="selected">Formation Zone 14</option></select>
+  <input type="hidden" id="IndoorMapZoneId" name="IndoorMapZoneId" value="z14">
+  <input type="hidden" id="IndoorMapFloorId" name="IndoorMapFloorId" value="l1">
   <select id="Call_DestinationPoiId" name="Call.DestinationPoiId"><option value=""></option><option value="31">UZ Gent</option></select>
   <input class="call-destination-free" id="Call_DestinationAddress" name="Call.DestinationAddress">
   <a id="destinationSearchButton" href="#">Find</a>
@@ -307,6 +310,76 @@ const settle = (page) => page.waitForTimeout(50);
             await page.evaluate(() => window.addressLookups[1]('13 Found Rd'));
             await settle(page);
             assert.deepEqual(await page.evaluate(() => window.submitted), ['update'], 'no second save with a location set after Save was pressed');
+            assert.deepEqual(errors, []);
+            await context.close();
+        }
+
+        // PR #591 round 2: a call placed outside any room (a map click outside the rooms, a dragged pin, an address, What3Words or
+        // typed point — the page's callLocationChanged — a POI or a found plus code) loses the indoor location it had, so the save
+        // never stores a room with a point outside it; a room pick (keepRoom) keeps it.
+        {
+            const { context, page, errors } = await harness(browser);
+            const indoor = () => page.evaluate(() => [$('#IndoorMapZoneId').val(), $('#IndoorMapFloorId').val(), $('#indoorZoneSearch').val()]);
+            assert.deepEqual(await indoor(), ['z14', 'l1', 'z14']);
+            await page.evaluate(() => resgrid.dispatch.calllocations.callLocationChanged(true));
+            assert.deepEqual(await indoor(), ['z14', 'l1', 'z14'], 'a room pick keeps its zone');
+            await page.evaluate(() => resgrid.dispatch.calllocations.callLocationChanged());
+            assert.deepEqual(await indoor(), ['', '', null], 'an outdoor placement clears zone, floor and the Indoor Location pick');
+
+            await page.evaluate(() => { $('#IndoorMapZoneId').val('z14'); $('#IndoorMapFloorId').val('l1'); });
+            await page.selectOption('#Call_LocationPoiId', '5');
+            assert.deepEqual((await indoor()).slice(0, 2), ['', ''], 'a POI pick clears it');
+
+            await page.evaluate(() => { $('#IndoorMapZoneId').val('z14'); $('#IndoorMapFloorId').val('l1'); });
+            await page.fill('#CallPlusCode', '85GCQ2XF+C8');
+            await page.click('#callPlusCodeButton');
+            await answer(page, 0, { Latitude: 39.7471, Longitude: -104.9926 });
+            await settle(page);
+            assert.deepEqual((await indoor()).slice(0, 2), ['', ''], 'a found plus code clears it');
+            assert.deepEqual(errors, []);
+            await context.close();
+        }
+
+        // PR #591 round 2: Find placed the call at a plus code and its address is still being looked up when Save is pressed
+        // (the code input is already empty): the save waits for that address too, and not at all once the location changed.
+        {
+            const { context, page, errors } = await harness(browser);
+            await page.evaluate(() => {
+                window.addressLookups = [];
+                resgrid.dispatch.editcall.geocodeCoordinates = function (lat, lng) {
+                    window.reverseGeocodes.push([lat, lng]);
+                    return new Promise(function (resolve) { window.addressLookups.push(function (address) { $('#Call_Address').val(address); resolve(); }); });
+                };
+            });
+            await page.fill('#CallPlusCode', '85GCQ2XF+C8');
+            await page.click('#callPlusCodeButton');
+            await answer(page, 0, { Latitude: 39.7471, Longitude: -104.9926 });
+            await page.waitForFunction(() => window.addressLookups.length === 1);
+            assert.equal(await value(page, '#CallPlusCode'), '');
+            await page.click('#dispatchNow');
+            await settle(page);
+            assert.deepEqual(await page.evaluate(() => window.submitted), [], 'the save waits for the address Find started');
+            assert.equal(await fetchCount(page), 1, 'no second plus code lookup');
+            await page.evaluate(() => window.addressLookups[0]('12 Found Rd'));
+            await page.waitForFunction(() => window.submitted.length === 1);
+            assert.deepEqual(await page.evaluate(() => window.submitted), ['dispatchNow'], 'the pressed button goes on');
+            assert.equal(await value(page, '#Call_Address'), '12 Found Rd');
+
+            // Once settled, a save goes straight through.
+            await page.click('#update');
+            assert.deepEqual(await page.evaluate(() => window.submitted), ['dispatchNow', 'update']);
+
+            // Find again, then a map click while the address is looked up, then Save: the save does not wait on the old point.
+            await page.fill('#CallPlusCode', '85GCQ2XF+C9');
+            await page.click('#callPlusCodeButton');
+            await answer(page, 1, { Latitude: 39.7472, Longitude: -104.9927 });
+            await page.waitForFunction(() => window.addressLookups.length === 2);
+            await page.evaluate(() => resgrid.dispatch.calllocations.callLocationChanged());
+            await page.click('#update');
+            assert.deepEqual(await page.evaluate(() => window.submitted), ['dispatchNow', 'update', 'update']);
+            await page.evaluate(() => window.addressLookups[1]('13 Found Rd'));
+            await settle(page);
+            assert.equal((await page.evaluate(() => window.submitted)).length, 3, 'the settled lookup sends nothing');
             assert.deepEqual(errors, []);
             await context.close();
         }

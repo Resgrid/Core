@@ -83,8 +83,10 @@ var resgrid;
                 var c = value / 255;
                 return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
             }
-            // Dark (#262626) or white text, whichever contrasts more with the background (WCAG contrast ratio), for a status
-            // with no text colour of its own. A brightness threshold alone put white on pure green (#00ff00, about 1.4:1).
+            // Dark or white text, whichever contrasts more with the background (WCAG contrast ratio), for a status with no text
+            // colour of its own. A brightness threshold alone put white on pure green (#00ff00, about 1.4:1). Dark is weighed as
+            // black (on mid-grey #808080 white is 3.9:1, black 5.3:1) and drawn as the theme's #262626 where that still reads at
+            // 4.5:1 (the WCAG minimum for normal text), else black.
             function readableTextColor(background) {
                 var hex = hexOr(background, null);
                 if (!hex) {
@@ -98,10 +100,13 @@ var resgrid;
                 var g = parseInt(hex.substr(2, 2), 16);
                 var b = parseInt(hex.substr(4, 2), 16);
                 var luminance = 0.2126 * channelLuminance(r) + 0.7152 * channelLuminance(g) + 0.0722 * channelLuminance(b);
-                var dark = channelLuminance(0x26);
                 var againstWhite = 1.05 / (luminance + 0.05);
-                var againstDark = (luminance + 0.05) / (dark + 0.05);
-                return againstDark > againstWhite ? '#262626' : '#ffffff';
+                var againstBlack = (luminance + 0.05) / 0.05;
+                if (againstWhite >= againstBlack) {
+                    return '#ffffff';
+                }
+                var againstDark = (luminance + 0.05) / (channelLuminance(0x26) + 0.05);
+                return againstDark >= 4.5 ? '#262626' : '#000000';
             }
             // A status in its own colours, as everywhere else; older built-in statuses carry a label class instead of a
             // colour. Set through .css() so a colour never lands in the markup unchecked. The border keeps a white or very

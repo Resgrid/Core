@@ -52,6 +52,27 @@ namespace Resgrid.Model
 			}
 		}
 
+		/// <summary>
+		/// What the update engine gets for an email the department's format read as no call: when the CAD update settings read it as a
+		/// close or cancel carrying a CAD call ID they find without the format (an Active911 "CLOSED …" page has no "active" in its
+		/// subject), a stand-in call (subject and text) for the engine to close or note the matched call with; otherwise null. The
+		/// caller never lets the engine create a call from it.
+		/// </summary>
+		public static CallEmailParseResult CloseOnlyParse(EmailCallUpdateConfig config, CallEmail email, int departmentId, int priority)
+		{
+			if (config == null || !config.Enabled || email == null || DetectClose(config, email) == CadEmailCloseKinds.None)
+				return null;
+
+			// An ID the format reads (FromFormat) is not there: the format found nothing in this email.
+			if (ExtractCallId(config, email, null) == null)
+				return null;
+
+			return new CallEmailParseResult
+			{
+				Call = new Call { DepartmentId = departmentId, Name = email.Subject, NatureOfCall = BodyText(email), Priority = priority }
+			};
+		}
+
 		/// <summary>Whether the email is the CAD closing or cancelling the call (cancel phrases are checked first).</summary>
 		public static CadEmailCloseKinds DetectClose(EmailCallUpdateConfig config, CallEmail email)
 		{

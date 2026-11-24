@@ -58,13 +58,14 @@ namespace Resgrid.Services
 		/// <summary>One read of the department's inventory, so a 1,000-row plan does not re-read the catalog per row.</summary>
 		private sealed class ImportContext
 		{
-			public string RequestId;
+			public int DepartmentId; public string RequestId;
 			public List<InventoryItem> Items; public Dictionary<string, InventoryItemContent> ItemDetails;
 			public List<InventoryCategory> Categories; public Dictionary<string, string> CategoryNames;
 			public Dictionary<string, InventoryLocation> Locations; public Dictionary<string, string> LocationNames; public HashSet<string> Unplaceable;
 			public List<InventoryLot> Lots; public Dictionary<string, InventoryLotContent> LotDetails;
-			public List<InventoryStock> Stocks;
-			public List<InventoryAsset> Assets; public Dictionary<string, InventoryAssetContent> AssetDetails;
+			public List<InventoryStock> Stocks; public ILookup<string, InventoryStock> StocksByItem;
+			public Dictionary<(string ItemId, string LocationId, string LotId), decimal> OnHand;
+			public List<InventoryAsset> Assets; public Dictionary<string, InventoryAssetContent> AssetDetails; public ILookup<string, InventoryAsset> AssetsByItem;
 			public List<InventoryParLevel> Pars;
 			public List<Unit> Units; public List<DepartmentGroup> Groups;
 			public Dictionary<string, string> Access = new(StringComparer.Ordinal);
@@ -75,10 +76,13 @@ namespace Resgrid.Services
 		private static bool Same(string a, string b) => string.Equals(a?.Trim(), b?.Trim(), StringComparison.OrdinalIgnoreCase);
 		private static string ImportKey(string value) => (value ?? "").Trim().ToUpperInvariant();
 
-		/// <summary>A stable identity for a row the import creates: the same request and key always give the same id.</summary>
-		private static string ImportId(string requestId, string key)
+		/// <summary>
+		/// A stable identity for a row the import creates: the same department, request and key always give the same id. Row ids
+		/// are unique across departments and the request id comes from the client, so the department is part of the input.
+		/// </summary>
+		private static string ImportId(int departmentId, string requestId, string key)
 		{
-			var bytes = SHA256.HashData(Encoding.UTF8.GetBytes("inventory-import:" + requestId + ":" + key))[..16];
+			var bytes = SHA256.HashData(Encoding.UTF8.GetBytes("inventory-import:" + departmentId.ToString(System.Globalization.CultureInfo.InvariantCulture) + ":" + requestId + ":" + key))[..16];
 			bytes[7] = (byte)((bytes[7] & 0x0F) | 0x50); bytes[8] = (byte)((bytes[8] & 0x3F) | 0x80);
 			return new Guid(bytes).ToString("D");
 		}
@@ -188,7 +192,7 @@ namespace Resgrid.Services
 
 		private async Task<ImportContext> ImportContextAsync(InventoryActor actor, string requestId)
 		{
-			var context = new ImportContext { RequestId = requestId };
+			var context = new ImportContext { DepartmentId = actor.DepartmentId, RequestId = requestId };
 			context.Items = await AllAsync<InventoryItem>(actor.DepartmentId);
 			context.ItemDetails = context.Items.ToDictionary(i => i.Id, i => Decode<InventoryItemContent>(i), StringComparer.Ordinal);
 			context.Categories = (await AllAsync<InventoryCategory>(actor.DepartmentId)).Where(c => !c.IsDeleted).ToList();
@@ -209,8 +213,12 @@ namespace Resgrid.Services
 			context.Lots = await AllAsync<InventoryLot>(actor.DepartmentId);
 			context.LotDetails = context.Lots.ToDictionary(l => l.Id, l => Decode<InventoryLotContent>(l), StringComparer.Ordinal);
 			context.Stocks = (await AllAsync<InventoryStock>(actor.DepartmentId)).Where(s => !s.IsDeleted).ToList();
+			// Indexed once: planning reads one balance per row and export one item's stock at a time.
+			context.StocksByItem = context.Stocks.ToLookup(s => s.ItemId, StringComparer.Ordinal);
+			context.OnHand = context.Stocks.GroupBy(s => (s.ItemId, s.LocationId, s.LotId)).ToDictionary(g => g.Key, g => g.Sum(s => s.Quantity));
 			context.Assets = await AllAsync<InventoryAsset>(actor.DepartmentId);
 			context.AssetDetails = context.Assets.ToDictionary(a => a.Id, a => Decode<InventoryAssetContent>(a), StringComparer.Ordinal);
+			context.AssetsByItem = context.Assets.ToLookup(a => a.ItemId, StringComparer.Ordinal);
 			context.Pars = (await AllAsync<InventoryParLevel>(actor.DepartmentId)).Where(p => !p.IsDeleted).ToList();
 			context.Units = (await _units.GetUnitsForDepartmentAsync(actor.DepartmentId) ?? new List<Unit>()).Where(u => u != null && !u.IsDeleted && u.DepartmentId == actor.DepartmentId).ToList();
 			context.Groups = (await _groups.GetAllGroupsForDepartmentAsync(actor.DepartmentId) ?? new List<DepartmentGroup>()).Where(g => g != null && g.DepartmentId == actor.DepartmentId).ToList();
@@ -232,6 +240,8 @@ namespace Resgrid.Services
 				plan.Results.Add(result); results[row.RowNumber] = result;
 				if (row.ParseError != null) Fail(result, row.ParseError, row.ParseColumn);
 				else if (string.IsNullOrWhiteSpace(row.Item)) Fail(result, "ImportItemRequired", Columns.Item);
+				// The row's note becomes the posting note: refuse here what the posting would refuse at apply.
+				else if (row.Note?.Length > InventoryImportLimits.MaxTextLength) Fail(result, "ImportValueTooLong", Columns.Note);
 			}
 			var valid = input.Rows.OrderBy(r => r.RowNumber).Where(r => results[r.RowNumber].ErrorCode == null).ToList();
 			var planned = new Dictionary<string, ImportItem>(StringComparer.Ordinal);
@@ -377,7 +387,7 @@ namespace Resgrid.Services
 					var details = new InventoryItemContent { Name = name, Code = code, Barcode = barcode, Description = description, UnitOfMeasure = unitOfMeasure ?? DefaultImportUnitOfMeasure,
 						MinLevel = minLevel, MaxLevel = maxLevel, ReorderPoint = reorderPoint, ReorderQuantity = reorderQuantity, DefaultUnitCost = firstCost, CurrencyCode = Currency(currency) };
 					if (unitOfMeasure == null) Warn(results[rows[0].RowNumber], "ImportUnitOfMeasureDefaulted");
-					item = new ImportItem { Id = ImportId(context.RequestId, "item:" + ImportKey(name)), Action = InventoryImportItemAction.Create, Tracking = mode, RequiresLot = lots, RequiresExpiration = expiring, Details = details };
+					item = new ImportItem { Id = ImportId(context.DepartmentId, context.RequestId,"item:" + ImportKey(name)), Action = InventoryImportItemAction.Create, Tracking = mode, RequiresLot = lots, RequiresExpiration = expiring, Details = details };
 					if (categoryPath != null)
 					{
 						column = Columns.Category;
@@ -426,7 +436,7 @@ namespace Resgrid.Services
 				var planned = plan.Categories.FirstOrDefault(c => c.ParentId == parent && Same(c.Name, segment));
 				if (planned == null)
 				{
-					planned = new ImportCategory { Id = ImportId(context.RequestId, "category:" + parent + ":" + ImportKey(segment)), ParentId = parent, Name = segment };
+					planned = new ImportCategory { Id = ImportId(context.DepartmentId, context.RequestId,"category:" + parent + ":" + ImportKey(segment)), ParentId = parent, Name = segment };
 					plan.Categories.Add(planned); created = true;
 				}
 				parent = planned.Id;
@@ -446,9 +456,11 @@ namespace Resgrid.Services
 			try
 			{
 				var (locationId, createdLocation) = ResolveImportLocation(context, plan, row);
-				result.LocationName = ImportLocationLabel(context, plan, locationId); result.CreatesLocation = createdLocation;
+				result.CreatesLocation = createdLocation;
 				var denied = await ImportLocationAccessAsync(actor, context, plan, locationId);
 				if (denied != null) throw new InventoryException(403, denied);
+				// Named only once the person may use it: a refused row must not show a location they cannot see.
+				result.LocationName = ImportLocationLabel(context, plan, locationId);
 				if (row.ParLevel.HasValue)
 				{
 					column = Columns.ParLevel;
@@ -488,7 +500,7 @@ namespace Resgrid.Services
 			result.LotNumber = lot.Id == null ? null : lot.Number; result.CreatesLot = lot.Created;
 			at(Columns.Quantity);
 			if (!context.Lines.Add((item.Id, locationId, lot.Id))) throw new InventoryException(400, "ImportDuplicateLine");
-			var current = context.Stocks.Where(s => s.ItemId == item.Id && s.LocationId == locationId && s.LotId == lot.Id).Sum(s => s.Quantity);
+			var current = context.OnHand.TryGetValue((item.Id, locationId, lot.Id), out var onHand) ? onHand : 0m;
 			var change = row.Quantity.Value - current;
 			result.CurrentQuantity = current; result.NewQuantity = row.Quantity.Value; result.Change = change;
 			if (change == 0) { result.StockAction = InventoryImportStockAction.Unchanged; return; }
@@ -540,7 +552,7 @@ namespace Resgrid.Services
 			if (item.RequiresExpiration && !expires.HasValue) throw new InventoryException(400, "ExpiryRequired");
 			at(Columns.UnitCost); Cost(row.UnitCost);
 			if (lot.UnitCost.HasValue && row.UnitCost.HasValue && lot.UnitCost != row.UnitCost) throw new InventoryException(409, "LotCostMismatch");
-			var id = ImportId(context.RequestId, "asset:" + item.Id + ":" + ImportKey(row.SerialNumber));
+			var id = ImportId(context.DepartmentId, context.RequestId,"asset:" + item.Id + ":" + ImportKey(row.SerialNumber));
 			plan.Assets.Add(new ImportAsset { Id = id, ItemId = item.Id, LotId = lot.Id, ExpiresOn = expires,
 				Details = new InventoryAssetContent { SerialNumber = row.SerialNumber.Trim(), AssetTag = row.AssetTag, AcquisitionCost = row.UnitCost } });
 			plan.Lines.Add(new InventoryPosting { ItemId = item.Id, AssetId = id, LotId = lot.Id, ToLocationId = locationId, Quantity = 1, Type = InventoryTransactionType.Receive, UnitCost = row.UnitCost,
@@ -583,7 +595,7 @@ namespace Resgrid.Services
 				return (planned.Id, planned.LotNumber, false, planned.ExpiresOn, null);
 			}
 			if (item.RequiresExpiration && !row.Expires.HasValue) throw new InventoryException(400, "ExpiryRequired");
-			planned = new ImportLot { Id = ImportId(context.RequestId, "lot:" + item.Id + ":" + ImportKey(number)), ItemId = item.Id, LotNumber = number, ExpiresOn = row.Expires };
+			planned = new ImportLot { Id = ImportId(context.DepartmentId, context.RequestId,"lot:" + item.Id + ":" + ImportKey(number)), ItemId = item.Id, LotNumber = number, ExpiresOn = row.Expires };
 			plan.Lots.Add(planned);
 			return (planned.Id, number, true, planned.ExpiresOn, null);
 		}
@@ -624,7 +636,7 @@ namespace Resgrid.Services
 
 		private static string PlanImportLocation(ImportContext context, ImportPlan plan, InventoryLocationType type, int? groupId, int? unitId, string parentId, string name)
 		{
-			var id = ImportId(context.RequestId, "location:" + (int)type + ":" + groupId + ":" + unitId + ":" + parentId + ":" + ImportKey(name));
+			var id = ImportId(context.DepartmentId, context.RequestId,"location:" + (int)type + ":" + groupId + ":" + unitId + ":" + parentId + ":" + ImportKey(name));
 			if (plan.Locations.All(l => l.Id != id)) plan.Locations.Add(new ImportLocation { Id = id, Type = (int)type, GroupId = groupId, UnitId = unitId, ParentId = parentId, Name = name });
 			return id;
 		}
@@ -821,7 +833,7 @@ namespace Resgrid.Services
 				var usedPars = new HashSet<string>(StringComparer.Ordinal);
 				if (item.TrackingMode == (int)InventoryTrackingMode.Bulk)
 				{
-					foreach (var stock in context.Stocks.Where(s => s.ItemId == item.Id && s.Quantity != 0).OrderBy(s => s.LocationId, StringComparer.Ordinal).ThenBy(s => s.LotId, StringComparer.Ordinal))
+					foreach (var stock in context.StocksByItem[item.Id].Where(s => s.Quantity != 0).OrderBy(s => s.LocationId, StringComparer.Ordinal).ThenBy(s => s.LotId, StringComparer.Ordinal))
 					{
 						if (await Place(stock.LocationId) is not { } place) continue;
 						var line = Line(); Put(line, place); line[Columns.Quantity] = InventoryImportCsv.Number(stock.Quantity);
@@ -835,7 +847,7 @@ namespace Resgrid.Services
 				}
 				else
 				{
-					foreach (var asset in context.Assets.Where(a => a.ItemId == item.Id && !a.IsDeleted && a.Status is 0 or 1 or 2 or 3).OrderBy(a => context.AssetDetails[a.Id].SerialNumber, StringComparer.OrdinalIgnoreCase))
+					foreach (var asset in context.AssetsByItem[item.Id].Where(a => !a.IsDeleted && a.Status is 0 or 1 or 2 or 3).OrderBy(a => context.AssetDetails[a.Id].SerialNumber, StringComparer.OrdinalIgnoreCase))
 					{
 						if (await Place(asset.CurrentLocationId) is not { } place) continue;
 						var line = Line(); Put(line, place);
@@ -847,10 +859,13 @@ namespace Resgrid.Services
 						lines.Add(line);
 					}
 				}
+				// An item with no stock or assets keeps its default cost on its par rows, as the catalog-only row would.
+				var stocked = lines.Count > 0;
 				foreach (var par in pars.Where(p => !usedPars.Contains(p.LocationId)))
 				{
 					if (await Place(par.LocationId) is not { } place) continue;
 					var line = Line(); Put(line, place); line[Columns.ParLevel] = InventoryImportCsv.Number(par.MinimumQuantity);
+					if (!stocked) line[Columns.UnitCost] = InventoryImportCsv.Number(details.DefaultUnitCost);
 					lines.Add(line);
 				}
 				if (lines.Count == 0) { var line = Line(); line[Columns.UnitCost] = InventoryImportCsv.Number(details.DefaultUnitCost); lines.Add(line); }

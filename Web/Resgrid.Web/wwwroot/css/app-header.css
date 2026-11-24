@@ -133,18 +133,19 @@
 /* ===== Top bar =====================================================================================================
    One row that never wraps: the search box and the department name give up width first, Help becomes an icon, and on
    a phone (where the module sidebar is hidden) a menu button opens the sidebar. Before this the right-hand links
-   wrapped onto a second line under the 50px bar and covered the page heading. */
+   wrapped onto a second line under the 50px bar and covered the page heading. The bar is .navbar-static-top, or
+   .navbar-fixed-top when the user turned the fixed top bar on (site.js swaps the class), so both are matched. */
 .rg-topbar {
 	min-height: 50px;
 }
-.rg-topbar > .navbar-static-top {
+.rg-topbar > :is(.navbar-static-top, .navbar-fixed-top) {
 	display: flex;
 	align-items: center;
 	flex-wrap: nowrap;
 	min-height: 50px;
 }
-.rg-topbar > .navbar-static-top::before,
-.rg-topbar > .navbar-static-top::after {
+.rg-topbar > :is(.navbar-static-top, .navbar-fixed-top)::before,
+.rg-topbar > :is(.navbar-static-top, .navbar-fixed-top)::after {
 	display: none;
 }
 .rg-topbar .rg-topbar-start {
@@ -169,7 +170,7 @@
 	margin-left: auto;
 	padding: 4px 8px 0;
 }
-.rg-topbar > .navbar-static-top > .navbar-top-links.navbar-right {
+.rg-topbar > :is(.navbar-static-top, .navbar-fixed-top) > .navbar-top-links.navbar-right {
 	display: flex;
 	align-items: center;
 	flex: 0 1 auto;
@@ -178,7 +179,7 @@
 	margin: 0;
 	white-space: nowrap;
 }
-.rg-topbar > .navbar-static-top > .navbar-top-links.navbar-right > li {
+.rg-topbar > :is(.navbar-static-top, .navbar-fixed-top) > .navbar-top-links.navbar-right > li {
 	flex: 0 0 auto;
 	float: none;
 }
@@ -258,8 +259,8 @@
 	.rg-topbar #menu-department > .dropdown-toggle > .text {
 		max-width: 34vw;
 	}
-	.rg-topbar > .navbar-static-top > .navbar-top-links.navbar-right > li > a,
-	.rg-topbar > .navbar-static-top > .navbar-top-links.navbar-right > li > form .btn-link {
+	.rg-topbar > :is(.navbar-static-top, .navbar-fixed-top) > .navbar-top-links.navbar-right > li > a,
+	.rg-topbar > :is(.navbar-static-top, .navbar-fixed-top) > .navbar-top-links.navbar-right > li > form .btn-link {
 		padding-left: 8px;
 		padding-right: 8px;
 	}
@@ -285,6 +286,7 @@
 		right: 8px;
 		max-width: calc(100vw - 16px);
 	}
+	/* The menus above hang from the bar. A fixed top bar is positioned already (and relative would unfix it). */
 	.rg-topbar > .navbar-static-top {
 		position: relative;
 	}

@@ -35,6 +35,7 @@ namespace Resgrid.Tests.Intake
 		private DepartmentPhoneNumber _number;
 		private Call _call;
 		private List<CallAttachment> _saved;
+		private int _saves;
 		private VoiceIntakeRecordingService _service;
 
 		private bool _savedHostSwitch;
@@ -65,9 +66,18 @@ namespace Resgrid.Tests.Intake
 			_saved = new List<CallAttachment>();
 			_calls = new Mock<ICallsService>();
 			_calls.Setup(c => c.GetCallByIdAsync(900, It.IsAny<bool>())).ReturnsAsync(() => _call);
+			_saves = 0;
 			_calls.Setup(c => c.SaveCallAttachmentAsync(It.IsAny<CallAttachment>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((CallAttachment a, CancellationToken _) =>
 				{
+					// SaveOrUpdate: an id updates that row, none inserts one.
+					_saves++;
+					if (a.CallAttachmentId > 0)
+					{
+						_saved[_saved.FindIndex(s => s.CallAttachmentId == a.CallAttachmentId)] = a;
+						return a;
+					}
+
 					a.CallAttachmentId = 7000 + _saved.Count;
 					_saved.Add(a);
 					return a;
@@ -409,6 +419,188 @@ namespace Resgrid.Tests.Intake
 		}
 
 		[Test]
+		public async Task a_file_saved_before_its_protected_write_failed_is_saved_again_by_its_id_before_the_recording_counts_as_attached()
+		{
+			var session = Session(VoiceIntakeSteps.Completed, callId: 900);
+			session.RecordingState = (int)VoiceIntakeRecordingStates.Requested;
+			// CallsService.SaveCallAttachmentAsync inserts the file, then the ADP step throws: the row is there, still unprotected.
+			var first = true;
+			_calls.Setup(c => c.SaveCallAttachmentAsync(It.IsAny<CallAttachment>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((CallAttachment a, CancellationToken _) =>
+				{
+					_saves++;
+					if (a.CallAttachmentId > 0)
+					{
+						_saved[_saved.FindIndex(s => s.CallAttachmentId == a.CallAttachmentId)] = a;
+						return a;
+					}
+
+					a.CallAttachmentId = 7000 + _saved.Count;
+					_saved.Add(a);
+					if (first)
+					{
+						first = false;
+						throw new InvalidOperationException("Protected write blocked (broker unavailable)");
+					}
+					return a;
+				});
+
+			(await _service.HandleStatusAsync(Completed())).Should().Be(VoiceRecordingOutcomes.Waiting);
+			session.RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Completed);
+			_provider.Verify(p => p.DeleteRecordingAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never, "Twilio's copy stays until the file is safe");
+
+			(await _service.ProcessPendingAsync(Now.AddMinutes(15))).Should().Be(1);
+
+			_saves.Should().Be(2, "the recovered file goes through the save (and its protected-write step) again");
+			_saved.Should().ContainSingle().Which.CallAttachmentId.Should().Be(7000);
+			session.RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Attached);
+			session.RecordingCallAttachmentId.Should().Be(7000);
+			_provider.Verify(p => p.DeleteRecordingAsync(RecordingSid, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task the_file_is_saved_with_the_second_the_call_began_which_identifies_it_where_adp_seals_its_name()
+		{
+			var session = Session(VoiceIntakeSteps.Completed, callId: 900);
+			session.RecordingState = (int)VoiceIntakeRecordingStates.Requested;
+			session.StartedOn = new DateTime(2026, 11, 23, 13, 57, 5, 640, DateTimeKind.Utc);
+			// Another file on the call, the same size and added after the call began, its name sealed: not this recording.
+			_saved.Add(new CallAttachment { CallAttachmentId = 6000, CallId = 900, CallAttachmentType = (int)CallAttachmentTypes.File, FileName = "rgdp1:sealed-photo",
+				Size = 4, Timestamp = session.StartedOn.AddMinutes(2) });
+
+			(await _service.HandleStatusAsync(Completed())).Should().Be(VoiceRecordingOutcomes.Attached);
+
+			_saved.Should().HaveCount(2, "a same-size file added later is not taken for the recording");
+			var file = _saved.Single(a => a.CallAttachmentId != 6000);
+			file.Timestamp.Should().Be(new DateTime(2026, 11, 23, 13, 57, 5, DateTimeKind.Utc));
+			session.RecordingCallAttachmentId.Should().Be(file.CallAttachmentId);
+		}
+
+		[Test]
+		public async Task a_retry_finds_its_sealed_file_by_size_and_stamp()
+		{
+			var session = Session(VoiceIntakeSteps.Completed, callId: 900);
+			session.RecordingState = (int)VoiceIntakeRecordingStates.Completed;
+			session.RecordingSid = RecordingSid;
+			session.RecordingAttempts = 1;
+			_saved.Add(new CallAttachment { CallAttachmentId = 6000, CallId = 900, CallAttachmentType = (int)CallAttachmentTypes.File, FileName = "rgdp1:sealed-name",
+				Size = 4, Timestamp = VoiceIntakeRecordingService.RecordingStamp(session) });
+
+			(await _service.ProcessPendingAsync(Now)).Should().Be(1);
+
+			_saved.Should().ContainSingle().Which.CallAttachmentId.Should().Be(6000);
+			session.RecordingCallAttachmentId.Should().Be(6000);
+			session.RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Attached);
+		}
+
+		[Test]
+		public async Task an_attempt_that_lost_its_lease_while_downloading_saves_nothing_and_changes_nothing()
+		{
+			var session = Session(VoiceIntakeSteps.Completed, callId: 900);
+			session.RecordingState = (int)VoiceIntakeRecordingStates.Requested;
+			var takenOver = Now.AddMinutes(VoiceIntakeRecordingService.LeaseMinutes + 1);
+			_provider.Setup(p => p.DownloadRecordingAsync(RecordingSid, It.IsAny<int>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(() =>
+				{
+					// The download stalled past the lease; worker 80 took the recording over meanwhile.
+					session.RecordingClaimedOn = takenOver;
+					return new VoiceRecordingDownload { Status = VoiceRecordingDownloadStatuses.Downloaded, Data = new byte[] { 1, 2, 3, 4 }, Extension = ".mp3" };
+				});
+
+			(await _service.HandleStatusAsync(Completed())).Should().Be(VoiceRecordingOutcomes.Waiting);
+
+			_saved.Should().BeEmpty();
+			session.RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Completed);
+			session.RecordingClaimedOn.Should().Be(takenOver, "the other attempt's lease is left alone");
+			_provider.Verify(p => p.DeleteRecordingAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task an_attempt_that_lost_its_lease_during_the_save_neither_marks_it_attached_nor_deletes_twilios_copy()
+		{
+			var session = Session(VoiceIntakeSteps.Completed, callId: 900);
+			session.RecordingState = (int)VoiceIntakeRecordingStates.Requested;
+			var takenOver = Now.AddMinutes(VoiceIntakeRecordingService.LeaseMinutes + 1);
+			_calls.Setup(c => c.SaveCallAttachmentAsync(It.IsAny<CallAttachment>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((CallAttachment a, CancellationToken _) =>
+				{
+					a.CallAttachmentId = 7000 + _saved.Count;
+					_saved.Add(a);
+					session.RecordingClaimedOn = takenOver;
+					return a;
+				});
+
+			(await _service.HandleStatusAsync(Completed())).Should().Be(VoiceRecordingOutcomes.Waiting);
+
+			session.RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Completed, "the attempt holding the lease records the outcome");
+			session.RecordingClaimedOn.Should().Be(takenOver);
+			_provider.Verify(p => p.DeleteRecordingAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+
+			// The takeover finds the file instead of adding a second one.
+			_calls.Setup(c => c.SaveCallAttachmentAsync(It.IsAny<CallAttachment>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((CallAttachment a, CancellationToken _) =>
+				{
+					if (a.CallAttachmentId > 0)
+						_saved[_saved.FindIndex(s => s.CallAttachmentId == a.CallAttachmentId)] = a;
+					else
+					{
+						a.CallAttachmentId = 7000 + _saved.Count;
+						_saved.Add(a);
+					}
+					return a;
+				});
+			_clock.Now = takenOver.AddMinutes(VoiceIntakeRecordingService.LeaseMinutes + 1);
+			(await _service.ProcessPendingAsync(_clock.Now)).Should().Be(1);
+
+			_saved.Should().ContainSingle();
+			session.RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Attached);
+		}
+
+		[Test]
+		public async Task a_timeout_discard_never_overwrites_a_recording_a_callback_completed_meanwhile()
+		{
+			var session = Session(VoiceIntakeSteps.Completed, callId: 900, startedOn: Now.AddMinutes(-31));
+			session.RecordingState = (int)VoiceIntakeRecordingStates.Requested;
+			_sessions.OnWorkRead = () =>
+			{
+				// The status callback lands after worker 80 read the row as Requested with no sid.
+				_sessions.OnWorkRead = null;
+				session.RecordingState = (int)VoiceIntakeRecordingStates.Completed;
+				session.RecordingSid = RecordingSid;
+				session.RecordingDurationSeconds = 20;
+			};
+
+			(await _service.ProcessPendingAsync(Now)).Should().Be(0);
+			session.RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Completed, "the callback's recording stays to be attached");
+
+			(await _service.ProcessPendingAsync(Now.AddMinutes(1))).Should().Be(1);
+			session.RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Attached);
+			_saved.Should().ContainSingle();
+		}
+
+		[Test]
+		public async Task a_first_sid_that_arrives_after_the_session_gave_the_recording_up_is_stored_and_twilios_copy_deleted()
+		{
+			var session = Session(VoiceIntakeSteps.Location, callId: null, startedOn: Now.AddMinutes(-31));
+			session.RecordingState = (int)VoiceIntakeRecordingStates.Requested;
+			(await _service.ProcessPendingAsync(Now)).Should().Be(1);
+			session.RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Discarded);
+			_provider.SetupSequence(p => p.DeleteRecordingAsync(RecordingSid, It.IsAny<CancellationToken>())).ReturnsAsync(false).ReturnsAsync(true);
+
+			(await _service.HandleStatusAsync(Completed())).Should().Be(VoiceRecordingOutcomes.Discarded);
+
+			session.RecordingSid.Should().Be(RecordingSid, "the sid is kept so the copy can still be deleted");
+			session.RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Discarded);
+			_saved.Should().BeEmpty();
+			session.RecordingCarrierDeletedOn.Should().BeNull("the first delete failed");
+
+			// Worker 80 finishes the delete.
+			(await _service.ProcessPendingAsync(Now.AddMinutes(15))).Should().Be(1);
+			session.RecordingCarrierDeletedOn.Should().NotBeNull();
+			_provider.Verify(p => p.DeleteRecordingAsync(RecordingSid, It.IsAny<CancellationToken>()), Times.Exactly(2));
+		}
+
+		[Test]
 		public async Task a_lost_status_callback_is_recovered_by_fetching_the_recording_by_sid()
 		{
 			var session = Session(VoiceIntakeSteps.Completed, callId: 900, startedOn: Now.AddMinutes(-31));
@@ -563,6 +755,20 @@ namespace Resgrid.Tests.Intake
 
 			public Task<bool> SetRecordingStateAsync(string voiceIntakeSessionId, int state, int? callAttachmentId, CancellationToken cancellationToken = default)
 			{
+				var row = ById(voiceIntakeSessionId);
+				if (row == null)
+					return Task.FromResult(false);
+				row.RecordingState = state;
+				row.RecordingClaimedOn = null;
+				row.RecordingCallAttachmentId = callAttachmentId ?? row.RecordingCallAttachmentId;
+				return Task.FromResult(true);
+			}
+
+			/// <summary>Runs between the lease renewal and the save (another attempt taking the lease over meanwhile).</summary>
+			public Action<VoiceIntakeSession> OnRenew { get; set; }
+
+			public Task<bool> SetClaimedRecordingStateAsync(string voiceIntakeSessionId, DateTime claimedOn, int state, int? callAttachmentId, CancellationToken cancellationToken = default)
+			{
 				if (state == (int)VoiceIntakeRecordingStates.Attached && FailNextAttachedWrite)
 				{
 					FailNextAttachedWrite = false;
@@ -570,11 +776,31 @@ namespace Resgrid.Tests.Intake
 				}
 
 				var row = ById(voiceIntakeSessionId);
-				if (row == null)
+				if (row == null || row.RecordingClaimedOn != claimedOn)
 					return Task.FromResult(false);
 				row.RecordingState = state;
 				row.RecordingClaimedOn = null;
 				row.RecordingCallAttachmentId = callAttachmentId ?? row.RecordingCallAttachmentId;
+				return Task.FromResult(true);
+			}
+
+			public Task<bool> RenewRecordingClaimAsync(string voiceIntakeSessionId, DateTime claimedOn, DateTime renewedOn, CancellationToken cancellationToken = default)
+			{
+				var row = ById(voiceIntakeSessionId);
+				if (row == null || row.RecordingClaimedOn != claimedOn || row.RecordingState != (int)VoiceIntakeRecordingStates.Completed)
+					return Task.FromResult(false);
+				row.RecordingClaimedOn = renewedOn;
+				OnRenew?.Invoke(row);
+				return Task.FromResult(true);
+			}
+
+			public Task<bool> TryDiscardUnconfirmedRecordingAsync(string voiceIntakeSessionId, CancellationToken cancellationToken = default)
+			{
+				var row = ById(voiceIntakeSessionId);
+				if (row == null || row.RecordingState != (int)VoiceIntakeRecordingStates.Requested || row.RecordingSid != null)
+					return Task.FromResult(false);
+				row.RecordingState = (int)VoiceIntakeRecordingStates.Discarded;
+				row.RecordingClaimedOn = null;
 				return Task.FromResult(true);
 			}
 
@@ -595,13 +821,17 @@ namespace Resgrid.Tests.Intake
 						 (r.RecordingState == (int)VoiceIntakeRecordingStates.Attached || r.RecordingState == (int)VoiceIntakeRecordingStates.Discarded ||
 						  (r.RecordingState == (int)VoiceIntakeRecordingStates.Failed && r.StartedOn < purgeBefore))))
 					.OrderBy(r => r.StartedOn).Take(max).Select(Copy).ToList();
+				OnWorkRead?.Invoke();
 				return Task.FromResult(work);
 			}
+
+			/// <summary>Runs right after worker 80 read its work (a callback landing between that read and the worker's writes).</summary>
+			public Action OnWorkRead { get; set; }
 
 			public Task<bool> TryInsertAsync(VoiceIntakeSession session, CancellationToken cancellationToken = default) => throw new NotSupportedException();
 			public Task<bool> UpdateProgressAsync(VoiceIntakeSession session, int expectedStep, int expectedRetries, CancellationToken cancellationToken = default) => throw new NotSupportedException();
 			public Task<int> CountStartedAsync(int departmentId, DateTime from, DateTime before) => throw new NotSupportedException();
-			public Task<int> PurgeStartedBeforeAsync(DateTime before, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+			public Task<int> PurgeStartedBeforeAsync(DateTime before, bool keepCarrierCleanup, CancellationToken cancellationToken = default) => throw new NotSupportedException();
 			public Task<IEnumerable<VoiceIntakeSession>> GetAllAsync() => throw new NotSupportedException();
 			public Task<VoiceIntakeSession> GetByIdAsync(object id) => throw new NotSupportedException();
 			public Task<IEnumerable<VoiceIntakeSession>> GetAllByDepartmentIdAsync(int departmentId) => throw new NotSupportedException();

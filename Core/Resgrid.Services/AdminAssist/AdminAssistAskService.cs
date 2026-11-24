@@ -56,7 +56,13 @@ namespace Resgrid.Services.AdminAssist
 				// Seed reads are matched locally; the model then selects among observed cards with the focus as untrusted data.
 				metered = new MeteredLlmClient(client.Value);
 				var culture = CultureInfo.GetCultureInfo(actor.Locale ?? "en");
-				result = await new GroundedAskRunner(metered, queries, async guard => { if (!(await aiAccess.CanUseAdminAssistAsync(actor, guard, false)).Available) throw new UnauthorizedAccessException(); },
+				result = await new GroundedAskRunner(metered, queries, async guard =>
+					{
+						if (!(await aiAccess.CanUseAdminAssistAsync(actor, guard, false)).Available) throw new UnauthorizedAccessException();
+						// Every round resends the opening turn: once Advanced Data Protection starts mid-turn, a turn carrying the question
+						// itself stops before its next round (answered as Unavailable) rather than send the question again.
+						if (!protectedDepartment && await IsProtectedAsync(actor.DepartmentId)) throw new ProtectionStartedException();
+					},
 					AiCacheIsolation.SaltFor(actor.DepartmentId, AiConfig.SendCacheSalt, AiConfig.CacheSaltKey, AiConfig.AuditHmacKey), key => Labels.GetString(key, culture))
 					.RunAsync(actor, AiConfig.Model, request.Topic, seeds, reserved.Tokens, token, focus, searchFallback: protectedDepartment);
 				outcome = result.Outcome;
@@ -84,6 +90,9 @@ namespace Resgrid.Services.AdminAssist
 				catch (Exception) { /* The persisted reservation remains conservatively charged and expires admission after 120 seconds. */ }
 			}
 		}
+		/// <summary>The department's protection started while a turn that sends the question was running.</summary>
+		private sealed class ProtectionStartedException : Exception { }
+
 		// Any ADP state but Disabled (queued, enrolling, enabled, offboarding, failed) keeps free text local. An unreadable
 		// state fails closed to the protected path.
 		private async Task<bool> IsProtectedAsync(int departmentId)

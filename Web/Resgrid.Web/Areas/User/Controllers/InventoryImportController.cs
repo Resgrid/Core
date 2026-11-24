@@ -83,7 +83,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				byte[] bytes;
 				using (var buffer = new MemoryStream())
 				{
-					await file.CopyToAsync(buffer);
+					// Reading the upload stops when the request does; nothing has been written yet.
+					await file.CopyToAsync(buffer, HttpContext?.RequestAborted ?? System.Threading.CancellationToken.None);
 					bytes = buffer.ToArray();
 				}
 				view.FileName = Path.GetFileName(file.FileName);

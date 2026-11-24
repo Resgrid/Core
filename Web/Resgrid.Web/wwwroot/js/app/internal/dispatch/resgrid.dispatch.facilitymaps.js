@@ -309,8 +309,9 @@ var resgrid;
                 if (!map || !floorId || !maps.length) {
                     return;
                 }
-                // A map or floor picked while the floor is being looked up wins over it.
-                var started = showRequest;
+                // A map or floor picked while the floor is being looked up wins over it. The number is taken when the lookup
+                // starts, so of two floor lookups on their way only the later one shows its floor, whichever answers first.
+                var started = ++showRequest;
                 getJson('GetCustomMapLayer/' + encodeURIComponent(floorId)).then(function (result) {
                     var mapId = result && result.Data && (result.Data.IndoorMapId || (result.Data.Layer && result.Data.Layer.IndoorMapId));
                     if (mapId && started === showRequest) {

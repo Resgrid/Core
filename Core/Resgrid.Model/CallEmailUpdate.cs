@@ -7,8 +7,9 @@ using Newtonsoft.Json;
 namespace Resgrid.Model
 {
 	/// <summary>
-	/// What an inbound dispatch email carrying a CAD call ID did. Values 1-10 are stored on <see cref="CallEmailUpdate.Outcome"/>
-	/// (append only); 0, -1 and -2 are only ever returned.
+	/// What an inbound dispatch email carrying a CAD call ID did. Values 1-13 are stored on <see cref="CallEmailUpdate.Outcome"/>
+	/// (append only); 0, -1 and -2 are only ever returned. Applying, Saved, FollowedUp and Noting are the steps of work still in
+	/// progress: a row the engine wrote first and moves on as each step is done, so a redelivery finishes what is left.
 	/// </summary>
 	public enum CallEmailUpdateOutcomes
 	{
@@ -43,10 +44,29 @@ namespace Resgrid.Model
 		CloseUnmatched = 9,
 
 		/// <summary>
-		/// Written before an update or close changes the call, with the hashes it will set, and moved to Updated, Closed or Cancelled
-		/// once the call is saved. A row left here (the attempt died, or the move failed) counts only where the call shows its values.
+		/// Written before an update or close changes the call, with the hashes it will set, and moved to Saved once the call is saved.
+		/// A row left here proves nothing (the save may or may not have happened): it never counts as the CAD's values, and its email
+		/// runs again on a redelivery.
 		/// </summary>
 		Applying = 10,
+
+		/// <summary>
+		/// The update's or close's call save went through; its follow-up (an update's page in the outbox, a close's resource release)
+		/// is not done yet. Counts as applied; a redelivery finishes the work from here instead of applying the email again.
+		/// </summary>
+		Saved = 11,
+
+		/// <summary>
+		/// The follow-up is done too; the added resource rows (an update) or the close notice (a close), and the note, may not be.
+		/// Counts as applied; a redelivery finishes the rest.
+		/// </summary>
+		FollowedUp = 12,
+
+		/// <summary>
+		/// A note-only outcome (stale, no change, close blocked, a closed call noted) written before its note and moved to that outcome
+		/// once the note is saved. Never counts; a redelivery of an email left here writes its note again.
+		/// </summary>
+		Noting = 13,
 
 		/// <summary>Not stored. Another email for the same CAD call ID is being handled; try again later.</summary>
 		Busy = -1,
@@ -106,7 +126,10 @@ namespace Resgrid.Model
 		/// <summary><see cref="CallEmailUpdateOutcomes"/>.</summary>
 		public int Outcome { get; set; }
 
-		/// <summary>Comma-separated field groups the email changed.</summary>
+		/// <summary>
+		/// Comma-separated field groups the email changed (for a stale or closed-call note, the ones it would have changed). A close
+		/// records Close or Cancel, and Live when the call was active, so a redelivery can finish its release and notice.
+		/// </summary>
 		[MaxLength(500)]
 		public string ChangedFields { get; set; }
 

@@ -55,7 +55,8 @@ namespace Resgrid.Model
 	/// <summary>
 	/// One phone call taken by Enhanced AI voice intake (M0323), keyed by the carrier's call id so Twilio's webhook retries
 	/// resume the same session. Answers are transcripts (protected content): kept only until the pending call is created and
-	/// purged after <c>IntakeConfig.VoiceSessionRetentionHours</c> by worker 80.
+	/// purged after <c>IntakeConfig.VoiceSessionRetentionHours</c> by worker 80 (a session whose call recording is still at the carrier
+	/// keeps its row, answers cleared, until worker 80 has deleted that copy).
 	/// </summary>
 	[Table("VoiceIntakeSessions")]
 	public class VoiceIntakeSession : IEntity

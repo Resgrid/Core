@@ -721,21 +721,45 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task A_saved_change_whose_row_was_never_moved_on_is_still_the_cads_value()
+		public async Task A_redelivery_of_a_change_whose_steps_were_never_recorded_settles_it_as_the_cads_value()
+		{
+			_config.IdSource = (int)CadCallIdSources.FromFormat;
+			_config.RepageWhen = (int)CadRepageRules.Never;
+			var created = await ApplyAsync(Email("x"), ParsedWith(new Call { Name = "Fire", Address = "12 Oak St" }, CallEmailParsedFields.Address));
+
+			// The CAD's correction saves, but the ledger cannot record that it did: its row stays Applying, which proves nothing.
+			_ledger.FailOutcomeMoves = true;
+			var correction = Email("x");
+			(await ApplyAsync(correction, ParsedWith(new Call { Address = "14 Oak St" }, CallEmailParsedFields.Address))).Outcome.Should().Be(CallEmailUpdateOutcomes.Updated);
+			_ledger.Rows.Should().Contain(r => r.Outcome == (int)CallEmailUpdateOutcomes.Applying);
+			_ledger.FailOutcomeMoves = false;
+
+			// Its redelivery finds the call already holding 14 Oak St: no change, and the CAD's value from now on.
+			(await ApplyAsync(correction, ParsedWith(new Call { Address = "14 Oak St" }, CallEmailParsedFields.Address))).Outcome.Should().Be(CallEmailUpdateOutcomes.NoChange);
+			var next = await ApplyAsync(Email("x"), ParsedWith(new Call { Address = "16 Oak St" }, CallEmailParsedFields.Address));
+
+			next.Changes.Should().ContainSingle(c => c.Group == EmailCallUpdateService.GroupLocation && c.Applied);
+			created.Call.Address.Should().Be("16 Oak St");
+		}
+
+		[Test]
+		public async Task A_value_a_dispatcher_typed_is_not_taken_as_the_cads_from_an_update_whose_save_failed()
 		{
 			_config.IdSource = (int)CadCallIdSources.FromFormat;
 			var created = await ApplyAsync(Email("x"), ParsedWith(new Call { Name = "Fire", Address = "12 Oak St" }, CallEmailParsedFields.Address));
 
-			// The CAD's correction saves, but the ledger cannot record that it did: its row stays Applying.
-			_ledger.FailOutcomeMoves = true;
-			(await ApplyAsync(Email("x"), ParsedWith(new Call { Address = "14 Oak St" }, CallEmailParsedFields.Address))).Outcome.Should().Be(CallEmailUpdateOutcomes.Updated);
-			_ledger.Rows.Should().Contain(r => r.Outcome == (int)CallEmailUpdateOutcomes.Applying);
-			_ledger.FailOutcomeMoves = false;
+			// The CAD's change to 14 Oak St writes its row, then the save fails.
+			_callsService.Setup(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>())).ThrowsAsync(new TimeoutException());
+			Func<Task> failed = () => ApplyAsync(Email("x"), ParsedWith(new Call { Address = "14 Oak St" }, CallEmailParsedFields.Address));
+			await failed.Should().ThrowAsync<TimeoutException>();
+			_callsService.Setup(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>())).ReturnsAsync((Call call, CancellationToken ct) => call);
 
+			// A dispatcher then types the same address.
+			created.Call.Address = "14 Oak St";
 			var next = await ApplyAsync(Email("x"), ParsedWith(new Call { Address = "16 Oak St" }, CallEmailParsedFields.Address));
 
-			next.Changes.Should().ContainSingle(c => c.Group == EmailCallUpdateService.GroupLocation && c.Applied, "14 Oak St was the CAD's change, not a dispatcher's");
-			created.Call.Address.Should().Be("16 Oak St");
+			created.Call.Address.Should().Be("14 Oak St", "the dispatcher's edit wins; the failed update's row proves nothing");
+			next.Changes.Should().ContainSingle(c => c.Group == EmailCallUpdateService.GroupLocation && c.Reason == EmailCallUpdateService.ReasonEdited);
 		}
 
 		[Test]
@@ -755,21 +779,22 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task A_redelivery_whose_update_saved_but_was_never_recorded_is_recognised_from_the_call()
+		public async Task A_redelivery_whose_steps_were_never_recorded_runs_again_without_repeating_its_text()
 		{
 			var call = OpenCall("2026-0042");
 			var email = Email("Call ID: 2026-0042\nNew nature");
 			_ledger.FailOutcomeMoves = true;
 			(await ProcessAsync(email)).Outcome.Should().Be(CallEmailUpdateOutcomes.Updated);
 			_ledger.FailOutcomeMoves = false;
-			var notes = call.Notes;
+			var (nature, notes) = (call.NatureOfCall, call.Notes);
 
 			var again = await ProcessAsync(email);
 
-			again.Outcome.Should().Be(CallEmailUpdateOutcomes.AlreadyHandled, "the call shows the values the Applying row set");
-			call.Notes.Should().Be(notes, "the appended notes are not appended again");
+			again.Outcome.Should().Be(CallEmailUpdateOutcomes.NoChange, "its row never said whether the save went through, so the email ran again and found it had");
+			call.NatureOfCall.Should().Be(nature);
+			call.Notes.Should().Be(notes, "appended text the call already ends with is not appended again");
 			_notes.Should().ContainSingle();
-			_ledger.Rows.Should().ContainSingle(r => r.MessageId == email.MessageId).Which.Outcome.Should().Be((int)CallEmailUpdateOutcomes.Updated);
+			(await ProcessAsync(email)).Outcome.Should().Be(CallEmailUpdateOutcomes.AlreadyHandled);
 		}
 
 		[Test]
@@ -932,6 +957,268 @@ namespace Resgrid.Tests.Services
 			_dispatchStatus.Verify(s => s.ApplyReleaseStatusesAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<CancellationToken>()), Times.Once);
 			_closure.Verify(c => c.NotifyCallClosedAsync(It.Is<Call>(x => x.CallId == 42), "manager", It.IsAny<CancellationToken>()), Times.Once);
 			_ledger.Rows.Should().ContainSingle().Which.Outcome.Should().Be((int)CallEmailUpdateOutcomes.Closed);
+		}
+
+		// ---- the steps a redelivery finishes (PR #591 review, round 2) ----
+
+		private void ReleaseUnitSeven() => PopulateWith(c =>
+		{
+			c.UnitDispatches = new List<CallDispatchUnit> { new CallDispatchUnit { CallId = c.CallId, UnitId = 7 } };
+			return Task.FromResult(c);
+		});
+
+		private void ThrowOnFirstCloseEvent()
+		{
+			var thrown = false;
+			_events.Setup(e => e.SendMessage(It.IsAny<CallClosedEvent>())).Callback(() =>
+			{
+				if (thrown)
+					return;
+				thrown = true;
+				throw new TimeoutException("the process stopped");
+			});
+		}
+
+		private void VerifyReleasedAndNotifiedOnce()
+		{
+			_dispatchStatus.Verify(s => s.ApplyReleaseStatusesAsync(It.Is<Call>(c => c.CallId == 42), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<CancellationToken>()), Times.Once);
+			_closure.Verify(c => c.NotifyCallClosedAsync(It.Is<Call>(x => x.CallId == 42), "manager", It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task A_close_interrupted_after_its_save_releases_and_notifies_on_redelivery()
+		{
+			var call = OpenCall("2026-0042");
+			_config.ClosePhrases = "CALL CLOSED";
+			ReleaseUnitSeven();
+			ThrowOnFirstCloseEvent();
+			var email = Email("Call ID: 2026-0042\nCALL CLOSED");
+
+			Func<Task> first = () => ProcessAsync(email);
+			await first.Should().ThrowAsync<TimeoutException>();
+			call.State.Should().Be((int)CallStates.Closed);
+			_ledger.Rows.Should().ContainSingle().Which.Outcome.Should().Be((int)CallEmailUpdateOutcomes.Saved, "the close is saved; its release and notice are not");
+
+			var again = await ProcessAsync(email);
+
+			again.Outcome.Should().Be(CallEmailUpdateOutcomes.Closed);
+			VerifyReleasedAndNotifiedOnce();
+			_notes.Should().ContainSingle();
+			_ledger.Rows.Should().ContainSingle().Which.Outcome.Should().Be((int)CallEmailUpdateOutcomes.Closed);
+			(await ProcessAsync(email)).Outcome.Should().Be(CallEmailUpdateOutcomes.AlreadyHandled);
+			VerifyReleasedAndNotifiedOnce();
+		}
+
+		[Test]
+		public async Task A_close_saved_before_its_row_could_say_so_is_finished_from_the_close_it_wrote()
+		{
+			var call = OpenCall("2026-0042");
+			_config.ClosePhrases = "CALL CLOSED";
+			ReleaseUnitSeven();
+			ThrowOnFirstCloseEvent();
+			_ledger.FailOutcomeMoves = true;
+			var email = Email("Call ID: 2026-0042\nCALL CLOSED");
+
+			Func<Task> first = () => ProcessAsync(email);
+			await first.Should().ThrowAsync<TimeoutException>();
+			_ledger.FailOutcomeMoves = false;
+			_ledger.Rows.Should().ContainSingle().Which.Outcome.Should().Be((int)CallEmailUpdateOutcomes.Applying);
+
+			var again = await ProcessAsync(email);
+
+			again.Outcome.Should().Be(CallEmailUpdateOutcomes.Closed, "the call carries the close this engine writes, so the save went through");
+			call.State.Should().Be((int)CallStates.Closed);
+			VerifyReleasedAndNotifiedOnce();
+			_ledger.Rows.Should().ContainSingle().Which.Outcome.Should().Be((int)CallEmailUpdateOutcomes.Closed);
+		}
+
+		[Test]
+		public async Task An_update_interrupted_after_its_save_records_its_page_and_adds_its_unit_on_redelivery()
+		{
+			_config.IdSource = (int)CadCallIdSources.FromFormat;
+			_config.RepageWhen = (int)CadRepageRules.Never;
+			var call = OpenCall("2026-0042");
+			call.UnitDispatches = new List<CallDispatchUnit>();
+			var records = 0;
+			_outbox.Setup(o => o.RecordAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+					It.IsAny<IEnumerable<int>>(), It.IsAny<string>()))
+				.Returns(() => ++records == 1 ? Task.FromException<CallBroadcastOutboxEntry>(new TimeoutException("the process stopped")) : Task.FromResult(new CallBroadcastOutboxEntry()));
+			var inserted = 0;
+			_unitDispatches.Setup(r => r.InsertAsync(It.IsAny<CallDispatchUnit>(), It.IsAny<CancellationToken>(), true))
+				.Callback(() => inserted++)
+				.ReturnsAsync((CallDispatchUnit row, CancellationToken ct, bool first) => row);
+			CallEmailParseResult Parsed() => new CallEmailParseResult
+			{
+				Call = new Call { Address = "14 Oak St", UnitDispatches = new List<CallDispatchUnit> { new CallDispatchUnit { UnitId = 7 } } },
+				ParsedFields = CallEmailParsedFields.Address | CallEmailParsedFields.Resources, MatchKey = "2026-0042"
+			};
+			var email = Email("x");
+
+			Func<Task> first = () => ApplyAsync(email, Parsed());
+			await first.Should().ThrowAsync<TimeoutException>();
+			call.Address.Should().Be("14 Oak St");
+			inserted.Should().Be(0);
+			_ledger.Rows.Should().ContainSingle().Which.Outcome.Should().Be((int)CallEmailUpdateOutcomes.Saved);
+
+			var again = await ApplyAsync(email, Parsed());
+
+			again.Outcome.Should().Be(CallEmailUpdateOutcomes.Updated);
+			again.AddedResources.Should().Be(1);
+			inserted.Should().Be(1);
+			records.Should().Be(2, "the page the interrupted delivery never recorded is recorded now");
+			_saves.Should().Be(1, "the address is the call's already and is not saved again");
+			_ledger.Rows.Should().ContainSingle().Which.Outcome.Should().Be((int)CallEmailUpdateOutcomes.Updated);
+		}
+
+		[Test]
+		public async Task An_update_that_stopped_before_its_row_said_it_saved_still_sends_the_page_it_owed()
+		{
+			_config.IdSource = (int)CadCallIdSources.FromFormat;
+			var call = OpenCall("2026-0042");
+			var records = 0;
+			_outbox.Setup(o => o.RecordAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+					It.IsAny<IEnumerable<int>>(), It.IsAny<string>()))
+				.Returns(() => ++records == 1 ? Task.FromException<CallBroadcastOutboxEntry>(new TimeoutException("the process stopped")) : Task.FromResult(new CallBroadcastOutboxEntry()));
+
+			// The address change saves, the row cannot say so, and the process stops before the page is recorded.
+			_ledger.FailMovesTo.Add((int)CallEmailUpdateOutcomes.Saved);
+			var email = Email("x");
+			Func<Task> first = () => ApplyAsync(email, ParsedWith(new Call { Address = "14 Oak St" }, CallEmailParsedFields.Address));
+			await first.Should().ThrowAsync<TimeoutException>();
+			_ledger.FailMovesTo.Clear();
+			call.Address.Should().Be("14 Oak St");
+
+			var again = await ApplyAsync(email, ParsedWith(new Call { Address = "14 Oak St" }, CallEmailParsedFields.Address));
+
+			again.Outcome.Should().Be(CallEmailUpdateOutcomes.Updated);
+			again.Repaged.Should().BeTrue("the location change its earlier run made still pages under the location rule");
+			records.Should().Be(2);
+		}
+
+		[Test]
+		public async Task A_redelivery_after_its_page_was_recorded_pages_nothing_again_even_after_a_dispatcher_edit()
+		{
+			_config.IdSource = (int)CadCallIdSources.FromFormat;
+			_config.RepageWhen = (int)CadRepageRules.EveryUpdate;
+			var call = OpenCall("2026-0042");
+			call.UnitDispatches = new List<CallDispatchUnit>();
+			var attempts = 0;
+			_unitDispatches.Setup(r => r.InsertAsync(It.IsAny<CallDispatchUnit>(), It.IsAny<CancellationToken>(), true))
+				.Returns((CallDispatchUnit row, CancellationToken ct, bool first) =>
+					++attempts == 1 ? Task.FromException<CallDispatchUnit>(new TimeoutException("the process stopped")) : Task.FromResult(row));
+			CallEmailParseResult Parsed() => new CallEmailParseResult
+			{
+				Call = new Call { NatureOfCall = "Working fire", UnitDispatches = new List<CallDispatchUnit> { new CallDispatchUnit { UnitId = 7 } } },
+				ParsedFields = CallEmailParsedFields.Nature | CallEmailParsedFields.Resources, MatchKey = "2026-0042"
+			};
+			var email = Email("x");
+
+			Func<Task> first = () => ApplyAsync(email, Parsed());
+			await first.Should().ThrowAsync<TimeoutException>();
+			_ledger.Rows.Should().ContainSingle().Which.Outcome.Should().Be((int)CallEmailUpdateOutcomes.FollowedUp);
+			var dispatchCount = call.DispatchCount;
+			call.NatureOfCall = "Dispatcher: second alarm requested";
+
+			var again = await ApplyAsync(email, Parsed());
+
+			again.Outcome.Should().Be(CallEmailUpdateOutcomes.Updated);
+			_outbox.Verify(o => o.RecordAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+				It.IsAny<IEnumerable<int>>(), It.IsAny<string>()), Times.Once, "its page is in the outbox already");
+			call.DispatchCount.Should().Be(dispatchCount, "the alarm level is not raised again");
+			call.NatureOfCall.Should().Be("Dispatcher: second alarm requested", "the change is not applied again");
+			attempts.Should().Be(2);
+		}
+
+		[Test]
+		public async Task A_pin_correction_whose_save_failed_is_applied_on_redelivery()
+		{
+			_config.IdSource = (int)CadCallIdSources.FromFormat;
+			var created = await ApplyAsync(Email("x"), ParsedWith(new Call { Name = "Fire", Address = "12 Oak St", GeoLocationData = "40.0,-75.0" },
+				CallEmailParsedFields.Address | CallEmailParsedFields.Coordinates));
+			var fail = true;
+			_callsService.Setup(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()))
+				.Returns((Call call, CancellationToken ct) => fail ? Task.FromException<Call>(new TimeoutException()) : Task.FromResult(call));
+			CallEmailParseResult Pin() => ParsedWith(new Call { Address = "12 Oak St", GeoLocationData = "40.01,-75.01" }, CallEmailParsedFields.Address | CallEmailParsedFields.Coordinates);
+			var email = Email("x");
+
+			Func<Task> first = () => ApplyAsync(email, Pin());
+			await first.Should().ThrowAsync<TimeoutException>();
+			fail = false;
+			created.Call.GeoLocationData = "40.0,-75.0";
+
+			var again = await ApplyAsync(email, Pin());
+
+			again.Outcome.Should().Be(CallEmailUpdateOutcomes.Updated, "the unchanged address is no evidence the pin was saved");
+			created.Call.GeoLocationData.Should().Be("40.01,-75.01");
+		}
+
+		[Test]
+		public async Task A_close_that_incident_command_blocked_does_not_make_an_earlier_correction_stale()
+		{
+			_config.IdSource = (int)CadCallIdSources.FromFormat;
+			_config.ClosePhrases = "CALL CLOSED";
+			var call = OpenCall("2026-0042");
+			var ten = new DateTime(2026, 11, 23, 10, 0, 0, DateTimeKind.Utc);
+			(await ApplyAsync(Email("x", sentOn: ten), ParsedWith(new Call { Address = "14 Oak St" }, CallEmailParsedFields.Address))).Outcome.Should().Be(CallEmailUpdateOutcomes.Updated);
+
+			_closure.Setup(c => c.GetBlockingIncidentCommandAsync(DepartmentId, 42)).ReturnsAsync(new IncidentCommand());
+			(await ApplyAsync(Email("CALL CLOSED", sentOn: ten.AddMinutes(20)), ParsedWith(new Call(), CallEmailParsedFields.None))).Outcome
+				.Should().Be(CallEmailUpdateOutcomes.CloseBlocked);
+			_closure.Setup(c => c.GetBlockingIncidentCommandAsync(DepartmentId, 42)).ReturnsAsync((IncidentCommand)null);
+
+			var correction = await ApplyAsync(Email("x", sentOn: ten.AddMinutes(10)), ParsedWith(new Call { Address = "16 Oak St" }, CallEmailParsedFields.Address));
+
+			correction.Outcome.Should().Be(CallEmailUpdateOutcomes.Updated, "the blocked close changed nothing, so it sets no newer state");
+			call.Address.Should().Be("16 Oak St");
+		}
+
+		[Test]
+		public async Task A_new_address_replaces_a_pin_a_dispatcher_moved_and_says_so()
+		{
+			_config.IdSource = (int)CadCallIdSources.FromFormat;
+			var created = await ApplyAsync(Email("x"), ParsedWith(new Call { Name = "Fire", Address = "12 Oak St", GeoLocationData = "40.0,-75.0" },
+				CallEmailParsedFields.Address | CallEmailParsedFields.Coordinates));
+			created.Call.GeoLocationData = "40.5,-75.5";
+
+			await ApplyAsync(Email("x"), ParsedWith(new Call { Address = "99 Elm St", GeoLocationData = "41.0,-76.0" }, CallEmailParsedFields.Address | CallEmailParsedFields.Coordinates));
+
+			created.Call.Address.Should().Be("99 Elm St");
+			created.Call.GeoLocationData.Should().Be("41.0,-76.0", "a new address is a new place");
+			_notes.Should().ContainSingle().Which.Note.Should().Contain("map pin a dispatcher had moved was replaced");
+		}
+
+		[Test]
+		public async Task A_stale_email_whose_note_could_not_be_written_writes_it_on_redelivery()
+		{
+			_config.IdSource = (int)CadCallIdSources.FromFormat;
+			OpenCall("2026-0042");
+			var ten = new DateTime(2026, 11, 23, 10, 0, 0, DateTimeKind.Utc);
+			await ApplyAsync(Email("x", sentOn: ten.AddMinutes(20)), ParsedWith(new Call { Address = "14 Oak St" }, CallEmailParsedFields.Address));
+			var notesBefore = _notes.Count;
+
+			var failNote = true;
+			_callsService.Setup(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()))
+				.Returns((CallNote note, CancellationToken ct) =>
+				{
+					if (failNote)
+					{
+						failNote = false;
+						return Task.FromException<CallNote>(new TimeoutException());
+					}
+
+					_notes.Add(note);
+					return Task.FromResult(note);
+				});
+			var late = Email("x", sentOn: ten.AddMinutes(10));
+
+			(await ApplyAsync(late, ParsedWith(new Call { Address = "16 Oak St" }, CallEmailParsedFields.Address))).Outcome.Should().Be(CallEmailUpdateOutcomes.Stale);
+			_ledger.Rows.Should().ContainSingle(r => r.MessageId == late.MessageId).Which.Outcome.Should().Be((int)CallEmailUpdateOutcomes.Noting);
+
+			(await ApplyAsync(late, ParsedWith(new Call { Address = "16 Oak St" }, CallEmailParsedFields.Address))).Outcome.Should().Be(CallEmailUpdateOutcomes.Stale);
+
+			_notes.Should().HaveCount(notesBefore + 1);
+			_notes.Last().Note.Should().Contain("arrived after a newer one");
+			(await ApplyAsync(late, ParsedWith(new Call { Address = "16 Oak St" }, CallEmailParsedFields.Address))).Outcome.Should().Be(CallEmailUpdateOutcomes.AlreadyHandled);
 		}
 	}
 }

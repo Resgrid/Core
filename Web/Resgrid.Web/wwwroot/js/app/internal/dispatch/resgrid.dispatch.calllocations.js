@@ -113,18 +113,46 @@ var resgrid;
             // stored. A result applies only while its number is still the latest and the input still reads the code looked up.
             var callPlusCodeLookup = 0;
 
+            // The page's address lookup for the point a found call plus code placed ({ request, settled }), until it settles: a save
+            // (Find, then Save at once) waits for it, so the form never posts that point with the old or a blank address.
+            var callAddressPending = null;
+
             function callPlusCodeInput() {
                 return $('#CallPlusCode');
             }
 
             /**
+             * The call is placed outside any room (a map click outside the rooms, a dragged pin, an address, What3Words or plus code,
+             * a typed point, a POI): an indoor location picked earlier would be saved with a point outside that room, so its zone,
+             * floor and Indoor Location pick go.
+             */
+            function clearIndoorLocation() {
+                var zone = $('#IndoorMapZoneId');
+                var floor = $('#IndoorMapFloorId');
+                if (!zone.val() && !floor.val()) {
+                    return;
+                }
+                zone.val('');
+                floor.val('');
+                var search = $('#indoorZoneSearch');
+                if (search.length && search.val()) {
+                    search.val(null).trigger('change');
+                }
+            }
+
+            /**
              * The call location was set another way (a POI, a map click, an address or What3Words search, a typed pin, a dragged
              * marker, a room): a call plus code still being looked up no longer applies, and one still typed in is dropped so the
-             * save does not look it up again and move the call back.
+             * save does not look it up again and move the call back. Unless keepRoom (a room was just picked for that point), the
+             * indoor location goes too; a map click inside a room clears it first and the room's pick then sets it again.
              */
-            function callLocationChanged() {
+            function callLocationChanged(keepRoom) {
                 callPlusCodeLookup++;
+                callAddressPending = null;
                 callPlusCodeInput().val('');
+                if (!keepRoom) {
+                    clearIndoorLocation();
+                }
             }
             calllocations.callLocationChanged = callLocationChanged;
 
@@ -154,22 +182,26 @@ var resgrid;
                             var lat = Number(result.Data.Latitude);
                             var lng = Number(result.Data.Longitude);
 
+                            clearIndoorLocation();
                             setCallLocation(lat, lng);
                             callPlusCodeInput().val('');
 
                             var page = pageScript();
                             var addressLookup = page && typeof page.geocodeCoordinates === 'function' ? page.geocodeCoordinates(lat, lng) : null;
 
-                            if (typeof onFound === 'function') {
-                                // A location set another way while the address was being looked up wins: the save waits
-                                // for the dispatcher again instead of going on with a place they did not save.
-                                var resume = function () {
-                                    if (request === callPlusCodeLookup) {
-                                        onFound();
-                                    }
-                                };
-                                Promise.resolve(addressLookup).then(resume, resume);
-                            }
+                            // Tracked until it settles, whether this lookup came from Find or from a save: a save sent meanwhile
+                            // waits for it (onFormSubmit). A location set another way while the address was being looked up wins:
+                            // the save then waits for the dispatcher again instead of going on with a place they did not save.
+                            var waiting = { request: request, settled: Promise.resolve(addressLookup).then(function () { }, function () { }) };
+                            callAddressPending = waiting;
+                            waiting.settled.then(function () {
+                                if (callAddressPending === waiting) {
+                                    callAddressPending = null;
+                                }
+                                if (typeof onFound === 'function' && request === callPlusCodeLookup) {
+                                    onFound();
+                                }
+                            });
                         } else {
                             alert(text('plusCodeNotFound', 'No location was found for that plus code.'));
                         }
@@ -462,8 +494,18 @@ var resgrid;
                 var destinationCode = $.trim(destinationInput.val() || '');
 
                 var lookup = null;
+                var pendingAddress = callAddressPending;
                 if (callCode !== '' && !callInput.prop('disabled')) {
                     lookup = function (resume) { lookupCallPlusCode(callCode, resume); };
+                } else if (pendingAddress && pendingAddress.request === callPlusCodeLookup) {
+                    // A call plus code Find already placed: its address is still being looked up.
+                    lookup = function (resume) {
+                        pendingAddress.settled.then(function () {
+                            if (pendingAddress.request === callPlusCodeLookup) {
+                                resume();
+                            }
+                        });
+                    };
                 } else if (destinationCode !== '' && !destinationInput.prop('disabled')) {
                     lookup = function (resume) { lookupPlusCode(destinationCode, resume); };
                 }

@@ -198,8 +198,8 @@ namespace Resgrid.Services.CallEmailTemplates
 		}
 
 		/// <summary>
-		/// A value with the label's separators (":", "#", "-", "=", ".") taken off its front. For a coordinate a "-" or "." that starts
-		/// the number stays: "Longitude:-119.75" is -119.75, not 119.75.
+		/// A value with the label's separators (":", "#", "-", "=", ".", and any spaces between them) taken off its front. For a
+		/// coordinate a "-" or "." that starts the number stays: "Longitude:-119.75" and "Longitude: = -119.75" are both -119.75.
 		/// </summary>
 		private static string TrimSeparators(string value, bool numeric)
 		{
@@ -208,7 +208,7 @@ namespace Resgrid.Services.CallEmailTemplates
 			while (i < text.Length)
 			{
 				var ch = text[i];
-				if (ch == ':' || ch == '#' || ch == '=')
+				if (ch == ':' || ch == '#' || ch == '=' || char.IsWhiteSpace(ch))
 				{
 					i++;
 					continue;

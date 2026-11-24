@@ -40,6 +40,7 @@ const api = {
     ] },
     'GetCustomMapRegionsGeoJSON/l2': { type: 'FeatureCollection', features: [] },
     'GetCustomMapLayer/l2': { Data: { IndoorMapFloorId: 'l2', IndoorMapId: 'b100', Name: 'Level 2' } },
+    'GetCustomMapLayer/l1': { Data: { IndoorMapFloorId: 'l1', IndoorMapId: 'b100', Name: 'Level 1' } },
 };
 
 async function harness(browser, floorId) {
@@ -169,6 +170,31 @@ const value = (page, selector) => page.$eval(selector, el => el.value);
             await settle(page);
             assert.equal(await page.evaluate(() => window.map.rasters.length), 0, 'the earlier map is not drawn over None');
             assert.equal(await page.evaluate(() => resgrid.dispatch.facilitymaps.zoneAt(32.005, -111.995)), null);
+            assert.deepEqual(errors, []);
+            await context.close();
+        }
+
+        // PR #591 round 2: of two floor lookups on their way (two Indoor Location picks), the later pick's floor is shown even
+        // when the earlier lookup answers first.
+        {
+            const { context, page, errors } = await harness(browser);
+            await page.evaluate(() => {
+                const answer = window.fetch;
+                window.heldFloors = {};
+                window.fetch = (url) => url.indexOf('/GetCustomMapLayer/') >= 0
+                    ? new Promise((resolve) => { window.heldFloors[url.split('/').pop()] = () => resolve(answer(url)); })
+                    : answer(url);
+            });
+            await page.evaluate(() => resgrid.dispatch.facilitymaps.showFloor('l1', false));
+            await page.evaluate(() => resgrid.dispatch.facilitymaps.showFloor('l2', false));
+            await page.evaluate(() => window.heldFloors.l1());
+            await settle(page);
+            await page.evaluate(() => window.heldFloors.l2());
+            await settle(page);
+            const rasters = await page.evaluate(() => window.map.rasters.map((r) => r.tiles));
+            assert.equal(rasters.length, 1, 'only the later floor is drawn');
+            assert.match(rasters[0], /\/l2\//);
+            assert.equal(await value(page, '.rg-facility-maps select:nth-of-type(2)'), 'l2');
             assert.deepEqual(errors, []);
             await context.close();
         }

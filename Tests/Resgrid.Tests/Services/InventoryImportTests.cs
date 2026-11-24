@@ -260,6 +260,28 @@ namespace Resgrid.Tests.Services
 			var preview = await _service.PreviewImportAsync(_actor, ImportFile("Item,Location,Quantity\r\nAnything,Synthetic storage,1\r\n"));
 
 			preview.Rows.Single().Should().BeEquivalentTo(new { ErrorCode = "LocationUnavailable", ErrorColumn = "Location" }, o => o.ExcludingMissingMembers());
+			preview.Rows.Single().LocationName.Should().BeNull("a refused location is not named on the preview");
+		}
+
+		[Test]
+		public async Task A_note_longer_than_a_posting_takes_fails_its_row_at_preview()
+		{
+			var input = new InventoryImportInput { RequestId = Guid.NewGuid().ToString("D") };
+			input.Rows.Add(new InventoryImportRow { RowNumber = 2, Item = "Gauze", Location = "Main Warehouse", Quantity = 1, Note = new string('n', InventoryImportLimits.MaxTextLength + 1) });
+
+			var preview = await _service.PreviewImportAsync(_actor, input);
+
+			preview.Rows.Single().Should().BeEquivalentTo(new { ErrorCode = "ImportValueTooLong", ErrorColumn = "Note" }, o => o.ExcludingMissingMembers());
+		}
+
+		[Test]
+		public async Task An_item_with_only_par_levels_exports_its_default_cost()
+		{
+			await ImportAsync("Item,UnitCost,Location,ParLevel\r\nOxygen mask,4.25,Rescue cache,3\r\n");
+
+			var exported = InventoryImportCsv.Parse(await _service.ExportImportFileAsync(_actor), Guid.NewGuid().ToString("D")).Rows.Single(r => r.Item == "Oxygen mask");
+
+			exported.ParLevel.Should().Be(3); exported.UnitCost.Should().Be(4.25m, "a fresh catalog importing the file keeps the cost");
 		}
 
 		[Test]

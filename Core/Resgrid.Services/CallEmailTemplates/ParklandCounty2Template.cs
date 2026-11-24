@@ -132,21 +132,18 @@ namespace Resgrid.Services.CallEmailTemplates
 			return c;
 		}
 
-		/// <summary>This format has no incident number: a page belongs to the incident with the same name and call time.</summary>
+		/// <summary>
+		/// This format has no incident number: a page belongs to the incident with the same name and call time. The key is a hash of
+		/// both (the whole name and the time, so a long name still keeps the time), because it is stored in the update ledger, which
+		/// keeps no email text. Calls opened under the earlier readable key are still found by <see cref="IsSameIncident"/>.
+		/// </summary>
 		public string GetMatchKey(Call parsed)
 		{
 			if (parsed == null || string.IsNullOrWhiteSpace(parsed.Name) || parsed.LoggedOn == DateTime.MinValue)
 				return null;
 
-			var name = parsed.Name.Trim();
-			var stamp = "|" + parsed.LoggedOn.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
-			if (name.Length + stamp.Length <= CallEmailUpdate.MaxCadCallIdLength)
-				return name + stamp;
-
-			// A name too long for the key keeps its start and a hash of the whole name, and the call time always stays: cutting the
-			// key at the limit used to drop the time, so two incidents with one long name shared a key.
-			var hash = "~" + CadEmailText.Hash(name).Substring(0, 16);
-			return name.Substring(0, CallEmailUpdate.MaxCadCallIdLength - stamp.Length - hash.Length).TrimEnd() + hash + stamp;
+			var stamp = parsed.LoggedOn.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
+			return "PC2-" + CadEmailText.Hash(parsed.Name.Trim() + "|" + stamp).Substring(0, 32);
 		}
 
 		/// <summary>The comparison this format used to find its own open calls before the update ledger existed.</summary>

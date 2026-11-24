@@ -135,8 +135,12 @@ namespace Resgrid.Model.Repositories
 
 		Task<int> CountStartedAsync(int departmentId, DateTime from, DateTime before);
 
-		/// <summary>Deletes sessions started before the cutoff (their transcripts with them).</summary>
-		Task<int> PurgeStartedBeforeAsync(DateTime before, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// Deletes sessions started before the cutoff (their transcripts with them). With <paramref name="keepCarrierCleanup"/>, a session whose
+		/// call recording is still at the carrier (a sid, no carrier delete yet) loses only its answers and stays, so worker 80 can still delete
+		/// that copy; it goes on a later purge once the copy is gone. Returns the sessions deleted.
+		/// </summary>
+		Task<int> PurgeStartedBeforeAsync(DateTime before, bool keepCarrierCleanup, CancellationToken cancellationToken = default);
 
 		// Call recording (M0332). Each write touches only the Recording* columns, and only from the state it expects, so the guided
 		// questions' progress writes and the recording's callback / worker never overwrite each other.
@@ -160,8 +164,27 @@ namespace Resgrid.Model.Repositories
 		Task<bool> TryClaimRecordingAsync(string voiceIntakeSessionId, int expectedState, DateTime claimedOn, DateTime staleBefore,
 			CancellationToken cancellationToken = default);
 
-		/// <summary>Ends an attempt: the new state (and the call file), lease released.</summary>
+		/// <summary>Sets the state (and the call file), lease released. Unconditional: only for a session no attach attempt holds.</summary>
 		Task<bool> SetRecordingStateAsync(string voiceIntakeSessionId, int state, int? callAttachmentId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Ends an attach attempt: the new state (and the call file), lease released, only while the lease is still the one taken at
+		/// <paramref name="claimedOn"/>. False when the attempt lost its lease to another one (that one finishes the recording).
+		/// </summary>
+		Task<bool> SetClaimedRecordingStateAsync(string voiceIntakeSessionId, DateTime claimedOn, int state, int? callAttachmentId,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Renews an attach attempt's lease to <paramref name="renewedOn"/>, only while it still holds the one taken at <paramref name="claimedOn"/>
+		/// and the recording is still Completed. False when another attempt took it over.
+		/// </summary>
+		Task<bool> RenewRecordingClaimAsync(string voiceIntakeSessionId, DateTime claimedOn, DateTime renewedOn, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Requested → Discarded, only while no carrier sid is stored (the start was never confirmed and no callback bound one). False when a
+		/// callback stored the sid or moved the recording on meanwhile.
+		/// </summary>
+		Task<bool> TryDiscardUnconfirmedRecordingAsync(string voiceIntakeSessionId, CancellationToken cancellationToken = default);
 
 		Task<bool> MarkRecordingCarrierDeletedAsync(string voiceIntakeSessionId, DateTime deletedOn, CancellationToken cancellationToken = default);
 

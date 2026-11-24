@@ -56,8 +56,43 @@ namespace Resgrid.Tests.Services
 		[TestCase("12a4")]
 		[TestCase("abc")]
 		[TestCase("1.2.3")]
+		[TestCase("(12.50")]
+		[TestCase("12.50)")]
+		[TestCase("(-12.50)")]
 		public void Numbers_that_could_be_misread_are_refused(string text)
 			=> InventoryImportCsv.TryNumber(text, '.', ',', out _).Should().BeFalse();
+
+		[TestCase("($12.50)", -12.5)]
+		[TestCase("(3)", -3)]
+		public void Accounting_parentheses_read_as_negative(string text, decimal expected)
+		{
+			InventoryImportCsv.TryNumber(text, '.', ',', out var value).Should().BeTrue();
+			value.Should().Be(expected);
+		}
+
+		[TestCase("12:00 PM")]
+		[TestCase("5/12")]
+		public void A_date_must_be_written_in_full(string text)
+			=> InventoryImportCsv.TryDate(text, new CultureInfo("en-US"), out _).Should().BeFalse();
+
+		[TestCase("12/5/2027", 2027, 12, 5)]
+		[TestCase("12/5/27", 2027, 12, 5)]
+		[TestCase("December 5, 2027", 2027, 12, 5)]
+		[TestCase("2027-12-05", 2027, 12, 5)]
+		public void Complete_dates_in_the_uploaders_format_still_read(string text, int year, int month, int day)
+		{
+			InventoryImportCsv.TryDate(text, new CultureInfo("en-US"), out var date).Should().BeTrue();
+			date.Should().Be(new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Utc));
+		}
+
+		[Test]
+		public void Text_after_a_closing_quote_makes_the_row_unreadable()
+		{
+			var input = InventoryImportCsv.Parse("Item,Quantity\r\nA,\"12\"34\r\nB,\"5\"  \r\n", RequestId);
+
+			input.Rows.Select(r => (r.RowNumber, r.ParseError)).Should().Equal((2, "ImportRowUnreadable"), (3, null));
+			input.Rows[1].Quantity.Should().Be(5);
+		}
 
 		[Test]
 		public void A_bad_value_fails_only_its_row_and_names_the_column()

@@ -90,12 +90,39 @@ namespace Resgrid.Providers.NumberProvider
 				if (response.Content.Headers.ContentLength > limit)
 					return new VoiceRecordingDownload { Status = VoiceRecordingDownloadStatuses.TooLarge };
 
-				// Read at most limit + 1 bytes: a missing or wrong Content-Length never buffers more than that.
 				await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+				var body = await ReadBodyAsync(stream, limit, BodyTimeout, cancellationToken);
+				if (body.Status == VoiceRecordingDownloadStatuses.Unavailable)
+					Resgrid.Framework.Logging.LogError($"Voice intake recording {recordingSid} download stalled or was empty.");
+				return body;
+			}
+			catch (Exception ex) when (ex is HttpRequestException || (ex is TaskCanceledException && !cancellationToken.IsCancellationRequested))
+			{
+				Resgrid.Framework.Logging.LogError($"Voice intake recording {recordingSid} could not be downloaded: {ex.Message}");
+				return new VoiceRecordingDownload { Status = VoiceRecordingDownloadStatuses.Unavailable };
+			}
+		}
+
+		/// <summary>
+		/// How long the MP3 body may take after the headers. HttpClient.Timeout stops at the headers (ResponseHeadersRead), so a media server
+		/// that sends them and then stalls would otherwise hold worker 80's whole pass (the rest of the batch, the purge, the number lifecycle).
+		/// </summary>
+		public static readonly TimeSpan BodyTimeout = TimeSpan.FromSeconds(120);
+
+		/// <summary>
+		/// Reads at most <paramref name="limit"/> + 1 bytes of the recording (a missing or wrong Content-Length never buffers more than that),
+		/// within <paramref name="timeout"/>: a body that stalls is Unavailable (worker 80 retries it). The caller's own cancellation still throws.
+		/// </summary>
+		public static async Task<VoiceRecordingDownload> ReadBodyAsync(Stream stream, int limit, TimeSpan timeout, CancellationToken cancellationToken)
+		{
+			using var body = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+			body.CancelAfter(timeout);
+			try
+			{
 				using var buffer = new MemoryStream();
 				var chunk = new byte[81920];
 				int read;
-				while ((read = await stream.ReadAsync(chunk.AsMemory(0, chunk.Length), cancellationToken)) > 0)
+				while ((read = await stream.ReadAsync(chunk.AsMemory(0, chunk.Length), body.Token)) > 0)
 				{
 					buffer.Write(chunk, 0, read);
 					if (buffer.Length > limit)
@@ -107,9 +134,9 @@ namespace Resgrid.Providers.NumberProvider
 
 				return new VoiceRecordingDownload { Status = VoiceRecordingDownloadStatuses.Downloaded, Data = buffer.ToArray(), Extension = ".mp3" };
 			}
-			catch (Exception ex) when (ex is HttpRequestException || (ex is TaskCanceledException && !cancellationToken.IsCancellationRequested))
+			catch (Exception ex) when ((ex is OperationCanceledException || ex is IOException) && !cancellationToken.IsCancellationRequested)
 			{
-				Resgrid.Framework.Logging.LogError($"Voice intake recording {recordingSid} could not be downloaded: {ex.Message}");
+				// The body timeout (or the connection dropping mid-body), not the caller.
 				return new VoiceRecordingDownload { Status = VoiceRecordingDownloadStatuses.Unavailable };
 			}
 		}

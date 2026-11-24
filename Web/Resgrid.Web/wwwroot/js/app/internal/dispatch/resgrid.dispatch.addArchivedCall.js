@@ -491,7 +491,8 @@
             addArchivedCall.geocodeCoordinates = geocodeCoordinates;
             /**
              * The dispatcher placed the call another way (map click, search, pin, dragged marker): an address lookup for an earlier
-             * point and a call plus code still typed or being looked up (resgrid.dispatch.calllocations) no longer apply.
+             * point, a call plus code still typed or being looked up and an indoor location picked earlier
+             * (resgrid.dispatch.calllocations) no longer apply.
              */
             function callLocationChanged() {
                 reverseGeocodeRequest++;

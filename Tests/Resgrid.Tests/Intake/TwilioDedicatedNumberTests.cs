@@ -16,6 +16,7 @@ using Resgrid.Web.Services.Twilio;
 using Twilio.TwiML;
 using Gather = Twilio.TwiML.Voice.Gather;
 using Play = Twilio.TwiML.Voice.Play;
+using Say = Twilio.TwiML.Voice.Say;
 
 namespace Resgrid.Tests.Intake
 {
@@ -337,6 +338,63 @@ namespace Resgrid.Tests.Intake
 
 			_spoken[0].Should().Be(TwilioVoicePromptCatalog.VoiceIntakeGate);
 			twiml.Should().NotContain("rec=1");
+		}
+
+		[Test]
+		public async Task a_recording_notice_tts_could_not_make_offers_no_consent_so_the_caller_is_never_recorded()
+		{
+			// TTS failed and the <Say> fallback is off: the service appends nothing, so the gate is silent.
+			_number.VoiceRecordingEnabled = true;
+			GuidedIntakeStarts();
+			_prompts.Setup(p => p.AppendPromptAsync(It.IsAny<Gather>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
+				.Callback((Gather g, string text, CancellationToken _, string __) => _spoken.Add(text))
+				.Returns(Task.CompletedTask);
+
+			var twiml = Content(await Controller().InboundVoice(Call()));
+
+			twiml.Should().Contain("input=\"dtmf\"").And.Contain("/api/Twilio/VoiceIntakeGate\"").And.NotContain("rec=1");
+		}
+
+		[Test]
+		public async Task a_recording_notice_cut_off_by_the_tts_budget_with_no_say_fallback_offers_no_consent()
+		{
+			_number.VoiceRecordingEnabled = true;
+			GuidedIntakeStarts();
+			// The notice's audio is still being made when the 6 s TTS budget runs out; the <Say> fallback (mocked: off) adds nothing.
+			_prompts.Setup(p => p.AppendPromptAsync(It.IsAny<Gather>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
+				.Returns((Gather g, string text, CancellationToken token, string voice) => Task.Delay(System.Threading.Timeout.Infinite, token));
+
+			var twiml = Content(await Controller().InboundVoice(Call()));
+
+			_prompts.Verify(p => p.AppendSayFallback(It.IsAny<Gather>(), TwilioVoicePromptCatalog.VoiceIntakeRecordedGate(null)), Times.Once);
+			twiml.Should().Contain("input=\"dtmf\"").And.NotContain("rec=1");
+		}
+
+		[Test]
+		public async Task a_recording_notice_spoken_by_the_say_fallback_still_offers_consent()
+		{
+			_number.VoiceRecordingEnabled = true;
+			GuidedIntakeStarts();
+			_prompts.Setup(p => p.AppendPromptAsync(It.IsAny<Gather>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
+				.Returns((Gather g, string text, CancellationToken token, string voice) => Task.Delay(System.Threading.Timeout.Infinite, token));
+			_prompts.Setup(p => p.AppendSayFallback(It.IsAny<TwiML>(), It.IsAny<string>()))
+				.Callback((TwiML parent, string text) => parent.Append(new Say(text)));
+
+			var twiml = Content(await Controller().InboundVoice(Call()));
+
+			twiml.Should().Contain("<Say").And.Contain("VoiceIntakeGate?rec=1");
+		}
+
+		[Test]
+		public void speaks_anything_finds_play_or_say_inside_a_gather()
+		{
+			TwilioController.SpeaksAnything(new Gather()).Should().BeFalse();
+			var play = new Gather();
+			play.Append(new Play(new Uri("https://tts.example/p.wav")));
+			TwilioController.SpeaksAnything(play).Should().BeTrue();
+			var say = new Gather();
+			say.Append(new Say("hello"));
+			TwilioController.SpeaksAnything(say).Should().BeTrue();
 		}
 
 		[Test]

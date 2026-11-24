@@ -347,6 +347,26 @@ NARR: SMOKE SHOWING";
 		}
 
 		[Test]
+		public async Task A_call_whose_first_page_failed_still_gets_its_cad_baseline_once()
+		{
+			_storedCad = new EmailCallUpdateConfig
+			{
+				Enabled = true, IdSource = (int)CadCallIdSources.Label, IdLabel = "ID", IdSearchIn = (int)CadCallIdSearchAreas.SubjectThenBody
+			};
+			var id = Guid.NewGuid().ToString();
+			_broadcastFailures = 1;
+
+			(await ReceiveAsync(Email(id))).Should().Be(400, "the page never went out");
+			(await ReceiveAsync(Email(id))).Should().Be(200, "the retry resumes the saved call");
+
+			_saved.Should().ContainSingle();
+			_ledger.Rows.Should().ContainSingle(r => r.CallId == _saved[0].CallId && r.Outcome == (int)CallEmailUpdateOutcomes.Created,
+				"the baseline is recorded from the call as first saved, even though the engine never saw the create path return, and the resume adds no second one");
+			_ledger.Rows.Single().CadCallId.Should().Be("2026-000777-FIRE");
+			_ledger.Rows.Single().FieldHashes.Should().NotBeNullOrWhiteSpace("later CAD emails compare against these values");
+		}
+
+		[Test]
 		public async Task A_close_email_for_a_call_resgrid_never_had_creates_nothing()
 		{
 			_storedCad = new EmailCallUpdateConfig

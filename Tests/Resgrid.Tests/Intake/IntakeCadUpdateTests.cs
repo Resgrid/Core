@@ -36,6 +36,8 @@ namespace Resgrid.Tests.Intake
 		private TaskCompletionSource<bool> _firstSaveGate;
 		private IntakeService _service;
 		private bool _intakeEnabled;
+		private IntakeChannel _channel;
+		private Mock<ICallDispatchUnitRepository> _unitDispatches;
 
 		[SetUp]
 		public void SetUp()
@@ -46,13 +48,13 @@ namespace Resgrid.Tests.Intake
 			_completions.Clear();
 			_firstSaveGate = null;
 
-			var channel = new IntakeChannel
+			_channel = new IntakeChannel
 			{
 				IntakeChannelId = "ch-mail", DepartmentId = DepartmentId, Name = "CAD bridge", ChannelType = (int)IntakeChannelTypes.Email,
 				Address = "cad", ProcessingMode = (int)IntakeProcessingModes.Template, TemplateFormat = (int)CallEmailTypes.Generic, IsEnabled = true, CadUpdates = true
 			};
 			var channels = new Mock<IIntakeChannelsRepository>();
-			channels.Setup(c => c.GetByIdAsync("ch-mail")).ReturnsAsync(channel);
+			channels.Setup(c => c.GetByIdAsync("ch-mail")).ReturnsAsync(() => _channel);
 
 			_messages = new Mock<IIntakeMessagesRepository>();
 			_messages.Setup(m => m.TryClaimAsync(It.IsAny<IntakeMessage>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
@@ -108,14 +110,19 @@ namespace Resgrid.Tests.Intake
 					It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
 				.ReturnsAsync((Call call, bool a, bool b, bool c, bool d, bool e, bool f, bool g, bool h, bool i, bool j) => call);
 
+			var units = new Mock<IUnitsService>();
+			units.Setup(u => u.GetUnitsForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<Unit> { new Unit { UnitId = 9, DepartmentId = DepartmentId, Name = "Engine 4" } });
+			_unitDispatches = new Mock<ICallDispatchUnitRepository>();
+
 			_ledger = new FakeCallEmailUpdatesRepository { Calls = () => { lock (_saved) return _saved.ToList(); } };
-			var engine = EmailCallUpdateServices.Create(_calls.Object, _ledger, () => config, departments: departments.Object);
+			var engine = EmailCallUpdateServices.Create(_calls.Object, _ledger, () => config, departments: departments.Object,
+				labels: new EmailLabeledFieldsConfig { Units = "Units" }, unitDispatches: _unitDispatches, units: units.Object);
 
 			_service = new IntakeService(channels.Object, _messages.Object, Mock.Of<IVoiceIntakeSessionsRepository>(), departments.Object, settings.Object, flags.Object,
 				_calls.Object, Mock.Of<INumbersService>(), Mock.Of<IGeoLocationProvider>(), Mock.Of<IEventAggregator>(), Mock.Of<IQueueService>(),
 				Mock.Of<ICommunicationService>(), Mock.Of<ICacheProvider>(), Mock.Of<IIntakeConversationService>(), Mock.Of<IIntakeConversationOperations>(),
 				Mock.Of<IIntakeBlockedSendersRepository>(), TimeProvider.System, new Lazy<IDispatcherRoutingService>(() => Mock.Of<IDispatcherRoutingService>()),
-				new Lazy<IEmailCallUpdateService>(() => engine));
+				new Lazy<IEmailCallUpdateService>(() => engine), units.Object);
 		}
 
 		[TearDown]
@@ -178,6 +185,22 @@ namespace Resgrid.Tests.Intake
 			_saved.Should().ContainSingle("both emails are one incident");
 			results.Select(r => r.State).Should().BeEquivalentTo(new[] { IntakeMessageStates.CallCreated, IntakeMessageStates.UpdatedCall });
 			results.Single(r => r.State == IntakeMessageStates.UpdatedCall).CallId.Should().Be(_saved[0].CallId);
+		}
+
+		[Test]
+		public async Task A_follow_up_naming_a_unit_adds_it_to_the_call_but_a_first_email_dispatches_nobody()
+		{
+			_channel.TemplateFormat = (int)CallEmailTypes.LabeledFields;
+
+			await _service.ReceiveAsync(CadEmail("m-1", "Call ID: 26-103\nUnits: Engine 4\nStructure fire at 12 Oak St"));
+			_saved.Should().ContainSingle();
+			(_saved[0].UnitDispatches == null || !_saved[0].UnitDispatches.Any()).Should().BeTrue("intake never dispatches anyone on the pending call it makes");
+
+			var result = await _service.ReceiveAsync(CadEmail("m-2", "Call ID: 26-103\nUnits: Engine 4"));
+
+			result.State.Should().Be(IntakeMessageStates.UpdatedCall);
+			_unitDispatches.Verify(r => r.InsertAsync(It.Is<CallDispatchUnit>(d => d.UnitId == 9 && d.CallId == _saved[0].CallId), It.IsAny<CancellationToken>(), It.IsAny<bool>()),
+				Times.Once, "the follow-up's unit is read against the department's units and added to the matched call");
 		}
 
 		[Test]

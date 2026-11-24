@@ -31,8 +31,14 @@ const script = path.join(root, 'Web/Resgrid.Web/wwwroot/js/app/internal/dispatch
             return [style.backgroundColor, style.color];
         }, row);
 
-        assert.deepEqual(await badge({ Status: 'Standing By', StatusColor: '#777' }), ['rgb(119, 119, 119)', 'rgb(255, 255, 255)'],
-            'the built-in Standing By reads white on its mid-grey');
+        // PR #591 round 2: on a mid-grey white falls under 4.5:1 (#777: 4.48:1, #808080: 3.9:1) while black reads (4.69:1,
+        // 5.3:1); the theme's #262626 would not (3.4:1), so those get black.
+        assert.deepEqual(await badge({ Status: 'Standing By', StatusColor: '#777' }), ['rgb(119, 119, 119)', 'rgb(0, 0, 0)'],
+            'the built-in Standing By reads black on its mid-grey');
+        assert.deepEqual(await badge({ Status: 'Unavailable', StatusColor: '#808080' }), ['rgb(128, 128, 128)', 'rgb(0, 0, 0)'],
+            'a mid-grey status gets black, not white at 3.9:1');
+        assert.deepEqual(await badge({ Status: 'Committed', StatusColor: '#555' }), ['rgb(85, 85, 85)', 'rgb(255, 255, 255)'],
+            'a dark grey still gets white');
         assert.deepEqual(await badge({ Status: 'Available', StatusColor: '#d1dade' }), ['rgb(209, 218, 222)', 'rgb(38, 38, 38)'],
             'a light status gets dark text');
         assert.deepEqual(await badge({ Status: 'Responding', StatusColor: '#449d44', StatusTextColor: '#ffff00' }), ['rgb(68, 157, 68)', 'rgb(255, 255, 0)'],

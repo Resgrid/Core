@@ -46,7 +46,7 @@ namespace Resgrid.Tests.Mocks
 
 		public Task<bool> SetOutcomeAsync(string callEmailUpdateId, int fromOutcome, int toOutcome, CancellationToken cancellationToken = default)
 		{
-			if (FailOutcomeMoves)
+			if (FailOutcomeMoves || FailMovesTo.Contains(toOutcome))
 				throw new InvalidOperationException("The ledger could not be written.");
 
 			lock (Rows)
@@ -62,8 +62,11 @@ namespace Resgrid.Tests.Mocks
 		/// <summary>Every ledger insert throws (the database refused it).</summary>
 		public bool FailInserts { get; set; }
 
-		/// <summary>Every <see cref="SetOutcomeAsync"/> throws: the row an update wrote first stays Applying.</summary>
+		/// <summary>Every <see cref="SetOutcomeAsync"/> throws: the row an update wrote first stays at the step it was written with.</summary>
 		public bool FailOutcomeMoves { get; set; }
+
+		/// <summary>Moves to these outcomes throw (the step before them stays recorded).</summary>
+		public HashSet<int> FailMovesTo { get; } = new HashSet<int>();
 
 		public Task<IEnumerable<Call>> GetOpenCallsForCadCallIdAsync(int departmentId, string cadCallId, CancellationToken cancellationToken = default)
 		{

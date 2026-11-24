@@ -340,7 +340,11 @@ namespace Resgrid.Services.Intake
 				// A file an earlier attempt saved (its insert went through, its protected write or the state write did not) is not left
 				// behind unowned: it becomes the attachment once its protected write completes, else it is removed (no transient plaintext
 				// stays on a protected department's call).
-				var adopted = await AdoptOrRemoveOrphanAsync(session, callId);
+				var (adopted, held) = await AdoptOrRemoveOrphanAsync(session, callId, claim);
+				if (held == null)
+					return LeaseLost(session);
+				claim = held.Value;
+
 				if (adopted.HasValue)
 				{
 					if (!await _sessions.SetClaimedRecordingStateAsync(session.VoiceIntakeSessionId, claim, (int)VoiceIntakeRecordingStates.Attached, adopted, CancellationToken.None))
@@ -429,9 +433,11 @@ namespace Resgrid.Services.Intake
 
 		/// <summary>
 		/// On the last attempt: a file an earlier attempt saved becomes the attachment (sealed already, or once saving it again completes its
-		/// protected write); one whose protected write still fails is removed. Null when there is none to adopt.
+		/// protected write); one whose protected write still fails is removed — only while this attempt still holds the lease, since another
+		/// attempt that took over during the save may have linked that same file. Adopted is null when there is none to adopt; Claim is the
+		/// lease this attempt holds afterwards, null when it was lost (the caller writes nothing more).
 		/// </summary>
-		private async Task<int?> AdoptOrRemoveOrphanAsync(VoiceIntakeSession session, int callId)
+		private async Task<(int? Adopted, DateTime? Claim)> AdoptOrRemoveOrphanAsync(VoiceIntakeSession session, int callId, DateTime claim)
 		{
 			CallAttachment orphan;
 			try
@@ -441,23 +447,42 @@ namespace Resgrid.Services.Intake
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex, $"[Voice Recording] call {callId}: the call's files could not be read for an earlier attempt's recording.");
-				return null;
+				return (null, claim);
 			}
 
 			if (orphan == null)
-				return null;
+				return (null, claim);
 
 			if (ProtectedDataEnvelope.IsEnveloped(orphan.FileName))
-				return orphan.CallAttachmentId;
+				return (orphan.CallAttachmentId, claim);
 
 			try
 			{
 				var saved = await _calls.SaveCallAttachmentAsync(orphan, CancellationToken.None);
-				return saved?.CallAttachmentId ?? orphan.CallAttachmentId;
+				return (saved?.CallAttachmentId ?? orphan.CallAttachmentId, claim);
 			}
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex, $"[Voice Recording] call {callId}: file {orphan.CallAttachmentId} an earlier attempt saved could not be completed; it is removed.");
+
+				var renewed = Later(_clock.GetUtcNow().UtcDateTime, claim);
+				bool holds;
+				try
+				{
+					holds = await _sessions.RenewRecordingClaimAsync(session.VoiceIntakeSessionId, claim, renewed, CancellationToken.None);
+				}
+				catch (Exception renewEx)
+				{
+					Framework.Logging.LogException(renewEx, $"[Voice Recording] call {callId}: the lease could not be checked before removing file {orphan.CallAttachmentId}.");
+					holds = false;
+				}
+
+				if (!holds)
+				{
+					Framework.Logging.LogInfo($"[Voice Recording] call {callId}: another attempt holds the recording now; file {orphan.CallAttachmentId} is left to it.");
+					return (null, null);
+				}
+
 				try
 				{
 					await _attachments.DeleteAsync(orphan, CancellationToken.None);
@@ -466,7 +491,7 @@ namespace Resgrid.Services.Intake
 				{
 					Framework.Logging.LogException(deleteEx, $"[Voice Recording] call {callId}: file {orphan.CallAttachmentId} could not be removed.");
 				}
-				return null;
+				return (null, renewed);
 			}
 		}
 

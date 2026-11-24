@@ -173,6 +173,19 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public void Parkland_calls_inside_the_same_second_are_different_incidents()
+		{
+			var template = new ParklandCounty2Template();
+			var loggedOn = new DateTime(2026, 5, 14, 16, 53, 16, DateTimeKind.Utc);
+			var first = new Call { Name = "Call Import Type: Unknown", LoggedOn = loggedOn.AddMilliseconds(120) };
+			var second = new Call { Name = "Call Import Type: Unknown", LoggedOn = loggedOn.AddMilliseconds(870) };
+
+			template.GetMatchKey(second).Should().NotBe(template.GetMatchKey(first), "IsSameIncident compares the full time, so the key does too");
+			template.IsSameIncident(second, first).Should().BeFalse();
+			template.GetMatchKey(new Call { Name = first.Name, LoggedOn = first.LoggedOn }).Should().Be(template.GetMatchKey(first), "the key is deterministic");
+		}
+
+		[Test]
 		public void Spaces_between_label_separators_are_skipped()
 		{
 			var labels = new EmailLabeledFieldsConfig { Latitude = "Latitude", Longitude = "Longitude", Address = "Address" };

@@ -370,6 +370,25 @@ NARR: SMOKE SHOWING";
 		}
 
 		[Test]
+		public async Task A_call_whose_save_threw_after_its_row_still_gets_its_cad_baseline_once()
+		{
+			_storedCad = new EmailCallUpdateConfig
+			{
+				Enabled = true, IdSource = (int)CadCallIdSources.Label, IdLabel = "ID", IdSearchIn = (int)CadCallIdSearchAreas.SubjectThenBody
+			};
+			var id = Guid.NewGuid().ToString();
+			_failNextSaveAfterRow = true;
+
+			(await ReceiveAsync(Email(id))).Should().Be(400, "the save threw after the call row was in");
+			(await ReceiveAsync(Email(id))).Should().Be(200, "the retry resumes the saved call");
+
+			_saved.Should().ContainSingle();
+			_ledger.Rows.Should().ContainSingle(r => r.CallId == _saved[0].CallId && r.Outcome == (int)CallEmailUpdateOutcomes.Created,
+				"the call SaveCallAsync left behind gets its baseline before the failure goes to the retry, which resumes without the engine");
+			_ledger.Rows.Single().CadCallId.Should().Be("2026-000777-FIRE");
+		}
+
+		[Test]
 		public async Task A_settings_change_during_a_failed_first_page_does_not_link_the_call_to_another_cad_id()
 		{
 			_storedCad = new EmailCallUpdateConfig

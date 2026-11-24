@@ -248,7 +248,7 @@
             creating another one.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.EmailController.RecordBaselineAfterFailureAsync(Resgrid.Model.Services.EmailCallUpdateRequest,Resgrid.Model.Call)">
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.SaveNewCallAsync(Resgrid.Model.Services.EmailCallUpdateRequest,Resgrid.Model.Call,System.Threading.CancellationToken)">
             <summary>
             The CAD update baseline of a new call whose page, desk entry or receipt step failed after the save. The engine records the
             baseline only once the create path returns, and the provider's retry resumes the saved call without the engine, so without
@@ -256,6 +256,11 @@
             CAD's values, before anyone could edit it). The CAD call ID comes from the settings the engine read for this delivery
             (<see cref="P:Resgrid.Model.Services.EmailCallUpdateRequest.Config"/>), never re-read, so a settings change in between cannot link the call to another ID.
             Nothing for an email that carries no CAD call ID. Never throws.
+            </summary>
+            <summary>
+            Saves a new email call. The call row can be committed before SaveCallAsync throws (its protected-write and attachment checks run
+            after the insert), so a call left behind that way still gets its CAD baseline before the failure reaches the delivery's retry,
+            exactly as a failure after the save does (the retry resumes the saved call without the update engine).
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.EmailController.ResumeCallAsync(Resgrid.Model.InboundEmailReceiptClaim,System.Boolean,System.Int32,PostmarkDotNet.PostmarkInboundMessage,System.Threading.CancellationToken)">

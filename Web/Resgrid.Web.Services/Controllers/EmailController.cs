@@ -453,7 +453,7 @@ namespace Resgrid.Web.Services.Controllers
 										call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
 									}
 
-									var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
+									var savedCall = await SaveNewCallAsync(updateRequest, call, cancellationToken);
 									try
 									{
 										await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedCall.CallId, pendingSteps);
@@ -713,7 +713,7 @@ namespace Resgrid.Web.Services.Controllers
 									if (emailSettings.FormatType == (int)CallEmailTypes.AI)
 										pendingSteps |= InboundEmailPendingSteps.AiEnrichment;
 
-									var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
+									var savedCall = await SaveNewCallAsync(updateRequest, call, cancellationToken);
 									try
 									{
 										await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedCall.CallId, pendingSteps);
@@ -933,6 +933,24 @@ namespace Resgrid.Web.Services.Controllers
 		/// (<see cref="EmailCallUpdateRequest.Config"/>), never re-read, so a settings change in between cannot link the call to another ID.
 		/// Nothing for an email that carries no CAD call ID. Never throws.
 		/// </summary>
+		/// <summary>
+		/// Saves a new email call. The call row can be committed before SaveCallAsync throws (its protected-write and attachment checks run
+		/// after the insert), so a call left behind that way still gets its CAD baseline before the failure reaches the delivery's retry,
+		/// exactly as a failure after the save does (the retry resumes the saved call without the update engine).
+		/// </summary>
+		private async Task<Call> SaveNewCallAsync(EmailCallUpdateRequest updateRequest, Call call, CancellationToken cancellationToken)
+		{
+			try
+			{
+				return await _callsService.SaveCallAsync(call, cancellationToken);
+			}
+			catch
+			{
+				await RecordBaselineAfterFailureAsync(updateRequest, call);
+				throw;
+			}
+		}
+
 		private async Task RecordBaselineAfterFailureAsync(EmailCallUpdateRequest request, Call savedCall)
 		{
 			try

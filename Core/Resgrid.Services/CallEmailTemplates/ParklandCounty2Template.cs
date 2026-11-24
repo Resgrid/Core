@@ -142,7 +142,9 @@ namespace Resgrid.Services.CallEmailTemplates
 			if (parsed == null || string.IsNullOrWhiteSpace(parsed.Name) || parsed.LoggedOn == DateTime.MinValue)
 				return null;
 
-			var stamp = parsed.LoggedOn.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
+			// The full time (ticks), as IsSameIncident compares it: two calls with one name inside the same second (a Date: line with
+			// fractional seconds, or two unreadable emails stamped with their receipt time) must not share a key.
+			var stamp = parsed.LoggedOn.Ticks.ToString(System.Globalization.CultureInfo.InvariantCulture);
 			return "PC2-" + ExactHash(parsed.Name.Trim() + "|" + stamp).Substring(0, 32);
 		}
 

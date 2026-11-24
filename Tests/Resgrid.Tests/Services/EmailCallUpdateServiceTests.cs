@@ -1323,6 +1323,8 @@ namespace Resgrid.Tests.Services
 			_saves.Should().Be(1, "the change is not applied again");
 			_notes.Should().ContainSingle();
 			_ledger.Rows.Should().ContainSingle().Which.Outcome.Should().Be((int)CallEmailUpdateOutcomes.Updated);
+			_events.Verify(e => e.SendMessage(It.IsAny<CallUpdatedEvent>()), Times.Once,
+				"the refresh (and the workflows and bus messages behind it) is raised once, by the delivery that finished the update");
 		}
 
 		[Test]
@@ -1376,6 +1378,83 @@ namespace Resgrid.Tests.Services
 
 			_outbox.Verify(o => o.SendPendingForCallAsync(It.Is<Call>(c => c.CallId == 42), It.IsAny<CallBroadcastOutboxEntry>()), Times.Once,
 				"Engine 2's page goes out now, not only when worker 12 next runs");
+		}
+
+		[Test]
+		public async Task An_added_unit_whose_unrecorded_page_failed_is_not_put_on_the_call_until_its_redelivery_pages_it()
+		{
+			_config.IdSource = (int)CadCallIdSources.FromFormat;
+			_config.RepageWhen = (int)CadRepageRules.Never;
+			var call = OpenCall("2026-0042");
+			call.UnitDispatches = new List<CallDispatchUnit>();
+			_outbox.Setup(o => o.RecordAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+					It.IsAny<IEnumerable<int>>(), It.IsAny<string>()))
+				.ReturnsAsync(() => new CallBroadcastOutboxEntry { Persisted = false });
+			var sends = 0;
+			_outbox.Setup(o => o.SendPendingForCallAsync(It.IsAny<Call>(), It.IsAny<CallBroadcastOutboxEntry>())).ReturnsAsync(() => ++sends == 1 ? 0 : 1);
+			CallEmailParseResult Parsed() => new CallEmailParseResult
+			{
+				Call = new Call { UnitDispatches = new List<CallDispatchUnit> { new CallDispatchUnit { UnitId = 7 } } },
+				ParsedFields = CallEmailParsedFields.Resources, MatchKey = "2026-0042"
+			};
+			var email = Email("x");
+
+			Func<Task> first = () => ApplyAsync(email, Parsed());
+			await first.Should().ThrowAsync<EmailCallUpdateIncompleteException>("the page reached nobody and no worker holds it");
+			_unitDispatches.Verify(r => r.InsertAsync(It.IsAny<CallDispatchUnit>(), It.IsAny<CancellationToken>(), true), Times.Never,
+				"written now, Engine 2 would no longer be an addition and its redelivery would page nobody");
+
+			var again = await ApplyAsync(email, Parsed());
+
+			again.Outcome.Should().Be(CallEmailUpdateOutcomes.Updated);
+			again.AddedResources.Should().Be(1);
+			sends.Should().Be(2, "the redelivery found Engine 2 still to add and paged it");
+			_unitDispatches.Verify(r => r.InsertAsync(It.Is<CallDispatchUnit>(d => d.CallId == 42 && d.UnitId == 7), It.IsAny<CancellationToken>(), true), Times.Once);
+		}
+
+		[Test]
+		public async Task A_close_whose_saved_step_could_not_be_recorded_still_releases_and_notifies()
+		{
+			var call = OpenCall("2026-0042");
+			_config.ClosePhrases = "CALL CLOSED";
+			ReleaseUnitSeven();
+			_ledger.FailMovesTo.Add((int)CallEmailUpdateOutcomes.Saved);
+
+			var result = await ProcessAsync(Email("Call ID: 2026-0042\nCALL CLOSED"));
+
+			result.Outcome.Should().Be(CallEmailUpdateOutcomes.Closed);
+			call.State.Should().Be((int)CallStates.Closed);
+			VerifyReleasedAndNotifiedOnce();
+			_ledger.Rows.Should().ContainSingle().Which.Outcome.Should().Be((int)CallEmailUpdateOutcomes.Closed);
+		}
+
+		[Test]
+		public async Task A_saved_close_waiting_for_its_note_still_makes_an_older_close_stale()
+		{
+			_config.IdSource = (int)CadCallIdSources.FromFormat;
+			_config.ClosePhrases = "CALL CLOSED";
+			var call = OpenCall("2026-0042");
+			var ten = new DateTime(2026, 11, 23, 10, 0, 0, DateTimeKind.Utc);
+			var failNote = true;
+			_callsService.Setup(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()))
+				.Returns((CallNote note, CancellationToken ct) =>
+				{
+					if (failNote)
+						return Task.FromException<CallNote>(new TimeoutException());
+					_notes.Add(note);
+					return Task.FromResult(note);
+				});
+
+			Func<Task> close = () => ApplyAsync(Email("CALL CLOSED", sentOn: ten), ParsedWith(new Call(), CallEmailParsedFields.None));
+			await close.Should().ThrowAsync<EmailCallUpdateIncompleteException>("only the close's note is owed");
+			_ledger.Rows.Should().ContainSingle().Which.Outcome.Should().Be((int)CallEmailUpdateOutcomes.Noting);
+			failNote = false;
+			call.State = (int)CallStates.Active;
+
+			var older = await ApplyAsync(Email("CALL CLOSED", sentOn: ten.AddMinutes(-30)), ParsedWith(new Call(), CallEmailParsedFields.None));
+
+			older.Outcome.Should().Be(CallEmailUpdateOutcomes.Stale, "the 10:00 close changed the call even though its note is still owed");
+			call.State.Should().Be((int)CallStates.Active, "a person reopened it; the delayed 09:30 close does not close it again");
 		}
 
 		[Test]

@@ -526,17 +526,16 @@ namespace Resgrid.Services
 
 			// The page is in the outbox before the added rows are written, so a failure from here on still leaves worker 12 a page to send.
 			var page = paging != null ? await _callBroadcastOutboxService.RecordAsync(saved, paging.Users, paging.Groups, paging.Units, paging.Roles, department?.ManagingUserId) : null;
-			if (page != null && page.Persisted)
-				await MoveAsync(row, CallEmailUpdateOutcomes.FollowedUp);
+			var sentUnrecorded = await PageStepAsync(saved, row, page);
 			var addedCount = await InsertAdditionsAsync(saved, additions, cancellationToken);
 
 			if (otherCallIds.Count > 0)
 				notes.Add("This email also matched calls " + string.Join(", ", otherCallIds) + "; only this call was updated.");
 
-			var (repaged, done) = await FinishUpdateAsync(department, saved, row, page, repage, Header(cadCallId, applied ? "updated this call" : "paged this call again") +
+			var (repaged, done) = await FinishUpdateAsync(department, saved, row, page, repage, sentUnrecorded, Header(cadCallId, applied ? "updated this call" : "paged this call again") +
 				Lines(changes.Select(c => Describe(c, true)).Concat(notes)));
 			if (!done)
-				throw Incomplete(row, "its note or the page the outbox could not record");
+				throw Incomplete(row, "its note");
 
 			return new EmailCallUpdateResult
 			{
@@ -608,7 +607,9 @@ namespace Resgrid.Services
 			bool wentOut, bool stillClosed, string extraLine, CancellationToken cancellationToken)
 		{
 			var verb = cancel ? "cancelled" : "closed";
-			var at = row.Outcome;
+			// Only ever run once the close is saved: a row still Applying is one whose move to Saved failed (or, resumed, could not be
+			// recorded), so it owes everything a Saved row does — never a terminal close without its release and notice.
+			var at = row.Outcome == (int)CallEmailUpdateOutcomes.Applying ? (int)CallEmailUpdateOutcomes.Saved : row.Outcome;
 			var releaseOwed = stillClosed && wentOut && (at == (int)CallEmailUpdateOutcomes.Saved || at == (int)CallEmailUpdateOutcomes.Notified);
 			var noticeOwed = stillClosed && wentOut && config.NotifyOnClose && (at == (int)CallEmailUpdateOutcomes.Saved || at == (int)CallEmailUpdateOutcomes.FollowedUp);
 
@@ -718,48 +719,65 @@ namespace Resgrid.Services
 				repage = Repages(config.GetRepageWhen(), groups);
 				var paging = PageRecipients(additions, repage, config.PageAddedResources, repage ? additions.Current ?? await LoadDispatchesAsync(call) : null);
 				page = paging != null ? await _callBroadcastOutboxService.RecordAsync(call, paging.Users, paging.Groups, paging.Units, paging.Roles, department?.ManagingUserId) : null;
-				if (page != null && page.Persisted)
-					await MoveAsync(row, CallEmailUpdateOutcomes.FollowedUp);
 			}
 
+			var sentUnrecorded = await PageStepAsync(call, row, page);
 			var addedCount = await InsertAdditionsAsync(call, additions, cancellationToken);
 			var lines = groups.Where(g => g != GroupResources).Select(g => $"{(g == GroupLocation ? "Address" : g)} updated").ToList();
 			if (additions.Names.Count > 0)
 				lines.Add("Added: " + string.Join(", ", additions.Names));
 
 			// The page goes out at once whenever there is one (an added unit's page as much as a re-page): worker 12 is the retry only.
-			var (repaged, done) = await FinishUpdateAsync(department, call, row, page, repage,
+			var (repaged, done) = await FinishUpdateAsync(department, call, row, page, repage, sentUnrecorded,
 				Header(cadCallId, groups.Count > 0 ? "updated this call" : "paged this call again") + Lines(lines));
 			if (!done)
-				throw Incomplete(row, "its note or the page the outbox could not record");
+				throw Incomplete(row, "its note");
 
 			return new EmailCallUpdateResult { Outcome = CallEmailUpdateOutcomes.Updated, Call = call, Repaged = repaged, AddedResources = addedCount };
 		}
 
 		/// <summary>
-		/// The end of an update once its call is saved and its resource rows are in. A page the outbox could not record has no other sender,
-		/// so it is sent before the update counts as done (and, once sent, the row says so: a redelivery never sends it again); then the
-		/// note, the row's outcome and the refresh; then a recorded page is sent at once (worker 12 retries it). Done is false when the note
-		/// or an unrecorded page could not be done: the row stays at its step for the redelivery.
+		/// The page step, taken before the added resource rows are written. A page the outbox recorded moves the row to FollowedUp (worker
+		/// 12 is its retry). One the outbox could not record has no other sender and names the additions the call still lacks, so it is sent
+		/// now: a send that fails stops the update before those rows are written, and the redelivery finds the same additions and pages them
+		/// again (written first, they would no longer be additions, and the page would be lost). True when an unrecorded page went out.
+		/// </summary>
+		private async Task<bool> PageStepAsync(Call saved, CallEmailUpdate row, CallBroadcastOutboxEntry page)
+		{
+			if (page == null)
+				return false;
+
+			if (!page.Persisted)
+			{
+				if (saved.State != (int)CallStates.Active)
+					return false;
+				if (!await SendPageAsync(saved, page))
+					throw Incomplete(row, "the page the outbox could not record");
+			}
+
+			await MoveAsync(row, CallEmailUpdateOutcomes.FollowedUp);
+			return !page.Persisted;
+		}
+
+		/// <summary>
+		/// The end of an update once its call is saved, its page step taken and its resource rows are in: the note, then the row's outcome
+		/// and the refresh (raised once, when the update is done: a redelivery that finishes a failed note raises it then, never a second
+		/// time), then a recorded page is sent at once (worker 12 retries it; the outbox claim keeps it single). Done is false when the note
+		/// could not be written: the row stays at its step for the redelivery.
 		/// </summary>
 		private async Task<(bool Repaged, bool Done)> FinishUpdateAsync(Department department, Call saved, CallEmailUpdate row, CallBroadcastOutboxEntry page,
-			bool repage, string note)
+			bool repage, bool sentUnrecorded, string note)
 		{
 			var live = saved.State == (int)CallStates.Active;
-			var unrecorded = page != null && !page.Persisted;
-			var sentUnrecorded = unrecorded && live && await SendPageAsync(saved, page);
-			if (sentUnrecorded)
-				await MoveAsync(row, CallEmailUpdateOutcomes.FollowedUp);
-
-			var noted = await AddNoteAsync(department, saved.CallId, note);
-			var done = noted && (!unrecorded || sentUnrecorded || !live);
+			var done = await AddNoteAsync(department, saved.CallId, note);
 			if (done)
+			{
 				await MoveAsync(row, CallEmailUpdateOutcomes.Updated);
-
-			_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent { DepartmentId = saved.DepartmentId, Call = saved });
+				_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent { DepartmentId = saved.DepartmentId, Call = saved });
+			}
 
 			var accepted = sentUnrecorded;
-			if (page != null && !unrecorded && live)
+			if (page != null && page.Persisted && live)
 				accepted = await SendPageAsync(saved, page);
 
 			return (repage && accepted, done);
@@ -1020,9 +1038,9 @@ namespace Resgrid.Services
 
 		/// <summary>
 		/// The newest sent time among the emails that set the call's state: created, updated, no change where the call shows what the CAD
-		/// sent, closed or cancelled, or saved and still finishing. A stale email, a close incident command blocked, a note on a closed call,
-		/// a no change the call reflects nowhere (everything held back by policy or a person's edit) and a row still Applying or Noting
-		/// changed nothing, so a correction sent before them still applies.
+		/// sent, closed or cancelled, or saved and still finishing (a saved close waiting for its note included). A stale email, a close
+		/// incident command blocked, a note on a closed call, a no change the call reflects nowhere (everything held back by policy or a
+		/// person's edit), a note-only email's Noting row and a row still Applying changed nothing, so a correction sent before them still applies.
 		/// </summary>
 		private static DateTime? LastApplied(List<CallEmailUpdate> history)
 		{
@@ -1035,6 +1053,9 @@ namespace Resgrid.Services
 			{
 				case CallEmailUpdateOutcomes.NoChange:
 					return !Steps(row).Contains(StepNotApplied);
+				case CallEmailUpdateOutcomes.Noting:
+					// A close saved and waiting only for its note changed the call (a note-only email's Noting row did not).
+					return IsClose(row);
 				case CallEmailUpdateOutcomes.Created:
 				case CallEmailUpdateOutcomes.Updated:
 				case CallEmailUpdateOutcomes.Closed:

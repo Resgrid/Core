@@ -793,6 +793,31 @@ namespace Resgrid.Tests.Intake
 			_saved.Should().BeEmpty("no transient plaintext stays on the call");
 		}
 
+		[Test]
+		public async Task on_the_last_attempt_a_file_is_not_removed_once_another_attempt_took_the_lease_during_its_save()
+		{
+			var session = Session(VoiceIntakeSteps.Completed, callId: 900);
+			session.RecordingState = (int)VoiceIntakeRecordingStates.Completed;
+			session.RecordingSid = RecordingSid;
+			session.RecordingAttempts = 2;
+			_saved.Add(new CallAttachment { CallAttachmentId = 7000, CallId = 900, CallAttachmentType = (int)CallAttachmentTypes.File, FileName = VoiceIntakeRecording.FileName(session),
+				Size = 4, Timestamp = VoiceIntakeRecordingService.RecordingStamp(session), Data = new byte[] { 1, 2, 3, 4 } });
+			var saves = 0;
+			_calls.Setup(c => c.SaveCallAttachmentAsync(It.IsAny<CallAttachment>(), It.IsAny<CancellationToken>()))
+				.Returns((CallAttachment a, CancellationToken ct) =>
+				{
+					// The orphan's own save outlasts the lease: another attempt claims the recording (and may link this very file).
+					if (++saves == 2)
+						session.RecordingClaimedOn = Now.AddMinutes(10);
+					throw new InvalidOperationException("Protected write blocked; call attachment 7000 has transient plaintext pending re-encryption.");
+				});
+
+			await _service.ProcessPendingAsync(Now);
+
+			_saved.Should().ContainSingle(a => a.CallAttachmentId == 7000, "the attempt that lost the lease leaves the file to the one holding it");
+			session.RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Completed, "an attempt without the lease writes nothing");
+		}
+
 		[TestCase(null, "Caller recording")]
 		[TestCase(0, "Caller recording")]
 		[TestCase(9, "Caller recording (0:09)")]

@@ -467,14 +467,14 @@ NARR: SMOKE SHOWING";
 
 			_saved.Should().BeEmpty("the email updated the pending call instead of creating another");
 			_broadcasts.Should().Be(0);
-			_outbox.Verify(o => o.RecordAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+			_outbox.Verify(o => o.RecordOnceAsync(It.IsAny<string>(),It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
 				It.IsAny<IEnumerable<int>>(), It.IsAny<string>()), Times.Never, "a pending call waits for its dispatcher");
 
 			_existing = new Call { CallId = 78, DepartmentId = DepartmentId, State = (int)CallStates.Active, Name = "Structure Fire", IncidentNumber = "2026-000777-FIRE", LoggedOn = DateTime.UtcNow };
 			(await ReceiveAsync(Email())).Should().Be(200);
 
 			_saved.Should().BeEmpty();
-			_outbox.Verify(o => o.RecordAsync(It.Is<Call>(c => c.CallId == 78), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+			_outbox.Verify(o => o.RecordOnceAsync(It.IsAny<string>(),It.Is<Call>(c => c.CallId == 78), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
 				It.IsAny<IEnumerable<int>>(), It.IsAny<string>()), Times.Once, "a running call is paged again under its rule");
 			_existing.DispatchCount.Should().Be(1, "an every-update re-page is the call's next alarm");
 		}

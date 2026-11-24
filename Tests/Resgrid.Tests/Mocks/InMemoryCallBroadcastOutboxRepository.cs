@@ -21,13 +21,23 @@ namespace Resgrid.Tests.Mocks
 		/// <summary>Set to make the next insert throw (the row cannot be written).</summary>
 		public bool FailInserts { get; set; }
 
+		/// <summary>Set to make inserts write the row and then throw (the commit went through, its reply was lost).</summary>
+		public bool FailAfterInsert { get; set; }
+
 		public Task InsertEntryAsync(CallBroadcastOutboxEntry entry, CancellationToken cancellationToken = default)
 		{
 			if (FailInserts)
 				throw new InvalidOperationException("insert failed");
 
 			lock (_gate)
+			{
+				if (Find(entry.CallBroadcastOutboxId) != null)
+					throw new InvalidOperationException("duplicate key");
 				Rows.Add(Copy(entry));
+			}
+
+			if (FailAfterInsert)
+				throw new TimeoutException("the reply was lost");
 
 			return Task.CompletedTask;
 		}

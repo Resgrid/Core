@@ -525,14 +525,14 @@ namespace Resgrid.Services
 			await MoveAsync(row, CallEmailUpdateOutcomes.Saved);
 
 			// The page is in the outbox before the added rows are written, so a failure from here on still leaves worker 12 a page to send.
-			var page = paging != null ? await _callBroadcastOutboxService.RecordAsync(saved, paging.Users, paging.Groups, paging.Units, paging.Roles, department?.ManagingUserId) : null;
-			var sentUnrecorded = await PageStepAsync(saved, row, page);
+			var page = paging != null ? await _callBroadcastOutboxService.RecordOnceAsync(PageId(row), saved, paging.Users, paging.Groups, paging.Units, paging.Roles, department?.ManagingUserId) : null;
+			await PageStepAsync(row, page);
 			var addedCount = await InsertAdditionsAsync(saved, additions, cancellationToken);
 
 			if (otherCallIds.Count > 0)
 				notes.Add("This email also matched calls " + string.Join(", ", otherCallIds) + "; only this call was updated.");
 
-			var (repaged, done) = await FinishUpdateAsync(department, saved, row, page, repage, sentUnrecorded, Header(cadCallId, applied ? "updated this call" : "paged this call again") +
+			var (repaged, done) = await FinishUpdateAsync(department, saved, row, page, repage, Header(cadCallId, applied ? "updated this call" : "paged this call again") +
 				Lines(changes.Select(c => Describe(c, true)).Concat(notes)));
 			if (!done)
 				throw Incomplete(row, "its note");
@@ -718,17 +718,18 @@ namespace Resgrid.Services
 			{
 				repage = Repages(config.GetRepageWhen(), groups);
 				var paging = PageRecipients(additions, repage, config.PageAddedResources, repage ? additions.Current ?? await LoadDispatchesAsync(call) : null);
-				page = paging != null ? await _callBroadcastOutboxService.RecordAsync(call, paging.Users, paging.Groups, paging.Units, paging.Roles, department?.ManagingUserId) : null;
+				// The same id as the delivery that saved the call: a page it already recorded is reused, never recorded twice.
+				page = paging != null ? await _callBroadcastOutboxService.RecordOnceAsync(PageId(row), call, paging.Users, paging.Groups, paging.Units, paging.Roles, department?.ManagingUserId) : null;
 			}
 
-			var sentUnrecorded = await PageStepAsync(call, row, page);
+			await PageStepAsync(row, page);
 			var addedCount = await InsertAdditionsAsync(call, additions, cancellationToken);
 			var lines = groups.Where(g => g != GroupResources).Select(g => $"{(g == GroupLocation ? "Address" : g)} updated").ToList();
 			if (additions.Names.Count > 0)
 				lines.Add("Added: " + string.Join(", ", additions.Names));
 
 			// The page goes out at once whenever there is one (an added unit's page as much as a re-page): worker 12 is the retry only.
-			var (repaged, done) = await FinishUpdateAsync(department, call, row, page, repage, sentUnrecorded,
+			var (repaged, done) = await FinishUpdateAsync(department, call, row, page, repage,
 				Header(cadCallId, groups.Count > 0 ? "updated this call" : "paged this call again") + Lines(lines));
 			if (!done)
 				throw Incomplete(row, "its note");
@@ -737,36 +738,41 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>
-		/// The page step, taken before the added resource rows are written. A page the outbox recorded moves the row to FollowedUp (worker
-		/// 12 is its retry). One the outbox could not record has no other sender and names the additions the call still lacks, so it is sent
-		/// now: a send that fails stops the update before those rows are written, and the redelivery finds the same additions and pages them
-		/// again (written first, they would no longer be additions, and the page would be lost). True when an unrecorded page went out.
+		/// The page step, taken before the added resource rows are written: only a page the outbox recorded moves the update on (to
+		/// FollowedUp; worker 12 is its retry). One it could not record stops the update here. It cannot be sent before the added rows (the
+		/// outbox pages only resources the call carries, so the additions would be left out), and sent after them a failed send would leave
+		/// the redelivery no additions to page. Stopped here, the redelivery finds the same additions and records the same page under the
+		/// same id (<see cref="PageId"/>).
 		/// </summary>
-		private async Task<bool> PageStepAsync(Call saved, CallEmailUpdate row, CallBroadcastOutboxEntry page)
+		private async Task PageStepAsync(CallEmailUpdate row, CallBroadcastOutboxEntry page)
 		{
 			if (page == null)
-				return false;
+				return;
 
 			if (!page.Persisted)
-			{
-				if (saved.State != (int)CallStates.Active)
-					return false;
-				if (!await SendPageAsync(saved, page))
-					throw Incomplete(row, "the page the outbox could not record");
-			}
+				throw Incomplete(row, "the page the outbox could not record");
 
 			await MoveAsync(row, CallEmailUpdateOutcomes.FollowedUp);
-			return !page.Persisted;
 		}
 
 		/// <summary>
-		/// The end of an update once its call is saved, its page step taken and its resource rows are in: the note, then the row's outcome
-		/// and the refresh (raised once, when the update is done: a redelivery that finishes a failed note raises it then, never a second
-		/// time), then a recorded page is sent at once (worker 12 retries it; the outbox claim keeps it single). Done is false when the note
-		/// could not be written: the row stays at its step for the redelivery.
+		/// The outbox id of the page an update records: derived from its ledger row, so a redelivery that finishes that row records (and
+		/// finds) the same page rather than a second one, even when the row could not be moved past Saved.
+		/// </summary>
+		private static string PageId(CallEmailUpdate row)
+		{
+			var bytes = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes("cad-email-page:" + row.CallEmailUpdateId));
+			return new Guid(bytes.AsSpan(0, 16)).ToString();
+		}
+
+		/// <summary>
+		/// The end of an update once its call is saved, its page recorded and its resource rows are in: the note, then the row's outcome and
+		/// the refresh (raised once, when the update is done: a redelivery that finishes a failed note raises it then, never a second time),
+		/// then the recorded page is sent at once (worker 12 retries it; the outbox claim keeps it single). Done is false when the note could
+		/// not be written: the row stays at its step for the redelivery.
 		/// </summary>
 		private async Task<(bool Repaged, bool Done)> FinishUpdateAsync(Department department, Call saved, CallEmailUpdate row, CallBroadcastOutboxEntry page,
-			bool repage, bool sentUnrecorded, string note)
+			bool repage, string note)
 		{
 			var live = saved.State == (int)CallStates.Active;
 			var done = await AddNoteAsync(department, saved.CallId, note);
@@ -776,10 +782,7 @@ namespace Resgrid.Services
 				_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent { DepartmentId = saved.DepartmentId, Call = saved });
 			}
 
-			var accepted = sentUnrecorded;
-			if (page != null && page.Persisted && live)
-				accepted = await SendPageAsync(saved, page);
-
+			var accepted = page != null && page.Persisted && live && await SendPageAsync(saved, page);
 			return (repage && accepted, done);
 		}
 

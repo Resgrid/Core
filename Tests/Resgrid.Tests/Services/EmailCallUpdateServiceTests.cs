@@ -76,7 +76,7 @@ namespace Resgrid.Tests.Services
 			_callsService.Setup(c => c.GetCallTypesForDepartmentAsync(It.IsAny<int>())).ReturnsAsync(new List<CallType>());
 
 			_outbox = new Mock<ICallBroadcastOutboxService>();
-			_outbox.Setup(o => o.RecordAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+			_outbox.Setup(o => o.RecordOnceAsync(It.IsAny<string>(),It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
 					It.IsAny<IEnumerable<int>>(), It.IsAny<string>()))
 				.ReturnsAsync(new CallBroadcastOutboxEntry { Persisted = true });
 			_outbox.Setup(o => o.SendPendingForCallAsync(It.IsAny<Call>(), It.IsAny<CallBroadcastOutboxEntry>())).ReturnsAsync(1);
@@ -261,7 +261,7 @@ namespace Resgrid.Tests.Services
 			call.Address.Should().Be("12 Oak Ave");
 			call.GeoLocationData.Should().Be("40.1,-75.2", "the new address is geocoded");
 			result.Repaged.Should().BeTrue("the address changed (default rule)");
-			_outbox.Verify(o => o.RecordAsync(It.Is<Call>(c => c.CallId == 42), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+			_outbox.Verify(o => o.RecordOnceAsync(It.IsAny<string>(),It.Is<Call>(c => c.CallId == 42), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
 				It.IsAny<IEnumerable<int>>(), "manager"), Times.Once);
 			_events.Verify(e => e.SendMessage(It.Is<CallUpdatedEvent>(u => u.Call.CallId == 42)), Times.Once);
 			_notes.Should().ContainSingle(n => n.Source == (int)CallNoteSources.CadEmail && n.Note.Contains("12 Oak St") && n.Note.Contains("12 Oak Ave"));
@@ -385,7 +385,7 @@ namespace Resgrid.Tests.Services
 
 			result.AddedResources.Should().Be(1);
 			_unitDispatches.Verify(r => r.InsertAsync(It.Is<CallDispatchUnit>(d => d.CallId == 42 && d.UnitId == 7), It.IsAny<CancellationToken>(), true), Times.Once);
-			_outbox.Verify(o => o.RecordAsync(It.IsAny<Call>(), It.Is<IEnumerable<string>>(u => !u.Any()), It.IsAny<IEnumerable<int>>(),
+			_outbox.Verify(o => o.RecordOnceAsync(It.IsAny<string>(),It.IsAny<Call>(), It.Is<IEnumerable<string>>(u => !u.Any()), It.IsAny<IEnumerable<int>>(),
 				It.Is<IEnumerable<int>>(u => u.SequenceEqual(new[] { 7 })), It.IsAny<IEnumerable<int>>(), It.IsAny<string>()), Times.Once);
 			_notes.Should().Contain(n => n.Note.Contains("Added: Engine 2"));
 		}
@@ -661,7 +661,7 @@ namespace Resgrid.Tests.Services
 			call.NatureOfCall.Should().Be(nature, "the text is not appended a second time");
 			call.DispatchCount.Should().Be(dispatchCount, "the call is not paged as its next alarm again");
 			_notes.Should().HaveCount(notes);
-			_outbox.Verify(o => o.RecordAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+			_outbox.Verify(o => o.RecordOnceAsync(It.IsAny<string>(),It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
 				It.IsAny<IEnumerable<int>>(), It.IsAny<string>()), Times.Once);
 			_ledger.Rows.Should().ContainSingle(r => r.MessageId == email.MessageId).Which.Outcome.Should().Be((int)CallEmailUpdateOutcomes.Updated);
 		}
@@ -894,7 +894,7 @@ namespace Resgrid.Tests.Services
 			var call = OpenCall("2026-0042");
 			call.UnitDispatches = new List<CallDispatchUnit>();
 			var order = new List<string>();
-			_outbox.Setup(o => o.RecordAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+			_outbox.Setup(o => o.RecordOnceAsync(It.IsAny<string>(),It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
 					It.IsAny<IEnumerable<int>>(), It.IsAny<string>()))
 				.Callback(() => order.Add("outbox"))
 				.ReturnsAsync(new CallBroadcastOutboxEntry { Persisted = true });
@@ -934,7 +934,7 @@ namespace Resgrid.Tests.Services
 				ParsedFields = CallEmailParsedFields.Resources, MatchKey = "2026-0042"
 			});
 
-			_outbox.Verify(o => o.RecordAsync(It.Is<Call>(c => c.CallId == 42), It.IsAny<IEnumerable<string>>(), It.Is<IEnumerable<int>>(g => g.SequenceEqual(new[] { 9 })),
+			_outbox.Verify(o => o.RecordOnceAsync(It.IsAny<string>(),It.Is<Call>(c => c.CallId == 42), It.IsAny<IEnumerable<string>>(), It.Is<IEnumerable<int>>(g => g.SequenceEqual(new[] { 9 })),
 				It.Is<IEnumerable<int>>(u => u.OrderBy(x => x).SequenceEqual(new[] { 3, 7 })), It.IsAny<IEnumerable<int>>(), "manager"), Times.Once);
 		}
 
@@ -1097,7 +1097,7 @@ namespace Resgrid.Tests.Services
 			var call = OpenCall("2026-0042");
 			call.UnitDispatches = new List<CallDispatchUnit>();
 			var records = 0;
-			_outbox.Setup(o => o.RecordAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+			_outbox.Setup(o => o.RecordOnceAsync(It.IsAny<string>(),It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
 					It.IsAny<IEnumerable<int>>(), It.IsAny<string>()))
 				.Returns(() => ++records == 1 ? Task.FromException<CallBroadcastOutboxEntry>(new TimeoutException("the process stopped")) : Task.FromResult(new CallBroadcastOutboxEntry { Persisted = true }));
 			var inserted = 0;
@@ -1133,7 +1133,7 @@ namespace Resgrid.Tests.Services
 			_config.IdSource = (int)CadCallIdSources.FromFormat;
 			var call = OpenCall("2026-0042");
 			var records = 0;
-			_outbox.Setup(o => o.RecordAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+			_outbox.Setup(o => o.RecordOnceAsync(It.IsAny<string>(),It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
 					It.IsAny<IEnumerable<int>>(), It.IsAny<string>()))
 				.Returns(() => ++records == 1 ? Task.FromException<CallBroadcastOutboxEntry>(new TimeoutException("the process stopped")) : Task.FromResult(new CallBroadcastOutboxEntry { Persisted = true }));
 
@@ -1179,7 +1179,7 @@ namespace Resgrid.Tests.Services
 			var again = await ApplyAsync(email, Parsed());
 
 			again.Outcome.Should().Be(CallEmailUpdateOutcomes.Updated);
-			_outbox.Verify(o => o.RecordAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+			_outbox.Verify(o => o.RecordOnceAsync(It.IsAny<string>(),It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
 				It.IsAny<IEnumerable<int>>(), It.IsAny<string>()), Times.Once, "its page is in the outbox already");
 			call.DispatchCount.Should().Be(dispatchCount, "the alarm level is not raised again");
 			call.NatureOfCall.Should().Be("Dispatcher: second alarm requested", "the change is not applied again");
@@ -1328,27 +1328,27 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task A_page_the_outbox_could_not_record_is_sent_before_the_update_counts_as_done()
+		public async Task A_page_the_outbox_could_not_record_stops_the_update_until_its_redelivery_records_it()
 		{
 			_config.IdSource = (int)CadCallIdSources.FromFormat;
 			_config.RepageWhen = (int)CadRepageRules.LocationOrPriorityChanged;
 			var call = OpenCall("2026-0042");
-			_outbox.Setup(o => o.RecordAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+			var records = 0;
+			_outbox.Setup(o => o.RecordOnceAsync(It.IsAny<string>(), It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
 					It.IsAny<IEnumerable<int>>(), It.IsAny<string>()))
-				.ReturnsAsync(() => new CallBroadcastOutboxEntry { Persisted = false });
-			var sends = 0;
-			_outbox.Setup(o => o.SendPendingForCallAsync(It.IsAny<Call>(), It.IsAny<CallBroadcastOutboxEntry>())).ReturnsAsync(() => ++sends == 1 ? 0 : 1);
+				.ReturnsAsync(() => new CallBroadcastOutboxEntry { Persisted = ++records > 1 });
 			var email = Email("x");
 
 			Func<Task> first = () => ApplyAsync(email, ParsedWith(new Call { Address = "14 Oak St" }, CallEmailParsedFields.Address));
-			await first.Should().ThrowAsync<EmailCallUpdateIncompleteException>("the page reached nobody and no worker holds it");
-			_ledger.Rows.Should().ContainSingle().Which.Outcome.Should().Be((int)CallEmailUpdateOutcomes.Saved, "an unrecorded page is never marked done");
+			await first.Should().ThrowAsync<EmailCallUpdateIncompleteException>("a page nobody holds is never sent from here nor marked done");
+			_ledger.Rows.Should().ContainSingle().Which.Outcome.Should().Be((int)CallEmailUpdateOutcomes.Saved);
+			_outbox.Verify(o => o.SendPendingForCallAsync(It.IsAny<Call>(), It.IsAny<CallBroadcastOutboxEntry>()), Times.Never);
 
 			var again = await ApplyAsync(email, ParsedWith(new Call { Address = "14 Oak St" }, CallEmailParsedFields.Address));
 
 			again.Outcome.Should().Be(CallEmailUpdateOutcomes.Updated);
 			again.Repaged.Should().BeTrue();
-			sends.Should().Be(2);
+			_outbox.Verify(o => o.SendPendingForCallAsync(It.Is<Call>(c => c.CallId == 42), It.IsAny<CallBroadcastOutboxEntry>()), Times.Once);
 			call.Address.Should().Be("14 Oak St");
 			_ledger.Rows.Should().ContainSingle().Which.Outcome.Should().Be((int)CallEmailUpdateOutcomes.Updated);
 		}
@@ -1361,7 +1361,7 @@ namespace Resgrid.Tests.Services
 			var call = OpenCall("2026-0042");
 			call.UnitDispatches = new List<CallDispatchUnit>();
 			var records = 0;
-			_outbox.Setup(o => o.RecordAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+			_outbox.Setup(o => o.RecordOnceAsync(It.IsAny<string>(),It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
 					It.IsAny<IEnumerable<int>>(), It.IsAny<string>()))
 				.Returns(() => ++records == 1 ? Task.FromException<CallBroadcastOutboxEntry>(new TimeoutException("the process stopped")) : Task.FromResult(new CallBroadcastOutboxEntry { Persisted = true }));
 			CallEmailParseResult Parsed() => new CallEmailParseResult
@@ -1381,17 +1381,16 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task An_added_unit_whose_unrecorded_page_failed_is_not_put_on_the_call_until_its_redelivery_pages_it()
+		public async Task An_added_unit_whose_page_the_outbox_could_not_record_is_not_put_on_the_call_until_its_redelivery_records_it()
 		{
 			_config.IdSource = (int)CadCallIdSources.FromFormat;
 			_config.RepageWhen = (int)CadRepageRules.Never;
 			var call = OpenCall("2026-0042");
 			call.UnitDispatches = new List<CallDispatchUnit>();
-			_outbox.Setup(o => o.RecordAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+			var records = 0;
+			_outbox.Setup(o => o.RecordOnceAsync(It.IsAny<string>(), It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
 					It.IsAny<IEnumerable<int>>(), It.IsAny<string>()))
-				.ReturnsAsync(() => new CallBroadcastOutboxEntry { Persisted = false });
-			var sends = 0;
-			_outbox.Setup(o => o.SendPendingForCallAsync(It.IsAny<Call>(), It.IsAny<CallBroadcastOutboxEntry>())).ReturnsAsync(() => ++sends == 1 ? 0 : 1);
+				.ReturnsAsync(() => new CallBroadcastOutboxEntry { Persisted = ++records > 1 });
 			CallEmailParseResult Parsed() => new CallEmailParseResult
 			{
 				Call = new Call { UnitDispatches = new List<CallDispatchUnit> { new CallDispatchUnit { UnitId = 7 } } },
@@ -1400,16 +1399,69 @@ namespace Resgrid.Tests.Services
 			var email = Email("x");
 
 			Func<Task> first = () => ApplyAsync(email, Parsed());
-			await first.Should().ThrowAsync<EmailCallUpdateIncompleteException>("the page reached nobody and no worker holds it");
+			await first.Should().ThrowAsync<EmailCallUpdateIncompleteException>("Engine 2's page is held by nobody");
 			_unitDispatches.Verify(r => r.InsertAsync(It.IsAny<CallDispatchUnit>(), It.IsAny<CancellationToken>(), true), Times.Never,
 				"written now, Engine 2 would no longer be an addition and its redelivery would page nobody");
+			_outbox.Verify(o => o.SendPendingForCallAsync(It.IsAny<Call>(), It.IsAny<CallBroadcastOutboxEntry>()), Times.Never,
+				"sent before its row, the outbox would leave Engine 2 out (it pages only resources the call carries)");
 
 			var again = await ApplyAsync(email, Parsed());
 
 			again.Outcome.Should().Be(CallEmailUpdateOutcomes.Updated);
 			again.AddedResources.Should().Be(1);
-			sends.Should().Be(2, "the redelivery found Engine 2 still to add and paged it");
 			_unitDispatches.Verify(r => r.InsertAsync(It.Is<CallDispatchUnit>(d => d.CallId == 42 && d.UnitId == 7), It.IsAny<CancellationToken>(), true), Times.Once);
+			_outbox.Verify(o => o.RecordOnceAsync(It.IsAny<string>(), It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(),
+				It.Is<IEnumerable<int>>(u => u.SequenceEqual(new[] { 7 })), It.IsAny<IEnumerable<int>>(), It.IsAny<string>()), Times.Exactly(2));
+			_outbox.Verify(o => o.SendPendingForCallAsync(It.Is<Call>(c => c.CallId == 42), It.IsAny<CallBroadcastOutboxEntry>()), Times.Once,
+				"the recorded page goes out after Engine 2's row is in");
+		}
+
+		[Test]
+		public async Task A_redelivery_records_the_page_under_the_id_the_first_delivery_used()
+		{
+			_config.IdSource = (int)CadCallIdSources.FromFormat;
+			_config.RepageWhen = (int)CadRepageRules.Never;
+			var call = OpenCall("2026-0042");
+			call.UnitDispatches = new List<CallDispatchUnit>();
+			var ids = new List<string>();
+			_outbox.Setup(o => o.RecordOnceAsync(It.IsAny<string>(), It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+					It.IsAny<IEnumerable<int>>(), It.IsAny<string>()))
+				.ReturnsAsync((string id, Call c, IEnumerable<string> u, IEnumerable<int> g, IEnumerable<int> un, IEnumerable<int> r, string by) =>
+				{
+					ids.Add(id);
+					return new CallBroadcastOutboxEntry { CallBroadcastOutboxId = id, Persisted = true };
+				});
+			// The FollowedUp move fails and so does the note: the row stays Saved, the delivery is retried.
+			_ledger.FailMovesTo.Add((int)CallEmailUpdateOutcomes.FollowedUp);
+			var failNote = true;
+			_callsService.Setup(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()))
+				.Returns((CallNote note, CancellationToken ct) =>
+				{
+					if (failNote)
+						return Task.FromException<CallNote>(new TimeoutException());
+					_notes.Add(note);
+					return Task.FromResult(note);
+				});
+			CallEmailParseResult Parsed() => new CallEmailParseResult
+			{
+				Call = new Call { Address = "14 Oak St", UnitDispatches = new List<CallDispatchUnit> { new CallDispatchUnit { UnitId = 7 } } },
+				ParsedFields = CallEmailParsedFields.Address | CallEmailParsedFields.Resources, MatchKey = "2026-0042"
+			};
+			var email = Email("x");
+
+			Func<Task> first = () => ApplyAsync(email, Parsed());
+			await first.Should().ThrowAsync<EmailCallUpdateIncompleteException>();
+			_ledger.Rows.Should().ContainSingle().Which.Outcome.Should().Be((int)CallEmailUpdateOutcomes.Saved);
+			_ledger.FailMovesTo.Clear();
+			failNote = false;
+			// Engine 2's row went in on the first delivery, so the resume only re-records a page if the additions still name it.
+			call.UnitDispatches = new List<CallDispatchUnit>();
+
+			(await ApplyAsync(email, Parsed())).Outcome.Should().Be(CallEmailUpdateOutcomes.Updated);
+
+			ids.Should().HaveCount(2);
+			ids.Distinct().Should().ContainSingle("the outbox finds the first delivery's page by its id instead of recording a second one");
+			Guid.TryParse(ids[0], out _).Should().BeTrue("the id fits the outbox's 36-character key");
 		}
 
 		[Test]
@@ -1464,7 +1516,7 @@ namespace Resgrid.Tests.Services
 			_config.RepageWhen = (int)CadRepageRules.LocationOrPriorityChanged;
 			var call = OpenCall("2026-0042");
 			var records = 0;
-			_outbox.Setup(o => o.RecordAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
+			_outbox.Setup(o => o.RecordOnceAsync(It.IsAny<string>(),It.IsAny<Call>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(),
 					It.IsAny<IEnumerable<int>>(), It.IsAny<string>()))
 				.Returns(() => ++records <= 2 ? Task.FromException<CallBroadcastOutboxEntry>(new TimeoutException("the process stopped")) : Task.FromResult(new CallBroadcastOutboxEntry { Persisted = true }));
 			var email = Email("x");

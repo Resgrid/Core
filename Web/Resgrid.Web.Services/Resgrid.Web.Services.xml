@@ -253,7 +253,9 @@
             The CAD update baseline of a new call whose page, desk entry or receipt step failed after the save. The engine records the
             baseline only once the create path returns, and the provider's retry resumes the saved call without the engine, so without
             this later CAD emails could not tell a dispatcher's edit from the CAD's. Taken from the call as this delivery saved it (the
-            CAD's values, before anyone could edit it). Nothing for an email that carries no CAD call ID. Never throws.
+            CAD's values, before anyone could edit it). The CAD call ID comes from the settings the engine read for this delivery
+            (<see cref="P:Resgrid.Model.Services.EmailCallUpdateRequest.Config"/>), never re-read, so a settings change in between cannot link the call to another ID.
+            Nothing for an email that carries no CAD call ID. Never throws.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.EmailController.ResumeCallAsync(Resgrid.Model.InboundEmailReceiptClaim,System.Boolean,System.Int32,PostmarkDotNet.PostmarkInboundMessage,System.Threading.CancellationToken)">
@@ -455,11 +457,16 @@
         <member name="M:Resgrid.Web.Services.Controllers.TwilioController.VoiceIntakeRecordingCallback">
             <summary>
             Twilio's recording status callback for voice intake (M0332; POST, after the call ended): "completed" attaches the MP3 to the
-            pending call as a file, "absent" / "failed" keeps nothing. Always 204: what is not attached now, worker 80 retries.
+            pending call as a file, "absent" / "failed" keeps nothing. 204 once the callback is handled or its sid is stored (what is not
+            attached now, worker 80 retries); 503 when it could not be read in at all, or nothing durable holds the recording yet, so Twilio
+            sends it again (the callback URL carries the 5xx retry override; a repeated callback is a no-op).
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.TwilioController.SpeaksAnything(Twilio.TwiML.TwiML)">
             <summary>True when the TwiML element holds something the caller hears (a &lt;Play&gt; or &lt;Say&gt;), however deeply nested.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.AudioCount(Twilio.TwiML.TwiML)">
+            <summary>How many &lt;Play&gt; / &lt;Say&gt; verbs the TwiML element holds, however deeply nested.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.TwilioController.DepartmentNameAsync(System.Int32)">
             <summary>The department's name for the recorded-call gate; null (the prompt says "the department") when it cannot be read.</summary>

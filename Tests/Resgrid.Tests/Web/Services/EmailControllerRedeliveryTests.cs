@@ -44,6 +44,7 @@ NARR: SMOKE SHOWING";
 		private List<Message> _messages;
 		private int _broadcastFailures;
 		private int _broadcastAttempts;
+		private Action _onBroadcast;
 		private bool _failNextSaveAfterRow;
 		private bool _unreadable;
 		private int _sendFailures;
@@ -62,6 +63,7 @@ NARR: SMOKE SHOWING";
 			_messages = new List<Message>();
 			_broadcastFailures = 0;
 			_broadcastAttempts = 0;
+			_onBroadcast = null;
 			_failNextSaveAfterRow = false;
 			_unreadable = false;
 			_sendFailures = 0;
@@ -127,6 +129,7 @@ NARR: SMOKE SHOWING";
 				.ReturnsAsync((CallQueueItem item, CancellationToken ct) =>
 				{
 					_broadcastAttempts++;
+					_onBroadcast?.Invoke();
 					if (_broadcastFailures > 0)
 					{
 						_broadcastFailures--;
@@ -364,6 +367,26 @@ NARR: SMOKE SHOWING";
 				"the baseline is recorded from the call as first saved, even though the engine never saw the create path return, and the resume adds no second one");
 			_ledger.Rows.Single().CadCallId.Should().Be("2026-000777-FIRE");
 			_ledger.Rows.Single().FieldHashes.Should().NotBeNullOrWhiteSpace("later CAD emails compare against these values");
+		}
+
+		[Test]
+		public async Task A_settings_change_during_a_failed_first_page_does_not_link_the_call_to_another_cad_id()
+		{
+			_storedCad = new EmailCallUpdateConfig
+			{
+				Enabled = true, IdSource = (int)CadCallIdSources.Label, IdLabel = "ID", IdSearchIn = (int)CadCallIdSearchAreas.SubjectThenBody
+			};
+			// An administrator switches the ID label to ADDR1 while the first page is failing: the baseline keeps the ID this delivery used.
+			_onBroadcast = () => _storedCad = new EmailCallUpdateConfig
+			{
+				Enabled = true, IdSource = (int)CadCallIdSources.Label, IdLabel = "ADDR1", IdSearchIn = (int)CadCallIdSearchAreas.SubjectThenBody
+			};
+			_broadcastFailures = 1;
+
+			(await ReceiveAsync(Email(Guid.NewGuid().ToString()))).Should().Be(400, "the page never went out");
+
+			_ledger.Rows.Should().ContainSingle(r => r.CallId == _saved[0].CallId && r.Outcome == (int)CallEmailUpdateOutcomes.Created)
+				.Which.CadCallId.Should().Be("2026-000777-FIRE", "the ID the engine chose for this delivery, not one read from the changed settings");
 		}
 
 		[Test]

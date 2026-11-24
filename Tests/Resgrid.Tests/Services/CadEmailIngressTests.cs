@@ -158,6 +158,21 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public void Parkland_names_that_differ_only_in_case_or_spacing_are_different_incidents()
+		{
+			var template = new ParklandCounty2Template();
+			var loggedOn = new DateTime(2026, 5, 14, 16, 53, 16, DateTimeKind.Utc);
+			var fire = new Call { Name = "C - Fire", LoggedOn = loggedOn };
+
+			var key = template.GetMatchKey(fire);
+
+			template.GetMatchKey(new Call { Name = "C - FIRE", LoggedOn = loggedOn }).Should().NotBe(key, "IsSameIncident compares the exact name");
+			template.GetMatchKey(new Call { Name = "C -  Fire", LoggedOn = loggedOn }).Should().NotBe(key, "inner spacing is part of the exact name");
+			template.IsSameIncident(new Call { Name = "C - FIRE", LoggedOn = loggedOn }, fire).Should().BeFalse();
+			template.GetMatchKey(new Call { Name = "C - Fire", LoggedOn = loggedOn }).Should().Be(key, "the same name and time is the same incident");
+		}
+
+		[Test]
 		public void Spaces_between_label_separators_are_skipped()
 		{
 			var labels = new EmailLabeledFieldsConfig { Latitude = "Latitude", Longitude = "Longitude", Address = "Address" };
@@ -208,6 +223,19 @@ namespace Resgrid.Tests.Services
 			copy.UnitDispatches.Select(u => u.UnitId).Should().Equal(new[] { 9, 12 });
 			copy.UnitDispatches.Should().NotContain(u => parsed.UnitDispatches.Contains(u), "fresh rows, not the parse's");
 			copy.Dispatches.Select(d => d.UserId).Should().Equal(new[] { "member" });
+		}
+
+		[Test]
+		public void A_mailbox_call_with_only_units_is_still_a_dispatch()
+		{
+			var unitOnly = CallEmailImporterLogic.CreateNewCallFromCall(new Call
+			{
+				Name = "Fire", NatureOfCall = "Smoke", UnitDispatches = new List<CallDispatchUnit> { new CallDispatchUnit { UnitId = 4 } }
+			});
+
+			CallEmailImporterLogic.HasRecipients(unitOnly).Should().BeTrue("Units: Engine 4 with no member is a real page");
+			CallEmailImporterLogic.HasRecipients(new Call { Name = "Fire" }).Should().BeFalse("a call that pages nobody is still not created");
+			CallEmailImporterLogic.HasRecipients(new Call { Dispatches = new List<CallDispatch> { new CallDispatch { UserId = "member" } } }).Should().BeTrue();
 		}
 
 		[Test]

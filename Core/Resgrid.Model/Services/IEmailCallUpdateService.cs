@@ -94,6 +94,17 @@ namespace Resgrid.Model.Services
 	}
 
 	/// <summary>
+	/// A CAD email the update engine applied only in part (its note, an unrecorded page, a close's release or notice failed). What was
+	/// done is recorded on the email's ledger row; the caller must leave the delivery unacknowledged so the redelivery finishes the rest.
+	/// </summary>
+	public class EmailCallUpdateIncompleteException : Exception
+	{
+		public EmailCallUpdateIncompleteException(string message) : base(message)
+		{
+		}
+	}
+
+	/// <summary>
 	/// CAD email call updates (cad-email-call-updates-plan.md): decides whether an inbound dispatch email creates a call or updates,
 	/// closes or is noted on the call that already carries its CAD call ID, under the department's <see cref="EmailCallUpdateConfig"/>,
 	/// and keeps the update ledger. Used by the dispatch and group dispatch email addresses, the mailbox importer and intake email
@@ -117,7 +128,10 @@ namespace Resgrid.Model.Services
 		/// call it touched) for a redelivery of an email with the same provider message id that was already handled. A redelivery of one
 		/// that was interrupted after its call was saved finishes only what it had left (the page, resource rows, release, notice, note)
 		/// and answers Updated, Closed or Cancelled. Exceptions from <paramref name="createCall"/> propagate, and so do a ledger write that
-		/// fails before the call is changed (nothing was done; retry the email) and a failed call save (retry the email).
+		/// fails before the call is changed (nothing was done; retry the email) and a failed call save (retry the email). An email applied
+		/// only in part — its note, an unrecorded page, a close's release or notice could not be done — throws
+		/// <see cref="EmailCallUpdateIncompleteException"/> once everything else is done: its ledger row says what is left, so the caller
+		/// must not acknowledge the delivery (release the receipt, fail the claim) and the provider's redelivery finishes it.
 		/// </summary>
 		Task<EmailCallUpdateResult> ProcessAsync(EmailCallUpdateRequest request, Func<Call, Task<Call>> createCall, CancellationToken cancellationToken = default);
 

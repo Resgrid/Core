@@ -427,7 +427,9 @@ namespace Resgrid.Web.Services.Controllers
 									FormatType = emailSettings.FormatType,
 									Email = callEmail,
 									Parsed = parsed,
-									Source = CallEmailUpdateSources.DispatchAddress
+									Source = CallEmailUpdateSources.DispatchAddress,
+									// Read once: the engine and the baseline recovery below pick the CAD call ID from the same settings.
+									Config = await _departmentSettingsService.GetEmailCallUpdateConfigAsync(departmentId.Value, emailSettings.FormatType)
 								};
 								async Task<Call> createDispatchCall(Call newCall)
 								{
@@ -693,7 +695,9 @@ namespace Resgrid.Web.Services.Controllers
 									FormatType = emailSettings.FormatType,
 									Email = callEmail,
 									Parsed = parsed,
-									Source = CallEmailUpdateSources.GroupDispatchAddress
+									Source = CallEmailUpdateSources.GroupDispatchAddress,
+									// Read once: the engine and the baseline recovery below pick the CAD call ID from the same settings.
+									Config = await _departmentSettingsService.GetEmailCallUpdateConfigAsync(departmentGroup.DepartmentId, emailSettings.FormatType)
 								};
 								async Task<Call> createGroupCall(Call newCall)
 								{
@@ -925,7 +929,9 @@ namespace Resgrid.Web.Services.Controllers
 		/// The CAD update baseline of a new call whose page, desk entry or receipt step failed after the save. The engine records the
 		/// baseline only once the create path returns, and the provider's retry resumes the saved call without the engine, so without
 		/// this later CAD emails could not tell a dispatcher's edit from the CAD's. Taken from the call as this delivery saved it (the
-		/// CAD's values, before anyone could edit it). Nothing for an email that carries no CAD call ID. Never throws.
+		/// CAD's values, before anyone could edit it). The CAD call ID comes from the settings the engine read for this delivery
+		/// (<see cref="EmailCallUpdateRequest.Config"/>), never re-read, so a settings change in between cannot link the call to another ID.
+		/// Nothing for an email that carries no CAD call ID. Never throws.
 		/// </summary>
 		private async Task RecordBaselineAfterFailureAsync(EmailCallUpdateRequest request, Call savedCall)
 		{
@@ -934,7 +940,7 @@ namespace Resgrid.Web.Services.Controllers
 				if (savedCall == null || savedCall.CallId <= 0)
 					return;
 
-				var config = await _departmentSettingsService.GetEmailCallUpdateConfigAsync(request.DepartmentId, request.FormatType);
+				var config = request.Config;
 				if (config == null || !config.Enabled)
 					return;
 

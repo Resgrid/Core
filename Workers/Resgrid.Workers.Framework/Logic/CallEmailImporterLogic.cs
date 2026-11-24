@@ -19,6 +19,15 @@ namespace Resgrid.Workers.Framework.Logic
 		private static readonly TimeSpan BusyLockTimeout = TimeSpan.FromSeconds(30);
 		private const int BusyAttempts = 3;
 
+		/// <summary>
+		/// Whether an imported (dispatched, not pending) call pages anyone: members, or units the format resolved (a unit-only page such
+		/// as "Units: Engine 4" is a real dispatch). A call with neither is not created, as before.
+		/// </summary>
+		public static bool HasRecipients(Call call)
+		{
+			return call != null && ((call.Dispatches != null && call.Dispatches.Any()) || (call.UnitDispatches != null && call.UnitDispatches.Any()));
+		}
+
 		/// <summary>One mailbox delivery: its message id, else (a server that gives none) the call it reads as.</summary>
 		public static string DeliveryKey(CallEmail email, Call parsed)
 		{
@@ -115,8 +124,12 @@ namespace Resgrid.Workers.Framework.Logic
 							return pendingCall;
 						}
 
-						if (newCall.Dispatches == null || !newCall.Dispatches.Any())
+						if (!HasRecipients(newCall))
+						{
+							// As the importer always did: a call that would page nobody is not created (the format resolved no one).
+							Logging.LogInfo($"Imported email for department {item.EmailSettings.DepartmentId}: the format resolved no members or units; no call was created.");
 							return null;
+						}
 
 						var savedCall = await _callsService.SaveCallAsync(newCall);
 

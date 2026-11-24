@@ -232,8 +232,14 @@ var resgrid;
                 }
 
                 // A picked POI is the call's location now: a plus code lookup still on its way no longer applies, and a code still
-                // typed in goes too (the save would otherwise look it up and move the call off the POI).
-                callLocationChanged();
+                // typed in goes too (the save would otherwise look it up and move the call off the POI). Through the page's own hook,
+                // so an address lookup for an earlier point cannot land over the POI either.
+                var page = pageScript();
+                if (page && typeof page.callLocationChanged === 'function') {
+                    page.callLocationChanged();
+                } else {
+                    callLocationChanged();
+                }
 
                 var option = select.find('option:selected');
                 var lat = Number(option.attr('data-lat'));

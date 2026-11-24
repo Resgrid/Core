@@ -1726,20 +1726,23 @@ namespace Resgrid.Web.Services.Controllers
 						{
 							ActionOnEmptyResult = false
 						};
-						var gatePrompt = recorded
-							? TwilioVoicePromptCatalog.VoiceIntakeRecordedGate(await DepartmentNameAsync(number.DepartmentId))
-							: TwilioVoicePromptCatalog.VoiceIntakeGate;
-						await AppendVoicePromptAsync(gate, gatePrompt, number.DepartmentId);
-
-						// The consent path ("rec=1") only when the recording notice is in the gate as audio: a TTS failure or an expired TTS budget
-						// with the <Say> fallback off leaves the gate silent, and a caller who was never told is never recorded (they still go on,
-						// unrecorded, with their 1).
 						if (recorded)
 						{
-							if (SpeaksAnything(gate))
+							// The recording notice plays on its own, BEFORE the gate listens: Twilio takes digits while a <Gather>'s nested audio
+							// plays, so a 1 pressed early would accept a notice the caller had not heard to the end. The gate after it is silent.
+							// The consent path ("rec=1") only when the notice is there as audio: a TTS failure or an expired TTS budget with the
+							// <Say> fallback off leaves it silent, and a caller who was never told is never recorded (they still go on, unrecorded,
+							// with their 1).
+							var heard = AudioCount(response);
+							await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.VoiceIntakeRecordedGate(await DepartmentNameAsync(number.DepartmentId)), number.DepartmentId);
+							if (AudioCount(response) > heard)
 								gate.Action = new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceIntakeGate?rec=1");
 							else
 								Framework.Logging.LogError($"[Twilio Voice] CallSid={callSid} dedicated number of department {number.DepartmentId}: the recording notice could not be played; this call is not recorded.");
+						}
+						else
+						{
+							await AppendVoicePromptAsync(gate, TwilioVoicePromptCatalog.VoiceIntakeGate, number.DepartmentId);
 						}
 
 						response.Append(gate);
@@ -1840,7 +1843,9 @@ namespace Resgrid.Web.Services.Controllers
 
 		/// <summary>
 		/// Twilio's recording status callback for voice intake (M0332; POST, after the call ended): "completed" attaches the MP3 to the
-		/// pending call as a file, "absent" / "failed" keeps nothing. Always 204: what is not attached now, worker 80 retries.
+		/// pending call as a file, "absent" / "failed" keeps nothing. 204 once the callback is handled or its sid is stored (what is not
+		/// attached now, worker 80 retries); 503 when it could not be read in at all, or nothing durable holds the recording yet, so Twilio
+		/// sends it again (the callback URL carries the 5xx retry override; a repeated callback is a no-op).
 		/// </summary>
 		[HttpPost("VoiceIntakeRecording")]
 		[ValidateRequest]
@@ -1865,23 +1870,31 @@ namespace Resgrid.Web.Services.Controllers
 				// Not the request's token: Twilio stops waiting after 15 seconds, the attach (download + save) should still finish.
 				var outcome = await _voiceIntakeRecording.HandleStatusAsync(status, CancellationToken.None);
 				Framework.Logging.LogInfo($"[Twilio Voice] CallSid={status.CallSid} recording {status.RecordingSid} {status.Status}: {outcome}.");
+				if (outcome == VoiceRecordingOutcomes.RetryLater)
+					return StatusCode(Microsoft.AspNetCore.Http.StatusCodes.Status503ServiceUnavailable);
 			}
 			catch (Exception ex)
 			{
-				Framework.Logging.LogException(ex, $"[Twilio Voice] CallSid={status.CallSid} recording status callback failed; worker 80 retries.");
+				// The session could not be read or written: its sid may be stored nowhere (a start that timed out stores none), and worker 80
+				// would later discard that session with no way back to the recording. Twilio sends the callback again.
+				Framework.Logging.LogException(ex, $"[Twilio Voice] CallSid={status.CallSid} recording status callback failed; Twilio retries it.");
+				return StatusCode(Microsoft.AspNetCore.Http.StatusCodes.Status503ServiceUnavailable);
 			}
 
 			return NoContent();
 		}
 
 		/// <summary>True when the TwiML element holds something the caller hears (a &lt;Play&gt; or &lt;Say&gt;), however deeply nested.</summary>
-		public static bool SpeaksAnything(TwiML element)
+		public static bool SpeaksAnything(TwiML element) => AudioCount(element) > 0;
+
+		/// <summary>How many &lt;Play&gt; / &lt;Say&gt; verbs the TwiML element holds, however deeply nested.</summary>
+		public static int AudioCount(TwiML element)
 		{
 			if (element == null)
-				return false;
+				return 0;
 
 			var xml = System.Xml.Linq.XDocument.Parse(element.ToString());
-			return xml.Root != null && xml.Root.Descendants().Any(e => e.Name.LocalName == "Play" || e.Name.LocalName == "Say");
+			return xml.Root == null ? 0 : xml.Root.Descendants().Count(e => e.Name.LocalName == "Play" || e.Name.LocalName == "Say");
 		}
 
 		/// <summary>The department's name for the recorded-call gate; null (the prompt says "the department") when it cannot be read.</summary>

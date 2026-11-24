@@ -328,7 +328,8 @@ namespace Resgrid.Services
 			bool Matches() => digits == 4 && number == year || digits == 2 && number == year % 100;
 			foreach (var c in value + " ")
 			{
-				if (char.IsDigit(c)) { number = number * 10 + (int)char.GetNumericValue(c); digits++; continue; }
+				// Only a run of two or four digits can name the year, so a longer run stops accumulating (and never overflows).
+				if (char.IsDigit(c)) { if (digits < 5) number = number * 10 + (int)char.GetNumericValue(c); digits++; continue; }
 				if (digits > 0 && Matches()) return true;
 				number = 0; digits = 0;
 			}

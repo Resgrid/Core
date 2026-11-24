@@ -369,6 +369,12 @@ namespace Resgrid.Model
 		Unknown = 4,
 
 		/// <summary>Given up after IntakeConfig.VoiceRecordingMaxAttempts.</summary>
-		Failed = 5
+		Failed = 5,
+
+		/// <summary>
+		/// Nothing durable holds this recording yet (no session to keep its sid, and Twilio's copy could not be deleted): the status callback
+		/// answers 503 so Twilio sends it again (the callback URL carries the 5xx retry override).
+		/// </summary>
+		RetryLater = 6
 	}
 }

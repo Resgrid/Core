@@ -257,6 +257,26 @@ const settle = (page) => page.waitForTimeout(50);
             await context.close();
         }
 
+        // PR #591 round 3: a POI pick goes through the page's own callLocationChanged, so the page's address lookup for an
+        // earlier point (its reverse-geocode generation) is dropped too and cannot write that point's address over the POI.
+        {
+            const { context, page, errors } = await harness(browser);
+            await page.evaluate(() => {
+                window.pageLocationChanges = 0;
+                resgrid.dispatch.editcall.callLocationChanged = function () {
+                    window.pageLocationChanges++;
+                    resgrid.dispatch.calllocations.callLocationChanged();
+                };
+            });
+            await page.fill('#CallPlusCode', '85GCQ2XF+C8');
+            await page.selectOption('#Call_LocationPoiId', '5');
+            assert.equal(await page.evaluate(() => window.pageLocationChanges), 1, 'the page hook ran, advancing its reverse-geocode generation');
+            assert.equal(await value(page, '#CallPlusCode'), '', 'and through it the shared state is still cleared');
+            assert.equal(await value(page, '#Latitude'), '39.74');
+            assert.deepEqual(errors, []);
+            await context.close();
+        }
+
         // PR #591: a location set another way (the page's map click, address or What3Words search, typed pin, dragged marker
         // or room, through callLocationChanged) drops a call plus code lookup still on its way, and the typed code.
         {

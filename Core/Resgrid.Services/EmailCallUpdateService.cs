@@ -22,9 +22,11 @@ namespace Resgrid.Services
 	/// create a call exactly as before through the caller's delegate. Every email that carried an ID leaves a ledger row
 	/// (CallEmailUpdates): hashes of what the CAD set, never content. The row is written before the email changes or notes anything and
 	/// moves on as each step is done (Applying, Saved once the call is, FollowedUp once the page is recorded or the resources are
-	/// released, then the outcome; Noting before a note-only outcome's note), so a redelivery of the same email — recognised by its
-	/// provider message id — does nothing once it finished, finishes the steps an interruption left, and never takes a value the call
-	/// merely shows as proof the CAD wrote it.
+	/// released, Notified once a close's notice is out while its release is owed, then the outcome; Noting before a note-only outcome's
+	/// note), so a redelivery of the same email — recognised by its provider message id — does nothing once it finished, finishes the
+	/// steps an interruption left, and never takes a value the call merely shows as proof the CAD wrote it. A step that failed (a note,
+	/// an unrecorded page, a release, a notice) throws <see cref="EmailCallUpdateIncompleteException"/> once the rest is done, so the
+	/// caller leaves the delivery unacknowledged and the redelivery finishes it.
 	/// </summary>
 	public class EmailCallUpdateService : IEmailCallUpdateService
 	{
@@ -43,6 +45,9 @@ namespace Resgrid.Services
 		private const string StepClose = "Close";
 		private const string StepCancel = "Cancel";
 		private const string StepLive = "Live";
+
+		/// <summary>What a NoChange row records when the call reflects nothing the email sent (it then sets no newer state).</summary>
+		private const string StepNotApplied = "NotApplied";
 
 		/// <summary>CallEmailUpdates.MessageId's length (M0330).</summary>
 		private const int MessageIdLength = 500;
@@ -186,6 +191,7 @@ namespace Resgrid.Services
 			// meant to change still decides the re-page, so a page the first attempt owed is not lost.
 			var department = request.Department;
 			var intended = new List<string>();
+			var intendedHashes = new Dictionary<string, string>();
 			var messageId = StoredMessageId(email);
 			if (!string.IsNullOrWhiteSpace(messageId))
 			{
@@ -198,7 +204,10 @@ namespace Resgrid.Services
 					return new EmailCallUpdateResult { Outcome = CallEmailUpdateOutcomes.AlreadyHandled, Call = earlier, CadCallId = cadCallId };
 				}
 
-				var resumable = rows.LastOrDefault(r => (r.Outcome == (int)CallEmailUpdateOutcomes.Saved || r.Outcome == (int)CallEmailUpdateOutcomes.FollowedUp) && r.CallId.HasValue);
+				// A close also resumes from Notified (its release is owed) or Noting (only its note is); a note-only email's Noting row is
+				// handled again from scratch instead.
+				var resumable = rows.LastOrDefault(r => r.CallId.HasValue && (r.Outcome == (int)CallEmailUpdateOutcomes.Saved || r.Outcome == (int)CallEmailUpdateOutcomes.FollowedUp ||
+					(IsClose(r) && (r.Outcome == (int)CallEmailUpdateOutcomes.Notified || r.Outcome == (int)CallEmailUpdateOutcomes.Noting))));
 				var resumeCall = resumable != null ? await _callsService.GetCallByIdAsync(resumable.CallId.Value) : null;
 				if (resumable == null)
 				{
@@ -222,7 +231,12 @@ namespace Resgrid.Services
 					return resumed;
 				}
 
-				intended = rows.Where(r => r.Outcome == (int)CallEmailUpdateOutcomes.Applying && !IsClose(r)).SelectMany(Steps).Distinct().ToList();
+				var unfinished = rows.Where(r => r.Outcome == (int)CallEmailUpdateOutcomes.Applying && !IsClose(r)).ToList();
+				intended = unfinished.SelectMany(Steps).Distinct().ToList();
+				foreach (var row in unfinished)
+					foreach (var pair in ReadHashes(row) ?? new Dictionary<string, string>())
+						if (Steps(row).Contains(pair.Key) || (pair.Key == HashCoordinates && Steps(row).Contains(GroupLocation)))
+							intendedHashes[pair.Key] = pair.Value;
 			}
 
 			department ??= await _departmentsService.GetDepartmentByIdAsync(request.DepartmentId, false);
@@ -246,7 +260,7 @@ namespace Resgrid.Services
 
 					var result = closeKind != CadEmailCloseKinds.None
 						? await CloseAsync(request, department, call, parsed, config, closeKind, cadCallId, history, others, cancellationToken)
-						: await UpdateAsync(request, department, call, parsed, config, cadCallId, history, others, intended, cancellationToken);
+						: await UpdateAsync(request, department, call, parsed, config, cadCallId, history, others, intended, intendedHashes, cancellationToken);
 					result.CadCallId = cadCallId;
 					return result;
 				}
@@ -318,7 +332,7 @@ namespace Resgrid.Services
 
 		private async Task<EmailCallUpdateResult> UpdateAsync(EmailCallUpdateRequest request, Department department, Call call, CallEmailParseResult parsed,
 			EmailCallUpdateConfig config, string cadCallId, List<CallEmailUpdate> history, List<int> otherCallIds, List<string> intended,
-			CancellationToken cancellationToken)
+			Dictionary<string, string> intendedHashes, CancellationToken cancellationToken)
 		{
 			var priorities = await LoadPrioritiesAsync(request.DepartmentId);
 			var sentOn = request.Email?.SentOn;
@@ -340,9 +354,11 @@ namespace Resgrid.Services
 			bool EditedInResgrid(string group, string currentValue) =>
 				config.DispatcherEditsWin && previous != null && previous.TryGetValue(group, out var hash) && hash != CadEmailText.Hash(currentValue);
 
-			// Where the email and the call already agree, that value is the CAD's now (it just sent it), so a later change to it is a
-			// person's. This also settles a value an earlier run of this same email saved without its row saying so.
-			Agree(config, call, parsed, hashes);
+			// Where the email and the call already agree on a field the CAD has no known value for, that value is the CAD's now, so a later
+			// change to it is a person's. A field with a known CAD value the call no longer shows keeps it: a person changed it, and the CAD
+			// later sending the same value does not make it the CAD's (a later CAD change would otherwise overwrite their edit). The one
+			// exception is this same email's earlier run that meant to write exactly that value (its save may have gone through unrecorded).
+			var agreed = Agree(config, call, parsed, hashes, previous, intendedHashes);
 
 			// Location: the address, its coordinates (the CAD's, else geocoded) and What3Words.
 			if (parsed.Has(CallEmailParsedFields.Address) && !CadEmailText.SameValue(call.Address, parsed.Call.Address))
@@ -476,7 +492,11 @@ namespace Resgrid.Services
 				var note = changes.Count > 0 || notes.Count > 0
 					? Header(cadCallId, "changed nothing on this call") + Lines(changes.Select(c => Describe(c, true)).Concat(notes))
 					: null;
-				await NoteOnlyAsync(request, department, call.CallId, cadCallId, CallEmailUpdateOutcomes.NoChange, null, hashes.Count > 0 ? hashes : null, note);
+
+				// An email the call reflects nowhere (every difference held back by policy or a person's edit) sets no newer state: an
+				// older correction arriving after it still applies.
+				await NoteOnlyAsync(request, department, call.CallId, cadCallId, CallEmailUpdateOutcomes.NoChange, agreed ? null : new[] { StepNotApplied },
+					hashes.Count > 0 ? hashes : null, note);
 				return new EmailCallUpdateResult { Outcome = CallEmailUpdateOutcomes.NoChange, Call = call, Changes = changes };
 			}
 
@@ -492,8 +512,11 @@ namespace Resgrid.Services
 
 			// The ledger row goes in first, with the hashes this update sets (a ledger that cannot be written stops the update before the
 			// call changes), and moves on at each step: Saved once the call is, FollowedUp once its page is in the outbox, Updated at the
-			// end. A redelivery finishes from the step it finds; a row left Applying is never taken as the CAD's values.
-			var row = await WriteAheadAsync(request, call.CallId, cadCallId, CallEmailUpdateOutcomes.Applying, appliedGroups, hashes);
+			// end. A redelivery finishes from the step it finds; a row left Applying is never taken as the CAD's values. The row names what
+			// an earlier run of this email meant to change as well, so a re-page those groups decided still pages if this run stops after
+			// its save.
+			var row = await WriteAheadAsync(request, call.CallId, cadCallId, CallEmailUpdateOutcomes.Applying,
+				appliedGroups.Concat(intended ?? new List<string>()).Distinct().ToList(), hashes);
 
 			// The call row alone (no child collections: the repository's cascade would delete dispatch rows a person added meanwhile);
 			// added resources are inserted as their own rows below.
@@ -503,25 +526,17 @@ namespace Resgrid.Services
 
 			// The page is in the outbox before the added rows are written, so a failure from here on still leaves worker 12 a page to send.
 			var page = paging != null ? await _callBroadcastOutboxService.RecordAsync(saved, paging.Users, paging.Groups, paging.Units, paging.Roles, department?.ManagingUserId) : null;
-			if (page != null)
+			if (page != null && page.Persisted)
 				await MoveAsync(row, CallEmailUpdateOutcomes.FollowedUp);
 			var addedCount = await InsertAdditionsAsync(saved, additions, cancellationToken);
 
 			if (otherCallIds.Count > 0)
 				notes.Add("This email also matched calls " + string.Join(", ", otherCallIds) + "; only this call was updated.");
 
-			await AddNoteAsync(department, saved.CallId, Header(cadCallId, applied ? "updated this call" : "paged this call again") +
+			var (repaged, done) = await FinishUpdateAsync(department, saved, row, page, repage, Header(cadCallId, applied ? "updated this call" : "paged this call again") +
 				Lines(changes.Select(c => Describe(c, true)).Concat(notes)));
-			await MoveAsync(row, CallEmailUpdateOutcomes.Updated);
-
-			_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent { DepartmentId = saved.DepartmentId, Call = saved });
-
-			var repaged = false;
-			if (page != null && saved.State == (int)CallStates.Active)
-			{
-				var accepted = await SendPageAsync(saved, page);
-				repaged = repage && accepted;
-			}
+			if (!done)
+				throw Incomplete(row, "its note or the page the outbox could not record");
 
 			return new EmailCallUpdateResult
 			{
@@ -575,7 +590,7 @@ namespace Resgrid.Services
 
 			_eventAggregator.SendMessage<CallClosedEvent>(new CallClosedEvent { DepartmentId = saved.DepartmentId, Call = saved });
 
-			await FinishCloseAsync(department, saved, config, cadCallId, row, cancel, wentOut,
+			await FinishCloseAsync(department, saved, config, cadCallId, row, cancel, wentOut, true,
 				otherCallIds.Count > 0 ? "This email also matched calls " + string.Join(", ", otherCallIds) + "; only this call was closed." : null, cancellationToken);
 
 			return new EmailCallUpdateResult { Outcome = cancel ? CallEmailUpdateOutcomes.Cancelled : CallEmailUpdateOutcomes.Closed, Call = saved };
@@ -583,83 +598,103 @@ namespace Resgrid.Services
 
 		/// <summary>
 		/// What follows a CAD close once the call is saved closed: its resources released, the close notice, the note, then the row's
-		/// outcome. The call stays closed whatever fails here (logged, never a reason to reopen it); each step runs on its own, so a failed
-		/// release never costs the notice. The row records the release, so a redelivery after an interruption finishes only what is left.
+		/// outcome. The call stays closed whatever fails here (never a reason to reopen it); the release and the notice each run on their
+		/// own, so a failed release never costs the notice. The row records each one done (FollowedUp: released; Notified: notice sent,
+		/// release owed; Noting: only the note owed), and anything still owed throws once the rest is done, so the email's redelivery
+		/// finishes only what is left. A call that is no longer closed by this close (reopened, or closed again by a person) gets neither a
+		/// release nor a notice: what is on it now is theirs.
 		/// </summary>
 		private async Task FinishCloseAsync(Department department, Call saved, EmailCallUpdateConfig config, string cadCallId, CallEmailUpdate row, bool cancel,
-			bool wentOut, string extraLine, CancellationToken cancellationToken)
+			bool wentOut, bool stillClosed, string extraLine, CancellationToken cancellationToken)
 		{
 			var verb = cancel ? "cancelled" : "closed";
-			var released = row.Outcome == (int)CallEmailUpdateOutcomes.FollowedUp;
+			var at = row.Outcome;
+			var releaseOwed = stillClosed && wentOut && (at == (int)CallEmailUpdateOutcomes.Saved || at == (int)CallEmailUpdateOutcomes.Notified);
+			var noticeOwed = stillClosed && wentOut && config.NotifyOnClose && (at == (int)CallEmailUpdateOutcomes.Saved || at == (int)CallEmailUpdateOutcomes.FollowedUp);
 
 			Call populated = null;
-			async Task<Call> LoadAsync()
+			if (releaseOwed || noticeOwed)
 			{
 				try
 				{
-					return await _callsService.PopulateCallData(await _callsService.GetCallByIdAsync(saved.CallId), true, false, false, true, true, true, false, false, false);
+					populated = await _callsService.PopulateCallData(await _callsService.GetCallByIdAsync(saved.CallId), true, false, false, true, true, true, false, false, false);
 				}
 				catch (Exception ex)
 				{
 					Logging.LogException(ex, $"Loading call {saved.CallId} to release its resources and send the close notice after a CAD close.");
-					return null;
 				}
 			}
 
-			if (!released)
+			var released = !releaseOwed;
+			if (releaseOwed && populated != null)
 			{
-				populated = await LoadAsync();
-				if (populated != null)
-				{
-					if (wentOut && ((populated.GroupDispatches != null && populated.GroupDispatches.Any()) || (populated.UnitDispatches != null && populated.UnitDispatches.Any())))
-					{
-						try
-						{
-							await _callDispatchStatusService.ApplyReleaseStatusesAsync(populated, cancellationToken: cancellationToken);
-						}
-						catch (Exception ex)
-						{
-							Logging.LogException(ex, $"Releasing the resources of call {saved.CallId} after a CAD close.");
-						}
-					}
-
+				if ((populated.GroupDispatches == null || !populated.GroupDispatches.Any()) && (populated.UnitDispatches == null || !populated.UnitDispatches.Any()))
 					released = true;
-					await MoveAsync(row, CallEmailUpdateOutcomes.FollowedUp);
-				}
-			}
-
-			if (released && config.NotifyOnClose && wentOut)
-			{
-				populated ??= await LoadAsync();
-				if (populated != null)
+				else
 				{
 					try
 					{
-						await _callClosureService.NotifyCallClosedAsync(populated, department?.ManagingUserId, cancellationToken);
+						await _callDispatchStatusService.ApplyReleaseStatusesAsync(populated, cancellationToken: cancellationToken);
+						released = true;
 					}
 					catch (Exception ex)
 					{
-						Logging.LogException(ex, $"Sending the close notice for call {saved.CallId} after a CAD close.");
+						Logging.LogException(ex, $"Releasing the resources of call {saved.CallId} after a CAD close; the email's redelivery retries it.");
 					}
 				}
 			}
 
-			await AddNoteAsync(department, saved.CallId, Header(cadCallId, $"{verb} this call") + (extraLine != null ? Lines(new[] { extraLine }) : string.Empty));
+			var notified = !noticeOwed;
+			if (noticeOwed && populated != null)
+			{
+				try
+				{
+					await _callClosureService.NotifyCallClosedAsync(populated, department?.ManagingUserId, cancellationToken);
+					notified = true;
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Sending the close notice for call {saved.CallId} after a CAD close; the email's redelivery retries it.");
+				}
+			}
 
-			// A close whose call could not even be loaded stays Saved: a redelivery still releases and notifies.
-			if (released)
+			if (!released || !notified)
+			{
+				// Something is still owed: the row says what is done (a release done: FollowedUp; a notice sent: Notified), the note waits
+				// for the rest, and the email is retried.
+				if (released && at == (int)CallEmailUpdateOutcomes.Saved)
+					await MoveAsync(row, CallEmailUpdateOutcomes.FollowedUp);
+				else if (notified && at == (int)CallEmailUpdateOutcomes.Saved)
+					await MoveAsync(row, CallEmailUpdateOutcomes.Notified);
+
+				throw Incomplete(row, !released && !notified ? "its resource release and close notice" : !released ? "its resource release" : "its close notice");
+			}
+
+			if (await AddNoteAsync(department, saved.CallId, Header(cadCallId, $"{verb} this call") + (extraLine != null ? Lines(new[] { extraLine }) : string.Empty)))
+			{
 				await MoveAsync(row, cancel ? CallEmailUpdateOutcomes.Cancelled : CallEmailUpdateOutcomes.Closed);
+				return;
+			}
+
+			if (at != (int)CallEmailUpdateOutcomes.Noting)
+				await MoveAsync(row, CallEmailUpdateOutcomes.Noting);
+			throw Incomplete(row, "its note");
 		}
 
-		/// <summary>A redelivered close whose call save went through: the release, notice and note it had left.</summary>
+		/// <summary>
+		/// A redelivered close whose call save went through: the release, notice and note it had left — the release and notice only while
+		/// the call is still closed by that close (a call reopened since keeps its units working).
+		/// </summary>
 		private async Task<EmailCallUpdateResult> ResumeCloseAsync(Department department, Call call, EmailCallUpdateConfig config, string cadCallId,
 			CallEmailUpdate row, CancellationToken cancellationToken)
 		{
 			var steps = Steps(row);
 			var cancel = steps.Contains(StepCancel);
-			Logging.LogInfo($"CAD email for department {row.DepartmentId}: finishing the close of call {call.CallId} (CAD call ID {cadCallId}) an earlier delivery saved.");
+			var stillClosed = ClosedByCadEmail(call, row);
+			Logging.LogInfo($"CAD email for department {row.DepartmentId}: finishing the close of call {call.CallId} (CAD call ID {cadCallId}) an earlier delivery saved" +
+				(stillClosed ? "." : "; the call is no longer closed by it, so nothing is released or announced."));
 
-			await FinishCloseAsync(department, call, config, cadCallId, row, cancel, steps.Contains(StepLive), null, cancellationToken);
+			await FinishCloseAsync(department, call, config, cadCallId, row, cancel, steps.Contains(StepLive), stillClosed, null, cancellationToken);
 			return new EmailCallUpdateResult { Outcome = cancel ? CallEmailUpdateOutcomes.Cancelled : CallEmailUpdateOutcomes.Closed, Call = call };
 		}
 
@@ -683,7 +718,7 @@ namespace Resgrid.Services
 				repage = Repages(config.GetRepageWhen(), groups);
 				var paging = PageRecipients(additions, repage, config.PageAddedResources, repage ? additions.Current ?? await LoadDispatchesAsync(call) : null);
 				page = paging != null ? await _callBroadcastOutboxService.RecordAsync(call, paging.Users, paging.Groups, paging.Units, paging.Roles, department?.ManagingUserId) : null;
-				if (page != null)
+				if (page != null && page.Persisted)
 					await MoveAsync(row, CallEmailUpdateOutcomes.FollowedUp);
 			}
 
@@ -691,17 +726,47 @@ namespace Resgrid.Services
 			var lines = groups.Where(g => g != GroupResources).Select(g => $"{(g == GroupLocation ? "Address" : g)} updated").ToList();
 			if (additions.Names.Count > 0)
 				lines.Add("Added: " + string.Join(", ", additions.Names));
-			await AddNoteAsync(department, call.CallId, Header(cadCallId, groups.Count > 0 ? "updated this call" : "paged this call again") + Lines(lines));
-			await MoveAsync(row, CallEmailUpdateOutcomes.Updated);
 
-			_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent { DepartmentId = call.DepartmentId, Call = call });
-
-			var repaged = false;
-			if (page != null)
-				repaged = repage && await SendPageAsync(call, page);
+			// The page goes out at once whenever there is one (an added unit's page as much as a re-page): worker 12 is the retry only.
+			var (repaged, done) = await FinishUpdateAsync(department, call, row, page, repage,
+				Header(cadCallId, groups.Count > 0 ? "updated this call" : "paged this call again") + Lines(lines));
+			if (!done)
+				throw Incomplete(row, "its note or the page the outbox could not record");
 
 			return new EmailCallUpdateResult { Outcome = CallEmailUpdateOutcomes.Updated, Call = call, Repaged = repaged, AddedResources = addedCount };
 		}
+
+		/// <summary>
+		/// The end of an update once its call is saved and its resource rows are in. A page the outbox could not record has no other sender,
+		/// so it is sent before the update counts as done (and, once sent, the row says so: a redelivery never sends it again); then the
+		/// note, the row's outcome and the refresh; then a recorded page is sent at once (worker 12 retries it). Done is false when the note
+		/// or an unrecorded page could not be done: the row stays at its step for the redelivery.
+		/// </summary>
+		private async Task<(bool Repaged, bool Done)> FinishUpdateAsync(Department department, Call saved, CallEmailUpdate row, CallBroadcastOutboxEntry page,
+			bool repage, string note)
+		{
+			var live = saved.State == (int)CallStates.Active;
+			var unrecorded = page != null && !page.Persisted;
+			var sentUnrecorded = unrecorded && live && await SendPageAsync(saved, page);
+			if (sentUnrecorded)
+				await MoveAsync(row, CallEmailUpdateOutcomes.FollowedUp);
+
+			var noted = await AddNoteAsync(department, saved.CallId, note);
+			var done = noted && (!unrecorded || sentUnrecorded || !live);
+			if (done)
+				await MoveAsync(row, CallEmailUpdateOutcomes.Updated);
+
+			_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent { DepartmentId = saved.DepartmentId, Call = saved });
+
+			var accepted = sentUnrecorded;
+			if (page != null && !unrecorded && live)
+				accepted = await SendPageAsync(saved, page);
+
+			return (repage && accepted, done);
+		}
+
+		private static EmailCallUpdateIncompleteException Incomplete(CallEmailUpdate row, string what) =>
+			new EmailCallUpdateIncompleteException($"The CAD email update of call {row.CallId} (CAD call ID {row.CadCallId}) is saved, but {what} could not be done; its redelivery finishes it.");
 
 		/// <summary>Nature or notes under a text policy; protected (enveloped) text cannot be read here, so it is replaced or noted, never appended to.</summary>
 		private static EmailCallFieldChange ApplyText(string group, CadTextPolicies policy, string current, string incoming, string stamp,
@@ -811,26 +876,31 @@ namespace Resgrid.Services
 			return list.Count == 0 ? string.Empty : "\n" + string.Join("\n", list);
 		}
 
-		/// <summary>Writes the CAD note on the call; false (logged) when it could not be written.</summary>
+		/// <summary>
+		/// Writes the CAD note on the call; false (logged) when it could not be written. A note whose insert went through counts as
+		/// written even when the work after the insert (protected-write check, search projection) failed: writing it again would
+		/// duplicate it.
+		/// </summary>
 		private async Task<bool> AddNoteAsync(Department department, int callId, string text)
 		{
+			var note = new CallNote
+			{
+				CallId = callId,
+				UserId = department?.ManagingUserId,
+				Note = text.Length > 4000 ? text.Substring(0, 4000) : text,
+				Source = (int)CallNoteSources.CadEmail,
+				Timestamp = DateTime.UtcNow
+			};
+
 			try
 			{
-				await _callsService.SaveCallNoteAsync(new CallNote
-				{
-					CallId = callId,
-					UserId = department?.ManagingUserId,
-					Note = text.Length > 4000 ? text.Substring(0, 4000) : text,
-					Source = (int)CallNoteSources.CadEmail,
-					Timestamp = DateTime.UtcNow
-				});
+				await _callsService.SaveCallNoteAsync(note);
 				return true;
 			}
 			catch (Exception ex)
 			{
-				// The update is saved; a note that could not be written is logged, never a reason to fail the email.
 				Logging.LogException(ex, $"Writing the CAD update note on call {callId}.");
-				return false;
+				return note.CallNoteId > 0;
 			}
 		}
 
@@ -900,8 +970,9 @@ namespace Resgrid.Services
 
 		/// <summary>
 		/// A note-only outcome (stale, no change, close blocked, a closed call noted): its row goes in as Noting, the note is written,
-		/// then the row takes the outcome, so an email interrupted between the two (or whose note could not be written) writes its note
-		/// on a redelivery instead of never. Without a note the row takes the outcome at once.
+		/// then the row takes the outcome. A note that could not be written throws (the row stays Noting, which never counts), so the
+		/// caller leaves the delivery unacknowledged and its redelivery is handled again, writing the note then. Without a note the row
+		/// takes the outcome at once.
 		/// </summary>
 		private async Task NoteOnlyAsync(EmailCallUpdateRequest request, Department department, int callId, string cadCallId, CallEmailUpdateOutcomes outcome,
 			IEnumerable<string> groups, Dictionary<string, string> hashes, string note)
@@ -913,8 +984,10 @@ namespace Resgrid.Services
 			}
 
 			var row = await WriteAheadAsync(request, callId, cadCallId, CallEmailUpdateOutcomes.Noting, groups, hashes);
-			if (await AddNoteAsync(department, callId, note))
-				await MoveAsync(row, outcome);
+			if (!await AddNoteAsync(department, callId, note))
+				throw new EmailCallUpdateIncompleteException($"The CAD email note ({outcome}) for call {callId} (CAD call ID {cadCallId}) could not be written; its redelivery writes it.");
+
+			await MoveAsync(row, outcome);
 		}
 
 		/// <summary>The CAD's values on a new call: what later emails are compared with to tell a person's edit from the CAD's.</summary>
@@ -946,26 +1019,29 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>
-		/// The newest sent time among the emails that set the call's state: created, updated, no change (the CAD sent what the call has),
-		/// closed or cancelled, or saved and still finishing. A stale email, a close incident command blocked, a note on a closed call and
-		/// a row still Applying or Noting changed nothing, so a correction sent before them still applies.
+		/// The newest sent time among the emails that set the call's state: created, updated, no change where the call shows what the CAD
+		/// sent, closed or cancelled, or saved and still finishing. A stale email, a close incident command blocked, a note on a closed call,
+		/// a no change the call reflects nowhere (everything held back by policy or a person's edit) and a row still Applying or Noting
+		/// changed nothing, so a correction sent before them still applies.
 		/// </summary>
 		private static DateTime? LastApplied(List<CallEmailUpdate> history)
 		{
-			return history.Where(h => h.SentOn.HasValue && SetsState(h.Outcome)).Select(h => h.SentOn).DefaultIfEmpty(null).Max();
+			return history.Where(h => h.SentOn.HasValue && SetsState(h)).Select(h => h.SentOn).DefaultIfEmpty(null).Max();
 		}
 
-		private static bool SetsState(int outcome)
+		private static bool SetsState(CallEmailUpdate row)
 		{
-			switch ((CallEmailUpdateOutcomes)outcome)
+			switch ((CallEmailUpdateOutcomes)row.Outcome)
 			{
+				case CallEmailUpdateOutcomes.NoChange:
+					return !Steps(row).Contains(StepNotApplied);
 				case CallEmailUpdateOutcomes.Created:
 				case CallEmailUpdateOutcomes.Updated:
-				case CallEmailUpdateOutcomes.NoChange:
 				case CallEmailUpdateOutcomes.Closed:
 				case CallEmailUpdateOutcomes.Cancelled:
 				case CallEmailUpdateOutcomes.Saved:
 				case CallEmailUpdateOutcomes.FollowedUp:
+				case CallEmailUpdateOutcomes.Notified:
 					return true;
 				default:
 					return false;
@@ -975,7 +1051,8 @@ namespace Resgrid.Services
 		/// <summary>A row whose email is done: anything but a step still in progress.</summary>
 		private static bool IsFinished(int outcome) =>
 			outcome != (int)CallEmailUpdateOutcomes.Applying && outcome != (int)CallEmailUpdateOutcomes.Saved &&
-			outcome != (int)CallEmailUpdateOutcomes.FollowedUp && outcome != (int)CallEmailUpdateOutcomes.Noting;
+			outcome != (int)CallEmailUpdateOutcomes.FollowedUp && outcome != (int)CallEmailUpdateOutcomes.Noting &&
+			outcome != (int)CallEmailUpdateOutcomes.Notified;
 
 		/// <summary>The groups (or close steps) a row recorded.</summary>
 		private static List<string> Steps(CallEmailUpdate row) =>
@@ -1020,31 +1097,46 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>
-		/// The fields where the email and the call already hold the same value take that value as the CAD's in the new baseline (for
-		/// nature and notes only under Replace: appended text has no single value).
+		/// The fields where the email and the call already hold the same value (for nature and notes only under Replace: appended text has
+		/// no single value). Each becomes the CAD's value in the new baseline only where the CAD has no known value for it (the newest
+		/// recorded baseline lacks it, or already holds it), or this same email's earlier run meant to write exactly that value: a known
+		/// CAD value the call no longer shows was changed by a person, and the CAD later sending what they typed does not make it the
+		/// CAD's. True when the call shows any value the email sent (the email set the call's state, for the stale check).
 		/// </summary>
-		private static void Agree(EmailCallUpdateConfig config, Call call, CallEmailParseResult parsed, Dictionary<string, string> hashes)
+		private static bool Agree(EmailCallUpdateConfig config, Call call, CallEmailParseResult parsed, Dictionary<string, string> hashes,
+			Dictionary<string, string> previous, Dictionary<string, string> intendedHashes)
 		{
 			if (parsed?.Call == null)
-				return;
+				return false;
+
+			var agreed = false;
+			void Take(string group, string value)
+			{
+				agreed = true;
+				var hash = CadEmailText.Hash(value);
+				if (previous == null || !previous.TryGetValue(group, out var known) || known == hash ||
+					(intendedHashes != null && intendedHashes.TryGetValue(group, out var meant) && meant == hash))
+					hashes[group] = hash;
+			}
 
 			if (parsed.Has(CallEmailParsedFields.Address) && CadEmailText.SameValue(call.Address, parsed.Call.Address))
-				hashes[GroupLocation] = CadEmailText.Hash(call.Address);
+				Take(GroupLocation, call.Address);
 			if (parsed.Has(CallEmailParsedFields.Coordinates) && !string.IsNullOrWhiteSpace(parsed.Call.GeoLocationData) &&
 				CadEmailText.SameValue(call.GeoLocationData, parsed.Call.GeoLocationData))
-				hashes[HashCoordinates] = CadEmailText.Hash(call.GeoLocationData);
+				Take(HashCoordinates, call.GeoLocationData);
 			if (parsed.Has(CallEmailParsedFields.Priority) && call.Priority == parsed.Call.Priority)
-				hashes[GroupPriority] = CadEmailText.Hash(call.Priority.ToString());
+				Take(GroupPriority, call.Priority.ToString());
 			if (parsed.Has(CallEmailParsedFields.Type) && !string.IsNullOrWhiteSpace(parsed.Call.Type) && CadEmailText.SameValue(call.Type, parsed.Call.Type))
-				hashes[GroupType] = CadEmailText.Hash(call.Type);
+				Take(GroupType, call.Type);
 			if (parsed.Has(CallEmailParsedFields.Name) && CadEmailText.SameValue(call.Name, parsed.Call.Name))
-				hashes[GroupName] = CadEmailText.Hash(call.Name);
+				Take(GroupName, call.Name);
 			if (parsed.Has(CallEmailParsedFields.Nature) && config.GetNaturePolicy() == CadTextPolicies.Replace && !ProtectedDataEnvelope.IsEnveloped(call.NatureOfCall) &&
 				!string.IsNullOrWhiteSpace(parsed.Call.NatureOfCall) && CadEmailText.SameValue(call.NatureOfCall, parsed.Call.NatureOfCall))
-				hashes[GroupNature] = CadEmailText.Hash(call.NatureOfCall);
+				Take(GroupNature, call.NatureOfCall);
 			if (parsed.Has(CallEmailParsedFields.Notes) && config.GetNotesPolicy() == CadTextPolicies.Replace && !ProtectedDataEnvelope.IsEnveloped(call.Notes) &&
 				!string.IsNullOrWhiteSpace(parsed.Call.Notes) && CadEmailText.SameValue(call.Notes, parsed.Call.Notes))
-				hashes[GroupNotes] = CadEmailText.Hash(call.Notes);
+				Take(GroupNotes, call.Notes);
+			return agreed;
 		}
 
 		private static Dictionary<string, string> ReadHashes(CallEmailUpdate row)

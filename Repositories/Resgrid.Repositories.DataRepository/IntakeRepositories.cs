@@ -653,6 +653,20 @@ namespace Resgrid.Repositories.DataRepository
 			return updated == 1;
 		}
 
+		public async Task<bool> TryDiscardWithoutCallAsync(string voiceIntakeSessionId, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(voiceIntakeSessionId))
+				return false;
+
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl(Table)} SET {Col("RecordingState")} = {P}Discarded, {Col("RecordingClaimedOn")} = NULL " +
+				$"WHERE {Col("VoiceIntakeSessionId")} = {P}Id AND {Col("RecordingState")} = {P}Completed AND {Col("CallId")} IS NULL",
+				new { Id = voiceIntakeSessionId, Discarded = (int)VoiceIntakeRecordingStates.Discarded, Completed = (int)VoiceIntakeRecordingStates.Completed },
+				cancellationToken);
+
+			return updated == 1;
+		}
+
 		public async Task<bool> MarkRecordingCarrierDeletedAsync(string voiceIntakeSessionId, DateTime deletedOn, CancellationToken cancellationToken = default)
 		{
 			if (string.IsNullOrWhiteSpace(voiceIntakeSessionId))
@@ -676,11 +690,13 @@ namespace Resgrid.Repositories.DataRepository
 				  $"({Col("RecordingState")} IN ({P}Attached, {P}Discarded) OR ({Col("RecordingState")} = {P}Failed AND {Col("StartedOn")} < {P}PurgeBefore)))"
 				: string.Empty;
 
-			// Recording columns plus what the attach needs; never the answers (transcripts).
+			// Recording columns plus what the attach needs; never the answers (transcripts). Recordings still to attach come first: carrier
+			// copies whose deletes keep failing are kept (the purge holds their sessions) and must never fill every batch ahead of them.
+			var attachFirst = $"CASE WHEN {Col("RecordingState")} IN ({(int)VoiceIntakeRecordingStates.Requested}, {(int)VoiceIntakeRecordingStates.Completed}) THEN 0 ELSE 1 END";
 			var rows = await QueryAsync<VoiceIntakeSession>(
 				$"SELECT {top}{Cols("VoiceIntakeSessionId", "DepartmentId", "ProviderCallId", "FromNumber", "ToNumber", "Step", "CallId", "StartedOn", "CompletedOn", "RecordingState", "RecordingSid", "RecordingDurationSeconds", "RecordingAttempts", "RecordingClaimedOn", "RecordingCallAttachmentId", "RecordingCarrierDeletedOn")} " +
 				$"FROM {Tbl(Table)} WHERE {Col("RecordingState")} IN ({P}Requested, {P}Completed){carrierCopies} " +
-				$"ORDER BY {Col("StartedOn")}{limit}",
+				$"ORDER BY {attachFirst}, {Col("StartedOn")}{limit}",
 				new
 				{
 					Requested = (int)VoiceIntakeRecordingStates.Requested,

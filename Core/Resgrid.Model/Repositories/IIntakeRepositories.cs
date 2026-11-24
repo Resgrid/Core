@@ -186,6 +186,12 @@ namespace Resgrid.Model.Repositories
 		/// </summary>
 		Task<bool> TryDiscardUnconfirmedRecordingAsync(string voiceIntakeSessionId, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// Completed → Discarded, only while the session still has no pending call (the caller hung up before intake made one). False when
+		/// intake saved the call meanwhile (the recording is then attached to it) or the recording moved on.
+		/// </summary>
+		Task<bool> TryDiscardWithoutCallAsync(string voiceIntakeSessionId, CancellationToken cancellationToken = default);
+
 		Task<bool> MarkRecordingCarrierDeletedAsync(string voiceIntakeSessionId, DateTime deletedOn, CancellationToken cancellationToken = default);
 
 		/// <summary>

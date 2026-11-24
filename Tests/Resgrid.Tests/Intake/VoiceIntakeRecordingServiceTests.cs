@@ -84,6 +84,8 @@ namespace Resgrid.Tests.Intake
 				});
 			_attachments = new Mock<ICallAttachmentRepository>();
 			_attachments.Setup(a => a.GetCallDispatchesByCallIdAsync(900)).ReturnsAsync(() => _saved.ToList());
+			_attachments.Setup(a => a.DeleteAsync(It.IsAny<CallAttachment>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((CallAttachment a, CancellationToken _) => _saved.RemoveAll(s => s.CallAttachmentId == a.CallAttachmentId) > 0);
 
 			_clock = new FixedClock(Now);
 			_number = new DepartmentPhoneNumber { DepartmentId = DepartmentId, PhoneNumber = "+17755550100", Status = (int)DepartmentPhoneNumberStatuses.Active, VoiceIntakeEnabled = true, VoiceCapable = true, VoiceRecordingEnabled = true };
@@ -127,7 +129,8 @@ namespace Resgrid.Tests.Intake
 			(await _service.StartAsync(_number, CallSid)).Should().BeTrue();
 			(await _service.StartAsync(_number, CallSid)).Should().BeFalse("a repeated gate webhook never starts a second recording");
 
-			_provider.Verify(p => p.StartCallRecordingAsync(CallSid, It.Is<string>(u => u.EndsWith("/api/Twilio/VoiceIntakeRecording")), It.IsAny<CancellationToken>()), Times.Once);
+			// The callback URL carries Twilio's 5xx retry override: a callback this side could not take in is sent again.
+			_provider.Verify(p => p.StartCallRecordingAsync(CallSid, It.Is<string>(u => u.EndsWith("/api/Twilio/VoiceIntakeRecording#rp=5xx,ct,rt")), It.IsAny<CancellationToken>()), Times.Once);
 			session.RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Requested);
 			session.RecordingSid.Should().Be(RecordingSid);
 		}
@@ -679,6 +682,117 @@ namespace Resgrid.Tests.Intake
 			session.RecordingCarrierDeletedOn.Should().NotBeNull("nothing is left at the carrier");
 		}
 
+		[Test]
+		public async Task a_recording_whose_call_intake_saved_after_worker_80_read_it_is_attached_not_discarded()
+		{
+			var session = Session(VoiceIntakeSteps.Location, callId: null, startedOn: Now.AddMinutes(-31));
+			session.RecordingState = (int)VoiceIntakeRecordingStates.Completed;
+			session.RecordingSid = RecordingSid;
+			// Intake saves the pending call after worker 80 read the session without one.
+			_sessions.OnWorkRead = () => { _sessions.OnWorkRead = null; session.CallId = 900; };
+
+			(await _service.ProcessPendingAsync(Now)).Should().Be(1);
+
+			session.RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Attached);
+			_saved.Should().ContainSingle();
+		}
+
+		[Test]
+		public async Task a_callback_with_no_session_whose_carrier_delete_fails_asks_twilio_to_send_it_again()
+		{
+			// Nothing else remembers this sid: only Twilio's retry brings the delete back.
+			_provider.Setup(p => p.DeleteRecordingAsync(RecordingSid, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+
+			(await _service.HandleStatusAsync(Completed())).Should().Be(VoiceRecordingOutcomes.RetryLater);
+
+			IntakeConfig.VoiceRecordingDeleteCarrierCopy = false;
+			(await _service.HandleStatusAsync(Completed())).Should().Be(VoiceRecordingOutcomes.Unknown, "a carrier copy kept by the host's setting needs no retry");
+		}
+
+		[Test]
+		public async Task a_file_saved_after_the_lease_was_lost_is_removed_once_the_takeover_attached_its_own()
+		{
+			var session = Session(VoiceIntakeSteps.Completed, callId: 900);
+			session.RecordingState = (int)VoiceIntakeRecordingStates.Requested;
+			_calls.Setup(c => c.SaveCallAttachmentAsync(It.IsAny<CallAttachment>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((CallAttachment a, CancellationToken _) =>
+				{
+					a.CallAttachmentId = 7000;
+					_saved.Add(a);
+					// The save outlasted the lease: the takeover attempt found nothing, saved its own copy and attached it meanwhile.
+					_saved.Add(new CallAttachment { CallAttachmentId = 7100, CallId = 900, CallAttachmentType = (int)CallAttachmentTypes.File, FileName = a.FileName, Size = a.Size, Timestamp = a.Timestamp });
+					session.RecordingClaimedOn = null;
+					session.RecordingState = (int)VoiceIntakeRecordingStates.Attached;
+					session.RecordingCallAttachmentId = 7100;
+					return a;
+				});
+
+			(await _service.HandleStatusAsync(Completed())).Should().Be(VoiceRecordingOutcomes.Waiting);
+
+			_saved.Select(a => a.CallAttachmentId).Should().Equal(new[] { 7100 }, "the stale attempt's copy goes, the linked one stays");
+			session.RecordingCallAttachmentId.Should().Be(7100);
+		}
+
+		[Test]
+		public async Task a_stale_copy_that_landed_during_the_save_is_swept_once_the_recording_is_attached()
+		{
+			var session = Session(VoiceIntakeSteps.Completed, callId: 900);
+			session.RecordingState = (int)VoiceIntakeRecordingStates.Requested;
+			_calls.Setup(c => c.SaveCallAttachmentAsync(It.IsAny<CallAttachment>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((CallAttachment a, CancellationToken _) =>
+				{
+					a.CallAttachmentId = 7000;
+					_saved.Add(a);
+					// An attempt that lost its lease earlier lands its save now.
+					_saved.Add(new CallAttachment { CallAttachmentId = 7500, CallId = 900, CallAttachmentType = (int)CallAttachmentTypes.File, FileName = a.FileName, Size = a.Size, Timestamp = a.Timestamp });
+					return a;
+				});
+
+			(await _service.HandleStatusAsync(Completed())).Should().Be(VoiceRecordingOutcomes.Attached);
+
+			_saved.Select(a => a.CallAttachmentId).Should().Equal(new[] { 7000 });
+			session.RecordingCallAttachmentId.Should().Be(7000);
+		}
+
+		[Test]
+		public async Task on_the_last_attempt_a_file_an_earlier_attempt_saved_is_completed_and_becomes_the_recording()
+		{
+			var session = Session(VoiceIntakeSteps.Completed, callId: 900);
+			session.RecordingState = (int)VoiceIntakeRecordingStates.Completed;
+			session.RecordingSid = RecordingSid;
+			session.RecordingAttempts = 2;
+			// An earlier attempt's insert went through but its protected write did not; the carrier now keeps failing the download.
+			_saved.Add(new CallAttachment { CallAttachmentId = 7000, CallId = 900, CallAttachmentType = (int)CallAttachmentTypes.File, FileName = VoiceIntakeRecording.FileName(session),
+				Size = 4, Timestamp = VoiceIntakeRecordingService.RecordingStamp(session), Data = new byte[] { 1, 2, 3, 4 } });
+			_provider.Setup(p => p.DownloadRecordingAsync(RecordingSid, It.IsAny<int>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new VoiceRecordingDownload { Status = VoiceRecordingDownloadStatuses.Unavailable });
+
+			(await _service.ProcessPendingAsync(Now)).Should().Be(1);
+
+			session.RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Attached);
+			session.RecordingCallAttachmentId.Should().Be(7000);
+			_saves.Should().Be(1, "the file is saved once more so its protected write completes");
+			_provider.Verify(p => p.DeleteRecordingAsync(RecordingSid, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task on_the_last_attempt_a_file_whose_protected_write_still_fails_is_removed()
+		{
+			var session = Session(VoiceIntakeSteps.Completed, callId: 900);
+			session.RecordingState = (int)VoiceIntakeRecordingStates.Completed;
+			session.RecordingSid = RecordingSid;
+			session.RecordingAttempts = 2;
+			_saved.Add(new CallAttachment { CallAttachmentId = 7000, CallId = 900, CallAttachmentType = (int)CallAttachmentTypes.File, FileName = VoiceIntakeRecording.FileName(session),
+				Size = 4, Timestamp = VoiceIntakeRecordingService.RecordingStamp(session), Data = new byte[] { 1, 2, 3, 4 } });
+			_calls.Setup(c => c.SaveCallAttachmentAsync(It.IsAny<CallAttachment>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new InvalidOperationException("Protected write blocked; call attachment 7000 has transient plaintext pending re-encryption."));
+
+			(await _service.ProcessPendingAsync(Now)).Should().Be(1);
+
+			session.RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Failed);
+			_saved.Should().BeEmpty("no transient plaintext stays on the call");
+		}
+
 		[TestCase(null, "Caller recording")]
 		[TestCase(0, "Caller recording")]
 		[TestCase(9, "Caller recording (0:09)")]
@@ -798,6 +912,16 @@ namespace Resgrid.Tests.Intake
 			{
 				var row = ById(voiceIntakeSessionId);
 				if (row == null || row.RecordingState != (int)VoiceIntakeRecordingStates.Requested || row.RecordingSid != null)
+					return Task.FromResult(false);
+				row.RecordingState = (int)VoiceIntakeRecordingStates.Discarded;
+				row.RecordingClaimedOn = null;
+				return Task.FromResult(true);
+			}
+
+			public Task<bool> TryDiscardWithoutCallAsync(string voiceIntakeSessionId, CancellationToken cancellationToken = default)
+			{
+				var row = ById(voiceIntakeSessionId);
+				if (row == null || row.RecordingState != (int)VoiceIntakeRecordingStates.Completed || row.CallId.HasValue)
 					return Task.FromResult(false);
 				row.RecordingState = (int)VoiceIntakeRecordingStates.Discarded;
 				row.RecordingClaimedOn = null;

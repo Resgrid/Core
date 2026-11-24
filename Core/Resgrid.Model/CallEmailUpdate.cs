@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 namespace Resgrid.Model
 {
 	/// <summary>
-	/// What an inbound dispatch email carrying a CAD call ID did. Values 1-13 are stored on <see cref="CallEmailUpdate.Outcome"/>
-	/// (append only); 0, -1 and -2 are only ever returned. Applying, Saved, FollowedUp and Noting are the steps of work still in
-	/// progress: a row the engine wrote first and moves on as each step is done, so a redelivery finishes what is left.
+	/// What an inbound dispatch email carrying a CAD call ID did. Values 1-14 are stored on <see cref="CallEmailUpdate.Outcome"/>
+	/// (append only); 0, -1 and -2 are only ever returned. Applying, Saved, FollowedUp, Noting and Notified are the steps of work still
+	/// in progress: a row the engine wrote first and moves on as each step is done, so a redelivery finishes what is left.
 	/// </summary>
 	public enum CallEmailUpdateOutcomes
 	{
@@ -57,16 +57,23 @@ namespace Resgrid.Model
 		Saved = 11,
 
 		/// <summary>
-		/// The follow-up is done too; the added resource rows (an update) or the close notice (a close), and the note, may not be.
-		/// Counts as applied; a redelivery finishes the rest.
+		/// The follow-up is done too (an update's page is durably in the outbox; a close's resources are released); the added resource
+		/// rows (an update) or the close notice (a close), and the note, may not be. Counts as applied; a redelivery finishes the rest.
 		/// </summary>
 		FollowedUp = 12,
 
 		/// <summary>
 		/// A note-only outcome (stale, no change, close blocked, a closed call noted) written before its note and moved to that outcome
-		/// once the note is saved. Never counts; a redelivery of an email left here writes its note again.
+		/// once the note is saved. Never counts; a redelivery of an email left here is handled again. On a close's row: the release and
+		/// the notice are done and only the note is owed.
 		/// </summary>
 		Noting = 13,
+
+		/// <summary>
+		/// A close's notice went out but its resource release failed: a redelivery retries the release only (the notice is not sent
+		/// again). Counts as applied.
+		/// </summary>
+		Notified = 14,
 
 		/// <summary>Not stored. Another email for the same CAD call ID is being handled; try again later.</summary>
 		Busy = -1,

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -305,6 +306,7 @@ namespace Resgrid.Tests.Intake
 				_spoken.Should().Equal(TwilioVoicePromptCatalog.VoiceIntakeRecordedGate("Springfield Fire"), TwilioVoicePromptCatalog.VoiceIntakeNothingHeard);
 				_spoken[0].Should().Be("This is an emergency dispatch number for Springfield Fire, and this conversation will be recorded. To accept and proceed, press 1 now.");
 				twiml.Should().Contain("input=\"dtmf\"").And.Contain("/api/Twilio/VoiceIntakeGate?rec=1");
+				NoticePlaysBeforeASilentGate(twiml);
 				_voice.Verify(v => v.StartAsync(It.IsAny<DepartmentPhoneNumber>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 				_recording.Verify(r => r.StartAsync(It.IsAny<DepartmentPhoneNumber>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never,
 					"nothing is recorded before the caller accepts");
@@ -340,14 +342,28 @@ namespace Resgrid.Tests.Intake
 			twiml.Should().NotContain("rec=1");
 		}
 
+		/// <summary>
+		/// The recorded-call notice is a verb of its own ahead of the gate, and the consent gate holds no audio: Twilio takes digits while
+		/// a Gather's nested audio plays, so a 1 pressed during a nested notice would accept it before the caller heard it to the end.
+		/// </summary>
+		private static void NoticePlaysBeforeASilentGate(string twiml)
+		{
+			var root = System.Xml.Linq.XDocument.Parse(twiml).Root;
+			var verbs = root.Elements().Select(e => e.Name.LocalName).ToList();
+			var gate = root.Elements().Single(e => e.Name.LocalName == "Gather");
+			verbs.IndexOf("Gather").Should().BeGreaterThan(0, "the notice plays before the gate");
+			verbs.Take(verbs.IndexOf("Gather")).Should().Contain(v => v == "Play" || v == "Say");
+			gate.Descendants().Should().NotContain(e => e.Name.LocalName == "Play" || e.Name.LocalName == "Say", "the consent gate listens only after the notice ended");
+		}
+
 		[Test]
 		public async Task a_recording_notice_tts_could_not_make_offers_no_consent_so_the_caller_is_never_recorded()
 		{
-			// TTS failed and the <Say> fallback is off: the service appends nothing, so the gate is silent.
+			// TTS failed and the <Say> fallback is off: the service appends nothing, so there is no notice.
 			_number.VoiceRecordingEnabled = true;
 			GuidedIntakeStarts();
-			_prompts.Setup(p => p.AppendPromptAsync(It.IsAny<Gather>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
-				.Callback((Gather g, string text, CancellationToken _, string __) => _spoken.Add(text))
+			_prompts.Setup(p => p.AppendPromptAsync(It.IsAny<VoiceResponse>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
+				.Callback((VoiceResponse r, string text, CancellationToken _, string __) => _spoken.Add(text))
 				.Returns(Task.CompletedTask);
 
 			var twiml = Content(await Controller().InboundVoice(Call()));
@@ -361,12 +377,12 @@ namespace Resgrid.Tests.Intake
 			_number.VoiceRecordingEnabled = true;
 			GuidedIntakeStarts();
 			// The notice's audio is still being made when the 6 s TTS budget runs out; the <Say> fallback (mocked: off) adds nothing.
-			_prompts.Setup(p => p.AppendPromptAsync(It.IsAny<Gather>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
-				.Returns((Gather g, string text, CancellationToken token, string voice) => Task.Delay(System.Threading.Timeout.Infinite, token));
+			_prompts.Setup(p => p.AppendPromptAsync(It.IsAny<VoiceResponse>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
+				.Returns((VoiceResponse r, string text, CancellationToken token, string voice) => Task.Delay(System.Threading.Timeout.Infinite, token));
 
 			var twiml = Content(await Controller().InboundVoice(Call()));
 
-			_prompts.Verify(p => p.AppendSayFallback(It.IsAny<Gather>(), TwilioVoicePromptCatalog.VoiceIntakeRecordedGate(null)), Times.Once);
+			_prompts.Verify(p => p.AppendSayFallback(It.IsAny<VoiceResponse>(), TwilioVoicePromptCatalog.VoiceIntakeRecordedGate(null)), Times.Once);
 			twiml.Should().Contain("input=\"dtmf\"").And.NotContain("rec=1");
 		}
 
@@ -375,14 +391,28 @@ namespace Resgrid.Tests.Intake
 		{
 			_number.VoiceRecordingEnabled = true;
 			GuidedIntakeStarts();
-			_prompts.Setup(p => p.AppendPromptAsync(It.IsAny<Gather>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
-				.Returns((Gather g, string text, CancellationToken token, string voice) => Task.Delay(System.Threading.Timeout.Infinite, token));
+			_prompts.Setup(p => p.AppendPromptAsync(It.IsAny<VoiceResponse>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
+				.Returns((VoiceResponse r, string text, CancellationToken token, string voice) => Task.Delay(System.Threading.Timeout.Infinite, token));
 			_prompts.Setup(p => p.AppendSayFallback(It.IsAny<TwiML>(), It.IsAny<string>()))
 				.Callback((TwiML parent, string text) => parent.Append(new Say(text)));
 
 			var twiml = Content(await Controller().InboundVoice(Call()));
 
 			twiml.Should().Contain("<Say").And.Contain("VoiceIntakeGate?rec=1");
+			NoticePlaysBeforeASilentGate(twiml);
+		}
+
+		[Test]
+		public async Task the_plain_gate_without_recording_keeps_its_prompt_inside_the_gather()
+		{
+			// No consent rides on the plain gate, so the caller may press 1 while it plays.
+			_number.VoiceRecordingEnabled = false;
+			GuidedIntakeStarts();
+
+			var twiml = Content(await Controller().InboundVoice(Call()));
+
+			var gate = System.Xml.Linq.XDocument.Parse(twiml).Root.Elements().Single(e => e.Name.LocalName == "Gather");
+			gate.Descendants().Should().Contain(e => e.Name.LocalName == "Play");
 		}
 
 		[Test]
@@ -498,9 +528,33 @@ namespace Resgrid.Tests.Intake
 		}
 
 		[Test]
-		public async Task a_recording_callback_that_fails_still_answers_204_for_worker_80_to_retry()
+		public async Task a_recording_callback_that_fails_answers_503_so_twilio_sends_it_again()
 		{
+			// The session could not be read: its sid may be stored nowhere, and only Twilio's retry can bring it back.
 			_recording.Setup(r => r.HandleStatusAsync(It.IsAny<VoiceRecordingStatus>(), It.IsAny<CancellationToken>())).ThrowsAsync(new TimeoutException("db"));
+
+			var result = await RecordingCallbackController(new Dictionary<string, string> { ["CallSid"] = "CA1", ["RecordingStatus"] = "completed" }).VoiceIntakeRecordingCallback();
+
+			result.Should().BeOfType<StatusCodeResult>().Which.StatusCode.Should().Be(503);
+		}
+
+		[Test]
+		public async Task a_recording_nothing_durable_holds_yet_answers_503()
+		{
+			_recording.Setup(r => r.HandleStatusAsync(It.IsAny<VoiceRecordingStatus>(), It.IsAny<CancellationToken>())).ReturnsAsync(VoiceRecordingOutcomes.RetryLater);
+
+			var result = await RecordingCallbackController(new Dictionary<string, string> { ["CallSid"] = "CA1", ["RecordingStatus"] = "completed" }).VoiceIntakeRecordingCallback();
+
+			result.Should().BeOfType<StatusCodeResult>().Which.StatusCode.Should().Be(503);
+		}
+
+		[TestCase(VoiceRecordingOutcomes.Waiting)]
+		[TestCase(VoiceRecordingOutcomes.Duplicate)]
+		[TestCase(VoiceRecordingOutcomes.Unknown)]
+		[TestCase(VoiceRecordingOutcomes.Failed)]
+		public async Task a_handled_or_stored_recording_callback_answers_204(VoiceRecordingOutcomes outcome)
+		{
+			_recording.Setup(r => r.HandleStatusAsync(It.IsAny<VoiceRecordingStatus>(), It.IsAny<CancellationToken>())).ReturnsAsync(outcome);
 
 			var result = await RecordingCallbackController(new Dictionary<string, string> { ["CallSid"] = "CA1", ["RecordingStatus"] = "completed" }).VoiceIntakeRecordingCallback();
 

@@ -143,7 +143,17 @@ namespace Resgrid.Services.CallEmailTemplates
 				return null;
 
 			var stamp = parsed.LoggedOn.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
-			return "PC2-" + CadEmailText.Hash(parsed.Name.Trim() + "|" + stamp).Substring(0, 32);
+			return "PC2-" + ExactHash(parsed.Name.Trim() + "|" + stamp).Substring(0, 32);
+		}
+
+		/// <summary>
+		/// SHA-256 of the exact text (no case folding or whitespace collapsing, unlike <see cref="CadEmailText.Hash"/>): the key must keep
+		/// apart names <see cref="IsSameIncident"/> keeps apart, such as "C - Fire" and "C - FIRE".
+		/// </summary>
+		private static string ExactHash(string value)
+		{
+			var bytes = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(value));
+			return Convert.ToHexString(bytes).ToLowerInvariant();
 		}
 
 		/// <summary>The comparison this format used to find its own open calls before the update ledger existed.</summary>

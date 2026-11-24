@@ -715,5 +715,67 @@ namespace Resgrid.Tests.Repositories
 			(await repository.GetRecordingWorkAsync(Base.AddHours(-51), true, 10)).Should().BeEmpty();
 			(await repository.GetRecordingWorkAsync(Base.AddHours(-48), true, 10)).Select(s => s.ProviderCallId).Should().Equal("CAREC2");
 		}
+
+		[Test]
+		public async Task a_recording_without_a_call_is_discarded_only_while_the_session_still_has_none()
+		{
+			var repository = Sessions();
+			var session = new VoiceIntakeSession
+			{
+				VoiceIntakeSessionId = Guid.NewGuid().ToString("D"), DepartmentId = 55, ProviderCallId = "CANOCALL1", FromNumber = "+15305550199", ToNumber = "+17755550100",
+				Step = (int)VoiceIntakeSteps.Location, StartedOn = Base
+			};
+			(await repository.TryInsertAsync(session)).Should().BeTrue();
+			await repository.TryBeginRecordingAsync("CANOCALL1");
+			await repository.CompleteRecordingAsync("CANOCALL1", "RE-NOCALL", 9, (int)VoiceIntakeRecordingStates.Completed);
+
+			// Intake saves the pending call after worker 80 read the session without one: the discard no longer applies.
+			var stored = await repository.GetByProviderCallIdAsync("CANOCALL1");
+			stored.CallId = 900;
+			(await repository.UpdateProgressAsync(stored, (int)VoiceIntakeSteps.Location, 0)).Should().BeTrue();
+			(await repository.TryDiscardWithoutCallAsync(session.VoiceIntakeSessionId)).Should().BeFalse("the session has a call now");
+			(await repository.GetByProviderCallIdAsync("CANOCALL1")).RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Completed);
+
+			var orphan = new VoiceIntakeSession
+			{
+				VoiceIntakeSessionId = Guid.NewGuid().ToString("D"), DepartmentId = 55, ProviderCallId = "CANOCALL2", FromNumber = "+15305550199", ToNumber = "+17755550100",
+				Step = (int)VoiceIntakeSteps.Abandoned, StartedOn = Base
+			};
+			await repository.TryInsertAsync(orphan);
+			await repository.TryBeginRecordingAsync("CANOCALL2");
+			(await repository.TryDiscardWithoutCallAsync(orphan.VoiceIntakeSessionId)).Should().BeFalse("only a completed recording is discarded this way");
+			await repository.CompleteRecordingAsync("CANOCALL2", "RE-NOCALL2", 9, (int)VoiceIntakeRecordingStates.Completed);
+			(await repository.TryDiscardWithoutCallAsync(orphan.VoiceIntakeSessionId)).Should().BeTrue();
+			(await repository.GetByProviderCallIdAsync("CANOCALL2")).RecordingState.Should().Be((int)VoiceIntakeRecordingStates.Discarded);
+		}
+
+		[Test]
+		public async Task recordings_to_attach_come_before_carrier_copies_whose_deletes_keep_failing()
+		{
+			var repository = Sessions();
+			async Task<string> Recorded(string callSid, DateTime startedOn, VoiceIntakeRecordingStates state)
+			{
+				var row = new VoiceIntakeSession
+				{
+					VoiceIntakeSessionId = Guid.NewGuid().ToString("D"), DepartmentId = 55, ProviderCallId = callSid, FromNumber = "+15305550199", ToNumber = "+17755550100",
+					Step = (int)VoiceIntakeSteps.Completed, StartedOn = startedOn
+				};
+				await repository.TryInsertAsync(row);
+				await repository.TryBeginRecordingAsync(callSid);
+				await repository.CompleteRecordingAsync(callSid, "RE-" + callSid, 9, (int)VoiceIntakeRecordingStates.Completed);
+				if (state != VoiceIntakeRecordingStates.Completed)
+					await repository.SetRecordingStateAsync(row.VoiceIntakeSessionId, (int)state, null);
+				return callSid;
+			}
+
+			// Two older copies left at the carrier (their deletes failing), one newer recording still to attach.
+			await Recorded("CAORDER1", Base.AddHours(-3), VoiceIntakeRecordingStates.Attached);
+			await Recorded("CAORDER2", Base.AddHours(-2), VoiceIntakeRecordingStates.Discarded);
+			await Recorded("CAORDER3", Base.AddHours(-1), VoiceIntakeRecordingStates.Completed);
+
+			(await repository.GetRecordingWorkAsync(Base.AddHours(-48), true, 1)).Select(s => s.ProviderCallId).Should().Equal(new[] { "CAORDER3" },
+				"a full batch of failing cleanups never starves the attach");
+			(await repository.GetRecordingWorkAsync(Base.AddHours(-48), true, 10)).Select(s => s.ProviderCallId).Should().Equal("CAORDER3", "CAORDER1", "CAORDER2");
+		}
 	}
 }

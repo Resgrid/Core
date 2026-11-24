@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { ChatMessageType, type GifDto } from '../types';
 import { searchGifs } from '../chatApi';
 import { stringifyMetadata } from '../chatFormat';
@@ -22,6 +22,8 @@ interface ComposerProps {
   allowEmoji?: boolean;
   placeholder?: string;
   disabled?: boolean;
+  /** Shown above the input row, e.g. the AI prompt PII/PHI warning on assistant conversations. */
+  notice?: ReactNode;
 }
 
 type Popover = 'emoji' | 'gif' | null;
@@ -40,6 +42,7 @@ export default function Composer({
   allowEmoji = true,
   placeholder = 'Write a message…',
   disabled = false,
+  notice,
 }: ComposerProps) {
   const [text, setText] = useState('');
   const [urgent, setUrgent] = useState(false);
@@ -240,6 +243,8 @@ export default function Composer({
           )}
         </div>
       )}
+
+      {notice}
 
       <div className="rgchat-composer__row">
         <div className="rgchat-composer__tools">

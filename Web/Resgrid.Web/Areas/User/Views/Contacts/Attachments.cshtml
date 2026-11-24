@@ -30,7 +30,7 @@
         <div class="title-action">
             @if (canEdit)
             {
-                <a asp-controller="Contacts" asp-action="Preplan" asp-route-area="User" asp-route-contactId="@Model.Contact.ContactId" class="btn btn-default"><i class="fa fa-fire-extinguisher"></i> @localizer["PreplanTitle"]</a>
+                <a asp-controller="Contacts" asp-action="Preplan" asp-route-area="User" asp-route-contactId="@Model.Contact.ContactId" class="btn btn-default">@localizer["PreplanTitle"]</a>
             }
         </div>
     </div>

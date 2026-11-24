@@ -37,10 +37,10 @@
 	</div>
 	<div class="col-sm-4">
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-			<a class="btn btn-default" asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@r.CallId"><i class="fa fa-phone"></i> @localizer["Call"]</a>
+			<a class="btn btn-default" asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@r.CallId">@localizer["Call"]</a>
 			@if (!string.IsNullOrWhiteSpace(r.IncidentReportId))
 			{
-				<a class="btn btn-primary" asp-controller="IncidentReports" asp-action="Details" asp-route-area="User" asp-route-id="@r.IncidentReportId"><i class="fa fa-file-text-o"></i> @localizer["IncidentReport"]</a>
+				<a class="btn btn-primary" asp-controller="IncidentReports" asp-action="Details" asp-route-area="User" asp-route-id="@r.IncidentReportId">@localizer["IncidentReport"]</a>
 			}
 		</div>
 	</div>

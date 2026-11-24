@@ -80,5 +80,32 @@ namespace Resgrid.Config
 
 		/// <summary>Seconds the voice gate waits for the caller to press 1.</summary>
 		public static int VoiceGateTimeoutSeconds = 8;
+
+		/// <summary>
+		/// Host switch for voice intake call recording (M0332; each dedicated number also has its own switch, off by default). Off = no number
+		/// records and the gate plays its usual prompt.
+		/// </summary>
+		public static bool VoiceRecordingEnabled = true;
+
+		/// <summary>Seconds the gate webhook waits for Twilio to start the recording before it answers the caller (the status callback still binds it).</summary>
+		public static int VoiceRecordingStartTimeoutSeconds = 4;
+
+		/// <summary>
+		/// Minutes after a recorded call started before worker 80 stops waiting: for the pending call (the caller hung up before it was created,
+		/// so the recording is discarded) and for the status callback (a lost one: the recording is fetched by its sid).
+		/// </summary>
+		public static int VoiceRecordingWaitMinutes = 30;
+
+		/// <summary>Attach attempts (status callback plus worker 80 passes) before a recording is marked Failed.</summary>
+		public static int VoiceRecordingMaxAttempts = 5;
+
+		/// <summary>Largest recording attached to a call, in bytes (Twilio MP3 is about 0.25 MB a minute); a larger one is marked Failed.</summary>
+		public static int VoiceRecordingMaxBytes = 20 * 1024 * 1024;
+
+		/// <summary>
+		/// Delete Twilio's copy once the recording is a call file (or was discarded). The file on the call is then the only copy, under the
+		/// department's retention and data protection. A Failed recording's copy stays until the voice session purge.
+		/// </summary>
+		public static bool VoiceRecordingDeleteCarrierCopy = true;
 	}
 }

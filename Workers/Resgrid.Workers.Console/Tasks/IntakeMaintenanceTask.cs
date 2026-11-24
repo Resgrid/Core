@@ -12,7 +12,7 @@ using Resgrid.Workers.Framework;
 namespace Resgrid.Workers.Console.Tasks
 {
 	/// <summary>
-	/// Worker 80, every 15 minutes: deletes IntakeMessages older than IntakeConfig.MessageRetentionDays and voice intake sessions
+	/// Worker 80, every 15 minutes: finishes voice intake call recordings (M0332: attach, discard, delete Twilio's copies), deletes IntakeMessages older than IntakeConfig.MessageRetentionDays and voice intake sessions
 	/// (transcripts) older than IntakeConfig.VoiceSessionRetentionHours, then runs the dedicated number lifecycle (lapse numbers whose
 	/// add-on ended, release lapsed numbers past their grace period), then closes idle intake SMS conversations and those whose call
 	/// ended. Each step has its own scope, so one failing never stops the others.
@@ -49,6 +49,20 @@ namespace Resgrid.Workers.Console.Tasks
 		/// <summary>One maintenance pass; <paramref name="beginScope"/> opens a fresh lifetime scope (unit of work) per step.</summary>
 		public static async Task RunOnceAsync(Func<ILifetimeScope> beginScope, ILogger logger, DateTime nowUtc, CancellationToken cancellationToken)
 		{
+			try
+			{
+				// Voice intake call recordings (M0332), before the purge removes their sessions: attach what the status callback could not,
+				// discard recordings of calls that never became a pending call, delete Twilio's copies (Failed ones just before the purge).
+				using var scope = beginScope();
+				var recordings = await scope.Resolve<IVoiceIntakeRecordingService>().ProcessPendingAsync(nowUtc, cancellationToken);
+				if (recordings > 0)
+					logger?.LogInformation("IntakeMaintenance::Processed {Count} voice intake recording(s)", recordings);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException && cancellationToken.IsCancellationRequested))
+			{
+				Resgrid.Framework.Logging.LogException(ex, "Voice intake recordings");
+			}
+
 			try
 			{
 				using var scope = beginScope();

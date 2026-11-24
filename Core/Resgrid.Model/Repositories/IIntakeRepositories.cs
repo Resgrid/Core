@@ -137,5 +137,39 @@ namespace Resgrid.Model.Repositories
 
 		/// <summary>Deletes sessions started before the cutoff (their transcripts with them).</summary>
 		Task<int> PurgeStartedBeforeAsync(DateTime before, CancellationToken cancellationToken = default);
+
+		// Call recording (M0332). Each write touches only the Recording* columns, and only from the state it expects, so the guided
+		// questions' progress writes and the recording's callback / worker never overwrite each other.
+
+		/// <summary>None → Requested for the call's session. True for the one caller that may start the recording.</summary>
+		Task<bool> TryBeginRecordingAsync(string providerCallId, CancellationToken cancellationToken = default);
+
+		/// <summary>Stores the sid the carrier answered with on the call's session, unless one is stored already.</summary>
+		Task<bool> SetRecordingSidAsync(string providerCallId, string recordingSid, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// The carrier's status callback: Requested → <paramref name="state"/> (Completed or Discarded) with the sid and duration. False when the
+		/// session is not Requested (a repeated callback, or a recording this service did not start).
+		/// </summary>
+		Task<bool> CompleteRecordingAsync(string providerCallId, string recordingSid, int? durationSeconds, int state, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Takes the attach lease: only while the state is <paramref name="expectedState"/> and no lease newer than <paramref name="staleBefore"/>
+		/// is held; counts an attempt. False when another attempt holds it or the state moved on.
+		/// </summary>
+		Task<bool> TryClaimRecordingAsync(string voiceIntakeSessionId, int expectedState, DateTime claimedOn, DateTime staleBefore,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>Ends an attempt: the new state (and the call file), lease released.</summary>
+		Task<bool> SetRecordingStateAsync(string voiceIntakeSessionId, int state, int? callAttachmentId, CancellationToken cancellationToken = default);
+
+		Task<bool> MarkRecordingCarrierDeletedAsync(string voiceIntakeSessionId, DateTime deletedOn, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Recordings with work left: Requested or Completed, plus (with <paramref name="includeCarrierCopies"/>) Twilio copies still to delete —
+		/// Attached or Discarded, and Failed ones of sessions started before <paramref name="purgeBefore"/> (about to be purged). Oldest first,
+		/// without the answers.
+		/// </summary>
+		Task<List<VoiceIntakeSession>> GetRecordingWorkAsync(DateTime purgeBefore, bool includeCarrierCopies, int max, CancellationToken cancellationToken = default);
 	}
 }

@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ImportButton" xml:space="preserve">
+    <value>Εισαγωγή</value>
+  </data>
+  <data name="ImportTitle" xml:space="preserve">
+    <value>Εισαγωγή αποθεμάτων</value>
+  </data>
+  <data name="ImportIntro" xml:space="preserve">
+    <value>Συμπληρώστε τον κατάλογο και τα αρχικά σας αποθέματα από ένα υπολογιστικό φύλλο: είδη, κατηγορίες, τοποθεσίες, παρτίδες, εξοπλισμό με σειριακό αριθμό, κόστη και διαθέσιμες ποσότητες.</value>
+  </data>
+  <data name="ImportLocked" xml:space="preserve">
+    <value>Η εφαρμογή μιας εισαγωγής καταγράφει προστατευμένες σημειώσεις αποθέματος. Ξεκλειδώστε τα προστατευμένα δεδομένα και υποβάλετε ξανά.</value>
+  </data>
+  <data name="ImportNotMigrated" xml:space="preserve">
+    <value>Τα αποθέματα δεν έχουν ρυθμιστεί ακόμη για αυτό το τμήμα. Ρυθμίστε τα πρώτα και μετά επιστρέψτε για εισαγωγή.</value>
+  </data>
+  <data name="ImportBackToInventory" xml:space="preserve">
+    <value>Επιστροφή στα αποθέματα</value>
+  </data>
+  <data name="ImportNoPermission" xml:space="preserve">
+    <value>Η εισαγωγή απαιτεί δικαίωμα προσαρμογής αποθεμάτων.</value>
+  </data>
+  <data name="ImportApplied" xml:space="preserve">
+    <value>Η εισαγωγή ολοκληρώθηκε.</value>
+  </data>
+  <data name="ImportAlreadyApplied" xml:space="preserve">
+    <value>Αυτό το αρχείο έχει ήδη εισαχθεί. Αυτά είναι τα αποτελέσματα εκείνης της εισαγωγής· τίποτα δεν γράφτηκε δύο φορές.</value>
+  </data>
+  <data name="ImportViewOnHand" xml:space="preserve">
+    <value>Προβολή διαθέσιμου αποθέματος</value>
+  </data>
+  <data name="ImportViewHistory" xml:space="preserve">
+    <value>Προβολή ιστορικού</value>
+  </data>
+  <data name="ImportAnother" xml:space="preserve">
+    <value>Εισαγωγή άλλου αρχείου</value>
+  </data>
+  <data name="ImportReviewIntro" xml:space="preserve">
+    <value>Ελέγξτε τι θα κάνει η εισαγωγή. Δεν έχει γραφτεί τίποτα ακόμη.</value>
+  </data>
+  <data name="ImportIgnoredColumns" xml:space="preserve">
+    <value>Αυτές οι στήλες δεν αναγνωρίστηκαν και αγνοήθηκαν: {0}</value>
+  </data>
+  <data name="ImportErrorsFound" xml:space="preserve">
+    <value>Γραμμές που χρειάζονται διόρθωση: {0}. Διορθώστε το αρχείο και κάντε ξανά προεπισκόπηση· δεν έχει γραφτεί τίποτα.</value>
+  </data>
+  <data name="ImportReadyToApply" xml:space="preserve">
+    <value>Όλες οι γραμμές είναι σωστές. Εφαρμόστε την εισαγωγή για να γραφτούν αυτές οι αλλαγές.</value>
+  </data>
+  <data name="ImportTotalItemsCreated" xml:space="preserve">
+    <value>Νέα είδη</value>
+  </data>
+  <data name="ImportTotalItemsUpdated" xml:space="preserve">
+    <value>Ενημερωμένα είδη</value>
+  </data>
+  <data name="ImportTotalLocations" xml:space="preserve">
+    <value>Νέες τοποθεσίες</value>
+  </data>
+  <data name="ImportTotalCategories" xml:space="preserve">
+    <value>Νέες κατηγορίες</value>
+  </data>
+  <data name="ImportTotalLots" xml:space="preserve">
+    <value>Νέες παρτίδες</value>
+  </data>
+  <data name="ImportTotalAssets" xml:space="preserve">
+    <value>Νέα πάγια</value>
+  </data>
+  <data name="ImportTotalReceipts" xml:space="preserve">
+    <value>Γραμμές που προσθέτουν απόθεμα</value>
+  </data>
+  <data name="ImportTotalDecreases" xml:space="preserve">
+    <value>Γραμμές που αφαιρούν απόθεμα</value>
+  </data>
+  <data name="ImportTotalUnchanged" xml:space="preserve">
+    <value>Γραμμές που ήδη ταιριάζουν</value>
+  </data>
+  <data name="ImportTotalPar" xml:space="preserve">
+    <value>Ελάχιστα τοποθεσιών που ορίστηκαν</value>
+  </data>
+  <data name="ImportTotalMovements" xml:space="preserve">
+    <value>Κινήσεις αποθέματος που καταχωρίστηκαν</value>
+  </data>
+  <data name="ImportAddedValue" xml:space="preserve">
+    <value>Αξία που προστέθηκε</value>
+  </data>
+  <data name="ImportUncosted" xml:space="preserve">
+    <value>Γραμμές χωρίς κόστος: {0}</value>
+  </data>
+  <data name="ImportOnlyProblems" xml:space="preserve">
+    <value>Μόνο γραμμές που χρειάζονται προσοχή</value>
+  </data>
+  <data name="ImportStartOver" xml:space="preserve">
+    <value>Από την αρχή</value>
+  </data>
+  <data name="ImportApplyButton" xml:space="preserve">
+    <value>Εφαρμογή εισαγωγής</value>
+  </data>
+  <data name="ImportRow" xml:space="preserve">
+    <value>Γραμμή</value>
+  </data>
+  <data name="ImportItem" xml:space="preserve">
+    <value>Είδος</value>
+  </data>
+  <data name="ImportLocation" xml:space="preserve">
+    <value>Τοποθεσία</value>
+  </data>
+  <data name="ImportCurrent" xml:space="preserve">
+    <value>Διαθέσιμο τώρα</value>
+  </data>
+  <data name="ImportNew" xml:space="preserve">
+    <value>Μετά την εισαγωγή</value>
+  </data>
+  <data name="ImportChange" xml:space="preserve">
+    <value>Μεταβολή</value>
+  </data>
+  <data name="ImportUnitCost" xml:space="preserve">
+    <value>Κόστος ανά τεμάχιο</value>
+  </data>
+  <data name="ImportOutcome" xml:space="preserve">
+    <value>Αποτέλεσμα</value>
+  </data>
+  <data name="ImportItemNone" xml:space="preserve">
+    <value>Είδος</value>
+  </data>
+  <data name="ImportItemCreate" xml:space="preserve">
+    <value>Νέο είδος</value>
+  </data>
+  <data name="ImportItemUpdate" xml:space="preserve">
+    <value>Ενημερώνει το είδος</value>
+  </data>
+  <data name="ImportItemExisting" xml:space="preserve">
+    <value>Υπάρχον είδος</value>
+  </data>
+  <data name="ImportNewCategory" xml:space="preserve">
+    <value>νέα κατηγορία</value>
+  </data>
+  <data name="ImportChangedFields" xml:space="preserve">
+    <value>Αλλαγές: {0}</value>
+  </data>
+  <data name="ImportNewLocation" xml:space="preserve">
+    <value>Νέα τοποθεσία</value>
+  </data>
+  <data name="ImportNewLot" xml:space="preserve">
+    <value>νέα παρτίδα</value>
+  </data>
+  <data name="ImportParLevel" xml:space="preserve">
+    <value>Ελάχιστο στην τοποθεσία</value>
+  </data>
+  <data name="ImportNeedsFixing" xml:space="preserve">
+    <value>Χρειάζεται διόρθωση</value>
+  </data>
+  <data name="ImportStockNone" xml:space="preserve">
+    <value>Μόνο κατάλογος</value>
+  </data>
+  <data name="ImportStockReceive" xml:space="preserve">
+    <value>Προσθέτει απόθεμα</value>
+  </data>
+  <data name="ImportStockDecrease" xml:space="preserve">
+    <value>Αφαιρεί απόθεμα</value>
+  </data>
+  <data name="ImportStockUnchanged" xml:space="preserve">
+    <value>Ήδη ταιριάζει</value>
+  </data>
+  <data name="ImportStockCreateAsset" xml:space="preserve">
+    <value>Νέο πάγιο</value>
+  </data>
+  <data name="ImportStockAssetExists" xml:space="preserve">
+    <value>Ήδη καταχωρισμένο</value>
+  </data>
+  <data name="ImportStepFile" xml:space="preserve">
+    <value>1. Αποκτήστε ένα αρχείο</value>
+  </data>
+  <data name="ImportStepFileHelp" xml:space="preserve">
+    <value>Ξεκινήστε από το κενό πρότυπο ή κατεβάστε ό,τι έχει ήδη καταγραφεί, συμπληρώστε τις ποσότητες και τα κόστη και εισαγάγετέ το ξανά.</value>
+  </data>
+  <data name="ImportDownloadTemplate" xml:space="preserve">
+    <value>Κενό πρότυπο</value>
+  </data>
+  <data name="ImportDownloadCurrent" xml:space="preserve">
+    <value>Τρέχον απόθεμα</value>
+  </data>
+  <data name="ImportDownloadCurrentHelp" xml:space="preserve">
+    <value>Τα είδη σας, καθώς και το απόθεμα και ο εξοπλισμός στις τοποθεσίες που βλέπετε, έτοιμα για εισαγωγή. Οι ελεγχόμενες ουσίες εξαιρούνται.</value>
+  </data>
+  <data name="ImportStepUpload" xml:space="preserve">
+    <value>2. Μεταφόρτωση και προεπισκόπηση</value>
+  </data>
+  <data name="ImportFile" xml:space="preserve">
+    <value>Υπολογιστικό φύλλο αποθηκευμένο ως CSV</value>
+  </data>
+  <data name="ImportFileHelp" xml:space="preserve">
+    <value>Με διαχωριστικό κόμμα, ερωτηματικό (;) ή tab, έως {0} γραμμές και 1 MB. Χωρίστε ένα μεγαλύτερο απόθεμα σε περισσότερα αρχεία· η εισαγωγή τους το ένα μετά το άλλο είναι ασφαλής.</value>
+  </data>
+  <data name="ImportPreviewButton" xml:space="preserve">
+    <value>Προεπισκόπηση εισαγωγής</value>
+  </data>
+  <data name="ImportHowItWorks" xml:space="preserve">
+    <value>Πώς λειτουργεί η εισαγωγή</value>
+  </data>
+  <data name="ImportRuleCount" xml:space="preserve">
+    <value>Η στήλη {0} δείχνει το διαθέσιμο απόθεμα μετά την εισαγωγή. Κάθε τοποθεσία ορίζεται στην ποσότητα του αρχείου: απόθεμα προστίθεται ή αφαιρείται ώστε να ταιριάζει, έτσι ένα διορθωμένο αρχείο μπορεί να εισαχθεί ξανά χωρίς να διπλασιαστεί τίποτα.</value>
+  </data>
+  <data name="ImportRuleItems" xml:space="preserve">
+    <value>Τα είδη αντιστοιχίζονται με βάση τη στήλη {0}. Δημιουργούνται νέα είδη, κατηγορίες, τοποθεσίες και παρτίδες, και οι τιμές του αρχείου ενημερώνουν τα υπάρχοντα είδη. Ένα αρχείο δεν αλλάζει ποτέ τον τρόπο παρακολούθησης ενός υπάρχοντος είδους.</value>
+  </data>
+  <data name="ImportRuleCatalogRows" xml:space="preserve">
+    <value>Μια γραμμή χωρίς {0} και χωρίς {1} μόνο δημιουργεί ή ενημερώνει το είδος· το απόθεμά του μένει ανέγγιχτο.</value>
+  </data>
+  <data name="ImportRuleLocations" xml:space="preserve">
+    <value>Η στήλη {0} ορίζει μια τοποθεσία αποθήκευσης ή μια διαδρομή όπως Αποθήκη &gt; Ράφι Α. Συμπληρώστε {1} ή {2} για να τοποθετήσετε το απόθεμα στον αποθηκευτικό χώρο αυτού του σταθμού ή αυτής της μονάδας· τότε η {0} ορίζει ένα διαμέρισμα μέσα σε αυτόν. Αν η {0} είναι κενή, χρησιμοποιείται η προεπιλεγμένη τοποθεσία.</value>
+  </data>
+  <data name="ImportRuleSerialized" xml:space="preserve">
+    <value>Ο εξοπλισμός με σειριακό αριθμό καταχωρίζεται με μία γραμμή ανά πάγιο, με συμπληρωμένη τη στήλη {0}. Ένας σειριακός αριθμός που έχει ήδη καταγραφεί μένει εκεί που είναι.</value>
+  </data>
+  <data name="ImportRuleLots" xml:space="preserve">
+    <value>Τα είδη που λήγουν τηρούνται ανά παρτίδα: δώστε {0} και την ημερομηνία στη στήλη {1}. Μια παρτίδα δημιουργείται την πρώτη φορά που εμφανίζεται.</value>
+  </data>
+  <data name="ImportRuleCost" xml:space="preserve">
+    <value>Η στήλη {0} είναι η τιμή ανά μονάδα μέτρησης του είδους για τη γραμμή αυτή. Αποτιμά το απόθεμα που προσθέτει η γραμμή και γίνεται το προεπιλεγμένο κόστος του είδους όταν αυτό δεν έχει ακόμη.</value>
+  </data>
+  <data name="ImportRuleControlled" xml:space="preserve">
+    <value>Οι ελεγχόμενες ουσίες δεν εισάγονται: το απόθεμά τους απαιτεί παραλαβή με μάρτυρα.</value>
+  </data>
+  <data name="ImportRuleAllOrNothing" xml:space="preserve">
+    <value>Τίποτα δεν γράφεται μέχρι να κάνετε εφαρμογή, και το αρχείο εφαρμόζεται ολόκληρο ή καθόλου. Αν κάτι αλλάξει μεταξύ προεπισκόπησης και εφαρμογής, βλέπετε πρώτα τη νέα προεπισκόπηση.</value>
+  </data>
+  <data name="ImportColumns" xml:space="preserve">
+    <value>Στήλες</value>
+  </data>
+  <data name="ImportColumnsHelp" xml:space="preserve">
+    <value>Οι στήλες μπορούν να είναι σε οποιαδήποτε σειρά και μόνο η {0} είναι υποχρεωτική. Οι επικεφαλίδες αντιστοιχίζονται χωρίς διάκριση πεζών-κεφαλαίων και κενών, και αναγνωρίζονται συνηθισμένα ονόματα όπως Qty, SKU ή Serial. Οι στήλες ναι/όχι δέχονται Yes ή No, η {1} δέχεται Bulk ή Serialized, και οι ημερομηνίες γράφονται 2027-03-31.</value>
+  </data>
+  <data name="ImportColumnName" xml:space="preserve">
+    <value>Στήλη</value>
+  </data>
+  <data name="ImportColumnMeaning" xml:space="preserve">
+    <value>Τι περιέχει</value>
+  </data>
+  <data name="ImportColumnItem" xml:space="preserve">
+    <value>Το όνομα του είδους. Τα είδη αντιστοιχίζονται με βάση το όνομα· ένα νέο όνομα δημιουργεί το είδος. Υποχρεωτική.</value>
+  </data>
+  <data name="ImportColumnCode" xml:space="preserve">
+    <value>Ο δικός σας κωδικός είδους ή ανταλλακτικού, π.χ. MED-0042.</value>
+  </data>
+  <data name="ImportColumnBarcode" xml:space="preserve">
+    <value>Ο γραμμωτός κώδικας που είναι τυπωμένος στο είδος. Δεν πρέπει να ανήκει σε άλλο είδος.</value>
+  </data>
+  <data name="ImportColumnCategory" xml:space="preserve">
+    <value>Η κατηγορία, π.χ. Ιατρικά, ή μια διαδρομή όπως Ιατρικά &gt; Αεραγωγός. Οι κατηγορίες που λείπουν δημιουργούνται.</value>
+  </data>
+  <data name="ImportColumnDescription" xml:space="preserve">
+    <value>Μια μεγαλύτερη περιγραφή του είδους.</value>
+  </data>
+  <data name="ImportColumnUnitOfMeasure" xml:space="preserve">
+    <value>Πώς μετριέται το είδος: τεμάχιο, κουτί, ζεύγος, ml. Ένα νέο είδος χωρίς τιμή μετριέται σε "unit".</value>
+  </data>
+  <data name="ImportColumnTracking" xml:space="preserve">
+    <value>Bulk (μετριέται κατά ποσότητα) ή Serialized (ένα πάγιο ανά σειριακό αριθμό). Ένα νέο είδος με σειριακούς αριθμούς είναι Serialized.</value>
+  </data>
+  <data name="ImportColumnRequiresLot" xml:space="preserve">
+    <value>Yes όταν το απόθεμα του είδους τηρείται ανά παρτίδα.</value>
+  </data>
+  <data name="ImportColumnRequiresExpiration" xml:space="preserve">
+    <value>Yes όταν το είδος λήγει. Τα είδη Bulk που λήγουν τηρούνται ανά παρτίδα.</value>
+  </data>
+  <data name="ImportColumnUnitCost" xml:space="preserve">
+    <value>Η τιμή ανά μονάδα μέτρησης του είδους για το απόθεμα αυτής της γραμμής, π.χ. 12.50.</value>
+  </data>
+  <data name="ImportColumnCurrency" xml:space="preserve">
+    <value>Τριγράμματος κωδικός νομίσματος για τα κόστη του είδους, π.χ. USD ή EUR.</value>
+  </data>
+  <data name="ImportColumnMinLevel" xml:space="preserve">
+    <value>Το ελάχιστο για όλο το τμήμα, κάτω από το οποίο το είδος θεωρείται χαμηλό.</value>
+  </data>
+  <data name="ImportColumnMaxLevel" xml:space="preserve">
+    <value>Η μέγιστη ποσότητα που θέλει το τμήμα να έχει διαθέσιμη.</value>
+  </data>
+  <data name="ImportColumnReorderPoint" xml:space="preserve">
+    <value>Η ποσότητα για όλο το τμήμα που ενεργοποιεί αναπαραγγελία.</value>
+  </data>
+  <data name="ImportColumnReorderQuantity" xml:space="preserve">
+    <value>Πόσα παραγγέλνονται σε κάθε αναπαραγγελία.</value>
+  </data>
+  <data name="ImportColumnLocation" xml:space="preserve">
+    <value>Πού βρίσκεται το απόθεμα: όνομα τοποθεσίας ή διαδρομή όπως Αποθήκη &gt; Ράφι Α. Οι τοποθεσίες που λείπουν δημιουργούνται.</value>
+  </data>
+  <data name="ImportColumnStation" xml:space="preserve">
+    <value>Όνομα σταθμού: το απόθεμα βρίσκεται στον αποθηκευτικό χώρο αυτού του σταθμού.</value>
+  </data>
+  <data name="ImportColumnUnit" xml:space="preserve">
+    <value>Όνομα μονάδας: το απόθεμα βρίσκεται στον αποθηκευτικό χώρο αυτής της μονάδας.</value>
+  </data>
+  <data name="ImportColumnQuantity" xml:space="preserve">
+    <value>Πόσα υπάρχουν στην τοποθεσία μετά την εισαγωγή. Αν μείνει κενό, το απόθεμα δεν αλλάζει.</value>
+  </data>
+  <data name="ImportColumnParLevel" xml:space="preserve">
+    <value>Το ελάχιστο που πρέπει να υπάρχει στην τοποθεσία αυτής της γραμμής.</value>
+  </data>
+  <data name="ImportColumnLot" xml:space="preserve">
+    <value>Ο αριθμός παρτίδας. Οι παρτίδες που λείπουν δημιουργούνται.</value>
+  </data>
+  <data name="ImportColumnExpires" xml:space="preserve">
+    <value>Η ημερομηνία λήξης της παρτίδας ή του παγίου, π.χ. 2027-03-31.</value>
+  </data>
+  <data name="ImportColumnSerialNumber" xml:space="preserve">
+    <value>Ένα πάγιο με σειριακό αριθμό ανά γραμμή. Οι σειριακοί αριθμοί που έχουν ήδη καταγραφεί μένουν ως έχουν.</value>
+  </data>
+  <data name="ImportColumnAssetTag" xml:space="preserve">
+    <value>Ο αριθμός ετικέτας του παγίου.</value>
+  </data>
+  <data name="ImportColumnNote" xml:space="preserve">
+    <value>Σημείωση που καταγράφεται με την κίνηση αποθέματος που δημιουργεί αυτή η γραμμή.</value>
+  </data>
+  <data name="ErrorUnknown" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η ολοκλήρωση</value>
+  </data>
+  <data name="ErrorImportFileRequired" xml:space="preserve">
+    <value>Επιλέξτε ένα αρχείο για μεταφόρτωση.</value>
+  </data>
+  <data name="ErrorImportFileTooLarge" xml:space="preserve">
+    <value>Το αρχείο είναι μεγαλύτερο από 1 MB. Χωρίστε το σε περισσότερα αρχεία.</value>
+  </data>
+  <data name="ErrorImportFileInvalid" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η ανάγνωση του αρχείου ως CSV. Αποθηκεύστε το υπολογιστικό φύλλο ως CSV και δοκιμάστε ξανά.</value>
+  </data>
+  <data name="ErrorImportFileEmpty" xml:space="preserve">
+    <value>Το αρχείο έχει επικεφαλίδα αλλά καμία γραμμή.</value>
+  </data>
+  <data name="ErrorImportTooManyRows" xml:space="preserve">
+    <value>Το αρχείο έχει περισσότερες γραμμές από όσες δέχεται μία εισαγωγή. Χωρίστε το σε περισσότερα αρχεία.</value>
+  </data>
+  <data name="ErrorImportDuplicateColumn" xml:space="preserve">
+    <value>Δύο στήλες του αρχείου σημαίνουν το ίδιο. Αφαιρέστε τη μία.</value>
+  </data>
+  <data name="ErrorImportItemColumnRequired" xml:space="preserve">
+    <value>Το αρχείο χρειάζεται μια στήλη Item με το όνομα κάθε είδους.</value>
+  </data>
+  <data name="ErrorImportHasErrors" xml:space="preserve">
+    <value>Ορισμένες γραμμές χρειάζονται διόρθωση πριν εισαχθεί το αρχείο.</value>
+  </data>
+  <data name="ErrorImportPreviewChanged" xml:space="preserve">
+    <value>Το απόθεμα άλλαξε μετά την προεπισκόπηση. Ελέγξτε την ενημερωμένη προεπισκόπηση παρακάτω και εφαρμόστε ξανά.</value>
+  </data>
+  <data name="ErrorMigrationRequired" xml:space="preserve">
+    <value>Τα αποθέματα δεν έχουν ρυθμιστεί ακόμη για αυτό το τμήμα.</value>
+  </data>
+  <data name="ErrorInventoryDisabled" xml:space="preserve">
+    <value>Τα αποθέματα είναι απενεργοποιημένα για αυτό το τμήμα.</value>
+  </data>
+  <data name="ErrorPermissionRequired" xml:space="preserve">
+    <value>Δεν έχετε δικαίωμα να προσαρμόσετε απόθεμα εδώ.</value>
+  </data>
+  <data name="ErrorMembershipRequired" xml:space="preserve">
+    <value>Δεν είστε ενεργό μέλος αυτού του τμήματος.</value>
+  </data>
+  <data name="ErrorOperationUnavailable" xml:space="preserve">
+    <value>Αυτό δεν είναι διαθέσιμο αυτή τη στιγμή.</value>
+  </data>
+  <data name="ErrorRequestConflict" xml:space="preserve">
+    <value>Αυτή η εισαγωγή ξεκίνησε από άλλο άτομο. Ξεκινήστε από την αρχή με νέα μεταφόρτωση.</value>
+  </data>
+  <data name="ErrorRequestInProgress" xml:space="preserve">
+    <value>Αυτή η εισαγωγή εφαρμόζεται ακόμη.</value>
+  </data>
+  <data name="ErrorInsufficientStock" xml:space="preserve">
+    <value>Μέρος αυτού του αποθέματος είναι δεσμευμένο για εντολές εργασίας και δεν μπορεί να μειωθεί τόσο.</value>
+  </data>
+  <data name="ErrorRevisionConflict" xml:space="preserve">
+    <value>Κάποιος άλλαξε αυτή την εγγραφή ταυτόχρονα. Κάντε ξανά προεπισκόπηση του αρχείου.</value>
+  </data>
+  <data name="ErrorInvalidIdentifier" xml:space="preserve">
+    <value>Το αίτημα εισαγωγής δεν είναι έγκυρο. Ξεκινήστε από την αρχή με νέα μεταφόρτωση.</value>
+  </data>
+  <data name="ErrorCostReconciliationRequired" xml:space="preserve">
+    <value>Το ιστορικό κόστους του είδους χρειάζεται συμφωνία πριν μειωθεί το απόθεμά του.</value>
+  </data>
+  <data name="ErrorImportRowUnreadable" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η ανάγνωση αυτής της γραμμής· ελέγξτε τα εισαγωγικά της.</value>
+  </data>
+  <data name="ErrorImportRowColumns" xml:space="preserve">
+    <value>Αυτή η γραμμή έχει περισσότερες τιμές από τις στήλες της επικεφαλίδας.</value>
+  </data>
+  <data name="ErrorImportValueTooLong" xml:space="preserve">
+    <value>Αυτή η τιμή είναι πολύ μεγάλη.</value>
+  </data>
+  <data name="ErrorImportInvalidNumber" xml:space="preserve">
+    <value>Δεν είναι αριθμός.</value>
+  </data>
+  <data name="ErrorImportInvalidYesNo" xml:space="preserve">
+    <value>Γράψτε Yes ή No.</value>
+  </data>
+  <data name="ErrorImportInvalidTracking" xml:space="preserve">
+    <value>Γράψτε Bulk ή Serialized.</value>
+  </data>
+  <data name="ErrorImportInvalidDate" xml:space="preserve">
+    <value>Δεν είναι ημερομηνία· γράψτε τη ως 2027-03-31.</value>
+  </data>
+  <data name="ErrorImportItemRequired" xml:space="preserve">
+    <value>Λείπει το όνομα του είδους.</value>
+  </data>
+  <data name="ErrorImportItemConflict" xml:space="preserve">
+    <value>Άλλη γραμμή δίνει σε αυτό το είδος διαφορετική τιμή.</value>
+  </data>
+  <data name="ErrorImportControlledSubstance" xml:space="preserve">
+    <value>Οι ελεγχόμενες ουσίες δεν μπορούν να εισαχθούν· καταγράψτε τις με παραλαβή με μάρτυρα.</value>
+  </data>
+  <data name="ErrorImportItemTrackingMismatch" xml:space="preserve">
+    <value>Αυτό δεν ταιριάζει με τον τρόπο παρακολούθησης του υπάρχοντος είδους· επεξεργαστείτε το είδος.</value>
+  </data>
+  <data name="ErrorImportUnitNotFound" xml:space="preserve">
+    <value>Καμία μονάδα δεν έχει αυτό το όνομα.</value>
+  </data>
+  <data name="ErrorImportUnitAmbiguous" xml:space="preserve">
+    <value>Περισσότερες από μία μονάδες έχουν αυτό το όνομα.</value>
+  </data>
+  <data name="ErrorImportStationNotFound" xml:space="preserve">
+    <value>Κανένας σταθμός δεν έχει αυτό το όνομα.</value>
+  </data>
+  <data name="ErrorImportStationAmbiguous" xml:space="preserve">
+    <value>Περισσότεροι από ένας σταθμοί έχουν αυτό το όνομα.</value>
+  </data>
+  <data name="ErrorImportStationOrUnit" xml:space="preserve">
+    <value>Δώστε σταθμό ή μονάδα, όχι και τα δύο.</value>
+  </data>
+  <data name="ErrorImportLocationAmbiguous" xml:space="preserve">
+    <value>Περισσότερες από μία τοποθεσίες έχουν αυτό το όνομα· δώστε τη διαδρομή, τον σταθμό ή τη μονάδα της.</value>
+  </data>
+  <data name="ErrorImportLocationRequired" xml:space="preserve">
+    <value>Δώστε τοποθεσία· το τμήμα δεν έχει προεπιλεγμένη τοποθεσία.</value>
+  </data>
+  <data name="ErrorImportSerialRequired" xml:space="preserve">
+    <value>Αυτό το είδος παρακολουθείται με σειριακό αριθμό· δώστε έναν σειριακό αριθμό ανά γραμμή.</value>
+  </data>
+  <data name="ErrorImportSerialOnBulkItem" xml:space="preserve">
+    <value>Αυτό το είδος μετριέται χύμα και δεν έχει σειριακούς αριθμούς.</value>
+  </data>
+  <data name="ErrorImportDuplicateLine" xml:space="preserve">
+    <value>Άλλη γραμμή μετρά ήδη αυτό το είδος σε αυτή την τοποθεσία και παρτίδα.</value>
+  </data>
+  <data name="ErrorImportLotExpiryMismatch" xml:space="preserve">
+    <value>Αυτή η παρτίδα είναι καταγεγραμμένη με διαφορετική ημερομηνία λήξης.</value>
+  </data>
+  <data name="ErrorInvalidText" xml:space="preserve">
+    <value>Αυτή η τιμή λείπει, είναι πολύ μεγάλη ή δεν επιτρέπεται.</value>
+  </data>
+  <data name="ErrorInvalidItem" xml:space="preserve">
+    <value>Αυτή η τιμή είδους δεν είναι έγκυρη.</value>
+  </data>
+  <data name="ErrorInvalidCost" xml:space="preserve">
+    <value>Τα κόστη πρέπει να είναι μηδέν ή περισσότερο, με έως έξι δεκαδικά.</value>
+  </data>
+  <data name="ErrorInvalidCurrency" xml:space="preserve">
+    <value>Γράψτε έναν τριγράμματο κωδικό νομίσματος, όπως USD.</value>
+  </data>
+  <data name="ErrorInvalidQuantity" xml:space="preserve">
+    <value>Οι ποσότητες πρέπει να είναι μηδέν ή περισσότερο, με έως έξι δεκαδικά.</value>
+  </data>
+  <data name="ErrorInvalidParLevel" xml:space="preserve">
+    <value>Τα ελάχιστα τοποθεσιών πρέπει να είναι μηδέν ή περισσότερο, με έως έξι δεκαδικά.</value>
+  </data>
+  <data name="ErrorDuplicateItem" xml:space="preserve">
+    <value>Άλλο είδος έχει ήδη αυτόν τον γραμμωτό κώδικα.</value>
+  </data>
+  <data name="ErrorDuplicateSerial" xml:space="preserve">
+    <value>Αυτός ο σειριακός αριθμός εμφανίζεται περισσότερες από μία φορές για το είδος.</value>
+  </data>
+  <data name="ErrorLotRequired" xml:space="preserve">
+    <value>Αυτό το είδος τηρείται ανά παρτίδα· δώστε αριθμό παρτίδας.</value>
+  </data>
+  <data name="ErrorExpiryRequired" xml:space="preserve">
+    <value>Αυτό το είδος λήγει· δώστε ημερομηνία λήξης.</value>
+  </data>
+  <data name="ErrorExpiryRequiresLotTracking" xml:space="preserve">
+    <value>Ένα είδος χύμα που λήγει πρέπει να τηρείται ανά παρτίδα.</value>
+  </data>
+  <data name="ErrorLotMismatch" xml:space="preserve">
+    <value>Αυτή η παρτίδα δεν μπορεί να δεχτεί απόθεμα για αυτό το είδος.</value>
+  </data>
+  <data name="ErrorLotCostMismatch" xml:space="preserve">
+    <value>Αυτή η παρτίδα έχει ήδη διαφορετικό κόστος.</value>
+  </data>
+  <data name="ErrorItemUnavailable" xml:space="preserve">
+    <value>Αυτό το είδος είναι ανενεργό· ενεργοποιήστε το πριν αλλάξετε το απόθεμά του.</value>
+  </data>
+  <data name="ErrorItemCurrencyLocked" xml:space="preserve">
+    <value>Το νόμισμα του είδους δεν μπορεί να αλλάξει όταν υπάρχουν κινήσεις αποθέματος.</value>
+  </data>
+  <data name="ErrorSerializedQuantity" xml:space="preserve">
+    <value>Ένα πάγιο με σειριακό αριθμό καταλαμβάνει μία γραμμή· αφήστε την ποσότητα κενή ή 1.</value>
+  </data>
+  <data name="ErrorInvalidAsset" xml:space="preserve">
+    <value>Αυτή η τιμή παγίου δεν είναι έγκυρη.</value>
+  </data>
+  <data name="ErrorLocationUnavailable" xml:space="preserve">
+    <value>Δεν μπορείτε να τοποθετήσετε απόθεμα σε αυτή την τοποθεσία.</value>
+  </data>
+  <data name="ErrorInvalidLocationHierarchy" xml:space="preserve">
+    <value>Αυτή η διαδρομή τοποθεσίας δεν είναι έγκυρη.</value>
+  </data>
+  <data name="ErrorInvalidCategoryHierarchy" xml:space="preserve">
+    <value>Αυτή η διαδρομή κατηγορίας δεν είναι έγκυρη.</value>
+  </data>
+  <data name="ErrorHolderRequired" xml:space="preserve">
+    <value>Ο σταθμός ή η μονάδα αυτής της τοποθεσίας δεν είναι έγκυρη.</value>
+  </data>
+  <data name="ErrorKitMustBeSerialized" xml:space="preserve">
+    <value>Ένα σετ πρέπει να έχει σειριακό αριθμό.</value>
+  </data>
+  <data name="ErrorProtectedDataRequired" xml:space="preserve">
+    <value>Ξεκλειδώστε τα προστατευμένα δεδομένα για να συνεχίσετε.</value>
+  </data>
+  <data name="ErrorImportUnitOfMeasureDefaulted" xml:space="preserve">
+    <value>Δεν δόθηκε μονάδα μέτρησης, οπότε το νέο είδος παίρνει την προεπιλεγμένη. Αλλάξτε τη στο είδος αν χρειάζεται.</value>
+  </data>
+  <data name="ErrorImportLocationIgnored" xml:space="preserve">
+    <value>Η τοποθεσία αγνοείται: αυτή η γραμμή δεν έχει ποσότητα, σειριακό αριθμό ή ελάχιστο τοποθεσίας.</value>
+  </data>
+  <data name="ErrorImportAssetElsewhere" xml:space="preserve">
+    <value>Αυτός ο σειριακός αριθμός είναι καταγεγραμμένος σε άλλη τοποθεσία· δεν μετακινείται.</value>
+  </data>
+  <data name="ErrorImportAssetRetired" xml:space="preserve">
+    <value>Αυτός ο σειριακός αριθμός είναι καταγεγραμμένος ως απολεσθείς, καταναλωμένος ή αποσυρμένος· δεν αλλάζει.</value>
+  </data>
+</root>

@@ -52,6 +52,7 @@ NARR: SMOKE SHOWING";
 		private Mock<IQueueService> _queue;
 		private EmailController _controller;
 		private FakeCallEmailUpdatesRepository _ledger;
+		private EmailCallUpdateConfig _storedCad;
 
 		[SetUp]
 		public void SetUp()
@@ -69,8 +70,11 @@ NARR: SMOKE SHOWING";
 			_ledger = new FakeCallEmailUpdatesRepository();
 			_ledger.Calls = () => _saved;
 
+			_storedCad = null;
 			var settings = new Mock<IDepartmentSettingsService>();
 			settings.Setup(s => s.GetDepartmentIdForDispatchEmailAsync(DispatchCode)).ReturnsAsync(DepartmentId);
+			settings.Setup(s => s.GetEmailCallUpdateConfigAsync(It.IsAny<int>(), It.IsAny<int?>(), It.IsAny<bool>()))
+				.ReturnsAsync((int d, int? format, bool b) => _storedCad ?? (format.HasValue ? EmailCallUpdatePresets.ForFormat(format.Value) : null) ?? new EmailCallUpdateConfig());
 
 			var departments = new Mock<IDepartmentsService>();
 			departments.Setup(d => d.GetAllUsersForDepartmentAsync(DepartmentId, It.IsAny<bool>(), It.IsAny<bool>()))
@@ -169,7 +173,7 @@ NARR: SMOKE SHOWING";
 				messages.Object, Mock.Of<IFileService>(), units.Object, Mock.Of<IGeoLocationProvider>(), Mock.Of<ICallDispatchStatusService>(),
 				Mock.Of<IDispatchRecommendationService>(), Mock.Of<IFeatureToggleService>(), Mock.Of<Resgrid.Model.AiDispatch.IAiDispatchAdminService>(),
 				new InboundEmailReceiptsService(_receipts, TimeProvider.System), Mock.Of<IIntakeService>(), Mock.Of<Resgrid.Model.Providers.IEmailSender>(), Mock.Of<IDispatcherEmailCallService>(),
-				new UnreadableAwareEmailCallUpdates(EmailCallUpdateServices.Create(calls.Object, _ledger, departments: departments.Object), () => _unreadable));
+				new UnreadableAwareEmailCallUpdates(EmailCallUpdateServices.Create(calls.Object, _ledger, () => _storedCad, departments: departments.Object), () => _unreadable));
 		}
 
 		/// <summary>The engine, except that it finds no call while the test marks the email unreadable (the format cannot read it).</summary>
@@ -313,6 +317,66 @@ NARR: SMOKE SHOWING";
 			(await ReceiveAsync(Email(id))).Should().Be(200);
 
 			_saved.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task A_close_email_the_format_cannot_read_still_closes_the_open_call()
+		{
+			// Saved CAD update settings: the call ID after "ID", and "CLOSED" closes. An Active911 close page has no "active" in its
+			// subject, so the format reads no call from it; the engine must still see it before the 403.
+			_storedCad = new EmailCallUpdateConfig
+			{
+				Enabled = true, IdSource = (int)CadCallIdSources.Label, IdLabel = "ID", IdSearchIn = (int)CadCallIdSearchAreas.SubjectThenBody,
+				ClosePhrases = "CLOSED", NotifyOnClose = true
+			};
+
+			(await ReceiveAsync(Email(Guid.NewGuid().ToString()))).Should().Be(200);
+			_saved.Should().ContainSingle();
+			_saved[0].State = (int)CallStates.Active;
+
+			_unreadable = true;
+			var close = Email(Guid.NewGuid().ToString());
+			close.Subject = "CLOSED 9-1-1";
+			close.TextBody = "ID: 2026-000777-FIRE";
+
+			(await ReceiveAsync(close)).Should().Be(200, "the close was applied, so Postmark must stop");
+
+			_saved.Should().ContainSingle("a close never creates a call");
+			_saved[0].State.Should().Be((int)CallStates.Closed);
+			_ledger.Rows.Should().Contain(r => r.CallId == _saved[0].CallId && r.Outcome == (int)CallEmailUpdateOutcomes.Closed);
+		}
+
+		[Test]
+		public async Task A_close_email_for_a_call_resgrid_never_had_creates_nothing()
+		{
+			_storedCad = new EmailCallUpdateConfig
+			{
+				Enabled = true, IdSource = (int)CadCallIdSources.Label, IdLabel = "ID", IdSearchIn = (int)CadCallIdSearchAreas.SubjectThenBody, ClosePhrases = "CLOSED"
+			};
+			_unreadable = true;
+			var close = Email(Guid.NewGuid().ToString());
+			close.Subject = "CLOSED 9-1-1";
+			close.TextBody = "ID: 2026-999999-FIRE";
+
+			(await ReceiveAsync(close)).Should().Be(200);
+
+			_saved.Should().BeEmpty();
+			_ledger.Rows.Should().Contain(r => r.Outcome == (int)CallEmailUpdateOutcomes.CloseUnmatched);
+		}
+
+		[Test]
+		public async Task An_unreadable_email_that_is_not_a_close_is_still_refused()
+		{
+			_storedCad = new EmailCallUpdateConfig
+			{
+				Enabled = true, IdSource = (int)CadCallIdSources.Label, IdLabel = "ID", IdSearchIn = (int)CadCallIdSearchAreas.SubjectThenBody, ClosePhrases = "CLOSED"
+			};
+			_unreadable = true;
+
+			(await ReceiveAsync(Email(Guid.NewGuid().ToString()))).Should().Be(403);
+
+			_saved.Should().BeEmpty();
+			_ledger.Rows.Should().BeEmpty("the engine never saw it");
 		}
 
 		[Test]

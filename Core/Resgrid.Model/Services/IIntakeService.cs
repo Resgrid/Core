@@ -94,6 +94,27 @@ namespace Resgrid.Model.Services
 	}
 
 	/// <summary>
+	/// Voice intake call recording (M0332). <see cref="StartAsync"/> runs once the caller pressed 1 at the gate that said the call is
+	/// recorded; the carrier's status callback (<see cref="HandleStatusAsync"/>) attaches the MP3 to the pending call as a file when the
+	/// call ends; worker 80 (<see cref="ProcessPendingAsync"/>) retries what could not be attached yet, discards recordings of calls that
+	/// never became a pending call, and deletes the carrier's copies. Every step fails open: the caller's request never depends on it.
+	/// </summary>
+	public interface IVoiceIntakeRecordingService
+	{
+		/// <summary>
+		/// Starts recording the session's call (once per CallSid: a repeated gate webhook does not start a second). False when the number
+		/// does not record, there is no session, or the carrier refused.
+		/// </summary>
+		Task<bool> StartAsync(DepartmentPhoneNumber number, string providerCallId, CancellationToken cancellationToken = default);
+
+		/// <summary>The carrier's recording status callback: attaches the recording to the call when there is one.</summary>
+		Task<VoiceRecordingOutcomes> HandleStatusAsync(VoiceRecordingStatus status, CancellationToken cancellationToken = default);
+
+		/// <summary>Worker 80: attaches, discards or gives up on waiting recordings and deletes carrier copies. Returns recordings changed.</summary>
+		Task<int> ProcessPendingAsync(DateTime nowUtc, CancellationToken cancellationToken = default);
+	}
+
+	/// <summary>
 	/// Turns one voice intake answer into text. The Twilio implementation reads &lt;Gather input="speech"&gt;'s SpeechResult; a
 	/// self-hosted Whisper implementation can replace it later without touching the step machine (plan D2).
 	/// </summary>

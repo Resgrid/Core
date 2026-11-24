@@ -9880,8 +9880,15 @@ display: none;
 }
 }
 
-.buttons-actions a {
+/* White text only on the coloured buttons: on a white or default button it made the label invisible (View Call's
+   Repeat), and it hid the text of menu entries in a dropdown inside the wrapper. */
+.buttons-actions a.btn:not(.btn-default):not(.btn-white):not(.btn-link):not(.btn-outline) {
 color: white !important;
+}
+/* .ibox-tools a would otherwise paint a white button's label light grey. */
+.buttons-actions a.btn-default,
+.buttons-actions a.btn-white {
+color: #333;
 }
 
 .unit-block {

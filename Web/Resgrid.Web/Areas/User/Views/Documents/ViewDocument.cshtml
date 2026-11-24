@@ -45,12 +45,12 @@
     <div class="col-sm-7">
         <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
             <a class="btn btn-primary" asp-controller="Documents" asp-action="GetDocument" asp-route-area="User" asp-route-documentId="@Model.Document.DocumentId">
-                <i class="fa fa-download"></i> @commonLocalizer["Download"]
+                @commonLocalizer["Download"]
             </a>
             @if (Model.CanEdit)
             {
                 <a class="btn btn-info" asp-controller="Documents" asp-action="EditDocument" asp-route-area="User" asp-route-documentId="@Model.Document.DocumentId">
-                    <i class="fa fa-pencil"></i> @localizer["EditDocumentHeader"]
+                    @localizer["EditDocumentHeader"]
                 </a>
             }
             @if (Model.CanDelete)
@@ -60,7 +60,7 @@
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="documentId" value="@Model.Document.DocumentId" />
                     <button type="submit" class="btn btn-danger">
-                        <i class="fa fa-trash"></i> @localizer["DeleteDocumentButton"]
+                        @localizer["DeleteDocumentButton"]
                     </button>
                 </form>
             }

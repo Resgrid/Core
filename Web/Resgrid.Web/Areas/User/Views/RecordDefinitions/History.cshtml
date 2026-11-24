@@ -23,7 +23,7 @@
 			{
 				<form method="post" asp-controller="RecordDefinitions" asp-action="Retire" asp-route-area="User" asp-route-key="@key" style="display:inline" onsubmit="var r = prompt('@JsEncoder.Encode(localizer["DefinitionRetireReason"])'); if (!r) return false; this.querySelector('[name=reason]').value = r; return true;">
 					@Html.AntiForgeryToken()<input type="hidden" name="rowVersion" value="@Model.Aggregate.Definition.RowVersion" /><input type="hidden" name="reason" value="" />
-					<button type="submit" class="btn btn-danger"><i class="fa fa-ban"></i> @localizer["DefinitionRetire"]</button>
+					<button type="submit" class="btn btn-danger">@localizer["DefinitionRetire"]</button>
 				</form>
 			}
 		</div>

@@ -172,10 +172,7 @@
 										<label for="CadUpdates"></label>
 									</div>
 									<span class="help-block m-b-none">@localizer["CadUpdatesHelp"]</span>
-									@if (!Model.CadUpdatesAvailable)
-									{
-										<span class="help-block m-b-none text-warning">@localizer["CadUpdatesUnavailable"] <a asp-controller="CadUpdates" asp-action="Index" asp-route-area="User">@localizer["CadUpdatesSettingsLink"]</a></span>
-									}
+									<span class="help-block m-b-none text-warning" id="intakeCadUpdatesUnavailable" style="@(Model.CadUpdatesAvailable ? "display:none" : null)">@localizer["CadUpdatesUnavailable"] <a asp-controller="CadUpdates" asp-action="Index" asp-route-area="User">@localizer["CadUpdatesSettingsLink"]</a></span>
 								</div>
 							</div>
 						}
@@ -207,10 +204,25 @@
 {
 	<script type="text/javascript">
 		$(document).ready(function () {
+			// The formats the department's CAD update settings are on for; the box follows the format picked here (Generic outside Template
+			// mode). A ticked box always stays usable, so an existing opt-in can still be turned off.
+			var cadUpdateFormats = @Html.ScriptJson(Model.CadUpdateFormats);
+			function toggleCadUpdates() {
+				var box = $('#CadUpdates');
+				if (!box.length)
+					return;
+				var templateMode = $('#intakeProcessingMode').val() === '@((int)IntakeProcessingModes.Template)';
+				var format = templateMode ? parseInt($('#TemplateFormat').val(), 10) : @((int)CallEmailTypes.Generic);
+				var available = cadUpdateFormats.indexOf(format) >= 0;
+				box.prop('disabled', !available && !box.prop('checked'));
+				$('#intakeCadUpdatesUnavailable').toggle(!available);
+			}
 			function toggleTemplate() {
 				$('#intakeTemplateGroup').toggle($('#intakeProcessingMode').val() === '@((int)IntakeProcessingModes.Template)');
+				toggleCadUpdates();
 			}
 			$('#intakeProcessingMode').on('change', toggleTemplate);
+			$('#TemplateFormat').on('change', toggleCadUpdates);
 			toggleTemplate();
 		});
 	</script>

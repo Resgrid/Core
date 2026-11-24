@@ -15,6 +15,18 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<CallEmailUpdate>> GetByCallAsync(int departmentId, int callId, CancellationToken cancellationToken = default);
 
 		/// <summary>
+		/// The ledger rows an email (its provider message id) left under one CAD call ID: how a redelivery of an email whose update
+		/// already went through is recognised.
+		/// </summary>
+		Task<IEnumerable<CallEmailUpdate>> GetByMessageAsync(int departmentId, string cadCallId, string messageId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Moves one row from <paramref name="fromOutcome"/> to <paramref name="toOutcome"/> (the update it announced went through).
+		/// False when the row was not in that outcome.
+		/// </summary>
+		Task<bool> SetOutcomeAsync(string callEmailUpdateId, int fromOutcome, int toOutcome, CancellationToken cancellationToken = default);
+
+		/// <summary>
 		/// The department's open (Active) and Pending calls, not deleted, whose external identifier or incident number is
 		/// <paramref name="cadCallId"/> (trimmed, case ignored) or that a ledger row ties to it.
 		/// </summary>

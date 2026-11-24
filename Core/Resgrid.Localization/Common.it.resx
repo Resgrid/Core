@@ -834,4 +834,10 @@
   <data name="TermChecklist" xml:space="preserve">
     <value>Lista di controllo</value>
   </data>
+  <data name="AiPromptPiiWarning" xml:space="preserve">
+    <value>Non includere mai dati personali (PII) o dati sanitari (PHI) nelle richieste all’IA: niente nomi, numeri di telefono, indirizzi, dettagli sui pazienti o resoconti degli interventi. Ciò che scrivi qui può essere inviato a un modello di IA.</value>
+  </data>
+  <data name="ToggleMenu" xml:space="preserve">
+    <value>Mostra o nascondi il menu</value>
+  </data>
 </root>

@@ -1175,4 +1175,25 @@
   <data name="FacilityMapsHint" xml:space="preserve">
     <value>Κάντε κλικ σε ένα δωμάτιο για να ορίσετε την τοποθεσία της κλήσης.</value>
   </data>
+  <data name="StrikeAlarm" xml:space="preserve">
+    <value>Ενεργοποίηση συναγερμού {0}</value>
+  </data>
+  <data name="StrikeAlarmConfirm" xml:space="preserve">
+    <value>Κλιμάκωση αυτής της κλήσης σε συναγερμό {0}; Θα σταλούν οι πόροι του επόμενου συναγερμού από το σχέδιο απόκρισης.</value>
+  </data>
+  <data name="EscalateRunCardsDisabled" xml:space="preserve">
+    <value>Τα σχέδια απόκρισης δεν είναι ενεργοποιημένα για αυτό το τμήμα.</value>
+  </data>
+  <data name="EscalateCallNotFound" xml:space="preserve">
+    <value>Η κλήση δεν βρέθηκε.</value>
+  </data>
+  <data name="EscalateCallNotActive" xml:space="preserve">
+    <value>Μόνο ενεργές κλήσεις μπορούν να κλιμακωθούν.</value>
+  </data>
+  <data name="EscalateNoRunCard" xml:space="preserve">
+    <value>Κανένα σχέδιο απόκρισης δεν ταιριάζει σε αυτή την κλήση· δεν υπάρχει τίποτα για κλιμάκωση.</value>
+  </data>
+  <data name="EscalateNoResources" xml:space="preserve">
+    <value>Το σχέδιο απόκρισης δεν έχει επιπλέον πόρους για τον επόμενο συναγερμό.</value>
+  </data>
 </root>

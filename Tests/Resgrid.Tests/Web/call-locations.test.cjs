@@ -234,6 +234,79 @@ const settle = (page) => page.waitForTimeout(50);
             await answer(page, 1, { Latitude: 39.7471, Longitude: -104.9926 });
             await settle(page);
             assert.equal(await value(page, '#Latitude'), '39.74', 'the POI picked after the lookup started wins');
+            assert.equal(await value(page, '#CallPlusCode'), '', 'the POI pick drops the code too');
+            assert.deepEqual(errors, []);
+            await context.close();
+        }
+
+        // PR #591: a call plus code typed but not looked up goes when a POI is picked, so the save does not look it up and
+        // move the call off the POI.
+        {
+            const { context, page, errors } = await harness(browser);
+            await page.fill('#CallPlusCode', '85GCQ2XF+C8');
+            await page.selectOption('#Call_LocationPoiId', '5');
+            assert.equal(await value(page, '#CallPlusCode'), '');
+            await page.click('#update');
+            assert.equal(await fetchCount(page), 0, 'no lookup for the dropped code');
+            assert.deepEqual(await page.evaluate(() => window.submitted), ['update']);
+            assert.equal(await value(page, '#Latitude'), '39.74');
+            assert.deepEqual(errors, []);
+            await context.close();
+        }
+
+        // PR #591: a location set another way (the page's map click, address or What3Words search, typed pin, dragged marker
+        // or room, through callLocationChanged) drops a call plus code lookup still on its way, and the typed code.
+        {
+            const { context, page, errors } = await harness(browser);
+            await page.fill('#CallPlusCode', '85GCQ2XF+C8');
+            await page.click('#callPlusCodeButton');
+            await page.evaluate(() => {
+                // What the page does on a map click.
+                resgrid.dispatch.calllocations.callLocationChanged();
+                $('#Latitude').val('40.0001');
+                $('#Longitude').val('-105.0001');
+            });
+            assert.equal(await value(page, '#CallPlusCode'), '');
+            await answer(page, 0, { Latitude: 39.7471, Longitude: -104.9926 });
+            await settle(page);
+            assert.equal(await value(page, '#Latitude'), '40.0001', 'the clicked point stays');
+            assert.deepEqual(await page.evaluate(() => window.pins), [], 'the late plus code places no pin');
+            assert.deepEqual(await page.evaluate(() => window.reverseGeocodes), []);
+            assert.deepEqual(errors, []);
+            await context.close();
+        }
+
+        // PR #591: a save waiting on the call plus code goes on only once the page's address lookup for the found point has
+        // answered (so the call is not saved without it), and not at all when the location was set another way meanwhile.
+        {
+            const { context, page, errors } = await harness(browser);
+            await page.evaluate(() => {
+                window.addressLookups = [];
+                resgrid.dispatch.editcall.geocodeCoordinates = function (lat, lng) {
+                    window.reverseGeocodes.push([lat, lng]);
+                    return new Promise(function (resolve) { window.addressLookups.push(function (address) { $('#Call_Address').val(address); resolve(); }); });
+                };
+            });
+            await page.fill('#CallPlusCode', '85GCQ2XF+C8');
+            await page.click('#update');
+            await answer(page, 0, { Latitude: 39.7471, Longitude: -104.9926 });
+            await page.waitForFunction(() => window.addressLookups.length === 1);
+            await settle(page);
+            assert.deepEqual(await page.evaluate(() => window.submitted), [], 'the save waits for the address lookup');
+            await page.evaluate(() => window.addressLookups[0]('12 Found Rd'));
+            await page.waitForFunction(() => window.submitted.length === 1);
+            assert.deepEqual(await page.evaluate(() => window.submitted), ['update']);
+            assert.equal(await value(page, '#Call_Address'), '12 Found Rd');
+
+            // Again, but the dispatcher clicks the map while the address is being looked up: the form stays.
+            await page.fill('#CallPlusCode', '85GCQ2XF+C9');
+            await page.click('#update');
+            await answer(page, 1, { Latitude: 39.7472, Longitude: -104.9927 });
+            await page.waitForFunction(() => window.addressLookups.length === 2);
+            await page.evaluate(() => resgrid.dispatch.calllocations.callLocationChanged());
+            await page.evaluate(() => window.addressLookups[1]('13 Found Rd'));
+            await settle(page);
+            assert.deepEqual(await page.evaluate(() => window.submitted), ['update'], 'no second save with a location set after Save was pressed');
             assert.deepEqual(errors, []);
             await context.close();
         }

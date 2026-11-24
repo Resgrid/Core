@@ -1263,4 +1263,25 @@
   <data name="FacilityMapsHint" xml:space="preserve">
     <value>Натисніть на приміщення, щоб задати місце виклику.</value>
   </data>
+  <data name="StrikeAlarm" xml:space="preserve">
+    <value>Оголосити тривогу {0}</value>
+  </data>
+  <data name="StrikeAlarmConfirm" xml:space="preserve">
+    <value>Підвищити цей виклик до тривоги {0}? Буде надіслано ресурси наступної тривоги з плану реагування.</value>
+  </data>
+  <data name="EscalateRunCardsDisabled" xml:space="preserve">
+    <value>Плани реагування не ввімкнено.</value>
+  </data>
+  <data name="EscalateCallNotFound" xml:space="preserve">
+    <value>Виклик не знайдено.</value>
+  </data>
+  <data name="EscalateCallNotActive" xml:space="preserve">
+    <value>Підвищити тривогу можна лише для активних викликів.</value>
+  </data>
+  <data name="EscalateNoRunCard" xml:space="preserve">
+    <value>Жоден план реагування не відповідає цьому виклику; підвищувати нічого.</value>
+  </data>
+  <data name="EscalateNoResources" xml:space="preserve">
+    <value>План реагування не передбачає додаткових ресурсів для наступної тривоги.</value>
+  </data>
 </root>

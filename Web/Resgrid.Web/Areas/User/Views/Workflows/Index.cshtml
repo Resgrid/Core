@@ -20,18 +20,18 @@
     <div class="col-sm-8">
         <div class="title-action">
             <a asp-action="New" class="btn btn-primary">
-                <i class="fa fa-plus"></i> @localizer["NewWorkflow"]
+                @localizer["NewWorkflow"]
             </a>
             <a asp-action="Credentials" class="btn btn-default">
-                <i class="fa fa-key"></i> @localizer["Credentials"]
+                @localizer["Credentials"]
             </a>
             <a asp-action="Pending" class="btn btn-default">
-                <i class="fa fa-clock-o"></i> @localizer["PendingRuns"]
+                @localizer["PendingRuns"]
             </a>
             @if (ViewBag.CanAdministerProtectedWorkflows == true)
             {
                 <a asp-controller="ProtectedWorkflows" asp-action="Index" class="btn btn-default">
-                    <i class="fa fa-shield"></i> @pwLocalizer["PageTitle"]
+                    @pwLocalizer["PageTitle"]
                 </a>
             }
         </div>

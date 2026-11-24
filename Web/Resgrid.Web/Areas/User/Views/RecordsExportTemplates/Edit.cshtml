@@ -23,7 +23,7 @@
 		@if (!Model.IsNew)
 		{
 			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-				<a class="btn btn-default" asp-controller="RecordsExportTemplates" asp-action="Runs" asp-route-area="User" asp-route-id="@Model.RmsExportTemplateId"><i class="fa fa-history"></i> @localizer["ExportRuns"]</a>
+				<a class="btn btn-default" asp-controller="RecordsExportTemplates" asp-action="Runs" asp-route-area="User" asp-route-id="@Model.RmsExportTemplateId">@localizer["ExportRuns"]</a>
 			</div>
 		}
 	</div>

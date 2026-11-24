@@ -375,11 +375,15 @@ namespace Resgrid.Repositories.DataRepository
 			Utf8WriteGuard.Sanitize(block);
 			// The expiry only ever moves later, decided against the stored row in the same statement: a renewal that read the row before
 			// another one committed cannot shorten it, and a block that never expires stays so (a null expiry asked for makes it permanent).
+			// A permanent renewal is written as NULL outright: PostgreSQL cannot type a parameter that is only tested with IS NULL.
 			var expires = Col("ExpiresOn");
+			var expiry = block.ExpiresOn.HasValue
+				? $"CASE WHEN {expires} IS NULL THEN NULL WHEN {expires} > {P}ExpiresOn THEN {expires} ELSE {P}ExpiresOn END"
+				: "NULL";
 			var updated = await ExecuteAsync(
 				$"UPDATE {Tbl(Table)} SET {Col("ChannelType")} = {P}ChannelType, {Col("Reason")} = {P}Reason, {Col("CallId")} = {P}CallId, " +
 				$"{Col("BlockedByUserId")} = {P}BlockedByUserId, {Col("BlockedOn")} = {P}BlockedOn, " +
-				$"{expires} = CASE WHEN {expires} IS NULL OR {P}ExpiresOn IS NULL THEN NULL WHEN {expires} > {P}ExpiresOn THEN {expires} ELSE {P}ExpiresOn END " +
+				$"{expires} = {expiry} " +
 				$"WHERE {Col("IntakeBlockedSenderId")} = {P}Id AND {Col("DepartmentId")} = {P}DepartmentId AND {Col("RemovedOn")} IS NULL",
 				new
 				{
@@ -502,6 +506,128 @@ namespace Resgrid.Repositories.DataRepository
 		public Task<int> PurgeStartedBeforeAsync(DateTime before, CancellationToken cancellationToken = default)
 		{
 			return ExecuteAsync($"DELETE FROM {Tbl(Table)} WHERE {Col("StartedOn")} < {P}Before", new { Before = DatabaseTimestamp(before) }, cancellationToken);
+		}
+
+		public async Task<bool> TryBeginRecordingAsync(string providerCallId, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(providerCallId))
+				return false;
+
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl(Table)} SET {Col("RecordingState")} = {P}Requested WHERE {Col("ProviderCallId")} = {CaseInsensitive("CallSid")} " +
+				$"AND {Col("RecordingState")} = {P}None",
+				new { CallSid = providerCallId.Trim(), Requested = (int)VoiceIntakeRecordingStates.Requested, None = (int)VoiceIntakeRecordingStates.None },
+				cancellationToken);
+
+			return updated == 1;
+		}
+
+		public async Task<bool> SetRecordingSidAsync(string providerCallId, string recordingSid, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(providerCallId) || string.IsNullOrWhiteSpace(recordingSid))
+				return false;
+
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl(Table)} SET {Col("RecordingSid")} = {P}RecordingSid WHERE {Col("ProviderCallId")} = {CaseInsensitive("CallSid")} AND {Col("RecordingSid")} IS NULL",
+				new { CallSid = providerCallId.Trim(), RecordingSid = recordingSid.Trim() },
+				cancellationToken);
+
+			return updated == 1;
+		}
+
+		public async Task<bool> CompleteRecordingAsync(string providerCallId, string recordingSid, int? durationSeconds, int state, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(providerCallId))
+				return false;
+
+			// The sid the callback names wins over none; a stored one (from the start answer) is kept.
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl(Table)} SET {Col("RecordingState")} = {P}State, {Col("RecordingDurationSeconds")} = {P}Duration, " +
+				$"{Col("RecordingSid")} = COALESCE({Col("RecordingSid")}, {P}RecordingSid) " +
+				$"WHERE {Col("ProviderCallId")} = {CaseInsensitive("CallSid")} AND {Col("RecordingState")} = {P}Requested",
+				new
+				{
+					CallSid = providerCallId.Trim(),
+					RecordingSid = string.IsNullOrWhiteSpace(recordingSid) ? null : recordingSid.Trim(),
+					Duration = durationSeconds,
+					State = state,
+					Requested = (int)VoiceIntakeRecordingStates.Requested
+				},
+				cancellationToken);
+
+			return updated == 1;
+		}
+
+		public async Task<bool> TryClaimRecordingAsync(string voiceIntakeSessionId, int expectedState, DateTime claimedOn, DateTime staleBefore,
+			CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(voiceIntakeSessionId))
+				return false;
+
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl(Table)} SET {Col("RecordingClaimedOn")} = {P}ClaimedOn, {Col("RecordingAttempts")} = {Col("RecordingAttempts")} + 1 " +
+				$"WHERE {Col("VoiceIntakeSessionId")} = {P}Id AND {Col("RecordingState")} = {P}Expected " +
+				$"AND ({Col("RecordingClaimedOn")} IS NULL OR {Col("RecordingClaimedOn")} < {P}StaleBefore)",
+				new { Id = voiceIntakeSessionId, Expected = expectedState, ClaimedOn = DatabaseTimestamp(claimedOn), StaleBefore = DatabaseTimestamp(staleBefore) },
+				cancellationToken);
+
+			return updated == 1;
+		}
+
+		public async Task<bool> SetRecordingStateAsync(string voiceIntakeSessionId, int state, int? callAttachmentId, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(voiceIntakeSessionId))
+				return false;
+
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl(Table)} SET {Col("RecordingState")} = {P}State, {Col("RecordingClaimedOn")} = NULL, " +
+				$"{Col("RecordingCallAttachmentId")} = COALESCE({P}AttachmentId, {Col("RecordingCallAttachmentId")}) WHERE {Col("VoiceIntakeSessionId")} = {P}Id",
+				new { Id = voiceIntakeSessionId, State = state, AttachmentId = callAttachmentId },
+				cancellationToken);
+
+			return updated == 1;
+		}
+
+		public async Task<bool> MarkRecordingCarrierDeletedAsync(string voiceIntakeSessionId, DateTime deletedOn, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(voiceIntakeSessionId))
+				return false;
+
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl(Table)} SET {Col("RecordingCarrierDeletedOn")} = {P}DeletedOn WHERE {Col("VoiceIntakeSessionId")} = {P}Id AND {Col("RecordingCarrierDeletedOn")} IS NULL",
+				new { Id = voiceIntakeSessionId, DeletedOn = DatabaseTimestamp(deletedOn) },
+				cancellationToken);
+
+			return updated == 1;
+		}
+
+		public async Task<List<VoiceIntakeSession>> GetRecordingWorkAsync(DateTime purgeBefore, bool includeCarrierCopies, int max, CancellationToken cancellationToken = default)
+		{
+			var take = Math.Clamp(max, 1, 1000);
+			var top = IsPostgres ? string.Empty : $"TOP ({take}) ";
+			var limit = IsPostgres ? $" LIMIT {take}" : string.Empty;
+			var carrierCopies = includeCarrierCopies
+				? $" OR ({Col("RecordingSid")} IS NOT NULL AND {Col("RecordingCarrierDeletedOn")} IS NULL AND " +
+				  $"({Col("RecordingState")} IN ({P}Attached, {P}Discarded) OR ({Col("RecordingState")} = {P}Failed AND {Col("StartedOn")} < {P}PurgeBefore)))"
+				: string.Empty;
+
+			// Recording columns plus what the attach needs; never the answers (transcripts).
+			var rows = await QueryAsync<VoiceIntakeSession>(
+				$"SELECT {top}{Cols("VoiceIntakeSessionId", "DepartmentId", "ProviderCallId", "FromNumber", "ToNumber", "Step", "CallId", "StartedOn", "CompletedOn", "RecordingState", "RecordingSid", "RecordingDurationSeconds", "RecordingAttempts", "RecordingClaimedOn", "RecordingCallAttachmentId", "RecordingCarrierDeletedOn")} " +
+				$"FROM {Tbl(Table)} WHERE {Col("RecordingState")} IN ({P}Requested, {P}Completed){carrierCopies} " +
+				$"ORDER BY {Col("StartedOn")}{limit}",
+				new
+				{
+					Requested = (int)VoiceIntakeRecordingStates.Requested,
+					Completed = (int)VoiceIntakeRecordingStates.Completed,
+					Attached = (int)VoiceIntakeRecordingStates.Attached,
+					Discarded = (int)VoiceIntakeRecordingStates.Discarded,
+					Failed = (int)VoiceIntakeRecordingStates.Failed,
+					PurgeBefore = DatabaseTimestamp(purgeBefore)
+				},
+				cancellationToken);
+
+			return rows?.ToList() ?? new List<VoiceIntakeSession>();
 		}
 	}
 }

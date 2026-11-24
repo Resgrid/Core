@@ -54,7 +54,10 @@ namespace Resgrid.Model.Services
 	{
 		public CallEmailUpdateOutcomes Outcome { get; set; }
 
-		/// <summary>The call created, updated, closed or noted; null for <see cref="CallEmailUpdateOutcomes.CloseUnmatched"/> and Busy.</summary>
+		/// <summary>
+		/// The call created, updated, closed or noted (for AlreadyHandled, the call the first delivery touched); null for
+		/// <see cref="CallEmailUpdateOutcomes.CloseUnmatched"/> and Busy.
+		/// </summary>
 		public Call Call { get; set; }
 
 		/// <summary>The CAD call ID the email carried (normalised), or null.</summary>
@@ -110,13 +113,17 @@ namespace Resgrid.Model.Services
 		/// <paramref name="createCall"/> with the parsed call, which saves and dispatches it exactly as before and returns the saved
 		/// call; the created call carries the ID. Otherwise it updates, closes or notes the matched call itself, pages per the
 		/// department's rule and raises the refresh. Returns <see cref="CallEmailUpdateOutcomes.Busy"/> (nothing done) when another
-		/// email with the same ID held the lock too long. Exceptions from <paramref name="createCall"/> propagate.
+		/// email with the same ID held the lock too long, and <see cref="CallEmailUpdateOutcomes.AlreadyHandled"/> (nothing done, the
+		/// call it touched) for a redelivery of an email with the same provider message id that was already handled. Exceptions from
+		/// <paramref name="createCall"/> propagate, and so does a ledger write that fails before the call is changed (nothing was done;
+		/// retry the email).
 		/// </summary>
 		Task<EmailCallUpdateResult> ProcessAsync(EmailCallUpdateRequest request, Func<Call, Task<Call>> createCall, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// The ledger baseline for a call created outside <see cref="ProcessAsync"/> after it answered
-		/// <see cref="CallEmailUpdateOutcomes.Created"/> without one (intake email channels make their own pending call). Never throws.
+		/// <see cref="CallEmailUpdateOutcomes.Created"/> without one. No caller needs it today: intake email channels now save their
+		/// pending call inside the create delegate, so the engine records the baseline while it still holds the lock. Never throws.
 		/// </summary>
 		Task RecordCreatedAsync(EmailCallUpdateRequest request, Call saved, string cadCallId);
 

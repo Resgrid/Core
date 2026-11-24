@@ -7,8 +7,8 @@ using Newtonsoft.Json;
 namespace Resgrid.Model
 {
 	/// <summary>
-	/// What an inbound dispatch email carrying a CAD call ID did. Values 1-9 are stored on <see cref="CallEmailUpdate.Outcome"/>
-	/// (append only); 0 and -1 are only ever returned.
+	/// What an inbound dispatch email carrying a CAD call ID did. Values 1-10 are stored on <see cref="CallEmailUpdate.Outcome"/>
+	/// (append only); 0, -1 and -2 are only ever returned.
 	/// </summary>
 	public enum CallEmailUpdateOutcomes
 	{
@@ -42,8 +42,17 @@ namespace Resgrid.Model
 		/// <summary>A close or cancel email matched no call: nothing was created.</summary>
 		CloseUnmatched = 9,
 
+		/// <summary>
+		/// Written before an update or close changes the call, with the hashes it will set, and moved to Updated, Closed or Cancelled
+		/// once the call is saved. A row left here (the attempt died, or the move failed) counts only where the call shows its values.
+		/// </summary>
+		Applying = 10,
+
 		/// <summary>Not stored. Another email for the same CAD call ID is being handled; try again later.</summary>
-		Busy = -1
+		Busy = -1,
+
+		/// <summary>Not stored. This email (same provider message id) was already handled; a redelivery changes, notes and pages nothing.</summary>
+		AlreadyHandled = -2
 	}
 
 	/// <summary>Where a CAD email came in. Stored on <see cref="CallEmailUpdate.Source"/>; append only.</summary>

@@ -70,6 +70,10 @@ namespace Resgrid.Tests.Repositories
 			_master = Environment.GetEnvironmentVariable(IsPostgres ? "RESGRID_ADP_POSTGRES_TEST_CONNECTION" : "RESGRID_ADP_SQLSERVER_TEST_CONNECTION");
 			if (string.IsNullOrWhiteSpace(_master)) Assert.Ignore("Set a test connection to run real database checks.");
 
+			// As the API host runs (Startup): the seed's UTC DateTimes go into timestamp columns as written, not through the
+			// test server's session time zone.
+			if (IsPostgres) AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 			_previous = DataConfig.DatabaseType;
 			DataConfig.DatabaseType = type;
 			_configured = true;
@@ -169,6 +173,24 @@ namespace Resgrid.Tests.Repositories
 			rows.Select(r => r.Outcome).Should().Equal((int)CallEmailUpdateOutcomes.Created, (int)CallEmailUpdateOutcomes.Updated);
 			rows[0].FieldHashes.Should().Be("{\"Location\":\"abc\"}");
 			rows[0].SentOn.Should().NotBeNull();
+		}
+
+		[Test]
+		public async Task A_row_is_found_by_its_message_and_moved_on_only_from_the_outcome_it_was_written_with()
+		{
+			var repository = Repository();
+			var row = Row(42, "26-1", DateTime.UtcNow, CallEmailUpdateOutcomes.Applying);
+			row.MessageId = "PM-Abc-1";
+			await repository.InsertAsync(row, CancellationToken.None);
+			await repository.InsertAsync(Row(42, "26-1", DateTime.UtcNow), CancellationToken.None);
+
+			(await repository.GetByMessageAsync(Dept, " 26-1 ", "pm-abc-1")).Select(r => r.CallEmailUpdateId).Should().Equal(new[] { row.CallEmailUpdateId });
+			(await repository.GetByMessageAsync(Dept, "26-2", "PM-Abc-1")).Should().BeEmpty("another CAD call ID");
+			(await repository.GetByMessageAsync(Dept + 1, "26-1", "PM-Abc-1")).Should().BeEmpty("another department");
+
+			(await repository.SetOutcomeAsync(row.CallEmailUpdateId, (int)CallEmailUpdateOutcomes.Applying, (int)CallEmailUpdateOutcomes.Updated)).Should().BeTrue();
+			(await repository.SetOutcomeAsync(row.CallEmailUpdateId, (int)CallEmailUpdateOutcomes.Applying, (int)CallEmailUpdateOutcomes.Closed)).Should().BeFalse("it already moved on");
+			(await repository.GetByCallAsync(Dept, 42)).Single(r => r.CallEmailUpdateId == row.CallEmailUpdateId).Outcome.Should().Be((int)CallEmailUpdateOutcomes.Updated);
 		}
 
 		[Test]

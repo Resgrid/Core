@@ -238,18 +238,19 @@ namespace Resgrid.Tests.Services
 		{
 			Held(DepartmentPhoneNumberStatuses.Active);
 
-			var row = await _service.UpdateIntakeOptionsAsync(DepartmentId, false, true, "admin");
+			var row = await _service.UpdateIntakeOptionsAsync(DepartmentId, false, true, true, "admin");
 
 			row.SmsIntakeEnabled.Should().BeFalse();
 			row.VoiceIntakeEnabled.Should().BeTrue();
+			row.VoiceRecordingEnabled.Should().BeTrue("the recording switch is stored with the other intake options");
 			_channels.Verify(c => c.DisableChannelsForAddressAsync(DepartmentId, IntakeChannelTypes.Sms, Number, It.IsAny<CancellationToken>()), Times.Once);
 			_channels.Verify(c => c.DisableChannelsForAddressAsync(DepartmentId, IntakeChannelTypes.Voice, It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 
-			await _service.UpdateIntakeOptionsAsync(DepartmentId, true, true, "admin");
+			await _service.UpdateIntakeOptionsAsync(DepartmentId, true, true, false, "admin");
 			_channels.Verify(c => c.EnsureChannelAsync(DepartmentId, IntakeChannelTypes.Sms, Number, It.IsAny<string>(), "admin", It.IsAny<CancellationToken>()), Times.Once);
 
 			_repository.Rows.Clear();
-			(await FluentActions.Awaiting(() => _service.UpdateIntakeOptionsAsync(DepartmentId, true, true, "admin")).Should().ThrowAsync<DedicatedNumberException>())
+			(await FluentActions.Awaiting(() => _service.UpdateIntakeOptionsAsync(DepartmentId, true, true, false, "admin")).Should().ThrowAsync<DedicatedNumberException>())
 				.Which.Error.Should().Be(DedicatedNumberErrors.NoActiveNumber);
 		}
 

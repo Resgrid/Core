@@ -705,4 +705,25 @@
   <data name="FacilityMapsHint" xml:space="preserve">
     <value>انقر على غرفة لتعيين موقع البلاغ.</value>
   </data>
+  <data name="StrikeAlarm" xml:space="preserve">
+    <value>إطلاق الإنذار {0}</value>
+  </data>
+  <data name="StrikeAlarmConfirm" xml:space="preserve">
+    <value>هل تريد رفع هذا البلاغ إلى الإنذار {0}؟ سيتم إرسال موارد الإنذار التالي من خطة الاستجابة.</value>
+  </data>
+  <data name="EscalateRunCardsDisabled" xml:space="preserve">
+    <value>خطط الاستجابة غير مفعّلة لهذه الإدارة.</value>
+  </data>
+  <data name="EscalateCallNotFound" xml:space="preserve">
+    <value>لم يتم العثور على البلاغ.</value>
+  </data>
+  <data name="EscalateCallNotActive" xml:space="preserve">
+    <value>يمكن رفع مستوى البلاغات النشطة فقط.</value>
+  </data>
+  <data name="EscalateNoRunCard" xml:space="preserve">
+    <value>لا توجد خطة استجابة تطابق هذا البلاغ؛ لا يوجد ما يتم رفعه.</value>
+  </data>
+  <data name="EscalateNoResources" xml:space="preserve">
+    <value>لا تتضمن خطة الاستجابة موارد إضافية للإنذار التالي.</value>
+  </data>
 </root>

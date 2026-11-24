@@ -47,7 +47,7 @@ namespace Resgrid.Tests.AdminAssist
 				Access.Setup(u => u.ReserveTurnAsync(Actor, It.IsAny<AdminAssistAskStatus>(), It.IsAny<CancellationToken>())).ReturnsAsync(new AiUsageReservation("reservation", 7, "admin", 32768, DateTime.UtcNow.AddMinutes(2)));
 				Queries.Setup(q => q.ReadAsync(Actor, It.IsAny<AskToolInput>(), It.IsAny<CancellationToken>())).ReturnsAsync(new[] {
 					new AskEvidence("setup:report", "Setup", "Ui.report", Array.Empty<string>(), new Dictionary<string, decimal>(), "Known", null, "setup:report", "1", "1", DateTime.UtcNow) });
-				Service = new(Access.Object, ordinary.Object, Usage.Object, Queries.Object, new ConfigurationCatalog(), Store.Object, Protection.Object, new Lazy<ILlmClient>(() => Client.Object), TimeProvider.System);
+				Service = new(Access.Object, ordinary.Object, Usage.Object, Queries.Object, new ConfigurationCatalog(), Store.Object, Protection.Object, new Lazy<ILlmClient>(() => Client.Object), TimeProvider.System, Mock.Of<IAdminAssistReferenceSearch>(), Mock.Of<IDepartmentDataProtectionService>());
 			}
 		}
 		[Test]
@@ -120,7 +120,7 @@ namespace Resgrid.Tests.AdminAssist
 			// Arrange: access is revoked while the history refresh is running.
 			var f = new Fixture(); var id = Guid.NewGuid().ToString("D"); var row = new AiGenerationRow { Id = Guid.NewGuid().ToString("D"), ConversationId = id, Revision = 1 };
 			var access = new Mock<IAdminAssistAccessService>(); access.SetupSequence(a => a.CanAccessAsync(Actor, false, It.IsAny<CancellationToken>())).ReturnsAsync(true).ReturnsAsync(false);
-			var service = new AdminAssistAskService(f.Access.Object, access.Object, f.Usage.Object, f.Queries.Object, new ConfigurationCatalog(), f.Store.Object, f.Protection.Object, new Lazy<ILlmClient>(() => f.Client.Object), TimeProvider.System);
+			var service = new AdminAssistAskService(f.Access.Object, access.Object, f.Usage.Object, f.Queries.Object, new ConfigurationCatalog(), f.Store.Object, f.Protection.Object, new Lazy<ILlmClient>(() => f.Client.Object), TimeProvider.System, Mock.Of<IAdminAssistReferenceSearch>(), Mock.Of<IDepartmentDataProtectionService>());
 			f.Store.Setup(s => s.ReadAsync(Actor, id, It.IsAny<CancellationToken>())).ReturnsAsync(new[] { row });
 			f.Protection.Setup(p => p.ReadAsync(Actor, row, It.IsAny<CancellationToken>())).ReturnsAsync(new AskStoredContent("Plan help",
 				new[] { new AskToolInput("draft_plan", Id: "map-freshness") }, new[] { "draft:map-freshness:personnel" }));

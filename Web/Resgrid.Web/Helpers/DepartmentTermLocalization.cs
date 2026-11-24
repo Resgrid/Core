@@ -204,6 +204,8 @@ namespace Resgrid.Web.Helpers
 					"Inventory.UnitOfMeasure", "Inventory.UnitCost", "Inventory.M4AverageUnitCost", "Inventory.HelpFieldAmount",
 					"Inventory.HelpFieldAsset", "Inventory.HelpFieldTrackingMode", "Inventory.HelpFieldUnitCost", "Inventory.StepAssetItemHint",
 					"Inventory.StepAssetIdentityHint", "Inventory.StepKitIssueHint",
+					"InventoryImport.ImportUnitCost", "InventoryImport.ImportColumnUnitOfMeasure", "InventoryImport.ImportColumnUnitCost",
+					"InventoryImport.ImportRuleCost", "InventoryImport.ErrorImportUnitOfMeasureDefaulted",
 					"WorkOrders.UnitCost", "WorkOrders.ConditionUnit", "WorkOrders.MeterUnit", "WorkOrders.UseMeterReset",
 					"Workforce.DepreciationRate", "Workforce.DistanceUnit", "Workforce.ExpectedAnnualUtilizationHelp", "Workforce.FuelUnit",
 					"Workforce.UnitPrice", "Workforce.UsefulLifeQuantity", "Workforce.ResourceComponentsHelp",

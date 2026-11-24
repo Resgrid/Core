@@ -1175,4 +1175,25 @@
   <data name="FacilityMapsHint" xml:space="preserve">
     <value>Click a room to set the call location.</value>
   </data>
+  <data name="StrikeAlarm" xml:space="preserve">
+    <value>Strike Alarm {0}</value>
+  </data>
+  <data name="StrikeAlarmConfirm" xml:space="preserve">
+    <value>Escalate this call to alarm level {0}? The run card's next-alarm resources will be dispatched.</value>
+  </data>
+  <data name="EscalateRunCardsDisabled" xml:space="preserve">
+    <value>Run cards are not enabled for this department.</value>
+  </data>
+  <data name="EscalateCallNotFound" xml:space="preserve">
+    <value>Call not found.</value>
+  </data>
+  <data name="EscalateCallNotActive" xml:space="preserve">
+    <value>Only active calls can be escalated.</value>
+  </data>
+  <data name="EscalateNoRunCard" xml:space="preserve">
+    <value>No run card matches this call; nothing to escalate.</value>
+  </data>
+  <data name="EscalateNoResources" xml:space="preserve">
+    <value>The run card has no additional resources for the next alarm level.</value>
+  </data>
 </root>

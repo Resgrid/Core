@@ -5763,6 +5763,9 @@
   <data xml:space="preserve" name="Ui.Ask.Answered">
     <value>Éléments de preuve vérifiés associés</value>
   </data>
+  <data xml:space="preserve" name="Ui.Ask.Matched">
+    <value>Documentation associée issue de la recherche (non sélectionnée par l’IA)</value>
+  </data>
   <data xml:space="preserve" name="Ui.Ask.Boundary">
     <value>Trouvez des conseils de configuration, de mise en place et de modules complémentaires. Les réponses contiennent des fiches d’éléments de preuve actuelles et des sources de référence. Cette fonctionnalité ne peut pas modifier de paramètres, envoyer des messages, acheter des modules complémentaires ni prendre de décisions cliniques ou tactiques. Chaque question est évaluée indépendamment ; indiquez le nom du paramètre ou de la fonctionnalité.</value>
   </data>
@@ -5818,7 +5821,7 @@
     <value>Référence uniquement</value>
   </data>
   <data xml:space="preserve" name="Ui.Ask.Privacy">
-    <value>Votre historique est privé à votre compte et à votre département. Les questions sont chiffrées au repos et conservées 30 jours par défaut, sous réserve de rétentions approuvées. Seuls les concepts publics correspondants et les métadonnées autorisées parviennent au modèle local. Ne saisissez pas de détails sur les patients, de récits d’incidents, de mots de passe ni de jetons.</value>
+    <value>Votre historique est privé à votre compte et à votre département. Les questions sont chiffrées au repos et conservées 30 jours par défaut, sous réserve de rétentions approuvées. Votre question est envoyée au modèle d’IA pour trouver les conseils correspondants ; avec la Protection avancée des données, seuls ses mots qui figurent aussi dans la documentation publique de Resgrid sont envoyés. Ne saisissez jamais d’informations personnelles ou de santé (PII ou PHI), de détails sur les patients, de récits d’incidents, de mots de passe ni de jetons.</value>
   </data>
   <data xml:space="preserve" name="Ui.Ask.ProposedValue">
     <value>Valeur proposée (aperçu uniquement)</value>

@@ -1127,12 +1127,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EscalateCall([FromForm] int callId, CancellationToken cancellationToken)
 		{
 			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId))
-				return Json(new { success = false, message = "Run cards are not enabled for this department." });
+				return Json(new { success = false, message = _dispatchLocalizer["EscalateRunCardsDisabled"].Value });
 
 			var call = await _callsService.GetCallByIdAsync(callId);
 
 			if (call == null || call.DepartmentId != DepartmentId)
-				return Json(new { success = false, message = HttpContext.WithDepartmentTerms("Call not found.") });
+				return Json(new { success = false, message = _dispatchLocalizer["EscalateCallNotFound"].Value });
 
 			// The Call_Update claim and the department check above are not enough on their
 			// own: escalating dispatches units and notifies personnel, so it takes the same
@@ -1142,7 +1142,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			if (call.State != (int)CallStates.Active)
-				return Json(new { success = false, message = "Only active calls can be escalated." });
+				return Json(new { success = false, message = _dispatchLocalizer["EscalateCallNotActive"].Value });
 
 			call = await _callsService.PopulateCallData(call, true, false, false, true, true, true, false, false, false);
 
@@ -1152,10 +1152,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var result = await _dispatchRecommendationService.EnrichCallForDispatchAsync(call, targetAlarmLevel, false, cancellationToken);
 
 			if (!result.MatchedRunCardId.HasValue)
-				return Json(new { success = false, message = "No run card matches this call; nothing to escalate." });
+				return Json(new { success = false, message = _dispatchLocalizer["EscalateNoRunCard"].Value });
 
 			if (!result.HasRecommendations)
-				return Json(new { success = false, message = "The run card has no additional resources for the next alarm level.", result });
+				return Json(new { success = false, message = _dispatchLocalizer["EscalateNoResources"].Value, result });
 
 			var newUnitIds = result.Units.Select(u => u.UnitId).ToList();
 			var newUserIds = result.Personnel.Select(p => p.UserId).ToList();

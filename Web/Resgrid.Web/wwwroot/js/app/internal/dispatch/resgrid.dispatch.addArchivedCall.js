@@ -133,6 +133,7 @@
 
                     map.onClick(function (clicked) {
                             var e = { latlng: { lat: clicked[0], lng: clicked[1] } };
+                        callLocationChanged();
                         resgrid.dispatch.addArchivedCall.setMarkerLocation(e.latlng.lat, e.latlng.lng);
 
                         $("#Latitude").val(e.latlng.lat.toString());
@@ -179,6 +180,7 @@
                             if (result && result.Data && result.Data.Latitude && result.Data.Longitude) {
                                 var lat = result.Data.Latitude;
                                 var lng = result.Data.Longitude;
+                                callLocationChanged();
                                 if (map) {
                                     map.setView([Number(lat), Number(lng)], 16);
                                 }
@@ -201,6 +203,7 @@
                         alert(getText('invalidCoordinates', 'Please enter valid numeric latitude and longitude values.'));
                         return false;
                     }
+                    callLocationChanged();
                     if (map) {
                         map.setView([Number(lat), Number(lng)], 16);
                     }
@@ -217,6 +220,7 @@
                         type: 'GET'
                     }).done(function (data) {
                         if (data && data.Latitude && data.Longitude) {
+                            callLocationChanged();
                             if (map) {
                                 map.setView([Number(data.Latitude), Number(data.Longitude)], 16);
                             }
@@ -449,6 +453,7 @@
                     callMarker = map.addMarker([Number(lat), Number(lng)], { draggable: true });
                     callMarker.onDragEnd(function (moved) {
                         var position = { lat: moved[0], lng: moved[1] };
+                        callLocationChanged();
                         map.setView(moved);
 
                         $("#Latitude").val(position.lat);
@@ -463,14 +468,19 @@
             function getAuthToken() {
                 return '';
             }
+            // Reverse geocodes (the address of a clicked or found point): each takes the next number and fills the address only
+            // while it is still the latest, so the answer for an earlier click never lands over a newer location. Returns the
+            // lookup, which always settles (a failure is logged), for callers that wait on it.
+            var reverseGeocodeRequest = 0;
             function geocodeCoordinates(lat, lng) {
-				fetch('/api/web-bff/api/v4/Geocoding/ReverseGeocode?lat=' + lat + '&lon=' + lng)
+                var request = ++reverseGeocodeRequest;
+				return fetch('/api/web-bff/api/v4/Geocoding/ReverseGeocode?lat=' + lat + '&lon=' + lng)
 					.then(function(r) {
 						if (!r.ok) throw new Error('ReverseGeocode failed with HTTP status ' + r.status);
 						return r.json();
 					})
                     .then(function(result) {
-                        if (result && result.Data && result.Data.Address && !userSuppliedAddress) {
+                        if (request === reverseGeocodeRequest && result && result.Data && result.Data.Address && !userSuppliedAddress) {
                             $("#Call_Address").val(result.Data.Address);
                         }
                     })
@@ -479,6 +489,17 @@
 					});
             }
             addArchivedCall.geocodeCoordinates = geocodeCoordinates;
+            /**
+             * The dispatcher placed the call another way (map click, search, pin, dragged marker): an address lookup for an earlier
+             * point and a call plus code still typed or being looked up (resgrid.dispatch.calllocations) no longer apply.
+             */
+            function callLocationChanged() {
+                reverseGeocodeRequest++;
+                if (resgrid.dispatch.calllocations && typeof resgrid.dispatch.calllocations.callLocationChanged === 'function') {
+                    resgrid.dispatch.calllocations.callLocationChanged();
+                }
+            }
+            addArchivedCall.callLocationChanged = callLocationChanged;
 
             function findLocation(pos) {
 				fetch('/api/web-bff/api/v4/Geocoding/ReverseGeocode?lat=' + pos.lat + '&lon=' + pos.lng)

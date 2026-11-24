@@ -1,0 +1,372 @@
+@using System.Globalization
+@using System.Linq
+@using Newtonsoft.Json
+@using Resgrid.Model.Inventories
+@using Resgrid.Services
+@using Resgrid.Web.Areas.User.Models
+@using Resgrid.Web.Areas.User.Models.Inventory
+@model InventoryImportView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.InventoryImport> importLocalizer
+@*
+    Inventory -> Import. Three states on one page: get a file and upload it; review the plan
+    (nothing is written yet); the applied result. Every step is a POST form bound by
+    inventory-modern.js, so under Advanced Data Protection the reveal grant travels with it.
+*@
+@functions {
+    string Message(string code)
+    {
+        if (string.IsNullOrEmpty(code)) return "";
+        var own = importLocalizer["Error" + code];
+        if (!own.ResourceNotFound) return own.Value;
+        var shared = localizer[code];
+        return shared.ResourceNotFound ? importLocalizer["ErrorUnknown"].Value + " (" + code + ")" : shared.Value;
+    }
+
+    string Amount(decimal? value) => value?.ToString("#,0.######", CultureInfo.CurrentCulture) ?? "";
+
+    string Signed(decimal value) => value > 0 ? "+" + Amount(value) : Amount(value);
+
+    string Money(decimal? value, string currency) => value.HasValue
+        ? value.Value.ToString("#,0.00####", CultureInfo.CurrentCulture) + (string.IsNullOrEmpty(currency) ? "" : " " + currency)
+        : "";
+
+    static readonly string[] ColumnKeys = InventoryImportCsv.Header.ToArray();
+}
+@{
+    ViewBag.Title = "Resgrid | " + importLocalizer["ImportTitle"];
+    ViewData["Module"] = "Import";
+    ViewData["Intro"] = importLocalizer["ImportIntro"].Value;
+    var protectedData = ViewBag.ProtectionEnforced == true;
+    var preview = Model.Preview;
+    var result = Model.Result;
+}
+
+@await Html.PartialAsync("_Shell", new InventoryWorkspaceView { CanWrite = Model.CanWrite })
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>@importLocalizer["ImportTitle"]</h5>
+        </div>
+        <div class="ibox-content">
+            @if (protectedData)
+            {
+                @await Html.PartialAsync("_AdpRevealBanner", new AdpRevealView { BannerTitle = localizer["ProtectedDataRequired"].Value })
+            }
+
+            <div id="inventory-message" class="alert alert-info" role="status" hidden></div>
+
+            @* Revealing protected data reloads this page through this form. *@
+            <form id="inventory-page" asp-action="ReopenImport" method="post" class="inventory-navigation">
+                @Html.AntiForgeryToken()
+            </form>
+
+            @if (Model.ErrorCode != null)
+            {
+                <div class="alert @(Model.Locked ? "alert-warning" : "alert-danger")" role="alert">
+                    <i class="fa @(Model.Locked ? "fa-lock" : "fa-exclamation-triangle")"></i>
+                    @(Model.Locked ? importLocalizer["ImportLocked"].Value : Message(Model.ErrorCode))
+                </div>
+            }
+
+            @if (!Model.Migrated)
+            {
+                <div class="text-center m-t-lg m-b-lg">
+                    <i class="fa fa-cubes fa-3x text-muted"></i>
+                    <h4 class="m-t-sm">@localizer["Initialize"]</h4>
+                    <p>@importLocalizer["ImportNotMigrated"]</p>
+                    <form asp-action="Reopen" method="post" class="inventory-navigation m-t">
+                        @Html.AntiForgeryToken()
+                        <button class="btn btn-primary" type="submit"><i class="fa fa-cubes"></i> @importLocalizer["ImportBackToInventory"]</button>
+                    </form>
+                </div>
+            }
+            else if (!Model.CanWrite)
+            {
+                <div class="alert alert-warning" role="alert">@importLocalizer["ImportNoPermission"]</div>
+            }
+            else if (result != null)
+            {
+                @* ── Applied ───────────────────────────────────────────── *@
+                <div class="alert alert-success" role="status">
+                    <i class="fa fa-check-circle"></i>
+                    @(result.AlreadyApplied ? importLocalizer["ImportAlreadyApplied"].Value : importLocalizer["ImportApplied"].Value)
+                    @if (!string.IsNullOrEmpty(Model.FileName))
+                    {
+                        <span class="text-muted">· @Model.FileName</span>
+                    }
+                </div>
+                <div class="rgw-stat-tiles">
+                    @foreach (var (label, value) in new[]
+                    {
+                        ("ImportTotalItemsCreated", result.Totals.ItemsCreated), ("ImportTotalItemsUpdated", result.Totals.ItemsUpdated),
+                        ("ImportTotalLocations", result.Totals.LocationsCreated), ("ImportTotalCategories", result.Totals.CategoriesCreated),
+                        ("ImportTotalLots", result.Totals.LotsCreated), ("ImportTotalAssets", result.Totals.AssetsCreated),
+                        ("ImportTotalPar", result.Totals.ParLevelsSet), ("ImportTotalMovements", result.TransactionCount)
+                    })
+                    {
+                        <div class="rgw-stat-tile">
+                            <div class="rgw-stat-label">@importLocalizer[label]</div>
+                            <div class="rgw-stat-value">@value.ToString("#,0", CultureInfo.CurrentCulture)</div>
+                        </div>
+                    }
+                </div>
+                <div class="rgw-toolbar m-t">
+                    <form asp-action="Reopen" method="post" class="inventory-navigation">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="tab" value="OnHand" />
+                        <button class="btn btn-primary" type="submit"><i class="fa fa-cubes"></i> @importLocalizer["ImportViewOnHand"]</button>
+                    </form>
+                    <form asp-action="Reopen" method="post" class="inventory-navigation">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="tab" value="History" />
+                        <button class="btn btn-default" type="submit"><i class="fa fa-history"></i> @importLocalizer["ImportViewHistory"]</button>
+                    </form>
+                    <form asp-action="ReopenImport" method="post" class="inventory-navigation">
+                        @Html.AntiForgeryToken()
+                        <button class="btn btn-default" type="submit"><i class="fa fa-upload"></i> @importLocalizer["ImportAnother"]</button>
+                    </form>
+                </div>
+            }
+            else if (preview != null)
+            {
+                @* ── Review ────────────────────────────────────────────── *@
+                <p class="text-muted">
+                    @importLocalizer["ImportReviewIntro"]
+                    @if (!string.IsNullOrEmpty(Model.FileName))
+                    {
+                        <strong>@Model.FileName</strong>
+                    }
+                </p>
+                @if (preview.IgnoredColumns.Count > 0)
+                {
+                    <div class="alert alert-info" role="status">@string.Format(CultureInfo.CurrentCulture, importLocalizer["ImportIgnoredColumns"].Value, string.Join(", ", preview.IgnoredColumns))</div>
+                }
+                @if (preview.ErrorRows > 0)
+                {
+                    <div class="alert alert-danger" role="alert">@string.Format(CultureInfo.CurrentCulture, importLocalizer["ImportErrorsFound"].Value, preview.ErrorRows)</div>
+                }
+                else
+                {
+                    <div class="alert alert-success" role="status">@importLocalizer["ImportReadyToApply"]</div>
+                }
+
+                <div class="rgw-stat-tiles">
+                    @foreach (var (label, value) in new[]
+                    {
+                        ("ImportTotalItemsCreated", preview.Totals.ItemsCreated), ("ImportTotalItemsUpdated", preview.Totals.ItemsUpdated),
+                        ("ImportTotalLocations", preview.Totals.LocationsCreated), ("ImportTotalCategories", preview.Totals.CategoriesCreated),
+                        ("ImportTotalLots", preview.Totals.LotsCreated), ("ImportTotalAssets", preview.Totals.AssetsCreated),
+                        ("ImportTotalReceipts", preview.Totals.Receipts), ("ImportTotalDecreases", preview.Totals.Decreases),
+                        ("ImportTotalUnchanged", preview.Totals.Unchanged), ("ImportTotalPar", preview.Totals.ParLevelsSet)
+                    })
+                    {
+                        <div class="rgw-stat-tile">
+                            <div class="rgw-stat-label">@importLocalizer[label]</div>
+                            <div class="rgw-stat-value">@value.ToString("#,0", CultureInfo.CurrentCulture)</div>
+                        </div>
+                    }
+                    @foreach (var total in preview.AddedValue)
+                    {
+                        <div class="rgw-stat-tile">
+                            <div class="rgw-stat-label">@importLocalizer["ImportAddedValue"]</div>
+                            <div class="rgw-stat-value">@Money(total.KnownValue, total.CurrencyCode)</div>
+                            @if (total.UncostedRows > 0)
+                            {
+                                <small class="text-muted">@string.Format(CultureInfo.CurrentCulture, importLocalizer["ImportUncosted"].Value, total.UncostedRows)</small>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <div class="rgw-toolbar m-t">
+                    @if (preview.ErrorRows > 0)
+                    {
+                        <label class="checkbox-inline m-r">
+                            <input type="checkbox" id="inventory-import-problems" /> @importLocalizer["ImportOnlyProblems"]
+                        </label>
+                    }
+                    <div class="rgw-toolbar-spacer"></div>
+                    <form asp-action="ReopenImport" method="post" class="inventory-navigation">
+                        @Html.AntiForgeryToken()
+                        <button class="btn btn-white" type="submit">@importLocalizer["ImportStartOver"]</button>
+                    </form>
+                    @if (preview.CanApply)
+                    {
+                        <form asp-action="ApplyImport" method="post" class="inventory-navigation inventory-import-apply">
+                            @Html.AntiForgeryToken()
+                            @* Base64 so the file's line breaks and quotes come back byte for byte. *@
+                            <input type="hidden" name="data" value="@Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(Model.Csv ?? ""))" />
+                            <input type="hidden" name="requestId" value="@Model.RequestId" />
+                            <input type="hidden" name="previewHash" value="@preview.PreviewHash" />
+                            <input type="hidden" name="fileName" value="@Model.FileName" />
+                            <button class="btn btn-primary" type="submit"><i class="fa fa-check"></i> @importLocalizer["ImportApplyButton"]</button>
+                        </form>
+                    }
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table" id="inventory-import-rows">
+                        <thead>
+                            <tr>
+                                <th>@importLocalizer["ImportRow"]</th>
+                                <th>@importLocalizer["ImportItem"]</th>
+                                <th>@importLocalizer["ImportLocation"]</th>
+                                <th class="text-right">@importLocalizer["ImportCurrent"]</th>
+                                <th class="text-right">@importLocalizer["ImportNew"]</th>
+                                <th class="text-right">@importLocalizer["ImportChange"]</th>
+                                <th class="text-right">@importLocalizer["ImportUnitCost"]</th>
+                                <th>@importLocalizer["ImportOutcome"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in preview.Rows)
+                            {
+                                var problem = row.ErrorCode != null || row.Warnings.Count > 0;
+                                <tr class="@(row.ErrorCode != null ? "danger" : null)" data-import-problem="@(problem ? "true" : "false")">
+                                    <td>@row.RowNumber</td>
+                                    <td>
+                                        @row.ItemName
+                                        @if (row.ErrorCode == null)
+                                        {
+                                            <small class="text-muted rgw-sub">
+                                                @importLocalizer["ImportItem" + row.ItemAction]
+                                                @if (row.CreatesCategory) { <text>· @importLocalizer["ImportNewCategory"]</text> }
+                                            </small>
+                                            @if (row.ChangedFields.Count > 0)
+                                            {
+                                                <small class="text-muted rgw-sub">@string.Format(CultureInfo.CurrentCulture, importLocalizer["ImportChangedFields"].Value, string.Join(", ", row.ChangedFields))</small>
+                                            }
+                                        }
+                                    </td>
+                                    <td>
+                                        @row.LocationName
+                                        @if (row.CreatesLocation) { <small class="text-muted rgw-sub">@importLocalizer["ImportNewLocation"]</small> }
+                                        @if (!string.IsNullOrEmpty(row.LotNumber))
+                                        {
+                                            <small class="text-muted rgw-sub">@localizer["Batch"]: @row.LotNumber @(row.CreatesLot ? "· " + importLocalizer["ImportNewLot"].Value : "")</small>
+                                        }
+                                        @if (!string.IsNullOrEmpty(row.SerialNumber))
+                                        {
+                                            <small class="text-muted rgw-sub">@localizer["SerialNumber"]: @row.SerialNumber</small>
+                                        }
+                                        @if (row.ParLevel.HasValue)
+                                        {
+                                            <small class="text-muted rgw-sub">@importLocalizer["ImportParLevel"]: @Amount(row.ParLevel)</small>
+                                        }
+                                    </td>
+                                    <td class="text-right">@Amount(row.CurrentQuantity)</td>
+                                    <td class="text-right">@Amount(row.NewQuantity)</td>
+                                    <td class="text-right">@(row.StockAction is InventoryImportStockAction.Receive or InventoryImportStockAction.Decrease or InventoryImportStockAction.CreateAsset ? Signed(row.Change) : "")</td>
+                                    <td class="text-right">@Money(row.UnitCost, row.CurrencyCode)</td>
+                                    <td>
+                                        @if (row.ErrorCode != null)
+                                        {
+                                            <span class="label label-danger">@importLocalizer["ImportNeedsFixing"]</span>
+                                            <small class="rgw-sub">@Message(row.ErrorCode)@(row.ErrorColumn != null ? " (" + row.ErrorColumn + ")" : "")</small>
+                                        }
+                                        else
+                                        {
+                                            <span class="label @(row.StockAction switch { InventoryImportStockAction.Receive or InventoryImportStockAction.CreateAsset => "label-primary", InventoryImportStockAction.Decrease => "label-warning", _ => "" })">@importLocalizer["ImportStock" + row.StockAction]</span>
+                                            @foreach (var warning in row.Warnings)
+                                            {
+                                                <small class="text-warning rgw-sub"><i class="fa fa-info-circle"></i> @Message(warning)</small>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                @* ── Get a file, upload it ─────────────────────────────── *@
+                <div class="rgw-card-grid">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><strong>@importLocalizer["ImportStepFile"]</strong></div>
+                        <div class="panel-body">
+                            <p class="text-muted">@importLocalizer["ImportStepFileHelp"]</p>
+                            <p><a class="btn btn-default" asp-action="ImportTemplate"><i class="fa fa-file-o"></i> @importLocalizer["ImportDownloadTemplate"]</a></p>
+                            <form asp-action="ExportImport" method="post" class="inventory-navigation">
+                                @Html.AntiForgeryToken()
+                                <button class="btn btn-default" type="submit"><i class="fa fa-download"></i> @importLocalizer["ImportDownloadCurrent"]</button>
+                            </form>
+                            <p class="text-muted m-t-sm"><small>@importLocalizer["ImportDownloadCurrentHelp"]</small></p>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><strong>@importLocalizer["ImportStepUpload"]</strong></div>
+                        <div class="panel-body">
+                            <form asp-action="PreviewImport" method="post" enctype="multipart/form-data" class="inventory-navigation">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="requestId" value="@Model.RequestId" />
+                                <div class="form-group">
+                                    <label for="inventory-import-file">@importLocalizer["ImportFile"]</label>
+                                    <input type="file" name="file" id="inventory-import-file" class="form-control" accept=".csv,.txt,text/csv" required aria-describedby="inventory-import-file-help" />
+                                    <span class="help-block m-b-none" id="inventory-import-file-help">@string.Format(CultureInfo.CurrentCulture, importLocalizer["ImportFileHelp"].Value, InventoryImportLimits.MaxRows.ToString("#,0", CultureInfo.CurrentCulture))</span>
+                                </div>
+                                <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i> @importLocalizer["ImportPreviewButton"]</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                @* Column names are file headers, not words: they go in as arguments so translation and the
+                   department's own terms (a renamed "Unit") never change them. *@
+                <h4 class="m-t-lg">@importLocalizer["ImportHowItWorks"]</h4>
+                <ul class="rgw-import-rules">
+                    @foreach (var (rule, columns) in new (string, string[])[]
+                    {
+                        ("ImportRuleCount", new[] { InventoryImportCsv.Columns.Quantity }),
+                        ("ImportRuleItems", new[] { InventoryImportCsv.Columns.Item }),
+                        ("ImportRuleCatalogRows", new[] { InventoryImportCsv.Columns.Quantity, InventoryImportCsv.Columns.SerialNumber }),
+                        ("ImportRuleLocations", new[] { InventoryImportCsv.Columns.Location, InventoryImportCsv.Columns.Station, InventoryImportCsv.Columns.Unit }),
+                        ("ImportRuleSerialized", new[] { InventoryImportCsv.Columns.SerialNumber }),
+                        ("ImportRuleLots", new[] { InventoryImportCsv.Columns.Lot, InventoryImportCsv.Columns.Expires }),
+                        ("ImportRuleCost", new[] { InventoryImportCsv.Columns.UnitCost }),
+                        ("ImportRuleControlled", Array.Empty<string>()),
+                        ("ImportRuleAllOrNothing", Array.Empty<string>())
+                    })
+                    {
+                        <li>@string.Format(CultureInfo.CurrentCulture, importLocalizer[rule].Value, columns.Cast<object>().ToArray())</li>
+                    }
+                </ul>
+
+                <h4 class="m-t-lg">@importLocalizer["ImportColumns"]</h4>
+                <p class="text-muted">@string.Format(CultureInfo.CurrentCulture, importLocalizer["ImportColumnsHelp"].Value, InventoryImportCsv.Columns.Item, InventoryImportCsv.Columns.Tracking)</p>
+                <div class="table-responsive">
+                    <table class="table table-condensed rgw-table">
+                        <thead><tr><th>@importLocalizer["ImportColumnName"]</th><th>@importLocalizer["ImportColumnMeaning"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var column in ColumnKeys)
+                            {
+                                <tr>
+                                    <td><code>@column</code></td>
+                                    <td>@importLocalizer["ImportColumn" + column]</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script id="inventory-settings" type="application/json">@Html.Raw(JsonConvert.SerializeObject(new { protectedData = ViewBag.ProtectionEnforced == true, grant = (string)ViewBag.ProtectedGrant, expiry = (DateTime?)ViewBag.GrantExpiresOn, index = Url.Action("Import"), failed = localizer["UnableToComplete"].Value, witness = localizer["WitnessPending"].Value }, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+    <script src="~/js/app/internal/inventory/inventory-modern.js" asp-append-version="true"></script>
+    <script src="~/js/app/internal/inventory/inventory-import.js" asp-append-version="true"></script>
+    @if (ViewBag.ProtectionEnforced == true)
+    {
+        @await Html.PartialAsync("_AdpRevealScripts", new AdpRevealView { BannerTitle = localizer["ProtectedDataRequired"].Value, GrantExpiresOnUtc = (DateTime?)ViewBag.GrantExpiresOn, BindForms = new List<string> { "form.inventory-navigation" } })
+    }
+}

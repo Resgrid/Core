@@ -406,6 +406,12 @@ namespace Resgrid.Web.Services.Controllers
 
 								if (parsed?.Call == null)
 								{
+									// A close or cancel the format does not read as a call still closes the call carrying its CAD call ID.
+									var closeOnly = await CloseWithoutCallAsync(departmentId.Value, emailSettings.Department, emailSettings.FormatType, callEmail,
+										defaultPriority, CallEmailUpdateSources.DispatchAddress, cancellationToken);
+									if (closeOnly != null)
+										return await AnswerUpdateAsync(receipt, closeOnly, null);
+
 									// The department's email format found no call in this email, and would read it the same way again.
 									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 									return NotProcessable();
@@ -659,6 +665,12 @@ namespace Resgrid.Web.Services.Controllers
 
 								if (parsed?.Call == null)
 								{
+									// A close or cancel the format does not read as a call still closes the call carrying its CAD call ID.
+									var closeOnly = await CloseWithoutCallAsync(departmentGroup.DepartmentId, emailSettings.Department, emailSettings.FormatType, callEmail,
+										defaultPriority, CallEmailUpdateSources.GroupDispatchAddress, cancellationToken);
+									if (closeOnly != null)
+										return await AnswerUpdateAsync(receipt, closeOnly, null);
+
 									// The department's email format found no call in this email, and would read it the same way again.
 									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 									return NotProcessable();
@@ -824,6 +836,44 @@ namespace Resgrid.Web.Services.Controllers
 
 			// Ok(null) is answered 204, which Postmark retries for hours: a close email that matched no call has no call to return.
 			return update.Call != null ? Ok(update.Call) : Ok();
+		}
+
+		/// <summary>
+		/// A close or cancel email the department's format reads as no call (an Active911 "CLOSED …" page has no "active" in its subject)
+		/// still goes to the CAD update engine, as intake does, which closes the open call carrying its CAD call ID or notes the close on a
+		/// call already closed. Nothing is ever created from it. Null when the email is not a close the department's CAD update
+		/// settings recognise, or carries no CAD call ID they can read without the format (the caller answers 403).
+		/// </summary>
+		private async Task<EmailCallUpdateResult> CloseWithoutCallAsync(int departmentId, Department department, int formatType, CallEmail callEmail,
+			int defaultPriority, CallEmailUpdateSources source, CancellationToken cancellationToken)
+		{
+			var config = await _departmentSettingsService.GetEmailCallUpdateConfigAsync(departmentId, formatType);
+			if (config == null || !config.Enabled || CadEmailText.DetectClose(config, callEmail) == CadEmailCloseKinds.None)
+				return null;
+
+			// An ID the format reads (FromFormat) is not there: the format found nothing in this email.
+			if (CadEmailText.ExtractCallId(config, callEmail, null) == null)
+				return null;
+
+			var body = CadEmailText.BodyText(callEmail);
+			var parsed = new CallEmailParseResult
+			{
+				Call = new Call { DepartmentId = departmentId, Name = callEmail.Subject, NatureOfCall = body, Priority = defaultPriority }
+			};
+
+			var update = await _emailCallUpdateService.ProcessAsync(new EmailCallUpdateRequest
+			{
+				DepartmentId = departmentId,
+				Department = department,
+				FormatType = formatType,
+				Email = callEmail,
+				Parsed = parsed,
+				Source = source,
+				Config = config
+			}, unsaved => Task.FromResult<Call>(null), cancellationToken);
+
+			// The create path only runs without a usable ID; it creates nothing here, and the email is answered as unreadable.
+			return update.CreatedNewCall ? null : update;
 		}
 
 		/// <summary>

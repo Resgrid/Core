@@ -834,4 +834,10 @@
   <data name="TermChecklist" xml:space="preserve">
     <value>Checklista</value>
   </data>
+  <data name="AiPromptPiiWarning" xml:space="preserve">
+    <value>Ta aldrig med personuppgifter (PII) eller hälsouppgifter (PHI) i AI-frågor: inga namn, telefonnummer, adresser, patientuppgifter eller insatsbeskrivningar. Det du skriver här kan skickas till en AI-modell.</value>
+  </data>
+  <data name="ToggleMenu" xml:space="preserve">
+    <value>Visa eller dölj menyn</value>
+  </data>
 </root>

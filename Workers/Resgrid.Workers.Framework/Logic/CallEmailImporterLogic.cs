@@ -15,6 +15,19 @@ namespace Resgrid.Workers.Framework.Logic
 {
 	public class CallEmailImporterLogic
 	{
+		/// <summary>How long one attempt waits for another email with the same CAD call ID, and how many attempts an email gets.</summary>
+		private static readonly TimeSpan BusyLockTimeout = TimeSpan.FromSeconds(30);
+		private const int BusyAttempts = 3;
+
+		/// <summary>One mailbox delivery: its message id, else (a server that gives none) the call it reads as.</summary>
+		public static string DeliveryKey(CallEmail email, Call parsed)
+		{
+			if (!String.IsNullOrWhiteSpace(email?.MessageId))
+				return "id\n" + email.MessageId.Trim();
+
+			return "text\n" + (parsed?.Name ?? string.Empty) + "\n" + (parsed?.NatureOfCall ?? string.Empty);
+		}
+
 		public async Task<Tuple<bool, string>> Process(CallEmailQueueItem item)
 		{
 			bool success = true;
@@ -146,7 +159,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 					var emailCallUpdates = scope.Resolve<IEmailCallUpdateService>();
 
-					// The same email fetched twice in one pass is imported once.
+					// The same delivery fetched twice in one pass is imported once: by its message id, else (no id) by what it says.
 					var seen = new HashSet<string>(StringComparer.Ordinal);
 					foreach (var email in emailResult.Emails)
 					{
@@ -159,16 +172,16 @@ namespace Resgrid.Workers.Framework.Logic
 								continue;
 
 							parsed.Call.DepartmentId = item.EmailSettings.DepartmentId;
-							if (!seen.Add((parsed.Call.Name ?? string.Empty) + "\n" + (parsed.Call.NatureOfCall ?? string.Empty)))
+							var delivery = DeliveryKey(email, parsed.Call);
+							if (seen.Contains(delivery))
 								continue;
 
 							// Sender, for the AI dispatch sender allowlist (never put on the bus).
 							var sender = string.IsNullOrWhiteSpace(email.From) ? null : email.From;
 
 							// A follow-up email for an open call (same CAD call ID) updates it in place (cad-email-call-updates-plan.md; this
-							// path used to copy a matched call into a second, new call). The messages are already off the mail server, so an
-							// email that cannot take the lock is imported as a new call rather than lost.
-							var update = await emailCallUpdates.ProcessAsync(new EmailCallUpdateRequest
+							// path used to copy a matched call into a second, new call).
+							var request = new EmailCallUpdateRequest
 							{
 								DepartmentId = item.EmailSettings.DepartmentId,
 								Department = item.EmailSettings.Department,
@@ -176,17 +189,30 @@ namespace Resgrid.Workers.Framework.Logic
 								Email = email,
 								Parsed = parsed,
 								Source = CallEmailUpdateSources.MailboxImport,
-								LockTimeout = TimeSpan.FromSeconds(30)
-							}, call => createImportedCall(call, sender));
+								LockTimeout = BusyLockTimeout
+							};
+
+							var update = await emailCallUpdates.ProcessAsync(request, call => createImportedCall(call, sender));
+
+							// Another email for the same CAD call held the lock: it is handling that incident, so this one never becomes a second
+							// call (that would page the incident twice). The message is already off the mail server, so it is tried again here.
+							for (var attempt = 1; update.Outcome == CallEmailUpdateOutcomes.Busy && attempt < BusyAttempts; attempt++)
+								update = await emailCallUpdates.ProcessAsync(request, call => createImportedCall(call, sender));
 
 							if (update.Outcome == CallEmailUpdateOutcomes.Busy)
 							{
-								Logging.LogError($"Imported email for department {item.EmailSettings.DepartmentId}: CAD call {update.CadCallId} stayed locked; imported as a new call.");
-								await createImportedCall(parsed.Call, sender);
+								success = false;
+								result = $"CAD call {update.CadCallId} stayed locked; the email from the mailbox was not applied.";
+								Logging.LogError($"Imported email for department {item.EmailSettings.DepartmentId}: CAD call {update.CadCallId} stayed locked after {BusyAttempts} attempts; the email was not applied.");
+								continue;
 							}
+
+							seen.Add(delivery);
 						}
 						catch (Exception ex)
 						{
+							// The rest of the mailbox is still imported; the batch reports the failure.
+							success = false;
 							result = ex.ToString();
 							Logging.LogException(ex);
 						}

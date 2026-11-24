@@ -54,14 +54,14 @@
 					{
 						<a class="btn btn-success" asp-controller="Records" asp-action="New" asp-route-area="User"><i class="icon-plus"></i> @localizer["NewRecord"]</a>
 					}
-					<a class="btn btn-primary" asp-controller="IncidentReports" asp-action="Index" asp-route-area="User"><i class="fa fa-fire"></i> @localizer["IncidentReports"]</a>
-					<a class="btn btn-default" asp-controller="Records" asp-action="Dashboard" asp-route-area="User"><i class="fa fa-dashboard"></i> @localizer["RecordsDashboard"]</a>
+					<a class="btn btn-primary" asp-controller="IncidentReports" asp-action="Index" asp-route-area="User">@localizer["IncidentReports"]</a>
+					<a class="btn btn-default" asp-controller="Records" asp-action="Dashboard" asp-route-area="User">@localizer["RecordsDashboard"]</a>
 				</div>
 			}
 			@if (usable)
 			{
 				<div class="btn-group">
-					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bar-chart"></i> @localizer["ReportsMenu"] <span class="caret"></span></button>
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@localizer["ReportsMenu"] <span class="caret"></span></button>
 					<ul class="dropdown-menu dropdown-menu-right">
 						@if (canExport)
 						{
@@ -89,7 +89,7 @@
 			@if (showManage)
 			{
 				<div class="btn-group">
-					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-cog"></i> @localizer["ManageMenu"] <span class="caret"></span></button>
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@localizer["ManageMenu"] <span class="caret"></span></button>
 					<ul class="dropdown-menu dropdown-menu-right">
 						@if (canDisclosures)
 						{

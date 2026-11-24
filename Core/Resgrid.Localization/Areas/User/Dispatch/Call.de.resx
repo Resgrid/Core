@@ -1263,4 +1263,25 @@
   <data name="FacilityMapsHint" xml:space="preserve">
     <value>Klicken Sie auf einen Raum, um den Einsatzort festzulegen.</value>
   </data>
+  <data name="StrikeAlarm" xml:space="preserve">
+    <value>Alarmstufe {0} auslösen</value>
+  </data>
+  <data name="StrikeAlarmConfirm" xml:space="preserve">
+    <value>Diesen Einsatz auf Alarmstufe {0} erhöhen? Die Kräfte der nächsten Alarmstufe aus dem Alarmierungsplan werden alarmiert.</value>
+  </data>
+  <data name="EscalateRunCardsDisabled" xml:space="preserve">
+    <value>Alarmierungspläne sind für diese Abteilung nicht aktiviert.</value>
+  </data>
+  <data name="EscalateCallNotFound" xml:space="preserve">
+    <value>Einsatz nicht gefunden.</value>
+  </data>
+  <data name="EscalateCallNotActive" xml:space="preserve">
+    <value>Nur aktive Einsätze können auf die nächste Alarmstufe erhöht werden.</value>
+  </data>
+  <data name="EscalateNoRunCard" xml:space="preserve">
+    <value>Kein Alarmierungsplan passt zu diesem Einsatz; es gibt nichts zu erhöhen.</value>
+  </data>
+  <data name="EscalateNoResources" xml:space="preserve">
+    <value>Der Alarmierungsplan sieht für die nächste Alarmstufe keine weiteren Kräfte vor.</value>
+  </data>
 </root>

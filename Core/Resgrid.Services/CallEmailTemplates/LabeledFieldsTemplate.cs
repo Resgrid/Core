@@ -48,6 +48,10 @@ namespace Resgrid.Services.CallEmailTemplates
 
 			var values = ReadLabeledValues(labeledFields, email.Subject, body);
 			var fields = CallEmailParsedFields.None;
+			// With labels mapped, the subject and body fallbacks below fill a new call's required name and nature but are not something
+			// the CAD said: a follow-up carrying only an address must not overwrite the call's name and nature with them. Without any
+			// labels the format reads an email as Generic does, which counts both.
+			var unlabeled = labeledFields == null || !labeledFields.HasAnyLabel();
 
 			// The CAD call ID: what the CAD update engine matches follow-up emails on.
 			if (values.TryGetValue(LabeledEmailFields.CallId, out var callId))
@@ -62,19 +66,18 @@ namespace Resgrid.Services.CallEmailTemplates
 			}
 
 			// Nature: the mapped value, else the whole body (as Generic).
-			if (values.TryGetValue(LabeledEmailFields.Nature, out var nature))
-				c.NatureOfCall = nature;
-			else
-				c.NatureOfCall = body;
-			if (!string.IsNullOrWhiteSpace(c.NatureOfCall))
+			var natureLabeled = values.TryGetValue(LabeledEmailFields.Nature, out var nature);
+			c.NatureOfCall = natureLabeled ? nature : body;
+			if ((natureLabeled || unlabeled) && !string.IsNullOrWhiteSpace(c.NatureOfCall))
 				fields |= CallEmailParsedFields.Nature;
 
 			// Name: the mapped value, else the subject.
-			if (values.TryGetValue(LabeledEmailFields.Name, out var name))
+			var nameLabeled = values.TryGetValue(LabeledEmailFields.Name, out var name);
+			if (nameLabeled)
 				c.Name = name;
 			else if (!string.IsNullOrWhiteSpace(email.Subject))
 				c.Name = email.Subject.Trim();
-			if (!string.IsNullOrWhiteSpace(c.Name))
+			if ((nameLabeled || unlabeled) && !string.IsNullOrWhiteSpace(c.Name))
 				fields |= CallEmailParsedFields.Name;
 
 			if (values.TryGetValue(LabeledEmailFields.Address, out var address))
@@ -182,7 +185,7 @@ namespace Resgrid.Services.CallEmailTemplates
 					{
 						var start = hits[i].Index + hits[i].Length;
 						var end = i + 1 < hits.Count ? hits[i + 1].Index : line.Length;
-						var value = line.Substring(start, Math.Max(0, end - start)).Trim().TrimStart(':', '#', '-', '=', '.').Trim();
+						var value = TrimSeparators(line.Substring(start, Math.Max(0, end - start)), IsCoordinateField(hits[i].Field));
 						if (value.Length == 0 || values.ContainsKey(hits[i].Field))
 							continue;
 
@@ -193,6 +196,38 @@ namespace Resgrid.Services.CallEmailTemplates
 
 			return values;
 		}
+
+		/// <summary>
+		/// A value with the label's separators (":", "#", "-", "=", ".") taken off its front. For a coordinate a "-" or "." that starts
+		/// the number stays: "Longitude:-119.75" is -119.75, not 119.75.
+		/// </summary>
+		private static string TrimSeparators(string value, bool numeric)
+		{
+			var text = value.Trim();
+			var i = 0;
+			while (i < text.Length)
+			{
+				var ch = text[i];
+				if (ch == ':' || ch == '#' || ch == '=')
+				{
+					i++;
+					continue;
+				}
+
+				if ((ch == '-' || ch == '.') && !(numeric && i + 1 < text.Length && (char.IsDigit(text[i + 1]) || (ch == '-' && text[i + 1] == '.'))))
+				{
+					i++;
+					continue;
+				}
+
+				break;
+			}
+
+			return text.Substring(i).Trim();
+		}
+
+		private static bool IsCoordinateField(LabeledEmailFields field) =>
+			field == LabeledEmailFields.Latitude || field == LabeledEmailFields.Longitude || field == LabeledEmailFields.Coordinates;
 
 		private static List<(int Index, int Length, LabeledEmailFields Field)> FindLabels(string line, List<(LabeledEmailFields Field, string Label)> labels)
 		{

@@ -782,7 +782,8 @@ namespace Resgrid.Tests.Web.Services
 					authorizationService, adpRelease, Projection(),
 					Mock.Of<IDepartmentPhoneNumbersService>(), Mock.Of<IIntakeService>(), Mock.Of<IVoiceIntakeService>(),
 					Mock.Of<Resgrid.Model.Providers.ITextMessageProvider>(), Mock.Of<IIntakeConversationService>(),
-					Mock.Of<IIntakeConversationOperations>(), Mock.Of<IIntakeScreeningService>(), Mock.Of<IDispatcherInboundTextHandler>(), NoDeskVoice())
+					Mock.Of<IIntakeConversationOperations>(), Mock.Of<IIntakeScreeningService>(), Mock.Of<IDispatcherInboundTextHandler>(), NoDeskVoice(),
+					Mock.Of<IVoiceIntakeRecordingService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext() };
 			}

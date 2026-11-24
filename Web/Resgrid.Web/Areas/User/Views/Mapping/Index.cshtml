@@ -44,9 +44,9 @@
 		</ol>
 	</div>
 	<div class="col-sm-8">
-		@* One joined group, in reading order; each button keeps its own colour so none of them reads as disabled. *@
+		@* In reading order; css/app-header.css gives each heading button its own colour by position. *@
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-			<a title="@legendStrings["LegendIntro"]" class="btn btn-default" asp-controller="Mapping" asp-action="Legend" asp-route-area="User"><i class="fa fa-map-marker"></i> @legendStrings["LegendPageTitle"]</a>
+			<a title="@legendStrings["LegendIntro"]" class="btn btn-default" asp-controller="Mapping" asp-action="Legend" asp-route-area="User">@legendStrings["LegendPageTitle"]</a>
 			@if (ClaimsAuthorizationHelper.CanViewCalls())
 			{
 				<a title="@visualizationStrings["PageIntro"]" class="btn btn-warning" asp-controller="MapVisualizations" asp-action="Index" asp-route-area="User">@visualizationStrings["PageTitle"]</a>

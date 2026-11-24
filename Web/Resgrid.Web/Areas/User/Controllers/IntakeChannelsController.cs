@@ -395,11 +395,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 				.Where(f => f != CallEmailTypes.AI)
 				.Select(f => new KeyValuePair<int, string>((int)f, f.ToString())).ToList();
 
-			// The channel uses the department's CAD update settings (saved, or the built-in behaviour of the channel's format).
+			// The channel uses the department's CAD update settings (saved, or the built-in behaviour of the channel's format), so whether it
+			// may accept CAD updates follows the format picked on the page: the formats it is on for go to the page, which re-checks on a change.
 			var cadFormat = model.ProcessingMode == (int)IntakeProcessingModes.Template ? model.TemplateFormat ?? (int)CallEmailTypes.Generic : (int)CallEmailTypes.Generic;
-			model.CadUpdatesAvailable = (await _departmentSettings.GetEmailCallUpdateConfigAsync(DepartmentId, cadFormat))?.Enabled == true;
+			var storedCad = await _departmentSettings.GetStoredEmailCallUpdateConfigAsync(DepartmentId);
+			model.CadUpdateFormats = model.TemplateFormats.Select(f => f.Key).Append((int)CallEmailTypes.Generic).Distinct()
+				.Where(f => CadUpdatesOn(storedCad, f)).ToList();
+			model.CadUpdatesAvailable = model.CadUpdateFormats.Contains(cadFormat);
 			return model;
 		}
+
+		/// <summary>As IDepartmentSettingsService.GetEmailCallUpdateConfigAsync reads it: the saved settings, else the format's built-in behaviour.</summary>
+		public static bool CadUpdatesOn(EmailCallUpdateConfig stored, int formatType) =>
+			(stored ?? EmailCallUpdatePresets.ForFormat(formatType) ?? new EmailCallUpdateConfig()).Enabled;
 
 		private static IntakeChannelEditView ToView(IntakeChannel channel) => new IntakeChannelEditView
 		{

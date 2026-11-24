@@ -25,6 +25,11 @@ namespace Resgrid.Search
 			if (query.Length > 256) throw new ArgumentException("Reference query too long.");
 			return _index.Value.Search(query, locale, Math.Clamp(take, 1, 25));
 		}
+		public IReadOnlyList<string> ReviewedTerms(string text, int max = 24)
+		{
+			if (string.IsNullOrWhiteSpace(text)) return Array.Empty<string>();
+			return _index.Value.ReviewedTerms(text.Length > 2000 ? text[..2000] : text, Math.Clamp(max, 1, 64));
+		}
 		public void Dispose() { if (_index.IsValueCreated) _index.Value.Dispose(); }
 		private sealed class ReferenceIndex : IDisposable
 		{
@@ -67,6 +72,21 @@ namespace Resgrid.Search
 				var searcher = new IndexSearcher(_reader) { Similarity = new BM25Similarity() };
 				return searcher.Search(filter, take).ScoreDocs.Select(hit => _articles[searcher.Doc(hit.Doc).Get("id")]).Select(a =>
 					new AdminAssistSearchHit(a.Id, a.TitleKey, a.Body.Length > 500 ? a.Body[..500] + "…" : a.Body, a.SourcePath, a.Anchor, a.PackVersion, a.Locale)).ToArray();
+			}
+			public IReadOnlyList<string> ReviewedTerms(string text, int max)
+			{
+				var terms = new List<string>();
+				using var tokens = _analyzer.GetTokenStream("body", new StringReader(text));
+				var term = tokens.AddAttribute<ICharTermAttribute>(); tokens.Reset();
+				while (terms.Count < max && tokens.IncrementToken())
+				{
+					var value = term.ToString();
+					// Digits-only tokens are dropped even when the corpus has them: they are the likeliest identifiers.
+					if (value.Length < 2 || value.Length > 64 || value.All(char.IsDigit) || terms.Contains(value)) continue;
+					if (_reader.DocFreq(new Term("body", value)) > 0) terms.Add(value);
+				}
+				tokens.End();
+				return terms;
 			}
 			public void Dispose() { _reader.Dispose(); _analyzer.Dispose(); _directory.Dispose(); }
 		}

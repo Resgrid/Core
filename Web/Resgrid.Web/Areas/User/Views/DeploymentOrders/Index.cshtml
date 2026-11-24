@@ -17,8 +17,8 @@
 	</div>
 	<div class="col-sm-4">
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-			@if (Model.IsDepartmentAdmin) { <a class="btn btn-default" asp-controller="RecordDeploymentConnectors" asp-action="Index" asp-route-area="User"><i class="fa fa-plug"></i> @localizer["Connectors"]</a> }
-			@if (Model.CanCreate) { <a class="btn btn-success" asp-controller="DeploymentOrders" asp-action="New" asp-route-area="User"><i class="fa fa-plus"></i> @localizer["DeploymentNewExternalOrder"]</a> }
+			@if (Model.IsDepartmentAdmin) { <a class="btn btn-default" asp-controller="RecordDeploymentConnectors" asp-action="Index" asp-route-area="User">@localizer["Connectors"]</a> }
+			@if (Model.CanCreate) { <a class="btn btn-success" asp-controller="DeploymentOrders" asp-action="New" asp-route-area="User">@localizer["DeploymentNewExternalOrder"]</a> }
 		</div>
 	</div>
 </div>

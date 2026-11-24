@@ -1263,4 +1263,25 @@
   <data name="FacilityMapsHint" xml:space="preserve">
     <value>Cliquez sur une pièce pour définir le lieu de l'appel.</value>
   </data>
+  <data name="StrikeAlarm" xml:space="preserve">
+    <value>Déclencher l'alerte {0}</value>
+  </data>
+  <data name="StrikeAlarmConfirm" xml:space="preserve">
+    <value>Passer cet appel à l'alerte {0} ? Les ressources de l'alerte suivante du plan de réponse seront envoyées.</value>
+  </data>
+  <data name="EscalateRunCardsDisabled" xml:space="preserve">
+    <value>Les plans de réponse ne sont pas activés pour ce service.</value>
+  </data>
+  <data name="EscalateCallNotFound" xml:space="preserve">
+    <value>Appel introuvable.</value>
+  </data>
+  <data name="EscalateCallNotActive" xml:space="preserve">
+    <value>Seuls les appels actifs peuvent passer à l'alerte suivante.</value>
+  </data>
+  <data name="EscalateNoRunCard" xml:space="preserve">
+    <value>Aucun plan de réponse ne correspond à cet appel ; rien à renforcer.</value>
+  </data>
+  <data name="EscalateNoResources" xml:space="preserve">
+    <value>Le plan de réponse ne prévoit aucune ressource supplémentaire pour l'alerte suivante.</value>
+  </data>
 </root>

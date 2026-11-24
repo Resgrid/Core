@@ -176,14 +176,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<IActionResult> UpdateIntake(bool smsIntakeEnabled, bool voiceIntakeEnabled, CancellationToken cancellationToken)
+		public async Task<IActionResult> UpdateIntake(bool smsIntakeEnabled, bool voiceIntakeEnabled, bool voiceRecordingEnabled, CancellationToken cancellationToken)
 		{
 			if (!await _authorization.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 				return Unauthorized();
 
 			return await RunAsync(async () =>
 			{
-				await _numbers.UpdateIntakeOptionsAsync(DepartmentId, smsIntakeEnabled, voiceIntakeEnabled, UserId, cancellationToken);
+				await _numbers.UpdateIntakeOptionsAsync(DepartmentId, smsIntakeEnabled, voiceIntakeEnabled, voiceRecordingEnabled, UserId, cancellationToken);
 				TempData[MessageKey] = _localizer["IntakeSaved"].Value;
 			});
 		}

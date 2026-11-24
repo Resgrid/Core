@@ -12,12 +12,20 @@ using Resgrid.Ai;
 using Resgrid.Config;
 using Resgrid.Llm;
 using Resgrid.Model.AdminAssist;
+using Resgrid.Model.Services;
 
 namespace Resgrid.Services.AdminAssist
 {
+	/// <summary>
+	/// Admin Assist conversation turns. Question routing (decision 2026-11-23, replacing "the raw question never reaches a
+	/// model"): a department without Advanced Data Protection sends the question to the configured model, and the page warns
+	/// against entering PII or PHI; a department with ADP in any state other than Disabled sends only the question's words
+	/// that occur in the reviewed public corpus, and falls back to the local reference-search matches when the model abstains.
+	/// </summary>
 	public sealed class AdminAssistAskService(IAiAccessService aiAccess, IAdminAssistAccessService access, IAiUsageMeter usage,
 		IAdminAssistAskQueries queries, IAdminAssistCatalog catalog, IAdminAssistConversationStore store,
-		IAdminAssistConversationProtection protection, Lazy<ILlmClient> client, TimeProvider clock) : IAdminAssistAskService
+		IAdminAssistConversationProtection protection, Lazy<ILlmClient> client, TimeProvider clock,
+		IAdminAssistReferenceSearch referenceSearch, IDepartmentDataProtectionService dataProtection) : IAdminAssistAskService
 	{
 		private static readonly ResourceManager Labels = new(typeof(Resgrid.Localization.Areas.User.AdminAssist.AdminAssist));
 		public Task<AdminAssistAskStatus> GetStatusAsync(AdminAssistActor actor, CancellationToken ct) => aiAccess.CanUseAdminAssistAsync(actor, ct);
@@ -35,6 +43,8 @@ namespace Resgrid.Services.AdminAssist
 			await protection.PreflightAsync(actor, token);
 			if (request.ConversationId != null && await store.GetRevisionAsync(actor, request.ConversationId, token) != request.ExpectedRevision) throw new AdminAssistConcurrencyException();
 			var seeds = Seeds(actor, request);
+			var protectedDepartment = await IsProtectedAsync(actor.DepartmentId);
+			var focus = protectedDepartment ? AskFocus.FromTerms(referenceSearch.ReviewedTerms(request.Question, AskFocus.MaxTerms)) : AskFocus.FromQuestion(request.Question);
 			var id = request.ConversationId ?? Guid.NewGuid().ToString("D");
 			// Token budget for the add-on, or one free question (enhanced-ai-addon-plan.md §5.4), chosen by the admitting tier.
 			var reserved = await aiAccess.ReserveTurnAsync(actor, admitted, token);
@@ -43,10 +53,12 @@ namespace Resgrid.Services.AdminAssist
 			MeteredLlmClient metered = null;
 			var outcome = "Unavailable";
 			try {
-				// Match locally against reviewed catalog titles. Only the resulting public IDs reach inference.
+				// Seed reads are matched locally; the model then selects among observed cards with the focus as untrusted data.
 				metered = new MeteredLlmClient(client.Value);
+				var culture = CultureInfo.GetCultureInfo(actor.Locale ?? "en");
 				result = await new GroundedAskRunner(metered, queries, async guard => { if (!(await aiAccess.CanUseAdminAssistAsync(actor, guard, false)).Available) throw new UnauthorizedAccessException(); },
-					AiCacheIsolation.SaltFor(actor.DepartmentId, AiConfig.SendCacheSalt, AiConfig.CacheSaltKey, AiConfig.AuditHmacKey)).RunAsync(actor, AiConfig.Model, request.Topic, seeds, reserved.Tokens, token);
+					AiCacheIsolation.SaltFor(actor.DepartmentId, AiConfig.SendCacheSalt, AiConfig.CacheSaltKey, AiConfig.AuditHmacKey), key => Labels.GetString(key, culture))
+					.RunAsync(actor, AiConfig.Model, request.Topic, seeds, reserved.Tokens, token, focus, searchFallback: protectedDepartment);
 				outcome = result.Outcome;
 				await RequireAsync(actor, token);
 				// Entitlement/kill switch are rechecked even after an in-flight reservation.
@@ -71,6 +83,13 @@ namespace Resgrid.Services.AdminAssist
 				try { await usage.CompleteAsync(reserved, metered?.HasUnsettledRequest == true ? reserved.Tokens : Math.Min(reserved.Tokens, metered?.VerifiedTokens ?? 0), outcome, settle.Token); }
 				catch (Exception) { /* The persisted reservation remains conservatively charged and expires admission after 120 seconds. */ }
 			}
+		}
+		// Any ADP state but Disabled (queued, enrolling, enabled, offboarding, failed) keeps free text local. An unreadable
+		// state fails closed to the protected path.
+		private async Task<bool> IsProtectedAsync(int departmentId)
+		{
+			try { return await dataProtection.GetStateAsync(departmentId, true) != Resgrid.Model.DepartmentDataProtectionState.Disabled; }
+			catch (Exception) { return true; }
 		}
 		private IReadOnlyList<AskToolInput> Seeds(AdminAssistActor actor, AdminAssistAskRequest request)
 		{

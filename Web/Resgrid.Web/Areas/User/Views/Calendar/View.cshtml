@@ -100,7 +100,7 @@
                     <form method="post" asp-controller="Calendar" asp-action="DeleteCalendarItem" asp-route-area="User" asp-route-itemId="@Model.CalendarItem.CalendarItemId" style="display: inline;">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["DeleteEventConfirm"])');">
-                            <i class="fa fa-trash"></i> @localizer["DeleteEvent"]
+                            @localizer["DeleteEvent"]
                         </button>
                     </form>
                 }
@@ -109,7 +109,7 @@
                     <form method="post" asp-controller="Calendar" asp-action="DeleteAllCalendarItems" asp-route-area="User" asp-route-itemId="@Model.CalendarItem.CalendarItemId" style="display: inline;">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["DeleteEventOccurrencesConfirm"])');">
-                            <i class="fa fa-trash"></i> @localizer["DeleteEventOccurrences"]
+                            @localizer["DeleteEventOccurrences"]
                         </button>
                     </form>
                 }
@@ -117,20 +117,20 @@
                 {
                     <a asp-controller="Calendar" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.CalendarItem.CalendarItemId"
                        class="btn btn-success">
-                        <i class="fa fa-pencil"></i> @localizer["EditEvent"]
+                        @localizer["EditEvent"]
                     </a>
                 }
                 @if (!string.IsNullOrWhiteSpace(Model.ExportIcsUrl))
                 {
                     <a href="@Model.ExportIcsUrl" class="btn btn-info">
-                        <i class="fa fa-download"></i> @localizer["DownloadIcs"]
+                        @localizer["DownloadIcs"]
                     </a>
                 }
                 @if (Model.CanEdit)
                 {
                     <a href="@Url.Action("SignupSheet", "Calendar", new { area = "User", calendarItemId = Model.CalendarItem.CalendarItemId })"
                        class="btn btn-warning" target="_blank">
-                        <i class="fa fa-print"></i> @localizer["PrintSignupSheet"]
+                        @localizer["PrintSignupSheet"]
                     </a>
                 }
             </div>

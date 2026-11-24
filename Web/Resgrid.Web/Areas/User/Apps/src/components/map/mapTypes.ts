@@ -531,11 +531,20 @@ export function toSameOriginApiUrl(absoluteApiUrl: string | null | undefined, ap
   return `${apiBaseUrl.replace(/\/+$/, '')}${absoluteApiUrl.slice(at)}`;
 }
 
-function toBounds(source: Pick<CustomMapLayerInfo, 'BoundsNELat' | 'BoundsNELon' | 'BoundsSWLat' | 'BoundsSWLon'> | null | undefined) {
-  const n = Number(source?.BoundsNELat);
-  const e = Number(source?.BoundsNELon);
-  const s = Number(source?.BoundsSWLat);
-  const w = Number(source?.BoundsSWLon);
+/** A bound as a number; a missing one (null, undefined, blank) is not 0, which Number() would make it. */
+function boundValue(value: number | string | null | undefined): number {
+  return value === null || value === undefined || (typeof value === 'string' && value.trim() === '') ? Number.NaN : Number(value);
+}
+
+/**
+ * [west, south, east, north] of a custom map or layer, or null unless all four bounds are there and enclose an area. A missing
+ * bound never reads as 0 (south -34, west 150, east 151 and no north would otherwise pass as a box up to the equator).
+ */
+export function customMapBounds(source: Pick<CustomMapLayerInfo, 'BoundsNELat' | 'BoundsNELon' | 'BoundsSWLat' | 'BoundsSWLon'> | null | undefined) {
+  const n = boundValue(source?.BoundsNELat);
+  const e = boundValue(source?.BoundsNELon);
+  const s = boundValue(source?.BoundsSWLat);
+  const w = boundValue(source?.BoundsSWLon);
   // Zero bounds mean "not set"; the server will not render tiles for them either.
   if (![n, e, s, w].every(Number.isFinite) || n <= s || e <= w) {
     return null;
@@ -569,7 +578,7 @@ export function buildCustomMapOverlay(
     name: layer.Name && layer.Name !== map.Name ? `${map.Name} - ${layer.Name}` : map.Name,
     tileUrl: layer.HasImage ? toSameOriginApiUrl(layer.MercatorTileUrl, apiBaseUrl) : null,
     // A layer without bounds of its own is drawn over its map's bounds (the tile renderer does the same).
-    bounds: toBounds(layer) ?? toBounds(map),
+    bounds: customMapBounds(layer) ?? customMapBounds(map),
     opacity: Number.isFinite(opacity) && opacity > 0 ? Math.min(opacity, 1) : 0.85,
     regions,
   };

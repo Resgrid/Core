@@ -26,7 +26,7 @@
             @if (!string.IsNullOrWhiteSpace(Model.OperationalDeploymentId)) { <a class="btn btn-default" asp-action="Report" asp-route-id="@Model.OperationalDeploymentId">@localizer["DeploymentReports"]</a> }
             @if (Resgrid.Web.Helpers.ClaimsAuthorizationHelper.CanExportRecords()) { <a class="btn btn-info" asp-action="ExportOrders" asp-route-id="@o.RmsExternalOrderId">@localizer["DeploymentExportResources"]</a> }
             <button type="button" class="btn btn-default" onclick="window.print()">@commonLocalizer["Print"]</button>
-			@if (!string.IsNullOrEmpty(o.ArtifactFileName)) { <a class="btn btn-default" asp-controller="RecordDeployments" asp-action="Artifact" asp-route-area="User" asp-route-id="@o.RmsExternalOrderId"><i class="fa fa-download"></i> @localizer["DeploymentArtifact"]</a> }
+			@if (!string.IsNullOrEmpty(o.ArtifactFileName)) { <a class="btn btn-default" asp-controller="RecordDeployments" asp-action="Artifact" asp-route-area="User" asp-route-id="@o.RmsExternalOrderId">@localizer["DeploymentArtifact"]</a> }
 		</div>
 	</div>
 </div>

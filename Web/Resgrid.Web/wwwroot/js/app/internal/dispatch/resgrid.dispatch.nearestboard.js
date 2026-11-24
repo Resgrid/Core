@@ -78,7 +78,13 @@ var resgrid;
                 }
                 return span.prop('outerHTML');
             }
-            // Dark or white text by the background's brightness (YIQ), for a status with no text colour of its own.
+            // WCAG relative luminance of one 0-255 channel.
+            function channelLuminance(value) {
+                var c = value / 255;
+                return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+            }
+            // Dark (#262626) or white text, whichever contrasts more with the background (WCAG contrast ratio), for a status
+            // with no text colour of its own. A brightness threshold alone put white on pure green (#00ff00, about 1.4:1).
             function readableTextColor(background) {
                 var hex = hexOr(background, null);
                 if (!hex) {
@@ -91,7 +97,11 @@ var resgrid;
                 var r = parseInt(hex.substr(0, 2), 16);
                 var g = parseInt(hex.substr(2, 2), 16);
                 var b = parseInt(hex.substr(4, 2), 16);
-                return (r * 299 + g * 587 + b * 114) / 1000 >= 150 ? '#262626' : '#ffffff';
+                var luminance = 0.2126 * channelLuminance(r) + 0.7152 * channelLuminance(g) + 0.0722 * channelLuminance(b);
+                var dark = channelLuminance(0x26);
+                var againstWhite = 1.05 / (luminance + 0.05);
+                var againstDark = (luminance + 0.05) / (dark + 0.05);
+                return againstDark > againstWhite ? '#262626' : '#ffffff';
             }
             // A status in its own colours, as everywhere else; older built-in statuses carry a label class instead of a
             // colour. Set through .css() so a colour never lands in the markup unchecked. The border keeps a white or very

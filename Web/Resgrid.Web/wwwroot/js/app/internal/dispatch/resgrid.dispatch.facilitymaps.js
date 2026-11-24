@@ -26,6 +26,9 @@ var resgrid;
             var roomAddress = null;
             var mapSelect = null;
             var layerSelect = null;
+            // Each selection (a map, a floor, None, an indoor location's floor) takes the next number; a map whose layers are still
+            // loading is drawn only while its number is the latest, so a slow load never replaces what was picked since.
+            var showRequest = 0;
 
             function text(key, fallback) {
                 return resgrid.dispatch && typeof resgrid.dispatch.getText === 'function' ? resgrid.dispatch.getText(key, fallback) : fallback;
@@ -131,6 +134,7 @@ var resgrid;
             }
 
             function showMap(mapId, layerId, fit) {
+                var request = ++showRequest;
                 var mapInfo = maps.filter(function (m) { return m.IndoorMapId === mapId; })[0];
                 if (!mapInfo) {
                     clear();
@@ -141,6 +145,9 @@ var resgrid;
                 }
                 mapSelect.value = mapId;
                 return loadLayers(mapId).then(function () {
+                    if (request !== showRequest) {
+                        return null;
+                    }
                     var layer = fillLayerSelect(mapInfo, layerId);
                     draw(mapInfo, layer, fit);
                     return layer;
@@ -181,6 +188,7 @@ var resgrid;
                     showMap(mapSelect.value, null, true);
                 });
                 layerSelect.addEventListener('change', function () {
+                    showRequest++;
                     var mapInfo = maps.filter(function (m) { return m.IndoorMapId === mapSelect.value; })[0];
                     var layer = sortedLayers(mapSelect.value).filter(function (l) { return l.IndoorMapFloorId === layerSelect.value; })[0];
                     draw(mapInfo, layer, false);
@@ -301,9 +309,11 @@ var resgrid;
                 if (!map || !floorId || !maps.length) {
                     return;
                 }
+                // A map or floor picked while the floor is being looked up wins over it.
+                var started = showRequest;
                 getJson('GetCustomMapLayer/' + encodeURIComponent(floorId)).then(function (result) {
                     var mapId = result && result.Data && (result.Data.IndoorMapId || (result.Data.Layer && result.Data.Layer.IndoorMapId));
-                    if (mapId) {
+                    if (mapId && started === showRequest) {
                         showMap(mapId, floorId, fit);
                     }
                 }).catch(function (error) {

@@ -1263,4 +1263,25 @@
   <data name="FacilityMapsHint" xml:space="preserve">
     <value>Kliknij pomieszczenie, aby ustawić lokalizację zgłoszenia.</value>
   </data>
+  <data name="StrikeAlarm" xml:space="preserve">
+    <value>Ogłoś alarm {0}</value>
+  </data>
+  <data name="StrikeAlarmConfirm" xml:space="preserve">
+    <value>Podnieść to zgłoszenie do alarmu {0}? Zostaną zadysponowane zasoby kolejnego alarmu z planu zadysponowania.</value>
+  </data>
+  <data name="EscalateRunCardsDisabled" xml:space="preserve">
+    <value>Plany zadysponowania nie są włączone dla tego oddziału.</value>
+  </data>
+  <data name="EscalateCallNotFound" xml:space="preserve">
+    <value>Nie znaleziono zgłoszenia.</value>
+  </data>
+  <data name="EscalateCallNotActive" xml:space="preserve">
+    <value>Tylko aktywne zgłoszenia można podnieść do kolejnego alarmu.</value>
+  </data>
+  <data name="EscalateNoRunCard" xml:space="preserve">
+    <value>Żaden plan zadysponowania nie pasuje do tego zgłoszenia; nie ma czego podnieść.</value>
+  </data>
+  <data name="EscalateNoResources" xml:space="preserve">
+    <value>Plan zadysponowania nie przewiduje dodatkowych zasobów dla kolejnego alarmu.</value>
+  </data>
 </root>

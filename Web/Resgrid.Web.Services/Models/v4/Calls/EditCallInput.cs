@@ -159,8 +159,9 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string MapPage { get; set; }
 
 		/// <summary>
-		/// Optional. Indoor map zone the incident is in. Blank keeps the stored zone; leave it out (null) when the client
-		/// has no indoor location picker, which also leaves the department's indoor location requirement unenforced.
+		/// Optional. Indoor map zone the incident is in. Null (left out) keeps the stored zone and floor — leave it out when the
+		/// client has no indoor location picker, which also leaves the department's indoor location requirement unenforced; an
+		/// empty string clears both, the same as <see cref="RoutePlanId"/>.
 		/// </summary>
 		public string IndoorMapZoneId { get; set; }
 

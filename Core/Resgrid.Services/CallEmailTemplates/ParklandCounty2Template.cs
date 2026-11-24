@@ -138,8 +138,15 @@ namespace Resgrid.Services.CallEmailTemplates
 			if (parsed == null || string.IsNullOrWhiteSpace(parsed.Name) || parsed.LoggedOn == DateTime.MinValue)
 				return null;
 
-			var key = parsed.Name.Trim() + "|" + parsed.LoggedOn.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
-			return key.Length > CallEmailUpdate.MaxCadCallIdLength ? key.Substring(0, CallEmailUpdate.MaxCadCallIdLength) : key;
+			var name = parsed.Name.Trim();
+			var stamp = "|" + parsed.LoggedOn.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
+			if (name.Length + stamp.Length <= CallEmailUpdate.MaxCadCallIdLength)
+				return name + stamp;
+
+			// A name too long for the key keeps its start and a hash of the whole name, and the call time always stays: cutting the
+			// key at the limit used to drop the time, so two incidents with one long name shared a key.
+			var hash = "~" + CadEmailText.Hash(name).Substring(0, 16);
+			return name.Substring(0, CallEmailUpdate.MaxCadCallIdLength - stamp.Length - hash.Length).TrimEnd() + hash + stamp;
 		}
 
 		/// <summary>The comparison this format used to find its own open calls before the update ledger existed.</summary>

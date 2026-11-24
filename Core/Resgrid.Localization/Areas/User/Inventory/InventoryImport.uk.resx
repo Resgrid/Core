@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ImportButton" xml:space="preserve">
+    <value>Імпортувати</value>
+  </data>
+  <data name="ImportTitle" xml:space="preserve">
+    <value>Імпорт інвентарю</value>
+  </data>
+  <data name="ImportIntro" xml:space="preserve">
+    <value>Заповніть каталог і початкові залишки з електронної таблиці: позиції, категорії, місця зберігання, партії, обладнання із серійними номерами, вартість і кількість на складі.</value>
+  </data>
+  <data name="ImportLocked" xml:space="preserve">
+    <value>Застосування імпорту записує захищені примітки щодо запасів. Розблокуйте захищені дані, а потім надішліть ще раз.</value>
+  </data>
+  <data name="ImportNotMigrated" xml:space="preserve">
+    <value>Інвентар для вашого підрозділу ще не налаштовано. Спершу налаштуйте його, а потім поверніться до імпорту.</value>
+  </data>
+  <data name="ImportBackToInventory" xml:space="preserve">
+    <value>Назад до інвентарю</value>
+  </data>
+  <data name="ImportNoPermission" xml:space="preserve">
+    <value>Для імпорту потрібен дозвіл на коригування інвентарю.</value>
+  </data>
+  <data name="ImportApplied" xml:space="preserve">
+    <value>Імпорт завершено.</value>
+  </data>
+  <data name="ImportAlreadyApplied" xml:space="preserve">
+    <value>Цей файл уже імпортовано. Це результати того імпорту; нічого не записано двічі.</value>
+  </data>
+  <data name="ImportViewOnHand" xml:space="preserve">
+    <value>Переглянути залишки</value>
+  </data>
+  <data name="ImportViewHistory" xml:space="preserve">
+    <value>Переглянути історію</value>
+  </data>
+  <data name="ImportAnother" xml:space="preserve">
+    <value>Імпортувати інший файл</value>
+  </data>
+  <data name="ImportReviewIntro" xml:space="preserve">
+    <value>Перегляньте, що зробить імпорт. Ще нічого не записано.</value>
+  </data>
+  <data name="ImportIgnoredColumns" xml:space="preserve">
+    <value>Ці стовпці не розпізнано, їх проігноровано: {0}</value>
+  </data>
+  <data name="ImportErrorsFound" xml:space="preserve">
+    <value>Рядків, які потрібно виправити: {0}. Виправте файл і перегляньте його ще раз; нічого не записано.</value>
+  </data>
+  <data name="ImportReadyToApply" xml:space="preserve">
+    <value>Усі рядки коректні. Застосуйте імпорт, щоб записати ці зміни.</value>
+  </data>
+  <data name="ImportTotalItemsCreated" xml:space="preserve">
+    <value>Нові позиції</value>
+  </data>
+  <data name="ImportTotalItemsUpdated" xml:space="preserve">
+    <value>Оновлені позиції</value>
+  </data>
+  <data name="ImportTotalLocations" xml:space="preserve">
+    <value>Нові місця зберігання</value>
+  </data>
+  <data name="ImportTotalCategories" xml:space="preserve">
+    <value>Нові категорії</value>
+  </data>
+  <data name="ImportTotalLots" xml:space="preserve">
+    <value>Нові партії</value>
+  </data>
+  <data name="ImportTotalAssets" xml:space="preserve">
+    <value>Нові одиниці майна</value>
+  </data>
+  <data name="ImportTotalReceipts" xml:space="preserve">
+    <value>Рядки, що додають запас</value>
+  </data>
+  <data name="ImportTotalDecreases" xml:space="preserve">
+    <value>Рядки, що списують запас</value>
+  </data>
+  <data name="ImportTotalUnchanged" xml:space="preserve">
+    <value>Рядки, що вже збігаються</value>
+  </data>
+  <data name="ImportTotalPar" xml:space="preserve">
+    <value>Встановлені мінімуми в місцях</value>
+  </data>
+  <data name="ImportTotalMovements" xml:space="preserve">
+    <value>Проведені рухи запасів</value>
+  </data>
+  <data name="ImportAddedValue" xml:space="preserve">
+    <value>Додана вартість</value>
+  </data>
+  <data name="ImportUncosted" xml:space="preserve">
+    <value>Рядків без вартості: {0}</value>
+  </data>
+  <data name="ImportOnlyProblems" xml:space="preserve">
+    <value>Лише рядки, що потребують уваги</value>
+  </data>
+  <data name="ImportStartOver" xml:space="preserve">
+    <value>Почати знову</value>
+  </data>
+  <data name="ImportApplyButton" xml:space="preserve">
+    <value>Застосувати імпорт</value>
+  </data>
+  <data name="ImportRow" xml:space="preserve">
+    <value>Рядок</value>
+  </data>
+  <data name="ImportItem" xml:space="preserve">
+    <value>Позиція</value>
+  </data>
+  <data name="ImportLocation" xml:space="preserve">
+    <value>Місце зберігання</value>
+  </data>
+  <data name="ImportCurrent" xml:space="preserve">
+    <value>Залишок зараз</value>
+  </data>
+  <data name="ImportNew" xml:space="preserve">
+    <value>Після імпорту</value>
+  </data>
+  <data name="ImportChange" xml:space="preserve">
+    <value>Зміна</value>
+  </data>
+  <data name="ImportUnitCost" xml:space="preserve">
+    <value>Вартість одиниці</value>
+  </data>
+  <data name="ImportOutcome" xml:space="preserve">
+    <value>Результат</value>
+  </data>
+  <data name="ImportItemNone" xml:space="preserve">
+    <value>Позиція</value>
+  </data>
+  <data name="ImportItemCreate" xml:space="preserve">
+    <value>Нова позиція</value>
+  </data>
+  <data name="ImportItemUpdate" xml:space="preserve">
+    <value>Оновлює позицію</value>
+  </data>
+  <data name="ImportItemExisting" xml:space="preserve">
+    <value>Наявна позиція</value>
+  </data>
+  <data name="ImportNewCategory" xml:space="preserve">
+    <value>нова категорія</value>
+  </data>
+  <data name="ImportChangedFields" xml:space="preserve">
+    <value>Зміни: {0}</value>
+  </data>
+  <data name="ImportNewLocation" xml:space="preserve">
+    <value>Нове місце зберігання</value>
+  </data>
+  <data name="ImportNewLot" xml:space="preserve">
+    <value>нова партія</value>
+  </data>
+  <data name="ImportParLevel" xml:space="preserve">
+    <value>Мінімум у місці</value>
+  </data>
+  <data name="ImportNeedsFixing" xml:space="preserve">
+    <value>Потребує виправлення</value>
+  </data>
+  <data name="ImportStockNone" xml:space="preserve">
+    <value>Лише каталог</value>
+  </data>
+  <data name="ImportStockReceive" xml:space="preserve">
+    <value>Додає запас</value>
+  </data>
+  <data name="ImportStockDecrease" xml:space="preserve">
+    <value>Списує запас</value>
+  </data>
+  <data name="ImportStockUnchanged" xml:space="preserve">
+    <value>Уже збігається</value>
+  </data>
+  <data name="ImportStockCreateAsset" xml:space="preserve">
+    <value>Нова одиниця майна</value>
+  </data>
+  <data name="ImportStockAssetExists" xml:space="preserve">
+    <value>Уже зареєстровано</value>
+  </data>
+  <data name="ImportStepFile" xml:space="preserve">
+    <value>1. Отримайте файл</value>
+  </data>
+  <data name="ImportStepFileHelp" xml:space="preserve">
+    <value>Почніть із порожнього шаблону або завантажте вже зареєстровані дані, заповніть кількості й вартість та імпортуйте файл назад.</value>
+  </data>
+  <data name="ImportDownloadTemplate" xml:space="preserve">
+    <value>Порожній шаблон</value>
+  </data>
+  <data name="ImportDownloadCurrent" xml:space="preserve">
+    <value>Поточний інвентар</value>
+  </data>
+  <data name="ImportDownloadCurrentHelp" xml:space="preserve">
+    <value>Ваші позиції, а також запаси й обладнання в місцях, які ви бачите, підготовлені для імпорту. Контрольовані речовини не включено.</value>
+  </data>
+  <data name="ImportStepUpload" xml:space="preserve">
+    <value>2. Завантаження й попередній перегляд</value>
+  </data>
+  <data name="ImportFile" xml:space="preserve">
+    <value>Таблиця, збережена у форматі CSV</value>
+  </data>
+  <data name="ImportFileHelp" xml:space="preserve">
+    <value>Розділювач — кома, крапка з комою або табуляція; до {0} рядків і 1 MB. Розділіть більший інвентар на кілька файлів; імпортувати їх по черзі безпечно.</value>
+  </data>
+  <data name="ImportPreviewButton" xml:space="preserve">
+    <value>Попередній перегляд імпорту</value>
+  </data>
+  <data name="ImportHowItWorks" xml:space="preserve">
+    <value>Як працює імпорт</value>
+  </data>
+  <data name="ImportRuleCount" xml:space="preserve">
+    <value>{0} — це залишок після імпорту. Для кожного місця встановлюється кількість із файлу: запас додається або списується до збігу, тож виправлений файл можна імпортувати повторно без подвоєння.</value>
+  </data>
+  <data name="ImportRuleItems" xml:space="preserve">
+    <value>Позиції зіставляються за стовпцем {0}. Нові позиції, категорії, місця зберігання та партії створюються, а значення з файлу оновлюють наявні позиції. Файл ніколи не змінює спосіб обліку наявної позиції.</value>
+  </data>
+  <data name="ImportRuleCatalogRows" xml:space="preserve">
+    <value>Рядок із порожніми {0} та {1} лише створює або оновлює позицію; її запас не змінюється.</value>
+  </data>
+  <data name="ImportRuleLocations" xml:space="preserve">
+    <value>{0} — це назва місця зберігання або шлях, наприклад Склад &gt; Полиця А. Заповніть {1} або {2}, щоб розмістити запас у сховищі цієї станції чи підрозділу; тоді {0} означає відсік усередині нього. Якщо стовпець {0} порожній, використовується місце зберігання за замовчуванням.</value>
+  </data>
+  <data name="ImportRuleSerialized" xml:space="preserve">
+    <value>Обладнання із серійними номерами записується по одному рядку на одиницю майна із заповненим стовпцем {0}. Серійний номер, який уже зареєстровано, залишається там, де він є.</value>
+  </data>
+  <data name="ImportRuleLots" xml:space="preserve">
+    <value>Позиції з терміном придатності обліковуються за партіями: вкажіть {0} і дату в {1}. Партія створюється, коли з’являється вперше.</value>
+  </data>
+  <data name="ImportRuleCost" xml:space="preserve">
+    <value>{0} — це ціна однієї одиниці виміру позиції для цього рядка. Вона визначає вартість запасу, який додає рядок, і стає вартістю позиції за замовчуванням, якщо її ще немає.</value>
+  </data>
+  <data name="ImportRuleControlled" xml:space="preserve">
+    <value>Контрольовані речовини не імпортуються: їхній запас потребує надходження, засвідченого свідком.</value>
+  </data>
+  <data name="ImportRuleAllOrNothing" xml:space="preserve">
+    <value>Нічого не записується, доки ви не застосуєте імпорт, і файл застосовується повністю або не застосовується зовсім. Якщо щось зміниться між попереднім переглядом і застосуванням, спершу ви побачите новий попередній перегляд.</value>
+  </data>
+  <data name="ImportColumns" xml:space="preserve">
+    <value>Стовпці</value>
+  </data>
+  <data name="ImportColumnsHelp" xml:space="preserve">
+    <value>Стовпці можуть бути в будь-якому порядку, обов’язковий лише {0}. Заголовки зіставляються без урахування регістру та пробілів, а поширені назви, як-от Qty, SKU чи Serial, розпізнаються. Стовпці так/ні приймають Yes або No, {1} приймає Bulk або Serialized, а дати записуються як 2027-03-31.</value>
+  </data>
+  <data name="ImportColumnName" xml:space="preserve">
+    <value>Стовпець</value>
+  </data>
+  <data name="ImportColumnMeaning" xml:space="preserve">
+    <value>Що містить</value>
+  </data>
+  <data name="ImportColumnItem" xml:space="preserve">
+    <value>Назва позиції. Позиції зіставляються за назвою; нова назва створює позицію. Обов’язковий.</value>
+  </data>
+  <data name="ImportColumnCode" xml:space="preserve">
+    <value>Ваш власний код позиції або номер деталі, наприклад MED-0042.</value>
+  </data>
+  <data name="ImportColumnBarcode" xml:space="preserve">
+    <value>Штрихкод, надрукований на позиції. Він не має належати іншій позиції.</value>
+  </data>
+  <data name="ImportColumnCategory" xml:space="preserve">
+    <value>Категорія, наприклад Медичне, або шлях, наприклад Медичне &gt; Дихальні шляхи. Відсутні категорії створюються.</value>
+  </data>
+  <data name="ImportColumnDescription" xml:space="preserve">
+    <value>Довший опис позиції.</value>
+  </data>
+  <data name="ImportColumnUnitOfMeasure" xml:space="preserve">
+    <value>Як рахується позиція: штука, коробка, пара, ml. Нова позиція без значення рахується в "unit".</value>
+  </data>
+  <data name="ImportColumnTracking" xml:space="preserve">
+    <value>Bulk (облік за кількістю) або Serialized (одна одиниця майна на серійний номер). Нова позиція із серійними номерами — Serialized.</value>
+  </data>
+  <data name="ImportColumnRequiresLot" xml:space="preserve">
+    <value>Yes, якщо запас позиції обліковується за партіями.</value>
+  </data>
+  <data name="ImportColumnRequiresExpiration" xml:space="preserve">
+    <value>Yes, якщо позиція має термін придатності. Позиції Bulk із терміном придатності обліковуються за партіями.</value>
+  </data>
+  <data name="ImportColumnUnitCost" xml:space="preserve">
+    <value>Ціна однієї одиниці виміру позиції для запасу цього рядка, наприклад 12.50.</value>
+  </data>
+  <data name="ImportColumnCurrency" xml:space="preserve">
+    <value>Трилітерний код валюти для вартості позиції, наприклад USD або EUR.</value>
+  </data>
+  <data name="ImportColumnMinLevel" xml:space="preserve">
+    <value>Загальний мінімум, нижче якого запас позиції вважається низьким.</value>
+  </data>
+  <data name="ImportColumnMaxLevel" xml:space="preserve">
+    <value>Найбільша загальна кількість, яку ви хочете мати на складі.</value>
+  </data>
+  <data name="ImportColumnReorderPoint" xml:space="preserve">
+    <value>Загальна кількість, що запускає повторне замовлення.</value>
+  </data>
+  <data name="ImportColumnReorderQuantity" xml:space="preserve">
+    <value>Скільки замовляти під час повторного замовлення.</value>
+  </data>
+  <data name="ImportColumnLocation" xml:space="preserve">
+    <value>Де знаходиться запас: назва місця зберігання або шлях, наприклад Склад &gt; Полиця А. Відсутні місця зберігання створюються.</value>
+  </data>
+  <data name="ImportColumnStation" xml:space="preserve">
+    <value>Назва станції: запас зберігається у сховищі цієї станції.</value>
+  </data>
+  <data name="ImportColumnUnit" xml:space="preserve">
+    <value>Назва підрозділу: запас зберігається у сховищі цього підрозділу.</value>
+  </data>
+  <data name="ImportColumnQuantity" xml:space="preserve">
+    <value>Скільки є в місці зберігання після імпорту. Порожнє значення залишає запас без змін.</value>
+  </data>
+  <data name="ImportColumnParLevel" xml:space="preserve">
+    <value>Мінімум, який слід тримати в місці зберігання цього рядка.</value>
+  </data>
+  <data name="ImportColumnLot" xml:space="preserve">
+    <value>Номер партії. Відсутні партії створюються.</value>
+  </data>
+  <data name="ImportColumnExpires" xml:space="preserve">
+    <value>Термін придатності партії або одиниці майна, наприклад 2027-03-31.</value>
+  </data>
+  <data name="ImportColumnSerialNumber" xml:space="preserve">
+    <value>Одна одиниця майна із серійним номером на рядок. Уже зареєстровані серійні номери залишаються без змін.</value>
+  </data>
+  <data name="ImportColumnAssetTag" xml:space="preserve">
+    <value>Інвентарний номер одиниці майна.</value>
+  </data>
+  <data name="ImportColumnNote" xml:space="preserve">
+    <value>Примітка, що записується разом із рухом запасу, який проводить цей рядок.</value>
+  </data>
+  <data name="ErrorUnknown" xml:space="preserve">
+    <value>Не вдалося виконати</value>
+  </data>
+  <data name="ErrorImportFileRequired" xml:space="preserve">
+    <value>Виберіть файл для завантаження.</value>
+  </data>
+  <data name="ErrorImportFileTooLarge" xml:space="preserve">
+    <value>Файл більший за 1 MB. Розділіть його на кілька файлів.</value>
+  </data>
+  <data name="ErrorImportFileInvalid" xml:space="preserve">
+    <value>Не вдалося прочитати файл як CSV. Збережіть таблицю у форматі CSV і спробуйте ще раз.</value>
+  </data>
+  <data name="ErrorImportFileEmpty" xml:space="preserve">
+    <value>Файл має заголовок, але не має рядків.</value>
+  </data>
+  <data name="ErrorImportTooManyRows" xml:space="preserve">
+    <value>Файл має більше рядків, ніж приймає один імпорт. Розділіть його на кілька файлів.</value>
+  </data>
+  <data name="ErrorImportDuplicateColumn" xml:space="preserve">
+    <value>Два стовпці у файлі означають те саме. Видаліть один із них.</value>
+  </data>
+  <data name="ErrorImportItemColumnRequired" xml:space="preserve">
+    <value>У файлі має бути стовпець Item із назвою кожної позиції.</value>
+  </data>
+  <data name="ErrorImportHasErrors" xml:space="preserve">
+    <value>Деякі рядки потрібно виправити, перш ніж файл можна буде імпортувати.</value>
+  </data>
+  <data name="ErrorImportPreviewChanged" xml:space="preserve">
+    <value>Інвентар змінився після попереднього перегляду. Перегляньте оновлений попередній перегляд нижче й застосуйте знову.</value>
+  </data>
+  <data name="ErrorMigrationRequired" xml:space="preserve">
+    <value>Інвентар для вашого підрозділу ще не налаштовано.</value>
+  </data>
+  <data name="ErrorInventoryDisabled" xml:space="preserve">
+    <value>Інвентар для вашого підрозділу вимкнено.</value>
+  </data>
+  <data name="ErrorPermissionRequired" xml:space="preserve">
+    <value>У вас немає дозволу коригувати запаси тут.</value>
+  </data>
+  <data name="ErrorMembershipRequired" xml:space="preserve">
+    <value>Ви не є активним членом цього підрозділу.</value>
+  </data>
+  <data name="ErrorOperationUnavailable" xml:space="preserve">
+    <value>Зараз це недоступно.</value>
+  </data>
+  <data name="ErrorRequestConflict" xml:space="preserve">
+    <value>Цей імпорт розпочав хтось інший. Почніть знову з нового завантаження.</value>
+  </data>
+  <data name="ErrorRequestInProgress" xml:space="preserve">
+    <value>Цей імпорт ще застосовується.</value>
+  </data>
+  <data name="ErrorInsufficientStock" xml:space="preserve">
+    <value>Частину цього запасу зарезервовано для нарядів на роботи, і її не можна зменшити настільки.</value>
+  </data>
+  <data name="ErrorRevisionConflict" xml:space="preserve">
+    <value>Хтось змінив цей запис одночасно з вами. Перегляньте файл ще раз.</value>
+  </data>
+  <data name="ErrorInvalidIdentifier" xml:space="preserve">
+    <value>Запит на імпорт недійсний. Почніть знову з нового завантаження.</value>
+  </data>
+  <data name="ErrorCostReconciliationRequired" xml:space="preserve">
+    <value>Історію вартості позиції потрібно звірити, перш ніж її запас можна буде зменшити.</value>
+  </data>
+  <data name="ErrorImportRowUnreadable" xml:space="preserve">
+    <value>Не вдалося прочитати цей рядок; перевірте лапки.</value>
+  </data>
+  <data name="ErrorImportRowColumns" xml:space="preserve">
+    <value>У цьому рядку більше значень, ніж стовпців у заголовку.</value>
+  </data>
+  <data name="ErrorImportValueTooLong" xml:space="preserve">
+    <value>Це значення задовге.</value>
+  </data>
+  <data name="ErrorImportInvalidNumber" xml:space="preserve">
+    <value>Це не число.</value>
+  </data>
+  <data name="ErrorImportInvalidYesNo" xml:space="preserve">
+    <value>Напишіть Yes або No.</value>
+  </data>
+  <data name="ErrorImportInvalidTracking" xml:space="preserve">
+    <value>Напишіть Bulk або Serialized.</value>
+  </data>
+  <data name="ErrorImportInvalidDate" xml:space="preserve">
+    <value>Це не дата; запишіть її як 2027-03-31.</value>
+  </data>
+  <data name="ErrorImportItemRequired" xml:space="preserve">
+    <value>Відсутня назва позиції.</value>
+  </data>
+  <data name="ErrorImportItemConflict" xml:space="preserve">
+    <value>Інший рядок задає цій позиції інше значення.</value>
+  </data>
+  <data name="ErrorImportControlledSubstance" xml:space="preserve">
+    <value>Контрольовані речовини не можна імпортувати; зареєструйте їх через надходження, засвідчене свідком.</value>
+  </data>
+  <data name="ErrorImportItemTrackingMismatch" xml:space="preserve">
+    <value>Це не відповідає способу обліку наявної позиції; натомість відредагуйте позицію.</value>
+  </data>
+  <data name="ErrorImportUnitNotFound" xml:space="preserve">
+    <value>Немає підрозділу з такою назвою.</value>
+  </data>
+  <data name="ErrorImportUnitAmbiguous" xml:space="preserve">
+    <value>Цю назву має більше ніж один підрозділ.</value>
+  </data>
+  <data name="ErrorImportStationNotFound" xml:space="preserve">
+    <value>Немає станції з такою назвою.</value>
+  </data>
+  <data name="ErrorImportStationAmbiguous" xml:space="preserve">
+    <value>Цю назву має більше ніж одна станція.</value>
+  </data>
+  <data name="ErrorImportStationOrUnit" xml:space="preserve">
+    <value>Вкажіть станцію або підрозділ, але не обидва.</value>
+  </data>
+  <data name="ErrorImportLocationAmbiguous" xml:space="preserve">
+    <value>Цю назву має більше ніж одне місце зберігання; вкажіть його шлях, станцію або підрозділ.</value>
+  </data>
+  <data name="ErrorImportLocationRequired" xml:space="preserve">
+    <value>Вкажіть місце зберігання; місце зберігання за замовчуванням не задано.</value>
+  </data>
+  <data name="ErrorImportSerialRequired" xml:space="preserve">
+    <value>Ця позиція обліковується за серійними номерами; вкажіть один серійний номер на рядок.</value>
+  </data>
+  <data name="ErrorImportSerialOnBulkItem" xml:space="preserve">
+    <value>Ця позиція обліковується за кількістю й не має серійних номерів.</value>
+  </data>
+  <data name="ErrorImportDuplicateLine" xml:space="preserve">
+    <value>Інший рядок уже враховує цю позицію в цьому місці та партії.</value>
+  </data>
+  <data name="ErrorImportLotExpiryMismatch" xml:space="preserve">
+    <value>Цю партію зареєстровано з іншим терміном придатності.</value>
+  </data>
+  <data name="ErrorInvalidText" xml:space="preserve">
+    <value>Це значення відсутнє, задовге або недопустиме.</value>
+  </data>
+  <data name="ErrorInvalidItem" xml:space="preserve">
+    <value>Це значення позиції недійсне.</value>
+  </data>
+  <data name="ErrorInvalidCost" xml:space="preserve">
+    <value>Вартість має бути нульовою або більшою, не більше шести знаків після коми.</value>
+  </data>
+  <data name="ErrorInvalidCurrency" xml:space="preserve">
+    <value>Напишіть трилітерний код валюти, наприклад USD.</value>
+  </data>
+  <data name="ErrorInvalidQuantity" xml:space="preserve">
+    <value>Кількість має бути нульовою або більшою, не більше шести знаків після коми.</value>
+  </data>
+  <data name="ErrorInvalidParLevel" xml:space="preserve">
+    <value>Мінімуми в місцях мають бути нульовими або більшими, не більше шести знаків після коми.</value>
+  </data>
+  <data name="ErrorDuplicateItem" xml:space="preserve">
+    <value>Інша позиція вже має цей штрихкод.</value>
+  </data>
+  <data name="ErrorDuplicateSerial" xml:space="preserve">
+    <value>Цей серійний номер трапляється для позиції більше одного разу.</value>
+  </data>
+  <data name="ErrorLotRequired" xml:space="preserve">
+    <value>Ця позиція обліковується за партіями; вкажіть номер партії.</value>
+  </data>
+  <data name="ErrorExpiryRequired" xml:space="preserve">
+    <value>Ця позиція має термін придатності; вкажіть його.</value>
+  </data>
+  <data name="ErrorExpiryRequiresLotTracking" xml:space="preserve">
+    <value>Позиція з кількісним обліком і терміном придатності має обліковуватися за партіями.</value>
+  </data>
+  <data name="ErrorLotMismatch" xml:space="preserve">
+    <value>Ця партія не може приймати запас цієї позиції.</value>
+  </data>
+  <data name="ErrorLotCostMismatch" xml:space="preserve">
+    <value>Ця партія вже має іншу вартість.</value>
+  </data>
+  <data name="ErrorItemUnavailable" xml:space="preserve">
+    <value>Ця позиція неактивна; активуйте її, перш ніж змінювати запас.</value>
+  </data>
+  <data name="ErrorItemCurrencyLocked" xml:space="preserve">
+    <value>Валюту позиції не можна змінити після появи рухів запасу.</value>
+  </data>
+  <data name="ErrorSerializedQuantity" xml:space="preserve">
+    <value>Одиниця майна із серійним номером — це один рядок; залиште кількість порожньою або 1.</value>
+  </data>
+  <data name="ErrorInvalidAsset" xml:space="preserve">
+    <value>Це значення одиниці майна недійсне.</value>
+  </data>
+  <data name="ErrorLocationUnavailable" xml:space="preserve">
+    <value>Ви не можете розміщувати запас у цьому місці зберігання.</value>
+  </data>
+  <data name="ErrorInvalidLocationHierarchy" xml:space="preserve">
+    <value>Цей шлях місця зберігання недійсний.</value>
+  </data>
+  <data name="ErrorInvalidCategoryHierarchy" xml:space="preserve">
+    <value>Цей шлях категорії недійсний.</value>
+  </data>
+  <data name="ErrorHolderRequired" xml:space="preserve">
+    <value>Станція або підрозділ цього місця зберігання недійсні.</value>
+  </data>
+  <data name="ErrorKitMustBeSerialized" xml:space="preserve">
+    <value>Комплект має обліковуватися за серійним номером.</value>
+  </data>
+  <data name="ErrorProtectedDataRequired" xml:space="preserve">
+    <value>Розблокуйте захищені дані, щоб продовжити.</value>
+  </data>
+  <data name="ErrorImportUnitOfMeasureDefaulted" xml:space="preserve">
+    <value>Одиницю виміру не вказано, тому нова позиція отримує типову. За потреби змініть її в позиції.</value>
+  </data>
+  <data name="ErrorImportLocationIgnored" xml:space="preserve">
+    <value>Місце зберігання ігнорується: у цьому рядку немає кількості, серійного номера чи мінімуму в місці.</value>
+  </data>
+  <data name="ErrorImportAssetElsewhere" xml:space="preserve">
+    <value>Цей серійний номер зареєстровано в іншому місці зберігання; його не переміщено.</value>
+  </data>
+  <data name="ErrorImportAssetRetired" xml:space="preserve">
+    <value>Цей серійний номер зареєстровано як втрачений, використаний або виведений з експлуатації; його не змінено.</value>
+  </data>
+</root>

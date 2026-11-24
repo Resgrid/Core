@@ -39,6 +39,9 @@ const script = path.join(root, 'Web/Resgrid.Web/wwwroot/js/app/internal/dispatch
             'a status\'s own text colour wins');
         assert.deepEqual(await badge({ Status: 'On Scene', StatusColor: '#000' }), ['rgb(0, 0, 0)', 'rgb(255, 255, 255)'],
             'a three-digit colour is read too');
+        // PR #591: chosen by contrast, not a brightness threshold — white on pure green is about 1.4:1, dark about 11:1.
+        assert.deepEqual(await badge({ Status: 'Available', StatusColor: '#00ff00' }), ['rgb(0, 255, 0)', 'rgb(38, 38, 38)'],
+            'a bright green status gets dark text');
         // A label class (older built-in statuses) keeps the theme's own colours.
         assert.deepEqual(await badge({ Status: 'Standing By', StatusColor: 'label-default' }), ['rgb(209, 218, 222)', 'rgb(94, 94, 94)']);
         assert.deepEqual(errors, []);

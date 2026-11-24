@@ -834,4 +834,10 @@
   <data name="TermChecklist" xml:space="preserve">
     <value>Checkliste</value>
   </data>
+  <data name="AiPromptPiiWarning" xml:space="preserve">
+    <value>Geben Sie in KI-Eingaben niemals personenbezogene Daten (PII) oder Gesundheitsdaten (PHI) ein: keine Namen, Telefonnummern, Adressen, Patientendetails oder Einsatzschilderungen. Was Sie hier eingeben, kann an ein KI-Modell gesendet werden.</value>
+  </data>
+  <data name="ToggleMenu" xml:space="preserve">
+    <value>Menü ein- oder ausblenden</value>
+  </data>
 </root>

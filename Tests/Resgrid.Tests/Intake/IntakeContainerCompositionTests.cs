@@ -19,6 +19,8 @@ namespace Resgrid.Tests.Intake
 			Resolve<IIntakeService>().Should().NotBeNull();
 			Resolve<IVoiceIntakeTranscriber>().Should().NotBeNull();
 			Resolve<IVoiceIntakeService>().Should().NotBeNull();
+			Resolve<IVoiceIntakeRecordingService>().Should().NotBeNull();
+			Resolve<Resgrid.Model.Providers.IVoiceRecordingProvider>().Should().NotBeNull();
 			Resolve<IIntakeConversationsRepository>().Should().NotBeNull();
 			Resolve<IIntakeConversationMessagesRepository>().Should().NotBeNull();
 			Resolve<Resgrid.Model.Providers.IIntakeSmsProvider>().Should().NotBeNull();

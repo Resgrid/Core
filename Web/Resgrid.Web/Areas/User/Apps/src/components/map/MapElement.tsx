@@ -13,6 +13,7 @@ import {
 import {
   buildCustomMapOverlay,
   chooseCustomMapLayer,
+  customMapBounds,
   customMapTypeLabels,
   getPoiLayerId,
   isMapboxRendererEnabled,
@@ -186,6 +187,10 @@ export default function MapElement(props: MapElementProps) {
   const [customMapLayers, setCustomMapLayers] = useState<Record<string, CustomMapLayerInfo[]>>({});
   const [customMapRegions, setCustomMapRegions] = useState<Record<string, FeatureCollection | null>>({});
   const [customMapSelection, setCustomMapSelection] = useState<Record<string, string>>({});
+  // Where each map's layer load and each layer's region load stands; loading, success and failure kept apart from the
+  // loaded data so a failure can be retried and a successful empty answer is not fetched again.
+  const customMapLayerLoadsRef = useRef<Record<string, 'loading' | 'loaded' | 'failed'>>({});
+  const customMapRegionLoadsRef = useRef<Record<string, { mapId: string; state: 'loading' | 'loaded' | 'failed' }>>({});
   const [focusRequest, setFocusRequest] = useState<{ key: number; bounds: [number, number, number, number] } | null>(null);
   const [MapRenderer, setMapRenderer] = useState<MapRendererComponent | null>(null);
   const [rendererLoading, setRendererLoading] = useState(true);
@@ -437,18 +442,26 @@ export default function MapElement(props: MapElementProps) {
     };
   }, []);
 
-  // Layers of every switched-on map, then the regions of each chosen layer, fetched once each.
+  // Layers of every switched-on map, then the regions of each chosen layer, fetched once each. A load in flight or done
+  // (an empty answer included) is not fetched again; a failed one waits for the map to be switched on again or its layer
+  // picked (retryFailedCustomMapLoads), so a persistent failure never loops.
   useEffect(() => {
     for (const mapId of Object.keys(customMapSelection)) {
-      if (customMapLayers[mapId]) {
+      if (customMapLayerLoadsRef.current[mapId]) {
         continue;
       }
-      setCustomMapLayers((current) => ({ ...current, [mapId]: current[mapId] ?? [] }));
+      customMapLayerLoadsRef.current[mapId] = 'loading';
       void apiFetchJson<{ Data?: { Layers?: CustomMapLayerInfo[] } }>(`/api/v4/Mapping/GetCustomMap/${encodeURIComponent(mapId)}`)
-        .then((response) => setCustomMapLayers((current) => ({ ...current, [mapId]: response.Data?.Layers ?? [] })))
-        .catch((layerError: unknown) => console.error('Unable to load the custom map layers', layerError));
+        .then((response) => {
+          customMapLayerLoadsRef.current[mapId] = 'loaded';
+          setCustomMapLayers((current) => ({ ...current, [mapId]: response.Data?.Layers ?? [] }));
+        })
+        .catch((layerError: unknown) => {
+          customMapLayerLoadsRef.current[mapId] = 'failed';
+          console.error('Unable to load the custom map layers', layerError);
+        });
     }
-  }, [customMapLayers, customMapSelection]);
+  }, [customMapSelection]);
 
   const customMapOverlays = useMemo<CustomMapOverlay[]>(() => {
     const { apiBaseUrl } = getBrowserConfig();
@@ -464,23 +477,38 @@ export default function MapElement(props: MapElementProps) {
 
   useEffect(() => {
     for (const overlay of customMapOverlays) {
-      if (overlay.id in customMapRegions) {
+      if (customMapRegionLoadsRef.current[overlay.id]) {
         continue;
       }
-      setCustomMapRegions((current) => ({ ...current, [overlay.id]: current[overlay.id] ?? null }));
+      customMapRegionLoadsRef.current[overlay.id] = { mapId: overlay.mapId, state: 'loading' };
       void apiFetchJson<FeatureCollection>(`/api/v4/Mapping/GetCustomMapRegionsGeoJSON/${encodeURIComponent(overlay.id)}`)
-        .then((regions) => setCustomMapRegions((current) => ({ ...current, [overlay.id]: regions?.type === 'FeatureCollection' ? regions : null })))
-        .catch((regionError: unknown) => console.error('Unable to load the custom map regions', regionError));
+        .then((regions) => {
+          customMapRegionLoadsRef.current[overlay.id] = { mapId: overlay.mapId, state: 'loaded' };
+          setCustomMapRegions((current) => ({ ...current, [overlay.id]: regions?.type === 'FeatureCollection' ? regions : null }));
+        })
+        .catch((regionError: unknown) => {
+          customMapRegionLoadsRef.current[overlay.id] = { mapId: overlay.mapId, state: 'failed' };
+          console.error('Unable to load the custom map regions', regionError);
+        });
     }
-  }, [customMapOverlays, customMapRegions]);
+  }, [customMapOverlays]);
+
+  /** Lets a map's failed layer and region loads run again (the effects above pick them up on the selection change). */
+  const retryFailedCustomMapLoads = (mapId: string) => {
+    if (customMapLayerLoadsRef.current[mapId] === 'failed') {
+      delete customMapLayerLoadsRef.current[mapId];
+    }
+    for (const [layerId, load] of Object.entries(customMapRegionLoadsRef.current)) {
+      if (load.mapId === mapId && load.state === 'failed') {
+        delete customMapRegionLoadsRef.current[layerId];
+      }
+    }
+  };
 
   const focusCustomMap = (mapId: string) => {
     const overlay = customMapOverlays.find((candidate) => candidate.mapId === mapId);
     const map = customMaps.find((candidate) => candidate.IndoorMapId === mapId);
-    const bounds = overlay?.bounds
-      ?? (map && Number(map.BoundsNELat) > Number(map.BoundsSWLat) && Number(map.BoundsNELon) > Number(map.BoundsSWLon)
-        ? [Number(map.BoundsSWLon), Number(map.BoundsSWLat), Number(map.BoundsNELon), Number(map.BoundsNELat)] as [number, number, number, number]
-        : null);
+    const bounds = overlay?.bounds ?? customMapBounds(map);
     if (bounds) {
       setFocusRequest({ key: Date.now(), bounds });
     }
@@ -498,14 +526,18 @@ export default function MapElement(props: MapElementProps) {
     });
     writeCustomMapPreference(map.IndoorMapId, on ? customMapSelection[map.IndoorMapId] ?? '' : null);
     if (on) {
+      // Switched back on, a map whose layers or rooms failed to load tries again.
+      retryFailedCustomMapLoads(map.IndoorMapId);
       // Switching a map on takes the viewer to it; its bounds are known from the list already.
-      if (Number(map.BoundsNELat) > Number(map.BoundsSWLat) && Number(map.BoundsNELon) > Number(map.BoundsSWLon)) {
-        setFocusRequest({ key: Date.now(), bounds: [Number(map.BoundsSWLon), Number(map.BoundsSWLat), Number(map.BoundsNELon), Number(map.BoundsNELat)] });
+      const bounds = customMapBounds(map);
+      if (bounds) {
+        setFocusRequest({ key: Date.now(), bounds });
       }
     }
   };
 
   const setCustomMapLayer = (mapId: string, layerId: string) => {
+    retryFailedCustomMapLoads(mapId);
     setCustomMapSelection((current) => ({ ...current, [mapId]: layerId }));
     writeCustomMapPreference(mapId, layerId);
   };

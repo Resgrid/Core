@@ -1263,4 +1263,25 @@
   <data name="FacilityMapsHint" xml:space="preserve">
     <value>Fai clic su una stanza per impostare la posizione della chiamata.</value>
   </data>
+  <data name="StrikeAlarm" xml:space="preserve">
+    <value>Attiva allarme {0}</value>
+  </data>
+  <data name="StrikeAlarmConfirm" xml:space="preserve">
+    <value>Portare questa chiamata all'allarme {0}? Verranno inviate le risorse dell'allarme successivo del piano di risposta.</value>
+  </data>
+  <data name="EscalateRunCardsDisabled" xml:space="preserve">
+    <value>I piani di risposta non sono abilitati per questo dipartimento.</value>
+  </data>
+  <data name="EscalateCallNotFound" xml:space="preserve">
+    <value>Chiamata non trovata.</value>
+  </data>
+  <data name="EscalateCallNotActive" xml:space="preserve">
+    <value>Solo le chiamate attive possono passare all'allarme successivo.</value>
+  </data>
+  <data name="EscalateNoRunCard" xml:space="preserve">
+    <value>Nessun piano di risposta corrisponde a questa chiamata; non c'è nulla da intensificare.</value>
+  </data>
+  <data name="EscalateNoResources" xml:space="preserve">
+    <value>Il piano di risposta non prevede risorse aggiuntive per l'allarme successivo.</value>
+  </data>
 </root>

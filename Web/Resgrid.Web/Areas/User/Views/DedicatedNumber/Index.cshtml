@@ -192,8 +192,19 @@
 										}
 									</div>
 								</div>
+								<div class="form-group">
+									<div class="col-sm-10" style="padding-left: 40px;">
+										<div class="checkbox checkbox-primary">
+											<input type="checkbox" id="voiceRecordingEnabled" name="voiceRecordingEnabled" value="true" checked="@number.VoiceRecordingEnabled" />
+											<label for="voiceRecordingEnabled">@localizer["VoiceRecording"]</label>
+										</div>
+										<span class="help-block">@localizer["VoiceRecordingHelp"]</span>
+										<span class="help-block text-warning">@localizer["VoiceRecordingLegal"]</span>
+									</div>
+								</div>
 								<input type="hidden" name="smsIntakeEnabled" value="false" />
 								<input type="hidden" name="voiceIntakeEnabled" value="false" />
+								<input type="hidden" name="voiceRecordingEnabled" value="false" />
 								<button type="submit" class="btn btn-primary">@localizer["SaveIntake"]</button>
 							</form>
 

@@ -322,4 +322,53 @@ namespace Resgrid.Model
 
 		public int? CallId { get; set; }
 	}
+
+	/// <summary>Voice intake call recording (M0332): whether a dedicated number records its intake calls.</summary>
+	public static class VoiceIntakeRecording
+	{
+		/// <summary>The host allows recording and the number has it on.</summary>
+		public static bool IsEnabledFor(DepartmentPhoneNumber number) =>
+			number != null && number.VoiceRecordingEnabled && Resgrid.Config.IntakeConfig.VoiceRecordingEnabled;
+
+		/// <summary>The call file's name: one per session (its start time), so a repeated attempt finds the file it already made.</summary>
+		public static string FileName(VoiceIntakeSession session) =>
+			$"caller-recording-{(session?.StartedOn ?? DateTime.MinValue):yyyyMMdd-HHmmss}Z.mp3";
+	}
+
+	/// <summary>A Twilio recording status callback (M0332).</summary>
+	public sealed class VoiceRecordingStatus
+	{
+		public string AccountSid { get; set; }
+
+		public string CallSid { get; set; }
+
+		public string RecordingSid { get; set; }
+
+		/// <summary>"completed", "absent" (nothing was recorded) or "failed".</summary>
+		public string Status { get; set; }
+
+		public int? DurationSeconds { get; set; }
+	}
+
+	/// <summary>What one recording step did (not persisted).</summary>
+	public enum VoiceRecordingOutcomes
+	{
+		/// <summary>The recording is a file on the call.</summary>
+		Attached = 0,
+
+		/// <summary>Not attached yet (no call so far, a lease held elsewhere, the carrier not ready); worker 80 tries again.</summary>
+		Waiting = 1,
+
+		/// <summary>Nothing kept (no call was created, the recording was empty or never started).</summary>
+		Discarded = 2,
+
+		/// <summary>Already handled (a repeated callback).</summary>
+		Duplicate = 3,
+
+		/// <summary>No voice intake session for the call: a recording this service did not start, which is deleted at the carrier.</summary>
+		Unknown = 4,
+
+		/// <summary>Given up after IntakeConfig.VoiceRecordingMaxAttempts.</summary>
+		Failed = 5
+	}
 }

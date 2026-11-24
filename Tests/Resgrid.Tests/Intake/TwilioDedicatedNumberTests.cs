@@ -46,6 +46,7 @@ namespace Resgrid.Tests.Intake
 		private Mock<IIntakeConversationOperations> _conversationOperations;
 		private Mock<ICommunicationTestService> _communicationTests;
 		private Mock<IIntakeScreeningService> _screening;
+		private Mock<IVoiceIntakeRecordingService> _recording;
 		private IntakeConversation _thread;
 		private DepartmentPhoneNumber _number;
 		private IntakeEnvelope _received;
@@ -82,6 +83,7 @@ namespace Resgrid.Tests.Intake
 				.ReturnsAsync(true);
 			_conversationOperations = new Mock<IIntakeConversationOperations>();
 			_screening = new Mock<IIntakeScreeningService>();
+			_recording = new Mock<IVoiceIntakeRecordingService>();
 			_communicationTests = new Mock<ICommunicationTestService>();
 			_prompts = new Mock<ITwilioVoiceResponseService>();
 			_prompts.Setup(p => p.AppendPromptAsync(It.IsAny<VoiceResponse>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
@@ -101,7 +103,8 @@ namespace Resgrid.Tests.Intake
 				Mock.Of<ITextDepartmentSwitchService>(), Mock.Of<IDispatchRecommendationService>(), Mock.Of<IDispatchScopeService>(),
 				Mock.Of<Resgrid.Model.Services.IAuthorizationService>(), Mock.Of<IAdpReleaseService>(), Mock.Of<IProtectedProjectionService>(),
 				_numbers.Object, _intake.Object, _voice.Object, _text.Object, _conversations.Object, _conversationOperations.Object, _screening.Object,
-				Mock.Of<Resgrid.Web.Services.Twilio.IDispatcherInboundTextHandler>(), Mock.Of<Resgrid.Web.Services.Twilio.IDispatcherInboundVoiceHandler>())
+				Mock.Of<Resgrid.Web.Services.Twilio.IDispatcherInboundTextHandler>(), Mock.Of<Resgrid.Web.Services.Twilio.IDispatcherInboundVoiceHandler>(),
+				_recording.Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() }
 			};
@@ -265,12 +268,194 @@ namespace Resgrid.Tests.Intake
 
 		private static TwilioGatherRequest Call() => new TwilioGatherRequest { To = Dedicated, From = Caller, CallSid = "CA1" };
 
-		private TwilioController GateController(string digits)
+		private TwilioController GateController(string digits, bool heardRecordingNotice = false)
 		{
 			var controller = Controller();
 			controller.ControllerContext.HttpContext.Request.QueryString =
-				new QueryString("?CallSid=CA1&To=%2B17755550100&From=%2B15305550199" + (digits == null ? "" : "&Digits=" + Uri.EscapeDataString(digits)));
+				new QueryString("?CallSid=CA1&To=%2B17755550100&From=%2B15305550199" + (digits == null ? "" : "&Digits=" + Uri.EscapeDataString(digits)) +
+					(heardRecordingNotice ? "&rec=1" : ""));
 			return controller;
+		}
+
+		private void GuidedIntakeStarts()
+		{
+			_voice.Setup(v => v.RouteAsync(_number, Caller, It.IsAny<DateTime>())).ReturnsAsync(new VoiceIntakeRouting { Route = VoiceIntakeRoutes.Intake, DepartmentId = DepartmentId });
+			_voice.Setup(v => v.StartAsync(_number, "CA1", Caller, It.IsAny<CancellationToken>())).ReturnsAsync(new VoiceIntakeTurn
+			{
+				Step = VoiceIntakeSteps.Nature, Gather = true,
+				Prompts = new List<string> { TwilioVoicePromptCatalog.VoiceIntakeGreeting, TwilioVoicePromptCatalog.VoiceIntakeAskNature }
+			});
+		}
+
+		[Test]
+		public async Task a_recording_number_always_plays_the_gate_and_says_the_call_is_recorded()
+		{
+			var saved = Resgrid.Config.IntakeConfig.VoiceGateEnabled;
+			try
+			{
+				// The gate is off for the host, but a recorded call still needs the caller's 1.
+				Resgrid.Config.IntakeConfig.VoiceGateEnabled = false;
+				_number.VoiceRecordingEnabled = true;
+				_departments.Setup(d => d.GetDepartmentByIdAsync(DepartmentId, false)).ReturnsAsync(new Department { DepartmentId = DepartmentId, Name = "Springfield Fire" });
+				GuidedIntakeStarts();
+
+				var twiml = Content(await Controller().InboundVoice(Call()));
+
+				_spoken.Should().Equal(TwilioVoicePromptCatalog.VoiceIntakeRecordedGate("Springfield Fire"), TwilioVoicePromptCatalog.VoiceIntakeNothingHeard);
+				_spoken[0].Should().Be("This is an emergency dispatch number for Springfield Fire, and this conversation will be recorded. To accept and proceed, press 1 now.");
+				twiml.Should().Contain("input=\"dtmf\"").And.Contain("/api/Twilio/VoiceIntakeGate?rec=1");
+				_voice.Verify(v => v.StartAsync(It.IsAny<DepartmentPhoneNumber>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+				_recording.Verify(r => r.StartAsync(It.IsAny<DepartmentPhoneNumber>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never,
+					"nothing is recorded before the caller accepts");
+			}
+			finally
+			{
+				Resgrid.Config.IntakeConfig.VoiceGateEnabled = saved;
+			}
+		}
+
+		[Test]
+		public async Task the_recorded_gate_names_the_department_generically_when_its_name_cannot_be_read()
+		{
+			_number.VoiceRecordingEnabled = true;
+			_departments.Setup(d => d.GetDepartmentByIdAsync(DepartmentId, false)).ThrowsAsync(new TimeoutException("db"));
+			GuidedIntakeStarts();
+
+			var twiml = Content(await Controller().InboundVoice(Call()));
+
+			_spoken[0].Should().Be(TwilioVoicePromptCatalog.VoiceIntakeRecordedGate(null)).And.Contain("for the department, and this conversation will be recorded");
+			twiml.Should().Contain("VoiceIntakeGate?rec=1");
+		}
+
+		[Test]
+		public async Task without_the_recording_switch_the_gate_says_nothing_about_recording()
+		{
+			_number.VoiceRecordingEnabled = false;
+			GuidedIntakeStarts();
+
+			var twiml = Content(await Controller().InboundVoice(Call()));
+
+			_spoken[0].Should().Be(TwilioVoicePromptCatalog.VoiceIntakeGate);
+			twiml.Should().NotContain("rec=1");
+		}
+
+		[Test]
+		public async Task a_caller_who_accepted_the_recording_is_recorded_once_the_questions_start()
+		{
+			_number.VoiceRecordingEnabled = true;
+			GuidedIntakeStarts();
+
+			var twiml = Content(await GateController("1", heardRecordingNotice: true).VoiceIntakeGate());
+
+			twiml.Should().Contain("input=\"speech\"");
+			_recording.Verify(r => r.StartAsync(_number, "CA1", It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task a_caller_who_heard_the_plain_gate_is_never_recorded_even_if_recording_was_switched_on_meanwhile()
+		{
+			_number.VoiceRecordingEnabled = true;
+			GuidedIntakeStarts();
+
+			var twiml = Content(await GateController("1", heardRecordingNotice: false).VoiceIntakeGate());
+
+			twiml.Should().Contain("input=\"speech\"", "the request goes ahead, unrecorded");
+			_recording.Verify(r => r.StartAsync(It.IsAny<DepartmentPhoneNumber>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_caller_told_of_a_recording_switched_off_meanwhile_is_not_recorded()
+		{
+			_number.VoiceRecordingEnabled = false;
+			GuidedIntakeStarts();
+
+			var twiml = Content(await GateController("1", heardRecordingNotice: true).VoiceIntakeGate());
+
+			twiml.Should().Contain("input=\"speech\"");
+			_recording.Verify(r => r.StartAsync(It.IsAny<DepartmentPhoneNumber>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_recording_that_cannot_start_never_stops_the_request()
+		{
+			_number.VoiceRecordingEnabled = true;
+			GuidedIntakeStarts();
+			_recording.Setup(r => r.StartAsync(_number, "CA1", It.IsAny<CancellationToken>())).ThrowsAsync(new TimeoutException("twilio"));
+
+			var twiml = Content(await GateController("1", heardRecordingNotice: true).VoiceIntakeGate());
+
+			twiml.Should().Contain("<Gather").And.Contain("input=\"speech\"");
+			_spoken.Should().Equal(TwilioVoicePromptCatalog.VoiceIntakeGreeting, TwilioVoicePromptCatalog.VoiceIntakeAskNature);
+		}
+
+		[Test]
+		public async Task a_session_that_could_not_start_is_not_recorded()
+		{
+			_number.VoiceRecordingEnabled = true;
+			_voice.Setup(v => v.RouteAsync(_number, Caller, It.IsAny<DateTime>())).ReturnsAsync(new VoiceIntakeRouting { Route = VoiceIntakeRoutes.Intake, DepartmentId = DepartmentId });
+			_voice.Setup(v => v.StartAsync(_number, "CA1", Caller, It.IsAny<CancellationToken>())).ThrowsAsync(new TimeoutException("session store"));
+
+			var twiml = Content(await GateController("1", heardRecordingNotice: true).VoiceIntakeGate());
+
+			twiml.Should().Contain("<Hangup");
+			_recording.Verify(r => r.StartAsync(It.IsAny<DepartmentPhoneNumber>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		private TwilioController RecordingCallbackController(Dictionary<string, string> fields)
+		{
+			var controller = Controller();
+			var request = controller.ControllerContext.HttpContext.Request;
+			request.Method = "POST";
+			request.ContentType = "application/x-www-form-urlencoded";
+			var form = new Dictionary<string, Microsoft.Extensions.Primitives.StringValues>();
+			foreach (var field in fields)
+				form[field.Key] = field.Value;
+			request.Form = new FormCollection(form);
+			return controller;
+		}
+
+		[Test]
+		public async Task the_recording_status_callback_hands_the_recording_to_the_service()
+		{
+			VoiceRecordingStatus received = null;
+			_recording.Setup(r => r.HandleStatusAsync(It.IsAny<VoiceRecordingStatus>(), It.IsAny<CancellationToken>()))
+				.Callback((VoiceRecordingStatus s, CancellationToken _) => received = s)
+				.ReturnsAsync(VoiceRecordingOutcomes.Attached);
+
+			var result = await RecordingCallbackController(new Dictionary<string, string>
+			{
+				["AccountSid"] = "AC00000000000000000000000000000001",
+				["CallSid"] = "CA1",
+				["RecordingSid"] = "RE00000000000000000000000000000001",
+				["RecordingStatus"] = "completed",
+				["RecordingDuration"] = "161"
+			}).VoiceIntakeRecordingCallback();
+
+			result.Should().BeOfType<NoContentResult>();
+			received.CallSid.Should().Be("CA1");
+			received.RecordingSid.Should().Be("RE00000000000000000000000000000001");
+			received.Status.Should().Be("completed");
+			received.DurationSeconds.Should().Be(161);
+			received.AccountSid.Should().Be("AC00000000000000000000000000000001");
+		}
+
+		[Test]
+		public async Task a_recording_callback_that_fails_still_answers_204_for_worker_80_to_retry()
+		{
+			_recording.Setup(r => r.HandleStatusAsync(It.IsAny<VoiceRecordingStatus>(), It.IsAny<CancellationToken>())).ThrowsAsync(new TimeoutException("db"));
+
+			var result = await RecordingCallbackController(new Dictionary<string, string> { ["CallSid"] = "CA1", ["RecordingStatus"] = "completed" }).VoiceIntakeRecordingCallback();
+
+			result.Should().BeOfType<NoContentResult>();
+		}
+
+		[Test]
+		public async Task a_recording_callback_without_a_call_is_refused()
+		{
+			var result = await RecordingCallbackController(new Dictionary<string, string> { ["RecordingStatus"] = "completed" }).VoiceIntakeRecordingCallback();
+
+			result.Should().BeOfType<BadRequestResult>();
+			_recording.Verify(r => r.HandleStatusAsync(It.IsAny<VoiceRecordingStatus>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]

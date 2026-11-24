@@ -42,7 +42,6 @@
 .ibox-content > .nav-tabs { margin-bottom: 20px; }
 
 /* Each module button in the page heading is its own POST form, which is block level. */
-.rgw-modules form { display: inline-block; margin-left: 5px; }
 
 /* The theme restates `.dropdown-menu { left: 0 }` after Bootstrap, which undoes
    `.dropdown-menu-right`; a menu opened from the right edge of the heading would hang

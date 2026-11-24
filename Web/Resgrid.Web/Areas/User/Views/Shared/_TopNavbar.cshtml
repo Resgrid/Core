@@ -31,13 +31,16 @@
 		await featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, ClaimsAuthorizationHelper.GetDepartmentId()) &&
 		await featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCardConditions, ClaimsAuthorizationHelper.GetDepartmentId());
 }
-<div class="row border-bottom" style="height: 50px;">
+@* Layout (one row that never wraps, phone menu button, Help as an icon on narrow screens) lives in css/app-header.css. *@
+<div class="row border-bottom rg-topbar">
     <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
-        <div class="navbar-header" style="width: 60%;">
+        <div class="navbar-header rg-topbar-start">
+            @* site.js toggles the module sidebar from .navbar-minimalize; the button only shows where the sidebar is hidden. *@
+            <button type="button" class="navbar-minimalize rg-menu-toggle" title="@commonLocalizer["ToggleMenu"]" aria-label="@commonLocalizer["ToggleMenu"]"><i class="fa fa-bars" aria-hidden="true"></i></button>
             <div class="hidden-sm hidden-xs" id="top-icons-area">
             </div>
 
-            <div class="hidden-xs hidden-sm" style="float:right; width: 70%; padding-top: 4px;"> 
+            <div class="hidden-xs hidden-sm rg-topbar-search">
                 <div id="autocomplete" data-placeholder="@searchLocalizer["Placeholder"]" data-search-all-label="@searchLocalizer["SearchAllResults"]" data-search-button-label="@searchLocalizer["SearchButton"]"></div>
             </div>
         </div>
@@ -67,7 +70,7 @@
                 </li>
             }
             <li class="btn dropdown" id="menu-department">
-                <a href="#" data-toggle="dropdown" class="dropdown-toggle"><span class="text">@ClaimsAuthorizationHelper.GetDepartmentName().Truncate(45)</span>&nbsp;<b class="caret"></b></a>
+                <a href="#" data-toggle="dropdown" class="dropdown-toggle" title="@ClaimsAuthorizationHelper.GetDepartmentName()"><span class="text">@ClaimsAuthorizationHelper.GetDepartmentName().Truncate(45)</span>&nbsp;<b class="caret"></b></a>
                 <ul class="dropdown-menu">
                     @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
                     {
@@ -128,7 +131,7 @@
                 </ul>
             </li>
             <li class="btn dropdown" id="menu-help">
-                <a href="#" data-toggle="dropdown" class="dropdown-toggle"><span class="text">@commonLocalizer["Help"]</span>&nbsp;<b class="caret"></b></a>
+                <a href="#" data-toggle="dropdown" class="dropdown-toggle" title="@commonLocalizer["Help"]" aria-label="@commonLocalizer["Help"]"><span class="text">@commonLocalizer["Help"]</span><i class="fa fa-question-circle rg-topbar-help-icon" aria-hidden="true"></i>&nbsp;<b class="caret"></b></a>
                 <ul class="dropdown-menu">
                     <li><a href="@Resgrid.Config.SystemBehaviorConfig.HelpAndSupportUrl" target="_blank">@commonLocalizer["HelpAndSupport"]</a></li>
                     @*<li><a href="https://resgrid.wistia.com/projects/9irn4g1q8c" target="_blank">@commonLocalizer["Videos"]</a></li>*@
@@ -183,7 +186,7 @@
             <li>
 				<form asp-controller="Account" asp-action="LogOff" asp-route-area="" method="post" style="display:inline">
 					@Html.AntiForgeryToken()
-					<button type="submit" class="btn btn-link" title="Log out" aria-label="Log out"><i class="fa fa-sign-out" aria-hidden="true"></i></button>
+					<button type="submit" class="btn btn-link" title="@commonLocalizer["Logout"]" aria-label="@commonLocalizer["Logout"]"><i class="fa fa-sign-out" aria-hidden="true"></i></button>
 				</form>
             </li>
         </ul>

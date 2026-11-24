@@ -57,6 +57,13 @@ namespace Resgrid.Model
 		public const string VoiceIntakeGate = "Thank you for calling. To leave a request for the dispatcher, press 1 now.";
 		public static string VoiceIntakeUnavailable => $"This line cannot take your call. For emergencies, dial {EmergencyNumber.Current}. Goodbye.";
 
+		/// <summary>
+		/// The voice intake gate when the number records calls (M0332): the caller's 1 is the consent to the recording, which only starts after
+		/// it. Names the department, so the audio is cached per department.
+		/// </summary>
+		public static string VoiceIntakeRecordedGate(string departmentName) =>
+			$"This is an emergency dispatch number for {(string.IsNullOrWhiteSpace(departmentName) ? "the department" : departmentName.Trim())}, and this conversation will be recorded. To accept and proceed, press 1 now.";
+
 		public static string CallClosedByNumber(string callNumber) => $"This call, ID {callNumber}, has been closed. Goodbye.";
 
 		public static string RespondingToStation(string stationName) => $"You have been marked responding to {stationName}. Goodbye.";

@@ -26,7 +26,8 @@ namespace Resgrid.Model
 		public static readonly TimeSpan PatternTimeout = TimeSpan.FromMilliseconds(100);
 
 		private static readonly Regex Whitespace = new Regex(@"\s+", RegexOptions.Compiled);
-		private static readonly Regex Tags = new Regex(@"<[^>]*>", RegexOptions.Compiled);
+		// "<" cannot sit inside a tag: an email body full of unclosed "<" is scanned once, not once per "<" (which was quadratic).
+		private static readonly Regex Tags = new Regex(@"<[^<>]*>", RegexOptions.Compiled);
 		private static readonly Regex BreakTags = new Regex(@"<\s*(br|/p|/div|/tr|/li|/h[1-6])\s*/?\s*>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		/// <summary>
@@ -137,7 +138,8 @@ namespace Resgrid.Model
 
 		/// <summary>
 		/// The first word after <paramref name="label"/> on the same line, ignoring case; separators such as ":", "#" or "-" right
-		/// after the label are skipped. Null when the label is not there or nothing follows it.
+		/// after the label are skipped. The label is a whole word: "ID" does not match inside "VALID" or "IDENT". Null when the label
+		/// is not there or nothing follows it.
 		/// </summary>
 		public static string AfterLabel(string text, string label)
 		{
@@ -148,14 +150,21 @@ namespace Resgrid.Model
 			var index = text.IndexOf(trimmedLabel, StringComparison.OrdinalIgnoreCase);
 			while (index >= 0)
 			{
-				var rest = text.Substring(index + trimmedLabel.Length);
-				var lineEnd = rest.IndexOfAny(new[] { '\r', '\n' });
-				var line = (lineEnd >= 0 ? rest.Substring(0, lineEnd) : rest).TrimStart(' ', '\t', ':', '#', '-', '=', '.');
-				var word = line.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
-				if (!string.IsNullOrWhiteSpace(word))
-					return word.Trim().TrimEnd(',', ';', '.');
+				var end = index + trimmedLabel.Length;
+				// A label that starts or ends with a letter or digit must not run into one ("Call #" may be followed by "123" directly).
+				var startsWord = index == 0 || !char.IsLetterOrDigit(text[index - 1]) || !char.IsLetterOrDigit(trimmedLabel[0]);
+				var endsWord = end >= text.Length || !char.IsLetterOrDigit(text[end]) || !char.IsLetterOrDigit(trimmedLabel[trimmedLabel.Length - 1]);
+				if (startsWord && endsWord)
+				{
+					var rest = text.Substring(end);
+					var lineEnd = rest.IndexOfAny(new[] { '\r', '\n' });
+					var line = (lineEnd >= 0 ? rest.Substring(0, lineEnd) : rest).TrimStart(' ', '\t', ':', '#', '-', '=', '.');
+					var word = line.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+					if (!string.IsNullOrWhiteSpace(word))
+						return word.Trim().TrimEnd(',', ';', '.');
+				}
 
-				index = text.IndexOf(trimmedLabel, index + trimmedLabel.Length, StringComparison.OrdinalIgnoreCase);
+				index = text.IndexOf(trimmedLabel, end, StringComparison.OrdinalIgnoreCase);
 			}
 
 			return null;

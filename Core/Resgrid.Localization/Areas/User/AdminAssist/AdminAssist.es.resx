@@ -5763,6 +5763,9 @@
   <data xml:space="preserve" name="Ui.Ask.Answered">
     <value>Evidencia verificada relacionada</value>
   </data>
+  <data xml:space="preserve" name="Ui.Ask.Matched">
+    <value>Documentación relacionada de la búsqueda (no seleccionada por la IA)</value>
+  </data>
   <data xml:space="preserve" name="Ui.Ask.Boundary">
     <value>Encuentre orientación sobre configuración, puesta en marcha y complementos. Las respuestas contienen tarjetas de evidencia actuales y fuentes de referencia. Preguntar no puede cambiar configuraciones, enviar mensajes, comprar complementos ni tomar decisiones clínicas o tácticas. Cada pregunta se evalúa de forma independiente; incluya el nombre de la configuración o función.</value>
   </data>
@@ -5818,7 +5821,7 @@
     <value>Solo referencia</value>
   </data>
   <data xml:space="preserve" name="Ui.Ask.Privacy">
-    <value>Su historial es privado para su cuenta y departamento. Las preguntas se cifran en reposo y se conservan durante 30 días de forma predeterminada, sujeto a retenciones legales aprobadas. Solo los conceptos públicos coincidentes y los metadatos autorizados llegan al modelo local. No ingrese detalles de pacientes, narrativas de incidentes, contraseñas ni tokens.</value>
+    <value>Su historial es privado para su cuenta y departamento. Las preguntas se cifran en reposo y se conservan durante 30 días de forma predeterminada, sujeto a retenciones legales aprobadas. Su pregunta se envía al modelo de IA para encontrar orientación relacionada; con Protección de datos avanzada, solo se envían sus palabras que también aparecen en la documentación pública de Resgrid. Nunca ingrese información personal ni de salud (PII o PHI), detalles de pacientes, narrativas de incidentes, contraseñas ni tokens.</value>
   </data>
   <data xml:space="preserve" name="Ui.Ask.ProposedValue">
     <value>Valor propuesto (solo vista previa)</value>

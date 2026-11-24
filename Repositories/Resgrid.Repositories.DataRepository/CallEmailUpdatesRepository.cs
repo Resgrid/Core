@@ -34,6 +34,26 @@ namespace Resgrid.Repositories.DataRepository
 			return await QueryAsync<CallEmailUpdate>(sql, new { DepartmentId = departmentId, CallId = callId }, cancellationToken);
 		}
 
+		public async Task<IEnumerable<CallEmailUpdate>> GetByMessageAsync(int departmentId, string cadCallId, string messageId, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(cadCallId) || string.IsNullOrWhiteSpace(messageId))
+				return Enumerable.Empty<CallEmailUpdate>();
+
+			// IX_CallEmailUpdates_Department_CadCallId narrows it; an email always reads as the same CAD call ID.
+			var sql = $"SELECT * FROM {Tbl("CallEmailUpdates")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("CadCallId")} = {CaseInsensitive("CadCallId")} " +
+				$"AND {Col("MessageId")} = {CaseInsensitive("MessageId")} ORDER BY {Col("ReceivedOn")}";
+
+			return await QueryAsync<CallEmailUpdate>(sql, new { DepartmentId = departmentId, CadCallId = cadCallId.Trim(), MessageId = messageId }, cancellationToken);
+		}
+
+		public async Task<bool> SetOutcomeAsync(string callEmailUpdateId, int fromOutcome, int toOutcome, CancellationToken cancellationToken = default)
+		{
+			var sql = $"UPDATE {Tbl("CallEmailUpdates")} SET {Col("Outcome")} = {P}ToOutcome WHERE {Col("CallEmailUpdateId")} = {CaseInsensitive("Id")} " +
+				$"AND {Col("Outcome")} = {P}FromOutcome";
+
+			return await ExecuteAsync(sql, new { Id = callEmailUpdateId, FromOutcome = fromOutcome, ToOutcome = toOutcome }, cancellationToken) == 1;
+		}
+
 		public async Task<IEnumerable<Call>> GetOpenCallsForCadCallIdAsync(int departmentId, string cadCallId, CancellationToken cancellationToken = default)
 		{
 			if (string.IsNullOrWhiteSpace(cadCallId))
@@ -168,10 +188,29 @@ namespace Resgrid.Repositories.DataRepository
 				catch (Exception ex)
 				{
 					Logging.LogException(ex, "Releasing a CAD email call lock");
+
+					// The lock may still be held by this session: a pooled connection keeps its session (and a session lock) when it
+					// is handed back, so the pool is told to discard it instead; the session ends and the server drops the lock.
+					DiscardSession(connection);
 				}
 				finally
 				{
 					await connection.DisposeAsync();
+				}
+			}
+
+			private static void DiscardSession(DbConnection connection)
+			{
+				try
+				{
+					if (connection is Npgsql.NpgsqlConnection postgres)
+						Npgsql.NpgsqlConnection.ClearPool(postgres);
+					else if (connection is Microsoft.Data.SqlClient.SqlConnection sqlServer)
+						Microsoft.Data.SqlClient.SqlConnection.ClearPool(sqlServer);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, "Discarding the session of a CAD email call lock that could not be released");
 				}
 			}
 		}

@@ -36,6 +36,35 @@ namespace Resgrid.Tests.Mocks
 				return Task.FromResult<IEnumerable<CallEmailUpdate>>(Rows.Where(r => r.DepartmentId == departmentId && r.CallId == callId).OrderBy(r => r.ReceivedOn).ToList());
 		}
 
+		public Task<IEnumerable<CallEmailUpdate>> GetByMessageAsync(int departmentId, string cadCallId, string messageId, CancellationToken cancellationToken = default)
+		{
+			lock (Rows)
+				return Task.FromResult<IEnumerable<CallEmailUpdate>>(Rows.Where(r => r.DepartmentId == departmentId && !string.IsNullOrWhiteSpace(messageId) &&
+					string.Equals(r.CadCallId, cadCallId?.Trim(), StringComparison.OrdinalIgnoreCase) && string.Equals(r.MessageId, messageId, StringComparison.OrdinalIgnoreCase))
+					.OrderBy(r => r.ReceivedOn).ToList());
+		}
+
+		public Task<bool> SetOutcomeAsync(string callEmailUpdateId, int fromOutcome, int toOutcome, CancellationToken cancellationToken = default)
+		{
+			if (FailOutcomeMoves)
+				throw new InvalidOperationException("The ledger could not be written.");
+
+			lock (Rows)
+			{
+				var row = Rows.FirstOrDefault(r => r.CallEmailUpdateId == callEmailUpdateId && r.Outcome == fromOutcome);
+				if (row == null)
+					return Task.FromResult(false);
+				row.Outcome = toOutcome;
+				return Task.FromResult(true);
+			}
+		}
+
+		/// <summary>Every ledger insert throws (the database refused it).</summary>
+		public bool FailInserts { get; set; }
+
+		/// <summary>Every <see cref="SetOutcomeAsync"/> throws: the row an update wrote first stays Applying.</summary>
+		public bool FailOutcomeMoves { get; set; }
+
 		public Task<IEnumerable<Call>> GetOpenCallsForCadCallIdAsync(int departmentId, string cadCallId, CancellationToken cancellationToken = default)
 		{
 			return Task.FromResult<IEnumerable<Call>>(Find(departmentId, cadCallId)
@@ -62,6 +91,9 @@ namespace Resgrid.Tests.Mocks
 
 		public Task<CallEmailUpdate> InsertAsync(CallEmailUpdate entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
 		{
+			if (FailInserts)
+				throw new InvalidOperationException("The ledger could not be written.");
+
 			lock (Rows)
 				Rows.Add(entity);
 			return Task.FromResult(entity);
@@ -113,7 +145,7 @@ namespace Resgrid.Tests.Mocks
 		public static EmailCallUpdateService Create(ICallsService calls, FakeCallEmailUpdatesRepository ledger, Func<EmailCallUpdateConfig> stored = null,
 			Mock<ICallBroadcastOutboxService> outbox = null, Mock<ICallClosureService> closure = null, Mock<IEventAggregator> events = null,
 			IDepartmentsService departments = null, IGeoLocationProvider geo = null, EmailLabeledFieldsConfig labels = null,
-			Mock<ICallDispatchUnitRepository> unitDispatches = null, IUnitsService units = null)
+			Mock<ICallDispatchUnitRepository> unitDispatches = null, IUnitsService units = null, Mock<ICallDispatchStatusService> dispatchStatus = null)
 		{
 			var settings = new Mock<IDepartmentSettingsService>();
 			settings.Setup(s => s.GetEmailCallUpdateConfigAsync(It.IsAny<int>(), It.IsAny<int?>(), It.IsAny<bool>()))
@@ -124,7 +156,7 @@ namespace Resgrid.Tests.Mocks
 				d.GetDepartmentByIdAsync(It.IsAny<int>(), It.IsAny<bool>()) == Task.FromResult(new Department { DepartmentId = 1, ManagingUserId = "manager", TimeZone = "Eastern Standard Time" }));
 
 			return new EmailCallUpdateService(settings.Object, new CallEmailFactory(), calls, ledger, departmentsService, geo ?? Mock.Of<IGeoLocationProvider>(),
-				(outbox ?? new Mock<ICallBroadcastOutboxService>()).Object, (closure ?? new Mock<ICallClosureService>()).Object, Mock.Of<ICallDispatchStatusService>(),
+				(outbox ?? new Mock<ICallBroadcastOutboxService>()).Object, (closure ?? new Mock<ICallClosureService>()).Object, (dispatchStatus ?? new Mock<ICallDispatchStatusService>()).Object,
 				units ?? Mock.Of<IUnitsService>(), Mock.Of<IDepartmentGroupsService>(), Mock.Of<ICallDispatchesRepository>(), Mock.Of<ICallDispatchGroupRepository>(),
 				(unitDispatches ?? new Mock<ICallDispatchUnitRepository>()).Object, Mock.Of<ICallDispatchRoleRepository>(), (events ?? new Mock<IEventAggregator>()).Object);
 		}

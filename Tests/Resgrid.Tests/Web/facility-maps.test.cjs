@@ -152,6 +152,27 @@ const value = (page, selector) => page.$eval(selector, el => el.value);
             await context.close();
         }
 
+        // PR #591: a map whose layers are still loading is not drawn once another selection (here None) was made, so its rooms
+        // never become the ones a click picks from.
+        {
+            const { context, page, errors } = await harness(browser);
+            await page.evaluate(() => {
+                const answer = window.fetch;
+                window.heldLoads = [];
+                window.fetch = (url) => url.indexOf('/GetCustomMap/') >= 0
+                    ? new Promise((resolve) => window.heldLoads.push(() => resolve(answer(url))))
+                    : answer(url);
+            });
+            await page.selectOption('.rg-facility-maps select:first-of-type', 'b100');
+            await page.selectOption('.rg-facility-maps select:first-of-type', '');
+            await page.evaluate(() => window.heldLoads.forEach((release) => release()));
+            await settle(page);
+            assert.equal(await page.evaluate(() => window.map.rasters.length), 0, 'the earlier map is not drawn over None');
+            assert.equal(await page.evaluate(() => resgrid.dispatch.facilitymaps.zoneAt(32.005, -111.995)), null);
+            assert.deepEqual(errors, []);
+            await context.close();
+        }
+
         // Update Call: a call with an indoor location opens with that floor shown.
         {
             const { context, page, errors } = await harness(browser, 'l2');

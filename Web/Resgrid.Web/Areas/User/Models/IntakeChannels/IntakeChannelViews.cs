@@ -90,6 +90,9 @@ namespace Resgrid.Web.Areas.User.Models.IntakeChannels
 		/// <summary>The department's CAD update settings are on, so the channel may accept CAD updates.</summary>
 		public bool CadUpdatesAvailable { get; set; }
 
+		/// <summary>The email formats the department's CAD update settings are on for (Generic covers the Enhanced AI mode).</summary>
+		public List<int> CadUpdateFormats { get; set; } = new List<int>();
+
 		public bool IsEnabled { get; set; } = true;
 
 		public bool IsNew => string.IsNullOrWhiteSpace(IntakeChannelId);

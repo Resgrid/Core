@@ -118,8 +118,20 @@ var resgrid;
             }
 
             /**
+             * The call location was set another way (a POI, a map click, an address or What3Words search, a typed pin, a dragged
+             * marker, a room): a call plus code still being looked up no longer applies, and one still typed in is dropped so the
+             * save does not look it up again and move the call back.
+             */
+            function callLocationChanged() {
+                callPlusCodeLookup++;
+                callPlusCodeInput().val('');
+            }
+            calllocations.callLocationChanged = callLocationChanged;
+
+            /**
              * Looks the typed call plus code up and, when found, places the call there (the pin, and the address through the
-             * page's reverse geocode unless the dispatcher typed one) and empties the code. onFound runs after that.
+             * page's reverse geocode unless the dispatcher typed one) and empties the code. onFound runs after that, once the
+             * page's address lookup has answered (or failed), so a save waiting on the code is not sent without that address.
              */
             function lookupCallPlusCode(code, onFound) {
                 var request = ++callPlusCodeLookup;
@@ -146,12 +158,17 @@ var resgrid;
                             callPlusCodeInput().val('');
 
                             var page = pageScript();
-                            if (page && typeof page.geocodeCoordinates === 'function') {
-                                page.geocodeCoordinates(lat, lng);
-                            }
+                            var addressLookup = page && typeof page.geocodeCoordinates === 'function' ? page.geocodeCoordinates(lat, lng) : null;
 
                             if (typeof onFound === 'function') {
-                                onFound();
+                                // A location set another way while the address was being looked up wins: the save waits
+                                // for the dispatcher again instead of going on with a place they did not save.
+                                var resume = function () {
+                                    if (request === callPlusCodeLookup) {
+                                        onFound();
+                                    }
+                                };
+                                Promise.resolve(addressLookup).then(resume, resume);
                             }
                         } else {
                             alert(text('plusCodeNotFound', 'No location was found for that plus code.'));
@@ -182,8 +199,9 @@ var resgrid;
                     return;
                 }
 
-                // A picked POI is the call's location now; a plus code lookup still on its way no longer applies.
-                callPlusCodeLookup++;
+                // A picked POI is the call's location now: a plus code lookup still on its way no longer applies, and a code still
+                // typed in goes too (the save would otherwise look it up and move the call off the POI).
+                callLocationChanged();
 
                 var option = select.find('option:selected');
                 var lat = Number(option.attr('data-lat'));

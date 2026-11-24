@@ -369,10 +369,19 @@ export default function LeafletMapView({
           },
         });
         regions.addTo(map);
+        // Department layers share the overlay pane's SVG and draw in the order they were added, so regions added after
+        // them would cover them and take their clicks. Send the regions to the back, last first, so they keep their own
+        // order (a room above the hall around it) under every department shape (MapRendererProps.customOverlays).
+        const regionPaths = regions.getLayers();
+        for (let index = regionPaths.length - 1; index >= 0; index--) {
+          (regionPaths[index] as L.Path).bringToBack?.();
+        }
         customOverlayRefs.current.push(regions);
       }
     }
-  }, [customOverlays]);
+    // The map is replaced (and these overlays removed with it) when its tiles or attribution change, so they are
+    // installed again on the new map even when the overlays themselves did not change.
+  }, [customOverlays, resolvedMapConfig.attribution, resolvedMapConfig.tileUrl]);
 
   useEffect(() => {
     const map = mapRef.current;

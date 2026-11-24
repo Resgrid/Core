@@ -17,19 +17,19 @@
 	</div>
 	<div class="col-sm-4">
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-			<a class="btn btn-default" asp-controller="RecordDefinitions" asp-action="History" asp-route-area="User" asp-route-key="@Model.DefinitionKey"><i class="fa fa-history"></i> @localizer["DefinitionHistory"]</a>
-			<a class="btn btn-default" asp-controller="RecordDefinitions" asp-action="Layout" asp-route-area="User" asp-route-key="@Model.DefinitionKey"><i class="fa fa-print"></i> @localizer["DefinitionLayout"]</a>
+			<a class="btn btn-default" asp-controller="RecordDefinitions" asp-action="History" asp-route-area="User" asp-route-key="@Model.DefinitionKey">@localizer["DefinitionHistory"]</a>
+			<a class="btn btn-default" asp-controller="RecordDefinitions" asp-action="Layout" asp-route-area="User" asp-route-key="@Model.DefinitionKey">@localizer["DefinitionLayout"]</a>
 			@if (Model.IsDraft)
 			{
-				<a class="btn btn-success" asp-controller="RecordDefinitions" asp-action="Impact" asp-route-area="User" asp-route-key="@Model.DefinitionKey" asp-route-version="@Model.Version"><i class="fa fa-check"></i> @localizer["DefinitionImpactPublish"]</a>
+				<a class="btn btn-success" asp-controller="RecordDefinitions" asp-action="Impact" asp-route-area="User" asp-route-key="@Model.DefinitionKey" asp-route-version="@Model.Version">@localizer["DefinitionImpactPublish"]</a>
 			}
 			else if (Model.Aggregate?.Draft == null && !(Model.Aggregate?.Definition.IsRetired ?? false))
 			{
-				<form method="post" asp-controller="RecordDefinitions" asp-action="OpenDraft" asp-route-area="User" asp-route-key="@Model.DefinitionKey" style="display:inline">@Html.AntiForgeryToken()<button type="submit" class="btn btn-primary"><i class="fa fa-pencil"></i> @localizer["DefinitionOpenDraft"]</button></form>
+				<form method="post" asp-controller="RecordDefinitions" asp-action="OpenDraft" asp-route-area="User" asp-route-key="@Model.DefinitionKey" style="display:inline">@Html.AntiForgeryToken()<button type="submit" class="btn btn-primary">@localizer["DefinitionOpenDraft"]</button></form>
 			}
 			else if (Model.Aggregate?.Draft != null && !Model.IsDraft)
 			{
-				<a class="btn btn-primary" asp-controller="RecordDefinitions" asp-action="Edit" asp-route-area="User" asp-route-key="@Model.DefinitionKey" asp-route-version="@Model.Aggregate.Draft.Version"><i class="fa fa-pencil"></i> @localizer["DefinitionDraftVersion"] @Model.Aggregate.Draft.Version</a>
+				<a class="btn btn-primary" asp-controller="RecordDefinitions" asp-action="Edit" asp-route-area="User" asp-route-key="@Model.DefinitionKey" asp-route-version="@Model.Aggregate.Draft.Version">@localizer["DefinitionDraftVersion"] @Model.Aggregate.Draft.Version</a>
 			}
 		</div>
 	</div>

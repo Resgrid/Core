@@ -76,7 +76,7 @@ namespace Resgrid.Services
 			builder.RegisterType<AdminAssist.AdminAssistTraceWriter>().As<Resgrid.Model.AdminAssist.IAdminAssistTraceWriter>().InstancePerLifetimeScope();
 			builder.RegisterType<InventoryAuthorizationService>().As<IInventoryAuthorizationService>().InstancePerLifetimeScope();
 			builder.RegisterType<InventoryModernizationService>().AsSelf().As<IInventoryCatalogService>().As<IInventoryStockService>().As<IInventoryWorkOrderAdapter>().As<IInventoryTransferService>()
-				.As<IInventoryIssuanceService>().As<IInventoryMigrationService>().As<IInventoryPurchasingService>().As<IInventoryOperationsService>().As<IInventoryAlertService>().As<Resgrid.Model.Checklists.IChecklistAssetSource>().As<Resgrid.Model.Checklists.IChecklistHistoricalAssetSource>().InstancePerLifetimeScope();
+				.As<IInventoryIssuanceService>().As<IInventoryMigrationService>().As<IInventoryPurchasingService>().As<IInventoryOperationsService>().As<IInventoryAlertService>().As<IInventoryImportService>().As<Resgrid.Model.Checklists.IChecklistAssetSource>().As<Resgrid.Model.Checklists.IChecklistHistoricalAssetSource>().InstancePerLifetimeScope();
 			builder.RegisterType<InventoryAlertNotifications>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<InventoryScheduledReportService>().As<IInventoryScheduledReportService>().InstancePerLifetimeScope();
 			builder.RegisterType<ReadinessAccessService>().As<IReadinessAccessService>().InstancePerLifetimeScope();
@@ -445,6 +445,8 @@ namespace Resgrid.Services
 			builder.RegisterType<Intake.IntakeChannelsService>().As<IIntakeChannelsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Intake.IntakeService>().As<IIntakeService>().InstancePerLifetimeScope();
 			builder.RegisterType<Intake.VoiceIntakeService>().As<IVoiceIntakeService>().InstancePerLifetimeScope();
+			// Voice intake call recording (M0332): started after the caller accepts at the gate, attached to the pending call as a file.
+			builder.RegisterType<Intake.VoiceIntakeRecordingService>().As<IVoiceIntakeRecordingService>().InstancePerLifetimeScope();
 			// Intake spam handling (plan §9, M0326): blocked senders, dismiss as spam, screening labels.
 			builder.RegisterType<Intake.IntakeScreeningService>().As<IIntakeScreeningService>().InstancePerLifetimeScope();
 			// Intake SMS conversations (plan §8): one instance serves the desk contract and the intake/worker operations.

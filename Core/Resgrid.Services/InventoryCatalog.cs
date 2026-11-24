@@ -13,13 +13,7 @@ namespace Resgrid.Services
 		public Task<InventoryItem> SaveItemAsync(InventoryActor actor, InventoryItemInput input) => TransactionAsync(actor, async events =>
 		{
 			await _auth.RequireAsync(actor, true);
-			if (input?.Details == null || !Enum.IsDefined(input.TrackingMode)) throw new InventoryException(400, "InvalidItem");
-			Text(input.Details.Name); Text(input.Details.UnitOfMeasure, 80);
-			if (input.Details.Description?.Length > 16000 || input.Details.Code?.Length > 100 || input.Details.Barcode?.Length > 250
-				|| input.Details.DefaultUnitCost < 0 || input.Details.MinLevel < 0 || input.Details.ReorderPoint < 0 || input.Details.DefaultExpirationDays < 0)
-				throw new InventoryException(400, "InvalidItem");
-			if (input.IsKit && input.TrackingMode != InventoryTrackingMode.Serialized) throw new InventoryException(400, "KitMustBeSerialized");
-			if (input.RequiresExpiration && input.TrackingMode == InventoryTrackingMode.Bulk && !input.RequiresLotTracking) throw new InventoryException(400, "ExpiryRequiresLotTracking");
+			ValidateItemInput(input);
 			if (input.CategoryId != null && (await GetAsync<InventoryCategory>(actor, input.CategoryId)).IsDeleted) throw new InventoryException(404, "Unavailable");
 			if (input.IsControlledSubstance) await _auth.RequireAsync(actor, true, PermissionTypes.ManageControlledSubstances);
 			var row = input.Id == null ? New<InventoryItem>(actor) : await GetAsync<InventoryItem>(actor, input.Id);
@@ -46,6 +40,17 @@ namespace Resgrid.Services
 			if (input.ParLevels != null) await SaveParLevelsAsync(actor, row, input.ParLevels);
 			await RefreshLowStockAsync(actor, row.Id, events); return await RevealAsync(actor, row);
 		});
+		/// <summary>The item editor's field rules, shared with the import so a file can never seed an item the editor would refuse.</summary>
+		private static void ValidateItemInput(InventoryItemInput input)
+		{
+			if (input?.Details == null || !Enum.IsDefined(input.TrackingMode)) throw new InventoryException(400, "InvalidItem");
+			Text(input.Details.Name); Text(input.Details.UnitOfMeasure, 80);
+			if (input.Details.Description?.Length > 16000 || input.Details.Code?.Length > 100 || input.Details.Barcode?.Length > 250
+				|| input.Details.DefaultUnitCost < 0 || input.Details.MinLevel < 0 || input.Details.ReorderPoint < 0 || input.Details.DefaultExpirationDays < 0)
+				throw new InventoryException(400, "InvalidItem");
+			if (input.IsKit && input.TrackingMode != InventoryTrackingMode.Serialized) throw new InventoryException(400, "KitMustBeSerialized");
+			if (input.RequiresExpiration && input.TrackingMode == InventoryTrackingMode.Bulk && !input.RequiresLotTracking) throw new InventoryException(400, "ExpiryRequiresLotTracking");
+		}
 		/// <summary>
 		/// Sets or removes the listed locations' minimums for the item; locations not listed keep theirs, so a form showing only
 		/// some locations never wipes the rest. Setting or removing needs write access to that location. Removing soft deletes;

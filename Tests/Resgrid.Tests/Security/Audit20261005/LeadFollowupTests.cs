@@ -203,6 +203,9 @@ namespace Resgrid.Tests.Security.Audit20261005
 			{
 				TrainingId = 7, DepartmentId = DepartmentId, Name = "Pump ops", Users = new List<TrainingUser> { new TrainingUser { TrainingUserId = 1, UserId = "member-1" } }
 			});
+			// The editor is a department admin, who manages every training of the department.
+			M<IAuthorizationService>().Setup(x => x.GetTrainingManagementScopeAsync(UserId, DepartmentId))
+				.ReturnsAsync(new TrainingManagementScope { UserId = UserId, DepartmentId = DepartmentId, ManagesAll = true, ManagesOwn = true });
 			Training saved = null;
 			M<ITrainingService>().Setup(x => x.SaveAsync(It.IsAny<Training>(), It.IsAny<CancellationToken>())).Callback<Training, CancellationToken>((t, _) => saved = t).ReturnsAsync((Training t, CancellationToken _) => t);
 

@@ -55,7 +55,11 @@ namespace Resgrid.Services
 
 		public async Task<List<DispatchProtocol>> GetAllProtocolsForDepartmentAsync(int departmentId)
 		{
-			var items = await _dispatchProtocolRepository.GetAllByDepartmentIdAsync(departmentId);
+			// Deleted protocols stay as rows for the calls that cite them; they are not part of the department's current set
+			// (lists, matching, the apps' reference data).
+			var items = (await _dispatchProtocolRepository.GetAllByDepartmentIdAsync(departmentId) ?? Enumerable.Empty<DispatchProtocol>())
+				.Where(x => !x.IsDeleted)
+				.ToList();
 
 			foreach (var dispatchProtocol in items)
 			{
@@ -64,7 +68,24 @@ namespace Resgrid.Services
 				dispatchProtocol.Triggers = (await _dispatchProtocolTriggersRepository.GetDispatchProtocolTriggersByProtocolIdAsync(dispatchProtocol.DispatchProtocolId)).ToList();
 			}
 
-			return items.ToList();
+			return items;
+		}
+
+		public async Task<List<int>> GetProtocolIdsOwnedByDepartmentAsync(int departmentId, IEnumerable<int> protocolIds)
+		{
+			var requested = protocolIds?.Distinct().ToList() ?? new List<int>();
+
+			if (departmentId <= 0 || requested.Count == 0)
+				return new List<int>();
+
+			// The department's own protocol rows only: no attachments, questions or triggers are needed to check ownership.
+			// A deleted protocol is not attached to a new call.
+			var owned = (await _dispatchProtocolRepository.GetAllByDepartmentIdAsync(departmentId) ?? Enumerable.Empty<DispatchProtocol>())
+				.Where(x => x.DepartmentId == departmentId && !x.IsDeleted)
+				.Select(x => x.DispatchProtocolId)
+				.ToHashSet();
+
+			return requested.Where(owned.Contains).ToList();
 		}
 
 		public async Task<DispatchProtocol> SaveProtocolAsync(DispatchProtocol protocol, CancellationToken cancellationToken = default(CancellationToken))
@@ -127,11 +148,25 @@ namespace Resgrid.Services
 
 		public async Task<bool> DeleteProtocol(int id, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var procotol = await GetProtocolByIdAsync(id);
-			var deleted = await _dispatchProtocolRepository.DeleteAsync(procotol, cancellationToken);
-			if (deleted && procotol != null && _searchProjections != null)
-				await _searchProjections.Value.RemoveAsync(procotol.DepartmentId, SearchEntityTypes.Protocol, procotol.DispatchProtocolId.ToString(), cancellationToken);
-			return deleted;
+			// A soft delete: calls that used the protocol keep citing it (the CallProtocols foreign key no longer cascades, so
+			// removing the row would fail for any protocol that was ever used, and before M0333 it erased the protocol from
+			// those calls). The row alone is read and written; its questions, triggers and attachments stay as they are.
+			var protocol = await _dispatchProtocolRepository.GetDispatchProtocolByIdAsync(id);
+
+			if (protocol == null)
+				return false;
+
+			if (!protocol.IsDeleted)
+			{
+				protocol.IsDeleted = true;
+				protocol.DeletedOn = DateTime.UtcNow;
+				await _dispatchProtocolRepository.SaveOrUpdateAsync(protocol, cancellationToken, true);
+			}
+
+			if (_searchProjections != null)
+				await _searchProjections.Value.RemoveAsync(protocol.DepartmentId, SearchEntityTypes.Protocol, protocol.DispatchProtocolId.ToString(), cancellationToken);
+
+			return true;
 		}
 
 		public List<DispatchProtocol> ProcessTriggers(List<DispatchProtocol> protocols, Call call)

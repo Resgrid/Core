@@ -597,6 +597,10 @@ namespace Resgrid.Services
 			if (protocol.DepartmentId != department.DepartmentId)
 				return false;
 
+			// A deleted protocol is kept only for the calls that cite it; it is not edited or deleted again.
+			if (protocol.IsDeleted)
+				return false;
+
 			if (department.IsUserAnAdmin(userId))
 				return true;
 
@@ -615,6 +619,64 @@ namespace Resgrid.Services
 				return false;
 
 			return true;
+		}
+
+		public async Task<TrainingManagementScope> GetTrainingManagementScopeAsync(string userId, int departmentId)
+		{
+			var scope = TrainingManagementScope.None(userId, departmentId);
+
+			if (string.IsNullOrWhiteSpace(userId) || departmentId <= 0)
+				return scope;
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (department == null)
+				return scope;
+
+			if (department.IsUserAnAdmin(userId))
+			{
+				scope.ManagesAll = true;
+				scope.ManagesOwn = true;
+				return scope;
+			}
+
+			// No permission row means the default: department admins only (as the training claims are issued).
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.CreateTraining);
+
+			if (permission == null)
+				return scope;
+
+			switch ((PermissionActions)permission.Action)
+			{
+				case PermissionActions.DepartmentAdminsAndSelectRoles:
+					// The roles the department named to run its training: every training.
+					var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+
+					if (_permissionsService.IsUserAllowed(permission, false, false, roles ?? new List<PersonnelRole>()))
+					{
+						scope.ManagesAll = true;
+						scope.ManagesOwn = true;
+					}
+					break;
+				case PermissionActions.DepartmentAndGroupAdmins:
+					// A group admin: what they created, and trainings assigned only to members of their own group.
+					var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+
+					if (group != null && group.IsUserGroupAdmin(userId))
+					{
+						scope.ManagesOwn = true;
+						scope.AdministeredMemberUserIds = new HashSet<string>(
+							(group.Members ?? Enumerable.Empty<DepartmentGroupMember>()).Where(x => x != null && !string.IsNullOrWhiteSpace(x.UserId)).Select(x => x.UserId),
+							StringComparer.OrdinalIgnoreCase);
+					}
+					break;
+				case PermissionActions.Everyone:
+					// Every member may create a training; that does not make every member the manager of everyone else's.
+					scope.ManagesOwn = true;
+					break;
+			}
+
+			return scope;
 		}
 
 		public async Task<bool> CanUserManageSubscriptionAsync(string userId, int departmentId)

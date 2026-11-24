@@ -326,6 +326,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		/// <summary>
+		/// The posted protocol ids that are this department's own. The form only offers the department's protocols, but the
+		/// ids come back in the post, so an id from another department is dropped here instead of being attached to the call.
+		/// </summary>
+		private async Task<List<int>> OwnedProtocolIdsAsync(IEnumerable<int> postedIds)
+		{
+			var ids = postedIds?.Distinct().ToList() ?? new List<int>();
+
+			return ids.Count == 0 ? ids : await _protocolsService.GetProtocolIdsOwnedByDepartmentAsync(DepartmentId, ids);
+		}
+
+		/// <summary>
 		/// Adds a model error for every field the department's new-call policy requires that the call would be left
 		/// without, named by the label the department sees on its settings screen.
 		/// </summary>
@@ -613,6 +624,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 						model.Call.RoleDispatches.Add(dispatch);
 					}
 				}
+
+				// Only this department's protocols: the ids are posted, and a pending one could repeat an active one.
+				activeProtocols = await OwnedProtocolIdsAsync(activeProtocols);
+				pendingProtocols = (await OwnedProtocolIdsAsync(pendingProtocols)).Except(activeProtocols).ToList();
 
 				model.Call.Protocols = new List<CallProtocol>();
 				if (activeProtocols.Any())
@@ -1460,7 +1475,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (call.Protocols == null)
 						call.Protocols = new List<CallProtocol>();
 
-					foreach (var protocolId in PostedProtocolIds(collection))
+					foreach (var protocolId in await OwnedProtocolIdsAsync(PostedProtocolIds(collection)))
 					{
 						if (call.Protocols.Any(x => x.DispatchProtocolId == protocolId))
 							continue;
@@ -2081,6 +2096,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CallPriority = (CallPriority)model.Call.Priority;
 			model.Stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 			model.Protocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(DepartmentId);
+
+			// A protocol deleted since the call is no longer in the department's current set, but the call still cites it:
+			// load those by id (this department's only) so the call keeps showing what was attached.
+			foreach (var callProtocol in model.Call?.Protocols ?? Enumerable.Empty<CallProtocol>())
+			{
+				if (model.Protocols.Any(x => x.DispatchProtocolId == callProtocol.DispatchProtocolId))
+					continue;
+
+				var attached = await _protocolsService.GetProtocolByIdAsync(callProtocol.DispatchProtocolId);
+
+				if (attached != null && attached.DepartmentId == DepartmentId)
+					model.Protocols.Add(attached);
+			}
+
 			model.ChildCalls = await _callsService.GetChildCallsForCallAsync(callId);
 
 			// Show the note boxes and the Add File / Add Image buttons only when the POST behind them would be accepted.
@@ -2334,7 +2363,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					model.Call.IndoorMapFloorId = collection["IndoorMapFloorId"].FirstOrDefault();
 				}
 
-				model.Call.Protocols = PostedProtocolIds(collection)
+				model.Call.Protocols = (await OwnedProtocolIdsAsync(PostedProtocolIds(collection)))
 					.Select(id => new CallProtocol
 					{
 						DispatchProtocolId = id,

@@ -198,7 +198,9 @@ namespace Resgrid.Services.Search
 					case SearchEntityTypes.Training:
 						if (_trainings?.Value == null || !int.TryParse(hit.EntityId, out var trainingId)) return false;
 						var training = await _trainings.Value.GetTrainingByIdAsync(trainingId);
-						return training != null && training.DepartmentId == departmentId;
+						if (training == null || training.DepartmentId != departmentId) return false;
+						// As the Trainings pages: a training is found by its assignees and by whoever manages it.
+						return (await _authorization.GetTrainingManagementScopeAsync(userId, departmentId)).CanOpen(training);
 					case SearchEntityTypes.CalendarEvent:
 						if (_calendar?.Value == null || !int.TryParse(hit.EntityId, out var calendarItemId)) return false;
 						var calendarItem = await _calendar.Value.GetCalendarItemByIdAsync(calendarItemId);

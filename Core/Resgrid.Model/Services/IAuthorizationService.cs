@@ -217,6 +217,16 @@ namespace Resgrid.Model.Services
 		Task<bool> CanUserViewProtocolAsync(string userId, int protocolId);
 
 		/// <summary>
+		/// Which of the department's trainings the member may manage (edit, see the answer key and the report, reset,
+		/// delete) and open. Department admins and the roles the Create Training permission names manage every training;
+		/// a group admin manages the trainings assigned only to their own group's members; anyone else who may create
+		/// trainings manages the ones they created. A training is opened by its assignees and by whoever manages it.
+		/// </summary>
+		/// <param name="userId">The member.</param>
+		/// <param name="departmentId">The member's department.</param>
+		Task<TrainingManagementScope> GetTrainingManagementScopeAsync(string userId, int departmentId);
+
+		/// <summary>
 		/// Determines whether this instance [can user manage subscription asynchronous] the specified user identifier.
 		/// </summary>
 		/// <param name="userId">The user identifier.</param>

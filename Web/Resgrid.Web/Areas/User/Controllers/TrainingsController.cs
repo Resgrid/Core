@@ -13,6 +13,7 @@ using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Models.Training;
 using Resgrid.Web.Helpers;
+using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -24,9 +25,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentsService _departmentsService;
 		private readonly ITrainingService _trainingService;
 		private readonly IPersonnelRolesService _personnelRolesService;
+		private readonly IAuthorizationService _authorizationService;
 
-		public TrainingsController(IDepartmentGroupsService departmentGroupsService, IDepartmentsService departmentService, ITrainingService trainingService, IPersonnelRolesService personnelRolesService)
+		public TrainingsController(IDepartmentGroupsService departmentGroupsService, IDepartmentsService departmentService, ITrainingService trainingService, IPersonnelRolesService personnelRolesService,
+			IAuthorizationService authorizationService)
 		{
+			_authorizationService = authorizationService;
 			_departmentGroupsService = departmentGroupsService;
 			_departmentsService = departmentService;
 			_trainingService = trainingService;
@@ -38,7 +42,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Index()
 		{
 			var model = new TrainingIndexModel();
-			model.Trainings = await _trainingService.GetAllTrainingsForDepartmentAsync(DepartmentId);
+			// A member sees the trainings assigned to them and the ones they manage, not the whole department's list.
+			model.Scope = await _authorizationService.GetTrainingManagementScopeAsync(UserId, DepartmentId);
+			model.Trainings = (await _trainingService.GetAllTrainingsForDepartmentAsync(DepartmentId))
+				.Where(model.Scope.CanOpen)
+				.ToList();
 
 			return View(model);
 		}
@@ -175,7 +183,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				.Select(u => u.UserId).ToHashSet(StringComparer.OrdinalIgnoreCase);
 			model.Training.Users = model.Training.Users.Where(u => !String.IsNullOrWhiteSpace(u.UserId) && departmentUserIds.Contains(u.UserId)).ToList();
 
-			if (!model.Training.Users.Any())
+			// A training open to all members needs no assignees: it is reference material anyone may read.
+			if (!model.Training.Users.Any() && !model.Training.OpenToAllMembers)
 				ModelState.AddModelError("", "You have not selected any personnel, roles or groups to assign this training to.");
 
 			if (ModelState.IsValid)
@@ -257,10 +266,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.Training == null)
 				return NotFound();
 
-			model.CreatorUserName = await UserHelper.GetFullNameForUser(model.Training.CreatedByUserId);
-
 			if (model.Training.DepartmentId != DepartmentId)
 				return Unauthorized();
+
+			// Only its assignees and whoever manages it: being in the department is not enough to read a training.
+			if (!(await _authorizationService.GetTrainingManagementScopeAsync(UserId, DepartmentId)).CanOpen(model.Training))
+				return Unauthorized();
+
+			model.CreatorUserName = await UserHelper.GetFullNameForUser(model.Training.CreatedByUserId);
 
 			await _trainingService.SetTrainingAsViewedAsync(trainingId, UserId);
 
@@ -268,7 +281,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		[Authorize(Policy = ResgridResources.Training_Update)]
+		// Training_Create admits everyone who may manage any training; CanManage then decides for this one. The edit page
+		// shows the answer key, so it is never open to a member who merely may create trainings of their own.
+		[Authorize(Policy = ResgridResources.Training_Create)]
 		public async Task<IActionResult> Edit(int trainingId)
 		{
 			var training = await _trainingService.GetTrainingByIdAsync(trainingId);
@@ -277,6 +292,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return NotFound();
 
 			if (training.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (!await CanManageTrainingAsync(training))
 				return Unauthorized();
 
 			var model = new EditTrainingModel();
@@ -296,7 +314,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[Authorize(Policy = ResgridResources.Training_Update)]
+		[Authorize(Policy = ResgridResources.Training_Create)]
 		public async Task<IActionResult> Edit(int trainingId, EditTrainingModel model, IFormCollection form, ICollection<IFormFile> attachments)
 		{
 			var existingTraining = await _trainingService.GetTrainingByIdAsync(trainingId);
@@ -305,6 +323,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return NotFound();
 
 			if (existingTraining.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (!await CanManageTrainingAsync(existingTraining))
 				return Unauthorized();
 
 			if (attachments != null && attachments.Count > 0)
@@ -449,6 +470,7 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 				existingTraining.TrainingText = model.Training.TrainingText;
 				existingTraining.MinimumScore = model.Training.MinimumScore;
 				existingTraining.ToBeCompletedBy = model.Training.ToBeCompletedBy;
+				existingTraining.OpenToAllMembers = model.Training.OpenToAllMembers;
 				existingTraining.GroupsToAdd = form["groupsToAdd"];
 				existingTraining.RolesToAdd = form["rolesToAdd"];
 				existingTraining.UsersToAdd = form["usersToAdd"];
@@ -554,6 +576,9 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 			if (training == null || training.DepartmentId != DepartmentId)
 				return null;
 
+			if (!(await _authorizationService.GetTrainingManagementScopeAsync(UserId, DepartmentId)).CanOpen(training))
+				return null;
+
 			return new FileContentResult(attachment.Data, attachment.FileType)
 			{
 				FileDownloadName = attachment.FileName
@@ -572,6 +597,9 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 			if (model.Training.DepartmentId != DepartmentId)
 				return Unauthorized();
 
+			if (!(await _authorizationService.GetTrainingManagementScopeAsync(UserId, DepartmentId)).CanOpenQuiz(model.Training))
+				return Unauthorized();
+
 			await _trainingService.SetTrainingAsViewedAsync(trainingId, UserId, cancellationToken);
 
 			return View(model);
@@ -588,6 +616,10 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 				return NotFound();
 
 			if (training.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			// A quiz is answered by the people it was assigned to.
+			if (!(await _authorizationService.GetTrainingManagementScopeAsync(UserId, DepartmentId)).IsAssigned(training))
 				return Unauthorized();
 
 			List<int> questions = form.Keys
@@ -618,7 +650,7 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[Authorize(Policy = ResgridResources.Training_Delete)]
+		[Authorize(Policy = ResgridResources.Training_Create)]
 		public async Task<IActionResult> DeleteTraining(int trainingId)
 		{
 			var model = new ViewTrainingModel();
@@ -630,6 +662,9 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 			if (model.Training.DepartmentId != DepartmentId)
 				return Unauthorized();
 
+			if (!await CanManageTrainingAsync(model.Training))
+				return Unauthorized();
+
 			await _trainingService.DeleteTrainingAsync(trainingId);
 
 			return RedirectToAction("Index");
@@ -637,7 +672,7 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[Authorize(Policy = ResgridResources.Training_Update)]
+		[Authorize(Policy = ResgridResources.Training_Create)]
 		public async Task<IActionResult> ResetUserTraining(int trainingId, string userId)
 		{
 			var model = new ViewTrainingModel();
@@ -649,15 +684,18 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 			if (model.Training.DepartmentId != DepartmentId)
 				return Unauthorized();
 
+			if (!await CanManageTrainingAsync(model.Training))
+				return Unauthorized();
+
 			await _trainingService.ResetUserAsync(trainingId, userId);
 
 			return RedirectToAction("Report", new { trainingId = model.Training.TrainingId});
 		}
 
 		[HttpGet]
-		// Every member holds Training_View; the report lists everyone's progress and scores and its only actions (reset)
-		// need Training_Update, so it is limited to the people who can manage trainings - the same set the Index shows it to.
-		[Authorize(Policy = ResgridResources.Training_Update)]
+		// Every member holds Training_View; the report lists everyone's progress and scores, so it is limited to the people
+		// who manage this training - the same set the Index shows it to.
+		[Authorize(Policy = ResgridResources.Training_Create)]
 		public async Task<IActionResult> Report(int trainingId)
 		{
 			var model = new TrainingReportView();
@@ -665,6 +703,9 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 
 			if (model.Training == null)
 				return NotFound();
+
+			if (model.Training.DepartmentId != DepartmentId || !await CanManageTrainingAsync(model.Training))
+				return Unauthorized();
 
 			model.UserGroups = new Dictionary<string, string>();
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
@@ -681,6 +722,12 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 			}
 
 			return View(model);
+		}
+
+		/// <summary>True when the signed-in member manages this training (edit, answer key, report, reset, delete).</summary>
+		private async Task<bool> CanManageTrainingAsync(Training training)
+		{
+			return (await _authorizationService.GetTrainingManagementScopeAsync(UserId, DepartmentId)).CanManage(training);
 		}
 
 		private static async Task<byte[]> ReadUploadedFileAsync(IFormFile file)

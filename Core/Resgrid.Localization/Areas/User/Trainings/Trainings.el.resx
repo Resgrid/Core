@@ -168,6 +168,12 @@
   <data name="AddAllPersonnelLabel" xml:space="preserve">
     <value>Προσθήκη όλου του Προσωπικού</value>
   </data>
+  <data name="OpenToAllMembersLabel" xml:space="preserve">
+    <value>Ανοιχτό σε όλα τα μέλη</value>
+  </data>
+  <data name="OpenToAllMembersHelp" xml:space="preserve">
+    <value>Κάθε μέλος μπορεί να δει αυτή την εκπαίδευση χωρίς ανάθεση. Μόνο τα μέλη στα οποία έχει ανατεθεί παρακολουθούνται και κάνουν το κουίζ.</value>
+  </data>
   <data name="AddGroupsLabel" xml:space="preserve">
     <value>Προσθήκη Ομάδων</value>
   </data>

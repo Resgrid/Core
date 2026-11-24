@@ -484,7 +484,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				foreach (var callProtocol in c.Protocols)
 				{
 					var protocol = await _protocolsService.GetProtocolByIdAsync(callProtocol.DispatchProtocolId);
-					if (protocol != null)
+
+					// Only a protocol of the call's own department: a row pointing at another department's protocol is never read out.
+					if (protocol != null && protocol.DepartmentId == c.DepartmentId)
 						protocols.Add(protocol);
 				}
 			}
@@ -1043,7 +1045,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					var protocol = await _protocolsService.GetProtocolByIdAsync(callProtocol.DispatchProtocolId);
 
-					if (protocol != null)
+					// Only a protocol of the call's own department: a row pointing at another department's protocol is never read out.
+					if (protocol != null && protocol.DepartmentId == call.DepartmentId)
 						result.Data.Protocols.Add(CallProtocolsController.ConvertProtocolData(protocol));
 				}
 			}

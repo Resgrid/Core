@@ -133,10 +133,16 @@
                 <p class="text-muted">@localizer["ReportedLocation"]: @Model.Input.Latitude, @Model.Input.Longitude</p>
             }
 
+            @* e-Signature S3 (free with Checklists): a form that requires it is witnessed with an L2 signature bound to the completion's content. *@
+            @if (Model.Form.RequiresIndependentWitness && Model.Form.RequireWitnessSignature && run.State != (int)ChecklistRunState.InProgress)
+            {
+                @await Component.InvokeAsync("ChecklistWitnessSignature", new { completionId = run.Id })
+            }
+
             @if (run.State == (int)ChecklistRunState.AwaitingWitness)
             {
                 <div class="alert alert-info"><i class="fa fa-user-plus"></i> @localizer["WitnessInstructions"]</div>
-                @if (run.CreatedBy != (string)ViewBag.ChecklistUserId && ViewBag.ChecklistsEnabled == true)
+                @if (run.CreatedBy != (string)ViewBag.ChecklistUserId && ViewBag.ChecklistsEnabled == true && !(Model.Form.RequiresIndependentWitness && Model.Form.RequireWitnessSignature))
                 {
                     <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#checklist-witness">@localizer["Attest"]</button>
                     <div class="modal fade rgw-modal" id="checklist-witness" tabindex="-1" role="dialog" aria-labelledby="checklist-witness-title">

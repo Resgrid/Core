@@ -3249,6 +3249,15 @@
   <data xml:space="preserve" name="Permission.DeleteTraining">
     <value>Ta bort utbildning</value>
   </data>
+  <data xml:space="preserve" name="Permission.AuthorProtocols">
+    <value>Skriva protokoll</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ApproveProtocols">
+    <value>Godkänna protokoll</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageProtocolAcknowledgments">
+    <value>Hantera protokollbekräftelser</value>
+  </data>
   <data xml:space="preserve" name="Permission.CreateWorkflow">
     <value>Skapa arbetsflöde</value>
   </data>
@@ -3500,6 +3509,27 @@
   </data>
   <data xml:space="preserve" name="PermissionHelp.DeleteTraining">
     <value>Tillåter att arkivera, återställa och ta bort utbildningar. En utbildning som någon har slutfört arkiveras i stället för att tas bort, så att dess slutföranden finns kvar. Tills den sparas följer den Skapa utbildning.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AuthorProtocols">
+    <value>Tillåter att skapa, kopiera och importera protokoll, redigera deras biblioteksfält, utlösare, frågor och målgrupp, skriva utkast och skicka dem för godkännande, inaktivera protokoll och exportera biblioteket. Författare ser också utkast, granskningskön och alla protokoll oavsett målgrupp. Att godkänna och publicera kräver Godkänna protokoll. Utan sparad regel får bara avdelningsadministratörer göra detta.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ApproveProtocols">
+    <value>Tillåter att godkänna eller avslå inskickade protokollversioner, publicera dem direkt eller ett bestämt datum, registrera ”granskad, ingen ändring”, dra tillbaka och ta bort protokoll, lägga ett protokolls juridiska spärr samt hantera kategorier och deras godkännandesteg. Varje godkännande signeras med en ny förstärkt verifiering eller en lösennyckel. Utan sparad regel får bara avdelningsadministratörer göra detta.</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageCourses">
+    <value>Hantera kurser</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageCourses">
+    <value>Tillåter att skapa kurser och frågebanker, ladda upp kursvideor, skicka in, godkänna och publicera kursversioner, tilldela kurser och läsa kursresultat. Varje godkännande signeras med en färsk extra verifiering. Kurser ingår i LMS-tillägget, som inte är tillgängligt än; lektioner i Resgrid Academy kan tilldelas med denna behörighet eller med Tilldela utbildning. Utan sparad regel får bara organisationens administratörer.</value>
+  </data>
+  <data xml:space="preserve" name="Permission.GradeAssessments">
+    <value>Bedöma prov</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.GradeAssessments">
+    <value>Tillåter att bedöma fritextsvar som väntar i bedömningskön och läsa frågeanalysen. Ingen bedömer sitt eget försök. Ingår i LMS-tillägget, som inte är tillgängligt än. Utan sparad regel får bara organisationens administratörer.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageProtocolAcknowledgments">
+    <value>Reserverad för läs- och signeringsbekräftelser: vem som ska tilldela medlemmar protokoll att läsa och signera, undanta medlemmar och läsa bekräftelserapporten. Läs och signera finns inte än, så att spara regeln ändrar ingenting i dag. Utan sparad regel får bara avdelningsadministratörer göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateWorkflow">
     <value>Tillåter att arbetsflöden skapas, redigeras och tas bort, att deras villkor förhandsgranskas, att stegkonfigurationen läses i apparna och API:t och att den renderade utdatan från arbetsflödeskörningar visas. Utan sparad regel kan endast avdelningsadministratörer ändra arbetsflöden, men alla medlemmar kan öppna sidan Arbetsflöden och läsa definitioner; om du sparar Avdelningsadministratörer döljs arbetsflödena även för alla andra. Steg som skickar en export från Poster kräver också Exportera poster och Hantera rapportsammanställningar. Gratisplaner är begränsade i hur många arbetsflöden de kan ha.</value>
@@ -8297,5 +8327,1040 @@
   </data>
   <data name="FeaturePurpose.call-protocol-removal" xml:space="preserve">
     <value>Ta bort ett felaktigt bifogat protokoll från ett larm med en orsak; registret behåller det, markerat som borttaget.</value>
+  </data>
+  <data name="Setting.ProtocolLibrarySettings" xml:space="preserve">
+    <value>Inställningar för protokollbiblioteket</value>
+  </data>
+  <data name="SettingHelp.ProtocolLibrarySettings" xml:space="preserve">
+    <value>Avdelningsövergripande regler på sidan Inställningar för protokoll: om godkännanden kräver en lösennyckel och läs och signera en förstärkt verifiering, vilket granskningsintervall nya protokoll börjar med och hur länge ersatta och tillbakadragna versioner sparas, med en juridisk spärr som stoppar all borttagning. Saknas den gäller standardnivåerna för signering, inget standardintervall och alla versioner sparas. Bara avdelningsadministratörer kan ändra den.</value>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.RequirePasskeyForApproval" xml:space="preserve">
+    <value>Inställningar för protokollbiblioteket / Kräv lösennyckel för godkännande</value>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.RequirePasskeyForApproval" xml:space="preserve">
+    <value>Godkännanden och stämplar med ”granskad, ingen ändring” måste signeras med en lösennyckel; en förstärkt verifiering med autentiseringskod eller inloggningsleverantör räcker inte längre. Godkännare utan registrerad lösennyckel kan inte signera förrän de lägger till en. Avstängd signerar varje ny förstärkt verifiering eller lösennyckel.</value>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.ReadAndSignRequiresStepUp" xml:space="preserve">
+    <value>Inställningar för protokollbiblioteket / Läs och signera kräver förstärkt verifiering</value>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.ReadAndSignRequiresStepUp" xml:space="preserve">
+    <value>Läs- och signeringsbekräftelser kommer att kräva en ny förstärkt verifiering i stället för bara den inloggade sessionen. Läs och signera finns inte än; valet sparas tills det gör det.</value>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.DefaultReviewIntervalDays" xml:space="preserve">
+    <value>Inställningar för protokollbiblioteket / Standardintervall för granskning i dagar</value>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.DefaultReviewIntervalDays" xml:space="preserve">
+    <value>Dagar mellan granskningar för nya och importerade protokoll som inte anger ett eget intervall, 0 till 3650; 0 anger inget. Befintliga protokoll behåller sitt. Att publicera en version eller registrera ”granskad, ingen ändring” startar om intervallet, och protokollets ägare, eller avdelningsadministratörerna om ägare saknas, påminns 30 och 7 dagar innan granskningen förfaller och igen när den är försenad.</value>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.LegalHold" xml:space="preserve">
+    <value>Inställningar för protokollbiblioteket / Juridisk spärr</value>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.LegalHold" xml:space="preserve">
+    <value>En juridisk spärr för hela avdelningen: så länge den är på tas ingen ersatt eller tillbakadragen protokollversion bort, oavsett antal sparade dagar. En godkännare kan också spärra ett enskilt protokoll från dess redigeringssida.</value>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.Retention" xml:space="preserve">
+    <value>Inställningar för protokollbiblioteket / Lagringstid</value>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.Retention" xml:space="preserve">
+    <value>Dagar som varje protokolltyp (Utlarmning, SOG, Klinisk riktlinje, Policy, Procedur, Referens) sparar en version efter att den ersatts eller dragits tillbaka, upp till 36500; därefter tar en bakgrundsprocess bort den. 0 sparar den typens versioner. En version som fortfarande är bifogad till ett larm tas aldrig bort, och inget tas bort medan en juridisk spärr är på.</value>
+  </data>
+  <data name="Field.ProtocolKindRetention.Kind" xml:space="preserve">
+    <value>Lagringstid per protokolltyp / Typ</value>
+  </data>
+  <data name="FieldHelp.ProtocolKindRetention.Kind" xml:space="preserve">
+    <value>Den protokolltyp som posten gäller: 0 Utlarmning, 1 SOG, 2 Klinisk riktlinje, 3 Policy, 4 Procedur, 5 Referens. En post per typ; en typ utan post sparar alla versioner.</value>
+  </data>
+  <data name="Field.ProtocolKindRetention.KeepDays" xml:space="preserve">
+    <value>Lagringstid per protokolltyp / Antal dagar</value>
+  </data>
+  <data name="FieldHelp.ProtocolKindRetention.KeepDays" xml:space="preserve">
+    <value>Dagar efter att en version av den typen ersatts eller dragits tillbaka innan den får tas bort, 1 till 36500. En post med 0 tas bort när den sparas, så typen behåller sina versioner.</value>
+  </data>
+  <data name="Feature.protocol-review-queue" xml:space="preserve">
+    <value>Granskningskö för protokoll</value>
+  </data>
+  <data name="FeaturePurpose.protocol-review-queue" xml:space="preserve">
+    <value>Godkänn med signatur eller avslå inskickade protokollversioner och publicera dem sedan direkt eller ett bestämt datum.</value>
+  </data>
+  <data name="Feature.protocol-review-stamp" xml:space="preserve">
+    <value>Registrera en protokollgranskning</value>
+  </data>
+  <data name="FeaturePurpose.protocol-review-stamp" xml:space="preserve">
+    <value>Markera ett publicerat protokoll som ”granskad, ingen ändring” med en signerad stämpel, utan ny version.</value>
+  </data>
+  <data name="Feature.protocol-compare" xml:space="preserve">
+    <value>Jämför protokollversioner</value>
+  </data>
+  <data name="FeaturePurpose.protocol-compare" xml:space="preserve">
+    <value>Se vad som ändrats mellan två versioner av ett protokoll med markerade ändringar.</value>
+  </data>
+  <data name="Feature.protocol-categories" xml:space="preserve">
+    <value>Protokollkategorier</value>
+  </data>
+  <data name="FeaturePurpose.protocol-categories" xml:space="preserve">
+    <value>Dela in biblioteket i kategorier och ange de godkännandesteg varje kategori kräver.</value>
+  </data>
+  <data name="Feature.protocol-settings" xml:space="preserve">
+    <value>Protokollinställningar</value>
+  </data>
+  <data name="FeaturePurpose.protocol-settings" xml:space="preserve">
+    <value>Ange signeringskrav, standardintervallet för granskning, lagringstid för versioner och avdelningens juridiska spärr.</value>
+  </data>
+  <data name="Feature.protocol-import" xml:space="preserve">
+    <value>Importera protokoll</value>
+  </data>
+  <data name="FeaturePurpose.protocol-import" xml:space="preserve">
+    <value>Hämta in protokoll från en Resgrid-fil för protokollutbyte som utkast att granska.</value>
+  </data>
+  <data name="Setting.TrainingRecordSettings" xml:space="preserve">
+    <value>Inställningar för utbildningsposter</value>
+  </data>
+  <data name="SettingHelp.TrainingRecordSettings" xml:space="preserve">
+    <value>Hur utbildningsposter förs: avrundning av incheckningstimmar från kalendern, om medlemmar själva får skicka in extern utbildning och hur många år posterna minst sparas efter att en medlem slutat.</value>
+  </data>
+  <data name="Field.TrainingRecordSettings.HoursRoundingMinutes" xml:space="preserve">
+    <value>Inställningar för utbildningsposter / Avrunda incheckningstimmar till</value>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.HoursRoundingMinutes" xml:space="preserve">
+    <value>Timmarna från incheckning till utcheckning vid kalenderhändelser som räknas som utbildning avrundas till detta steg: 5, 6, 10, 15, 30 eller 60 minuter, eller 0 för exakt minut.</value>
+  </data>
+  <data name="Field.TrainingRecordSettings.HoursRoundingMode" xml:space="preserve">
+    <value>Inställningar för utbildningsposter / Avrundningsriktning</value>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.HoursRoundingMode" xml:space="preserve">
+    <value>Om incheckningstimmar avrundas till närmaste steg, nedåt eller uppåt. Ingen effekt så länge timmar förs på exakt minut.</value>
+  </data>
+  <data name="Field.TrainingRecordSettings.MemberSubmissionsDisabled" xml:space="preserve">
+    <value>Inställningar för utbildningsposter / Medlemmar får inte skicka in extern utbildning</value>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.MemberSubmissionsDisabled" xml:space="preserve">
+    <value>När det är på kan medlemmar inte själva skicka in extern utbildning. Befäl kan fortfarande registrera den via en import eller ett tillgodoräknande för en certifiering.</value>
+  </data>
+  <data name="Field.TrainingRecordSettings.DefaultRetentionYears" xml:space="preserve">
+    <value>Inställningar för utbildningsposter / Spara poster efter att en medlem slutat (år)</value>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.DefaultRetentionYears" xml:space="preserve">
+    <value>Minsta antal år som en tidigare medlems utbildningsposter sparas när deras kategori inte anger något. 0 innebär inget minimum.</value>
+  </data>
+  <data name="Feature.training-transcript" xml:space="preserve">
+    <value>Utbildningsregister</value>
+  </data>
+  <data name="FeaturePurpose.training-transcript" xml:space="preserve">
+    <value>Varje medlems genomförda kurser, utbildningsposter, närvaro i kalendern, importer och externa intyg, med timmar och om de räknas.</value>
+  </data>
+  <data name="FeatureValue.training-transcript" xml:space="preserve">
+    <value>Ett samlat register över varje medlems utbildning och timmar för förnyelser och granskningar, utan att summera närvarolistor för hand.</value>
+  </data>
+  <data name="FeatureExample.training-transcript" xml:space="preserve">
+    <value>Inför förnyelsen av en certifiering laddar en medlem ner sitt register som PDF med timmar per kategori, och utbildningsansvarig öppnar samma register från medlemmens namn.</value>
+  </data>
+  <data name="FeatureSetup.training-transcript" xml:space="preserve">
+    <value>Öppna Utbildningar och välj Mitt utbildningsregister. Befäl som granskar en medlems poster väljer medlemmen i registret. Bara verifierade poster räknas till timmarna.</value>
+  </data>
+  <data name="Feature.training-external-submissions" xml:space="preserve">
+    <value>Inskickad extern utbildning</value>
+  </data>
+  <data name="FeaturePurpose.training-external-submissions" xml:space="preserve">
+    <value>Medlemmar skickar in kurser de genomfört utanför organisationen, med timmar och ett valfritt intyg; ett befäl verifierar eller avvisar var och en i kön med poster.</value>
+  </data>
+  <data name="FeatureValue.training-external-submissions" xml:space="preserve">
+    <value>Externa kurser och fortbildning kommer in i registret med bevis bifogat, och inget räknas förrän ett befäl har kontrollerat det.</value>
+  </data>
+  <data name="FeatureExample.training-external-submissions" xml:space="preserve">
+    <value>En ambulanssjuksköterska går en fortbildningskurs online och skickar in den med intyg och 4 timmar; utbildningsansvarig verifierar den i kön och timmarna räknas.</value>
+  </data>
+  <data name="FeatureSetup.training-external-submissions" xml:space="preserve">
+    <value>Medlemmar väljer Skicka in extern utbildning i sitt register. Befäl öppnar kön med poster för att verifiera, avvisa eller lösa möjliga dubbletter. Inskick kan stängas av i inställningarna för utbildningsposter.</value>
+  </data>
+  <data name="Feature.training-categories" xml:space="preserve">
+    <value>Utbildningskategorier</value>
+  </data>
+  <data name="FeaturePurpose.training-categories" xml:space="preserve">
+    <value>Gruppera utbildningstimmar i kategorier med valfria timmål och lagringstid, börja från mallar som ISO, NCCP eller OSHA och kategorisera befintliga poster i en omgång.</value>
+  </data>
+  <data name="FeatureValue.training-categories" xml:space="preserve">
+    <value>Timmarna summeras som myndigheter, försäkringsbolag eller ackrediteringsorgan vill ha dem, och målen visar vem som ligger efter.</value>
+  </data>
+  <data name="FeatureExample.training-categories" xml:space="preserve">
+    <value>En organisation använder ISO-mallen, sätter ett årsmål för styrkornas utbildning och kategoriserar sedan förra årets övningsposter i en omgång efter kursnamn.</value>
+  </data>
+  <data name="FeatureSetup.training-categories" xml:space="preserve">
+    <value>Under Utbildningar öppnar du Utbildningsposter och sedan Utbildningskategorier. Använd en mall eller lägg till egna och använd sedan Kategorisera historik för poster utan kategori.</value>
+  </data>
+  <data name="Feature.training-credit-mappings" xml:space="preserve">
+    <value>Kopplingar för tillgodoräknanden</value>
+  </data>
+  <data name="FeaturePurpose.training-credit-mappings" xml:space="preserve">
+    <value>Räkna en utbildningskategoris verifierade timmar mot förnyelsen av en certifiering, för hela kategorin eller bara en del av den.</value>
+  </data>
+  <data name="FeatureValue.training-credit-mappings" xml:space="preserve">
+    <value>Förnyelsetimmar fylls i från utbildning som medlemmarna redan gör, i stället för att skrivas in på varje certifiering.</value>
+  </data>
+  <data name="FeatureExample.training-credit-mappings" xml:space="preserve">
+    <value>Timmar i kategorin ambulansfortbildning räknas mot certifieringen som ambulanssjukvårdare, så en medlems förnyelse går framåt så snart ett pass verifierats.</value>
+  </data>
+  <data name="FeatureSetup.training-credit-mappings" xml:space="preserve">
+    <value>Under Utbildningar öppnar du Utbildningsposter och sedan Tillgodoräknanden för certifieringar och kopplar en kategori till en certifieringstyp. Poster som genomförts innan kopplingen slogs på blir tillgodoräknanden först när du tillämpar historik.</value>
+  </data>
+  <data name="Feature.training-history-backfill" xml:space="preserve">
+    <value>Ifyllnad av utbildningshistorik</value>
+  </data>
+  <data name="FeaturePurpose.training-history-backfill" xml:space="preserve">
+    <value>För över genomförda kurser och utbildningsposter från tiden före registret till medlemmarnas register, med en provkörning som räknar vad som skulle skrivas.</value>
+  </data>
+  <data name="FeatureValue.training-history-backfill" xml:space="preserve">
+    <value>Registren börjar med den historik organisationen redan har i Resgrid i stället för tomma.</value>
+  </data>
+  <data name="FeatureExample.training-history-backfill" xml:space="preserve">
+    <value>Ett befäl gör en provkörning, ser hur många tidigare genomföranden och utbildningsposter som hittades och startar sedan ifyllnaden, som fortsätter i bakgrunden.</value>
+  </data>
+  <data name="FeatureSetup.training-history-backfill" xml:space="preserve">
+    <value>Under Utbildningar öppnar du Utbildningsposter och sedan Fyll i historik och gör först en provkörning. Ifyllda poster blir tillgodoräknanden först när du tillämpar historik på en certifieringstyp.</value>
+  </data>
+  <data name="Feature.training-history-import" xml:space="preserve">
+    <value>Import av utbildningshistorik</value>
+  </data>
+  <data name="FeaturePurpose.training-history-import" xml:space="preserve">
+    <value>Importera genomföranden från ett annat system med en CSV-fil: kontrollera hur varje rad matchades mot en medlem, rätta raderna som inte matchade och importera sedan.</value>
+  </data>
+  <data name="FeatureValue.training-history-import" xml:space="preserve">
+    <value>Flera års poster från ett kalkylark eller ett tidigare utbildningssystem hamnar i medlemmarnas register utan att skrivas in igen.</value>
+  </data>
+  <data name="FeatureExample.training-history-import" xml:space="preserve">
+    <value>En organisation som lämnar sitt gamla system exporterar sina genomföranden, importerar dem och väljer rätt medlem för de få rader som bara matchades på namn.</value>
+  </data>
+  <data name="FeatureSetup.training-history-import" xml:space="preserve">
+    <value>Under Utbildningar öppnar du Utbildningsposter och sedan Importera utbildningshistorik. Ladda ner mallen, fyll i en rad per genomförande med medlem, kurs, datum och timmar, ladda upp den och granska kontrollen innan du importerar.</value>
+  </data>
+  <data name="Feature.training-hours-report" xml:space="preserve">
+    <value>Rapport över utbildningstimmar</value>
+  </data>
+  <data name="FeaturePurpose.training-hours-report" xml:space="preserve">
+    <value>Verifierade utbildningstimmar per kategori, medlem eller månad, med export till CSV och PDF och tidigare medlemmar på begäran.</value>
+  </data>
+  <data name="FeatureValue.training-hours-report" xml:space="preserve">
+    <value>Svara på hur många timmar organisationen utbildat sig, och i vad, för budget, bidrag och årsrapporter.</value>
+  </data>
+  <data name="FeatureExample.training-hours-report" xml:space="preserve">
+    <value>Till årsrapporten exporterar chefen förra årets utbildningstimmar per kategori som PDF.</value>
+  </data>
+  <data name="FeatureSetup.training-hours-report" xml:space="preserve">
+    <value>Under Utbildningar öppnar du Utbildningsposter och sedan Utbildningstimmar. Välj period och gruppering och exportera sedan till CSV eller PDF.</value>
+  </data>
+  <data name="Feature.my-courses" xml:space="preserve">
+    <value>Mina kurser</value>
+  </data>
+  <data name="FeaturePurpose.my-courses" xml:space="preserve">
+    <value>Kurserna som tilldelats en medlem, kurser medlemmen kan gå med i och lektionerna i Resgrid Academy, med framsteg och förfallodatum.</value>
+  </data>
+  <data name="FeatureValue.my-courses" xml:space="preserve">
+    <value>Medlemmar ser vad de ska slutföra härnäst och fortsätter där de slutade, på webbplatsen eller i appen.</value>
+  </data>
+  <data name="FeatureExample.my-courses" xml:space="preserve">
+    <value>En ny medlem öppnar Mina kurser, slutför introduktionslektionen och dess korta kontroll, och slutförandet syns i utbildningsöversikten.</value>
+  </data>
+  <data name="FeatureSetup.my-courses" xml:space="preserve">
+    <value>Öppna Utbildningar och välj Kurser. Tilldelade kurser visas först; lektionerna i Resgrid Academy finns alltid så länge utbildningsmodulen är på.</value>
+  </data>
+  <data name="Feature.academy" xml:space="preserve">
+    <value>Resgrid Academy</value>
+  </data>
+  <data name="FeaturePurpose.academy" xml:space="preserve">
+    <value>Korta videolektioner om Resgrid, var och en med en kontroll på tre frågor, publicerade kostnadsfritt av Resgrid för alla organisationer, plus rollspår för medlemmar, larmoperatörer, befäl och administratörer.</value>
+  </data>
+  <data name="FeatureValue.academy" xml:space="preserve">
+    <value>Nya medlemmar och befäl lär sig systemet på samma sätt, och varje slutförd lektion räknas i utbildningsöversikten som systemutbildning.</value>
+  </data>
+  <data name="FeatureExample.academy" xml:space="preserve">
+    <value>Utbildningsansvarig tilldelar nya larmoperatörer spåret Larmoperatör och följer vilka lektioner var och en har slutfört.</value>
+  </data>
+  <data name="FeatureSetup.academy" xml:space="preserve">
+    <value>Öppna Utbildningar och välj Academy. Den som får tilldela utbildning tilldelar en lektion eller ett rollspår till medlemmar, roller eller grupper. Lektioner för moduler eller tillägg som organisationen inte använder förblir dolda.</value>
+  </data>
+  <data name="Feature.lms-course-builder" xml:space="preserve">
+    <value>Kursbyggare</value>
+  </data>
+  <data name="FeaturePurpose.lms-course-builder" xml:space="preserve">
+    <value>Organisationens egna kurser med moduler, video, dokument, protokollektioner, prov från frågebanker och enkäter, godkända och versionshanterade som protokoll.</value>
+  </data>
+  <data name="FeatureValue.lms-course-builder" xml:space="preserve">
+    <value>Genomför organisationens egen utbildning online, med poängsatta prov, studietid och slutföranden som utfärdar eller förnyar certifieringar.</value>
+  </data>
+  <data name="FeatureExample.lms-course-builder" xml:space="preserve">
+    <value>Ambulanssamordnaren bygger en årlig repetition med en video och ett prov med 20 frågor från en frågebank med godkäntgräns 80 % och tilldelar den till alla ambulanssjukvårdare.</value>
+  </data>
+  <data name="FeatureSetup.lms-course-builder" xml:space="preserve">
+    <value>Inget att ställa in ännu: kursbyggaren ingår i LMS-tillägget, som inte är tillgängligt än.</value>
+  </data>
+  <data name="Feature.lms-grading" xml:space="preserve">
+    <value>Provbedömning</value>
+  </data>
+  <data name="FeaturePurpose.lms-grading" xml:space="preserve">
+    <value>En kö med fritextsvar som väntar på bedömning, och en frågeanalys som visar hur svår varje fråga är och hur väl den skiljer starka resultat från svaga.</value>
+  </data>
+  <data name="FeatureValue.lms-grading" xml:space="preserve">
+    <value>Skriftliga svar får en rättvis, registrerad bedömning, och svaga frågor hittas och rättas till.</value>
+  </data>
+  <data name="FeatureExample.lms-grading" xml:space="preserve">
+    <value>En utbildningsansvarig bedömer tre korta svar på förra veckans prov om farliga ämnen; analysen visar en fråga som nästan alla svarar fel på, så den skrivs om.</value>
+  </data>
+  <data name="FeatureSetup.lms-grading" xml:space="preserve">
+    <value>Inget att ställa in ännu: bedömningen ingår i LMS-tillägget, som inte är tillgängligt än.</value>
+  </data>
+  <data name="Area.lms" xml:space="preserve">
+    <value>Lärplattform (LMS)</value>
+  </data>
+  <data name="AreaPurpose.lms" xml:space="preserve">
+    <value>Kurser, utbildningskrav, lektionstillfällen och formella utbildningsrapporter. Inte tillgängligt än.</value>
+  </data>
+  <data name="AreaValue.lms" xml:space="preserve">
+    <value>Strukturerade kurser och formella rapporter utöver det kostnadsfria utbildningsregistret, när det släpps.</value>
+  </data>
+  <data name="AreaExample.lms" xml:space="preserve">
+    <value>Inget att prova än: tillägget för lärplattform utvecklas fortfarande.</value>
+  </data>
+  <data name="ModuleAdoption.lms" xml:space="preserve">
+    <value>Inget att ställa in än; det kostnadsfria utbildningsregistret fungerar utan det.</value>
+  </data>
+  <data name="Feature.addon-lms" xml:space="preserve">
+    <value>LMS-tillägg</value>
+  </data>
+  <data name="FeaturePurpose.addon-lms" xml:space="preserve">
+    <value>Tillägget för utbildningshantering, i paket om 25 medlemmar: kurser, formella utbildningsrapporter och verifierbara intyg. Erbjuds när Resgrid aktiverar det för er avdelning.</value>
+  </data>
+  <data name="FeatureValue.addon-lms" xml:space="preserve">
+    <value>Lägger till kurser, formella rapporter och verifierbara intyg till det kostnadsfria utbildningsregistret, för de medlemmar ni aktiverar.</value>
+  </data>
+  <data name="FeatureExample.addon-lms" xml:space="preserve">
+    <value>En avdelning köper 2 paket, aktiverar sina 40 heltidsanställda och tar fram ISO FSRS-rapporten; deltidspersonalen behåller den kostnadsfria utbildningen.</value>
+  </data>
+  <data name="FeatureAdoption.addon-lms" xml:space="preserve">
+    <value>Under Prenumeration öppnar ni LMS-kortet och väljer antal paket, och aktiverar sedan medlemmar på personalsidan.</value>
+  </data>
+  <data name="Feature.lms-seats" xml:space="preserve">
+    <value>LMS-platser</value>
+  </data>
+  <data name="FeaturePurpose.lms-seats" xml:space="preserve">
+    <value>Aktivera LMS för en medlem i taget på medlemmens personalsida, eller för en hel grupp på en gång, inom de platser era paket ger.</value>
+  </data>
+  <data name="FeatureValue.lms-seats" xml:space="preserve">
+    <value>Ni betalar bara för de medlemmar ni utbildar genom LMS; alla andra behåller den kostnadsfria utbildningsmodulen.</value>
+  </data>
+  <data name="FeatureExample.lms-seats" xml:space="preserve">
+    <value>En kombinerad räddningstjänst aktiverar sina 40 heltidsanställda för LMS-kurser och låter deltidspersonalen ha kvar den kostnadsfria utbildningen.</value>
+  </data>
+  <data name="FeatureSetup.lms-seats" xml:space="preserve">
+    <value>Under Personal använder ni LMS-platser för att aktivera en grupp, eller öppnar en medlem och väljer Aktivera LMS. Bara aktiva medlemmar kan ha en plats; lägg till ett paket när platserna tar slut.</value>
+  </data>
+  <data name="Feature.lms-packs" xml:space="preserve">
+    <value>LMS-paket</value>
+  </data>
+  <data name="FeaturePurpose.lms-packs" xml:space="preserve">
+    <value>Köp LMS-tillägget i paket om 25 medlemmar och ändra antalet paket, med priset synligt före varje ändring.</value>
+  </data>
+  <data name="FeatureValue.lms-packs" xml:space="preserve">
+    <value>Fakturan följer de platser ni behöver: trappade nivåer gör stora styrkor billigare per medlem, och tillagda paket debiteras proportionellt.</value>
+  </data>
+  <data name="FeatureExample.lms-packs" xml:space="preserve">
+    <value>En avdelning med 110 LMS-aktiverade medlemmar har 5 paket; när den passerar 125 lägger den till ett sjätte paket och betalar den proportionella skillnaden direkt.</value>
+  </data>
+  <data name="FeatureSetup.lms-packs" xml:space="preserve">
+    <value>Under Prenumeration öppnar ni LMS-kortet, väljer antal paket och slutför köpet. Borttagna paket gäller från nästa faktureringsdatum.</value>
+  </data>
+  <data name="Setting.WellnessSettings" xml:space="preserve">
+    <value>Inställningar för välmående</value>
+  </data>
+  <data name="SettingHelp.WellnessSettings" xml:space="preserve">
+    <value>Vem som läser medlemmarnas loggar över exponeringar och kritiska händelser (rollen välmåendeansvarig), vilka som ingår i kamratstödsteamet och hur många år poster sparas.</value>
+  </data>
+  <data name="Field.WellnessSettings.WellnessOfficerRoleId" xml:space="preserve">
+    <value>Inställningar för välmående / Roll för välmåendeansvarig</value>
+  </data>
+  <data name="FieldHelp.WellnessSettings.WellnessOfficerRoleId" xml:space="preserve">
+    <value>Medlemmar i rollen läser varje medlems exponeringslogg och hanterar markeringar för hälsokontroll och uppföljningar. Administratörer ser inte loggarna utan rollen. Ingen lämnar varje logg åt medlemmen själv.</value>
+  </data>
+  <data name="Field.WellnessSettings.PeerTeamCertificationTypeId" xml:space="preserve">
+    <value>Inställningar för välmående / Certifiering för kamratstödsteam</value>
+  </data>
+  <data name="FieldHelp.WellnessSettings.PeerTeamCertificationTypeId" xml:space="preserve">
+    <value>Medlemmar med en giltig certifiering av typen utgör kamratstödsteamet och får de påminnelser om årsdagar som en medlem väljer att dela. Ingen stänger av teamet.</value>
+  </data>
+  <data name="Field.WellnessSettings.RetentionYears" xml:space="preserve">
+    <value>Inställningar för välmående / Spara poster (år)</value>
+  </data>
+  <data name="FieldHelp.WellnessSettings.RetentionYears" xml:space="preserve">
+    <value>Antal år en exponeringspost sparas efter händelsen, från 30 (minimum enligt OSHA 29 CFR 1910.1020) till 100. Ett rättsligt bevarandekrav sparar poster längre.</value>
+  </data>
+  <data name="Feature.member-wellness" xml:space="preserve">
+    <value>Mina exponeringar</value>
+  </data>
+  <data name="FeaturePurpose.member-wellness" xml:space="preserve">
+    <value>Varje medlems egen logg över exponeringar för cancerframkallande ämnen, blodburen smitta, farliga ämnen och kritiska händelser, med poster som föreslås från larmdata när ett larm markerats.</value>
+  </data>
+  <data name="FeatureValue.member-wellness" xml:space="preserve">
+    <value>Exponeringsunderlag för cancerpresumtion och arbetsskadeersättning, sparat i 30 år och läsbart bara för medlemmen och välmåendeansvariga.</value>
+  </data>
+  <data name="FeatureExample.member-wellness" xml:space="preserve">
+    <value>Efter en byggnadsbrand markerar befälet larmet; varje medlem på platsen bekräftar en föreslagen post om cancerframkallande ämnen och lägger till skyddsutrustning och sanering.</value>
+  </data>
+  <data name="FeatureSetup.member-wellness" xml:space="preserve">
+    <value>Välj rollen välmåendeansvarig under Personal, Mina exponeringar, Inställningar. Medlemmar öppnar Mina exponeringar från Personal; befäl markerar ett larm med knappen Välmåendeuppföljning.</value>
+  </data>
+  <data name="Feature.ai-knowledge" xml:space="preserve">
+    <value>Kunskapssvar</value>
+  </data>
+  <data name="FeaturePurpose.ai-knowledge" xml:space="preserve">
+    <value>Medlemmar ställer en fråga och får ett svar som bara bygger på avdelningens publicerade protokoll och utbildningar och Resgrid Academy, där varje del länkar till sin källa.</value>
+  </data>
+  <data name="FeatureValue.ai-knowledge" xml:space="preserve">
+    <value>Medlemmar hittar på några sekunder vad era protokoll säger, och de som skriver dem ser frågorna som innehållet inte besvarar.</value>
+  </data>
+  <data name="FeatureExample.ai-knowledge" xml:space="preserve">
+    <value>En medlem frågar vilken skyddsutrustning riktlinjen för farliga ämnen kräver och får svaret med en länk till det avsnittet i den gällande versionen.</value>
+  </data>
+  <data name="FeatureSetup.ai-knowledge" xml:space="preserve">
+    <value>Kräver tillägget Enhanced AI med kunskapssvar aktiverade för avdelningen. Publicera era protokoll och starta era utbildningar; medlemmar använder sedan Fråga i protokollbiblioteket, i ett protokoll, en utbildning eller ett larm. Utbildningsansvariga ser obesvarade frågor under Kunskapsluckor.</value>
+  </data>
+  <data name="Setting.KnowledgeSettings" xml:space="preserve">
+    <value>Kunskapsinställningar</value>
+  </data>
+  <data name="SettingHelp.KnowledgeSettings" xml:space="preserve">
+    <value>Avdelningsövergripande regler för kunskapssvar på sidan Kunskapsinställningar: om modulen Dokument används och länken till avdelningens doseringsverktyg. Saknas inställningen används inga dokument och det finns ingen doseringslänk. Bara avdelningens administratörer kan ändra den.</value>
+  </data>
+  <data name="Field.KnowledgeSettings.IncludeDocuments" xml:space="preserve">
+    <value>Kunskapsinställningar / Ta med dokument</value>
+  </data>
+  <data name="FieldHelp.KnowledgeSettings.IncludeDocuments" xml:space="preserve">
+    <value>Dokument blir källor för kunskapssvaren. Dokument endast för administratörer används bara för administratörer, och inga dokument används medan Advanced Data Protection är på. En ändring bygger om avdelningens kunskapsindex i bakgrunden.</value>
+  </data>
+  <data name="Field.KnowledgeSettings.DosingToolUrl" xml:space="preserve">
+    <value>Kunskapsinställningar / Länk till doseringsverktyg</value>
+  </data>
+  <data name="FieldHelp.KnowledgeSettings.DosingToolUrl" xml:space="preserve">
+    <value>En https-länk till avdelningens doseringsverktyg. Svar som citerar en dos visar den; doser citeras bara från en källa, och varken modellen eller Resgrid räknar ut någon. Allt annat än en https-länk avvisas.</value>
+  </data>
+  <data name="Feature.document-sealing" xml:space="preserve">
+    <value>Förseglade dokument och dokumentverifiering</value>
+  </data>
+  <data name="FeaturePurpose.document-sealing" xml:space="preserve">
+    <value>Intyg, utdrag, PDF-filer med rutiner och signerade dokument förseglas med tidsstämpel så att alla kan kontrollera att de inte har ändrats; befäl kan kontrollera valfri PDF under Verifiera ett dokument.</value>
+  </data>
+  <data name="FeatureValue.document-sealing" xml:space="preserve">
+    <value>Lämna ut dokument som andra myndigheter och domstolar kan lita på, och upptäck ändrade kopior.</value>
+  </data>
+  <data name="FeatureExample.document-sealing" xml:space="preserve">
+    <value>En inspektör kontrollerar att ett intyg som en medlem har med sig från en annan organisation är utfärdat av Resgrid och inte redigerat.</value>
+  </data>
+  <data name="FeatureSetup.document-sealing" xml:space="preserve">
+    <value>Öppna Verifiera ett dokument och ladda upp en PDF. Förseglingen konfigureras av den som driver installationen; till dess markeras dokument som försegling väntar.</value>
+  </data>
+  <data name="Feature.external-signatures" xml:space="preserve">
+    <value>Externa signaturer</value>
+  </data>
+  <data name="FeaturePurpose.external-signatures" xml:space="preserve">
+    <value>Kunder, nyttjare och externa parter signerar tidrapporter, anbud, avtal, inspektioner och överlämningar av bevis på plats på en medlems enhet, eller via en Resgrid-länk med engångskod.</value>
+  </data>
+  <data name="FeatureValue.external-signatures" xml:space="preserve">
+    <value>Ersätt inskrivna namn med signaturer som motparten kan verifiera, förseglade med en granskningssida.</value>
+  </data>
+  <data name="FeatureExample.external-signatures" xml:space="preserve">
+    <value>En arbetsledare ger surfplattan till kundens representant som signerar dagens tidrapport innan laget lämnar insatsen.</value>
+  </data>
+  <data name="FeatureSetup.external-signatures" xml:space="preserve">
+    <value>Öppna dokumentet och använd Lämna enheten till undertecknaren, eller begär en signatur via länk. För länkar lägger en administratör in organisationens Documenso-teamtoken under E-signering; länkar ingår i tillägget som dokumentet hör till.</value>
+  </data>
+  <data name="Feature.protocol-acknowledgments" xml:space="preserve">
+    <value>Mina bekräftelser</value>
+  </data>
+  <data name="FeaturePurpose.protocol-acknowledgments" xml:space="preserve">
+    <value>Läs och signera de protokoll och meddelanden du ombeds bekräfta.</value>
+  </data>
+  <data name="Feature.protocol-compliance" xml:space="preserve">
+    <value>Efterlevnad av bekräftelser</value>
+  </data>
+  <data name="FeaturePurpose.protocol-compliance" xml:space="preserve">
+    <value>Se vem som har läst och signerat varje protokollversion, per grupp, och exportera det.</value>
+  </data>
+  <data name="Feature.protocol-bulletins" xml:space="preserve">
+    <value>Prioriterade meddelanden</value>
+  </data>
+  <data name="FeaturePurpose.protocol-bulletins" xml:space="preserve">
+    <value>Utfärda ett kort meddelande som måste läsas, gäller direkt och godkänns i efterhand.</value>
+  </data>
+  <data name="Feature.protocol-bulk-upload" xml:space="preserve">
+    <value>Ladda upp protokolldokument</value>
+  </data>
+  <data name="FeaturePurpose.protocol-bulk-upload" xml:space="preserve">
+    <value>Ta in PDF- och Word-protokoll på en gång som utkast, med sökbar text.</value>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.DefaultContentLocale" xml:space="preserve">
+    <value>Inställningar för protokollbiblioteket / Innehållets språk</value>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.DefaultContentLocale" xml:space="preserve">
+    <value>Språket som protokollen skrivs på. Medlemmar utan godkänd översättning på sitt språk läser versionen på det här språket, och blocketiketter som Försiktighet skrivs på det. Tomt betyder engelska.</value>
+  </data>
+  <data name="Feature.protocol-block-editor" xml:space="preserve">
+    <value>Strukturerat protokollinnehåll</value>
+  </data>
+  <data name="FeaturePurpose.protocol-block-editor" xml:space="preserve">
+    <value>Skriv protokoll som block: steg, varningar, kontakt med medicinsk ledning, tabeller, läkemedel och varianter för vuxna och barn.</value>
+  </data>
+  <data name="Feature.protocol-step-through" xml:space="preserve">
+    <value>Protokoll steg för steg på larm</value>
+  </data>
+  <data name="FeaturePurpose.protocol-step-through" xml:space="preserve">
+    <value>Gå igenom ett procedur- eller larmprotokoll på ett larm som en checklista, varje steg tidsstämplat.</value>
+  </data>
+  <data name="Feature.protocol-book" xml:space="preserve">
+    <value>PDF-bok med protokoll, QR-kod och utskriftsvy</value>
+  </data>
+  <data name="FeaturePurpose.protocol-book" xml:space="preserve">
+    <value>Exportera en kategori eller hela biblioteket som en PDF-bok, skriv ut ett protokoll eller sätt upp dess QR-kod.</value>
+  </data>
+  <data name="Feature.protocol-translations" xml:space="preserve">
+    <value>Översättningar av protokollinnehåll</value>
+  </data>
+  <data name="FeaturePurpose.protocol-translations" xml:space="preserve">
+    <value>Översätt en protokollversion till medlemmarnas språk, varje översättning godkänd för sig.</value>
+  </data>
+  <data name="Field.WellnessSettings.DesignatedOfficerRoleId" xml:space="preserve">
+    <value>Friskvårdsinställningar / Roll för utsedd ansvarig</value>
+  </data>
+  <data name="FieldHelp.WellnessSettings.DesignatedOfficerRoleId" xml:space="preserve">
+    <value>Medlemmar i rollen tar emot rapporter om exponering för blodburen smitta och smittsamma sjukdomar (Ryan White del G) och driver exponeringsärendena. Ingen betyder att rollen för friskvårdsansvarig sköter det.</value>
+  </data>
+  <data name="Field.WellnessSettings.BbpTrainingCertificationTypeId" xml:space="preserve">
+    <value>Friskvårdsinställningar / Certifikat för utbildning i blodburen smitta</value>
+  </data>
+  <data name="FieldHelp.WellnessSettings.BbpTrainingCertificationTypeId" xml:space="preserve">
+    <value>Certifikattypen för den årliga utbildningen i blodburen smitta (OSHA 1910.1030). Varje exponeringsärende visar medlemmens aktuella status. Ingen lämnar den ouppföljd.</value>
+  </data>
+  <data name="Field.WellnessSettings.MedicalClearanceCertificationTypeId" xml:space="preserve">
+    <value>Friskvårdsinställningar / Certifikat för medicinsk klarering</value>
+  </data>
+  <data name="FieldHelp.WellnessSettings.MedicalClearanceCertificationTypeId" xml:space="preserve">
+    <value>Certifikattypen som en medicinsk bedömning enligt NFPA 1582 också registreras som (från mallen Medical Clearance (NFPA 1582)). Inte klarerad stänger av den. Ingen behåller klareringarna bara i Friskvård.</value>
+  </data>
+  <data name="Field.WellnessSettings.InjuryRetentionYears" xml:space="preserve">
+    <value>Friskvårdsinställningar / Spara skadejournaler (år)</value>
+  </data>
+  <data name="FieldHelp.WellnessSettings.InjuryRetentionYears" xml:space="preserve">
+    <value>Antal år en skadejournal sparas efter utgången av sitt år, från 5 (OSHA 29 CFR 1904.33) till 100. Ett rättsligt kvarhållande sparar journaler längre.</value>
+  </data>
+  <data name="Feature.ai-authoring-aids" xml:space="preserve">
+    <value>Utkasthjälp</value>
+  </data>
+  <data name="FeaturePurpose.ai-authoring-aids" xml:space="preserve">
+    <value>Utkast till quizfrågor, kursupplägg och ändringssammanfattningar från organisationens eget innehåll, som författarna granskar.</value>
+  </data>
+  <data name="FeatureValue.ai-authoring-aids" xml:space="preserve">
+    <value>Författare börjar från ett förankrat utkast i stället för en tom sida, och inget sparas förrän de godkänner det.</value>
+  </data>
+  <data name="FeatureExample.ai-authoring-aids" xml:space="preserve">
+    <value>En utbildningsansvarig skapar fem quizfrågor från den nya rökdykarutbildningen och behåller tre.</value>
+  </data>
+  <data name="FeatureSetup.ai-authoring-aids" xml:space="preserve">
+    <value>Aktivera kunskapssvar med Enhanced AI; hjälpen visas sedan i utbildningsredigeraren och kursbyggaren.</value>
+  </data>
+  <data name="Feature.help-search" xml:space="preserve">
+    <value>Sökning i hjälpcentret</value>
+  </data>
+  <data name="FeaturePurpose.help-search" xml:space="preserve">
+    <value>Gratis nyckelordssökning i Resgrid Academy och produktreferensen från hjälpmenyn.</value>
+  </data>
+  <data name="FeatureValue.help-search" xml:space="preserve">
+    <value>Medlemmar hittar lektionen eller inställningen de behöver utan att lämna Resgrid.</value>
+  </data>
+  <data name="FeatureExample.help-search" xml:space="preserve">
+    <value>En ny medlem söker på "status" och öppnar introduktionslektionen.</value>
+  </data>
+  <data name="FeatureSetup.help-search" xml:space="preserve">
+    <value>Inget att konfigurera: öppna Hjälp och sedan Sök hjälp.</value>
+  </data>
+  <data name="Feature.academy-guidance" xml:space="preserve">
+    <value>Guidade turer och nyheter</value>
+  </data>
+  <data name="FeaturePurpose.academy-guidance" xml:space="preserve">
+    <value>Första uppgifter för varje roll byggda på genomgångarna i Academy, och en kort lektion om varje version.</value>
+  </data>
+  <data name="FeatureValue.academy-guidance" xml:space="preserve">
+    <value>Nya medlemmar och administratörer vet vad de ska göra först, och alla ser vad som har ändrats.</value>
+  </data>
+  <data name="FeatureExample.academy-guidance" xml:space="preserve">
+    <value>En ny larmoperatör bockar av larmlistan, enheterna och kartan.</value>
+  </data>
+  <data name="FeatureSetup.academy-guidance" xml:space="preserve">
+    <value>Inget att konfigurera: varje medlem ser turen för sin roll på översikten och kan dölja den.</value>
+  </data>
+  <data name="Feature.multi-signer-signatures" xml:space="preserve">
+    <value>Signaturer från flera undertecknare</value>
+  </data>
+  <data name="FeaturePurpose.multi-signer-signatures" xml:space="preserve">
+    <value>Flera personer signerar ett dokument i tur och ordning: medlemmar på nivå 1 eller 2, vittnen, certifierande ansvariga, bedömare och externa parter, med påminnelser tills alla har signerat.</value>
+  </data>
+  <data name="FeatureValue.multi-signer-signatures" xml:space="preserve">
+    <value>Godkännanden som kräver mer än en person registreras i rätt ordning, knyts till exakt innehåll och förseglas med en granskningssida när de är klara.</value>
+  </data>
+  <data name="FeatureExample.multi-signer-signatures" xml:space="preserve">
+    <value>En utbildningsansvarig bedömer en färdighet på nivå 2, därefter signerar den certifierande ansvariga; var och en påminns när det är deras tur.</value>
+  </data>
+  <data name="FeatureSetup.multi-signer-signatures" xml:space="preserve">
+    <value>Medlemmar hittar det som väntar på dem under Mina signaturer och på sin startsida; begäranden startas från dokumentet som ska signeras.</value>
+  </data>
+  <data name="Feature.checklist-witness-signature" xml:space="preserve">
+    <value>Vittnessignatur för checklistor</value>
+  </data>
+  <data name="FeaturePurpose.checklist-witness-signature" xml:space="preserve">
+    <value>En checklista kan kräva att dess oberoende vittne signerar på nivå 2 (en ny identitetskontroll eller en nyckel) i stället för att intyga med enbart text.</value>
+  </data>
+  <data name="FeatureValue.checklist-witness-signature" xml:space="preserve">
+    <value>Kontroller av kontrollerade substanser och säkerhetskontroller får en vittnessignatur knuten till de registrerade resultaten, som ingår i Checklistor utan extra kostnad.</value>
+  </data>
+  <data name="FeatureExample.checklist-witness-signature" xml:space="preserve">
+    <value>Efter en kontroll av läkemedelsväskan signerar en andra ambulanssjuksköterska som vittne med sin nyckel innan kontrollen räknas som klar.</value>
+  </data>
+  <data name="FeatureSetup.checklist-witness-signature" xml:space="preserve">
+    <value>Redigera checklistan, aktivera det oberoende vittnet och vittnessignaturen och publicera den nya versionen.</value>
+  </data>
+  <data name="Feature.readiness-signatures" xml:space="preserve">
+    <value>Leverantörens godtagande och utlämningskvitton</value>
+  </data>
+  <data name="FeaturePurpose.readiness-signatures" xml:space="preserve">
+    <value>Leverantörer godtar slutförda arbetsordrar, och medlemmar eller mottagare signerar kvitton på utlämnad utrustning, på plats eller via en Resgrid-länk.</value>
+  </data>
+  <data name="FeatureValue.readiness-signatures" xml:space="preserve">
+    <value>Ersätt muntliga överlämningar med signerade godtaganden och kvitton som motparten kan verifiera.</value>
+  </data>
+  <data name="FeatureExample.readiness-signatures" xml:space="preserve">
+    <value>Teknikern från pumpverkstaden signerar den slutförda arbetsordern på stationens surfplatta innan hen åker.</value>
+  </data>
+  <data name="FeatureSetup.readiness-signatures" xml:space="preserve">
+    <value>Öppna en slutförd arbetsorder, eller Kvitto för en utlämnad artikel, och begär signaturen. Fjärrlänkar kräver Readiness Pro och avdelningens inställningar för e-signering.</value>
+  </data>
+  <data name="Setting.LmsProgramSettings" xml:space="preserve">
+    <value>Inställningar för utbildningsprogram</value>
+  </data>
+  <data name="SettingHelp.LmsProgramSettings" xml:space="preserve">
+    <value>Hur utbildningsansökningar godkänns och i vilken valuta deras kostnader anges, och om tillsyner och granskningar av insatsplaner i Journaler tillgodoräknas som objektkännedom.</value>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestSupervisorApproval" xml:space="preserve">
+    <value>Närmaste chef godkänner utbildningsansökningar</value>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestSupervisorApproval" xml:space="preserve">
+    <value>Administratörerna för medlemmens grupp (eller organisationens administratörer) godkänner en utbildningsansökan först.</value>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestTrainingOfficerApproval" xml:space="preserve">
+    <value>Utbildningsansvarig godkänner utbildningsansökningar</value>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestTrainingOfficerApproval" xml:space="preserve">
+    <value>En medlem som hanterar utbildningsposter för hela organisationen godkänner ansökan, efter närmaste chef när båda är på.</value>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestCurrency" xml:space="preserve">
+    <value>Valuta för utbildningsansökningar</value>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestCurrency" xml:space="preserve">
+    <value>Den valutakod med tre bokstäver som kostnader för utbildningsansökningar anges och summeras i.</value>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationEnabled" xml:space="preserve">
+    <value>Tillgodoräkna objektkännedom</value>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationEnabled" xml:space="preserve">
+    <value>Slutförda objektstillsyner och granskningar av insatsplaner i Journaler förs in i utbildningsregistret för den som utförde dem.</value>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationCategoryId" xml:space="preserve">
+    <value>Kategori för objektkännedom</value>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationCategoryId" xml:space="preserve">
+    <value>Den utbildningskategori som objektkännedom tillgodoräknas i, till exempel ISO-kategorin för insatsplanering.</value>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationMinutes" xml:space="preserve">
+    <value>Minuter per besök</value>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationMinutes" xml:space="preserve">
+    <value>De minuter som tillgodoräknas för ett besök utan start- och sluttid. Ett besök med egna tider tillgodoräknas med sin verkliga längd.</value>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationFromInspections" xml:space="preserve">
+    <value>Tillgodoräkna från tillsyner</value>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationFromInspections" xml:space="preserve">
+    <value>Slutförda objektstillsyner tillgodoräknas den som utförde tillsynen.</value>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationFromPreplanReviews" xml:space="preserve">
+    <value>Tillgodoräkna från granskningar av insatsplaner</value>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationFromPreplanReviews" xml:space="preserve">
+    <value>Granskningar av insatsplaner för objekt och kontakter tillgodoräknas granskaren.</value>
+  </data>
+  <data name="Feature.lms-training-plan" xml:space="preserve">
+    <value>Årlig utbildningsplan</value>
+  </data>
+  <data name="FeaturePurpose.lms-training-plan" xml:space="preserve">
+    <value>Ett års planerade pass och timmar per kategori och månad för hela organisationen, en grupp eller ett skift, jämfört med de timmar som faktiskt har registrerats.</value>
+  </data>
+  <data name="FeatureValue.lms-training-plan" xml:space="preserve">
+    <value>Den skriftliga plan som ISO-granskningar och regionala granskningar efterfrågar, och ett underskott mot årsmålen som syns redan i juni, inte först vid granskningen.</value>
+  </data>
+  <data name="FeatureExample.lms-training-plan" xml:space="preserve">
+    <value>Den utbildningsansvariga planerar 16 timmars styrkeövning varje månad; i juni visar prognosen att organisationen kommer att missa målet på 192 timmar med 20 timmar.</value>
+  </data>
+  <data name="FeatureSetup.lms-training-plan" xml:space="preserve">
+    <value>Inget att konfigurera ännu: årsplanen ingår i LMS-tillägget, som ännu inte är tillgängligt.</value>
+  </data>
+  <data name="Feature.lms-competency-frameworks" xml:space="preserve">
+    <value>Kompetensramverk</value>
+  </data>
+  <data name="FeaturePurpose.lms-competency-frameworks" xml:space="preserve">
+    <value>Funktionskrav, befattningar och färdigheter, taggade på de kurser, utbildningar och certifieringar som styrker dem, med en luckrapport per medlem.</value>
+  </data>
+  <data name="FeatureValue.lms-competency-frameworks" xml:space="preserve">
+    <value>Visar för varje medlem vilka krav som har underlag, hur gammalt det är och vilka som saknar underlag.</value>
+  </data>
+  <data name="FeatureExample.lms-competency-frameworks" xml:space="preserve">
+    <value>En organisation importerar sin regions ramverk för brandmän, taggar sina kurser och ser att en rekryt fortfarande saknar underlag för tre krav.</value>
+  </data>
+  <data name="FeatureSetup.lms-competency-frameworks" xml:space="preserve">
+    <value>Inget att konfigurera ännu: kompetensramverk ingår i LMS-tillägget, som ännu inte är tillgängligt.</value>
+  </data>
+  <data name="Feature.lms-training-requests" xml:space="preserve">
+    <value>Utbildningsansökningar</value>
+  </data>
+  <data name="FeaturePurpose.lms-training-requests" xml:space="preserve">
+    <value>Medlemmar ansöker om att gå en extern kurs och anger kostnaden; närmaste chef och en utbildningsansvarig godkänner den, och kursen förs in i utbildningsregistret när den är genomförd.</value>
+  </data>
+  <data name="FeatureValue.lms-training-requests" xml:space="preserve">
+    <value>En godkänd post med kostnader per extern kurs, och summerade kostnader per medlem, kurs och år.</value>
+  </data>
+  <data name="FeatureExample.lms-training-requests" xml:space="preserve">
+    <value>En ambulanssjuksköterska ansöker om att gå en kurs på 16 timmar som kostar 450 dollar; styrkeledaren och den utbildningsansvariga godkänner den, och intyget verifieras efteråt.</value>
+  </data>
+  <data name="FeatureSetup.lms-training-requests" xml:space="preserve">
+    <value>Inget att konfigurera ännu: utbildningsansökningar ingår i LMS-tillägget, som ännu inte är tillgängligt.</value>
+  </data>
+  <data name="Feature.lms-report-catalog" xml:space="preserve">
+    <value>Katalog över utbildningsrapporter</value>
+  </data>
+  <data name="FeaturePurpose.lms-report-catalog" xml:space="preserve">
+    <value>Alla utbildningsrapporter på ett ställe, sparade med sina inställningar i mappar och skickade enligt ett dagligt, veckovis eller månatligt schema som CSV eller PDF.</value>
+  </data>
+  <data name="FeatureValue.lms-report-catalog" xml:space="preserve">
+    <value>Rapporterna som en granskning kräver kommer av sig själva, filtrerade på samma sätt varje gång.</value>
+  </data>
+  <data name="FeatureExample.lms-report-catalog" xml:space="preserve">
+    <value>ISO-utbildningsrapporten skickas som PDF till räddningschefen och den utbildningsansvariga den första i varje månad.</value>
+  </data>
+  <data name="FeatureSetup.lms-report-catalog" xml:space="preserve">
+    <value>Inget att konfigurera ännu: sparade och schemalagda rapporter ingår i LMS-tillägget, som ännu inte är tillgängligt.</value>
+  </data>
+  <data name="Feature.lms-certification-cycles" xml:space="preserve">
+    <value>Certifieringscykler</value>
+  </data>
+  <data name="FeaturePurpose.lms-certification-cycles" xml:space="preserve">
+    <value>En certifierings nästa cykel startar automatiskt när förnyelsetimmarna är uppnådda, och chefer, administratörer eller namngivna medlemmar aviseras när en cykel slutförs, startar, närmar sig utgångsdatum eller går ut.</value>
+  </data>
+  <data name="FeatureValue.lms-certification-cycles" xml:space="preserve">
+    <value>Återkommande behörigheter fortsätter att räkna timmar utan att någon behöver mata in dem igen, och rätt personer får veta i tid.</value>
+  </data>
+  <data name="FeatureExample.lms-certification-cycles" xml:space="preserve">
+    <value>När en EMT når förnyelsetimmarna startar nästa tvååriga cykel vid nuvarande utgångsdatum och ambulanschefen får ett meddelande.</value>
+  </data>
+  <data name="FeatureSetup.lms-certification-cycles" xml:space="preserve">
+    <value>Inget att konfigurera ännu: regler för certifieringscykler ingår i LMS-tillägget, som ännu inte är tillgängligt.</value>
+  </data>
+  <data name="Feature.lms-credential-audiences" xml:space="preserve">
+    <value>Meddelanden efter certifieringsstatus</value>
+  </data>
+  <data name="FeaturePurpose.lms-credential-audiences" xml:space="preserve">
+    <value>Skicka ett meddelande till de medlemmar vars certifiering har gått ut, går ut inom ett visst antal dagar, eller som aldrig har haft den.</value>
+  </data>
+  <data name="FeatureValue.lms-credential-audiences" xml:space="preserve">
+    <value>Påminnelser når exakt de personer som behöver dem, utan att någon behöver bygga en lista för hand.</value>
+  </data>
+  <data name="FeatureExample.lms-credential-audiences" xml:space="preserve">
+    <value>Den utbildningsansvariga skickar ett meddelande med datumet för nästa kurs till alla vars CPR-kort går ut inom 30 dagar.</value>
+  </data>
+  <data name="FeatureSetup.lms-credential-audiences" xml:space="preserve">
+    <value>Inget att konfigurera ännu: mottagare efter certifieringsstatus ingår i LMS-tillägget, som ännu inte är tillgängligt.</value>
+  </data>
+  <data name="Setting.LearningRequirementSettings" xml:space="preserve">
+    <value>Inställningar för utbildningskrav</value>
+  </data>
+  <data name="SettingHelp.LearningRequirementSettings" xml:space="preserve">
+    <value>Utbildningsbaserad tillämpning för avdelningen (av som standard), den största andel av en rolls medlemmar som en tillämpningskörning får ta bort och standardvarningen för riskzonen för nya krav.</value>
+  </data>
+  <data name="Field.LearningRequirementSettings.EnforcementEnabled" xml:space="preserve">
+    <value>Inställningar för utbildningskrav / Utbildningsbaserad tillämpning</value>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.EnforcementEnabled" xml:space="preserve">
+    <value>När den är på kan ett krav som aktiverats för det låta den kopplade certifieringen gå ut när en medlem är försenad längre än respittiden; certifieringsmodulen tar sedan bort roller efter sin egen respittid. Av som standard, aldrig medan LMS-tillägget är inaktivt, och när den slås på visas först vem som skulle förlora vilken roll.</value>
+  </data>
+  <data name="Field.LearningRequirementSettings.MaxRoleRemovalSharePercent" xml:space="preserve">
+    <value>Inställningar för utbildningskrav / Största andel av en roll som tas bort i en körning</value>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.MaxRoleRemovalSharePercent" xml:space="preserve">
+    <value>En körning som skulle ta bort mer än den här procentandelen av en rolls aktiva medlemmar avvisas, och avdelningens administratörer meddelas. Standard 20.</value>
+  </data>
+  <data name="Field.LearningRequirementSettings.DefaultAtRiskDays" xml:space="preserve">
+    <value>Inställningar för utbildningskrav / Standardvarning för riskzonen</value>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.DefaultAtRiskDays" xml:space="preserve">
+    <value>Dagar före förfallodatum då ett nytt krav börjar visa medlemmar i riskzonen. Standard 14.</value>
+  </data>
+  <data name="Feature.lms-requirements" xml:space="preserve">
+    <value>Utbildningskrav</value>
+  </data>
+  <data name="FeaturePurpose.lms-requirements" xml:space="preserve">
+    <value>Återkommande och engångsutbildningskrav per roll, grupp, certifiering eller skift: kurser, utbildningar, timmar per kategori, lärvägar och godkända färdighetsbedömningar, med förfallodatum räknat från när medlemmar ansluter eller får en roll.</value>
+  </data>
+  <data name="FeatureValue.lms-requirements" xml:space="preserve">
+    <value>Alla vet vad de ska göra och när, och befälen ser vem som är i riskzonen före en revision.</value>
+  </data>
+  <data name="FeatureExample.lms-requirements" xml:space="preserve">
+    <value>Varje maskinist slutför kursen i pumphantering var 12:e månad, och varje medlem registrerar 24 timmars utbildning i sin styrka per kalenderår.</value>
+  </data>
+  <data name="FeatureSetup.lms-requirements" xml:space="preserve">
+    <value>Öppna Utbildningar, välj Program och lägg till ett krav.</value>
+  </data>
+  <data name="Feature.lms-compliance-matrix" xml:space="preserve">
+    <value>Efterlevnadsmatris</value>
+  </data>
+  <data name="FeaturePurpose.lms-compliance-matrix" xml:space="preserve">
+    <value>Varje medlem mot varje krav: uppfyller, förfaller senare, i riskzonen, försenad, undantagen, tjänstledig eller ej licensierad, med export till CSV och PDF och gruppadministratörens egen grupp.</value>
+  </data>
+  <data name="FeatureValue.lms-compliance-matrix" xml:space="preserve">
+    <value>En enda sida visar vem som inte uppfyller kraven och vad som förfaller härnäst.</value>
+  </data>
+  <data name="FeatureExample.lms-compliance-matrix" xml:space="preserve">
+    <value>En styrkeledare filtrerar matrisen på sin station och undantar en medlem som är tjänstledig för militärtjänst.</value>
+  </data>
+  <data name="FeatureSetup.lms-compliance-matrix" xml:space="preserve">
+    <value>Öppna Utbildningar, välj Program och sedan Efterlevnad.</value>
+  </data>
+  <data name="Feature.lms-learning-paths" xml:space="preserve">
+    <value>Lärvägar och introduktion</value>
+  </data>
+  <data name="FeaturePurpose.lms-learning-paths" xml:space="preserve">
+    <value>Kurser, Academy-lektioner och utbildningar i ordning med förkunskapskrav och valfria steg; att slutföra en lärväg kan utfärda en certifiering. En lärväg per roll kan tilldelas automatiskt när någon ansluter eller får rollen.</value>
+  </data>
+  <data name="FeatureValue.lms-learning-paths" xml:space="preserve">
+    <value>Nya medlemmar följer samma introduktion med ett förfallodatum, utan att någon behöver komma ihåg att tilldela den.</value>
+  </data>
+  <data name="FeatureExample.lms-learning-paths" xml:space="preserve">
+    <value>Nya larmoperatörer får lärvägen Larmoperatör med 30 dagar att slutföra den, och när den är slutförd utfärdas avdelningens larmoperatörscertifiering.</value>
+  </data>
+  <data name="FeatureSetup.lms-learning-paths" xml:space="preserve">
+    <value>Öppna Utbildningar, välj Program och sedan Lärvägar för att bygga en lärväg och Introduktion för att tilldela den per roll.</value>
+  </data>
+  <data name="Feature.ai-call-answers" xml:space="preserve">
+    <value>Frågor om ett larm</value>
+  </data>
+  <data name="FeaturePurpose.ai-call-answers" xml:space="preserve">
+    <value>Medlemmar ställer en fråga i Visa larm och får ett svar som bara bygger på de protokollversioner larmet hänvisar till och dess typ, prioritet, determinant och platstyp, där varje del länkar till sitt avsnitt.</value>
+  </data>
+  <data name="FeatureValue.ai-call-answers" xml:space="preserve">
+    <value>Besättningar och larmoperatörer ser på några sekunder vad larmets protokoll säger för just det här larmet, och uppgifter om patient eller inringare skickas aldrig.</value>
+  </data>
+  <data name="FeatureExample.ai-call-answers" xml:space="preserve">
+    <value>Vid en byggnadsbrand i en skola frågar en styrkeledare var besättningarna ska stå och får svaret från det citerade avsnittet i skolprotokollet.</value>
+  </data>
+  <data name="FeatureSetup.ai-call-answers" xml:space="preserve">
+    <value>Aktivera kunskapssvar med Enhanced AI och koppla protokoll till larm; Fråga om det här larmet visas sedan på fliken Protokoll i Visa larm.</value>
+  </data>
+  <data name="Feature.ai-tutor" xml:space="preserve">
+    <value>Handledare och scenarioövning</value>
+  </data>
+  <data name="FeaturePurpose.ai-tutor" xml:space="preserve">
+    <value>Deltagare ställer frågor om kursen de går, och medlemmar övar på ett kort scenario skrivet utifrån ett protokoll, där deras egna svar bedöms mot protokollet.</value>
+  </data>
+  <data name="FeatureValue.ai-tutor" xml:space="preserve">
+    <value>Medlemmar kontrollerar sin förståelse mellan övningar, och varje svar och resultat pekar på exakt avsnitt, utan att något registreras i utbildningshistoriken.</value>
+  </data>
+  <data name="FeatureExample.ai-tutor" xml:space="preserve">
+    <value>En ny ambulanssjukvårdare övar på protokollet för hjärtstopp: ett kort scenario, tre frågor och återkoppling som citerar protokollets steg.</value>
+  </data>
+  <data name="FeatureSetup.ai-tutor" xml:space="preserve">
+    <value>Aktivera kunskapssvar med Enhanced AI och LMS-tillägget; Fråga den här kursen visas i kursspelaren och Öva på varje protokoll.</value>
+  </data>
+  <data name="Feature.lms-recommendations" xml:space="preserve">
+    <value>Utbildningsrekommendationer</value>
+  </data>
+  <data name="FeaturePurpose.lms-recommendations" xml:space="preserve">
+    <value>Rekommenderar lärvägar och kurser till varje medlem utifrån öppna krav, pågående lärvägar, kompetensluckor och de kurser som erbjuds medlemmens roller.</value>
+  </data>
+  <data name="FeatureValue.lms-recommendations" xml:space="preserve">
+    <value>Medlemmar ser vad de ska ta härnäst och varför, och befäl ser detsamma för de medlemmar de ansvarar för.</value>
+  </data>
+  <data name="FeatureExample.lms-recommendations" xml:space="preserve">
+    <value>En brandman utan belägg för stegkompetensen ser kursen i stegarbete rekommenderad under Min utbildning, med skälet.</value>
+  </data>
+  <data name="FeatureSetup.lms-recommendations" xml:space="preserve">
+    <value>Öppna Utbildningar, välj Program och sedan Rekommendationer; medlemmar ser också Rekommenderat för dig under Min utbildning. Förklara med AI kräver Enhanced AI.</value>
+  </data>
+  <data name="Feature.approval-chains" xml:space="preserve">
+    <value>Godkännandekedjor</value>
+  </data>
+  <data name="FeaturePurpose.approval-chains" xml:space="preserve">
+    <value>Inköp, handlingsplaner för händelser, fakturor, Cal OES MARS-paket och avtal om ömsesidigt bistånd godkänns av en kedja av personer i tur och ordning, med beloppströsklar, parallella steg, ersättare när någon är ledig och eskalering när ett steg står still.</value>
+  </data>
+  <data name="FeatureValue.approval-chains" xml:space="preserve">
+    <value>Varje godkännande är en signatur på nivå 2 bunden till exakt innehåll: en ändring gör den ogiltig, ett avslag kräver en orsak och den slutförda kedjan förseglar dokumentet.</value>
+  </data>
+  <data name="FeatureExample.approval-chains" xml:space="preserve">
+    <value>Inköp över 5 000 kräver ekonomichefen efter logistiksektionens chef; om ekonomichefen inte agerar inom 24 timmar tillfrågas avdelningsadministratörerna.</value>
+  </data>
+  <data name="FeatureSetup.approval-chains" xml:space="preserve">
+    <value>En avdelningsadministratör definierar en kedja per typ under Godkännanden, Kedjor; medlemmar skickar in från postens sida eller från Godkännanden, och godkännare hittar begäranden under Mina godkännanden och på sin startsida.</value>
+  </data>
+  <data name="Feature.lms-protocol-learning" xml:space="preserve">
+    <value>Protokollquiz och mikroinlärning</value>
+  </data>
+  <data name="FeaturePurpose.lms-protocol-learning" xml:space="preserve">
+    <value>Låt bekräftelsen av ett protokoll vänta på ett quiz ur en frågebank, och skicka medlemmarna en scenariofråga i veckan ur valda protokoll.</value>
+  </data>
+  <data name="FeatureValue.lms-protocol-learning" xml:space="preserve">
+    <value>Medlemmarna visar att de har förstått ett protokoll, inte bara öppnat det, och håller det levande mellan granskningarna.</value>
+  </data>
+  <data name="FeatureExample.lms-protocol-learning" xml:space="preserve">
+    <value>Ett nytt maydayförfarande kräver fem frågor godkända på 80 % innan bekräftelsen räknas, och varje måndag svarar varje brandman på ett scenario ur det.</value>
+  </data>
+  <data name="FeatureSetup.lms-protocol-learning" xml:space="preserve">
+    <value>Inget att ställa in ännu: protokollquiz och mikroinlärning ingår i LMS-tillägget, som inte är tillgängligt ännu.</value>
+  </data>
+  <data name="Feature.lms-class-sessions" xml:space="preserve">
+    <value>Lektionstillfällen</value>
+  </data>
+  <data name="FeaturePurpose.lms-class-sessions" xml:space="preserve">
+    <value>Lärarledda lektioner i kalendern med kapacitet, väntelista, anmälningsregler, incheckning med roterande QR och GPS, och lärarens signering som skriver varje deltagares utbildningspost.</value>
+  </data>
+  <data name="FeatureValue.lms-class-sessions" xml:space="preserve">
+    <value>En deltagarlista per lektion som är underlaget: vem som undervisade, vem som deltog, vad som gicks igenom och hur länge, sparad under kategorins lagringstid.</value>
+  </data>
+  <data name="FeatureExample.lms-class-sessions" xml:space="preserve">
+    <value>En repetition om blodburen smitta med 20 platser blir full; tre medlemmar väntar, och när någon avanmäler sig blir nästa anmäld och meddelad.</value>
+  </data>
+  <data name="FeatureSetup.lms-class-sessions" xml:space="preserve">
+    <value>Inget att ställa in ännu: lektionstillfällen ingår i LMS-tillägget, som inte är tillgängligt ännu.</value>
+  </data>
+  <data name="Feature.lms-lesson-plans" xml:space="preserve">
+    <value>Lektionsplaner</value>
+  </data>
+  <data name="FeaturePurpose.lms-lesson-plans" xml:space="preserve">
+    <value>Återanvändbara planer för lärarledda lektioner: mål, kompetenser, material och övningsutrustning, lärartäthet, säkerhetsplan och checklista för genomgång, versionerade och godkända före användning.</value>
+  </data>
+  <data name="FeatureValue.lms-lesson-plans" xml:space="preserve">
+    <value>Varmövningar, körning och andningsskydd lärs ut efter en godkänd plan, och deltagarlistan visar vilken version som användes.</value>
+  </data>
+  <data name="FeatureExample.lms-lesson-plans" xml:space="preserve">
+    <value>Utbildningsansvarig kopierar mallen för varmövning, lägger till avdelningens brandhus och lärartäthet, och en chef godkänner den före första övningen.</value>
+  </data>
+  <data name="FeatureSetup.lms-lesson-plans" xml:space="preserve">
+    <value>Inget att ställa in ännu: lektionsplaner ingår i LMS-tillägget, som inte är tillgängligt ännu.</value>
+  </data>
+  <data name="Feature.lms-training-resources" xml:space="preserve">
+    <value>Bokning av lokaler och övningsutrustning</value>
+  </data>
+  <data name="FeaturePurpose.lms-training-resources" xml:space="preserve">
+    <value>Avdelningens övningsfält, lektionssalar, övningsutrustning, fordon och utrustning bokas för lektionstider så att inget dubbelbokas.</value>
+  </data>
+  <data name="FeatureValue.lms-training-resources" xml:space="preserve">
+    <value>Två lektioner räknar aldrig med samma brandhus eller fordon samma eftermiddag.</value>
+  </data>
+  <data name="FeatureExample.lms-training-resources" xml:space="preserve">
+    <value>Stegövningen bokar övningstornet och Släckbil 3 på lördagsförmiddagen; en andra lektion som vill ha tornet då nekas.</value>
+  </data>
+  <data name="FeatureSetup.lms-training-resources" xml:space="preserve">
+    <value>Inget att ställa in ännu: bokning av lokaler ingår i LMS-tillägget, som inte är tillgängligt ännu.</value>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.ShowDeterminantInDispatch" xml:space="preserve">
+    <value>Inställningar för protokollbiblioteket / Bestämningskod i larmtexter</value>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.ShowDeterminantInDispatch" xml:space="preserve">
+    <value>Lägger till bestämningskod och protokollnamn från ett larms ärendeflöde i pushrubriken, larm-sms:et och röstlarmet. Av som standard; då är alla larmtexter som förut.</value>
+  </data>
+  <data name="Feature.protocol-case-flow" xml:space="preserve">
+    <value>Protokollets ärendeflöde (beslutsmotor för larm)</value>
+  </data>
+  <data name="FeaturePurpose.protocol-case-flow" xml:space="preserve">
+    <value>Ett larmprotokoll kan ha ett ärendeflöde: inledande frågor och nyckelfrågor, instruktioner att läsa upp och utfall med bestämningskod och föreslagen prioritet. Larmoperatörer går igenom det i Nytt larm, ändrar bestämningskoden bara med ett skäl, skickar instruktioner via sms och får med Enhanced AI ett föreslaget protokoll att bekräfta. Insatskort kan reagera på bestämningskoden.</value>
+  </data>
+  <data name="Feature.lms-skill-sheets" xml:space="preserve">
+    <value>Färdighetsblad</value>
+  </data>
+  <data name="FeaturePurpose.lms-skill-sheets" xml:space="preserve">
+    <value>Färdighetsblad efter prestationskrav med ordnade steg, kritiska kriterier som underkänner bedömningen, skalor, tidtagning och underlag, versionshanterade och med ett bibliotek av Resgrid-mallar.</value>
+  </data>
+  <data name="FeatureValue.lms-skill-sheets" xml:space="preserve">
+    <value>Alla bedömare bedömer samma färdighet på samma sätt, och avdelningen kan visa exakt vad som kontrollerades.</value>
+  </data>
+  <data name="FeatureExample.lms-skill-sheets" xml:space="preserve">
+    <value>Bladet för påtagning av andningsskydd underkänner den som tar längre än 60 sekunder eller missar täthetskontrollen av masken.</value>
+  </data>
+  <data name="FeatureSetup.lms-skill-sheets" xml:space="preserve">
+    <value>Öppna Utbildning, välj Färdigheter och sedan Färdighetsblad, och börja från en mall.</value>
+  </data>
+  <data name="Feature.lms-skill-evaluations" xml:space="preserve">
+    <value>Färdighetsbedömningar</value>
+  </data>
+  <data name="FeaturePurpose.lms-skill-evaluations" xml:space="preserve">
+    <value>Bedömarläge: bedöm en medlem eller en hel besättning på ett blad, med godkänn alla, kommentarer och underlag, och signera sedan på nivå L2; godkända bedömningar hamnar i utbildningsregistret och posten förseglas.</value>
+  </data>
+  <data name="FeatureValue.lms-skill-evaluations" xml:space="preserve">
+    <value>Färdigheter som kontrollerats på övningsfältet blir signerade, förseglade bevis som krav och certifieringar kan räkna.</value>
+  </data>
+  <data name="FeatureExample.lms-skill-evaluations" xml:space="preserve">
+    <value>En styrkeledare bedömer besättningen på Släckbil 2 vid slangutläggning på ett formulär, bryter ut medlemmen som hade svårt och signerar på en surfplatta.</value>
+  </data>
+  <data name="FeatureSetup.lms-skill-evaluations" xml:space="preserve">
+    <value>Publicera ett blad, ange vem som får bedöma med det och välj sedan Starta en bedömning under Utbildning, Färdigheter.</value>
+  </data>
+  <data name="Feature.lms-task-books" xml:space="preserve">
+    <value>Uppgiftsböcker för befattningar</value>
+  </data>
+  <data name="FeaturePurpose.lms-task-books" xml:space="preserve">
+    <value>Uppgiftsböcker enligt NWCG-modellen: startas med befattningskod och datum, uppgifter signeras av behöriga bedömare vid olika tillfällen och ärenden, rekommenderas av en slutbedömare och certifieras av den certifierande; certifieringen aktiverar elevens certifiering.</value>
+  </data>
+  <data name="FeatureValue.lms-task-books" xml:space="preserve">
+    <value>Elever blir behöriga med ett komplett, signerat spår i stället för en pappersbok i ett skåp.</value>
+  </data>
+  <data name="FeatureExample.lms-task-books" xml:space="preserve">
+    <value>En elevs FFT2-bok startas i mars, två ärendeuppgifter signeras vid skogsbränder under sommaren och den certifierande certifierar den i september.</value>
+  </data>
+  <data name="FeatureSetup.lms-task-books" xml:space="preserve">
+    <value>Öppna Utbildning, välj Färdigheter och sedan Mallar, börja från en mall för uppgiftsbok, ange vem som signerar och certifierar och starta böcker under Uppgiftsböcker.</value>
+  </data>
+  <data name="Setting.LmsSkillSettings" xml:space="preserve">
+    <value>Inställningar för färdighetsmeddelanden</value>
+  </data>
+  <data name="SettingHelp.LmsSkillSettings" xml:space="preserve">
+    <value>Hur meddelanden om bedömningar och uppgiftsböcker levereras, direkt eller som daglig eller veckovis sammanfattning, och om bedömda medlemmar och administratörer får dem.</value>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestMode" xml:space="preserve">
+    <value>Leverans av färdighetsmeddelanden</value>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestMode" xml:space="preserve">
+    <value>Direkt, som daglig eller veckovis sammanfattning (ett meddelande per person med alla meddelanden) eller av.</value>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestHour" xml:space="preserve">
+    <value>Tid för färdighetssammanfattning</value>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestHour" xml:space="preserve">
+    <value>Avdelningens lokala klockslag då dagliga och veckovisa sammanfattningar skickas.</value>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestWeekday" xml:space="preserve">
+    <value>Dag för veckosammanfattning om färdigheter</value>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestWeekday" xml:space="preserve">
+    <value>Veckodagen då veckosammanfattningar skickas.</value>
+  </data>
+  <data name="Field.LmsSkillSettings.NotifyMembers" xml:space="preserve">
+    <value>Meddela bedömda medlemmar</value>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.NotifyMembers" xml:space="preserve">
+    <value>Bedömda medlemmar och elever får meddelanden om sina egna bedömningar och böcker.</value>
+  </data>
+  <data name="Field.LmsSkillSettings.NotifyOfficers" xml:space="preserve">
+    <value>Meddela administratörer</value>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.NotifyOfficers" xml:space="preserve">
+    <value>Avdelningens aktiva administratörer får ett meddelande om varje bedömning och bok.</value>
   </data>
 </root>

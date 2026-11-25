@@ -1,0 +1,59 @@
+@using Resgrid.Web.Areas.User.Models.Courses
+@model GradingModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* The manual grading queue (permission 133): short answers waiting for a grader; nobody grades their own attempt. *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["GradingTitle"];
+    ViewData["Section"] = "CourseLibrary";
+    ViewData["Title"] = localizer["GradingTitle"].Value;
+    ViewData["Subtitle"] = localizer["GradingIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.Items.Count == 0)
+    {
+        <p class="text-muted"><i class="fa fa-check" aria-hidden="true"></i> @localizer["GradingEmpty"]</p>
+    }
+    @foreach (var item in Model.Items)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>@item.CourseTitle — @item.LessonTitle</h5>
+                <span class="pull-right text-muted small">@(Model.Names.TryGetValue(item.Attempt.UserId, out var name) ? name : item.Attempt.UserId) · @Model.Date(item.Attempt.SubmittedOn)</span>
+            </div>
+            <div class="ibox-content">
+                <form method="post" asp-controller="Courses" asp-action="Grade" asp-route-area="User" asp-route-id="@item.Attempt.LmsAssessmentAttemptId">
+                    @Html.AntiForgeryToken()
+                    @foreach (var question in item.Questions)
+                    {
+                        <div class="form-group">
+                            <p><strong>@question.Text</strong></p>
+                            @if (!string.IsNullOrWhiteSpace(question.ModelAnswer))
+                            {
+                                <p class="text-muted small"><i class="fa fa-key" aria-hidden="true"></i> @localizer["ModelAnswerLabel"] @question.ModelAnswer</p>
+                            }
+                            <p class="well well-sm" style="white-space:pre-wrap">@question.AnswerText</p>
+                            <label for="g_@(item.Attempt.LmsAssessmentAttemptId)_@question.QuestionId">@string.Format(localizer["PointsAwardedFormat"].Value, question.Points.ToString("0.##"))</label>
+                            <input id="g_@(item.Attempt.LmsAssessmentAttemptId)_@question.QuestionId" name="g_@question.QuestionId" type="number" min="0" max="@question.Points.ToString(System.Globalization.CultureInfo.InvariantCulture)" step="0.5" class="form-control" style="max-width:140px" required />
+                        </div>
+                    }
+                    <div class="form-group">
+                        <label for="notes_@item.Attempt.LmsAssessmentAttemptId">@localizer["GraderNotesLabel"]</label>
+                        <textarea id="notes_@item.Attempt.LmsAssessmentAttemptId" name="notes" class="form-control" rows="2" maxlength="2000"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["SaveGradeButton"]</button>
+                    <a class="btn btn-white" asp-controller="Courses" asp-action="Result" asp-route-area="User" asp-route-id="@item.Attempt.LmsAssessmentAttemptId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["ReviewButton"]</a>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

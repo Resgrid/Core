@@ -1233,4 +1233,2605 @@
   <data name="ViewedOnValue" xml:space="preserve">
     <value>Vista el {0}</value>
   </data>
+  <data name="Doc.Transcript" xml:space="preserve">
+    <value>Expediente de formación</value>
+  </data>
+  <data name="Doc.Member" xml:space="preserve">
+    <value>Miembro</value>
+  </data>
+  <data name="Doc.Period" xml:space="preserve">
+    <value>Periodo</value>
+  </data>
+  <data name="Doc.Date" xml:space="preserve">
+    <value>Fecha</value>
+  </data>
+  <data name="Doc.Course" xml:space="preserve">
+    <value>Curso</value>
+  </data>
+  <data name="Doc.Code" xml:space="preserve">
+    <value>Código</value>
+  </data>
+  <data name="Doc.Category" xml:space="preserve">
+    <value>Categoría</value>
+  </data>
+  <data name="Doc.Source" xml:space="preserve">
+    <value>Origen</value>
+  </data>
+  <data name="Doc.Status" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="Doc.Hours" xml:space="preserve">
+    <value>Horas</value>
+  </data>
+  <data name="Doc.CeHours" xml:space="preserve">
+    <value>Horas de formación continua</value>
+  </data>
+  <data name="Doc.CeProvider" xml:space="preserve">
+    <value>Proveedor de formación continua</value>
+  </data>
+  <data name="Doc.CeCourseNumber" xml:space="preserve">
+    <value>Número de curso de formación continua</value>
+  </data>
+  <data name="Doc.Method" xml:space="preserve">
+    <value>Modalidad</value>
+  </data>
+  <data name="Doc.Instructors" xml:space="preserve">
+    <value>Instructores</value>
+  </data>
+  <data name="Doc.TotalHours" xml:space="preserve">
+    <value>Horas totales</value>
+  </data>
+  <data name="Doc.HoursByCategory" xml:space="preserve">
+    <value>Horas por categoría</value>
+  </data>
+  <data name="Doc.Uncategorized" xml:space="preserve">
+    <value>Sin categoría</value>
+  </data>
+  <data name="Doc.GeneratedOn" xml:space="preserve">
+    <value>Generado el {0} por {1}</value>
+  </data>
+  <data name="Doc.NotCounted" xml:space="preserve">
+    <value>No computa</value>
+  </data>
+  <data name="Doc.CertificateTitle" xml:space="preserve">
+    <value>Certificado de finalización</value>
+  </data>
+  <data name="Doc.CertifiesThat" xml:space="preserve">
+    <value>Se certifica que</value>
+  </data>
+  <data name="Doc.HasCompleted" xml:space="preserve">
+    <value>ha completado</value>
+  </data>
+  <data name="Doc.CompletedOn" xml:space="preserve">
+    <value>Completado el</value>
+  </data>
+  <data name="Doc.IssuedBy" xml:space="preserve">
+    <value>Emitido por</value>
+  </data>
+  <data name="Doc.VerificationCode" xml:space="preserve">
+    <value>Código de verificación</value>
+  </data>
+  <data name="Doc.VerifyAt" xml:space="preserve">
+    <value>Verifíquelo en</value>
+  </data>
+  <data name="Doc.HoursReport" xml:space="preserve">
+    <value>Informe de horas de formación</value>
+  </data>
+  <data name="Doc.Records" xml:space="preserve">
+    <value>Registros</value>
+  </data>
+  <data name="Doc.Members" xml:space="preserve">
+    <value>Miembros</value>
+  </data>
+  <data name="Doc.Target" xml:space="preserve">
+    <value>Objetivo</value>
+  </data>
+  <data name="Doc.UnresolvedDuplicates" xml:space="preserve">
+    <value>Posibles duplicados sin resolver: {0}</value>
+  </data>
+  <data name="Doc.PendingRecords" xml:space="preserve">
+    <value>Registros pendientes: {0}</value>
+  </data>
+  <data name="Doc.NotAccreditor" xml:space="preserve">
+    <value>Emitido por el departamento indicado arriba. Resgrid no es un organismo acreditador de formación continua.</value>
+  </data>
+  <data name="Doc.FormerMember" xml:space="preserve">
+    <value>Antiguo miembro</value>
+  </data>
+  <data name="Doc.IsoReport" xml:space="preserve">
+    <value>Informe de formación ISO FSRS</value>
+  </data>
+  <data name="Doc.NccpReport" xml:space="preserve">
+    <value>Progreso NREMT NCCP</value>
+  </data>
+  <data name="Doc.National" xml:space="preserve">
+    <value>Nacional</value>
+  </data>
+  <data name="Doc.Local" xml:space="preserve">
+    <value>Local</value>
+  </data>
+  <data name="Doc.Individual" xml:space="preserve">
+    <value>Individual</value>
+  </data>
+  <data name="Doc.Cycle" xml:space="preserve">
+    <value>Ciclo</value>
+  </data>
+  <data name="Doc.Level" xml:space="preserve">
+    <value>Nivel</value>
+  </data>
+  <data name="LearningSource.CourseCompletion" xml:space="preserve">
+    <value>Curso completado</value>
+  </data>
+  <data name="LearningSource.ClassSession" xml:space="preserve">
+    <value>Sesión de clase</value>
+  </data>
+  <data name="LearningSource.TrainingRecord" xml:space="preserve">
+    <value>Registro de formación</value>
+  </data>
+  <data name="LearningSource.ExternalSubmission" xml:space="preserve">
+    <value>Formación externa</value>
+  </data>
+  <data name="LearningSource.SkillEvaluation" xml:space="preserve">
+    <value>Evaluación de habilidades</value>
+  </data>
+  <data name="LearningSource.TaskBookSignoff" xml:space="preserve">
+    <value>Firma del libro de tareas</value>
+  </data>
+  <data name="LearningSource.ProtocolAcknowledgment" xml:space="preserve">
+    <value>Confirmación de protocolo</value>
+  </data>
+  <data name="LearningSource.AcademyLesson" xml:space="preserve">
+    <value>Lección de Academy</value>
+  </data>
+  <data name="LearningSource.ManualCredit" xml:space="preserve">
+    <value>Crédito de certificación</value>
+  </data>
+  <data name="LearningSource.Import" xml:space="preserve">
+    <value>Historial importado</value>
+  </data>
+  <data name="LearningSource.CalendarAttendance" xml:space="preserve">
+    <value>Evento de calendario</value>
+  </data>
+  <data name="LearningStatus.Pending" xml:space="preserve">
+    <value>Pendiente</value>
+  </data>
+  <data name="LearningStatus.Verified" xml:space="preserve">
+    <value>Verificado</value>
+  </data>
+  <data name="LearningStatus.Rejected" xml:space="preserve">
+    <value>Rechazado</value>
+  </data>
+  <data name="LearningStatus.Voided" xml:space="preserve">
+    <value>Anulado</value>
+  </data>
+  <data name="TrainingMethod.Classroom" xml:space="preserve">
+    <value>Aula</value>
+  </data>
+  <data name="TrainingMethod.Online" xml:space="preserve">
+    <value>En línea</value>
+  </data>
+  <data name="TrainingMethod.DrillField" xml:space="preserve">
+    <value>Simulacro o campo</value>
+  </data>
+  <data name="TrainingMethod.Virtual" xml:space="preserve">
+    <value>Virtual (en directo)</value>
+  </data>
+  <data name="TrainingMethod.SelfStudy" xml:space="preserve">
+    <value>Autoestudio</value>
+  </data>
+  <data name="TrainingMethod.OnTheJob" xml:space="preserve">
+    <value>En el puesto</value>
+  </data>
+  <data name="TargetPeriod.None" xml:space="preserve">
+    <value>Sin objetivo</value>
+  </data>
+  <data name="TargetPeriod.PerYear" xml:space="preserve">
+    <value>Por año</value>
+  </data>
+  <data name="TargetPeriod.PerMonth" xml:space="preserve">
+    <value>Por mes</value>
+  </data>
+  <data name="TargetPeriod.PerCycle" xml:space="preserve">
+    <value>Por ciclo de certificación</value>
+  </data>
+  <data name="TargetPeriod.Once" xml:space="preserve">
+    <value>Una vez</value>
+  </data>
+  <data name="TargetPeriod.FirstYear" xml:space="preserve">
+    <value>Durante el primer año</value>
+  </data>
+  <data name="CategoryKind.Custom" xml:space="preserve">
+    <value>Personalizada</value>
+  </data>
+  <data name="CategoryKind.IsoFsrs" xml:space="preserve">
+    <value>ISO FSRS</value>
+  </data>
+  <data name="CategoryKind.Nccp" xml:space="preserve">
+    <value>NREMT NCCP</value>
+  </data>
+  <data name="CategoryKind.Osha" xml:space="preserve">
+    <value>OSHA</value>
+  </data>
+  <data name="CategoryKind.State" xml:space="preserve">
+    <value>Estatal</value>
+  </data>
+  <data name="BackfillState.Queued" xml:space="preserve">
+    <value>En cola</value>
+  </data>
+  <data name="BackfillState.Running" xml:space="preserve">
+    <value>En curso</value>
+  </data>
+  <data name="BackfillState.Completed" xml:space="preserve">
+    <value>Completado</value>
+  </data>
+  <data name="BackfillState.Failed" xml:space="preserve">
+    <value>Fallido</value>
+  </data>
+  <data name="BackfillState.Cancelled" xml:space="preserve">
+    <value>Cancelado</value>
+  </data>
+  <data name="RoundingMode.Nearest" xml:space="preserve">
+    <value>Al paso más cercano</value>
+  </data>
+  <data name="RoundingMode.Down" xml:space="preserve">
+    <value>Hacia abajo</value>
+  </data>
+  <data name="RoundingMode.Up" xml:space="preserve">
+    <value>Hacia arriba</value>
+  </data>
+  <data name="MatchMethod.None" xml:space="preserve">
+    <value>Sin coincidencia</value>
+  </data>
+  <data name="MatchMethod.Email" xml:space="preserve">
+    <value>Coincide por correo</value>
+  </data>
+  <data name="MatchMethod.MemberId" xml:space="preserve">
+    <value>Coincide por ID de miembro</value>
+  </data>
+  <data name="MatchMethod.ExternalId" xml:space="preserve">
+    <value>Coincide por ID externo</value>
+  </data>
+  <data name="MatchMethod.Name" xml:space="preserve">
+    <value>Coincide por nombre</value>
+  </data>
+  <data name="MatchMethod.Manual" xml:space="preserve">
+    <value>Elegido por usted</value>
+  </data>
+  <data name="Grouping.Category" xml:space="preserve">
+    <value>Categoría</value>
+  </data>
+  <data name="Grouping.Member" xml:space="preserve">
+    <value>Miembro</value>
+  </data>
+  <data name="Grouping.Month" xml:space="preserve">
+    <value>Mes</value>
+  </data>
+  <data name="learning_record_self_review" xml:space="preserve">
+    <value>Nadie revisa su propio registro. Otro responsable debe revisarlo.</value>
+  </data>
+  <data name="learning_record_not_pending" xml:space="preserve">
+    <value>Este registro ya no espera revisión.</value>
+  </data>
+  <data name="learning_record_not_found" xml:space="preserve">
+    <value>No se encontró el registro.</value>
+  </data>
+  <data name="learning_record_hours_invalid" xml:space="preserve">
+    <value>Introduzca horas entre 0 y 9999.</value>
+  </data>
+  <data name="learning_record_voided" xml:space="preserve">
+    <value>Este registro está anulado.</value>
+  </data>
+  <data name="learning_record_not_duplicate" xml:space="preserve">
+    <value>Este registro no tiene un posible duplicado sin resolver.</value>
+  </data>
+  <data name="learning_record_category_invalid" xml:space="preserve">
+    <value>Elija una de las categorías del departamento.</value>
+  </data>
+  <data name="learning_record_reason_required" xml:space="preserve">
+    <value>Indique un motivo.</value>
+  </data>
+  <data name="Rec.TranscriptTab" xml:space="preserve">
+    <value>Expediente</value>
+  </data>
+  <data name="Rec.RecordsTab" xml:space="preserve">
+    <value>Registros</value>
+  </data>
+  <data name="Rec.OfficerStripLabel" xml:space="preserve">
+    <value>Registros de formación</value>
+  </data>
+  <data name="Rec.QueueTab" xml:space="preserve">
+    <value>Cola</value>
+  </data>
+  <data name="Rec.CategoriesTab" xml:space="preserve">
+    <value>Categorías</value>
+  </data>
+  <data name="Rec.CategorizeTab" xml:space="preserve">
+    <value>Categorizar</value>
+  </data>
+  <data name="Rec.CreditsTab" xml:space="preserve">
+    <value>Créditos</value>
+  </data>
+  <data name="Rec.BackfillTab" xml:space="preserve">
+    <value>Recuperar historial</value>
+  </data>
+  <data name="Rec.ImportTab" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="Rec.HoursTab" xml:space="preserve">
+    <value>Horas</value>
+  </data>
+  <data name="Rec.SettingsTab" xml:space="preserve">
+    <value>Ajustes</value>
+  </data>
+  <data name="Rec.IsoReportTab" xml:space="preserve">
+    <value>Informe ISO</value>
+  </data>
+  <data name="Rec.NccpReportTab" xml:space="preserve">
+    <value>Progreso NCCP</value>
+  </data>
+  <data name="Rec.CertificateTemplatesTab" xml:space="preserve">
+    <value>Plantillas de certificado</value>
+  </data>
+  <data name="Rec.ActionFailed" xml:space="preserve">
+    <value>No se pudo realizar. Recargue la página e inténtelo de nuevo.</value>
+  </data>
+  <data name="Rec.UnknownSource" xml:space="preserve">
+    <value>Otro</value>
+  </data>
+  <data name="Rec.ExportFailed" xml:space="preserve">
+    <value>No se pudo crear la exportación. Inténtelo de nuevo en un momento.</value>
+  </data>
+  <data name="Rec.ExportPdfButton" xml:space="preserve">
+    <value>Archivo PDF</value>
+  </data>
+  <data name="Rec.ExportCsvButton" xml:space="preserve">
+    <value>Archivo CSV</value>
+  </data>
+  <data name="Rec.FilterLabel" xml:space="preserve">
+    <value>Filtrar</value>
+  </data>
+  <data name="Rec.FromLabel" xml:space="preserve">
+    <value>Desde</value>
+  </data>
+  <data name="Rec.ToLabel" xml:space="preserve">
+    <value>Hasta</value>
+  </data>
+  <data name="Rec.AllCategories" xml:space="preserve">
+    <value>Todas las categorías</value>
+  </data>
+  <data name="Rec.AllSources" xml:space="preserve">
+    <value>Todos los orígenes</value>
+  </data>
+  <data name="Rec.ClearFilterButton" xml:space="preserve">
+    <value>Limpiar</value>
+  </data>
+  <data name="Rec.RemovedLabel" xml:space="preserve">
+    <value>Eliminada</value>
+  </data>
+  <data name="Rec.RemovedCategory" xml:space="preserve">
+    <value>{0} (eliminada)</value>
+  </data>
+  <data name="Rec.TargetValue" xml:space="preserve">
+    <value>{0} h · {1}</value>
+  </data>
+  <data name="Rec.TargetPerMember" xml:space="preserve">
+    <value>{0} h por miembro</value>
+  </data>
+  <data name="Rec.CategoryInvalid" xml:space="preserve">
+    <value>Elija una de las categorías del departamento.</value>
+  </data>
+  <data name="Rec.MethodInvalid" xml:space="preserve">
+    <value>Elija una modalidad de la lista.</value>
+  </data>
+  <data name="Rec.ReviewNoteLabel" xml:space="preserve">
+    <value>Nota</value>
+  </data>
+  <data name="Rec.BackfilledLabel" xml:space="preserve">
+    <value>Del historial</value>
+  </data>
+  <data name="Rec.PossibleDuplicateLabel" xml:space="preserve">
+    <value>Posible duplicado</value>
+  </data>
+  <data name="Rec.IncludeFormerLabel" xml:space="preserve">
+    <value>Incluir antiguos miembros</value>
+  </data>
+  <data name="Rec.NoHours" xml:space="preserve">
+    <value>No hay horas en este periodo.</value>
+  </data>
+  <data name="Rec.NoCategories" xml:space="preserve">
+    <value>El departamento aún no tiene categorías de formación.</value>
+  </data>
+  <data name="Rec.RecordsWritten" xml:space="preserve">
+    <value>Registros escritos</value>
+  </data>
+  <data name="Rec.RecordsSkipped" xml:space="preserve">
+    <value>Omitidos</value>
+  </data>
+  <data name="Rec.CertificationTypeLabel" xml:space="preserve">
+    <value>Tipo de certificación</value>
+  </data>
+  <data name="Rec.MyTranscriptTitle" xml:space="preserve">
+    <value>Mi expediente</value>
+  </data>
+  <data name="Rec.MemberTranscriptTitle" xml:space="preserve">
+    <value>Expediente: {0}</value>
+  </data>
+  <data name="Rec.TranscriptIntro" xml:space="preserve">
+    <value>Cada curso, registro de formación, evento de calendario y certificado externo, con sus horas y si computan.</value>
+  </data>
+  <data name="Rec.SubmitButton" xml:space="preserve">
+    <value>Enviar formación externa</value>
+  </data>
+  <data name="Rec.ShowAuditButton" xml:space="preserve">
+    <value>Vista de auditoría</value>
+  </data>
+  <data name="Rec.HideAuditButton" xml:space="preserve">
+    <value>Ocultar vista de auditoría</value>
+  </data>
+  <data name="Rec.MemberPickerLabel" xml:space="preserve">
+    <value>Miembro</value>
+  </data>
+  <data name="Rec.OpenTranscriptButton" xml:space="preserve">
+    <value>Abrir expediente</value>
+  </data>
+  <data name="Rec.MyTranscriptLink" xml:space="preserve">
+    <value>Mi expediente</value>
+  </data>
+  <data name="Rec.FormerMemberNotice" xml:space="preserve">
+    <value>Este miembro dejó el departamento. Su expediente sigue disponible para auditorías.</value>
+  </data>
+  <data name="Rec.RecordsHeader" xml:space="preserve">
+    <value>Registros de aprendizaje</value>
+  </data>
+  <data name="Rec.NoRecords" xml:space="preserve">
+    <value>Aún no hay registros. Aquí aparecen las formaciones completadas, los registros de formación, los registros de asistencia del calendario y los certificados externos.</value>
+  </data>
+  <data name="Rec.NoRecordsFiltered" xml:space="preserve">
+    <value>Ningún registro coincide con el filtro.</value>
+  </data>
+  <data name="Rec.CountedHelp" xml:space="preserve">
+    <value>Solo los registros verificados computan horas. Los pendientes, rechazados y anulados se muestran pero no computan.</value>
+  </data>
+  <data name="Rec.VoidReasonLabel" xml:space="preserve">
+    <value>Motivo de anulación</value>
+  </data>
+  <data name="Rec.HistoryChainSummary" xml:space="preserve">
+    <value>Historial ({0} versiones)</value>
+  </data>
+  <data name="Rec.CertificateButton" xml:space="preserve">
+    <value>Certificado</value>
+  </data>
+  <data name="Rec.EvidenceButton" xml:space="preserve">
+    <value>Justificante</value>
+  </data>
+  <data name="Rec.VoidButton" xml:space="preserve">
+    <value>Anular</value>
+  </data>
+  <data name="Rec.VoidConfirmButton" xml:space="preserve">
+    <value>Anular registro</value>
+  </data>
+  <data name="Rec.SubmitTitle" xml:space="preserve">
+    <value>Enviar formación externa</value>
+  </data>
+  <data name="Rec.SubmitIntro" xml:space="preserve">
+    <value>Un curso realizado fuera del departamento: un responsable lo verifica antes de que compute.</value>
+  </data>
+  <data name="Rec.SubmissionsDisabledHeader" xml:space="preserve">
+    <value>El envío de formación externa está desactivado</value>
+  </data>
+  <data name="Rec.SubmissionsDisabledHelp" xml:space="preserve">
+    <value>Su departamento no acepta formación externa de los miembros. Pida a un responsable de formación que la registre por usted.</value>
+  </data>
+  <data name="Rec.BackToTranscriptButton" xml:space="preserve">
+    <value>Volver a mi expediente</value>
+  </data>
+  <data name="Rec.SubmitHowItWorks" xml:space="preserve">
+    <value>Su envío espera a un responsable. Una vez verificado, computa en sus horas y en cualquier certificación que cuente su categoría.</value>
+  </data>
+  <data name="Rec.SubmitCourseSection" xml:space="preserve">
+    <value>Curso</value>
+  </data>
+  <data name="Rec.SubmitCeSection" xml:space="preserve">
+    <value>Formación continua</value>
+  </data>
+  <data name="Rec.SubmitEvidenceSection" xml:space="preserve">
+    <value>Justificante</value>
+  </data>
+  <data name="Rec.EvidenceLabel" xml:space="preserve">
+    <value>Certificado o prueba de finalización</value>
+  </data>
+  <data name="Rec.EvidenceHelp" xml:space="preserve">
+    <value>Opcional. PDF, imagen o documento de Word, hasta 10 MB.</value>
+  </data>
+  <data name="Rec.NotesLabel" xml:space="preserve">
+    <value>Notas</value>
+  </data>
+  <data name="Rec.SubmitSendButton" xml:space="preserve">
+    <value>Enviar a revisión</value>
+  </data>
+  <data name="Rec.TitleRequired" xml:space="preserve">
+    <value>Introduzca el nombre del curso.</value>
+  </data>
+  <data name="Rec.DateRequired" xml:space="preserve">
+    <value>Introduzca la fecha de finalización.</value>
+  </data>
+  <data name="Rec.DateInFuture" xml:space="preserve">
+    <value>La fecha de finalización no puede ser futura.</value>
+  </data>
+  <data name="Rec.EvidenceTypeError" xml:space="preserve">
+    <value>El justificante debe ser un archivo PDF, JPG, PNG, GIF, DOC o DOCX.</value>
+  </data>
+  <data name="Rec.EvidenceSizeError" xml:space="preserve">
+    <value>Los justificantes están limitados a 10 MB.</value>
+  </data>
+  <data name="Rec.SubmittedMessage" xml:space="preserve">
+    <value>Su formación externa se ha enviado a revisión.</value>
+  </data>
+  <data name="Rec.QueueTitle" xml:space="preserve">
+    <value>Cola de registros</value>
+  </data>
+  <data name="Rec.QueueIntro" xml:space="preserve">
+    <value>Formación externa y registros de asistencia abiertos pendientes de revisión, y posibles duplicados por resolver.</value>
+  </data>
+  <data name="Rec.WaitingForReview" xml:space="preserve">
+    <value>Pendiente de revisión</value>
+  </data>
+  <data name="Rec.PossibleDuplicatesHeader" xml:space="preserve">
+    <value>Posibles duplicados</value>
+  </data>
+  <data name="Rec.PossibleDuplicatesHelp" xml:space="preserve">
+    <value>Registros del mismo miembro cuyos horarios se solapan el mismo día. Conserve ambos si son sesiones distintas; fusionar anula este.</value>
+  </data>
+  <data name="Rec.QueueEmpty" xml:space="preserve">
+    <value>No hay nada pendiente de revisión.</value>
+  </data>
+  <data name="Rec.NoDuplicates" xml:space="preserve">
+    <value>No hay posibles duplicados por resolver.</value>
+  </data>
+  <data name="Rec.SubmittedColumn" xml:space="preserve">
+    <value>Enviado</value>
+  </data>
+  <data name="Rec.SubmittedBy" xml:space="preserve">
+    <value>por {0}</value>
+  </data>
+  <data name="Rec.CheckedInLabel" xml:space="preserve">
+    <value>Entrada registrada</value>
+  </data>
+  <data name="Rec.OwnRecordNotice" xml:space="preserve">
+    <value>Su propio registro: lo revisa otro responsable.</value>
+  </data>
+  <data name="Rec.VerifyButton" xml:space="preserve">
+    <value>Verificar</value>
+  </data>
+  <data name="Rec.VerifyConfirmButton" xml:space="preserve">
+    <value>Verificar registro</value>
+  </data>
+  <data name="Rec.RejectButton" xml:space="preserve">
+    <value>Rechazar</value>
+  </data>
+  <data name="Rec.RejectConfirmButton" xml:space="preserve">
+    <value>Rechazar registro</value>
+  </data>
+  <data name="Rec.OpenCheckInHelp" xml:space="preserve">
+    <value>No se registró la salida: introduzca las horas de asistencia.</value>
+  </data>
+  <data name="Rec.ThisRecordColumn" xml:space="preserve">
+    <value>Este registro</value>
+  </data>
+  <data name="Rec.OtherRecordColumn" xml:space="preserve">
+    <value>Posible duplicado de</value>
+  </data>
+  <data name="Rec.OtherRecordMissing" xml:space="preserve">
+    <value>El otro registro ya no está disponible.</value>
+  </data>
+  <data name="Rec.KeepBothButton" xml:space="preserve">
+    <value>Conservar ambos</value>
+  </data>
+  <data name="Rec.MergeButton" xml:space="preserve">
+    <value>Fusionar</value>
+  </data>
+  <data name="Rec.MergeConfirm" xml:space="preserve">
+    <value>Fusionar anula este registro como la misma sesión que el otro. ¿Continuar?</value>
+  </data>
+  <data name="Rec.VerifiedMessage" xml:space="preserve">
+    <value>El registro está verificado.</value>
+  </data>
+  <data name="Rec.RejectedMessage" xml:space="preserve">
+    <value>El registro está rechazado.</value>
+  </data>
+  <data name="Rec.RejectNoteRequired" xml:space="preserve">
+    <value>Indique un motivo para el miembro.</value>
+  </data>
+  <data name="Rec.VoidedMessage" xml:space="preserve">
+    <value>El registro está anulado.</value>
+  </data>
+  <data name="Rec.VoidReasonRequired" xml:space="preserve">
+    <value>Indique un motivo para anular el registro.</value>
+  </data>
+  <data name="Rec.DuplicateResolvedMessage" xml:space="preserve">
+    <value>El posible duplicado está resuelto.</value>
+  </data>
+  <data name="Rec.CategoriesTitle" xml:space="preserve">
+    <value>Categorías de formación</value>
+  </data>
+  <data name="Rec.CategoriesIntro" xml:space="preserve">
+    <value>Agrupe las horas de formación para informes, objetivos y créditos de certificación.</value>
+  </data>
+  <data name="Rec.CategoriesHeader" xml:space="preserve">
+    <value>Categorías</value>
+  </data>
+  <data name="Rec.KindLabel" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="Rec.RetentionLabel" xml:space="preserve">
+    <value>Conservar registros (años)</value>
+  </data>
+  <data name="Rec.RetentionHelp" xml:space="preserve">
+    <value>Años mínimos que se conservan los registros de esta categoría tras la salida de un miembro. Vacío usa el valor del departamento.</value>
+  </data>
+  <data name="Rec.ExternalCodeLabel" xml:space="preserve">
+    <value>Código externo</value>
+  </data>
+  <data name="Rec.ExternalCodeHelp" xml:space="preserve">
+    <value>El código que usan las exportaciones estatales o de terceros para esta categoría.</value>
+  </data>
+  <data name="Rec.YearsValue" xml:space="preserve">
+    <value>{0} años</value>
+  </data>
+  <data name="Rec.DepartmentDefault" xml:space="preserve">
+    <value>Valor del departamento</value>
+  </data>
+  <data name="Rec.DeleteCategoryConfirm" xml:space="preserve">
+    <value>¿Eliminar esta categoría? Los registros la conservan y la muestran como eliminada.</value>
+  </data>
+  <data name="Rec.AddCategoryHeader" xml:space="preserve">
+    <value>Añadir una categoría</value>
+  </data>
+  <data name="Rec.EditCategoryHeader" xml:space="preserve">
+    <value>Editar categoría</value>
+  </data>
+  <data name="Rec.TargetHoursLabel" xml:space="preserve">
+    <value>Horas objetivo</value>
+  </data>
+  <data name="Rec.TargetPeriodLabel" xml:space="preserve">
+    <value>Periodo del objetivo</value>
+  </data>
+  <data name="Rec.AppliesToLabel" xml:space="preserve">
+    <value>El objetivo se aplica a</value>
+  </data>
+  <data name="Rec.AppliesToPlaceholder" xml:space="preserve">
+    <value>p. ej. por bombero</value>
+  </data>
+  <data name="Rec.SaveCategoryButton" xml:space="preserve">
+    <value>Guardar categoría</value>
+  </data>
+  <data name="Rec.TemplatesHeader" xml:space="preserve">
+    <value>Plantillas de categorías</value>
+  </data>
+  <data name="Rec.TemplatesHelp" xml:space="preserve">
+    <value>Categorías iniciales para requisitos habituales. Aplicar una plantilla añade solo las categorías que aún no tiene; nada se aplica automáticamente.</value>
+  </data>
+  <data name="Rec.TargetsNotPoints" xml:space="preserve">
+    <value>Son objetivos de horas, no valores en puntos.</value>
+  </data>
+  <data name="Rec.TemplateAppliedLabel" xml:space="preserve">
+    <value>Aplicada</value>
+  </data>
+  <data name="Rec.ApplyTemplateButton" xml:space="preserve">
+    <value>Aplicar plantilla</value>
+  </data>
+  <data name="Rec.ApplyTemplateMissingButton" xml:space="preserve">
+    <value>Añadir categorías que faltan</value>
+  </data>
+  <data name="Rec.CategoryCodeTaken" xml:space="preserve">
+    <value>Otra categoría ya usa este código.</value>
+  </data>
+  <data name="Rec.RetentionRange" xml:space="preserve">
+    <value>Introduzca de 0 a 75 años.</value>
+  </data>
+  <data name="Rec.CategorySavedMessage" xml:space="preserve">
+    <value>La categoría está guardada.</value>
+  </data>
+  <data name="Rec.CategoryDeletedMessage" xml:space="preserve">
+    <value>La categoría está eliminada.</value>
+  </data>
+  <data name="Rec.TemplateAppliedMessage" xml:space="preserve">
+    <value>{0} categorías añadidas.</value>
+  </data>
+  <data name="Rec.CategorizeTitle" xml:space="preserve">
+    <value>Categorizar historial</value>
+  </data>
+  <data name="Rec.CategorizeIntro" xml:space="preserve">
+    <value>Asigne una categoría en bloque a los registros sin categoría, agrupados por nombre y código de curso.</value>
+  </data>
+  <data name="Rec.UncategorizedGroupsHeader" xml:space="preserve">
+    <value>Registros sin categoría</value>
+  </data>
+  <data name="Rec.NoUncategorized" xml:space="preserve">
+    <value>Todos los registros de este periodo tienen categoría.</value>
+  </data>
+  <data name="Rec.DatesColumn" xml:space="preserve">
+    <value>Fechas</value>
+  </data>
+  <data name="Rec.NoTitle" xml:space="preserve">
+    <value>(sin nombre)</value>
+  </data>
+  <data name="Rec.CategorizeButton" xml:space="preserve">
+    <value>Aplicar</value>
+  </data>
+  <data name="Rec.CategorizeNeedsGroup" xml:space="preserve">
+    <value>Elija un grupo de registros para categorizar.</value>
+  </data>
+  <data name="Rec.CategorizedMessage" xml:space="preserve">
+    <value>{0} registros categorizados.</value>
+  </data>
+  <data name="Rec.CreditsTitle" xml:space="preserve">
+    <value>Créditos de certificación</value>
+  </data>
+  <data name="Rec.CreditsIntro" xml:space="preserve">
+    <value>Cuente las horas de una categoría para la renovación de una certificación.</value>
+  </data>
+  <data name="Rec.CreditsReadOnly" xml:space="preserve">
+    <value>Los administradores del departamento y los gestores de certificaciones cambian las asignaciones de créditos.</value>
+  </data>
+  <data name="Rec.MappingsHeader" xml:space="preserve">
+    <value>Asignaciones de créditos</value>
+  </data>
+  <data name="Rec.NoMappings" xml:space="preserve">
+    <value>Ninguna certificación cuenta aún horas de formación.</value>
+  </data>
+  <data name="Rec.ComponentLabel" xml:space="preserve">
+    <value>Componente</value>
+  </data>
+  <data name="Rec.ComponentHelp" xml:space="preserve">
+    <value>Opcional. Cuente solo esta parte de la categoría; vacío la cuenta entera.</value>
+  </data>
+  <data name="Rec.EveryComponent" xml:space="preserve">
+    <value>Todos</value>
+  </data>
+  <data name="Rec.EnabledLabel" xml:space="preserve">
+    <value>Contando</value>
+  </data>
+  <data name="Rec.DisabledLabel" xml:space="preserve">
+    <value>En pausa</value>
+  </data>
+  <data name="Rec.EnabledSince" xml:space="preserve">
+    <value>desde {0}</value>
+  </data>
+  <data name="Rec.EnableButton" xml:space="preserve">
+    <value>Reanudar</value>
+  </data>
+  <data name="Rec.DisableButton" xml:space="preserve">
+    <value>Pausar</value>
+  </data>
+  <data name="Rec.DeleteMappingConfirm" xml:space="preserve">
+    <value>¿Eliminar esta asignación? Los créditos ya escritos permanecen en las certificaciones.</value>
+  </data>
+  <data name="Rec.AddMappingHeader" xml:space="preserve">
+    <value>Añadir una asignación</value>
+  </data>
+  <data name="Rec.EditMappingHeader" xml:space="preserve">
+    <value>Editar asignación</value>
+  </data>
+  <data name="Rec.MappingNeedsTypesAndCategories" xml:space="preserve">
+    <value>Primero añada tipos de certificación de personas y categorías de formación.</value>
+  </data>
+  <data name="Rec.MappingEnabledHelp" xml:space="preserve">
+    <value>Los registros verificados completados desde hoy se convierten en créditos del ciclo de certificación que los contiene.</value>
+  </data>
+  <data name="Rec.SaveMappingButton" xml:space="preserve">
+    <value>Guardar asignación</value>
+  </data>
+  <data name="Rec.CertificationTypeInvalid" xml:space="preserve">
+    <value>Elija un tipo de certificación de personas.</value>
+  </data>
+  <data name="Rec.MappingExists" xml:space="preserve">
+    <value>Esta certificación ya cuenta esta categoría.</value>
+  </data>
+  <data name="Rec.MappingSavedMessage" xml:space="preserve">
+    <value>La asignación está guardada.</value>
+  </data>
+  <data name="Rec.MappingDeletedMessage" xml:space="preserve">
+    <value>La asignación está eliminada.</value>
+  </data>
+  <data name="Rec.ApplyHistoryHeader" xml:space="preserve">
+    <value>Aplicar el historial a créditos</value>
+  </data>
+  <data name="Rec.ApplyHistoryHelp" xml:space="preserve">
+    <value>Los registros anteriores a la activación de una asignación, y el historial recuperado, solo se convierten en créditos cuando los aplica aquí.</value>
+  </data>
+  <data name="Rec.ApplyHistoryLink" xml:space="preserve">
+    <value>Aplicar el historial a créditos</value>
+  </data>
+  <data name="Rec.ApplyHistoryPreviewHelp" xml:space="preserve">
+    <value>No se escribe nada hasta que aplique. Desmarque los registros que no deban convertirse en crédito.</value>
+  </data>
+  <data name="Rec.ProposedCredits" xml:space="preserve">
+    <value>Créditos propuestos</value>
+  </data>
+  <data name="Rec.ProposedHours" xml:space="preserve">
+    <value>Horas propuestas</value>
+  </data>
+  <data name="Rec.OutsideEveryCycle" xml:space="preserve">
+    <value>Fuera de todo ciclo</value>
+  </data>
+  <data name="Rec.NothingToApply" xml:space="preserve">
+    <value>No hay historial pendiente de convertirse en créditos para esta certificación.</value>
+  </data>
+  <data name="Rec.BackToCreditsButton" xml:space="preserve">
+    <value>Volver a créditos</value>
+  </data>
+  <data name="Rec.RequiredHoursValue" xml:space="preserve">
+    <value>{0} h exigidas</value>
+  </data>
+  <data name="Rec.CycleCreditsSummary" xml:space="preserve">
+    <value>Créditos manuales {0} h · del expediente {1} h · propuestos {2} h</value>
+  </data>
+  <data name="Rec.ApplyColumn" xml:space="preserve">
+    <value>Aplicar</value>
+  </data>
+  <data name="Rec.ExistingCreditsSummary" xml:space="preserve">
+    <value>Créditos ya en este ciclo ({0})</value>
+  </data>
+  <data name="Rec.DerivedCreditLabel" xml:space="preserve">
+    <value>Del expediente</value>
+  </data>
+  <data name="Rec.ManualCreditLabel" xml:space="preserve">
+    <value>Manual</value>
+  </data>
+  <data name="Rec.ApplySelectedButton" xml:space="preserve">
+    <value>Aplicar los créditos seleccionados</value>
+  </data>
+  <data name="Rec.ApplyHistoryNoneSelected" xml:space="preserve">
+    <value>Seleccione al menos un registro.</value>
+  </data>
+  <data name="Rec.ApplyHistoryAppliedMessage" xml:space="preserve">
+    <value>{0} créditos escritos.</value>
+  </data>
+  <data name="Rec.BackfillTitle" xml:space="preserve">
+    <value>Recuperación del historial</value>
+  </data>
+  <data name="Rec.BackfillIntro" xml:space="preserve">
+    <value>Lleve a los expedientes las formaciones completadas y los registros de formación anteriores al expediente.</value>
+  </data>
+  <data name="Rec.BackfillHowItWorks" xml:space="preserve">
+    <value>Cómo funciona la recuperación</value>
+  </data>
+  <data name="Rec.BackfillRuleVerified" xml:space="preserve">
+    <value>Los registros recuperados están verificados y conservan su fecha original.</value>
+  </data>
+  <data name="Rec.BackfillRuleNoCredits" xml:space="preserve">
+    <value>Nunca generan créditos de certificación por sí solos: para eso use Aplicar el historial a créditos.</value>
+  </data>
+  <data name="Rec.BackfillRuleNoCalendar" xml:space="preserve">
+    <value>Los registros de asistencia del calendario no se recuperan.</value>
+  </data>
+  <data name="Rec.BackfillRuleRerun" xml:space="preserve">
+    <value>Se ejecuta en segundo plano y puede repetirse sin riesgo: los registros ya escritos se omiten.</value>
+  </data>
+  <data name="Rec.BackfillDryRunButton" xml:space="preserve">
+    <value>Solo contar (simulación)</value>
+  </data>
+  <data name="Rec.BackfillRunButton" xml:space="preserve">
+    <value>Ejecutar recuperación</value>
+  </data>
+  <data name="Rec.BackfillRunConfirm" xml:space="preserve">
+    <value>¿Escribir ahora los registros históricos de todos los miembros?</value>
+  </data>
+  <data name="Rec.LatestBackfillHeader" xml:space="preserve">
+    <value>Última ejecución</value>
+  </data>
+  <data name="Rec.NoBackfill" xml:space="preserve">
+    <value>Aún no se ha ejecutado ninguna recuperación.</value>
+  </data>
+  <data name="Rec.CompletionsFound" xml:space="preserve">
+    <value>Finalizaciones encontradas</value>
+  </data>
+  <data name="Rec.TrainingRecordsFound" xml:space="preserve">
+    <value>Registros de formación encontrados</value>
+  </data>
+  <data name="Rec.DryRunLabel" xml:space="preserve">
+    <value>Simulación</value>
+  </data>
+  <data name="Rec.RequestedLabel" xml:space="preserve">
+    <value>Solicitado</value>
+  </data>
+  <data name="Rec.StartedLabel" xml:space="preserve">
+    <value>Iniciado</value>
+  </data>
+  <data name="Rec.FinishedLabel" xml:space="preserve">
+    <value>Terminado</value>
+  </data>
+  <data name="Rec.AttemptsLabel" xml:space="preserve">
+    <value>Intentos</value>
+  </data>
+  <data name="Rec.ErrorLabel" xml:space="preserve">
+    <value>Error de ejecución</value>
+  </data>
+  <data name="Rec.BackfillRunning" xml:space="preserve">
+    <value>La recuperación se ejecuta en segundo plano. Recargue la página para ver el avance.</value>
+  </data>
+  <data name="Rec.BackfillQueuedMessage" xml:space="preserve">
+    <value>La recuperación está en cola.</value>
+  </data>
+  <data name="Rec.BackfillDryRunQueuedMessage" xml:space="preserve">
+    <value>La simulación está en cola: solo cuenta.</value>
+  </data>
+  <data name="Rec.ImportTitle" xml:space="preserve">
+    <value>Importar historial de formación</value>
+  </data>
+  <data name="Rec.ImportIntro" xml:space="preserve">
+    <value>Traiga finalizaciones de otro sistema con un archivo CSV: revise a qué miembro corresponde cada fila y luego importe.</value>
+  </data>
+  <data name="Rec.ImportStepUpload" xml:space="preserve">
+    <value>Subir un archivo</value>
+  </data>
+  <data name="Rec.ImportStepReview" xml:space="preserve">
+    <value>Revisar coincidencias</value>
+  </data>
+  <data name="Rec.ImportStepDone" xml:space="preserve">
+    <value>Hecho</value>
+  </data>
+  <data name="Rec.ImportStepTemplate" xml:space="preserve">
+    <value>Obtener la plantilla</value>
+  </data>
+  <data name="Rec.ImportTemplateHelp" xml:space="preserve">
+    <value>Una fila por finalización: miembro, curso, fecha y horas, con categoría, datos de formación continua y certificación opcionales.</value>
+  </data>
+  <data name="Rec.ImportDownloadTemplate" xml:space="preserve">
+    <value>Descargar la plantilla</value>
+  </data>
+  <data name="Rec.ImportFileLabel" xml:space="preserve">
+    <value>Archivo CSV</value>
+  </data>
+  <data name="Rec.ImportFileHelp" xml:space="preserve">
+    <value>CSV en UTF-8, hasta {0} MB.</value>
+  </data>
+  <data name="Rec.ImportPreviewButton" xml:space="preserve">
+    <value>Comprobar el archivo</value>
+  </data>
+  <data name="Rec.ImportHowItWorks" xml:space="preserve">
+    <value>Cómo funciona la importación</value>
+  </data>
+  <data name="Rec.ImportRuleMatching" xml:space="preserve">
+    <value>Los miembros se identifican por correo, luego por ID de miembro, ID externo y nombre. Puede elegir el miembro de cualquier fila.</value>
+  </data>
+  <data name="Rec.ImportRuleFormer" xml:space="preserve">
+    <value>También se ofrecen antiguos miembros: el historial puede pertenecer a personas que se fueron.</value>
+  </data>
+  <data name="Rec.ImportRuleCategories" xml:space="preserve">
+    <value>Una categoría que aún no existe deja la fila sin categoría.</value>
+  </data>
+  <data name="Rec.ImportRuleRepeat" xml:space="preserve">
+    <value>Las filas ya importadas se omiten, así que el mismo archivo puede importarse de nuevo sin riesgo.</value>
+  </data>
+  <data name="Rec.ImportRuleVerified" xml:space="preserve">
+    <value>Los registros importados son historial verificado y nunca generan créditos de certificación por sí solos.</value>
+  </data>
+  <data name="Rec.ImportRows" xml:space="preserve">
+    <value>Filas</value>
+  </data>
+  <data name="Rec.ImportMatched" xml:space="preserve">
+    <value>Con coincidencia</value>
+  </data>
+  <data name="Rec.ImportUnmatched" xml:space="preserve">
+    <value>Sin miembro</value>
+  </data>
+  <data name="Rec.ImportImportable" xml:space="preserve">
+    <value>Listas para importar</value>
+  </data>
+  <data name="Rec.ImportIgnoredColumns" xml:space="preserve">
+    <value>Estas columnas no se reconocieron y se ignoran: {0}</value>
+  </data>
+  <data name="Rec.ImportReviewHelp" xml:space="preserve">
+    <value>Las filas con errores no se importan. Elija un miembro para las filas sin coincidencia y vuelva a comprobar o importe.</value>
+  </data>
+  <data name="Rec.ImportRowColumn" xml:space="preserve">
+    <value>Fila</value>
+  </data>
+  <data name="Rec.ImportNotesColumn" xml:space="preserve">
+    <value>Observaciones</value>
+  </data>
+  <data name="Rec.ImportChangeMember" xml:space="preserve">
+    <value>Cambiar</value>
+  </data>
+  <data name="Rec.ImportMemberForRow" xml:space="preserve">
+    <value>Miembro de la fila {0}</value>
+  </data>
+  <data name="Rec.ImportChooseMember" xml:space="preserve">
+    <value>Elija un miembro...</value>
+  </data>
+  <data name="Rec.ImportFromFile" xml:space="preserve">
+    <value>En el archivo</value>
+  </data>
+  <data name="Rec.ImportAlreadyImported" xml:space="preserve">
+    <value>Ya importada</value>
+  </data>
+  <data name="Rec.ImportRecheckButton" xml:space="preserve">
+    <value>Comprobar de nuevo</value>
+  </data>
+  <data name="Rec.ImportCommitButton" xml:space="preserve">
+    <value>Importar {0} filas</value>
+  </data>
+  <data name="Rec.ImportConfirm" xml:space="preserve">
+    <value>¿Importar {0} filas en los expedientes de los miembros?</value>
+  </data>
+  <data name="Rec.ImportCertificationsCreated" xml:space="preserve">
+    <value>Certificaciones creadas</value>
+  </data>
+  <data name="Rec.ImportCreditsCreated" xml:space="preserve">
+    <value>Créditos creados</value>
+  </data>
+  <data name="Rec.ImportAnotherButton" xml:space="preserve">
+    <value>Importar otro archivo</value>
+  </data>
+  <data name="Rec.ImportDoneMessage" xml:space="preserve">
+    <value>{0} registros importados.</value>
+  </data>
+  <data name="Rec.ImportFileRequired" xml:space="preserve">
+    <value>Elija un archivo CSV para importar.</value>
+  </data>
+  <data name="Rec.ImportFileTooLarge" xml:space="preserve">
+    <value>El archivo supera {0} MB.</value>
+  </data>
+  <data name="Rec.ImportFileType" xml:space="preserve">
+    <value>El archivo debe ser CSV.</value>
+  </data>
+  <data name="Rec.HoursTitle" xml:space="preserve">
+    <value>Horas de formación</value>
+  </data>
+  <data name="Rec.HoursIntro" xml:space="preserve">
+    <value>Horas de formación verificadas por categoría, miembro o mes.</value>
+  </data>
+  <data name="Rec.GroupByLabel" xml:space="preserve">
+    <value>Agrupar por</value>
+  </data>
+  <data name="Rec.OnDutyNowLabel" xml:space="preserve">
+    <value>Solo de servicio ahora</value>
+  </data>
+  <data name="Rec.OpenQueueLink" xml:space="preserve">
+    <value>Abrir la cola</value>
+  </data>
+  <data name="Rec.SettingsTitle" xml:space="preserve">
+    <value>Ajustes de registros de formación</value>
+  </data>
+  <data name="Rec.SettingsIntro" xml:space="preserve">
+    <value>Horas de asistencia, envíos de formación externa y tiempo de conservación de los registros.</value>
+  </data>
+  <data name="Rec.RoundingSection" xml:space="preserve">
+    <value>Horas de asistencia del calendario</value>
+  </data>
+  <data name="Rec.RoundingHelp" xml:space="preserve">
+    <value>Las horas entre entrada y salida en eventos que cuentan como formación se redondean a este paso.</value>
+  </data>
+  <data name="Rec.RoundingMinutesLabel" xml:space="preserve">
+    <value>Redondear a</value>
+  </data>
+  <data name="Rec.RoundingExact" xml:space="preserve">
+    <value>El minuto (sin redondeo)</value>
+  </data>
+  <data name="Rec.RoundingMinutesValue" xml:space="preserve">
+    <value>{0} minutos</value>
+  </data>
+  <data name="Rec.RoundingModeLabel" xml:space="preserve">
+    <value>Redondeo</value>
+  </data>
+  <data name="Rec.SubmissionsSection" xml:space="preserve">
+    <value>Formación externa</value>
+  </data>
+  <data name="Rec.SubmissionsDisabledLabel" xml:space="preserve">
+    <value>Los miembros no pueden enviar formación externa</value>
+  </data>
+  <data name="Rec.SubmissionsDisabledSettingHelp" xml:space="preserve">
+    <value>Los responsables pueden seguir registrando formación externa mediante una importación o un crédito de certificación.</value>
+  </data>
+  <data name="Rec.RetentionSection" xml:space="preserve">
+    <value>Conservación de registros</value>
+  </data>
+  <data name="Rec.DefaultRetentionLabel" xml:space="preserve">
+    <value>Conservar registros tras la salida de un miembro (años)</value>
+  </data>
+  <data name="Rec.DefaultRetentionHelp" xml:space="preserve">
+    <value>Se usa cuando una categoría no fija ninguno. 0 no fija mínimo.</value>
+  </data>
+  <data name="Rec.SaveSettingsButton" xml:space="preserve">
+    <value>Guardar ajustes</value>
+  </data>
+  <data name="Rec.RoundingInvalid" xml:space="preserve">
+    <value>Elija una opción de redondeo de la lista.</value>
+  </data>
+  <data name="Rec.SettingsSavedMessage" xml:space="preserve">
+    <value>Los ajustes están guardados.</value>
+  </data>
+  <data name="Rec.IsoReportIntro" xml:space="preserve">
+    <value>Las horas de cada miembro en las categorías ISO FSRS junto a sus objetivos.</value>
+  </data>
+  <data name="Rec.IsoNoCategories" xml:space="preserve">
+    <value>Aplique primero la plantilla de categorías ISO FSRS.</value>
+  </data>
+  <data name="Rec.TargetMet" xml:space="preserve">
+    <value>Objetivo cumplido</value>
+  </data>
+  <data name="Rec.NccpReportIntro" xml:space="preserve">
+    <value>Las horas nacionales, locales e individuales de cada miembro en su ciclo de certificación actual.</value>
+  </data>
+  <data name="Rec.NccpNoCategories" xml:space="preserve">
+    <value>Aplique la plantilla de categorías NREMT NCCP para contar horas NCCP.</value>
+  </data>
+  <data name="Rec.NccpNoRows" xml:space="preserve">
+    <value>Ningún miembro tiene una certificación de un nivel NREMT.</value>
+  </data>
+  <data name="Rec.ProgressValue" xml:space="preserve">
+    <value>{0} de {1} h</value>
+  </data>
+  <data name="Rec.CertificateTemplatesTitle" xml:space="preserve">
+    <value>Plantillas de certificado</value>
+  </data>
+  <data name="Rec.CertificateTemplatesIntro" xml:space="preserve">
+    <value>El diseño propio de certificado de su departamento. La plantilla predeterminada se usa en todos los certificados.</value>
+  </data>
+  <data name="Rec.NoTemplates" xml:space="preserve">
+    <value>Aún no hay plantillas: los certificados usan el diseño estándar.</value>
+  </data>
+  <data name="Rec.UpdatedColumn" xml:space="preserve">
+    <value>Actualizada</value>
+  </data>
+  <data name="Rec.DefaultLabel" xml:space="preserve">
+    <value>Predeterminada</value>
+  </data>
+  <data name="Rec.DeleteTemplateConfirm" xml:space="preserve">
+    <value>¿Eliminar esta plantilla?</value>
+  </data>
+  <data name="Rec.AddTemplateHeader" xml:space="preserve">
+    <value>Añadir una plantilla</value>
+  </data>
+  <data name="Rec.EditTemplateHeader" xml:space="preserve">
+    <value>Editar plantilla</value>
+  </data>
+  <data name="Rec.DefaultTemplateLabel" xml:space="preserve">
+    <value>Usar en todos los certificados</value>
+  </data>
+  <data name="Rec.TemplateBodyLabel" xml:space="preserve">
+    <value>Diseño (HTML)</value>
+  </data>
+  <data name="Rec.TemplateBodyHelp" xml:space="preserve">
+    <value>Los scripts y el marcado inseguro se eliminan al guardar. Marcadores:</value>
+  </data>
+  <data name="Rec.TemplatePreviewHeader" xml:space="preserve">
+    <value>Vista previa</value>
+  </data>
+  <data name="Rec.SaveTemplateButton" xml:space="preserve">
+    <value>Guardar plantilla</value>
+  </data>
+  <data name="Rec.TemplateBodyRequired" xml:space="preserve">
+    <value>Introduzca el diseño.</value>
+  </data>
+  <data name="Rec.TemplateSavedMessage" xml:space="preserve">
+    <value>La plantilla está guardada.</value>
+  </data>
+  <data name="Rec.TemplateDeletedMessage" xml:space="preserve">
+    <value>La plantilla está eliminada.</value>
+  </data>
+  <data name="Rec.EditorCategoryHelp" xml:space="preserve">
+    <value>Las finalizaciones de esta formación figuran en esta categoría del expediente.</value>
+  </data>
+  <data name="Rec.CourseCodeLabel" xml:space="preserve">
+    <value>Código del curso</value>
+  </data>
+  <data name="Rec.CourseCodeHelp" xml:space="preserve">
+    <value>El código que muestran las exportaciones y el expediente para esta formación.</value>
+  </data>
+  <data name="Rec.TagsLabel" xml:space="preserve">
+    <value>Etiquetas</value>
+  </data>
+  <data name="Rec.TagsHelp" xml:space="preserve">
+    <value>Separe las etiquetas con comas.</value>
+  </data>
+  <data name="Rec.ObjectivesLabel" xml:space="preserve">
+    <value>Objetivos</value>
+  </data>
+  <data name="Verify.Title" xml:space="preserve">
+    <value>Verificación de certificado</value>
+  </data>
+  <data name="Verify.Valid" xml:space="preserve">
+    <value>Este certificado es válido.</value>
+  </data>
+  <data name="Verify.NotValid" xml:space="preserve">
+    <value>Este certificado ya no es válido.</value>
+  </data>
+  <data name="Verify.Member" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="Verify.Course" xml:space="preserve">
+    <value>Curso</value>
+  </data>
+  <data name="Verify.CompletedOn" xml:space="preserve">
+    <value>Completado el</value>
+  </data>
+  <data name="Verify.Department" xml:space="preserve">
+    <value>Emitido por</value>
+  </data>
+  <data name="Verify.Status" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="Verify.Disclaimer" xml:space="preserve">
+    <value>Los certificados los emite el departamento indicado arriba. Resgrid no es un organismo acreditador de formación continua.</value>
+  </data>
+  <data name="Import.File.Invalid" xml:space="preserve">
+    <value>No se pudo leer el archivo como CSV.</value>
+  </data>
+  <data name="Import.File.TooLarge" xml:space="preserve">
+    <value>El archivo supera los 5 MB.</value>
+  </data>
+  <data name="Import.File.CourseColumnRequired" xml:space="preserve">
+    <value>El archivo necesita una columna Course.</value>
+  </data>
+  <data name="Import.File.DateColumnRequired" xml:space="preserve">
+    <value>El archivo necesita una columna de fecha (CompletedOn o Date).</value>
+  </data>
+  <data name="Import.File.MemberColumnRequired" xml:space="preserve">
+    <value>El archivo necesita una columna de miembro: Email, MemberId, MemberExternalId o MemberName.</value>
+  </data>
+  <data name="Import.File.TooManyRows" xml:space="preserve">
+    <value>El archivo tiene más de 10.000 filas.</value>
+  </data>
+  <data name="Import.File.HoursColumnRequired" xml:space="preserve">
+    <value>El archivo necesita una columna Hours.</value>
+  </data>
+  <data name="Import.File.DuplicateColumn" xml:space="preserve">
+    <value>Dos columnas corresponden al mismo campo.</value>
+  </data>
+  <data name="Import.File.Empty" xml:space="preserve">
+    <value>El archivo tiene una fila de encabezado pero no tiene datos.</value>
+  </data>
+  <data name="Import.Err.CourseRequired" xml:space="preserve">
+    <value>Falta el curso.</value>
+  </data>
+  <data name="Import.Err.DateRequired" xml:space="preserve">
+    <value>Falta la fecha.</value>
+  </data>
+  <data name="Import.Err.DateInvalid" xml:space="preserve">
+    <value>No se pudo leer la fecha.</value>
+  </data>
+  <data name="Import.Err.HoursInvalid" xml:space="preserve">
+    <value>Las horas faltan o no son un número entre 0 y 999.</value>
+  </data>
+  <data name="Import.Err.MemberNotFound" xml:space="preserve">
+    <value>Ningún miembro coincide con esta fila. Elija uno abajo.</value>
+  </data>
+  <data name="Import.Err.Unreadable" xml:space="preserve">
+    <value>No se pudo leer la fila.</value>
+  </data>
+  <data name="Import.Err.FutureDate" xml:space="preserve">
+    <value>La fecha está en el futuro.</value>
+  </data>
+  <data name="Import.Warn.NameMatch" xml:space="preserve">
+    <value>Coincidencia solo por nombre. Revise el miembro.</value>
+  </data>
+  <data name="Import.Warn.UnknownCategory" xml:space="preserve">
+    <value>Categoría desconocida: el registro queda en Sin categoría.</value>
+  </data>
+  <data name="Import.Warn.UnknownCertification" xml:space="preserve">
+    <value>Tipo de certificación desconocido: no se registra ninguna certificación para esta fila.</value>
+  </data>
+  <data name="Import.Warn.CeHoursInvalid" xml:space="preserve">
+    <value>No se pudieron leer las horas de formación continua y se dejaron vacías.</value>
+  </data>
+  <data name="Import.Warn.DuplicateRow" xml:space="preserve">
+    <value>La misma formación completada aparece antes en el archivo.</value>
+  </data>
+  <data name="Import.Warn.UnknownMethod" xml:space="preserve">
+    <value>Modalidad de formación desconocida: se deja vacía.</value>
+  </data>
+  <data name="Import.Warn.CertificationDateInvalid" xml:space="preserve">
+    <value>No se pudo leer una fecha de certificación.</value>
+  </data>
+  <data name="learning_record_title_required" xml:space="preserve">
+    <value>Introduzca el nombre del curso.</value>
+  </data>
+  <data name="learning_record_date_invalid" xml:space="preserve">
+    <value>Introduzca una fecha de finalización válida que no esté en el futuro.</value>
+  </data>
+  <data name="learning_record_mapping_invalid" xml:space="preserve">
+    <value>Elija un tipo de certificación y una de las categorías del departamento.</value>
+  </data>
+  <data name="learning_record_category_name_required" xml:space="preserve">
+    <value>Introduzca un nombre para la categoría.</value>
+  </data>
+  <data name="learning_record_file_too_large" xml:space="preserve">
+    <value>El archivo de evidencia supera los 10 MB.</value>
+  </data>
+  <data name="learning_record_template_invalid" xml:space="preserve">
+    <value>La plantilla del certificado necesita un nombre.</value>
+  </data>
+  <data name="ExcludeFromAiLabel" xml:space="preserve">
+    <value>No usar en las respuestas de conocimiento con IA</value>
+  </data>
+  <data name="ExcludeFromAiHelp" xml:space="preserve">
+    <value>Para material con licencia que prohíbe su procesamiento: esta formación nunca se indexa ni se usa en las respuestas de conocimiento.</value>
+  </data>
+  <data name="CoursesTab" xml:space="preserve">
+    <value>Cursos</value>
+  </data>
+  <data name="AcademyTab" xml:space="preserve">
+    <value>Academy</value>
+  </data>
+  <data name="CourseLibraryTab" xml:space="preserve">
+    <value>Biblioteca de cursos</value>
+  </data>
+  <data name="LearningSource.LmsCourseCompletion" xml:space="preserve">
+    <value>Curso en línea</value>
+  </data>
+  <data name="LearningSource.BuildingFamiliarization" xml:space="preserve">
+    <value>Familiarización con edificios</value>
+  </data>
+  <data name="Prg.Tab.Programs" xml:space="preserve">
+    <value>Programas</value>
+  </data>
+  <data name="Prg.StripLabel" xml:space="preserve">
+    <value>Programas de formación</value>
+  </data>
+  <data name="Prg.Tab.Home" xml:space="preserve">
+    <value>Resumen</value>
+  </data>
+  <data name="Prg.Tab.Plans" xml:space="preserve">
+    <value>Planes anuales</value>
+  </data>
+  <data name="Prg.Tab.Frameworks" xml:space="preserve">
+    <value>Competencias</value>
+  </data>
+  <data name="Prg.Tab.Requests" xml:space="preserve">
+    <value>Solicitudes de formación</value>
+  </data>
+  <data name="Prg.Tab.Reports" xml:space="preserve">
+    <value>Informes</value>
+  </data>
+  <data name="Prg.Tab.Cycles" xml:space="preserve">
+    <value>Ciclos de certificación</value>
+  </data>
+  <data name="Prg.Tab.Settings" xml:space="preserve">
+    <value>Configuración</value>
+  </data>
+  <data name="Prg.HomeTitle" xml:space="preserve">
+    <value>Programas de formación</value>
+  </data>
+  <data name="Prg.HomeIntro" xml:space="preserve">
+    <value>Planes anuales de formación, marcos de competencias, solicitudes de formación, informes programados y ciclos de certificación.</value>
+  </data>
+  <data name="Prg.AddonNotice" xml:space="preserve">
+    <value>Estas funciones de programas forman parte del complemento LMS. Todo sigue pudiéndose consultar; los nuevos planes, solicitudes, programaciones y cambios requieren un complemento activo.</value>
+  </data>
+  <data name="Prg.LapsedNotice" xml:space="preserve">
+    <value>El complemento LMS no está activo. Todo sigue pudiéndose consultar y las solicitudes abiertas aún pueden decidirse, retirarse o completarse; no se puede crear nada nuevo hasta que vuelva a estar activo.</value>
+  </data>
+  <data name="Prg.AddonRequired" xml:space="preserve">
+    <value>Esto requiere un complemento LMS activo.</value>
+  </data>
+  <data name="Prg.ActionFailed" xml:space="preserve">
+    <value>No se pudo realizar. Revise los valores e inténtelo de nuevo.</value>
+  </data>
+  <data name="Prg.Saved" xml:space="preserve">
+    <value>Guardado.</value>
+  </data>
+  <data name="Prg.Deleted" xml:space="preserve">
+    <value>Eliminado.</value>
+  </data>
+  <data name="Prg.Open" xml:space="preserve">
+    <value>Abrir</value>
+  </data>
+  <data name="Prg.Edit" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="Prg.Remove" xml:space="preserve">
+    <value>Quitar</value>
+  </data>
+  <data name="Prg.Delete" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="Prg.Save" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="Prg.Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="Prg.Create" xml:space="preserve">
+    <value>Crear</value>
+  </data>
+  <data name="Prg.Add" xml:space="preserve">
+    <value>Añadir</value>
+  </data>
+  <data name="Prg.Apply" xml:space="preserve">
+    <value>Aplicar</value>
+  </data>
+  <data name="Prg.Applied" xml:space="preserve">
+    <value>Aplicado</value>
+  </data>
+  <data name="Prg.Show" xml:space="preserve">
+    <value>Mostrar</value>
+  </data>
+  <data name="Prg.All" xml:space="preserve">
+    <value>Todos</value>
+  </data>
+  <data name="Prg.Actions" xml:space="preserve">
+    <value>Acciones</value>
+  </data>
+  <data name="Prg.Name" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="Prg.Year" xml:space="preserve">
+    <value>Año</value>
+  </data>
+  <data name="Prg.Notes" xml:space="preserve">
+    <value>Notas</value>
+  </data>
+  <data name="Prg.Description" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
+  <data name="Prg.Uncategorized" xml:space="preserve">
+    <value>Sin categoría</value>
+  </data>
+  <data name="Prg.NotLicensed" xml:space="preserve">
+    <value>sin licencia</value>
+  </data>
+  <data name="Prg.MyOpenRequests" xml:space="preserve">
+    <value>Mis solicitudes abiertas</value>
+  </data>
+  <data name="Prg.AwaitingMe" xml:space="preserve">
+    <value>Pendientes de mi decisión</value>
+  </data>
+  <data name="Prg.SavedReports" xml:space="preserve">
+    <value>Informes guardados</value>
+  </data>
+  <data name="Prg.MyGaps" xml:space="preserve">
+    <value>Mis carencias de competencias</value>
+  </data>
+  <data name="Prg.MyNccpExport" xml:space="preserve">
+    <value>Mi exportación NCCP</value>
+  </data>
+  <data name="Prg.PlansTitle" xml:space="preserve">
+    <value>Planes anuales de formación</value>
+  </data>
+  <data name="Prg.PlansIntro" xml:space="preserve">
+    <value>Un año de sesiones y horas planificadas por categoría y mes para el departamento, un grupo o un turno, comparadas con las horas realmente registradas.</value>
+  </data>
+  <data name="Prg.NewPlan" xml:space="preserve">
+    <value>Nuevo plan anual</value>
+  </data>
+  <data name="Prg.CreatePlan" xml:space="preserve">
+    <value>Crear plan</value>
+  </data>
+  <data name="Prg.EditPlan" xml:space="preserve">
+    <value>Detalles del plan</value>
+  </data>
+  <data name="Prg.NoPlans" xml:space="preserve">
+    <value>Aún no hay planes anuales.</value>
+  </data>
+  <data name="Prg.Audience" xml:space="preserve">
+    <value>Abarca</value>
+  </data>
+  <data name="Prg.Scope.Department" xml:space="preserve">
+    <value>Todo el departamento</value>
+  </data>
+  <data name="Prg.Scope.Group" xml:space="preserve">
+    <value>Un grupo</value>
+  </data>
+  <data name="Prg.Scope.Shift" xml:space="preserve">
+    <value>Un turno</value>
+  </data>
+  <data name="Prg.PlanStatus.Draft" xml:space="preserve">
+    <value>Borrador</value>
+  </data>
+  <data name="Prg.PlanStatus.Adopted" xml:space="preserve">
+    <value>Adoptado</value>
+  </data>
+  <data name="Prg.PlanStatus.Archived" xml:space="preserve">
+    <value>Archivado</value>
+  </data>
+  <data name="Prg.AdoptPlan" xml:space="preserve">
+    <value>Adoptar plan</value>
+  </data>
+  <data name="Prg.ArchivePlan" xml:space="preserve">
+    <value>Archivar plan</value>
+  </data>
+  <data name="Prg.CopyPlan" xml:space="preserve">
+    <value>Copiar a otro año</value>
+  </data>
+  <data name="Prg.PlanCopied" xml:space="preserve">
+    <value>El plan se copió como un nuevo borrador.</value>
+  </data>
+  <data name="Prg.AsReport" xml:space="preserve">
+    <value>Como informe</value>
+  </data>
+  <data name="Prg.PlanAudience" xml:space="preserve">
+    <value>{0}: {1} miembros activos</value>
+  </data>
+  <data name="Prg.AtRiskCallout" xml:space="preserve">
+    <value>Se prevé que {0} categorías no alcancen su objetivo anual.</value>
+  </data>
+  <data name="Prg.PlannedVsActual" xml:space="preserve">
+    <value>Planificado frente a real</value>
+  </data>
+  <data name="Prg.PlannedVsActualHelp" xml:space="preserve">
+    <value>Horas por miembro de los destinatarios del plan. La previsión es la suma de las horas registradas hasta ahora y todo lo que aún está planificado; una categoría cuya previsión queda por debajo de su objetivo anual está en riesgo.</value>
+  </data>
+  <data name="Prg.NoPlanRows" xml:space="preserve">
+    <value>Todavía no hay nada planificado y ninguna categoría tiene un objetivo anual.</value>
+  </data>
+  <data name="Prg.ByMonth" xml:space="preserve">
+    <value>Por mes (planificado / real)</value>
+  </data>
+  <data name="Prg.PlannedSlashActual" xml:space="preserve">
+    <value>planificado / real</value>
+  </data>
+  <data name="Prg.PlanShort" xml:space="preserve">
+    <value>el plan por sí solo no alcanza el objetivo</value>
+  </data>
+  <data name="Prg.ShortBy" xml:space="preserve">
+    <value>Faltan {0} h</value>
+  </data>
+  <data name="Prg.OnTrack" xml:space="preserve">
+    <value>Según lo previsto</value>
+  </data>
+  <data name="Prg.AtRisk" xml:space="preserve">
+    <value>En riesgo</value>
+  </data>
+  <data name="Prg.PlanLines" xml:space="preserve">
+    <value>Sesiones planificadas</value>
+  </data>
+  <data name="Prg.NoPlanLines" xml:space="preserve">
+    <value>Aún no hay sesiones planificadas.</value>
+  </data>
+  <data name="Prg.AddLine" xml:space="preserve">
+    <value>Planificar una sesión</value>
+  </data>
+  <data name="Prg.EditLine" xml:space="preserve">
+    <value>Cambiar la sesión planificada</value>
+  </data>
+  <data name="Prg.HoursPerSession" xml:space="preserve">
+    <value>Horas por miembro y sesión</value>
+  </data>
+  <data name="Prg.Sessions" xml:space="preserve">
+    <value>Sesiones</value>
+  </data>
+  <data name="Prg.PlannedDate" xml:space="preserve">
+    <value>Fecha prevista (opcional)</value>
+  </data>
+  <data name="Prg.MakeCalendarItem" xml:space="preserve">
+    <value>Crear un elemento de calendario</value>
+  </data>
+  <data name="Prg.OnCalendar" xml:space="preserve">
+    <value>En el calendario</value>
+  </data>
+  <data name="Prg.CalendarCreated" xml:space="preserve">
+    <value>Se creó el elemento de calendario.</value>
+  </data>
+  <data name="Prg.FrameworksTitle" xml:space="preserve">
+    <value>Marcos de competencias</value>
+  </data>
+  <data name="Prg.FrameworksIntro" xml:space="preserve">
+    <value>Los requisitos de desempeño, puestos y habilidades hacia los que se orienta su formación, lo que acredita cada uno y las carencias de cada miembro.</value>
+  </data>
+  <data name="Prg.YourFrameworks" xml:space="preserve">
+    <value>Sus marcos</value>
+  </data>
+  <data name="Prg.NoFrameworks" xml:space="preserve">
+    <value>Aún no hay marcos de competencias.</value>
+  </data>
+  <data name="Prg.Publisher" xml:space="preserve">
+    <value>Editor</value>
+  </data>
+  <data name="Prg.Edition" xml:space="preserve">
+    <value>Edición</value>
+  </data>
+  <data name="Prg.Source" xml:space="preserve">
+    <value>Origen</value>
+  </data>
+  <data name="Prg.FrameworkSource.Catalog" xml:space="preserve">
+    <value>Catálogo de Resgrid</value>
+  </data>
+  <data name="Prg.FrameworkSource.CaseImport" xml:space="preserve">
+    <value>Importación CASE</value>
+  </data>
+  <data name="Prg.FrameworkSource.Custom" xml:space="preserve">
+    <value>Personalizado</value>
+  </data>
+  <data name="Prg.Catalog" xml:space="preserve">
+    <value>Catálogo</value>
+  </data>
+  <data name="Prg.CatalogHelp" xml:space="preserve">
+    <value>Resgrid solo incluye la estructura de los marcos y sus identificadores públicos (códigos de puesto, niveles de cualificación, nombres de habilidades), nunca el texto de una norma. Añada los números de capítulo y de JPR de la edición con la que forma, o importe el marco de su estado.</value>
+  </data>
+  <data name="Prg.ItemCount" xml:space="preserve">
+    <value>{0} elementos</value>
+  </data>
+  <data name="Prg.FrameworkApplied" xml:space="preserve">
+    <value>Se añadió el marco.</value>
+  </data>
+  <data name="Prg.ImportCase" xml:space="preserve">
+    <value>Importar un marco CASE 1.1</value>
+  </data>
+  <data name="Prg.ImportCaseHelp" xml:space="preserve">
+    <value>Suba el paquete JSON (CFDocument, CFItems y CFAssociations) que publica un estado o una academia. Si vuelve a importar el mismo documento, se actualiza.</value>
+  </data>
+  <data name="Prg.CaseFile" xml:space="preserve">
+    <value>Archivo JSON de CASE</value>
+  </data>
+  <data name="Prg.Import" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="Prg.CaseImported" xml:space="preserve">
+    <value>Importado: {0} añadidos, {1} modificados, {2} eliminados.</value>
+  </data>
+  <data name="Prg.NewFramework" xml:space="preserve">
+    <value>Nuevo marco personalizado</value>
+  </data>
+  <data name="Prg.EditFramework" xml:space="preserve">
+    <value>Detalles del marco</value>
+  </data>
+  <data name="Prg.EvidenceMaxAge" xml:space="preserve">
+    <value>Los justificantes son vigentes durante (meses)</value>
+  </data>
+  <data name="Prg.EvidenceMaxAgeHelp" xml:space="preserve">
+    <value>Los justificantes más antiguos aparecen como desactualizados en el informe de carencias. 0 significa que nunca se desactualizan.</value>
+  </data>
+  <data name="Prg.NoItems" xml:space="preserve">
+    <value>Este marco aún no tiene elementos.</value>
+  </data>
+  <data name="Prg.TaggedOn" xml:space="preserve">
+    <value>Acreditado por</value>
+  </data>
+  <data name="Prg.TagOn" xml:space="preserve">
+    <value>Etiquetar</value>
+  </data>
+  <data name="Prg.Tagged" xml:space="preserve">
+    <value>Etiquetado.</value>
+  </data>
+  <data name="Prg.Untag" xml:space="preserve">
+    <value>Quitar etiqueta</value>
+  </data>
+  <data name="Prg.Untagged" xml:space="preserve">
+    <value>Se quitó la etiqueta.</value>
+  </data>
+  <data name="Prg.AddItem" xml:space="preserve">
+    <value>Añadir un elemento</value>
+  </data>
+  <data name="Prg.AddItemHelp" xml:space="preserve">
+    <value>Use el identificador público del requisito (por ejemplo, un número de JPR) y una etiqueta breve propia. No pegue el texto de la norma.</value>
+  </data>
+  <data name="Prg.Parent" xml:space="preserve">
+    <value>Dentro de</value>
+  </data>
+  <data name="Prg.ShortLabel" xml:space="preserve">
+    <value>Etiqueta breve</value>
+  </data>
+  <data name="Prg.ItemType" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="Prg.Subject.Course" xml:space="preserve">
+    <value>Curso</value>
+  </data>
+  <data name="Prg.Subject.Training" xml:space="preserve">
+    <value>Capacitación</value>
+  </data>
+  <data name="Prg.Subject.SkillSheet" xml:space="preserve">
+    <value>Hoja de evaluación de habilidades</value>
+  </data>
+  <data name="Prg.Subject.TaskBookTask" xml:space="preserve">
+    <value>Tarea del libro de tareas</value>
+  </data>
+  <data name="Prg.Subject.Category" xml:space="preserve">
+    <value>Categoría</value>
+  </data>
+  <data name="Prg.Subject.CertificationType" xml:space="preserve">
+    <value>Certificación</value>
+  </data>
+  <data name="Prg.GapReport" xml:space="preserve">
+    <value>Informe de carencias</value>
+  </data>
+  <data name="Prg.GapIntro" xml:space="preserve">
+    <value>Para cada elemento de un marco: el justificante más reciente y su antigüedad, o que no hay ninguno.</value>
+  </data>
+  <data name="Prg.Framework" xml:space="preserve">
+    <value>Marco</value>
+  </data>
+  <data name="Prg.Evidence.Current" xml:space="preserve">
+    <value>Vigente</value>
+  </data>
+  <data name="Prg.Evidence.Aged" xml:space="preserve">
+    <value>Desactualizado</value>
+  </data>
+  <data name="Prg.Evidence.None" xml:space="preserve">
+    <value>Sin justificante</value>
+  </data>
+  <data name="Prg.Evidence.NotTagged" xml:space="preserve">
+    <value>Sin etiquetar</value>
+  </data>
+  <data name="Prg.RequestsTitle" xml:space="preserve">
+    <value>Solicitudes de formación</value>
+  </data>
+  <data name="Prg.RequestsIntro" xml:space="preserve">
+    <value>Solicite asistir a un curso externo indicando su coste; su supervisor y un responsable de formación lo aprueban y, una vez realizado, pasa a su expediente para su verificación.</value>
+  </data>
+  <data name="Prg.MyRequests" xml:space="preserve">
+    <value>Mis solicitudes</value>
+  </data>
+  <data name="Prg.NoRequests" xml:space="preserve">
+    <value>No hay solicitudes de formación.</value>
+  </data>
+  <data name="Prg.NewRequest" xml:space="preserve">
+    <value>Solicitar un curso externo</value>
+  </data>
+  <data name="Prg.ClassTitle" xml:space="preserve">
+    <value>Curso</value>
+  </data>
+  <data name="Prg.Provider" xml:space="preserve">
+    <value>Proveedor</value>
+  </data>
+  <data name="Prg.Location" xml:space="preserve">
+    <value>Lugar</value>
+  </data>
+  <data name="Prg.StartsOn" xml:space="preserve">
+    <value>Inicio</value>
+  </data>
+  <data name="Prg.EndsOn" xml:space="preserve">
+    <value>Fin</value>
+  </data>
+  <data name="Prg.CostTuition" xml:space="preserve">
+    <value>Matrícula</value>
+  </data>
+  <data name="Prg.CostTravel" xml:space="preserve">
+    <value>Desplazamiento</value>
+  </data>
+  <data name="Prg.CostOther" xml:space="preserve">
+    <value>Otros costes</value>
+  </data>
+  <data name="Prg.ActualCost" xml:space="preserve">
+    <value>Coste real</value>
+  </data>
+  <data name="Prg.Justification" xml:space="preserve">
+    <value>Motivo del curso</value>
+  </data>
+  <data name="Prg.SubmitRequest" xml:space="preserve">
+    <value>Enviar solicitud</value>
+  </data>
+  <data name="Prg.RequestSubmitted" xml:space="preserve">
+    <value>Su solicitud se envió.</value>
+  </data>
+  <data name="Prg.RequestApproved" xml:space="preserve">
+    <value>La solicitud se aprobó.</value>
+  </data>
+  <data name="Prg.RequestRejected" xml:space="preserve">
+    <value>La solicitud se rechazó.</value>
+  </data>
+  <data name="Prg.RequestWithdrawn" xml:space="preserve">
+    <value>La solicitud se retiró.</value>
+  </data>
+  <data name="Prg.RequestCancelled" xml:space="preserve">
+    <value>La solicitud se canceló.</value>
+  </data>
+  <data name="Prg.RequestCompleted" xml:space="preserve">
+    <value>Registrado. El curso está en el expediente, a la espera de que un responsable lo verifique.</value>
+  </data>
+  <data name="Prg.RequestStatus.Submitted" xml:space="preserve">
+    <value>Enviada</value>
+  </data>
+  <data name="Prg.RequestStatus.Approved" xml:space="preserve">
+    <value>Aprobada</value>
+  </data>
+  <data name="Prg.RequestStatus.Rejected" xml:space="preserve">
+    <value>Rechazada</value>
+  </data>
+  <data name="Prg.RequestStatus.Withdrawn" xml:space="preserve">
+    <value>Retirada</value>
+  </data>
+  <data name="Prg.RequestStatus.Completed" xml:space="preserve">
+    <value>Completada</value>
+  </data>
+  <data name="Prg.RequestStatus.Cancelled" xml:space="preserve">
+    <value>Cancelada</value>
+  </data>
+  <data name="Prg.Step" xml:space="preserve">
+    <value>Paso</value>
+  </data>
+  <data name="Prg.Step.Supervisor" xml:space="preserve">
+    <value>Aprobación del supervisor</value>
+  </data>
+  <data name="Prg.Step.TrainingOfficer" xml:space="preserve">
+    <value>Aprobación del responsable de formación</value>
+  </data>
+  <data name="Prg.Decision.Approved" xml:space="preserve">
+    <value>Aprobada</value>
+  </data>
+  <data name="Prg.Decision.Rejected" xml:space="preserve">
+    <value>Rechazada</value>
+  </data>
+  <data name="Prg.Waiting" xml:space="preserve">
+    <value>Pendiente</value>
+  </data>
+  <data name="Prg.Decide" xml:space="preserve">
+    <value>Decidir</value>
+  </data>
+  <data name="Prg.DecisionNote" xml:space="preserve">
+    <value>Nota (obligatoria para rechazar)</value>
+  </data>
+  <data name="Prg.Approve" xml:space="preserve">
+    <value>Aprobar</value>
+  </data>
+  <data name="Prg.Reject" xml:space="preserve">
+    <value>Rechazar</value>
+  </data>
+  <data name="Prg.Withdraw" xml:space="preserve">
+    <value>Retirar</value>
+  </data>
+  <data name="Prg.CancelRequest" xml:space="preserve">
+    <value>Cancelar solicitud</value>
+  </data>
+  <data name="Prg.CompleteRequest" xml:space="preserve">
+    <value>Realicé este curso</value>
+  </data>
+  <data name="Prg.CompleteRequestHelp" xml:space="preserve">
+    <value>Registre el curso como realizado. Pasa a su expediente como formación externa que verifica un responsable; añada su certificado como justificante.</value>
+  </data>
+  <data name="Prg.CompletedOn" xml:space="preserve">
+    <value>Completado el</value>
+  </data>
+  <data name="Prg.Evidence" xml:space="preserve">
+    <value>Certificado o justificante</value>
+  </data>
+  <data name="Prg.SubmissionWritten" xml:space="preserve">
+    <value>El curso está en el expediente como formación externa.</value>
+  </data>
+  <data name="Prg.OpenTranscript" xml:space="preserve">
+    <value>Abrir el expediente</value>
+  </data>
+  <data name="Prg.AllRequestsYear" xml:space="preserve">
+    <value>Todas las solicitudes de {0}</value>
+  </data>
+  <data name="Prg.ReportsTitle" xml:space="preserve">
+    <value>Informes de formación</value>
+  </data>
+  <data name="Prg.ReportsIntro" xml:space="preserve">
+    <value>El catálogo de informes de formación, los informes guardados en carpetas y los informes enviados de forma programada.</value>
+  </data>
+  <data name="Prg.Tier.Free" xml:space="preserve">
+    <value>Gratuito</value>
+  </data>
+  <data name="Prg.Tier.Lms" xml:space="preserve">
+    <value>LMS</value>
+  </data>
+  <data name="Prg.RunReport" xml:space="preserve">
+    <value>Generar</value>
+  </data>
+  <data name="Prg.NoSavedReports" xml:space="preserve">
+    <value>Aún no hay informes guardados. Genere un informe y guárdelo para conservar su configuración o enviarlo de forma programada.</value>
+  </data>
+  <data name="Prg.NoFolder" xml:space="preserve">
+    <value>Sin carpeta</value>
+  </data>
+  <data name="Prg.EmptyFolder" xml:space="preserve">
+    <value>Esta carpeta está vacía.</value>
+  </data>
+  <data name="Prg.NewFolder" xml:space="preserve">
+    <value>Nueva carpeta</value>
+  </data>
+  <data name="Prg.DeleteFolder" xml:space="preserve">
+    <value>Eliminar carpeta</value>
+  </data>
+  <data name="Prg.Folder" xml:space="preserve">
+    <value>Carpeta</value>
+  </data>
+  <data name="Prg.Schedule" xml:space="preserve">
+    <value>Programación</value>
+  </data>
+  <data name="Prg.NextRun" xml:space="preserve">
+    <value>próximo</value>
+  </data>
+  <data name="Prg.LastRun" xml:space="preserve">
+    <value>Último envío</value>
+  </data>
+  <data name="Prg.Frequency.None" xml:space="preserve">
+    <value>Sin programar</value>
+  </data>
+  <data name="Prg.Frequency.Daily" xml:space="preserve">
+    <value>Diario</value>
+  </data>
+  <data name="Prg.Frequency.Weekly" xml:space="preserve">
+    <value>Semanal</value>
+  </data>
+  <data name="Prg.Frequency.Monthly" xml:space="preserve">
+    <value>Mensual</value>
+  </data>
+  <data name="Prg.RunStatus.Sent" xml:space="preserve">
+    <value>Enviado</value>
+  </data>
+  <data name="Prg.RunStatus.Failed" xml:space="preserve">
+    <value>Fallido</value>
+  </data>
+  <data name="Prg.RunStatus.Skipped" xml:space="preserve">
+    <value>Omitido</value>
+  </data>
+  <data name="Prg.Period" xml:space="preserve">
+    <value>Periodo</value>
+  </data>
+  <data name="Prg.Period.MonthToDate" xml:space="preserve">
+    <value>Este mes hasta hoy</value>
+  </data>
+  <data name="Prg.Period.LastMonth" xml:space="preserve">
+    <value>Mes pasado</value>
+  </data>
+  <data name="Prg.Period.QuarterToDate" xml:space="preserve">
+    <value>Este trimestre hasta hoy</value>
+  </data>
+  <data name="Prg.Period.YearToDate" xml:space="preserve">
+    <value>Este año hasta hoy</value>
+  </data>
+  <data name="Prg.Period.Last12Months" xml:space="preserve">
+    <value>Últimos 12 meses</value>
+  </data>
+  <data name="Prg.Period.LastYear" xml:space="preserve">
+    <value>Año pasado</value>
+  </data>
+  <data name="Prg.Period.Custom" xml:space="preserve">
+    <value>Entre dos fechas</value>
+  </data>
+  <data name="Prg.From" xml:space="preserve">
+    <value>Desde</value>
+  </data>
+  <data name="Prg.To" xml:space="preserve">
+    <value>Hasta</value>
+  </data>
+  <data name="Prg.GroupBy" xml:space="preserve">
+    <value>Agrupar por</value>
+  </data>
+  <data name="Prg.GroupBy.Category" xml:space="preserve">
+    <value>Categoría</value>
+  </data>
+  <data name="Prg.GroupBy.Member" xml:space="preserve">
+    <value>Miembro</value>
+  </data>
+  <data name="Prg.GroupBy.Month" xml:space="preserve">
+    <value>Mes</value>
+  </data>
+  <data name="Prg.GroupBy.Course" xml:space="preserve">
+    <value>Curso</value>
+  </data>
+  <data name="Prg.GroupBy.Year" xml:space="preserve">
+    <value>Año</value>
+  </data>
+  <data name="Prg.Plan" xml:space="preserve">
+    <value>Plan</value>
+  </data>
+  <data name="Prg.WithinDays" xml:space="preserve">
+    <value>Vence en un plazo de (días)</value>
+  </data>
+  <data name="Prg.IncludeFormer" xml:space="preserve">
+    <value>Incluir antiguos miembros</value>
+  </data>
+  <data name="Prg.NoRows" xml:space="preserve">
+    <value>No hay nada que mostrar con esta configuración.</value>
+  </data>
+  <data name="Prg.SaveReport" xml:space="preserve">
+    <value>Guardar este informe</value>
+  </data>
+  <data name="Prg.EditSchedule" xml:space="preserve">
+    <value>Informe guardado y programación</value>
+  </data>
+  <data name="Prg.ReportSaved" xml:space="preserve">
+    <value>Se guardó el informe.</value>
+  </data>
+  <data name="Prg.Format" xml:space="preserve">
+    <value>Adjunto</value>
+  </data>
+  <data name="Prg.DayOfWeek" xml:space="preserve">
+    <value>Día de la semana (semanal)</value>
+  </data>
+  <data name="Prg.DayOfMonth" xml:space="preserve">
+    <value>Día del mes (mensual)</value>
+  </data>
+  <data name="Prg.HourLocal" xml:space="preserve">
+    <value>Hora (hora del departamento)</value>
+  </data>
+  <data name="Prg.Recipients" xml:space="preserve">
+    <value>Destinatarios</value>
+  </data>
+  <data name="Prg.RecipientsHelp" xml:space="preserve">
+    <value>Pueden recibir informes de formación los miembros que gestionan los registros de formación y los administradores del departamento; un miembro también puede recibir su propio informe individual. Se omiten los miembros que se van o están deshabilitados.</value>
+  </data>
+  <data name="Prg.RunHistory" xml:space="preserve">
+    <value>Envíos recientes</value>
+  </data>
+  <data name="Prg.Report.Hours" xml:space="preserve">
+    <value>Horas de formación</value>
+  </data>
+  <data name="Prg.Report.HoursHelp" xml:space="preserve">
+    <value>Horas por categoría, miembro o mes en un periodo.</value>
+  </data>
+  <data name="Prg.Report.Iso" xml:space="preserve">
+    <value>Informe de formación ISO</value>
+  </data>
+  <data name="Prg.Report.IsoHelp" xml:space="preserve">
+    <value>Las horas de cada miembro en las categorías de formación de ISO FSRS en un periodo.</value>
+  </data>
+  <data name="Prg.Report.Nccp" xml:space="preserve">
+    <value>Progreso NCCP de NREMT</value>
+  </data>
+  <data name="Prg.Report.NccpHelp" xml:space="preserve">
+    <value>Horas nacionales, locales e individuales del ciclo de recertificación actual de cada miembro frente a los objetivos de su nivel.</value>
+  </data>
+  <data name="Prg.Report.NccpMember" xml:space="preserve">
+    <value>Exportación NCCP de un miembro</value>
+  </data>
+  <data name="Prg.Report.NccpMemberHelp" xml:space="preserve">
+    <value>Todos los registros verificados de las categorías NCCP de un miembro en su ciclo actual, con el proveedor de CE y los números de curso, listos para su propia recertificación.</value>
+  </data>
+  <data name="Prg.Report.Plan" xml:space="preserve">
+    <value>Plan anual frente a real</value>
+  </data>
+  <data name="Prg.Report.PlanHelp" xml:space="preserve">
+    <value>Las horas planificadas y reales por categoría de un plan anual, la previsión y cualquier déficit frente a los objetivos.</value>
+  </data>
+  <data name="Prg.Report.Gaps" xml:space="preserve">
+    <value>Carencias de competencias</value>
+  </data>
+  <data name="Prg.Report.GapsHelp" xml:space="preserve">
+    <value>Los justificantes de un miembro por elemento de un marco de competencias, su antigüedad, o ninguno.</value>
+  </data>
+  <data name="Prg.Report.Costs" xml:space="preserve">
+    <value>Costes de las solicitudes de formación</value>
+  </data>
+  <data name="Prg.Report.CostsHelp" xml:space="preserve">
+    <value>Costes comprometidos y pendientes de las solicitudes de formación por miembro, curso o año.</value>
+  </data>
+  <data name="Prg.Report.CertExceptions" xml:space="preserve">
+    <value>Excepciones de certificación</value>
+  </data>
+  <data name="Prg.Report.CertExceptionsHelp" xml:space="preserve">
+    <value>Certificaciones vencidas, por vencer, suspendidas, revocadas y sin verificar de los miembros activos.</value>
+  </data>
+  <data name="Prg.Col.Member" xml:space="preserve">
+    <value>Miembro</value>
+  </data>
+  <data name="Prg.Col.Members" xml:space="preserve">
+    <value>Miembros</value>
+  </data>
+  <data name="Prg.Col.Month" xml:space="preserve">
+    <value>Mes</value>
+  </data>
+  <data name="Prg.Col.Category" xml:space="preserve">
+    <value>Categoría</value>
+  </data>
+  <data name="Prg.Col.Records" xml:space="preserve">
+    <value>Registros</value>
+  </data>
+  <data name="Prg.Col.Hours" xml:space="preserve">
+    <value>Horas</value>
+  </data>
+  <data name="Prg.Col.CeHours" xml:space="preserve">
+    <value>Horas de CE</value>
+  </data>
+  <data name="Prg.Col.Target" xml:space="preserve">
+    <value>Objetivo</value>
+  </data>
+  <data name="Prg.Col.Certification" xml:space="preserve">
+    <value>Certificación</value>
+  </data>
+  <data name="Prg.Col.CycleStart" xml:space="preserve">
+    <value>Inicio del ciclo</value>
+  </data>
+  <data name="Prg.Col.CycleEnd" xml:space="preserve">
+    <value>Fin del ciclo</value>
+  </data>
+  <data name="Prg.Col.NccpNational" xml:space="preserve">
+    <value>Nacional</value>
+  </data>
+  <data name="Prg.Col.NccpLocal" xml:space="preserve">
+    <value>Local</value>
+  </data>
+  <data name="Prg.Col.NccpIndividual" xml:space="preserve">
+    <value>Individual</value>
+  </data>
+  <data name="Prg.Col.Component" xml:space="preserve">
+    <value>Componente</value>
+  </data>
+  <data name="Prg.Col.Date" xml:space="preserve">
+    <value>Fecha</value>
+  </data>
+  <data name="Prg.Col.Title" xml:space="preserve">
+    <value>Título</value>
+  </data>
+  <data name="Prg.Col.CeProvider" xml:space="preserve">
+    <value>Proveedor de CE</value>
+  </data>
+  <data name="Prg.Col.CeCourseNumber" xml:space="preserve">
+    <value>Número de curso de CE</value>
+  </data>
+  <data name="Prg.Col.CourseCode" xml:space="preserve">
+    <value>Código del curso</value>
+  </data>
+  <data name="Prg.Col.PlannedYear" xml:space="preserve">
+    <value>Planificado (año)</value>
+  </data>
+  <data name="Prg.Col.ActualToDate" xml:space="preserve">
+    <value>Real hasta hoy</value>
+  </data>
+  <data name="Prg.Col.Forecast" xml:space="preserve">
+    <value>Previsión</value>
+  </data>
+  <data name="Prg.Col.RunRate" xml:space="preserve">
+    <value>Al ritmo actual</value>
+  </data>
+  <data name="Prg.Col.Shortfall" xml:space="preserve">
+    <value>Déficit</value>
+  </data>
+  <data name="Prg.Col.Status" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="Prg.Col.Code" xml:space="preserve">
+    <value>Código</value>
+  </data>
+  <data name="Prg.Col.Competency" xml:space="preserve">
+    <value>Competencia</value>
+  </data>
+  <data name="Prg.Col.EvidenceDate" xml:space="preserve">
+    <value>Fecha del justificante</value>
+  </data>
+  <data name="Prg.Col.AgeDays" xml:space="preserve">
+    <value>Antigüedad (días)</value>
+  </data>
+  <data name="Prg.Col.Evidence" xml:space="preserve">
+    <value>Justificante</value>
+  </data>
+  <data name="Prg.Col.Course" xml:space="preserve">
+    <value>Curso</value>
+  </data>
+  <data name="Prg.Col.Year" xml:space="preserve">
+    <value>Año</value>
+  </data>
+  <data name="Prg.Col.Requests" xml:space="preserve">
+    <value>Solicitudes</value>
+  </data>
+  <data name="Prg.Col.Committed" xml:space="preserve">
+    <value>Comprometido</value>
+  </data>
+  <data name="Prg.Col.Pending" xml:space="preserve">
+    <value>Pendiente</value>
+  </data>
+  <data name="Prg.Col.Cost" xml:space="preserve">
+    <value>Coste</value>
+  </data>
+  <data name="Prg.Col.Expires" xml:space="preserve">
+    <value>Vence</value>
+  </data>
+  <data name="Prg.Col.Days" xml:space="preserve">
+    <value>Días</value>
+  </data>
+  <data name="Prg.Cert.Expired" xml:space="preserve">
+    <value>Vencida</value>
+  </data>
+  <data name="Prg.Cert.Expiring" xml:space="preserve">
+    <value>Por vencer</value>
+  </data>
+  <data name="Prg.Cert.Suspended" xml:space="preserve">
+    <value>Suspendida</value>
+  </data>
+  <data name="Prg.Cert.Revoked" xml:space="preserve">
+    <value>Revocada</value>
+  </data>
+  <data name="Prg.Cert.Pending" xml:space="preserve">
+    <value>Pendiente de verificación</value>
+  </data>
+  <data name="Prg.Footer.TotalHours" xml:space="preserve">
+    <value>Total: {0} horas en {1} registros.</value>
+  </data>
+  <data name="Prg.Footer.Target" xml:space="preserve">
+    <value>objetivo {0} h ({1})</value>
+  </data>
+  <data name="Prg.Footer.Audience" xml:space="preserve">
+    <value>{0} miembros activos entre los destinatarios del plan.</value>
+  </data>
+  <data name="Prg.Footer.Gaps" xml:space="preserve">
+    <value>Vigentes: {0}. Desactualizados: {1}. Sin justificante: {2}.</value>
+  </data>
+  <data name="Prg.Footer.Costs" xml:space="preserve">
+    <value>Comprometido: {0}. Pendiente: {1}. Moneda: {2}.</value>
+  </data>
+  <data name="Prg.Problem.NccpCategories" xml:space="preserve">
+    <value>Aplique primero las categorías NCCP de NREMT (Capacitaciones &gt; Registros &gt; Categorías).</value>
+  </data>
+  <data name="Prg.Problem.NeedsMember" xml:space="preserve">
+    <value>Elija un miembro.</value>
+  </data>
+  <data name="Prg.Problem.NeedsPlan" xml:space="preserve">
+    <value>Elija un plan anual.</value>
+  </data>
+  <data name="Prg.Problem.NeedsFramework" xml:space="preserve">
+    <value>Elija un marco de competencias.</value>
+  </data>
+  <data name="Prg.CyclesTitle" xml:space="preserve">
+    <value>Ciclos de certificación</value>
+  </data>
+  <data name="Prg.CyclesIntro" xml:space="preserve">
+    <value>Inicie automáticamente el siguiente ciclo de certificación en cuanto se cumplan sus horas de renovación y avise a los supervisores, a los administradores o a miembros concretos cuando un ciclo se complete, se renueve, esté a punto de vencer o venza.</value>
+  </data>
+  <data name="Prg.NoCertificationTypes" xml:space="preserve">
+    <value>Aún no hay tipos de certificación de personas.</value>
+  </data>
+  <data name="Prg.RenewalHours" xml:space="preserve">
+    <value>La renovación requiere {0} horas</value>
+  </data>
+  <data name="Prg.NoRenewalHours" xml:space="preserve">
+    <value>Sin horas de renovación definidas</value>
+  </data>
+  <data name="Prg.ValidityMonths" xml:space="preserve">
+    <value>válida {0} meses</value>
+  </data>
+  <data name="Prg.AutoRenew" xml:space="preserve">
+    <value>Siguiente ciclo</value>
+  </data>
+  <data name="Prg.AutoRenew.Off" xml:space="preserve">
+    <value>No automático</value>
+  </data>
+  <data name="Prg.AutoRenew.OnCompletion" xml:space="preserve">
+    <value>Empieza cuando se cumplen las horas de renovación</value>
+  </data>
+  <data name="Prg.AutoRenew.OnExpiry" xml:space="preserve">
+    <value>Empieza al vencer si se cumplieron las horas de renovación</value>
+  </data>
+  <data name="Prg.AlertLeadDays" xml:space="preserve">
+    <value>Días de aviso antes del vencimiento</value>
+  </data>
+  <data name="Prg.AlertOnCompletion" xml:space="preserve">
+    <value>Avisar cuando se cumplan las horas de renovación</value>
+  </data>
+  <data name="Prg.AlertOnRenewal" xml:space="preserve">
+    <value>Avisar cuando empiece un ciclo</value>
+  </data>
+  <data name="Prg.AlertOnExpired" xml:space="preserve">
+    <value>Avisar al vencer</value>
+  </data>
+  <data name="Prg.NotifySupervisors" xml:space="preserve">
+    <value>Avisar a los supervisores del miembro</value>
+  </data>
+  <data name="Prg.NotifyAdmins" xml:space="preserve">
+    <value>Avisar a los administradores del departamento</value>
+  </data>
+  <data name="Prg.NamedRecipients" xml:space="preserve">
+    <value>Avisar también a</value>
+  </data>
+  <data name="Prg.RemoveRule" xml:space="preserve">
+    <value>Quitar la regla</value>
+  </data>
+  <data name="Prg.SettingsTitle" xml:space="preserve">
+    <value>Configuración de programas</value>
+  </data>
+  <data name="Prg.SettingsIntro" xml:space="preserve">
+    <value>Cómo se aprueban las solicitudes de formación y el crédito por familiarización con edificios procedente de Registros.</value>
+  </data>
+  <data name="Prg.Set.RequestSupervisorApproval" xml:space="preserve">
+    <value>El supervisor del miembro aprueba las solicitudes de formación</value>
+  </data>
+  <data name="Prg.Set.RequestTrainingOfficerApproval" xml:space="preserve">
+    <value>Un responsable de formación aprueba las solicitudes de formación</value>
+  </data>
+  <data name="Prg.Set.RequestApprovalHelp" xml:space="preserve">
+    <value>Con ambas opciones activadas, el supervisor decide primero. Con ambas desactivadas, las solicitudes se aprueban al enviarse.</value>
+  </data>
+  <data name="Prg.Set.RequestCurrency" xml:space="preserve">
+    <value>Moneda (código ISO)</value>
+  </data>
+  <data name="Prg.Set.Familiarization" xml:space="preserve">
+    <value>Familiarización con edificios</value>
+  </data>
+  <data name="Prg.Set.FamiliarizationHelp" xml:space="preserve">
+    <value>Las inspecciones de establecimientos y las revisiones de planes previos completadas en Registros pasan al expediente de la persona que las realizó, en la categoría que elija (por ejemplo, planificación previa al incendio de ISO).</value>
+  </data>
+  <data name="Prg.Set.FamiliarizationEnabled" xml:space="preserve">
+    <value>Acreditar la familiarización con edificios</value>
+  </data>
+  <data name="Prg.Set.FamiliarizationCategory" xml:space="preserve">
+    <value>Categoría</value>
+  </data>
+  <data name="Prg.Set.FamiliarizationMinutes" xml:space="preserve">
+    <value>Minutos por visita cuando no tiene inicio ni fin</value>
+  </data>
+  <data name="Prg.Set.FromInspections" xml:space="preserve">
+    <value>De inspecciones de establecimientos</value>
+  </data>
+  <data name="Prg.Set.FromPreplanReviews" xml:space="preserve">
+    <value>De revisiones de planes previos</value>
+  </data>
+  <data name="Prg.Notify.RequestTitle" xml:space="preserve">
+    <value>Solicitud de formación</value>
+  </data>
+  <data name="Prg.Notify.RequestWaiting" xml:space="preserve">
+    <value>{0} solicita asistir a {1} ({2} {3}). Apruébela o rechácela en Capacitaciones &gt; Programas &gt; Solicitudes de formación.</value>
+  </data>
+  <data name="Prg.Notify.RequestApproved" xml:space="preserve">
+    <value>Su solicitud de formación para {0} se aprobó.</value>
+  </data>
+  <data name="Prg.Notify.RequestRejected" xml:space="preserve">
+    <value>Su solicitud de formación para {0} se rechazó. Consulte el motivo en la solicitud.</value>
+  </data>
+  <data name="Prg.Notify.RequestCancelled" xml:space="preserve">
+    <value>Su solicitud de formación aprobada para {0} se canceló.</value>
+  </data>
+  <data name="Prg.Notify.CertTitle" xml:space="preserve">
+    <value>Certificación</value>
+  </data>
+  <data name="Prg.Notify.CertCompleted" xml:space="preserve">
+    <value>{0} ha cumplido las horas de renovación de {1} (el ciclo termina el {2}).</value>
+  </data>
+  <data name="Prg.Notify.CertRenewed" xml:space="preserve">
+    <value>La certificación {1} de {0} inició un nuevo ciclo (válida hasta el {2}).</value>
+  </data>
+  <data name="Prg.Notify.CertExpiring" xml:space="preserve">
+    <value>La certificación {1} de {0} vence el {2}.</value>
+  </data>
+  <data name="Prg.Notify.CertExpired" xml:space="preserve">
+    <value>La certificación {1} de {0} venció el {2}.</value>
+  </data>
+  <data name="lms_program_age_invalid" xml:space="preserve">
+    <value>Introduzca entre 0 y 240 meses.</value>
+  </data>
+  <data name="lms_program_auto_renew_needs_hours" xml:space="preserve">
+    <value>La renovación automática requiere horas de renovación y una validez en meses en el tipo de certificación.</value>
+  </data>
+  <data name="lms_program_calendar_failed" xml:space="preserve">
+    <value>No se pudo crear el elemento de calendario.</value>
+  </data>
+  <data name="lms_program_case_empty" xml:space="preserve">
+    <value>Elija un archivo JSON de CASE.</value>
+  </data>
+  <data name="lms_program_case_no_document" xml:space="preserve">
+    <value>El archivo no tiene ningún CFDocument con identificador y título.</value>
+  </data>
+  <data name="lms_program_case_too_large" xml:space="preserve">
+    <value>El archivo supera los 10 MB.</value>
+  </data>
+  <data name="lms_program_case_too_many_items" xml:space="preserve">
+    <value>El archivo tiene más de 5.000 elementos.</value>
+  </data>
+  <data name="lms_program_case_unreadable" xml:space="preserve">
+    <value>El archivo no es un JSON de CASE legible.</value>
+  </data>
+  <data name="lms_program_category_invalid" xml:space="preserve">
+    <value>Elija una categoría de su departamento.</value>
+  </data>
+  <data name="lms_program_cost_invalid" xml:space="preserve">
+    <value>Los costes deben estar entre 0 y 1.000.000.</value>
+  </data>
+  <data name="lms_program_date_invalid" xml:space="preserve">
+    <value>Introduzca una fecha que no sea futura.</value>
+  </data>
+  <data name="lms_program_date_outside_month" xml:space="preserve">
+    <value>La fecha prevista debe caer en el año del plan y en el mes elegido.</value>
+  </data>
+  <data name="lms_program_dates_invalid" xml:space="preserve">
+    <value>El curso no puede terminar antes de empezar.</value>
+  </data>
+  <data name="lms_program_familiarization_category_required" xml:space="preserve">
+    <value>Elija la categoría a la que se acredita la familiarización.</value>
+  </data>
+  <data name="lms_program_folder_not_found" xml:space="preserve">
+    <value>Esa carpeta ya no existe.</value>
+  </data>
+  <data name="lms_program_framework_not_found" xml:space="preserve">
+    <value>Ese marco ya no existe.</value>
+  </data>
+  <data name="lms_program_hours_invalid" xml:space="preserve">
+    <value>Introduzca entre 0 y 1.000 horas.</value>
+  </data>
+  <data name="lms_program_label_required" xml:space="preserve">
+    <value>Introduzca un código o una etiqueta.</value>
+  </data>
+  <data name="lms_program_member_required" xml:space="preserve">
+    <value>Elija el miembro al que se refiere este informe.</value>
+  </data>
+  <data name="lms_program_month_invalid" xml:space="preserve">
+    <value>Elija un mes.</value>
+  </data>
+  <data name="lms_program_name_required" xml:space="preserve">
+    <value>Introduzca un nombre.</value>
+  </data>
+  <data name="lms_program_not_allowed" xml:space="preserve">
+    <value>No tiene permiso para hacer eso.</value>
+  </data>
+  <data name="lms_program_not_found" xml:space="preserve">
+    <value>No encontrado.</value>
+  </data>
+  <data name="lms_program_parent_invalid" xml:space="preserve">
+    <value>Un elemento no puede estar dentro de sí mismo ni de uno de sus propios elementos.</value>
+  </data>
+  <data name="lms_program_plan_not_found" xml:space="preserve">
+    <value>Ese plan ya no existe.</value>
+  </data>
+  <data name="lms_program_reason_required" xml:space="preserve">
+    <value>Introduzca un motivo para rechazar la solicitud.</value>
+  </data>
+  <data name="lms_program_recipient_invalid" xml:space="preserve">
+    <value>Un destinatario no es un miembro activo que pueda recibir informes de formación.</value>
+  </data>
+  <data name="lms_program_recipients_required" xml:space="preserve">
+    <value>Elija al menos un destinatario para un informe programado.</value>
+  </data>
+  <data name="lms_program_report_not_found" xml:space="preserve">
+    <value>Ese informe no existe.</value>
+  </data>
+  <data name="lms_program_request_changed" xml:space="preserve">
+    <value>Otra persona actuó antes sobre esta solicitud. Vuelva a cargarla.</value>
+  </data>
+  <data name="lms_program_request_not_approved" xml:space="preserve">
+    <value>Solo se puede completar una solicitud aprobada.</value>
+  </data>
+  <data name="lms_program_request_not_found" xml:space="preserve">
+    <value>Esa solicitud ya no existe.</value>
+  </data>
+  <data name="lms_program_request_not_open" xml:space="preserve">
+    <value>Esta solicitud ya no está pendiente de decisión.</value>
+  </data>
+  <data name="lms_program_rule_invalid" xml:space="preserve">
+    <value>Elija una opción de renovación válida.</value>
+  </data>
+  <data name="lms_program_rule_not_found" xml:space="preserve">
+    <value>Esa regla ya no existe.</value>
+  </data>
+  <data name="lms_program_schedule_invalid" xml:space="preserve">
+    <value>Revise la programación: día del mes de 1 a 28, hora de 0 a 23.</value>
+  </data>
+  <data name="lms_program_scope_invalid" xml:space="preserve">
+    <value>Elija un grupo o turno de su departamento.</value>
+  </data>
+  <data name="lms_program_sessions_invalid" xml:space="preserve">
+    <value>Introduzca entre 1 y 100 sesiones.</value>
+  </data>
+  <data name="lms_program_status_invalid" xml:space="preserve">
+    <value>Ese estado no es válido.</value>
+  </data>
+  <data name="lms_program_subject_invalid" xml:space="preserve">
+    <value>Elija un curso, capacitación, categoría o certificación de su departamento.</value>
+  </data>
+  <data name="lms_program_title_required" xml:space="preserve">
+    <value>Introduzca un título.</value>
+  </data>
+  <data name="lms_program_too_many_recipients" xml:space="preserve">
+    <value>Demasiados destinatarios.</value>
+  </data>
+  <data name="lms_program_type_invalid" xml:space="preserve">
+    <value>Elija un tipo de certificación de personas.</value>
+  </data>
+  <data name="lms_program_year_invalid" xml:space="preserve">
+    <value>Introduzca un año entre 2000 y 2100.</value>
+  </data>
+  <data name="RequirementsTab" xml:space="preserve">
+    <value>Requisitos</value>
+  </data>
+  <data name="Prg.Report.Matrix" xml:space="preserve">
+    <value>Matriz de cumplimiento</value>
+  </data>
+  <data name="Prg.Report.MatrixHelp" xml:space="preserve">
+    <value>Cada miembro activo frente a cada requisito de formación vigente: cumple, vence más adelante, en riesgo, vencido, exento, de permiso o sin licencia. Agrupado por miembro o por requisito.</value>
+  </data>
+  <data name="Prg.GroupBy.Requirement" xml:space="preserve">
+    <value>Requisito</value>
+  </data>
+  <data name="Prg.Col.Requirement" xml:space="preserve">
+    <value>Requisito</value>
+  </data>
+  <data name="Prg.Col.Due" xml:space="preserve">
+    <value>Vencimiento</value>
+  </data>
+  <data name="Prg.Col.LastCompleted" xml:space="preserve">
+    <value>Última finalización</value>
+  </data>
+  <data name="Prg.Col.Progress" xml:space="preserve">
+    <value>Progreso</value>
+  </data>
+  <data name="Prg.Footer.MatrixPaused" xml:space="preserve">
+    <value>El complemento LMS no está activo: los requisitos están en pausa y nada pasa a vencido.</value>
+  </data>
+  <data name="Cls.Tab.Classes" xml:space="preserve">
+    <value>Clases</value>
+  </data>
+  <data name="Cls.OpenClassSession" xml:space="preserve">
+    <value>Abrir la clase</value>
+  </data>
+  <data name="Cls.Report.Roster" xml:space="preserve">
+    <value>Listas de las clases</value>
+  </data>
+  <data name="Cls.Report.RosterHelp" xml:space="preserve">
+    <value>Clases firmadas: fechas, resumen, formadores y cualificaciones, asistentes y puestos.</value>
+  </data>
+  <data name="Cls.Report.Enrollment" xml:space="preserve">
+    <value>Inscripciones a clases</value>
+  </data>
+  <data name="Cls.Report.EnrollmentHelp" xml:space="preserve">
+    <value>Por clase: capacidad, inscritos, en espera, pendientes, asistentes, ausentes y sin inscripción.</value>
+  </data>
+  <data name="Cls.Report.Exceptions" xml:space="preserve">
+    <value>Excepciones de inscripción</value>
+  </data>
+  <data name="Cls.Report.ExceptionsHelp" xml:space="preserve">
+    <value>Ausencias, miembros en espera o pendientes de aprobación, miembros inactivos en listas e inscritos de turno.</value>
+  </data>
+  <data name="Cls.Report.Series" xml:space="preserve">
+    <value>Asistencia a series de clases</value>
+  </data>
+  <data name="Cls.Report.SeriesHelp" xml:space="preserve">
+    <value>La asistencia de cada miembro a las sesiones de una clase periódica.</value>
+  </data>
+  <data name="Cls.Report.Costs" xml:space="preserve">
+    <value>Costes de las clases</value>
+  </data>
+  <data name="Cls.Report.CostsHelp" xml:space="preserve">
+    <value>Costes de clases por curso, miembro o año, junto a las solicitudes de formación.</value>
+  </data>
+  <data name="Cls.Report.Instructors" xml:space="preserve">
+    <value>Horas de los instructores</value>
+  </data>
+  <data name="Cls.Report.InstructorsHelp" xml:space="preserve">
+    <value>Quién impartió qué clases y las horas impartidas.</value>
+  </data>
+  <data name="Skl.Tab.Skills" xml:space="preserve">
+    <value>Destrezas</value>
+  </data>
+  <data name="Skl.Report.PassFail" xml:space="preserve">
+    <value>Evaluaciones de destrezas: aptos/no aptos</value>
+  </data>
+  <data name="Skl.Report.PassFailHelp" xml:space="preserve">
+    <value>Evaluaciones completadas por hoja o miembro: aptos, no aptos, tasa de aprobados, fallos críticos y puntuación media.</value>
+  </data>
+  <data name="Skl.Report.Ratings" xml:space="preserve">
+    <value>Evaluaciones de destrezas: calificaciones por pregunta</value>
+  </data>
+  <data name="Skl.Report.RatingsHelp" xml:space="preserve">
+    <value>Respuestas de escala por hoja, pregunta y mes: cuántas, la media, la mínima y la máxima.</value>
+  </data>
+  <data name="Skl.GroupBy.Sheet" xml:space="preserve">
+    <value>Hoja de destrezas</value>
+  </data>
+  <data name="Skl.GroupBy.Member" xml:space="preserve">
+    <value>Miembro</value>
+  </data>
+  <data name="Skl.Col.Sheet" xml:space="preserve">
+    <value>Hoja de destrezas</value>
+  </data>
+  <data name="Skl.Col.Member" xml:space="preserve">
+    <value>Miembro</value>
+  </data>
+  <data name="Skl.Col.Step" xml:space="preserve">
+    <value>Pregunta</value>
+  </data>
+  <data name="Skl.Col.Month" xml:space="preserve">
+    <value>Mes</value>
+  </data>
+  <data name="Skl.Col.Evaluations" xml:space="preserve">
+    <value>Evaluaciones</value>
+  </data>
+  <data name="Skl.Col.Passed" xml:space="preserve">
+    <value>Aptos</value>
+  </data>
+  <data name="Skl.Col.Failed" xml:space="preserve">
+    <value>No aptos</value>
+  </data>
+  <data name="Skl.Col.PassRate" xml:space="preserve">
+    <value>Tasa de aprobados</value>
+  </data>
+  <data name="Skl.Col.Critical" xml:space="preserve">
+    <value>Fallos críticos</value>
+  </data>
+  <data name="Skl.Col.AverageScore" xml:space="preserve">
+    <value>Puntuación media</value>
+  </data>
+  <data name="Skl.Col.Ratings" xml:space="preserve">
+    <value>Calificaciones</value>
+  </data>
+  <data name="Skl.Col.AverageRating" xml:space="preserve">
+    <value>Calificación media</value>
+  </data>
+  <data name="Skl.Col.Lowest" xml:space="preserve">
+    <value>Mínima</value>
+  </data>
+  <data name="Skl.Col.Highest" xml:space="preserve">
+    <value>Máxima</value>
+  </data>
 </root>

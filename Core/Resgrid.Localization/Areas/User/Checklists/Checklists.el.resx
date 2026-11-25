@@ -716,4 +716,13 @@
   <data name="HelpFieldScheduleName" xml:space="preserve"><value>Εμφανίζεται στη λίστα εκκρεμοτήτων, οπότε κάντε το αναγνωρίσιμο με μια ματιά.</value></data>
   <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>Πόσο χρόνο έχει το πλήρωμα να ολοκληρώσει τον έλεγχο μετά το άνοιγμα. Μετά θεωρείται χαμένος.</value></data>
   <data name="HelpFieldAssignment" xml:space="preserve"><value>Η αυτόματη δρομολόγηση στέλνει τον έλεγχο σε όποιον κατέχει τον στόχο. Επιλέξτε άτομο, ρόλο, ομάδα ή όχημα για παράκαμψη.</value></data>
+  <data name="The witness signs at L2 (a fresh step-up or a passkey), bound to the content of the completion" xml:space="preserve">
+    <value>Ο μάρτυρας υπογράφει σε L2 (νέος έλεγχος ταυτότητας ή κλειδί πρόσβασης), με δέσμευση στο περιεχόμενο της ολοκλήρωσης</value>
+  </data>
+  <data name="WitnessSignatureRequired" xml:space="preserve">
+    <value>Αυτή η λίστα ελέγχου πρέπει να επιβεβαιωθεί με υπογραφή μάρτυρα. Ανοίξτε την εκτέλεση και υπογράψτε ως μάρτυρας.</value>
+  </data>
+  <data name="WitnessSignatureRefused" xml:space="preserve">
+    <value>Η υπογραφή του μάρτυρα δεν καταγράφηκε, οπότε η λίστα ελέγχου εξακολουθεί να αναμένει τον μάρτυρά της.</value>
+  </data>
 </root>

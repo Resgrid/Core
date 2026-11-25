@@ -1,0 +1,1405 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Academy.CategoryDescription" xml:space="preserve">
+    <value>Μαθήματα της Ακαδημίας Resgrid (χωρίς μονάδες συνεχιζόμενης εκπαίδευσης).</value>
+  </data>
+  <data name="Academy.CategoryName" xml:space="preserve">
+    <value>Εκπαίδευση συστημάτων</value>
+  </data>
+  <data name="AcademyBadge" xml:space="preserve">
+    <value>Ακαδημία</value>
+  </data>
+  <data name="AcademyCompletedTile" xml:space="preserve">
+    <value>Ολοκληρώθηκαν από εσάς</value>
+  </data>
+  <data name="AcademyIntro" xml:space="preserve">
+    <value>Σύντομα μαθήματα για κάθε μέρος του Resgrid, δωρεάν για κάθε υπηρεσία. Το καθένα έχει ένα γρήγορο τεστ και μετρά στην αναλυτική σας βαθμολογία.</value>
+  </data>
+  <data name="AcademyLessonsHeader" xml:space="preserve">
+    <value>Μαθήματα και περιηγήσεις</value>
+  </data>
+  <data name="AcademyLessonsTile" xml:space="preserve">
+    <value>Διαθέσιμα μαθήματα</value>
+  </data>
+  <data name="AcademySiteLink" xml:space="preserve">
+    <value>Άνοιγμα του academy.resgrid.com</value>
+  </data>
+  <data name="AcademyTitle" xml:space="preserve">
+    <value>Ακαδημία Resgrid</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Ενέργειες</value>
+  </data>
+  <data name="AddLessonLabel" xml:space="preserve">
+    <value>Προσθήκη μαθήματος:</value>
+  </data>
+  <data name="AddModuleButton" xml:space="preserve">
+    <value>Προσθήκη ενότητας</value>
+  </data>
+  <data name="AddonNotice" xml:space="preserve">
+    <value>Η σύνταξη και ανάθεση μαθημάτων απαιτεί το πρόσθετο LMS. Η Ακαδημία Resgrid είναι δωρεάν για όλους.</value>
+  </data>
+  <data name="AddOwnerButton" xml:space="preserve">
+    <value>Προσθήκη υπευθύνου</value>
+  </data>
+  <data name="AiCaptionsNote" xml:space="preserve">
+    <value>Οι αυτόματοι υπότιτλοι θα έρθουν με το Enhanced AI· προς το παρόν ανεβάστε αρχείο WebVTT.</value>
+  </data>
+  <data name="AnswerKeyCopy" xml:space="preserve">
+    <value>Αντίγραφο με τις απαντήσεις</value>
+  </data>
+  <data name="AnswersHiddenNote" xml:space="preserve">
+    <value>Οι απαντήσεις αυτής της αξιολόγησης δεν εμφανίζονται μετά από προσπάθεια.</value>
+  </data>
+  <data name="ApprovalHeader" xml:space="preserve">
+    <value>Έγκριση αυτής της έκδοσης</value>
+  </data>
+  <data name="ApprovalRoundFormat" xml:space="preserve">
+    <value>Γύρος {0}</value>
+  </data>
+  <data name="ApprovalsHeader" xml:space="preserve">
+    <value>Εγκρίσεις και υπογραφές</value>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>Εγκρίθηκε και υπογράφηκε.</value>
+  </data>
+  <data name="ApproveSignButton" xml:space="preserve">
+    <value>Έγκριση και υπογραφή</value>
+  </data>
+  <data name="ApproveStepUpHelp" xml:space="preserve">
+    <value>Επιβεβαιώνετε ξανά την ταυτότητά σας πριν υπογράψετε· η υπογραφή καλύπτει ακριβώς αυτή την έκδοση.</value>
+  </data>
+  <data name="AssessmentHelp" xml:space="preserve">
+    <value>Οι ερωτήσεις επιλέγονται και βαθμολογούνται στον διακομιστή· το κλειδί απαντήσεων δεν φτάνει ποτέ στο πρόγραμμα περιήγησης ή στις εφαρμογές.</value>
+  </data>
+  <data name="AssessmentPassed" xml:space="preserve">
+    <value>Περάσατε αυτή την αξιολόγηση.</value>
+  </data>
+  <data name="AssessmentTitle" xml:space="preserve">
+    <value>Αξιολόγηση</value>
+  </data>
+  <data name="AssignButton" xml:space="preserve">
+    <value>Ανάθεση</value>
+  </data>
+  <data name="AssignedMessage" xml:space="preserve">
+    <value>Ανατέθηκε σε {0} μέλη ({1} το είχαν ήδη, {2} δεν ήταν δυνατό να ανατεθεί).</value>
+  </data>
+  <data name="AssignHeader" xml:space="preserve">
+    <value>Ανάθεση αυτού του μαθήματος</value>
+  </data>
+  <data name="AssignLessonHeader" xml:space="preserve">
+    <value>Ανάθεση μαθήματος «{0}»</value>
+  </data>
+  <data name="AssignPathButton" xml:space="preserve">
+    <value>Ανάθεση διαδρομής</value>
+  </data>
+  <data name="AssignPathHeader" xml:space="preserve">
+    <value>Ανάθεση διαδρομής ρόλου «{0}»</value>
+  </data>
+  <data name="AssignToLabel" xml:space="preserve">
+    <value>Ανάθεση σε</value>
+  </data>
+  <data name="AttemptLimitLabel" xml:space="preserve">
+    <value>Επιτρεπόμενες προσπάθειες (0 = απεριόριστες)</value>
+  </data>
+  <data name="AttemptsAllowedFormat" xml:space="preserve">
+    <value>Επιτρέπονται {0} προσπάθειες</value>
+  </data>
+  <data name="AttemptsTile" xml:space="preserve">
+    <value>Ολοκληρωμένες προσπάθειες</value>
+  </data>
+  <data name="AttemptsUnlimited" xml:space="preserve">
+    <value>Απεριόριστες προσπάθειες</value>
+  </data>
+  <data name="AttestationLabel" xml:space="preserve">
+    <value>Ζητήστε από τον εκπαιδευόμενο να επιβεβαιώσει ότι το κάνει μόνος</value>
+  </data>
+  <data name="AttestationText" xml:space="preserve">
+    <value>Ολοκληρώνω αυτή την αξιολόγηση μόνος/η μου.</value>
+  </data>
+  <data name="AudienceCurrentFormat" xml:space="preserve">
+    <value>Είναι αποθηκευμένοι {0} κανόνες κοινού.</value>
+  </data>
+  <data name="AudienceHeader" xml:space="preserve">
+    <value>Ποιος το βλέπει στον κατάλογο</value>
+  </data>
+  <data name="AudienceHelp" xml:space="preserve">
+    <value>Μην επιλέξετε κανέναν για ολόκληρη την υπηρεσία.</value>
+  </data>
+  <data name="AvailableOfflineLabel" xml:space="preserve">
+    <value>Διαθέσιμο εκτός σύνδεσης (το Omni κρατά ένα αντίγραφο ανά συσκευή)</value>
+  </data>
+  <data name="AverageRatingFormat" xml:space="preserve">
+    <value>Μέση βαθμολογία: {0} από 5</value>
+  </data>
+  <data name="AwaitingGradeBadge" xml:space="preserve">
+    <value>Αναμένει βαθμολόγηση</value>
+  </data>
+  <data name="BackToAcademy" xml:space="preserve">
+    <value>Επιστροφή στην ακαδημία</value>
+  </data>
+  <data name="BackToCourse" xml:space="preserve">
+    <value>Επιστροφή στο μάθημα</value>
+  </data>
+  <data name="BackToCourseDetail" xml:space="preserve">
+    <value>Μάθημα</value>
+  </data>
+  <data name="BankLabel" xml:space="preserve">
+    <value>Τράπεζα ερωτήσεων</value>
+  </data>
+  <data name="BanksIntro" xml:space="preserve">
+    <value>Σύνολα ερωτήσεων που επιλέγονται τυχαία σε κάθε προσπάθεια. Οι κοινόχρηστες τράπεζες είναι ανοιχτές σε όλους τους συντάκτες· οι ιδιωτικές μόνο στον κάτοχο.</value>
+  </data>
+  <data name="BanksTitle" xml:space="preserve">
+    <value>Τράπεζες ερωτήσεων</value>
+  </data>
+  <data name="BrowseAcademyLink" xml:space="preserve">
+    <value>Περιήγηση στη Resgrid Academy</value>
+  </data>
+  <data name="BuilderTitle" xml:space="preserve">
+    <value>Δημιουργός μαθήματος</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="CaptionsFileLabel" xml:space="preserve">
+    <value>Αρχείο WebVTT</value>
+  </data>
+  <data name="CaptionsLabelLabel" xml:space="preserve">
+    <value>Ετικέτα υποτίτλων</value>
+  </data>
+  <data name="CaptionsLocaleLabel" xml:space="preserve">
+    <value>Γλώσσα υποτίτλων</value>
+  </data>
+  <data name="CatalogFieldsHeader" xml:space="preserve">
+    <value>Στοιχεία μαθήματος</value>
+  </data>
+  <data name="CatalogHeader" xml:space="preserve">
+    <value>Μαθήματα στα οποία μπορείτε να εγγραφείτε</value>
+  </data>
+  <data name="CategoryLabel" xml:space="preserve">
+    <value>Κατηγορία εκπαίδευσης</value>
+  </data>
+  <data name="CeDisclaimer" xml:space="preserve">
+    <value>Το Resgrid δεν διαπιστεύει τη συνεχιζόμενη εκπαίδευση: ο πάροχος και ο αριθμός καταγράφονται όπως τα εισάγετε.</value>
+  </data>
+  <data name="CeNumberLabel" xml:space="preserve">
+    <value>Αριθμός μαθήματος συνεχιζόμενης εκπαίδευσης</value>
+  </data>
+  <data name="CeProviderLabel" xml:space="preserve">
+    <value>Πάροχος συνεχιζόμενης εκπαίδευσης</value>
+  </data>
+  <data name="CertificateTemplateLabel" xml:space="preserve">
+    <value>Πρότυπο πιστοποιητικού</value>
+  </data>
+  <data name="ChangeSummaryLabel" xml:space="preserve">
+    <value>Τι άλλαξε</value>
+  </data>
+  <data name="ChooseAllHelp" xml:space="preserve">
+    <value>Επιλέξτε όλα όσα ισχύουν.</value>
+  </data>
+  <data name="ChooseMember" xml:space="preserve">
+    <value>Επιλέξτε μέλος…</value>
+  </data>
+  <data name="ChooseOption" xml:space="preserve">
+    <value>Επιλογή…</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Κωδικός μαθήματος</value>
+  </data>
+  <data name="CommentLabel" xml:space="preserve">
+    <value>Σχόλιο</value>
+  </data>
+  <data name="CompletedBadge" xml:space="preserve">
+    <value>Ολοκληρωμένο</value>
+  </data>
+  <data name="CompletedColumn" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+  </data>
+  <data name="CompletedHeader" xml:space="preserve">
+    <value>Ολοκληρωμένα</value>
+  </data>
+  <data name="CompletedOfFormat" xml:space="preserve">
+    <value>{0} από {1}</value>
+  </data>
+  <data name="ContentHelp" xml:space="preserve">
+    <value>Μορφοποιημένο κείμενο (HTML). Καθαρίζεται κατά την αποθήκευση· επιτρέπονται ενσωματώσεις YouTube, Vimeo και Google Docs.</value>
+  </data>
+  <data name="ContentLabel" xml:space="preserve">
+    <value>Περιεχόμενο μαθήματος</value>
+  </data>
+  <data name="CooldownFormat" xml:space="preserve">
+    <value>Αναμονή {0} ωρών μεταξύ προσπαθειών</value>
+  </data>
+  <data name="CooldownLabel" xml:space="preserve">
+    <value>Ώρες μεταξύ προσπαθειών</value>
+  </data>
+  <data name="CorrectAnswerLabel" xml:space="preserve">
+    <value>σωστή απάντηση</value>
+  </data>
+  <data name="CorrectLabel" xml:space="preserve">
+    <value>Σωστό</value>
+  </data>
+  <data name="CorrectOrderLabel" xml:space="preserve">
+    <value>Σωστή σειρά:</value>
+  </data>
+  <data name="CourseColumn" xml:space="preserve">
+    <value>Μάθημα</value>
+  </data>
+  <data name="CourseCompletedMessage" xml:space="preserve">
+    <value>Το μάθημα ολοκληρώθηκε. Εμφανίζεται στην αναλυτική σας βαθμολογία.</value>
+  </data>
+  <data name="CoursesHeader" xml:space="preserve">
+    <value>Μαθήματα</value>
+  </data>
+  <data name="CreateBankButton" xml:space="preserve">
+    <value>Δημιουργία τράπεζας</value>
+  </data>
+  <data name="CreateCourseButton" xml:space="preserve">
+    <value>Δημιουργία μαθήματος</value>
+  </data>
+  <data name="CrewEndedMessage" xml:space="preserve">
+    <value>Αυτή η ομαδική προβολή έληξε.</value>
+  </data>
+  <data name="CrewQrAlt" xml:space="preserve">
+    <value>Κωδικός ομαδικής προβολής</value>
+  </data>
+  <data name="CrewQrRotates" xml:space="preserve">
+    <value>Ο κωδικός αλλάζει κάθε 30 δευτερόλεπτα, άρα μια φωτογραφία του σταματά να λειτουργεί.</value>
+  </data>
+  <data name="CrewScanConfirm" xml:space="preserve">
+    <value>Να καταγραφείτε παρών σε αυτή την προβολή; Το μάθημα που προβάλλεται μετρά ως παρακολουθημένο· το τεστ το κάνετε μετά στο δικό σας τηλέφωνο.</value>
+  </data>
+  <data name="CrewScanInstruction" xml:space="preserve">
+    <value>Σαρώστε αυτόν τον κωδικό με το δικό σας τηλέφωνο για να καταγραφείτε παρών.</value>
+  </data>
+  <data name="CrewViewingTitle" xml:space="preserve">
+    <value>Ομαδική προβολή</value>
+  </data>
+  <data name="DateLine" xml:space="preserve">
+    <value>Ημερομηνία:</value>
+  </data>
+  <data name="Decision.Approved" xml:space="preserve">
+    <value>εγκρίθηκε</value>
+  </data>
+  <data name="Decision.Pending" xml:space="preserve">
+    <value>σε αναμονή</value>
+  </data>
+  <data name="Decision.Rejected" xml:space="preserve">
+    <value>επιστράφηκε</value>
+  </data>
+  <data name="Decision.Withdrawn" xml:space="preserve">
+    <value>ανακλήθηκε</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="DeletedMessage" xml:space="preserve">
+    <value>Διαγράφηκε.</value>
+  </data>
+  <data name="DeleteLessonConfirm" xml:space="preserve">
+    <value>Διαγραφή αυτού του μαθήματος;</value>
+  </data>
+  <data name="DeleteModuleConfirm" xml:space="preserve">
+    <value>Διαγραφή αυτής της ενότητας και των μαθημάτων της;</value>
+  </data>
+  <data name="DifficultyColumn" xml:space="preserve">
+    <value>Δυσκολία (p)</value>
+  </data>
+  <data name="DifficultyHelp" xml:space="preserve">
+    <value>Ποσοστό σωστών απαντήσεων: υψηλότερο σημαίνει ευκολότερο.</value>
+  </data>
+  <data name="DiscardButton" xml:space="preserve">
+    <value>Απόρριψη προσχεδίου</value>
+  </data>
+  <data name="DiscardConfirm" xml:space="preserve">
+    <value>Απόρριψη αυτού του προσχεδίου; Δεν υποβλήθηκε ποτέ, οπότε δεν διατηρείται τίποτα.</value>
+  </data>
+  <data name="DiscardedMessage" xml:space="preserve">
+    <value>Το προσχέδιο απορρίφθηκε.</value>
+  </data>
+  <data name="DiscriminationColumn" xml:space="preserve">
+    <value>Διακριτική ικανότητα (D)</value>
+  </data>
+  <data name="DiscriminationHelp" xml:space="preserve">
+    <value>Ποσοστό σωστών στο κορυφαίο 27% των προσπαθειών μείον το χαμηλότερο 27%: κάτω από 0,2 αξίζει έλεγχο.</value>
+  </data>
+  <data name="DocumentNameLabel" xml:space="preserve">
+    <value>Όνομα εγγράφου</value>
+  </data>
+  <data name="DocumentUrlLabel" xml:space="preserve">
+    <value>Σύνδεσμος εγγράφου (https)</value>
+  </data>
+  <data name="DrawCountLabel" xml:space="preserve">
+    <value>Ερωτήσεις ανά προσπάθεια (0 = όλες)</value>
+  </data>
+  <data name="DrawTagsLabel" xml:space="preserve">
+    <value>Μόνο ερωτήσεις με ετικέτα</value>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Λήξη</value>
+  </data>
+  <data name="DueDateHelp" xml:space="preserve">
+    <value>Προαιρετικό. Το τέλος εκείνης της ημέρας στη ζώνη ώρας της υπηρεσίας.</value>
+  </data>
+  <data name="DueDateLabel" xml:space="preserve">
+    <value>Προθεσμία</value>
+  </data>
+  <data name="DueFormat" xml:space="preserve">
+    <value>Λήξη {0}</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="EditDraftButton" xml:space="preserve">
+    <value>Επεξεργασία προσχεδίου</value>
+  </data>
+  <data name="EditQuestionHeader" xml:space="preserve">
+    <value>Επεξεργασία ερώτησης</value>
+  </data>
+  <data name="EndCrewViewingButton" xml:space="preserve">
+    <value>Λήξη προβολής</value>
+  </data>
+  <data name="EnrollButton" xml:space="preserve">
+    <value>Εγγραφή</value>
+  </data>
+  <data name="EnrolledColumn" xml:space="preserve">
+    <value>Εγγεγραμμένοι</value>
+  </data>
+  <data name="EnrolledMessage" xml:space="preserve">
+    <value>Εγγραφήκατε.</value>
+  </data>
+  <data name="EnrollmentsHeader" xml:space="preserve">
+    <value>Εγγραφές</value>
+  </data>
+  <data name="EnrollmentStatus.Completed" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+  </data>
+  <data name="EnrollmentStatus.InProgress" xml:space="preserve">
+    <value>Σε εξέλιξη</value>
+  </data>
+  <data name="EnrollmentStatus.NotStarted" xml:space="preserve">
+    <value>Δεν ξεκίνησε</value>
+  </data>
+  <data name="EnrollmentStatus.Withdrawn" xml:space="preserve">
+    <value>Αποχώρησε</value>
+  </data>
+  <data name="Error.AddonRequired" xml:space="preserve">
+    <value>Απαιτείται το πρόσθετο LMS.</value>
+  </data>
+  <data name="Error.AlreadySubmitted" xml:space="preserve">
+    <value>Αυτό έχει ήδη υποβληθεί.</value>
+  </data>
+  <data name="Error.AttemptLimitReached" xml:space="preserve">
+    <value>Χρησιμοποιήσατε όλες τις επιτρεπόμενες προσπάθειες.</value>
+  </data>
+  <data name="Error.CodeExpired" xml:space="preserve">
+    <value>Ο κωδικός άλλαξε. Σαρώστε ξανά τον κωδικό στην οθόνη.</value>
+  </data>
+  <data name="Error.CooldownActive" xml:space="preserve">
+    <value>Περιμένετε πριν δοκιμάσετε ξανά.</value>
+  </data>
+  <data name="Error.FileTooLarge" xml:space="preserve">
+    <value>Το αρχείο είναι πολύ μεγάλο.</value>
+  </data>
+  <data name="Error.InvalidInput" xml:space="preserve">
+    <value>Ορισμένα στοιχεία λείπουν ή δεν είναι έγκυρα.</value>
+  </data>
+  <data name="Error.LapseWindowEnded" xml:space="preserve">
+    <value>Το πρόσθετο LMS έληξε και το περιθώριο ολοκλήρωσης αυτού του μαθήματος πέρασε.</value>
+  </data>
+  <data name="Error.LessonLocked" xml:space="preserve">
+    <value>Ολοκληρώστε πρώτα τα προηγούμενα μαθήματα.</value>
+  </data>
+  <data name="Error.MediaUnavailable" xml:space="preserve">
+    <value>Η αποθήκευση βίντεο δεν είναι διαθέσιμη τώρα.</value>
+  </data>
+  <data name="Error.None" xml:space="preserve">
+    <value>Έγινε.</value>
+  </data>
+  <data name="Error.NotAuthorized" xml:space="preserve">
+    <value>Δεν έχετε δικαίωμα για αυτό.</value>
+  </data>
+  <data name="Error.NotDraft" xml:space="preserve">
+    <value>Μόνο ένα προσχέδιο μπορεί να αλλάξει.</value>
+  </data>
+  <data name="Error.NotEntitled" xml:space="preserve">
+    <value>Αυτό το μάθημα αφορά μια λειτουργική ενότητα ή πρόσθετο που δεν έχει η υπηρεσία σας.</value>
+  </data>
+  <data name="Error.NotFound" xml:space="preserve">
+    <value>Το στοιχείο δεν βρέθηκε.</value>
+  </data>
+  <data name="Error.RequirementNotMet" xml:space="preserve">
+    <value>Αυτό το βήμα δεν έχει ολοκληρωθεί ακόμη.</value>
+  </data>
+  <data name="Error.ResponseRequired" xml:space="preserve">
+    <value>Απαντήστε στην εργασία (ή επισυνάψτε το ζητούμενο αρχείο) για να ολοκληρώσετε το μάθημα.</value>
+  </data>
+  <data name="Error.SeatTimeNotMet" xml:space="preserve">
+    <value>Αφιερώστε λίγο ακόμη χρόνο σε αυτό το μάθημα πριν το ολοκληρώσετε.</value>
+  </data>
+  <data name="Error.StaleCopy" xml:space="preserve">
+    <value>Κάποιος άλλος το άλλαξε αφού το ανοίξατε. Ανανεώστε και δοκιμάστε ξανά.</value>
+  </data>
+  <data name="Error.TimeExpired" xml:space="preserve">
+    <value>Ο χρόνος για αυτή την προσπάθεια έληξε.</value>
+  </data>
+  <data name="Error.UnsupportedFile" xml:space="preserve">
+    <value>Αυτός ο τύπος αρχείου δεν γίνεται δεκτός.</value>
+  </data>
+  <data name="EveryoneOption" xml:space="preserve">
+    <value>Όλοι στην υπηρεσία</value>
+  </data>
+  <data name="ExpiredBadge" xml:space="preserve">
+    <value>Ο χρόνος έληξε</value>
+  </data>
+  <data name="ExplanationLabel" xml:space="preserve">
+    <value>Εξήγηση (εμφανίζεται μετά την προσπάθεια· υπόδειγμα για σύντομες απαντήσεις)</value>
+  </data>
+  <data name="FailedBadge" xml:space="preserve">
+    <value>Αποτυχία</value>
+  </data>
+  <data name="FileColumn" xml:space="preserve">
+    <value>Αρχείο</value>
+  </data>
+  <data name="FileRequestHelp" xml:space="preserve">
+    <value>PDF, εικόνα, κείμενο, Word ή Excel, έως 10 MB.</value>
+  </data>
+  <data name="FileRequestLabel" xml:space="preserve">
+    <value>Αίτημα αρχείου (προαιρετικό)</value>
+  </data>
+  <data name="FingerprintFormat" xml:space="preserve">
+    <value>αποτύπωμα {0}</value>
+  </data>
+  <data name="FreeResponseLabel" xml:space="preserve">
+    <value>Εργασία ελεύθερης απάντησης (προαιρετικό)</value>
+  </data>
+  <data name="GradedMessage" xml:space="preserve">
+    <value>Ο βαθμός αποθηκεύτηκε.</value>
+  </data>
+  <data name="GraderNotesLabel" xml:space="preserve">
+    <value>Σημειώσεις βαθμολογητή</value>
+  </data>
+  <data name="GradingEmpty" xml:space="preserve">
+    <value>Δεν υπάρχει τίποτα για βαθμολόγηση.</value>
+  </data>
+  <data name="GradingIntro" xml:space="preserve">
+    <value>Σύντομες απαντήσεις που αναμένουν βαθμολόγηση. Κανείς δεν βαθμολογεί τη δική του προσπάθεια.</value>
+  </data>
+  <data name="GradingTitle" xml:space="preserve">
+    <value>Ουρά βαθμολόγησης</value>
+  </data>
+  <data name="GroupsLabel" xml:space="preserve">
+    <value>Ομάδες</value>
+  </data>
+  <data name="HostedVideoLabel" xml:space="preserve">
+    <value>Ανεβασμένο βίντεο</value>
+  </data>
+  <data name="HoursColumn" xml:space="preserve">
+    <value>Ώρες</value>
+  </data>
+  <data name="HoursFormat" xml:space="preserve">
+    <value>{0} ώρες</value>
+  </data>
+  <data name="HoursLabel" xml:space="preserve">
+    <value>Ώρες που πιστώνονται</value>
+  </data>
+  <data name="ImageUrlLabel" xml:space="preserve">
+    <value>Σύνδεσμος εικόνας (https, προαιρετικό)</value>
+  </data>
+  <data name="IncludedTile" xml:space="preserve">
+    <value>Περιλαμβάνεται</value>
+  </data>
+  <data name="IncorrectLabel" xml:space="preserve">
+    <value>Λάθος</value>
+  </data>
+  <data name="InForceFormat" xml:space="preserve">
+    <value>Έκδοση {0} σε ισχύ</value>
+  </data>
+  <data name="InProgressBadge" xml:space="preserve">
+    <value>Σε εξέλιξη</value>
+  </data>
+  <data name="InProgressHeader" xml:space="preserve">
+    <value>Ανατεθειμένα και σε εξέλιξη</value>
+  </data>
+  <data name="IssuesCertificationLabel" xml:space="preserve">
+    <value>Η ολοκλήρωση εκδίδει ή ανανεώνει</value>
+  </data>
+  <data name="ItemAnalysisFootnote" xml:space="preserve">
+    <value>Η διακριτική ικανότητα χρειάζεται τουλάχιστον 10 ολοκληρωμένες προσπάθειες. Όσες αναμένουν βαθμολόγηση δεν μετρούν.</value>
+  </data>
+  <data name="ItemAnalysisIntro" xml:space="preserve">
+    <value>Πώς απέδωσε κάθε ερώτηση στις ολοκληρωμένες προσπάθειες.</value>
+  </data>
+  <data name="ItemAnalysisTitle" xml:space="preserve">
+    <value>Ανάλυση ερωτήσεων</value>
+  </data>
+  <data name="Kind.Assessment" xml:space="preserve">
+    <value>Αξιολόγηση</value>
+  </data>
+  <data name="Kind.Blocks" xml:space="preserve">
+    <value>Ανάγνωση</value>
+  </data>
+  <data name="Kind.Cmi5" xml:space="preserve">
+    <value>Πακέτο cmi5</value>
+  </data>
+  <data name="Kind.Document" xml:space="preserve">
+    <value>Έγγραφο</value>
+  </data>
+  <data name="Kind.LiveSession" xml:space="preserve">
+    <value>Ζωντανή συνεδρία</value>
+  </data>
+  <data name="Kind.ProtocolVersion" xml:space="preserve">
+    <value>Πρωτόκολλο</value>
+  </data>
+  <data name="Kind.Scorm" xml:space="preserve">
+    <value>Πακέτο SCORM</value>
+  </data>
+  <data name="Kind.Survey" xml:space="preserve">
+    <value>Αξιολόγηση μαθήματος</value>
+  </data>
+  <data name="Kind.Video" xml:space="preserve">
+    <value>Βίντεο</value>
+  </data>
+  <data name="LapsedNotice" xml:space="preserve">
+    <value>Το πρόσθετο LMS έληξε: τα μαθήματα και τα αρχεία παραμένουν αναγνώσιμα, τα ανατεθειμένα μαθήματα μένουν ανοιχτά έως την προθεσμία (ή 30 ημέρες), το φιλοξενούμενο βίντεο είναι μόνο για ανάγνωση για 90 ημέρες και νέα μαθήματα ή αναθέσεις απαιτούν ξανά το πρόσθετο.</value>
+  </data>
+  <data name="LengthColumn" xml:space="preserve">
+    <value>Διάρκεια</value>
+  </data>
+  <data name="LessonBadge" xml:space="preserve">
+    <value>Μάθημα</value>
+  </data>
+  <data name="LessonColumn" xml:space="preserve">
+    <value>Μάθημα</value>
+  </data>
+  <data name="LessonCompletedMessage" xml:space="preserve">
+    <value>Το μάθημα ολοκληρώθηκε.</value>
+  </data>
+  <data name="LessonDoneLabel" xml:space="preserve">
+    <value>Ολοκληρώσατε αυτό το μάθημα.</value>
+  </data>
+  <data name="LibraryIntro" xml:space="preserve">
+    <value>Τα μαθήματα της υπηρεσίας σας: σύνταξη, έγκριση, δημοσίευση, ανάθεση και αναφορές.</value>
+  </data>
+  <data name="LibraryTitle" xml:space="preserve">
+    <value>Βιβλιοθήκη μαθημάτων</value>
+  </data>
+  <data name="Lifecycle.AlreadyDecided" xml:space="preserve">
+    <value>Αυτό το βήμα έχει ήδη αποφασιστεί ή έχετε ήδη εγκρίνει αυτόν τον γύρο.</value>
+  </data>
+  <data name="Lifecycle.ArtifactChanged" xml:space="preserve">
+    <value>Η έκδοση άλλαξε μετά την υποβολή ή την υπογραφή· υποβάλετέ την ξανά.</value>
+  </data>
+  <data name="Lifecycle.ChangeSummaryRequired" xml:space="preserve">
+    <value>Περιγράψτε τι άλλαξε πριν από τη δημοσίευση.</value>
+  </data>
+  <data name="Lifecycle.DraftExists" xml:space="preserve">
+    <value>Υπάρχει ήδη ανοιχτό προσχέδιο για αυτό το μάθημα.</value>
+  </data>
+  <data name="Lifecycle.EffectiveDateInPast" xml:space="preserve">
+    <value>Η ημερομηνία ισχύος είναι στο παρελθόν.</value>
+  </data>
+  <data name="Lifecycle.EmptyContent" xml:space="preserve">
+    <value>Προσθέστε τουλάχιστον ένα μάθημα πριν την υποβολή.</value>
+  </data>
+  <data name="Lifecycle.InvalidInput" xml:space="preserve">
+    <value>Ορισμένα στοιχεία λείπουν ή δεν είναι έγκυρα.</value>
+  </data>
+  <data name="Lifecycle.None" xml:space="preserve">
+    <value>Έγινε.</value>
+  </data>
+  <data name="Lifecycle.NotApproved" xml:space="preserve">
+    <value>Μόνο μια εγκεκριμένη έκδοση μπορεί να δημοσιευτεί.</value>
+  </data>
+  <data name="Lifecycle.NotAuthorized" xml:space="preserve">
+    <value>Δεν έχετε δικαίωμα για αυτό.</value>
+  </data>
+  <data name="Lifecycle.NotDraft" xml:space="preserve">
+    <value>Μόνο ένα προσχέδιο μπορεί να υποβληθεί.</value>
+  </data>
+  <data name="Lifecycle.NotFound" xml:space="preserve">
+    <value>Η έκδοση δεν βρέθηκε.</value>
+  </data>
+  <data name="Lifecycle.NotInReview" xml:space="preserve">
+    <value>Αυτή η έκδοση δεν αναμένει έγκριση.</value>
+  </data>
+  <data name="Lifecycle.NotPublished" xml:space="preserve">
+    <value>Δεν έχει δημοσιευτεί ακόμη τίποτα.</value>
+  </data>
+  <data name="Lifecycle.OpenComments" xml:space="preserve">
+    <value>Επιλύστε πρώτα τα ανοιχτά σχόλια ελέγχου.</value>
+  </data>
+  <data name="Lifecycle.PasskeyRequired" xml:space="preserve">
+    <value>Η υπηρεσία σας απαιτεί κλειδί πρόσβασης για αυτή την υπογραφή.</value>
+  </data>
+  <data name="Lifecycle.RetentionProtected" xml:space="preserve">
+    <value>Μια έκδοση που υποβλήθηκε διατηρείται και δεν μπορεί να απορριφθεί.</value>
+  </data>
+  <data name="Lifecycle.SignatureRequired" xml:space="preserve">
+    <value>Επιβεβαιώστε την ταυτότητά σας για να υπογράψετε την έγκριση.</value>
+  </data>
+  <data name="Lifecycle.StaleCopy" xml:space="preserve">
+    <value>Κάποιος άλλος το άλλαξε αφού το ανοίξατε. Ανανεώστε και δοκιμάστε ξανά.</value>
+  </data>
+  <data name="LockedBadge" xml:space="preserve">
+    <value>κλειδωμένο μέχρι να ολοκληρωθούν τα προηγούμενα μαθήματα</value>
+  </data>
+  <data name="MajorPolicyLabel" xml:space="preserve">
+    <value>Σε κύρια έκδοση</value>
+  </data>
+  <data name="MajorVersionOption" xml:space="preserve">
+    <value>Κύρια έκδοση: επιλέξτε τι συμβαίνει με όσους το ολοκλήρωσαν</value>
+  </data>
+  <data name="MarkCompleteButton" xml:space="preserve">
+    <value>Σήμανση ως ολοκληρωμένο</value>
+  </data>
+  <data name="MarkPresentButton" xml:space="preserve">
+    <value>Είμαι εδώ</value>
+  </data>
+  <data name="MediaNotConfigured" xml:space="preserve">
+    <value>Η αποθήκευση βίντεο δεν έχει ρυθμιστεί σε αυτή την εγκατάσταση, οπότε δεν μπορείτε να ανεβάσετε βίντεο. Οι σύνδεσμοι YouTube και Vimeo λειτουργούν.</value>
+  </data>
+  <data name="MediaStatus.Archived" xml:space="preserve">
+    <value>Αρχειοθετήθηκε (το πρόσθετο έληξε)</value>
+  </data>
+  <data name="MediaStatus.Failed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η επεξεργασία</value>
+  </data>
+  <data name="MediaStatus.Queued" xml:space="preserve">
+    <value>Αναμονή επεξεργασίας</value>
+  </data>
+  <data name="MediaStatus.Ready" xml:space="preserve">
+    <value>Έτοιμο</value>
+  </data>
+  <data name="MediaStatus.Transcoding" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="MediaStatus.Uploading" xml:space="preserve">
+    <value>Ανέβασμα</value>
+  </data>
+  <data name="MemberColumn" xml:space="preserve">
+    <value>Μέλος</value>
+  </data>
+  <data name="MembersLabel" xml:space="preserve">
+    <value>Μέλη</value>
+  </data>
+  <data name="MinimumSeatLabel" xml:space="preserve">
+    <value>Ελάχιστος χρόνος στο μάθημα (δευτερόλεπτα)</value>
+  </data>
+  <data name="MinorVersionOption" xml:space="preserve">
+    <value>Δευτερεύουσα έκδοση: οι ολοκληρώσεις ισχύουν</value>
+  </data>
+  <data name="MinutesFormat" xml:space="preserve">
+    <value>{0} λεπ.</value>
+  </data>
+  <data name="ModelAnswerLabel" xml:space="preserve">
+    <value>Υπόδειγμα απάντησης:</value>
+  </data>
+  <data name="ModuleLabel" xml:space="preserve">
+    <value>Ενότητα</value>
+  </data>
+  <data name="ModuleNumberFormat" xml:space="preserve">
+    <value>Ενότητα {0}</value>
+  </data>
+  <data name="ModuleTitleLabel" xml:space="preserve">
+    <value>Τίτλος ενότητας</value>
+  </data>
+  <data name="MoveUpButton" xml:space="preserve">
+    <value>Μετακίνηση πάνω</value>
+  </data>
+  <data name="MyCoursesIntro" xml:space="preserve">
+    <value>Μαθήματα που σας έχουν ανατεθεί, η Resgrid Academy και μαθήματα στα οποία μπορείτε να εγγραφείτε.</value>
+  </data>
+  <data name="MyCoursesTitle" xml:space="preserve">
+    <value>Τα μαθήματά μου</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="NameLine" xml:space="preserve">
+    <value>Όνομα:</value>
+  </data>
+  <data name="NewBankHeader" xml:space="preserve">
+    <value>Νέα τράπεζα ερωτήσεων</value>
+  </data>
+  <data name="NewCourseHeader" xml:space="preserve">
+    <value>Νέο μάθημα</value>
+  </data>
+  <data name="NewLessonFormat" xml:space="preserve">
+    <value>Νέο μάθημα: {0}</value>
+  </data>
+  <data name="NewQuestionHeader" xml:space="preserve">
+    <value>Νέα ερώτηση</value>
+  </data>
+  <data name="NewVersionButton" xml:space="preserve">
+    <value>Έναρξη νέας έκδοσης</value>
+  </data>
+  <data name="NextAttemptFormat" xml:space="preserve">
+    <value>Επόμενη προσπάθεια από {0}.</value>
+  </data>
+  <data name="NextButton" xml:space="preserve">
+    <value>Επόμενο</value>
+  </data>
+  <data name="NextUpLabel" xml:space="preserve">
+    <value>Επόμενο</value>
+  </data>
+  <data name="NoBanks" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη τράπεζες ερωτήσεων.</value>
+  </data>
+  <data name="NoCourses" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη μαθήματα.</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>Καμία</value>
+  </data>
+  <data name="NoOpenCourses" xml:space="preserve">
+    <value>Δεν έχετε ανοιχτά μαθήματα.</value>
+  </data>
+  <data name="NothingToPlay" xml:space="preserve">
+    <value>Αυτό το μάθημα δεν έχει ενότητες προς εμφάνιση.</value>
+  </data>
+  <data name="Notify.CourseAssigned" xml:space="preserve">
+    <value>Σας ανατέθηκε το μάθημα "{0}". Ανοίξτε το: {1}</value>
+  </data>
+  <data name="Notify.CourseAssigned.Title" xml:space="preserve">
+    <value>Ανατέθηκε νέο μάθημα</value>
+  </data>
+  <data name="Notify.CourseNewVersion" xml:space="preserve">
+    <value>Δημοσιεύτηκε νέα κύρια έκδοση ({1}) του μαθήματος "{0}" που ολοκληρώσατε.</value>
+  </data>
+  <data name="Notify.CourseNewVersion.Title" xml:space="preserve">
+    <value>Το μάθημα ενημερώθηκε</value>
+  </data>
+  <data name="Notify.CourseReassigned" xml:space="preserve">
+    <value>Το μάθημα "{0}" έχει νέα κύρια έκδοση ({1}) και σας ανατέθηκε ξανά.</value>
+  </data>
+  <data name="Notify.CourseReassigned.Title" xml:space="preserve">
+    <value>Το μάθημα ανατέθηκε ξανά</value>
+  </data>
+  <data name="Notify.InProgressReminder" xml:space="preserve">
+    <value>Δεν ολοκληρώσατε το μάθημα "{0}". Συνεχίστε από εκεί που σταματήσατε: {1}</value>
+  </data>
+  <data name="Notify.InProgressReminder.Title" xml:space="preserve">
+    <value>Υπενθύμιση μαθήματος</value>
+  </data>
+  <data name="NotStartedBadge" xml:space="preserve">
+    <value>Δεν ξεκίνησε</value>
+  </data>
+  <data name="OfflineCapLabel" xml:space="preserve">
+    <value>Μέγιστο μέγεθος εκτός σύνδεσης (MB)</value>
+  </data>
+  <data name="OfflineExpiryLabel" xml:space="preserve">
+    <value>Το αντίγραφο εκτός σύνδεσης διατηρείται για (ημέρες)</value>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Άνοιγμα</value>
+  </data>
+  <data name="OpenDocumentButton" xml:space="preserve">
+    <value>Άνοιγμα εγγράφου</value>
+  </data>
+  <data name="OptionalBadge" xml:space="preserve">
+    <value>προαιρετικό</value>
+  </data>
+  <data name="OptionCountsColumn" xml:space="preserve">
+    <value>Επιλογές που επιλέχθηκαν</value>
+  </data>
+  <data name="OptionNumberFormat" xml:space="preserve">
+    <value>Επιλογή {0}</value>
+  </data>
+  <data name="OptionsHelp" xml:space="preserve">
+    <value>Σημειώστε τη σωστή επιλογή ή επιλογές. Για ταξινόμηση, γράψτε τες στη σωστή σειρά. Το σωστό/λάθος χρησιμοποιεί τις δύο πρώτες. Οι σύντομες απαντήσεις δεν χρειάζονται επιλογές.</value>
+  </data>
+  <data name="OptionsLabel" xml:space="preserve">
+    <value>Επιλογές</value>
+  </data>
+  <data name="OrderHelp" xml:space="preserve">
+    <value>Βάλτε τα στοιχεία στη σωστή σειρά: επιλέξτε το πρώτο, μετά το δεύτερο κ.ο.κ.</value>
+  </data>
+  <data name="OutlineLabel" xml:space="preserve">
+    <value>Διάρθρωση μαθήματος</value>
+  </data>
+  <data name="OverdueBadge" xml:space="preserve">
+    <value>εκπρόθεσμο</value>
+  </data>
+  <data name="OverIncludedNote" xml:space="preserve">
+    <value>Η αποθήκευση υπερβαίνει την περιλαμβανόμενη ποσότητα. Σήμερα δεν χρεώνεται τίποτα· σκεφτείτε να αφαιρέσετε παλιά βίντεο.</value>
+  </data>
+  <data name="OverviewLabel" xml:space="preserve">
+    <value>Επισκόπηση</value>
+  </data>
+  <data name="OwnersHeader" xml:space="preserve">
+    <value>Υπεύθυνοι μαθήματος</value>
+  </data>
+  <data name="PassedBadge" xml:space="preserve">
+    <value>Επιτυχία</value>
+  </data>
+  <data name="PassMarkFormat" xml:space="preserve">
+    <value>Βάση επιτυχίας {0}%</value>
+  </data>
+  <data name="PassMarkLabel" xml:space="preserve">
+    <value>Βάση επιτυχίας</value>
+  </data>
+  <data name="PassRateTile" xml:space="preserve">
+    <value>Ποσοστό επιτυχίας</value>
+  </data>
+  <data name="PathLessonsFormat" xml:space="preserve">
+    <value>{0} μαθήματα · {1} ολοκληρώθηκαν από εσάς</value>
+  </data>
+  <data name="PathNobodyAssigned" xml:space="preserve">
+    <value>Η διαδρομή δεν έχει ανατεθεί ακόμη σε κανέναν.</value>
+  </data>
+  <data name="PathProgressButton" xml:space="preserve">
+    <value>Πρόοδος ({0} ανατεθειμένοι)</value>
+  </data>
+  <data name="PathProgressIntro" xml:space="preserve">
+    <value>Η πρόοδος κάθε μέλους που έχει ανατεθεί στα μαθήματα της διαδρομής.</value>
+  </data>
+  <data name="PlaybackSpeedLabel" xml:space="preserve">
+    <value>Ταχύτητα αναπαραγωγής</value>
+  </data>
+  <data name="PlayerTitle" xml:space="preserve">
+    <value>Μάθημα</value>
+  </data>
+  <data name="PointsAwardedFormat" xml:space="preserve">
+    <value>Βαθμοί που δόθηκαν (από {0})</value>
+  </data>
+  <data name="PointsLabel" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="PointsShort" xml:space="preserve">
+    <value>μον.</value>
+  </data>
+  <data name="Policy.Nothing" xml:space="preserve">
+    <value>Τίποτα: οι ολοκληρώσεις ισχύουν</value>
+  </data>
+  <data name="Policy.Notify" xml:space="preserve">
+    <value>Ειδοποίηση όσων το ολοκλήρωσαν</value>
+  </data>
+  <data name="Policy.Reassign" xml:space="preserve">
+    <value>Επανανάθεση σε όσους το ολοκλήρωσαν</value>
+  </data>
+  <data name="PresentHeader" xml:space="preserve">
+    <value>Παρόντες</value>
+  </data>
+  <data name="PresentMessage" xml:space="preserve">
+    <value>Καταγραφήκατε παρών. Συνεχίστε με το επόμενο μάθημα στο τηλέφωνό σας.</value>
+  </data>
+  <data name="PreTestLabel" xml:space="preserve">
+    <value>Προκαταρκτικό τεστ (η επιτυχία ολοκληρώνει το μάθημα)</value>
+  </data>
+  <data name="PreTestNote" xml:space="preserve">
+    <value>Προκαταρκτικό τεστ: η επιτυχία ολοκληρώνει όλο το μάθημα.</value>
+  </data>
+  <data name="PreviousButton" xml:space="preserve">
+    <value>Προηγούμενο</value>
+  </data>
+  <data name="PrintHint" xml:space="preserve">
+    <value>Χρησιμοποιήστε την εκτύπωση του προγράμματος περιήγησης για να εκτυπώσετε το τεστ.</value>
+  </data>
+  <data name="PrintKeyButton" xml:space="preserve">
+    <value>Με απαντήσεις</value>
+  </data>
+  <data name="PrintTestButton" xml:space="preserve">
+    <value>Εκτυπώσιμο τεστ</value>
+  </data>
+  <data name="PrivateBadge" xml:space="preserve">
+    <value>Ιδιωτική</value>
+  </data>
+  <data name="ProgressColumn" xml:space="preserve">
+    <value>Πρόοδος</value>
+  </data>
+  <data name="ProgressHonest" xml:space="preserve">
+    <value>Ολοκληρώθηκε το {0}% των υποχρεωτικών μαθημάτων</value>
+  </data>
+  <data name="ProgressLabel" xml:space="preserve">
+    <value>Πρόοδος</value>
+  </data>
+  <data name="ProtocolUnavailable" xml:space="preserve">
+    <value>Αυτή η έκδοση πρωτοκόλλου δεν είναι πλέον διαθέσιμη.</value>
+  </data>
+  <data name="ProtocolVersionFormat" xml:space="preserve">
+    <value>Έκδοση πρωτοκόλλου {0}, όπως δημοσιεύτηκε.</value>
+  </data>
+  <data name="ProtocolVersionHelp" xml:space="preserve">
+    <value>Το μάθημα δείχνει αυτή την έκδοση όπως δημοσιεύτηκε, ακόμη κι αν αλλάξει το πρωτόκολλο.</value>
+  </data>
+  <data name="ProtocolVersionLabel" xml:space="preserve">
+    <value>Έκδοση πρωτοκόλλου</value>
+  </data>
+  <data name="PublishBeforeAssign" xml:space="preserve">
+    <value>Δημοσιεύστε μια έκδοση πριν αναθέσετε το μάθημα.</value>
+  </data>
+  <data name="PublishButton" xml:space="preserve">
+    <value>Δημοσίευση</value>
+  </data>
+  <data name="PublishedColumn" xml:space="preserve">
+    <value>Δημοσιεύτηκε</value>
+  </data>
+  <data name="PublishedMessage" xml:space="preserve">
+    <value>Η έκδοση δημοσιεύτηκε.</value>
+  </data>
+  <data name="PublishHeader" xml:space="preserve">
+    <value>Δημοσίευση αυτής της έκδοσης</value>
+  </data>
+  <data name="PublishHelp" xml:space="preserve">
+    <value>Όσοι βρίσκονται στη μέση του μαθήματος κρατούν την έκδοση που ξεκίνησαν· όσοι δεν ξεκίνησαν μεταφέρονται σε αυτή.</value>
+  </data>
+  <data name="QuestionColumn" xml:space="preserve">
+    <value>Ερώτηση</value>
+  </data>
+  <data name="QuestionKind.MultiChoice" xml:space="preserve">
+    <value>Πολλαπλή επιλογή</value>
+  </data>
+  <data name="QuestionKind.Ordering" xml:space="preserve">
+    <value>Ταξινόμηση</value>
+  </data>
+  <data name="QuestionKind.ShortAnswer" xml:space="preserve">
+    <value>Σύντομη απάντηση (βαθμολογείται χειροκίνητα)</value>
+  </data>
+  <data name="QuestionKind.SingleChoice" xml:space="preserve">
+    <value>Μία επιλογή</value>
+  </data>
+  <data name="QuestionKind.TrueFalse" xml:space="preserve">
+    <value>Σωστό ή λάθος</value>
+  </data>
+  <data name="QuestionKindLabel" xml:space="preserve">
+    <value>Τύπος ερώτησης</value>
+  </data>
+  <data name="QuestionNumberFormat" xml:space="preserve">
+    <value>Ερώτηση {0} από {1}</value>
+  </data>
+  <data name="QuestionsCountFormat" xml:space="preserve">
+    <value>{0} ερωτήσεις</value>
+  </data>
+  <data name="QuestionTextLabel" xml:space="preserve">
+    <value>Ερώτηση</value>
+  </data>
+  <data name="RandomizeLabel" xml:space="preserve">
+    <value>Ανακάτεμα σειράς απαντήσεων</value>
+  </data>
+  <data name="RatingHelp" xml:space="preserve">
+    <value>1 είναι κακό, 5 είναι εξαιρετικό.</value>
+  </data>
+  <data name="ReassignDaysLabel" xml:space="preserve">
+    <value>Ημέρες για ολοκλήρωση σε επανανάθεση</value>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Επιστροφή σε προσχέδιο</value>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>Η έκδοση επέστρεψε σε προσχέδιο.</value>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>Λόγος επιστροφής</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Αφαίρεση</value>
+  </data>
+  <data name="RenameButton" xml:space="preserve">
+    <value>Μετονομασία</value>
+  </data>
+  <data name="RequiredLabel" xml:space="preserve">
+    <value>Απαιτείται για την ολοκλήρωση του μαθήματος</value>
+  </data>
+  <data name="RequiredWatchLabel" xml:space="preserve">
+    <value>Παρακολούθηση τουλάχιστον (%)</value>
+  </data>
+  <data name="ResponsesColumn" xml:space="preserve">
+    <value>Απαντήσεις</value>
+  </data>
+  <data name="ResponsesFormat" xml:space="preserve">
+    <value>{0} ανώνυμες απαντήσεις</value>
+  </data>
+  <data name="ResultColumn" xml:space="preserve">
+    <value>Αποτέλεσμα</value>
+  </data>
+  <data name="ResultTitle" xml:space="preserve">
+    <value>Αποτέλεσμα</value>
+  </data>
+  <data name="ResumeAttemptButton" xml:space="preserve">
+    <value>Συνέχεια προσπάθειας</value>
+  </data>
+  <data name="ResumeButton" xml:space="preserve">
+    <value>Συνέχεια</value>
+  </data>
+  <data name="RetakeButton" xml:space="preserve">
+    <value>Δοκιμάστε ξανά</value>
+  </data>
+  <data name="RetireButton" xml:space="preserve">
+    <value>Απόσυρση</value>
+  </data>
+  <data name="RetireConfirm" xml:space="preserve">
+    <value>Απόσυρση αυτού του μαθήματος; Φεύγει από τον κατάλογο· όσοι έχουν ήδη εγγραφεί μπορούν να το ολοκληρώσουν.</value>
+  </data>
+  <data name="RetiredBadge" xml:space="preserve">
+    <value>αποσυρμένο</value>
+  </data>
+  <data name="RetiredMessage" xml:space="preserve">
+    <value>Το μάθημα αποσύρθηκε.</value>
+  </data>
+  <data name="RetiredQuestionMessage" xml:space="preserve">
+    <value>Η ερώτηση αποσύρθηκε.</value>
+  </data>
+  <data name="RetireQuestionConfirm" xml:space="preserve">
+    <value>Απόσυρση αυτής της ερώτησης; Οι προσπάθειες που την περιείχαν κρατούν το αντίγραφό τους.</value>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Επισκόπηση</value>
+  </data>
+  <data name="ReviewQueueHeader" xml:space="preserve">
+    <value>Αναμένει έγκριση</value>
+  </data>
+  <data name="RightAssign" xml:space="preserve">
+    <value>ανάθεση</value>
+  </data>
+  <data name="RightEdit" xml:space="preserve">
+    <value>επεξεργασία</value>
+  </data>
+  <data name="RightReport" xml:space="preserve">
+    <value>αναφορές</value>
+  </data>
+  <data name="RightsColumn" xml:space="preserve">
+    <value>Δικαιώματα</value>
+  </data>
+  <data name="RolePathsHeader" xml:space="preserve">
+    <value>Διαδρομές ρόλων</value>
+  </data>
+  <data name="RolePathsIntro" xml:space="preserve">
+    <value>Ταξινομημένες λίστες μαθημάτων της ακαδημίας για έναν ρόλο. Η ανάθεση διαδρομής αναθέτει κάθε μάθημα της που διαθέτει η υπηρεσία σας.</value>
+  </data>
+  <data name="RolesLabel" xml:space="preserve">
+    <value>Ρόλοι</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="SavedMessage" xml:space="preserve">
+    <value>Αποθηκεύτηκε.</value>
+  </data>
+  <data name="SaveGradeButton" xml:space="preserve">
+    <value>Αποθήκευση βαθμού</value>
+  </data>
+  <data name="SaveLessonButton" xml:space="preserve">
+    <value>Αποθήκευση μαθήματος</value>
+  </data>
+  <data name="ScoreColumn" xml:space="preserve">
+    <value>Βαθμολογία</value>
+  </data>
+  <data name="SeatTimeRequirement" xml:space="preserve">
+    <value>Αυτό το μάθημα απαιτεί τουλάχιστον {0} λεπ. (έχετε {1} λεπ.).</value>
+  </data>
+  <data name="SelfEnrollLabel" xml:space="preserve">
+    <value>Τα μέλη μπορούν να εγγραφούν μόνα τους από τον κατάλογο</value>
+  </data>
+  <data name="SharedBadge" xml:space="preserve">
+    <value>Κοινόχρηστη</value>
+  </data>
+  <data name="SharedBankLabel" xml:space="preserve">
+    <value>Κοινόχρηστη με όλους τους συντάκτες</value>
+  </data>
+  <data name="SharingColumn" xml:space="preserve">
+    <value>Κοινή χρήση</value>
+  </data>
+  <data name="ShowAnswers.AfterPassing" xml:space="preserve">
+    <value>Το κλειδί, μετά την επιτυχία</value>
+  </data>
+  <data name="ShowAnswers.Always" xml:space="preserve">
+    <value>Το κλειδί μετά από κάθε προσπάθεια</value>
+  </data>
+  <data name="ShowAnswers.CorrectnessOnly" xml:space="preserve">
+    <value>Ποιες απαντήσεις ήταν σωστές, χωρίς το κλειδί</value>
+  </data>
+  <data name="ShowAnswers.Never" xml:space="preserve">
+    <value>Μόνο βαθμολογία</value>
+  </data>
+  <data name="ShowAnswersLabel" xml:space="preserve">
+    <value>Εμφάνιση απαντήσεων</value>
+  </data>
+  <data name="Signature.ArtifactChanged" xml:space="preserve">
+    <value>η έκδοση άλλαξε μετά την υπογραφή</value>
+  </data>
+  <data name="Signature.SubjectMissing" xml:space="preserve">
+    <value>η έκδοση δεν υπάρχει πλέον</value>
+  </data>
+  <data name="Signature.Valid" xml:space="preserve">
+    <value>αντιστοιχεί σε αυτή την έκδοση</value>
+  </data>
+  <data name="Signature.Voided" xml:space="preserve">
+    <value>ακυρώθηκε</value>
+  </data>
+  <data name="SizeColumn" xml:space="preserve">
+    <value>Μέγεθος</value>
+  </data>
+  <data name="StandardOption" xml:space="preserve">
+    <value>Τυπικό</value>
+  </data>
+  <data name="StartAssessmentButton" xml:space="preserve">
+    <value>Έναρξη αξιολόγησης</value>
+  </data>
+  <data name="StartButton" xml:space="preserve">
+    <value>Έναρξη</value>
+  </data>
+  <data name="StartCrewViewingButton" xml:space="preserve">
+    <value>Παρακολούθηση μαζί (ομαδική προβολή)</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="StorageIntro" xml:space="preserve">
+    <value>Φιλοξενούμενο βίντεο της υπηρεσίας σας σε σχέση με τα 100 GB που περιλαμβάνει το πρόσθετο LMS.</value>
+  </data>
+  <data name="StorageTitle" xml:space="preserve">
+    <value>Αποθήκευση βίντεο</value>
+  </data>
+  <data name="SubmitAttemptButton" xml:space="preserve">
+    <value>Υποβολή απαντήσεων</value>
+  </data>
+  <data name="SubmitConfirm" xml:space="preserve">
+    <value>Υποβολή απαντήσεων; Δεν θα μπορείτε να τις αλλάξετε μετά.</value>
+  </data>
+  <data name="SubmitForApprovalButton" xml:space="preserve">
+    <value>Υποβολή για έγκριση</value>
+  </data>
+  <data name="SubmitSurveyButton" xml:space="preserve">
+    <value>Αποστολή απαντήσεων</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Υποβλήθηκε</value>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>Η έκδοση υποβλήθηκε για έγκριση.</value>
+  </data>
+  <data name="SummaryLabel" xml:space="preserve">
+    <value>Περίληψη</value>
+  </data>
+  <data name="SurveyAnonymous" xml:space="preserve">
+    <value>Οι απαντήσεις σας είναι ανώνυμες: οι υπεύθυνοι βλέπουν μόνο σύνολα, από τρεις απαντήσεις.</value>
+  </data>
+  <data name="SurveyFormatHelp" xml:space="preserve">
+    <value>Μία ανά γραμμή: "rating: κείμενο", "text: κείμενο" ή "choice: κείμενο | επιλογή | επιλογή".</value>
+  </data>
+  <data name="SurveyQuestionsLabel" xml:space="preserve">
+    <value>Ερωτήσεις έρευνας</value>
+  </data>
+  <data name="SurveyResultsTitle" xml:space="preserve">
+    <value>Αξιολόγηση μαθήματος</value>
+  </data>
+  <data name="SurveyThanksMessage" xml:space="preserve">
+    <value>Ευχαριστούμε, οι απαντήσεις σας καταγράφηκαν ανώνυμα.</value>
+  </data>
+  <data name="SurveyTooFew" xml:space="preserve">
+    <value>Τα αποτελέσματα εμφανίζονται από {0} απαντήσεις, ώστε καμία να μη συνδέεται με μέλος.</value>
+  </data>
+  <data name="TagsLabel" xml:space="preserve">
+    <value>Ετικέτες</value>
+  </data>
+  <data name="TestedOutBadge" xml:space="preserve">
+    <value>Επιτυχία σε προκαταρκτικό τεστ</value>
+  </data>
+  <data name="TimeLimitFormat" xml:space="preserve">
+    <value>Χρονικό όριο {0} λεπ.</value>
+  </data>
+  <data name="TimeLimitLabel" xml:space="preserve">
+    <value>Χρονικό όριο (λεπτά, 0 = κανένα)</value>
+  </data>
+  <data name="TimeRemainingFormat" xml:space="preserve">
+    <value>Απομένουν {0} λεπ.</value>
+  </data>
+  <data name="TitleLabel" xml:space="preserve">
+    <value>Τίτλος</value>
+  </data>
+  <data name="TooFewAttempts" xml:space="preserve">
+    <value>πολύ λίγες προσπάθειες</value>
+  </data>
+  <data name="TranscriptHeader" xml:space="preserve">
+    <value>Απομαγνητοφώνηση</value>
+  </data>
+  <data name="TranscriptLink" xml:space="preserve">
+    <value>Αναλυτική βαθμολογία</value>
+  </data>
+  <data name="UploadButton" xml:space="preserve">
+    <value>Ανέβασμα</value>
+  </data>
+  <data name="UploadCaptionsButton" xml:space="preserve">
+    <value>Ανέβασμα υποτίτλων</value>
+  </data>
+  <data name="UploadedColumn" xml:space="preserve">
+    <value>Ανέβηκε</value>
+  </data>
+  <data name="UploadedMessage" xml:space="preserve">
+    <value>Ανέβηκε. Τα βίντεο επεξεργάζονται στο παρασκήνιο και παίζουν όταν είναι έτοιμα.</value>
+  </data>
+  <data name="UploadVideoLabel" xml:space="preserve">
+    <value>Ανέβασμα βίντεο</value>
+  </data>
+  <data name="UsedTile" xml:space="preserve">
+    <value>Σε χρήση</value>
+  </data>
+  <data name="VersionColumn" xml:space="preserve">
+    <value>Έκδοση</value>
+  </data>
+  <data name="VersionLabelFormat" xml:space="preserve">
+    <value>Έκδοση {0}</value>
+  </data>
+  <data name="VersionSettingsHeader" xml:space="preserve">
+    <value>Ρυθμίσεις έκδοσης</value>
+  </data>
+  <data name="VersionsHeader" xml:space="preserve">
+    <value>Εκδόσεις</value>
+  </data>
+  <data name="VersionStatus.Approved" xml:space="preserve">
+    <value>Εγκρίθηκε</value>
+  </data>
+  <data name="VersionStatus.Draft" xml:space="preserve">
+    <value>Προσχέδιο</value>
+  </data>
+  <data name="VersionStatus.InReview" xml:space="preserve">
+    <value>Υπό έλεγχο</value>
+  </data>
+  <data name="VersionStatus.Legacy" xml:space="preserve">
+    <value>Παλαιά</value>
+  </data>
+  <data name="VersionStatus.Published" xml:space="preserve">
+    <value>Δημοσιευμένη</value>
+  </data>
+  <data name="VersionStatus.Retired" xml:space="preserve">
+    <value>Αποσύρθηκε</value>
+  </data>
+  <data name="VersionStatus.Superseded" xml:space="preserve">
+    <value>Αντικαταστάθηκε</value>
+  </data>
+  <data name="VideoHelp" xml:space="preserve">
+    <value>Οι σύνδεσμοι YouTube και Vimeo λειτουργούν παντού. Το ανεβασμένο βίντεο ανήκει στο πρόσθετο LMS: μετατρέπεται σε HLS και μεταδίδεται μέσω υπογεγραμμένων συνδέσμων.</value>
+  </data>
+  <data name="VideoSource.Embed" xml:space="preserve">
+    <value>YouTube ή Vimeo</value>
+  </data>
+  <data name="VideoSource.Hosted" xml:space="preserve">
+    <value>Ανεβασμένο (LMS)</value>
+  </data>
+  <data name="VideoSourceLabel" xml:space="preserve">
+    <value>Πηγή βίντεο</value>
+  </data>
+  <data name="VideosTile" xml:space="preserve">
+    <value>Βίντεο</value>
+  </data>
+  <data name="VideoUnavailable" xml:space="preserve">
+    <value>Αυτό το βίντεο δεν είναι διαθέσιμο αυτή τη στιγμή.</value>
+  </data>
+  <data name="VideoUrlLabel" xml:space="preserve">
+    <value>Σύνδεσμος YouTube ή Vimeo</value>
+  </data>
+  <data name="WalkthroughBadge" xml:space="preserve">
+    <value>Περιήγηση</value>
+  </data>
+  <data name="WatchAgainButton" xml:space="preserve">
+    <value>Δείτε ξανά</value>
+  </data>
+  <data name="WatchRequirement" xml:space="preserve">
+    <value>Παρακολουθήστε τουλάχιστον το {0}% (έχετε δει το {1}%).</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Αποχώρηση</value>
+  </data>
+  <data name="WithdrawConfirm" xml:space="preserve">
+    <value>Αποχώρηση αυτού του μέλους από το μάθημα; Η πρόοδός του διατηρείται.</value>
+  </data>
+  <data name="WithdrawDraftButton" xml:space="preserve">
+    <value>Επιστροφή σε προσχέδιο</value>
+  </data>
+  <data name="WithdrawnDraftMessage" xml:space="preserve">
+    <value>Η έκδοση είναι ξανά προσχέδιο.</value>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>Το μέλος αποχώρησε από το μάθημα.</value>
+  </data>
+  <data name="YourAnswerLabel" xml:space="preserve">
+    <value>η απάντησή σας</value>
+  </data>
+  <data name="YourAttemptsHeader" xml:space="preserve">
+    <value>Οι προσπάθειές σας</value>
+  </data>
+  <data name="AidNothingAccepted" xml:space="preserve">
+    <value>Δεν έγινε αποδοχή κανενός στοιχείου.</value>
+  </data>
+  <data name="AidBankNameFormat" xml:space="preserve">
+    <value>Προσχέδια ερωτήσεων: {0}</value>
+  </data>
+  <data name="AidBankDescription" xml:space="preserve">
+    <value>Ερωτήσεις που έγιναν δεκτές από τα βοηθήματα σύνταξης. Ελέγξτε τις πριν τις χρησιμοποιήσετε σε αξιολόγηση.</value>
+  </data>
+  <data name="AidQuestionsSaved" xml:space="preserve">
+    <value>Προστέθηκαν {0} ερωτήσεις στην τράπεζα "{1}".</value>
+  </data>
+  <data name="AidOpenBank" xml:space="preserve">
+    <value>Άνοιγμα τράπεζας</value>
+  </data>
+  <data name="AidOutlineSaved" xml:space="preserve">
+    <value>Προστέθηκαν {0} ενότητες σε αυτό το προσχέδιο.</value>
+  </data>
+  <data name="Notify.MicroLearning" xml:space="preserve">
+    <value>Η εβδομαδιαία ερώτηση πρωτοκόλλου ({0}) είναι έτοιμη. Απαντήστε στα Πρωτόκολλα, Οι επιβεβαιώσεις μου, Εβδομαδιαίες ερωτήσεις.</value>
+  </data>
+  <data name="Notify.MicroLearning.Title" xml:space="preserve">
+    <value>Εβδομαδιαία ερώτηση πρωτοκόλλου</value>
+  </data>
+</root>

@@ -846,4 +846,7 @@
   <data name="AcademyLearnThisPage" xml:space="preserve">
     <value>Lezione su questa pagina ({0} min)</value>
   </data>
+  <data name="AcademyAssignThisLesson" xml:space="preserve">
+    <value>Assegna questa lezione</value>
+  </data>
 </root>

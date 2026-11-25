@@ -179,4 +179,58 @@
   <data name="NotAttending" xml:space="preserve">
     <value>Nie będę uczestniczyć</value>
   </data>
+  <data name="CredentialAudienceLabel" xml:space="preserve">
+    <value>Według certyfikatu</value>
+  </data>
+  <data name="CredentialAudienceNone" xml:space="preserve">
+    <value>Nikt według certyfikatu</value>
+  </data>
+  <data name="CredentialAudienceStatus" xml:space="preserve">
+    <value>Status certyfikatu</value>
+  </data>
+  <data name="CredentialAudienceExpired" xml:space="preserve">
+    <value>wygasł</value>
+  </data>
+  <data name="CredentialAudienceExpiring" xml:space="preserve">
+    <value>wygasa w ciągu podanej liczby dni</value>
+  </data>
+  <data name="CredentialAudienceMissing" xml:space="preserve">
+    <value>nigdy nie uzyskany</value>
+  </data>
+  <data name="CredentialAudienceDays" xml:space="preserve">
+    <value>Dni</value>
+  </data>
+  <data name="CredentialAudienceHelp" xml:space="preserve">
+    <value>Dodaje aktywnych członków, których certyfikat spełnia warunek, razem z odbiorcami wybranymi powyżej.</value>
+  </data>
+  <data name="CredentialAudienceNoMatch" xml:space="preserve">
+    <value>Żaden członek nie spełnia wybranego statusu certyfikatu.</value>
+  </data>
+  <data name="RosterAudienceLabel" xml:space="preserve">
+    <value>Uczestnicy zajęć</value>
+  </data>
+  <data name="RosterAudienceNone" xml:space="preserve">
+    <value>Bez zajęć</value>
+  </data>
+  <data name="RosterAudienceStatus" xml:space="preserve">
+    <value>Status na liście</value>
+  </data>
+  <data name="RosterAudienceEnrolled" xml:space="preserve">
+    <value>Zapisani</value>
+  </data>
+  <data name="RosterAudienceAttended" xml:space="preserve">
+    <value>Obecni</value>
+  </data>
+  <data name="RosterAudienceAbsent" xml:space="preserve">
+    <value>Nieobecni</value>
+  </data>
+  <data name="RosterAudienceWaitlisted" xml:space="preserve">
+    <value>Na liście rezerwowej</value>
+  </data>
+  <data name="RosterAudienceHelp" xml:space="preserve">
+    <value>Dodaje do odbiorców aktywnych członków zajęć o tym statusie.</value>
+  </data>
+  <data name="RosterAudienceNoMatch" xml:space="preserve">
+    <value>Nikt na liście tych zajęć nie ma tego statusu.</value>
+  </data>
 </root>

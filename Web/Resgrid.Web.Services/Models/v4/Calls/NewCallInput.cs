@@ -192,6 +192,14 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public Dictionary<int, List<int>> ProtocolAnswers { get; set; }
 
 		/// <summary>
+		/// Optional (Protocols P4): for a protocol whose version has a case flow, the case answers by step key, an optional determinant
+		/// override with its reason (required when it differs from the computed determinant), the priority applied, and an Enhanced AI
+		/// suggestion id the dispatcher confirmed. Keyed by protocol id; the server walks the cited version's graph and records the case.
+		/// Leave it out (null) and the protocol is attached as before. Older apps never send it.
+		/// </summary>
+		public Dictionary<int, Resgrid.Model.ProtocolCaseInput> ProtocolCases { get; set; }
+
+		/// <summary>
 		/// Time in the future, in the departments local time, to dispatch the call. Leave NULL to dispatch now.
 		/// </summary>
 		public DateTime? DispatchOn { get; set; }

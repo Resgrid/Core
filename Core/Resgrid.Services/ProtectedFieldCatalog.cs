@@ -788,6 +788,24 @@ namespace Resgrid.Services
 				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", familyName, table, column, ProtectedFieldStorageKind.Text,
 					Enum.Parse<ProtectedFieldClassification>(classification), view, edit, version));
 			}
+
+			// Member wellness WL0 (catalog 37, registered with M0376; protocols-training-knowledge-plan §13b, §25.4 item 4c): the
+			// substance, narrative, PPE, decontamination and health details of a member's exposure entry and the screening plan are
+			// health data about a member (Personnel family). The member link, call, category, dates and statuses are operational.
+			// Who may SEE an entry at all is decided by the wellness tier on top (the member, or the wellness officer role).
+			foreach (var (table, column, classification) in Resgrid.Model.WellnessProtectedFields.All())
+				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", PersonnelFamily, table, column, ProtectedFieldStorageKind.Text,
+					Enum.Parse<ProtectedFieldClassification>(classification), PermissionTypes.ViewProtectedPersonnelData, PermissionTypes.ViewProtectedPersonnelData,
+					Resgrid.Model.WellnessProtectedFields.CatalogVersion));
+
+			// Member wellness WL1 (catalog 38, registered with M0394-M0396; §13b, §25.4 item 4c): the notes of a BBP exposure case, the
+			// description, injury, restriction, treatment and clearance notes of an injury, and a medical clearance's restriction detail.
+			// Member, call, dates, stage, duty status, clearance status and the OSHA codes are operational. Who may SEE a record at all is
+			// decided by the wellness tier on top (the member, the designated officer or the wellness officer role).
+			foreach (var (table, column, classification) in Resgrid.Model.MemberHealthProtectedFields.All())
+				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", PersonnelFamily, table, column, ProtectedFieldStorageKind.Text,
+					Enum.Parse<ProtectedFieldClassification>(classification), PermissionTypes.ViewProtectedPersonnelData, PermissionTypes.ViewProtectedPersonnelData,
+					Resgrid.Model.MemberHealthProtectedFields.CatalogVersion));
 			return list;
 		}
 	}

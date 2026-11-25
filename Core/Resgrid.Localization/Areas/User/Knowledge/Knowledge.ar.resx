@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllFilter" xml:space="preserve">
+    <value>الكل</value>
+  </data>
+  <data name="AskButton" xml:space="preserve">
+    <value>اسأل</value>
+  </data>
+  <data name="AskHeader" xml:space="preserve">
+    <value>اسأل معرفة إدارتك</value>
+  </data>
+  <data name="AskHeaderCall" xml:space="preserve">
+    <value>اسأل عن بروتوكول هذا البلاغ</value>
+  </data>
+  <data name="AskHeaderProtocol" xml:space="preserve">
+    <value>اسأل عن هذا البروتوكول</value>
+  </data>
+  <data name="AskHeaderTraining" xml:space="preserve">
+    <value>اسأل عن هذا التدريب</value>
+  </data>
+  <data name="AskHelp" xml:space="preserve">
+    <value>تأتي الإجابات فقط من البروتوكولات والتدريبات المنشورة لإدارتك ومن أكاديمية Resgrid، وكل إجابة مرتبطة بمصادرها. راجع المصدر قبل أن تتصرف.</value>
+  </data>
+  <data name="Asking" xml:space="preserve">
+    <value>جارٍ البحث في بروتوكولات إدارتك وتدريباتها...</value>
+  </data>
+  <data name="AskLabel" xml:space="preserve">
+    <value>سؤالك</value>
+  </data>
+  <data name="AskPlaceholder" xml:space="preserve">
+    <value>اطرح سؤالًا عن بروتوكولاتك أو تدريبك</value>
+  </data>
+  <data name="BudgetNotice" xml:space="preserve">
+    <value>استهلكت إدارتك حصة الذكاء الاصطناعي لهذا الشهر. هذه المصادر تطابق سؤالك.</value>
+  </data>
+  <data name="BusyNotice" xml:space="preserve">
+    <value>خدمة الإجابات مشغولة حاليًا. حاول مرة أخرى بعد قليل. هذه المصادر تطابق سؤالك.</value>
+  </data>
+  <data name="ColumnActions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="ColumnAsked" xml:space="preserve">
+    <value>طُرح</value>
+  </data>
+  <data name="ColumnNearest" xml:space="preserve">
+    <value>أقرب المصادر</value>
+  </data>
+  <data name="ColumnQuestion" xml:space="preserve">
+    <value>السؤال</value>
+  </data>
+  <data name="ColumnReason" xml:space="preserve">
+    <value>السبب</value>
+  </data>
+  <data name="ConflictLabel" xml:space="preserve">
+    <value>هذه المصادر متعارضة</value>
+  </data>
+  <data name="CorpusHeader" xml:space="preserve">
+    <value>المصادر</value>
+  </data>
+  <data name="CorpusHelp" xml:space="preserve">
+    <value>تُضمَّن البروتوكولات المنشورة والتدريبات التي بدأت دائمًا، باستثناء العناصر المحددة بعدم استخدامها للذكاء الاصطناعي. لا تُستخدم المسودات والاختبارات وسجلات التعلم أبدًا.</value>
+  </data>
+  <data name="DismissButton" xml:space="preserve">
+    <value>رفض</value>
+  </data>
+  <data name="DismissedTile" xml:space="preserve">
+    <value>مرفوضة</value>
+  </data>
+  <data name="DoseNotice" xml:space="preserve">
+    <value>تُقتبس الجرعات تمامًا كما يكتبها المصدر. لم يُحسب أي شيء. راجع المصدر وأداة الجرعات لديك.</value>
+  </data>
+  <data name="DosingToolLink" xml:space="preserve">
+    <value>افتح أداة الجرعات الخاصة بالإدارة</value>
+  </data>
+  <data name="DosingToolUrlHelp" xml:space="preserve">
+    <value>رابط https لأداة الجرعات في إدارتك. ترتبط الإجابات التي تقتبس جرعة به. لا يحسب Resgrid أي جرعة أبدًا.</value>
+  </data>
+  <data name="DosingToolUrlLabel" xml:space="preserve">
+    <value>رابط أداة الجرعات</value>
+  </data>
+  <data name="DraftFailed" xml:space="preserve">
+    <value>تعذّر فتح مسودة لهذا البروتوكول.</value>
+  </data>
+  <data name="DraftProtocolButton" xml:space="preserve">
+    <value>مسودة تعديل البروتوكول</value>
+  </data>
+  <data name="EffectiveLabel" xml:space="preserve">
+    <value>سارٍ منذ {0}</value>
+  </data>
+  <data name="ErrorNotice" xml:space="preserve">
+    <value>حدث خطأ ما. حاول مرة أخرى.</value>
+  </data>
+  <data name="FeedbackGap" xml:space="preserve">
+    <value>شكرًا. أُضيف السؤال إلى تقرير فجوات المعرفة.</value>
+  </data>
+  <data name="FeedbackThanks" xml:space="preserve">
+    <value>شكرًا على ملاحظاتك.</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>تصفية</value>
+  </data>
+  <data name="GapsIntro" xml:space="preserve">
+    <value>أسئلة لم تجب عنها بروتوكولاتك وتدريباتك، وإجابات وصفها الأعضاء بأنها غير مفيدة. حوّل الفجوة إلى مسودة تعديل لبروتوكول أو إلى تدريب جديد.</value>
+  </data>
+  <data name="GapsLink" xml:space="preserve">
+    <value>فجوات المعرفة</value>
+  </data>
+  <data name="GapsTab" xml:space="preserve">
+    <value>فجوات المعرفة</value>
+  </data>
+  <data name="GapsTitle" xml:space="preserve">
+    <value>فجوات المعرفة</value>
+  </data>
+  <data name="GapSuggestionBody" xml:space="preserve">
+    <value>فجوة معرفة: سأل الأعضاء "{0}" ولم تجب عنه البروتوكولات.</value>
+  </data>
+  <data name="GapTrainingNoQuestion" xml:space="preserve">
+    <value>فجوة معرفة (لم يُحفظ السؤال)</value>
+  </data>
+  <data name="GapUpdated" xml:space="preserve">
+    <value>حُدّثت الفجوة.</value>
+  </data>
+  <data name="Helpful" xml:space="preserve">
+    <value>مفيد</value>
+  </data>
+  <data name="IncludeDocumentsHelp" xml:space="preserve">
+    <value>تنضم المستندات إلى المصادر التي تستخدمها الإجابات. لا تُستخدم مستندات المسؤولين فقط إلا للمسؤولين. لا تُستخدم أثناء تفعيل الحماية المتقدمة للبيانات.</value>
+  </data>
+  <data name="IncludeDocumentsLabel" xml:space="preserve">
+    <value>تضمين وحدة المستندات</value>
+  </data>
+  <data name="IndexHeader" xml:space="preserve">
+    <value>الفهرس</value>
+  </data>
+  <data name="IndexNotBuilt" xml:space="preserve">
+    <value>لم يُبنَ الفهرس بعد. يُبنى في الخلفية بعد أول سؤال.</value>
+  </data>
+  <data name="IndexStatus" xml:space="preserve">
+    <value>فُهرس {0} قسمًا، منها {1} مع متجهات التضمين. آخر تحديث {2}.</value>
+  </data>
+  <data name="IndexWarning" xml:space="preserve">
+    <value>تعذّرت فهرسة بعض العناصر أو كانت خدمة التضمين غير متاحة؛ ستُعاد المحاولة في الدورة التالية.</value>
+  </data>
+  <data name="InvalidUrl" xml:space="preserve">
+    <value>أدخل رابط https.</value>
+  </data>
+  <data name="KeptLocalNotice" xml:space="preserve">
+    <value>تستخدم إدارتك الحماية المتقدمة للبيانات، لذا يبقى سؤالك داخل Resgrid. هذه المصادر تطابقه.</value>
+  </data>
+  <data name="KeptLocalStatus" xml:space="preserve">
+    <value>تستخدم إدارتك الحماية المتقدمة للبيانات: يبقى سؤالك داخل Resgrid وتحصل على المصادر المطابقة.</value>
+  </data>
+  <data name="KeywordOnlyNotice" xml:space="preserve">
+    <value>لم تستجب خدمة البحث في الوقت المناسب، لذا عُثر على المصادر بالكلمات المفتاحية فقط.</value>
+  </data>
+  <data name="KindAcademy" xml:space="preserve">
+    <value>أكاديمية Resgrid</value>
+  </data>
+  <data name="KindCourse" xml:space="preserve">
+    <value>دورة</value>
+  </data>
+  <data name="KindDocument" xml:space="preserve">
+    <value>مستند</value>
+  </data>
+  <data name="KindProtocol" xml:space="preserve">
+    <value>بروتوكول</value>
+  </data>
+  <data name="KindProtocolFile" xml:space="preserve">
+    <value>ملف بروتوكول</value>
+  </data>
+  <data name="KindTraining" xml:space="preserve">
+    <value>تدريب</value>
+  </data>
+  <data name="KindTrainingFile" xml:space="preserve">
+    <value>ملف تدريب</value>
+  </data>
+  <data name="KnowledgeHeader" xml:space="preserve">
+    <value>المعرفة</value>
+  </data>
+  <data name="MatchedNotice" xml:space="preserve">
+    <value>هذه المصادر تطابق سؤالك.</value>
+  </data>
+  <data name="NearestLabel" xml:space="preserve">
+    <value>أقرب العناصر</value>
+  </data>
+  <data name="NewTrainingButton" xml:space="preserve">
+    <value>تدريب جديد</value>
+  </data>
+  <data name="NextPage" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="NoGaps" xml:space="preserve">
+    <value>لا توجد فجوات معرفة هنا.</value>
+  </data>
+  <data name="NoNearest" xml:space="preserve">
+    <value>لم يُعثر على شيء</value>
+  </data>
+  <data name="NoRole" xml:space="preserve">
+    <value>بلا دور</value>
+  </data>
+  <data name="NotCovered" xml:space="preserve">
+    <value>لا تغطي بروتوكولات إدارتك وتدريباتها هذا الأمر.</value>
+  </data>
+  <data name="NoteLabel" xml:space="preserve">
+    <value>ملاحظة</value>
+  </data>
+  <data name="NotHelpful" xml:space="preserve">
+    <value>غير مفيد</value>
+  </data>
+  <data name="OpenSource" xml:space="preserve">
+    <value>فتح</value>
+  </data>
+  <data name="OpenTile" xml:space="preserve">
+    <value>مفتوحة</value>
+  </data>
+  <data name="PreviousPage" xml:space="preserve">
+    <value>السابق</value>
+  </data>
+  <data name="ProtocolsCrumb" xml:space="preserve">
+    <value>البروتوكولات</value>
+  </data>
+  <data name="QuestionNotKept" xml:space="preserve">
+    <value>لم يُحفظ السؤال (الحماية المتقدمة للبيانات)</value>
+  </data>
+  <data name="QuestionRequired" xml:space="preserve">
+    <value>اكتب سؤالًا أولًا.</value>
+  </data>
+  <data name="ReasonNotCovered" xml:space="preserve">
+    <value>غير مغطى</value>
+  </data>
+  <data name="ReasonThumbsDown" xml:space="preserve">
+    <value>وُصف بأنه غير مفيد</value>
+  </data>
+  <data name="RebuildButton" xml:space="preserve">
+    <value>إعادة بناء الفهرس</value>
+  </data>
+  <data name="RebuildQueued" xml:space="preserve">
+    <value>سيُعاد بناء الفهرس في الخلفية خلال بضع دقائق.</value>
+  </data>
+  <data name="ReopenButton" xml:space="preserve">
+    <value>إعادة فتح</value>
+  </data>
+  <data name="ResolveButton" xml:space="preserve">
+    <value>حل</value>
+  </data>
+  <data name="ResolvedTile" xml:space="preserve">
+    <value>محلولة</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>ما يمكن أن تستخدمه إجابات المعرفة في الإدارة.</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>حُفظت إعدادات المعرفة.</value>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>إعدادات المعرفة</value>
+  </data>
+  <data name="SourcesLabel" xml:space="preserve">
+    <value>المصادر</value>
+  </data>
+  <data name="StaleCopyNotice" xml:space="preserve">
+    <value>نسختك غير المتصلة من عنصر مستشهد به أقدم من الإصدار المستشهد به.</value>
+  </data>
+  <data name="StatusFilterLabel" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="SurfaceApi" xml:space="preserve">
+    <value>تطبيق الجوال</value>
+  </data>
+  <data name="SurfaceAssistant" xml:space="preserve">
+    <value>المساعد</value>
+  </data>
+  <data name="SurfaceCall" xml:space="preserve">
+    <value>البلاغ</value>
+  </data>
+  <data name="SurfaceLibrary" xml:space="preserve">
+    <value>مكتبة البروتوكولات</value>
+  </data>
+  <data name="SurfaceProtocol" xml:space="preserve">
+    <value>صفحة البروتوكول</value>
+  </data>
+  <data name="SurfaceTraining" xml:space="preserve">
+    <value>صفحة التدريب</value>
+  </data>
+  <data name="UnavailableNotice" xml:space="preserve">
+    <value>الإجابات غير متاحة حاليًا. حاول مرة أخرى بعد بضع دقائق.</value>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>الإصدار {0}</value>
+  </data>
+  <data name="SurfaceHelp" xml:space="preserve">
+    <value>البحث في المساعدة</value>
+  </data>
+  <data name="SurfaceCourse" xml:space="preserve">
+    <value>الدورة</value>
+  </data>
+  <data name="AskHeaderCallWide" xml:space="preserve">
+    <value>اسأل عن هذا البلاغ</value>
+  </data>
+  <data name="AskHelpCallWide" xml:space="preserve">
+    <value>تأتي الإجابات فقط من البروتوكولات التي يستند إليها هذا البلاغ ومن نوعه وأولويته ومحدِّده ونوع موقعه. لا تُستخدم أبدًا تفاصيل المريض أو المتصل.</value>
+  </data>
+  <data name="AskHeaderCourse" xml:space="preserve">
+    <value>اسأل هذه الدورة</value>
+  </data>
+  <data name="AskHelpCourse" xml:space="preserve">
+    <value>تأتي الإجابات فقط من إصدار هذه الدورة الذي تأخذه، وكل جزء مرتبط بدرسه.</value>
+  </data>
+  <data name="CallContextNotice" xml:space="preserve">
+    <value>تمت الإجابة لهذا البلاغ: بروتوكولاته ونوعه وأولويته ومحدِّده ونوع موقعه.</value>
+  </data>
+  <data name="PracticeHeader" xml:space="preserve">
+    <value>التدرّب</value>
+  </data>
+  <data name="PracticeHelp" xml:space="preserve">
+    <value>تدرّب على سيناريو قصير مكتوب من الإصدار المعمول به من هذا البروتوكول. تُقيَّم إجاباتك مقارنةً بالبروتوكول فقط، ولا يُسجَّل شيء في سجل تدريبك.</value>
+  </data>
+  <data name="PracticeStart" xml:space="preserve">
+    <value>ابدأ سيناريو</value>
+  </data>
+  <data name="PracticeStarting" xml:space="preserve">
+    <value>جارٍ كتابة سيناريو…</value>
+  </data>
+  <data name="PracticeScenarioLabel" xml:space="preserve">
+    <value>السيناريو</value>
+  </data>
+  <data name="PracticeAnswerLabel" xml:space="preserve">
+    <value>إجابتك</value>
+  </data>
+  <data name="PracticeSubmit" xml:space="preserve">
+    <value>قيّم إجاباتي</value>
+  </data>
+  <data name="PracticeScoring" xml:space="preserve">
+    <value>جارٍ تقييم إجاباتك…</value>
+  </data>
+  <data name="PracticeAgain" xml:space="preserve">
+    <value>سيناريو آخر</value>
+  </data>
+  <data name="PracticeScoreFormat" xml:space="preserve">
+    <value>النتيجة: {0} من {1}</value>
+  </data>
+  <data name="PracticeItemScoreFormat" xml:space="preserve">
+    <value>{0} من {1}</value>
+  </data>
+  <data name="PracticeNotScored" xml:space="preserve">
+    <value>تعذّر تقييم هذه الإجابة.</value>
+  </data>
+  <data name="PracticeExcluded" xml:space="preserve">
+    <value>لا يُستخدم هذا البروتوكول مع الذكاء الاصطناعي.</value>
+  </data>
+  <data name="PracticeKeptLocal" xml:space="preserve">
+    <value>تُبقي حماية البيانات المتقدمة محتوى هذه الإدارة محليًا، لذلك التدرّب غير متاح.</value>
+  </data>
+  <data name="PracticeNoContent" xml:space="preserve">
+    <value>يحتوي هذا البروتوكول على نص قليل جدًا للتدرّب عليه.</value>
+  </data>
+  <data name="PracticeRefused" xml:space="preserve">
+    <value>تعذّر التحقق من السيناريو مقارنةً بالبروتوكول. حاول مرة أخرى.</value>
+  </data>
+  <data name="PracticeStale" xml:space="preserve">
+    <value>تغيّر البروتوكول منذ كتابة هذا السيناريو. ابدأ سيناريو جديدًا.</value>
+  </data>
+  <data name="PracticeAnswerRequired" xml:space="preserve">
+    <value>أجب عن سؤال واحد على الأقل.</value>
+  </data>
+  <data name="PracticeOnlyNotice" xml:space="preserve">
+    <value>للتدرّب فقط: لا يُسجَّل شيء في سجل تدريبك.</value>
+  </data>
+</root>

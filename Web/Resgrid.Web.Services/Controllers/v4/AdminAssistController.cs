@@ -52,7 +52,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				ImpactSettings = catalog.Settings.Where(s => Resgrid.AdminAssist.ConfigurationImpactEvaluator.Supports(s.Id)).Select(s => s.Id).ToArray(),
 				ModuleImpactTypes = ModuleImpactSelection.Supported,
 				PermissionImpactTypes = Resgrid.Services.AdminAssist.PermissionImpactService.Supported,
-				catalog.Version, catalog.Areas, catalog.Capabilities, catalog.Settings, catalog.Packs, catalog.Articles,
+				// An add-on built dark (no feature released, e.g. the LMS before it is sold) is neither listed nor offered.
+				catalog.Version, Areas = catalog.ListedAreas(), Capabilities = catalog.ListedCapabilities(), catalog.Settings, catalog.Packs, catalog.Articles,
 				Strings = labels.GetAllStrings(true).GroupBy(s => s.Name).ToDictionary(g => g.Key, g => g.First().Value),
 				RightToLeft = CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft
 			};

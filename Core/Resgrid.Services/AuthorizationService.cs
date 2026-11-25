@@ -37,6 +37,7 @@ namespace Resgrid.Services
 		private readonly IContactsService _contactsService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IDispatchScopeService _dispatchScopeService;
+		private readonly Lazy<IProtocolAccessService> _protocolAccess;
 
 		private static string WhoCanViewUnitsCacheKey = "ViewUnitsSecurityMaxtix_{0}";
 		private static string WhoCanViewUnitLocationsCacheKey = "ViewUnitLocationsSecurityMaxtix_{0}";
@@ -56,7 +57,7 @@ namespace Resgrid.Services
 			IPermissionsService permissionsService, ICalendarService calendarService, IProtocolsService protocolsService,
 			IShiftsService shiftsService, ICustomStateService customStateService, ICertificationService certificationService,
 			IDocumentsService documentsService, INotesService notesService, ICacheProvider cacheProvider, IContactsService contactsService,
-			IEventAggregator eventAggregator, IDispatchScopeService dispatchScopeService)
+			IEventAggregator eventAggregator, IDispatchScopeService dispatchScopeService, Lazy<IProtocolAccessService> protocolAccess = null)
 		{
 			_departmentsService = departmentsService;
 			_invitesService = invitesService;
@@ -79,6 +80,7 @@ namespace Resgrid.Services
 			_contactsService = contactsService;
 			_eventAggregator = eventAggregator;
 			_dispatchScopeService = dispatchScopeService;
+			_protocolAccess = protocolAccess;
 		}
 
 		/// <summary>
@@ -605,6 +607,10 @@ namespace Resgrid.Services
 			if (department.IsUserAnAdmin(userId))
 				return true;
 
+			// P1: whoever holds Author Protocols (128) edits the department's protocols.
+			if (_protocolAccess?.Value != null)
+				return (await _protocolAccess.Value.GetReaderAsync(department.DepartmentId, userId)).MayAuthor;
+
 			return false;
 		}
 
@@ -619,6 +625,11 @@ namespace Resgrid.Services
 
 			if (protocol.DepartmentId != department.DepartmentId)
 				return false;
+
+			// P1 (R-P4): the protocol read rule (published, in its audience, or a Dispatch protocol for dispatchers; drafts and
+			// reviews for authors and approvers). Unified Search checks every protocol hit through here.
+			if (_protocolAccess?.Value != null)
+				return await _protocolAccess.Value.CanReadAsync(await _protocolAccess.Value.GetReaderAsync(department.DepartmentId, userId), protocol);
 
 			return true;
 		}

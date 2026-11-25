@@ -2667,4 +2667,19 @@
   <data name="ShiftOverSignupHelp" xml:space="preserve">
     <value>Los miembros pueden inscribirse en un grupo aunque todos sus puestos por función (obligatorios y opcionales) estén ocupados. Siguen necesitando una de las funciones del grupo.</value>
   </data>
+  <data name="DocumentNumberKindProtocol" xml:space="preserve">
+    <value>Protocolos</value>
+  </data>
+  <data name="RunCardConditionProtocolOutcome" xml:space="preserve">
+    <value>Un determinante de protocolo en la llamada</value>
+  </data>
+  <data name="RunCardDeterminantEquals" xml:space="preserve">
+    <value>es igual a</value>
+  </data>
+  <data name="RunCardDeterminantStartsWith" xml:space="preserve">
+    <value>empieza por</value>
+  </data>
+  <data name="RunCardDeterminantValue" xml:space="preserve">
+    <value>Determinante (p. ej. 09-E)</value>
+  </data>
 </root>

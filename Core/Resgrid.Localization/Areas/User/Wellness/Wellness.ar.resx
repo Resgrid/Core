@@ -1,0 +1,700 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PersonnelLink" xml:space="preserve">
+    <value>الأفراد</value>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>الرئيسية</value>
+  </data>
+  <data name="WellnessModuleLabel" xml:space="preserve">
+    <value>الرفاهية</value>
+  </data>
+  <data name="MyExposuresTab" xml:space="preserve">
+    <value>حالات تعرضي</value>
+  </data>
+  <data name="ReportTab" xml:space="preserve">
+    <value>تقرير الأعضاء</value>
+  </data>
+  <data name="FlagCallTab" xml:space="preserve">
+    <value>إشارات ما بعد البلاغ</value>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="MyExposuresTitle" xml:space="preserve">
+    <value>حالات تعرضي</value>
+  </data>
+  <data name="MemberExposuresTitle" xml:space="preserve">
+    <value>سجل التعرض: {0}</value>
+  </data>
+  <data name="MyExposuresIntro" xml:space="preserve">
+    <value>سجلك الخاص بحالات التعرض والبلاغات الصعبة. لا يراه إلا أنت ومسؤولو الرفاهية في إدارتك.</value>
+  </data>
+  <data name="MemberExposuresIntro" xml:space="preserve">
+    <value>سجل التعرض والحوادث الحرجة لهذا العضو. تعامل معه بعناية: لا يراه إلا العضو ومسؤولو الرفاهية.</value>
+  </data>
+  <data name="LogExposureButton" xml:space="preserve">
+    <value>تسجيل تعرض</value>
+  </data>
+  <data name="ExportPdfButton" xml:space="preserve">
+    <value>تصدير PDF</value>
+  </data>
+  <data name="ExportCsvButton" xml:space="preserve">
+    <value>تصدير CSV</value>
+  </data>
+  <data name="ProtectedWithheldNotice" xml:space="preserve">
+    <value>بعض التفاصيل محمية بالحماية المتقدمة للبيانات في إدارتك ولا تُعرض هنا.</value>
+  </data>
+  <data name="ConfirmedEntriesLabel" xml:space="preserve">
+    <value>الإدخالات المؤكدة</value>
+  </data>
+  <data name="CriticalIncidentsLabel" xml:space="preserve">
+    <value>الحوادث الحرجة</value>
+  </data>
+  <data name="AwaitingReviewLabel" xml:space="preserve">
+    <value>بانتظار المراجعة</value>
+  </data>
+  <data name="SuggestionsHeader" xml:space="preserve">
+    <value>مقترحة من البلاغات الأخيرة</value>
+  </data>
+  <data name="SuggestionsHelp" xml:space="preserve">
+    <value>اقتُرحت هذه من سجلات الإرسال بعد الإشارة إلى بلاغ. لا يُسجَّل شيء حتى تراجعه وتؤكده. إن لم ينطبق عليك فتجاهله.</value>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="CategoryColumn" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="CallColumn" xml:space="preserve">
+    <value>البلاغ</value>
+  </data>
+  <data name="DurationColumn" xml:space="preserve">
+    <value>المدة (س:دد)</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="SuggestedFromLabel" xml:space="preserve">
+    <value>مقترح من</value>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>مراجعة</value>
+  </data>
+  <data name="DismissButton" xml:space="preserve">
+    <value>تجاهل</value>
+  </data>
+  <data name="ScreeningHeader" xml:space="preserve">
+    <value>فحص معزز</value>
+  </data>
+  <data name="ScreeningSelfText" xml:space="preserve">
+    <value>اقترح مسؤول الرفاهية في إدارتك إجراء فحوص صحية إضافية لك. المتابعات أدناه هنا لمساعدتك على المتابعة.</value>
+  </data>
+  <data name="ScreeningOfficerText" xml:space="preserve">
+    <value>هذا العضو مُشار إليه لفحص معزز.</value>
+  </data>
+  <data name="ReviewOnLabel" xml:space="preserve">
+    <value>المراجعة التالية</value>
+  </data>
+  <data name="PlanNotesLabel" xml:space="preserve">
+    <value>خطة المتابعة</value>
+  </data>
+  <data name="WithheldValue" xml:space="preserve">
+    <value>محمي</value>
+  </data>
+  <data name="FollowUpColumn" xml:space="preserve">
+    <value>المتابعة</value>
+  </data>
+  <data name="AssigneeColumn" xml:space="preserve">
+    <value>مُسند إلى</value>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>الاستحقاق</value>
+  </data>
+  <data name="StateColumn" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="CompleteButton" xml:space="preserve">
+    <value>تعليم كمنجز</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="ScreeningManageHeader" xml:space="preserve">
+    <value>الفحص والمتابعة</value>
+  </data>
+  <data name="ScreeningManageHelp" xml:space="preserve">
+    <value>أشِر إلى هذا العضو لفحص معزز واحتفظ بخطة متابعة. الخطة محمية ولا يراها إلا العضو ومسؤولو الرفاهية.</value>
+  </data>
+  <data name="ScreeningCategoryLabel" xml:space="preserve">
+    <value>بسبب</value>
+  </data>
+  <data name="NoCategoryOption" xml:space="preserve">
+    <value>غير محدد</value>
+  </data>
+  <data name="ProtectedFieldHelp" xml:space="preserve">
+    <value>محمي: لا يراه إلا العضو ومسؤولو الرفاهية.</value>
+  </data>
+  <data name="FlagForScreeningButton" xml:space="preserve">
+    <value>الإشارة لفحص معزز</value>
+  </data>
+  <data name="SaveScreeningButton" xml:space="preserve">
+    <value>حفظ الفحص</value>
+  </data>
+  <data name="ClearScreeningButton" xml:space="preserve">
+    <value>إنهاء الفحص المعزز</value>
+  </data>
+  <data name="AddFollowUpHeader" xml:space="preserve">
+    <value>إضافة متابعة</value>
+  </data>
+  <data name="FollowUpPrivacyHelp" xml:space="preserve">
+    <value>تسجل المتابعات نوع الخطوة وما إذا أُنجزت فقط. احتفظ بأي تفاصيل صحية في الخطة المحمية.</value>
+  </data>
+  <data name="AddFollowUpButton" xml:space="preserve">
+    <value>إضافة متابعة</value>
+  </data>
+  <data name="EntriesHeader" xml:space="preserve">
+    <value>الإدخالات</value>
+  </data>
+  <data name="NoEntriesSelf" xml:space="preserve">
+    <value>لا توجد لديك إدخالات بعد. يمكنك تسجيل تعرض في أي وقت.</value>
+  </data>
+  <data name="NoEntriesMember" xml:space="preserve">
+    <value>لا توجد إدخالات لهذا العضو.</value>
+  </data>
+  <data name="RetentionNotice" xml:space="preserve">
+    <value>تُحفظ الإدخالات 30 عامًا على الأقل. يمكن تعليم الإدخال المسجل خطأً بذلك؛ يُحتفظ به لكنه لا يُحتسب.</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="AnniversaryReminderOnLabel" xml:space="preserve">
+    <value>تذكير الذكرى مفعّل</value>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>فتح</value>
+  </data>
+  <data name="VoidButton" xml:space="preserve">
+    <value>سُجّل خطأً</value>
+  </data>
+  <data name="VoidHelp" xml:space="preserve">
+    <value>يبقى الإدخال في السجل طوال مدة الاحتفاظ لكنه لا يُحتسب.</value>
+  </data>
+  <data name="VoidConfirmButton" xml:space="preserve">
+    <value>تأكيد</value>
+  </data>
+  <data name="SupportNote" xml:space="preserve">
+    <value>إذا كان شيء ما من بلاغ لا يزال يرافقك، فلست مضطرًا لمواجهته وحدك. فريق دعم الأقران وموارد الرفاهية في إدارتك موجودة من أجلك.</value>
+  </data>
+  <data name="LogExposureTitle" xml:space="preserve">
+    <value>تسجيل تعرض</value>
+  </data>
+  <data name="ReviewSuggestionTitle" xml:space="preserve">
+    <value>مراجعة إدخال مقترح</value>
+  </data>
+  <data name="EntryTitle" xml:space="preserve">
+    <value>إدخال تعرض</value>
+  </data>
+  <data name="EntryIntro" xml:space="preserve">
+    <value>سجّل ما حدث بكلماتك. تُستخدم الفئة والتاريخ والبلاغ والمدة فقط في الإحصاءات؛ وكل ما عدا ذلك محمي.</value>
+  </data>
+  <data name="SuggestionReviewNotice" xml:space="preserve">
+    <value>اقتُرح هذا الإدخال من سجلات الإرسال. تحقق من التفاصيل وأضف ما تشاء ثم أكّده - أو تجاهله إن لم ينطبق.</value>
+  </data>
+  <data name="WhatHappenedHeader" xml:space="preserve">
+    <value>متى وماذا</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>العضو</value>
+  </data>
+  <data name="OccurredOnLabel" xml:space="preserve">
+    <value>التاريخ والوقت</value>
+  </data>
+  <data name="DurationMinutesLabel" xml:space="preserve">
+    <value>المدة (بالدقائق)</value>
+  </data>
+  <data name="NoCallOption" xml:space="preserve">
+    <value>بدون بلاغ</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>التفاصيل (محمية)</value>
+  </data>
+  <data name="DetailsHelp" xml:space="preserve">
+    <value>هذه التفاصيل محمية: لا يقرؤها إلا أنت ومسؤولو الرفاهية في إدارتك، ولا تُستخدم أبدًا في البحث أو في أي ميزة ذكاء اصطناعي.</value>
+  </data>
+  <data name="SubstanceLabel" xml:space="preserve">
+    <value>المادة أو العامل</value>
+  </data>
+  <data name="PpeWornLabel" xml:space="preserve">
+    <value>معدات الحماية المستخدمة</value>
+  </data>
+  <data name="DecontaminationLabel" xml:space="preserve">
+    <value>إزالة التلوث بعد ذلك</value>
+  </data>
+  <data name="NarrativeLabel" xml:space="preserve">
+    <value>ماذا حدث</value>
+  </data>
+  <data name="HealthDetailsLabel" xml:space="preserve">
+    <value>تفاصيل صحية</value>
+  </data>
+  <data name="HealthDetailsHelp" xml:space="preserve">
+    <value>اختياري. الأعراض أو العلاج أو أي شيء تريد تسجيله. هذا ليس تقييمًا طبيًا.</value>
+  </data>
+  <data name="RemindersHeader" xml:space="preserve">
+    <value>تذكيرات الذكرى</value>
+  </data>
+  <data name="RemindersHelp" xml:space="preserve">
+    <value>بالنسبة للحوادث الحرجة، يمكنك اختيار تذكير لطيف قبل كل ذكرى - لنفسك و/أو لإعلام فريق دعم الأقران. يمكنك تغيير ذلك في أي وقت.</value>
+  </data>
+  <data name="RemindMemberLabel" xml:space="preserve">
+    <value>ذكّرني قبل الذكرى</value>
+  </data>
+  <data name="RemindPeerTeamLabel" xml:space="preserve">
+    <value>أعلم فريق دعم الأقران قبل الذكرى</value>
+  </data>
+  <data name="NoPeerTeamHelp" xml:space="preserve">
+    <value>لم تُنشئ إدارتك فريق دعم أقران بعد.</value>
+  </data>
+  <data name="ConfirmButton" xml:space="preserve">
+    <value>تأكيد الإدخال</value>
+  </data>
+  <data name="SaveForLaterButton" xml:space="preserve">
+    <value>حفظ دون تأكيد</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="BackButton" xml:space="preserve">
+    <value>رجوع</value>
+  </data>
+  <data name="DismissLongButton" xml:space="preserve">
+    <value>هذا لا ينطبق علي - تجاهل</value>
+  </data>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>تقرير تعرض الأعضاء</value>
+  </data>
+  <data name="ReportIntro" xml:space="preserve">
+    <value>إحصاءات لكل عضو لمسؤولي الرفاهية. تبقى التفاصيل في سجل كل عضو.</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>تصفية التقرير</value>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>من</value>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>إلى</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>تصفية</value>
+  </data>
+  <data name="MembersHeader" xml:space="preserve">
+    <value>الأعضاء</value>
+  </data>
+  <data name="NoReportRows" xml:space="preserve">
+    <value>لا توجد إدخالات في هذه الفترة.</value>
+  </data>
+  <data name="LastExposureLabel" xml:space="preserve">
+    <value>الأحدث</value>
+  </data>
+  <data name="ScreeningFlaggedLabel" xml:space="preserve">
+    <value>فحص معزز</value>
+  </data>
+  <data name="OpenFollowUpsValue" xml:space="preserve">
+    <value>{0} متابعات مفتوحة</value>
+  </data>
+  <data name="OpenLogButton" xml:space="preserve">
+    <value>فتح السجل</value>
+  </data>
+  <data name="RecentFlagsHeader" xml:space="preserve">
+    <value>إشارات ما بعد البلاغ الأخيرة</value>
+  </data>
+  <data name="NoFlags" xml:space="preserve">
+    <value>لم تتم الإشارة إلى أي بلاغ.</value>
+  </data>
+  <data name="FlaggedOnLabel" xml:space="preserve">
+    <value>تاريخ الإشارة</value>
+  </data>
+  <data name="SuggestionsColumn" xml:space="preserve">
+    <value>الاقتراحات</value>
+  </data>
+  <data name="FlagClearedLabel" xml:space="preserve">
+    <value>أُزيلت</value>
+  </data>
+  <data name="SuggestionsBuiltValue" xml:space="preserve">
+    <value>{0} مقترحة</value>
+  </data>
+  <data name="SuggestionsPendingLabel" xml:space="preserve">
+    <value>بانتظار انتهاء البلاغ</value>
+  </data>
+  <data name="FlagCallTitle" xml:space="preserve">
+    <value>متابعة الرفاهية: البلاغ {0}</value>
+  </data>
+  <data name="FlagCallPickerTitle" xml:space="preserve">
+    <value>إشارات ما بعد البلاغ</value>
+  </data>
+  <data name="FlagCallIntro" xml:space="preserve">
+    <value>أشِر إلى بلاغ كحادث حرج أو تعرض. بعد انتهاء البلاغ، يُعرض على كل من تضعه سجلات الإرسال فيه إدخال مقترح لمراجعته. لا يُسجَّل أحد دون تأكيد.</value>
+  </data>
+  <data name="RecentCallsHeader" xml:space="preserve">
+    <value>البلاغات الأخيرة</value>
+  </data>
+  <data name="NoRecentCalls" xml:space="preserve">
+    <value>لا توجد بلاغات في آخر 30 يومًا.</value>
+  </data>
+  <data name="CallActiveNotice" xml:space="preserve">
+    <value>هذا البلاغ لا يزال نشطًا. تُنشأ الاقتراحات بعد انتهائه.</value>
+  </data>
+  <data name="CriticalIncidentHelp" xml:space="preserve">
+    <value>بلاغ قد يكون صادمًا. هذا منفصل عن أولوية إرسال البلاغ.</value>
+  </data>
+  <data name="NotFlaggedLabel" xml:space="preserve">
+    <value>غير مُشار إليه</value>
+  </data>
+  <data name="FlagButton" xml:space="preserve">
+    <value>إشارة</value>
+  </data>
+  <data name="ClearFlagButton" xml:space="preserve">
+    <value>إزالة الإشارة</value>
+  </data>
+  <data name="FlagPrivacyHelp" xml:space="preserve">
+    <value>الإشارة إلى بلاغ تسجل البلاغ والفئة فقط. يقرر الأعضاء ما يضيفونه إلى سجلاتهم.</value>
+  </data>
+  <data name="BackToCallButton" xml:space="preserve">
+    <value>العودة إلى البلاغ</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>إعدادات الرفاهية</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>من يقرأ سجلات تعرض الأعضاء، ومن هو فريق دعم الأقران، وكم مدة الاحتفاظ بالإدخالات.</value>
+  </data>
+  <data name="WellnessOfficerRoleLabel" xml:space="preserve">
+    <value>دور مسؤول الرفاهية</value>
+  </data>
+  <data name="WellnessOfficerRoleHelp" xml:space="preserve">
+    <value>يمكن لأعضاء هذا الدور قراءة سجل تعرض كل عضو وإدارة إشارات الفحص. لا يستطيع مديرو الإدارة قراءة السجلات ما لم يحملوا هذا الدور.</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>لا شيء</value>
+  </data>
+  <data name="PeerTeamLabel" xml:space="preserve">
+    <value>شهادة فريق دعم الأقران</value>
+  </data>
+  <data name="PeerTeamHelp" xml:space="preserve">
+    <value>يتلقى الأعضاء الحاملون لشهادة سارية من هذا النوع تذكيرات الذكرى التي يختار الأعضاء مشاركتها.</value>
+  </data>
+  <data name="RetentionYearsLabel" xml:space="preserve">
+    <value>الاحتفاظ بالإدخالات لمدة (سنوات)</value>
+  </data>
+  <data name="RetentionYearsHelp" xml:space="preserve">
+    <value>30 عامًا على الأقل (OSHA 29 CFR 1910.1020). تُحفظ الإدخالات الخاضعة لحجز قانوني مدة أطول.</value>
+  </data>
+  <data name="WellnessFollowUpButton" xml:space="preserve">
+    <value>متابعة الرفاهية</value>
+  </data>
+  <data name="WellnessFollowUpHelp" xml:space="preserve">
+    <value>أشِر إلى هذا البلاغ كحادث حرج أو تعرض ليتمكن الأعضاء من إضافته إلى سجلاتهم</value>
+  </data>
+  <data name="Msg.Recorded" xml:space="preserve">
+    <value>تم تسجيل الإدخال.</value>
+  </data>
+  <data name="Msg.Confirmed" xml:space="preserve">
+    <value>تم تأكيد الإدخال.</value>
+  </data>
+  <data name="Msg.Saved" xml:space="preserve">
+    <value>تم الحفظ.</value>
+  </data>
+  <data name="Msg.Dismissed" xml:space="preserve">
+    <value>تم تجاهل الاقتراح.</value>
+  </data>
+  <data name="Msg.Voided" xml:space="preserve">
+    <value>تم تعليم الإدخال كمسجل خطأً.</value>
+  </data>
+  <data name="Msg.RemindersSaved" xml:space="preserve">
+    <value>تم حفظ اختيارات التذكير.</value>
+  </data>
+  <data name="Msg.ScreeningSaved" xml:space="preserve">
+    <value>تم حفظ إشارة الفحص.</value>
+  </data>
+  <data name="Msg.ScreeningCleared" xml:space="preserve">
+    <value>انتهى الفحص المعزز.</value>
+  </data>
+  <data name="Msg.FollowUpAdded" xml:space="preserve">
+    <value>تمت إضافة المتابعة.</value>
+  </data>
+  <data name="Msg.FollowUpCompleted" xml:space="preserve">
+    <value>تم تعليم المتابعة كمنجزة.</value>
+  </data>
+  <data name="Msg.FollowUpCancelled" xml:space="preserve">
+    <value>تم إلغاء المتابعة.</value>
+  </data>
+  <data name="Msg.CallFlagged" xml:space="preserve">
+    <value>تمت الإشارة إلى البلاغ. ستُعرض الاقتراحات بعد انتهائه.</value>
+  </data>
+  <data name="Msg.CallFlagCleared" xml:space="preserve">
+    <value>أُزيلت الإشارة. وحُذفت الاقتراحات التي لم يؤكدها أحد.</value>
+  </data>
+  <data name="Msg.SettingsSaved" xml:space="preserve">
+    <value>تم حفظ إعدادات الرفاهية.</value>
+  </data>
+  <data name="Error.Generic" xml:space="preserve">
+    <value>تعذر الحفظ. يرجى التحقق من الإدخال والمحاولة مرة أخرى.</value>
+  </data>
+  <data name="Error.NotAllowed" xml:space="preserve">
+    <value>ليس لديك صلاحية الوصول إلى ذلك.</value>
+  </data>
+  <data name="Error.ExportFailed" xml:space="preserve">
+    <value>تعذر إنشاء التصدير. يرجى المحاولة مرة أخرى.</value>
+  </data>
+  <data name="Error.role_not_found" xml:space="preserve">
+    <value>لم يتم العثور على ذلك الدور.</value>
+  </data>
+  <data name="Error.certification_type_not_found" xml:space="preserve">
+    <value>لم يتم العثور على نوع الشهادة ذلك.</value>
+  </data>
+  <data name="Error.member_not_found" xml:space="preserve">
+    <value>لم يتم العثور على ذلك العضو في هذه الإدارة.</value>
+  </data>
+  <data name="Error.entry_not_found" xml:space="preserve">
+    <value>لم يتم العثور على ذلك الإدخال.</value>
+  </data>
+  <data name="Error.entry_closed" xml:space="preserve">
+    <value>هذا الإدخال مغلق ولا يمكن تغييره.</value>
+  </data>
+  <data name="Error.entry_changed" xml:space="preserve">
+    <value>قام شخص آخر بتغيير هذا الإدخال. يرجى فتحه مجددًا والمحاولة مرة أخرى.</value>
+  </data>
+  <data name="Error.not_a_suggestion" xml:space="preserve">
+    <value>يمكن تأكيد أو تجاهل الإدخال المقترح فقط.</value>
+  </data>
+  <data name="Error.not_confirmed" xml:space="preserve">
+    <value>يمكن تغيير الإدخال المؤكد فقط بهذه الطريقة.</value>
+  </data>
+  <data name="Error.reminders_critical_incident_only" xml:space="preserve">
+    <value>تُتاح تذكيرات الذكرى للحوادث الحرجة فقط.</value>
+  </data>
+  <data name="Error.category_required" xml:space="preserve">
+    <value>يرجى اختيار فئة.</value>
+  </data>
+  <data name="Error.date_invalid" xml:space="preserve">
+    <value>يرجى إدخال تاريخ صالح.</value>
+  </data>
+  <data name="Error.duration_invalid" xml:space="preserve">
+    <value>يرجى إدخال مدة بين 0 و10080 دقيقة.</value>
+  </data>
+  <data name="Error.call_not_found" xml:space="preserve">
+    <value>لم يتم العثور على ذلك البلاغ في هذه الإدارة.</value>
+  </data>
+  <data name="Error.protected_write_refused" xml:space="preserve">
+    <value>تعذر حفظ التفاصيل المحمية. يرجى المحاولة مرة أخرى.</value>
+  </data>
+  <data name="Error.flag_not_found" xml:space="preserve">
+    <value>لم يتم العثور على تلك الإشارة.</value>
+  </data>
+  <data name="Error.follow_up_kind_required" xml:space="preserve">
+    <value>يرجى اختيار نوع المتابعة.</value>
+  </data>
+  <data name="Error.follow_up_assignee_invalid" xml:space="preserve">
+    <value>يمكن إسناد المتابعة إلى العضو أو إلى مسؤول رفاهية.</value>
+  </data>
+  <data name="Error.follow_up_closed" xml:space="preserve">
+    <value>هذه المتابعة مغلقة بالفعل.</value>
+  </data>
+  <data name="Error.follow_up_not_found" xml:space="preserve">
+    <value>لم يتم العثور على تلك المتابعة.</value>
+  </data>
+  <data name="Category.Carcinogen" xml:space="preserve">
+    <value>مادة مسرطنة</value>
+  </data>
+  <data name="Category.BloodbornePathogen" xml:space="preserve">
+    <value>مُمرض منقول بالدم</value>
+  </data>
+  <data name="Category.HazardousSubstance" xml:space="preserve">
+    <value>مادة خطرة</value>
+  </data>
+  <data name="Category.CriticalIncident" xml:space="preserve">
+    <value>حادث حرج</value>
+  </data>
+  <data name="Category.Other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="Status.Suggested" xml:space="preserve">
+    <value>بانتظار المراجعة</value>
+  </data>
+  <data name="Status.Confirmed" xml:space="preserve">
+    <value>مؤكد</value>
+  </data>
+  <data name="Status.Dismissed" xml:space="preserve">
+    <value>متجاهل</value>
+  </data>
+  <data name="Status.Voided" xml:space="preserve">
+    <value>سُجّل خطأً</value>
+  </data>
+  <data name="FollowUpKind.screening_appointment" xml:space="preserve">
+    <value>موعد فحص</value>
+  </data>
+  <data name="FollowUpKind.baseline_test" xml:space="preserve">
+    <value>فحص أساسي</value>
+  </data>
+  <data name="FollowUpKind.medical_review" xml:space="preserve">
+    <value>مراجعة طبية</value>
+  </data>
+  <data name="FollowUpKind.wellness_check_in" xml:space="preserve">
+    <value>متابعة الرفاهية</value>
+  </data>
+  <data name="FollowUpKind.other" xml:space="preserve">
+    <value>متابعة أخرى</value>
+  </data>
+  <data name="FollowUpState.Open" xml:space="preserve">
+    <value>مفتوحة</value>
+  </data>
+  <data name="FollowUpState.Acknowledged" xml:space="preserve">
+    <value>تم الاطلاع</value>
+  </data>
+  <data name="FollowUpState.Completed" xml:space="preserve">
+    <value>منجزة</value>
+  </data>
+  <data name="FollowUpState.Cancelled" xml:space="preserve">
+    <value>ملغاة</value>
+  </data>
+  <data name="Basis.status" xml:space="preserve">
+    <value>حالة الفرد</value>
+  </data>
+  <data name="Basis.unit_crew" xml:space="preserve">
+    <value>طاقم الوحدة</value>
+  </data>
+  <data name="Basis.check_in" xml:space="preserve">
+    <value>تسجيل الحضور</value>
+  </data>
+  <data name="Basis.unit_response" xml:space="preserve">
+    <value>أوقات استجابة الوحدة</value>
+  </data>
+  <data name="Doc.Title" xml:space="preserve">
+    <value>سجل التعرض والحوادث الحرجة</value>
+  </data>
+  <data name="Doc.Member" xml:space="preserve">
+    <value>العضو</value>
+  </data>
+  <data name="Doc.Date" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="Doc.Category" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="Doc.Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="Doc.Call" xml:space="preserve">
+    <value>البلاغ</value>
+  </data>
+  <data name="Doc.Duration" xml:space="preserve">
+    <value>المدة (س:دد)</value>
+  </data>
+  <data name="Doc.Substance" xml:space="preserve">
+    <value>المادة أو العامل</value>
+  </data>
+  <data name="Doc.PpeWorn" xml:space="preserve">
+    <value>معدات الحماية المستخدمة</value>
+  </data>
+  <data name="Doc.Decontamination" xml:space="preserve">
+    <value>إزالة التلوث</value>
+  </data>
+  <data name="Doc.Narrative" xml:space="preserve">
+    <value>ماذا حدث</value>
+  </data>
+  <data name="Doc.HealthDetails" xml:space="preserve">
+    <value>تفاصيل صحية</value>
+  </data>
+  <data name="Doc.Withheld" xml:space="preserve">
+    <value>محجوب (محمي)</value>
+  </data>
+  <data name="Doc.GeneratedOn" xml:space="preserve">
+    <value>أُنشئ في {0}</value>
+  </data>
+  <data name="Doc.Retention" xml:space="preserve">
+    <value>تحتفظ إدارتك بهذه السجلات 30 عامًا على الأقل.</value>
+  </data>
+  <data name="Doc.CriticalIncidents" xml:space="preserve">
+    <value>الحوادث الحرجة</value>
+  </data>
+  <data name="Doc.ReportTitle" xml:space="preserve">
+    <value>تقرير تعرض الأعضاء</value>
+  </data>
+  <data name="Doc.Total" xml:space="preserve">
+    <value>الإدخالات المؤكدة</value>
+  </data>
+  <data name="Doc.PendingSuggestions" xml:space="preserve">
+    <value>بانتظار المراجعة</value>
+  </data>
+  <data name="Doc.LastExposure" xml:space="preserve">
+    <value>الأحدث</value>
+  </data>
+  <data name="Doc.ScreeningFlagged" xml:space="preserve">
+    <value>فحص معزز</value>
+  </data>
+  <data name="Doc.OpenFollowUps" xml:space="preserve">
+    <value>متابعات مفتوحة</value>
+  </data>
+  <data name="Doc.Yes" xml:space="preserve">
+    <value>نعم</value>
+  </data>
+</root>

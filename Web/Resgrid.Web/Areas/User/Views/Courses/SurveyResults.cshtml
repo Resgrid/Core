@@ -1,0 +1,59 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Courses
+@model SurveyResultsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* Course evaluation results (T2 item 5): anonymous and aggregate only, shown from three responses. *@
+@{
+    var report = Model.Report;
+    ViewBag.Title = "Resgrid | " + localizer["SurveyResultsTitle"];
+    ViewData["Section"] = "CourseLibrary";
+    ViewData["Title"] = localizer["SurveyResultsTitle"].Value + " — " + report.Lesson.Title;
+    ViewData["Subtitle"] = string.Format(localizer["ResponsesFormat"].Value, report.Responses);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (report.Hidden)
+    {
+        <p class="text-muted"><i class="fa fa-user-secret" aria-hidden="true"></i> @string.Format(localizer["SurveyTooFew"].Value, LmsSurveyReport.MinimumResponses)</p>
+    }
+    else
+    {
+        @foreach (var question in report.Questions)
+        {
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@question.Question.Text</h5></div>
+                <div class="ibox-content">
+                    @if (question.Average.HasValue)
+                    {
+                        <p>@string.Format(localizer["AverageRatingFormat"].Value, question.Average.Value.ToString("0.##"))</p>
+                    }
+                    @if (question.Counts.Count > 0)
+                    {
+                        <ul class="list-unstyled">
+                            @foreach (var count in question.Counts.OrderBy(c => c.Key))
+                            {
+                                <li>@count.Key: <strong>@count.Value</strong></li>
+                            }
+                        </ul>
+                    }
+                    @if (question.Comments.Count > 0)
+                    {
+                        <ul>
+                            @foreach (var comment in question.Comments)
+                            {
+                                <li style="white-space:pre-wrap">@comment</li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

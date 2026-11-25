@@ -84,7 +84,13 @@ namespace Resgrid.Tests.Web.User
 			["Department/Terminology"] = "editors are built per term, not asp-for",
 			["Department/TextSettings"] = "the catalog's text-to-call editors are inside a Razor comment",
 			["Security/Index"] = "permission editors are built per permission, not asp-for",
+			["Protocols/Settings"] = "editors are plain name= inputs (RetentionDays[i] per kind), not asp-for",
 			["IncidentBackOffice/Settings"] = "policy editors are built per policy field from IncidentPolicyForm, not asp-for; Field is the policy form's anchor",
+			["TrainingRecords/Settings"] = "editors are plain inputs named after the action's parameters, not asp-for; Field is the input's id for the deep link",
+			["LmsPrograms/Settings"] = "editors are plain inputs named after the action's parameters, not asp-for; Field is the input's id for the deep link",
+			["Knowledge/Settings"] = "editors are plain name= inputs (IncludeDocuments, DosingToolUrl), not asp-for; Field is the input's id for the deep link",
+			["LmsRequirements/Enforcement"] = "editors are plain name= inputs posted as LmsSettingsForm, not asp-for; Field is the input's id for the deep link",
+			["LmsSkills/Settings"] = "editors are plain inputs named after the action's parameters, not asp-for; Field is the input's id for the deep link",
 		};
 
 		private static readonly string[] SwitchFields = { "MessagingEnabled", "MappingEnabled", "ShiftsEnabled", "LogsEnabled", "ReportsEnabled", "DocumentsEnabled",
@@ -160,6 +166,7 @@ namespace Resgrid.Tests.Web.User
 		[TestCase("DepartmentImport/Settings", "Resgrid.Web.Areas.User.Models.DepartmentImport.ImportSettingsView")]
 		[TestCase("Records/Settings", "Resgrid.Web.Areas.User.Models.Records.RecordsSettingsView")]
 		[TestCase("Security/SecurityPolicy", "Resgrid.Web.Areas.User.Models.Security.SecurityPolicyEditView")]
+		[TestCase("Wellness/Settings", "Resgrid.Web.Areas.User.Models.Wellness.WellnessSettingsView")]
 		public async Task Field_help_lands_where_it_reads(string screen, string model)
 		{
 			var html = await RenderAsync(screen, model);

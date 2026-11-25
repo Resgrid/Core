@@ -67,6 +67,20 @@ namespace Resgrid.Tests.Localization
 			"Areas/User/Inventory/InventoryImport",
 			// Protocols library, detail, editor and the call forms' protocol panel (Protocols P0, 2026-11-24) shipped fully translated.
 			"Areas/User/Protocols/Protocols",
+			// The shared signature panel and signatures list (S0, 2026-11-24) shipped fully translated.
+			"Areas/User/Signatures/Signatures",
+			// Member wellness WL0: My exposures, the entry form, the officer report, post-call flags and settings (2026-11-25).
+			"Areas/User/Wellness/Wellness",
+			// Member wellness WL1: health records, exposure cases, injuries, medical clearance and the OSHA export (2026-11-25).
+			"Areas/User/Wellness/MemberHealth",
+			// Courses (catalog, player, assessments, builder, grading; T2, 2026-11-25) shipped fully translated.
+			"Areas/User/Courses/Courses",
+			// Resgrid Academy lesson titles, knowledge-check questions and role paths (A1, 2026-11-25) shipped fully translated.
+			"Areas/User/Academy/AcademyCourses",
+			// Approval chains (e-Signature S4: My approvals, a request's page, chains, delegates, mutual-aid agreements; 2026-11-25).
+			"Areas/User/Approvals/Approvals",
+			// Trainings → Skills: skill sheets, evaluator mode, task books and skill notice settings (T4 part 2, 2026-11-25) shipped fully translated.
+			"Areas/User/LmsSkills/LmsSkills",
 		};
 
 		private static string LocalizationRoot()
@@ -113,6 +127,8 @@ namespace Resgrid.Tests.Localization
 			"DashboardWidgets|W.incidentCommand.active.Commander", "DashboardWidgets|W.inventory.alerts.TimesCount",
 			"DashboardWidgets|W.personnel.staffingSummary.GroupAvailable", "DashboardWidgets|W.records.legalHolds.Period",
 			"DashboardWidgets|W.shifts.coverage.Changes", "DashboardWidgets|W.voice.ptt.Title",
+			// e-Signature S1/S2 (2026-11-25): the "PDF" button and the "{0} · {1}" signer/time join are the same in every language.
+			"Signatures|ProtocolPdfButton", "Signatures|SignedByNote",
 			// Intake channels (2026-11-19): chat platform product names and the Enhanced AI add-on name.
 			"IntakeChannels|ModeEnhancedAi", "IntakeChannels|Type.WhatsApp", "IntakeChannels|Type.Slack", "IntakeChannels|Type.Teams",
 			"IntakeChannels|Type.Telegram", "IntakeChannels|Type.Discord", "IntakeChannels|Type.GoogleChat",
@@ -122,6 +138,8 @@ namespace Resgrid.Tests.Localization
 			"HomeDashboard|Category.Business", "DashboardWidgets|W.admin.plan.Addon.BusinessOperations",
 			// Dispatcher desk (2026-11-19): a break bar's tooltip is "type · state · time", format only.
 			"DispatcherDesk|BreakTooltipFormat",
+			// Approval chains (2026-11-25): the step order column header is "#" in every language.
+			"Approvals|StepOrderColumn",
 		};
 
 		private static readonly HashSet<string> KnownIdentical = new HashSet<string>(StringComparer.Ordinal)
@@ -412,14 +430,42 @@ namespace Resgrid.Tests.Localization
 
 			// Protocols (2026-11-24), checked side by side: N/A everywhere it is written that way; Status, Code and Details in German;
 			// Status in Polish and Swedish; French Type, Description, Question(s) and Score, and "{0} questions".
+			// Protocols P4: "No" is the same word in Spanish and Italian.
+			"Protocols|es|GraphLabelNo", "Protocols|it|GraphLabelNo",
 			"Protocols|de|NotApplicableLabel", "Protocols|es|NotApplicableLabel", "Protocols|fr|NotApplicableLabel", "Protocols|it|NotApplicableLabel", "Protocols|sv|NotApplicableLabel",
 			"Protocols|de|StatusLabel", "Protocols|pl|StatusLabel", "Protocols|sv|StatusLabel", "Protocols|de|CodeLabel", "Protocols|de|DetailsHeader",
 			"Protocols|fr|DescriptionLabel", "Protocols|fr|TriggerTypeColumn", "Protocols|fr|QuestionsLabel", "Protocols|fr|QuestionColumn", "Protocols|fr|QuestionsTab",
 			"Protocols|fr|QuestionsCount", "Protocols|fr|ScoreLabel",
+			// Protocols P1 and the signing layer (2026-11-24), checked side by side: the SOP / SOG acronyms kept in ar, de, el, sv and uk;
+			// "AI" as el, pl and sv already write it; Version in German and Swedish; Policy in Swedish; French Certification,
+			// Message, Question, Section, Signatures, Type, Version(s) and Attestation; "Passkey" as German and Italian write it.
+			"Protocols|ar|KindSog", "Protocols|de|KindSog", "Protocols|de|VersionColumn", "Protocols|de|VersionLabel", "Protocols|el|AiLabel", "Protocols|el|KindSog",
+			"Protocols|fr|AudienceCertificationLabel", "Protocols|fr|MessageLabel", "Protocols|fr|QuestionOption", "Protocols|fr|SectionLabel",
+			"Protocols|fr|SignatureSettingsHeader", "Protocols|fr|SignaturesTab", "Protocols|fr|SuggestKindLabel", "Protocols|fr|VersionColumn", "Protocols|fr|VersionLabel",
+			"Protocols|fr|VersionsTab", "Protocols|pl|AiLabel", "Protocols|sv|AiLabel", "Protocols|sv|KindPolicy", "Protocols|sv|KindSog", "Protocols|sv|VersionColumn",
+			"Protocols|sv|VersionLabel", "Protocols|uk|KindSog", "Signatures|de|MethodPasskey", "Signatures|fr|IntentAttest", "Signatures|it|MethodPasskey",
+			// e-Signature S1/S2 (2026-11-25), checked side by side: Status in German, Polish and Swedish; Format in German, French, Polish and
+			// Swedish; Details in German; No in Spanish and Italian; Signatures as French writes it.
+			"Signatures|de|StatusLabel", "Signatures|pl|StatusLabel", "Signatures|sv|StatusLabel", "Signatures|de|VerifyFormatColumn", "Signatures|fr|VerifyFormatColumn",
+			"Signatures|pl|VerifyFormatColumn", "Signatures|sv|VerifyFormatColumn", "Signatures|de|ViewRequestLink", "Signatures|es|No", "Signatures|it|No",
+			"Signatures|fr|SignaturePageTitle", "Signatures|fr|SignaturesHeading", "Signatures|fr|SignaturesModuleTitle",
+			// Courses and the Academy (2026-11-25), checked side by side: Name, Option, Version and Videos in German; French
+			// Discrimination (D), Version and "pts"; Italian File; Swedish Version; Administrator in German and Polish.
+			"Courses|de|NameLine", "Courses|de|OptionNumberFormat", "Courses|de|VersionLabelFormat", "Courses|de|VideosTile",
+			"Courses|fr|DiscriminationColumn", "Courses|fr|PointsShort", "Courses|fr|VersionColumn", "Courses|fr|VersionLabelFormat",
+			"Courses|it|FileColumn", "Courses|sv|VersionLabelFormat", "AcademyCourses|de|Path.administrator", "AcademyCourses|pl|Path.administrator",
 
 			// Counted phrases whose wording matches English.
 			"CommunicationTest|es|ScopeRoles",    // {0} roles
 			"CommunicationTest|sv|ScopePerson",   // 1 person
+			// Member wellness WL0 (2026-11-25), checked side by side: the same words in these languages.
+			"Wellness|fr|PersonnelLink", "Wellness|it|HomeLink", "Wellness|fr|DateColumn", "Wellness|fr|Doc.Date", "Wellness|fr|ActionsColumn",
+			"Wellness|fr|SuggestionsColumn", "Wellness|it|FollowUpColumn", "Wellness|it|Basis.check_in",
+			"Wellness|de|StatusColumn", "Wellness|pl|StatusColumn", "Wellness|sv|StatusColumn", "Wellness|de|Doc.Status", "Wellness|pl|Doc.Status", "Wellness|sv|Doc.Status",
+			// Member wellness WL1 (2026-11-25): the same words in these languages.
+			"MemberHealth|fr|DateColumn", "MemberHealth|fr|ActionsColumn", "MemberHealth|es|Osha.No", "MemberHealth|it|Osha.No",
+			// Approval chains (2026-11-25), checked side by side: Actions in French; Status in German, Polish and Swedish.
+			"Approvals|fr|ActionsColumn", "Approvals|de|StatusLabel", "Approvals|pl|StatusLabel", "Approvals|sv|StatusLabel",
 		};
 
 		[Test]

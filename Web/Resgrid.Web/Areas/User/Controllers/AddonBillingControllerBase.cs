@@ -50,6 +50,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return member?.DepartmentId == DepartmentId && !member.IsDeleted && member.IsDisabled != true && department?.ManagingUserId == UserId;
 		}
 
+		/// <summary>Members who may manage the subscription see billing details (prices, quantities) without being able to buy.</summary>
+		protected Task<bool> CanViewBillingAsync() => _authorization.CanUserManageSubscriptionAsync(UserId, DepartmentId);
+
 		/// <summary>The same toggle the Billing API checks before it opens a checkout.</summary>
 		protected async Task<bool> OfferedAsync()
 		{
@@ -104,7 +107,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				CanViewBilling = canViewBilling,
 				Offered = offered,
 				Status = status,
-				Result = result is AddonBillingResults.Complete or AddonBillingResults.Cancelled or AddonBillingResults.RenewalCancelled or AddonBillingResults.RenewalFailed ? result : null,
+				Result = AddonBillingResults.IsKnown(result) ? result : null,
 				Attempt = Math.Clamp(attempt, 0, 100)
 			};
 			if (!offered)

@@ -11,6 +11,34 @@ namespace Resgrid.WebCore.Areas.User.Models.Protocols
 		/// <summary>The resource, or its key when there is no localizer or no resource (tests, a key not yet translated).</summary>
 		private static string L(IStringLocalizer localizer, string key) => localizer?[key]?.Value ?? key;
 
+		/// <summary>A protocol kind in words (P1).</summary>
+		/// <summary>A content language's own name ("Deutsch", "français") for the language picker (P3 translations); the tag when unknown.</summary>
+		public static string LanguageName(string locale)
+		{
+			if (string.IsNullOrWhiteSpace(locale))
+				return string.Empty;
+			try
+			{
+				var name = System.Globalization.CultureInfo.GetCultureInfo(locale).NativeName;
+				return string.IsNullOrWhiteSpace(name) ? locale : name;
+			}
+			catch (System.Globalization.CultureNotFoundException)
+			{
+				return locale;
+			}
+		}
+
+		public static string KindName(int kind, IStringLocalizer localizer) =>
+			System.Enum.IsDefined(typeof(ProtocolKinds), kind) ? L(localizer, "Kind" + (ProtocolKinds)kind) : L(localizer, "KindDispatch");
+
+		/// <summary>A version status in words (P1).</summary>
+		public static string VersionStatusName(int status, IStringLocalizer localizer) =>
+			System.Enum.IsDefined(typeof(ProtocolVersionStatuses), status) ? L(localizer, "VersionStatus" + (ProtocolVersionStatuses)status) : status.ToString();
+
+		/// <summary>A version as "v1.2", or "Draft"/"In review" before it has a number.</summary>
+		public static string VersionLabel(ProtocolVersion version, IStringLocalizer localizer) =>
+			version == null ? null : version.Label != null ? "v" + version.Label : VersionStatusName(version.Status, localizer);
+
 		public static string PriorityName(int? priorityId, IEnumerable<DepartmentCallPriority> priorities, IStringLocalizer localizer)
 		{
 			if (!priorityId.HasValue)
@@ -52,6 +80,9 @@ namespace Resgrid.WebCore.Areas.User.Models.Protocols
 					return string.Format(L(localizer, "TriggerSummaryType"), TypeName(trigger, types, localizer));
 				case ProtocolTriggerTypes.CallPriortyAndType:
 					return string.Format(L(localizer, "TriggerSummaryPriorityAndType"), TypeName(trigger, types, localizer), PriorityName(trigger.Priority, priorities, localizer));
+				case ProtocolTriggerTypes.Conditions:
+					// P4: an "any call" trigger is described by its conditions; the keywords are the most telling part.
+					return string.IsNullOrWhiteSpace(trigger.Keywords) ? L(localizer, "ConditionsTrigger") : L(localizer, "ConditionsTrigger") + ": " + trigger.Keywords;
 				default:
 					return L(localizer, "NotApplicableLabel");
 			}
@@ -71,6 +102,7 @@ namespace Resgrid.WebCore.Areas.User.Models.Protocols
 			ProtocolTriggerTypes.CallPriorty => L(localizer, "CallPriorityTrigger"),
 			ProtocolTriggerTypes.CallType => L(localizer, "CallTypeTrigger"),
 			ProtocolTriggerTypes.CallPriortyAndType => L(localizer, "CallPriorityAndTypeTrigger"),
+			ProtocolTriggerTypes.Conditions => L(localizer, "ConditionsTrigger"),
 			_ => L(localizer, "NotApplicableLabel")
 		};
 	}

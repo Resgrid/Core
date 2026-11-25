@@ -1,0 +1,64 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Calls.ViewCallView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> protocolsLocalizer
+@inject Resgrid.Model.Services.IProtocolStepThroughService stepThrough
+@*
+    Protocols P3 on View Call: the call's protocols that can be stepped through (Procedure and Dispatch kinds, each a checklist with
+    timestamped steps) and the incident SOP checklists (the department's Procedure protocols: MAYDAY, RIT, hazmat entry) that can be
+    started on the call. Starting one attaches it to the call as a manual pick, citing the version in force.
+*@
+@{
+    var departmentId = ClaimsAuthorizationHelper.GetDepartmentId();
+    var userId = ClaimsAuthorizationHelper.GetUserId();
+    var checklists = Model.Call == null ? new List<ProtocolCallChecklist>() : await stepThrough.GetCallChecklistsAsync(departmentId, Model.Call.CallId);
+    var running = checklists.Select(c => c.Protocol.DispatchProtocolId).ToHashSet();
+    var onCall = (Model.Call?.Protocols ?? new List<CallProtocol>()).Select(r => r.DispatchProtocolId).ToHashSet();
+    var library = Model.CanRemoveProtocols && Model.Call != null
+        ? (await stepThrough.GetSopLibraryAsync(departmentId, userId)).Where(p => !onCall.Contains(p.DispatchProtocolId)).ToList()
+        : new List<DispatchProtocol>();
+}
+@if (checklists.Count > 0 || library.Count > 0)
+{
+    <div class="panel panel-default m-t-sm">
+        <div class="panel-heading rgw-builder-heading">
+            <span class="rgw-builder-title"><i class="fa fa-check-square-o" aria-hidden="true"></i> @protocolsLocalizer["SopChecklistsHeader"]</span>
+        </div>
+        <div class="panel-body">
+            @if (checklists.Count > 0)
+            {
+                <ul class="list-unstyled">
+                    @foreach (var checklist in checklists)
+                    {
+                        <li class="m-b-xs">
+                            <a asp-controller="ProtocolTools" asp-action="Steps" asp-route-area="User" asp-route-callId="@Model.Call.CallId" asp-route-callProtocolId="@checklist.Row.CallProtocolId"><i class="fa fa-list-ol" aria-hidden="true"></i> <span class="rgw-mono">@checklist.Protocol.Code</span> @checklist.Protocol.Name</a>
+                            <span class="text-muted small">· @string.Format(protocolsLocalizer["StepProgressFormat"].Value, checklist.DoneCount, checklist.Steps.Count)</span>
+                            @if (checklist.Log != null && checklist.Log.IsComplete)
+                            {
+                                <span class="label label-primary"><i class="fa fa-flag-checkered" aria-hidden="true"></i> @protocolsLocalizer["StepsCompletedLabel"]</span>
+                            }
+                            else if (checklist.IsIncidentSop)
+                            {
+                                <span class="label label-info"><i class="fa fa-life-ring" aria-hidden="true"></i> @protocolsLocalizer["IncidentSopLabel"]</span>
+                            }
+                        </li>
+                    }
+                </ul>
+            }
+            @if (library.Count > 0)
+            {
+                <form method="post" class="form-inline" asp-controller="ProtocolTools" asp-action="StartSteps" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="callId" value="@Model.Call.CallId" />
+                    <label class="control-label" for="startSopProtocol">@protocolsLocalizer["StartSopLabel"]</label>
+                    <select id="startSopProtocol" name="protocolId" class="form-control" style="min-width: 240px;">
+                        @foreach (var sop in library)
+                        {
+                            <option value="@sop.DispatchProtocolId">@(string.IsNullOrWhiteSpace(sop.Code) ? "" : sop.Code + " · ")@sop.Name</option>
+                        }
+                    </select>
+                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-play" aria-hidden="true"></i> @protocolsLocalizer["StartSopButton"]</button>
+                </form>
+            }
+        </div>
+    </div>
+}

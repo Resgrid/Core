@@ -265,4 +265,98 @@ namespace Resgrid.Web.Services.Models.v4.Trainings
 	{
 		public TrainingReportData Data { get; set; }
 	}
+
+	// Training T1 (one transcript): the member's transcript, the department's training categories and outside training
+	// submissions for Omni. All times are UTC.
+
+	/// <summary>One learning record on a transcript.</summary>
+	public class LearningRecordData
+	{
+		public int Id { get; set; }
+		public string Title { get; set; }
+		public string CourseCode { get; set; }
+		public DateTime CompletedOn { get; set; }
+		public decimal Hours { get; set; }
+		public int? CategoryId { get; set; }
+		/// <summary>The category's name; null when uncategorized or the category is unknown.</summary>
+		public string CategoryName { get; set; }
+		/// <summary>LearningRecordSourceKinds value (0 course completion, 2 training record, 3 external submission, 9 import, 10 calendar attendance...).</summary>
+		public int SourceKind { get; set; }
+		/// <summary>LearningRecordSourceKinds name.</summary>
+		public string SourceKindName { get; set; }
+		/// <summary>LearningRecordStatuses value: 0 pending, 1 verified, 2 rejected, 3 voided. Only verified records count toward hours.</summary>
+		public int Status { get; set; }
+		/// <summary>LearningRecordStatuses name.</summary>
+		public string StatusName { get; set; }
+		public decimal? CeHours { get; set; }
+		public string CeProvider { get; set; }
+		public string CeCourseNumber { get; set; }
+		/// <summary>Written by the history backfill from completions that predate the transcript.</summary>
+		public bool IsBackfill { get; set; }
+		/// <summary>The record may duplicate another one of the member's records and an officer has not resolved it yet.</summary>
+		public bool PossibleDuplicate { get; set; }
+	}
+
+	public class LearningRecordsResult : StandardApiResponseV4Base
+	{
+		public List<LearningRecordData> Data { get; set; } = new List<LearningRecordData>();
+	}
+
+	/// <summary>One of the department's training categories (removed categories are not listed).</summary>
+	public class TrainingCategoryData
+	{
+		public int CategoryId { get; set; }
+		public string Name { get; set; }
+		public string Code { get; set; }
+		/// <summary>TrainingCategoryKinds value: 0 custom, 1 ISO FSRS, 2 NCCP, 3 OSHA, 4 state.</summary>
+		public int Kind { get; set; }
+		public int SortOrder { get; set; }
+		public string Description { get; set; }
+		public decimal? TargetHours { get; set; }
+		/// <summary>TrainingTargetPeriods value: 0 none, 1 per year, 2 per month, 3 per certification cycle, 4 once, 5 first year.</summary>
+		public int TargetPeriod { get; set; }
+	}
+
+	public class TrainingCategoriesResult : StandardApiResponseV4Base
+	{
+		public List<TrainingCategoryData> Data { get; set; } = new List<TrainingCategoryData>();
+	}
+
+	/// <summary>
+	/// A course the member completed outside the department. It is Pending until an officer verifies it. The optional evidence
+	/// file is base64 in <see cref="Data"/>: PDF, JPG, JPEG, PNG, GIF, DOC or DOCX by the extension of <see cref="FileName"/>, at
+	/// most 10 MB decoded.
+	/// </summary>
+	public class SubmitExternalTrainingInput
+	{
+		public string Title { get; set; }
+		/// <summary>When the course was completed (UTC); at most one day ahead of now.</summary>
+		public DateTime CompletedOn { get; set; }
+		/// <summary>Hours, more than 0 and at most 9999.</summary>
+		public decimal? Hours { get; set; }
+		public int? CategoryId { get; set; }
+		public string CeProvider { get; set; }
+		public string CeCourseNumber { get; set; }
+		public decimal? CeHours { get; set; }
+		/// <summary>MethodsOfTraining value: 0 classroom, 1 online, 2 drill/field, 3 virtual, 4 self study, 5 on the job.</summary>
+		public int? Method { get; set; }
+		public string Notes { get; set; }
+		public string FileName { get; set; }
+		/// <summary>Informational; the stored type follows the file name's extension.</summary>
+		public string ContentType { get; set; }
+		/// <summary>The evidence file, base64.</summary>
+		public string Data { get; set; }
+	}
+
+	public class ExternalTrainingSubmissionResult : StandardApiResponseV4Base
+	{
+		/// <summary>The Pending record; null when the submission was refused.</summary>
+		public LearningRecordData Data { get; set; }
+		/// <summary>
+		/// Why the submission was refused: submissions_disabled, title_required, title_too_long, date_invalid, hours_invalid,
+		/// ce_hours_invalid, category_invalid, method_invalid, text_too_long, file_name_required, file_type_not_allowed, file_too_large,
+		/// file_invalid, or a learning_record_* code of the service. Null on success.
+		/// </summary>
+		public string Error { get; set; }
+	}
 }

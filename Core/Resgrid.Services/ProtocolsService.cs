@@ -28,13 +28,20 @@ namespace Resgrid.Services
 		private readonly ICallTypesRepository _callTypesRepository;
 		private readonly ICallProtocolsRepository _callProtocolsRepository;
 		private readonly IDispatchProtocolSnapshotsRepository _snapshotsRepository;
+		private readonly IProtocolVersionsRepository _versionsRepository;
+		private readonly Lazy<IDispatchTriggerFactsService> _triggerFacts;
+		private readonly Lazy<IProtocolAiSuggestionService> _aiSuggestions;
 
 		public ProtocolsService(IDispatchProtocolRepository dispatchProtocolRepository, IDispatchProtocolAttachmentRepository dispatchProtocolAttachmentRepository,
 			IDispatchProtocolQuestionsRepository dispatchProtocolQuestionsRepository, IDispatchProtocolTriggersRepository dispatchProtocolTriggersRepository,
-			IDispatchProtocolQuestionAnswersRepository dispatchProtocolQuestionAnswersRepository, Lazy<ISearchProjectionService> searchProjections = null,
+			IDispatchProtocolQuestionAnswersRepository dispatchProtocolQuestionAnswersRepository, Lazy<IDispatchTriggerFactsService> triggerFacts,
+			Lazy<IProtocolAiSuggestionService> aiSuggestions, Lazy<ISearchProjectionService> searchProjections = null,
 			ICacheProvider cacheProvider = null, ICallTypesRepository callTypesRepository = null, ICallProtocolsRepository callProtocolsRepository = null,
-			IDispatchProtocolSnapshotsRepository snapshotsRepository = null)
+			IDispatchProtocolSnapshotsRepository snapshotsRepository = null, IProtocolVersionsRepository versionsRepository = null)
 		{
+			_versionsRepository = versionsRepository;
+			_triggerFacts = triggerFacts;
+			_aiSuggestions = aiSuggestions;
 			_searchProjections = searchProjections;
 			_dispatchProtocolRepository = dispatchProtocolRepository;
 			_dispatchProtocolAttachmentRepository = dispatchProtocolAttachmentRepository;
@@ -58,8 +65,10 @@ namespace Resgrid.Services
 		{
 			var protocols = (await LoadDepartmentProtocolsAsync(departmentId)).Where(x => !x.IsDeleted);
 
+			// "In force" (P1): enabled and with a published version. Drafts never published and retired protocols are the
+			// library's alone; the apps, the offline reference data and every attach path see only what is published.
 			if (enabledOnly)
-				protocols = protocols.Where(x => !x.IsDisabled);
+				protocols = protocols.Where(x => !x.IsDisabled && x.IsPublished);
 
 			return protocols.ToList();
 		}
@@ -111,8 +120,9 @@ namespace Resgrid.Services
 		{
 			async Task<List<DispatchProtocol>> build()
 			{
-				// What the matcher and the question flow need, and nothing else: no text, no description, no attachments.
-				return (await GetProtocolSummariesForDepartmentAsync(departmentId, true)).Select(x => new DispatchProtocol
+				// What the matcher and the question flow need, and nothing else: no text, no description, no attachments. Only the
+				// kinds whose triggers mean something (Dispatch, Procedure) are matched to calls.
+				return (await GetProtocolSummariesForDepartmentAsync(departmentId, true)).Where(x => ProtocolKindRules.TriggersApply(x.Kind)).Select(x => new DispatchProtocol
 				{
 					DispatchProtocolId = x.DispatchProtocolId,
 					DepartmentId = x.DepartmentId,
@@ -120,6 +130,9 @@ namespace Resgrid.Services
 					Code = x.Code,
 					MinimumWeight = x.MinimumWeight,
 					IsDisabled = x.IsDisabled,
+					Kind = x.Kind,
+					Status = x.Status,
+					CurrentVersionId = x.CurrentVersionId,
 					CreatedOn = x.CreatedOn,
 					UpdatedOn = x.UpdatedOn,
 					Triggers = x.Triggers,
@@ -156,7 +169,7 @@ namespace Resgrid.Services
 			// The department's own protocol rows only: no attachments, questions or triggers are needed to check ownership.
 			// A deleted or disabled protocol is not attached to a call.
 			var attachable = (await _dispatchProtocolRepository.GetAllByDepartmentIdAsync(departmentId) ?? Enumerable.Empty<DispatchProtocol>())
-				.Where(x => x.DepartmentId == departmentId && !x.IsDeleted && !x.IsDisabled)
+				.Where(x => x.DepartmentId == departmentId && !x.IsDeleted && !x.IsDisabled && x.IsPublished)
 				.Select(x => x.DispatchProtocolId)
 				.ToHashSet();
 
@@ -209,6 +222,17 @@ namespace Resgrid.Services
 				return null;
 
 			return attachment;
+		}
+
+		public async Task<List<ProtocolVersion>> GetCitedVersionsAsync(int departmentId, IEnumerable<int> protocolVersionIds)
+		{
+			var ids = (protocolVersionIds ?? Enumerable.Empty<int>()).Where(x => x > 0).Distinct().ToList();
+			if (_versionsRepository == null || departmentId <= 0 || ids.Count == 0)
+				return new List<ProtocolVersion>();
+
+			return (await _versionsRepository.GetByIdsAsync(departmentId, ids, true) ?? new List<ProtocolVersion>())
+				.Where(x => x.DepartmentId == departmentId)
+				.ToList();
 		}
 
 		public async Task<List<DispatchProtocolSnapshot>> GetSnapshotsAsync(int departmentId, IEnumerable<string> contentHashes)
@@ -264,6 +288,18 @@ namespace Resgrid.Services
 				context.CallTypeId = callTypeId.Value;
 			else
 				context.CallTypeId = CallTypeLink.Resolve(callTypeName, null, types);
+
+			return context;
+		}
+
+		public async Task<ProtocolCallContext> BuildCallContextWithFactsAsync(int departmentId, int priority, int? callTypeId, string callTypeName, DispatchTriggerCallInput details)
+		{
+			var context = await BuildCallContextAsync(departmentId, priority, callTypeId, callTypeName, details?.LoggedOnUtc);
+
+			// P4: the facts the shared trigger engine reads besides type, priority and time (zone, local schedule, keywords, POI type,
+			// intake source). Best effort: a fact that cannot be resolved only stops the criteria that need it from matching.
+			if (_triggerFacts != null && details != null)
+				await _triggerFacts.Value.FillAsync(departmentId, context, details);
 
 			return context;
 		}
@@ -358,8 +394,10 @@ namespace Resgrid.Services
 
 			var onCall = new HashSet<int>((alreadyOnCall ?? call.Protocols ?? Enumerable.Empty<CallProtocol>()).Select(x => x.DispatchProtocolId));
 			var protocols = (await LoadDepartmentProtocolsAsync(departmentId)).ToDictionary(x => x.DispatchProtocolId);
-			var context = await BuildCallContextAsync(departmentId, call.Priority, call.CallTypeId, call.Type, call.LoggedOn);
+			var context = await BuildCallContextWithFactsAsync(departmentId, call.Priority, call.CallTypeId, call.Type, DispatchTriggerCallInput.FromCall(call));
 			var now = DateTime.UtcNow;
+			// P4: the decision graphs of the versions in force of the protocols asked for (one query; only valid graphs count).
+			var graphs = await LoadGraphsAsync(departmentId, asked.Select(x => protocols.TryGetValue(x.ProtocolId, out var p) ? p : null));
 
 			foreach (var request in asked)
 			{
@@ -371,6 +409,8 @@ namespace Resgrid.Services
 					refusal = ProtocolAttachRefusals.Deleted;
 				else if (protocol.IsDisabled)
 					refusal = ProtocolAttachRefusals.Disabled;
+				else if (!protocol.IsPublished)
+					refusal = ProtocolAttachRefusals.NotPublished;
 				else if (!onCall.Add(protocol.DispatchProtocolId))
 					refusal = ProtocolAttachRefusals.Duplicate;
 
@@ -402,6 +442,44 @@ namespace Resgrid.Services
 					continue;
 				}
 
+				// P4: the case flow. The server walks the cited version's graph with the posted answers; the client decides nothing but
+				// the answers and an override, which needs a reason. A confirmed Enhanced AI suggestion is recorded as such, once.
+				CallProtocolCase caseRecord = null;
+				var callSource = source;
+				if (request.Case != null && protocol.CurrentVersionId.HasValue && graphs.TryGetValue(protocol.CurrentVersionId.Value, out var graph))
+				{
+					ProtocolAiSuggestion suggestion = null;
+					if (request.Case.AiSuggestionId.HasValue && call.CallId > 0 && _aiSuggestions != null)
+						suggestion = await _aiSuggestions.Value.GetConfirmableAsync(departmentId, call.CallId, protocol.DispatchProtocolId, request.Case.AiSuggestionId.Value);
+
+					var walked = ProtocolCaseFlow.Run(graph, request.Case.Answers);
+					var (record, caseError) = ProtocolCaseFlow.Record(walked, request.Case, protocol.CurrentVersionId,
+						suggestion != null ? CallProtocolSources.Ai : CallProtocolSources.Manual, userId, now);
+
+					if (caseError == ProtocolCaseErrors.OverrideReasonRequired)
+						refusal = ProtocolAttachRefusals.OverrideReasonRequired;
+					else if (caseError != ProtocolCaseErrors.None)
+						refusal = ProtocolAttachRefusals.CaseInvalid;
+
+					if (refusal.HasValue)
+					{
+						onCall.Remove(protocol.DispatchProtocolId);
+						result.Refused.Add(new ProtocolAttachRefusal { ProtocolId = request.ProtocolId, Reason = refusal.Value });
+						continue;
+					}
+
+					record.ProtocolCode = protocol.Code;
+					record.ProtocolName = protocol.Name;
+					caseRecord = record;
+
+					if (suggestion != null)
+					{
+						callSource = CallProtocolSources.Ai;
+						if (storeSnapshots)
+							await _aiSuggestions.Value.ConfirmAsync(departmentId, suggestion.ProtocolAiSuggestionId, userId, cancellationToken);
+					}
+				}
+
 				var hash = ProtocolContentHash.Compute(protocol.ProtocolText);
 
 				result.Attached.Add(new CallProtocol
@@ -412,11 +490,17 @@ namespace Resgrid.Services
 					Data = protocol.Code,
 					Score = answers?.Score ?? 0,
 					Trigger = matched?.Type ?? 0,
-					Source = (int)source,
+					// A trigger match stays Trigger; a protocol picked by hand that a dispatcher confirmed from an AI suggestion is Ai.
+					Source = (int)(source == CallProtocolSources.Trigger ? source : callSource),
+					Determinant = caseRecord?.Determinant,
+					OverrideReason = caseRecord != null && caseRecord.Overridden ? caseRecord.OverrideReason : null,
+					CaseJson = caseRecord?.ToJson(),
 					AnswersJson = answers == null ? null : JsonConvert.SerializeObject(answers),
 					ContentHash = hash,
 					AttachedOn = now,
-					AttachedByUserId = userId
+					AttachedByUserId = userId,
+					// Calls cite versions, never live rows (P1 §4): the version in force when it was attached.
+					ProtocolVersionId = protocol.CurrentVersionId
 				});
 
 				if (storeSnapshots && _snapshotsRepository != null)
@@ -433,6 +517,35 @@ namespace Resgrid.Services
 			}
 
 			return result;
+		}
+
+		/// <summary>
+		/// The valid decision graphs (P4) of the versions in force of the given protocols, by version id. A protocol that is not Dispatch kind,
+		/// has no version in force, or whose version has no graph or an invalid one, has none.
+		/// </summary>
+		private async Task<Dictionary<int, ProtocolDecisionGraph>> LoadGraphsAsync(int departmentId, IEnumerable<DispatchProtocol> protocols)
+		{
+			var graphs = new Dictionary<int, ProtocolDecisionGraph>();
+			var versionIds = (protocols ?? Enumerable.Empty<DispatchProtocol>())
+				.Where(p => p != null && p.Kind == (int)ProtocolKinds.Dispatch && p.CurrentVersionId.HasValue)
+				.Select(p => p.CurrentVersionId.Value)
+				.Distinct()
+				.ToList();
+
+			if (_versionsRepository == null || versionIds.Count == 0)
+				return graphs;
+
+			foreach (var version in await _versionsRepository.GetByIdsAsync(departmentId, versionIds, true) ?? new List<ProtocolVersion>())
+			{
+				if (version == null || version.DepartmentId != departmentId || version.IsDocument)
+					continue;
+
+				var graph = ProtocolContentDocument.Parse(version.ContentJson, null).Graph;
+				if (graph != null && !graph.IsEmpty && ProtocolDecisionGraphs.Validate(graph).Count == 0)
+					graphs[version.ProtocolVersionId] = graph;
+			}
+
+			return graphs;
 		}
 
 		/// <summary>
@@ -690,7 +803,8 @@ namespace Resgrid.Services
 			current.Name = edited.Name?.Trim();
 			current.Code = ProtocolRules.NormalizeCode(edited.Code);
 			current.Description = StringHelpers.SanitizeHtmlForStorage(edited.Description);
-			current.ProtocolText = StringHelpers.SanitizeHtmlForStorage(edited.ProtocolText);
+			// The text is not edited here (P1): ProtocolText is the published version's, written only when a version is published.
+			// Content changes go to the draft (IProtocolLibraryService.SaveDraftAsync).
 			current.MinimumWeight = edited.MinimumWeight;
 			current.IsDisabled = edited.IsDisabled;
 			current.UpdatedOn = DateTime.UtcNow;
@@ -720,6 +834,14 @@ namespace Resgrid.Services
 				target.Priority = trigger.Priority;
 				target.CallType = trigger.CallType;
 				target.CallTypeId = trigger.CallTypeId;
+				// P4 conditions (shared trigger engine).
+				target.GeofenceGroupId = trigger.GeofenceGroupId;
+				target.DaysOfWeek = trigger.DaysOfWeek;
+				target.StartMinute = trigger.StartMinute;
+				target.EndMinute = trigger.EndMinute;
+				target.Keywords = trigger.Keywords;
+				target.PoiTypeId = trigger.PoiTypeId;
+				target.CallSources = trigger.CallSources;
 
 				var saved = await _dispatchProtocolTriggersRepository.SaveOrUpdateAsync(target, cancellationToken, true);
 				if (trigger.DispatchProtocolTriggerId <= 0)

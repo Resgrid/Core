@@ -1198,7 +1198,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// The server decides which of the sent protocols go on the call (D15, D19): this department's, enabled, matched by a
 			// trigger or recorded as picked by hand, with the answers the client collected (ProtocolAnswers) scored here. Ids it
 			// refuses are dropped, like unknown entries on the dispatch list. Checked now for the field policy, attached below.
-			var protocolRequests = ProtocolRequests(newCallInput.ProtocolIds, newCallInput.ProtocolAnswers);
+			var protocolRequests = ProtocolRequests(newCallInput.ProtocolIds, newCallInput.ProtocolAnswers, newCallInput.ProtocolCases);
 			var protocolsWillAttach = protocolRequests.Count > 0 && (await _protocolsService.PrepareCallProtocolsAsync(effectiveDepartmentId,
 				new Resgrid.Model.Call { DepartmentId = effectiveDepartmentId, Priority = newCallInput.Priority, Type = newCallInput.Type, LoggedOn = DateTime.UtcNow },
 				protocolRequests, UserId, null, false)).Attached.Count > 0;
@@ -1952,7 +1952,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			// Added to what the call already has (a protocol already on it, removed or not, is not added again), the same as the
 			// web edit form, and decided by the server the same way as SaveCall. Taking one off is CallProtocols/RemoveCallProtocol.
-			var editProtocolRequests = ProtocolRequests(editCallInput.ProtocolIds, editCallInput.ProtocolAnswers);
+			var editProtocolRequests = ProtocolRequests(editCallInput.ProtocolIds, editCallInput.ProtocolAnswers, editCallInput.ProtocolCases);
 			if (editProtocolRequests.Count > 0)
 			{
 				if (call.Protocols == null)
@@ -3513,13 +3513,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// sent answers for (ProtocolAnswers) has them scored, and as on the web forms a suggested protocol with questions then
 		/// needs them answered and passing.
 		/// </summary>
-		private static List<ProtocolAttachRequest> ProtocolRequests(List<int> protocolIds, Dictionary<int, List<int>> protocolAnswers)
+		private static List<ProtocolAttachRequest> ProtocolRequests(List<int> protocolIds, Dictionary<int, List<int>> protocolAnswers,
+			Dictionary<int, ProtocolCaseInput> protocolCases = null)
 		{
 			return (protocolIds ?? new List<int>()).Where(x => x > 0).Distinct().Select(id => new ProtocolAttachRequest
 			{
 				ProtocolId = id,
 				AnswerIds = protocolAnswers != null && protocolAnswers.TryGetValue(id, out var answers) ? answers ?? new List<int>() : null,
-				AnswersRequired = protocolAnswers != null && protocolAnswers.ContainsKey(id)
+				AnswersRequired = protocolAnswers != null && protocolAnswers.ContainsKey(id),
+				// P4: the case flow (Omni's dispatch form); null when the client ran none.
+				Case = protocolCases != null && protocolCases.TryGetValue(id, out var caseInput) ? caseInput : null
 			}).ToList();
 		}
 

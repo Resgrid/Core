@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboveAmountNote" xml:space="preserve">
+    <value>(över {0})</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Åtgärder</value>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="AddDelegateHeading" xml:space="preserve">
+    <value>Lägg till ersättare</value>
+  </data>
+  <data name="AgreementDeletedMessage" xml:space="preserve">
+    <value>Avtalet togs bort.</value>
+  </data>
+  <data name="AgreementInvalidMessage" xml:space="preserve">
+    <value>Avtalet kunde inte sparas. Kontrollera titeln och datumen; ett godkänt avtal kan inte ändras.</value>
+  </data>
+  <data name="AgreementSavedMessage" xml:space="preserve">
+    <value>Avtalet sparades.</value>
+  </data>
+  <data name="AgreementTitleLabel" xml:space="preserve">
+    <value>Avtal</value>
+  </data>
+  <data name="AgreementsIntro" xml:space="preserve">
+    <value>Avtal om ömsesidigt bistånd som din avdelning godkänner och förseglar.</value>
+  </data>
+  <data name="AgreementsTab" xml:space="preserve">
+    <value>Avtal om ömsesidigt bistånd</value>
+  </data>
+  <data name="AllMyApprovalsLink" xml:space="preserve">
+    <value>Alla mina godkännanden</value>
+  </data>
+  <data name="AllowSelfApprovalLabel" xml:space="preserve">
+    <value>Låt den som skickar in godkänna</value>
+  </data>
+  <data name="AmountColumn" xml:space="preserve">
+    <value>Belopp</value>
+  </data>
+  <data name="ApplyErrorNote" xml:space="preserve">
+    <value>Godkännandet står kvar, men modulen kunde inte tillämpa det (dess egna regler nekade). Slutför steget i modulen.</value>
+  </data>
+  <data name="ApprovalsHeading" xml:space="preserve">
+    <value>Godkännanden</value>
+  </data>
+  <data name="ApprovalsModuleTitle" xml:space="preserve">
+    <value>Godkännanden</value>
+  </data>
+  <data name="ApproveButton" xml:space="preserve">
+    <value>Godkänn</value>
+  </data>
+  <data name="ApprovePanelTitle" xml:space="preserve">
+    <value>Ditt godkännande</value>
+  </data>
+  <data name="ApprovedByColumn" xml:space="preserve">
+    <value>Godkänt av</value>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>Ditt godkännande registrerades.</value>
+  </data>
+  <data name="ApprovedStepsLabel" xml:space="preserve">
+    <value>Godkända steg</value>
+  </data>
+  <data name="ApproverColumn" xml:space="preserve">
+    <value>Godkännare</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="CandidatesHeading" xml:space="preserve">
+    <value>Redo att skicka in</value>
+  </data>
+  <data name="CertificationTypeLabel" xml:space="preserve">
+    <value>Certifieringstyp</value>
+  </data>
+  <data name="ChainDeactivatedMessage" xml:space="preserve">
+    <value>Kedjan stängdes av.</value>
+  </data>
+  <data name="ChainEditorHelp" xml:space="preserve">
+    <value>Steg med samma nummer körs parallellt och alla måste godkänna. En tröskel begränsar ett steg till belopp över den. När du sparar skapas en ny version; begäranden som redan skickats in behåller de steg de började med.</value>
+  </data>
+  <data name="ChainNameLabel" xml:space="preserve">
+    <value>Kedjans namn</value>
+  </data>
+  <data name="ChainSavedMessage" xml:space="preserve">
+    <value>Godkännandekedjan sparades.</value>
+  </data>
+  <data name="ChainsIntro" xml:space="preserve">
+    <value>Vem som godkänner vad, i vilken ordning, över vilka belopp och när ett steg som står still eskaleras.</value>
+  </data>
+  <data name="ChainsTab" xml:space="preserve">
+    <value>Kedjor</value>
+  </data>
+  <data name="ChangedSinceApproval" xml:space="preserve">
+    <value>Detta ändrades efter att det godkändes. Godkännandet gäller inte längre; skicka in det igen.</value>
+  </data>
+  <data name="ChangedSinceSubmission" xml:space="preserve">
+    <value>Detta ändrades efter att det skickades in. De tidigare godkännandena följer inte med; skicka in det igen.</value>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>Innehållskod</value>
+  </data>
+  <data name="DeactivateChainButton" xml:space="preserve">
+    <value>Stäng av</value>
+  </data>
+  <data name="DecidedColumn" xml:space="preserve">
+    <value>Beslutat</value>
+  </data>
+  <data name="DefineChainButton" xml:space="preserve">
+    <value>Definiera kedja</value>
+  </data>
+  <data name="DelegateForLabel" xml:space="preserve">
+    <value>Medlem</value>
+  </data>
+  <data name="DelegateHelp" xml:space="preserve">
+    <value>Medan medlemmen är ledig går hens namngivna godkännandesteg även till ersättaren. Med datum träder ersättaren också in mellan dem.</value>
+  </data>
+  <data name="DelegateInvalidMessage" xml:space="preserve">
+    <value>Ersättaren kunde inte sparas. Välj två olika aktiva medlemmar och giltiga datum.</value>
+  </data>
+  <data name="DelegateLabel" xml:space="preserve">
+    <value>Ersättare</value>
+  </data>
+  <data name="DelegateRemovedMessage" xml:space="preserve">
+    <value>Ersättaren togs bort.</value>
+  </data>
+  <data name="DelegateSavedMessage" xml:space="preserve">
+    <value>Ersättaren sparades.</value>
+  </data>
+  <data name="DelegatedNote" xml:space="preserve">
+    <value>Delegerat: den namngivna godkännaren är borta</value>
+  </data>
+  <data name="DelegatesIntro" xml:space="preserve">
+    <value>Vem som godkänner för en medlem medan hen är ledig.</value>
+  </data>
+  <data name="DelegatesTab" xml:space="preserve">
+    <value>Ersättare</value>
+  </data>
+  <data name="DeleteAgreementButton" xml:space="preserve">
+    <value>Ta bort avtal</value>
+  </data>
+  <data name="DepartmentLinkLabel" xml:space="preserve">
+    <value>Avdelningslänk</value>
+  </data>
+  <data name="DownloadSealedLink" xml:space="preserve">
+    <value>Ladda ned det förseglade dokumentet</value>
+  </data>
+  <data name="DueByLabel" xml:space="preserve">
+    <value>senast {0}</value>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Förfaller</value>
+  </data>
+  <data name="EditChainButton" xml:space="preserve">
+    <value>Redigera kedja</value>
+  </data>
+  <data name="EditChainTitle" xml:space="preserve">
+    <value>Godkännandekedja</value>
+  </data>
+  <data name="EffectiveLabel" xml:space="preserve">
+    <value>Gäller från</value>
+  </data>
+  <data name="EndsLabel" xml:space="preserve">
+    <value>Slutar</value>
+  </data>
+  <data name="EscalatedLabel" xml:space="preserve">
+    <value>Eskalerad</value>
+  </data>
+  <data name="EscalatesAfterNote" xml:space="preserve">
+    <value>(eskaleras efter {0} h)</value>
+  </data>
+  <data name="EscalationColumn" xml:space="preserve">
+    <value>Eskalering</value>
+  </data>
+  <data name="ExpiresInDaysLabel" xml:space="preserve">
+    <value>Upphör efter (dagar)</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Grupp</value>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="HoursPlaceholder" xml:space="preserve">
+    <value>Timmar (tomt: aldrig)</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Medlem</value>
+  </data>
+  <data name="MyApprovalsIntro" xml:space="preserve">
+    <value>Begäranden som väntar på ditt godkännande och de som du har skickat in.</value>
+  </data>
+  <data name="MyApprovalsTab" xml:space="preserve">
+    <value>Mina godkännanden</value>
+  </data>
+  <data name="MyApprovalsTitle" xml:space="preserve">
+    <value>Mina godkännanden</value>
+  </data>
+  <data name="MySubmissionsHeader" xml:space="preserve">
+    <value>Mina väntande inskick</value>
+  </data>
+  <data name="NewAgreementButton" xml:space="preserve">
+    <value>Nytt avtal</value>
+  </data>
+  <data name="NextApprovalLabel" xml:space="preserve">
+    <value>Nästa att godkänna</value>
+  </data>
+  <data name="NoAgreements" xml:space="preserve">
+    <value>Inga avtal om ömsesidigt bistånd ännu.</value>
+  </data>
+  <data name="NoApprovalYet" xml:space="preserve">
+    <value>Inte inskickat för godkännande ännu.</value>
+  </data>
+  <data name="NoCandidates" xml:space="preserve">
+    <value>Inget väntar på att skickas in.</value>
+  </data>
+  <data name="NoChainDefined" xml:space="preserve">
+    <value>Ingen kedja: dessa behöver inget godkännande.</value>
+  </data>
+  <data name="NoDelegates" xml:space="preserve">
+    <value>Inga ersättare.</value>
+  </data>
+  <data name="NoPendingSubmissions" xml:space="preserve">
+    <value>Inget väntar.</value>
+  </data>
+  <data name="NoRequests" xml:space="preserve">
+    <value>Inga begäranden.</value>
+  </data>
+  <data name="NothingToApprove" xml:space="preserve">
+    <value>Inget väntar på ditt godkännande.</value>
+  </data>
+  <data name="OnLeaveOnly" xml:space="preserve">
+    <value>Under ledighet</value>
+  </data>
+  <data name="OpenInModuleLink" xml:space="preserve">
+    <value>Öppna</value>
+  </data>
+  <data name="OpenRequestLink" xml:space="preserve">
+    <value>Öppna</value>
+  </data>
+  <data name="PartnerLabel" xml:space="preserve">
+    <value>Partneravdelning</value>
+  </data>
+  <data name="PartnerSignatureOwedNote" xml:space="preserve">
+    <value>Din avdelnings kedja godkänner och förseglar detta avtal. Partneravdelningens kontrasignering via avdelningslänken är inte tillgänglig ännu.</value>
+  </data>
+  <data name="PayrollRunsNote" xml:space="preserve">
+    <value>Lönekörningar får en godkännandekedja när lönekörningar finns i Resgrid.</value>
+  </data>
+  <data name="PendingApprovalsHeader" xml:space="preserve">
+    <value>Väntar på ditt godkännande</value>
+  </data>
+  <data name="PendingInDepartmentHeader" xml:space="preserve">
+    <value>Väntande i avdelningen</value>
+  </data>
+  <data name="PendingSubmittedLabel" xml:space="preserve">
+    <value>Väntande</value>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Avslå</value>
+  </data>
+  <data name="RejectHeading" xml:space="preserve">
+    <value>Avslå</value>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>Orsak</value>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>Begäran avslogs och den som skickade in den har meddelats.</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="RequestsIntro" xml:space="preserve">
+    <value>Alla godkännandebegäranden i avdelningen.</value>
+  </data>
+  <data name="RequestsTab" xml:space="preserve">
+    <value>Begäranden</value>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Granska</value>
+  </data>
+  <data name="RoleLabel" xml:space="preserve">
+    <value>Roll</value>
+  </data>
+  <data name="SaveAgreementButton" xml:space="preserve">
+    <value>Spara avtal</value>
+  </data>
+  <data name="SaveChainButton" xml:space="preserve">
+    <value>Spara kedja</value>
+  </data>
+  <data name="SaveDelegateButton" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="SealedNote" xml:space="preserve">
+    <value>Godkänt och förseglat.</value>
+  </data>
+  <data name="SealingPendingNote" xml:space="preserve">
+    <value>Godkänt. Försegling väntar: det förseglade dokumentet skapas så snart förseglingstjänsten är tillgänglig.</value>
+  </data>
+  <data name="StartsLabel" xml:space="preserve">
+    <value>Börjar</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="StepApproved" xml:space="preserve">
+    <value>Godkänt</value>
+  </data>
+  <data name="StepColumn" xml:space="preserve">
+    <value>Steg</value>
+  </data>
+  <data name="StepLabelPlaceholder" xml:space="preserve">
+    <value>Stegets namn (valfritt)</value>
+  </data>
+  <data name="StepNotYet" xml:space="preserve">
+    <value>Inte än</value>
+  </data>
+  <data name="StepOrderColumn" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="StepRejected" xml:space="preserve">
+    <value>Avslaget</value>
+  </data>
+  <data name="StepWaiting" xml:space="preserve">
+    <value>Väntar</value>
+  </data>
+  <data name="StepsHeading" xml:space="preserve">
+    <value>Steg i kedjan</value>
+  </data>
+  <data name="StepsHelp" xml:space="preserve">
+    <value>Stegen körs i ordning; steg med samma nummer körs parallellt. Varje godkännande signeras på nivå 2 och binds till innehållskoden.</value>
+  </data>
+  <data name="SubjectColumn" xml:space="preserve">
+    <value>Ärende</value>
+  </data>
+  <data name="SubjectGroupOption" xml:space="preserve">
+    <value>Ärendets egen grupp</value>
+  </data>
+  <data name="SubjectHeading" xml:space="preserve">
+    <value>Vad som godkänns</value>
+  </data>
+  <data name="SubmitForApprovalButton" xml:space="preserve">
+    <value>Skicka för godkännande</value>
+  </data>
+  <data name="SubmitHeading" xml:space="preserve">
+    <value>Skicka för godkännande</value>
+  </data>
+  <data name="SubmittedByLine" xml:space="preserve">
+    <value>Inskickat av {0} den {1} UTC</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Inskickat</value>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>Skickat för godkännande. Godkännarna har meddelats.</value>
+  </data>
+  <data name="TermsLabel" xml:space="preserve">
+    <value>Villkor</value>
+  </data>
+  <data name="ThresholdColumn" xml:space="preserve">
+    <value>Endast över belopp</value>
+  </data>
+  <data name="UseStepColumn" xml:space="preserve">
+    <value>Använd</value>
+  </data>
+  <data name="WaitingForMeLabel" xml:space="preserve">
+    <value>Väntar på mig</value>
+  </data>
+  <data name="WindowColumn" xml:space="preserve">
+    <value>När</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Dra tillbaka</value>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>Begäran drogs tillbaka.</value>
+  </data>
+  <data name="KindPurchaseRequisitionApproval" xml:space="preserve">
+    <value>Inköpsrekvisitioner</value>
+  </data>
+  <data name="KindIncidentPlanApproval" xml:space="preserve">
+    <value>Handlingsplaner för händelser (IAP)</value>
+  </data>
+  <data name="KindInvoiceApproval" xml:space="preserve">
+    <value>Fakturor</value>
+  </data>
+  <data name="KindPayrollRunApproval" xml:space="preserve">
+    <value>Lönekörningar</value>
+  </data>
+  <data name="KindCalOesMarsPackageApproval" xml:space="preserve">
+    <value>Cal OES MARS-paket</value>
+  </data>
+  <data name="KindMutualAidAgreementApproval" xml:space="preserve">
+    <value>Avtal om ömsesidigt bistånd</value>
+  </data>
+  <data name="StatusPending" xml:space="preserve">
+    <value>Väntande</value>
+  </data>
+  <data name="StatusApproved" xml:space="preserve">
+    <value>Godkänd</value>
+  </data>
+  <data name="StatusRejected" xml:space="preserve">
+    <value>Avslagen</value>
+  </data>
+  <data name="StatusWithdrawn" xml:space="preserve">
+    <value>Tillbakadragen</value>
+  </data>
+  <data name="StatusSuperseded" xml:space="preserve">
+    <value>Ersatt</value>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>Utgången</value>
+  </data>
+  <data name="ApproverRole" xml:space="preserve">
+    <value>Vem som helst i en roll</value>
+  </data>
+  <data name="ApproverNamedMember" xml:space="preserve">
+    <value>En namngiven medlem</value>
+  </data>
+  <data name="ApproverGroupAdmin" xml:space="preserve">
+    <value>Gruppadministratörer</value>
+  </data>
+  <data name="ApproverCertifyingOfficial" xml:space="preserve">
+    <value>Certifierande ansvarig</value>
+  </data>
+  <data name="ApproverDepartmentAdmins" xml:space="preserve">
+    <value>Avdelningsadministratörer</value>
+  </data>
+  <data name="EscalateToDepartmentAdmins" xml:space="preserve">
+    <value>Eskalera till avdelningsadministratörer</value>
+  </data>
+  <data name="EscalateToRole" xml:space="preserve">
+    <value>Eskalera till en roll</value>
+  </data>
+  <data name="EscalateToNamedMember" xml:space="preserve">
+    <value>Eskalera till en medlem</value>
+  </data>
+  <data name="AgreementStatusDraft" xml:space="preserve">
+    <value>Utkast</value>
+  </data>
+  <data name="AgreementStatusInApproval" xml:space="preserve">
+    <value>Under godkännande</value>
+  </data>
+  <data name="AgreementStatusApproved" xml:space="preserve">
+    <value>Godkänt</value>
+  </data>
+  <data name="AgreementStatusWithdrawn" xml:space="preserve">
+    <value>Tillbakadraget</value>
+  </data>
+  <data name="RefusalNone" xml:space="preserve">
+    <value>Klart.</value>
+  </data>
+  <data name="RefusalInvalidRequest" xml:space="preserve">
+    <value>Begäran kunde inte behandlas.</value>
+  </data>
+  <data name="RefusalSubjectNotFound" xml:space="preserve">
+    <value>Posten finns inte längre.</value>
+  </data>
+  <data name="RefusalModuleUnavailable" xml:space="preserve">
+    <value>Den här modulen eller dess tillägg är inte aktiv för din avdelning.</value>
+  </data>
+  <data name="RefusalNoChain" xml:space="preserve">
+    <value>Din avdelning har ingen godkännandekedja för dessa.</value>
+  </data>
+  <data name="RefusalAlreadyPending" xml:space="preserve">
+    <value>Detta väntar redan på godkännande.</value>
+  </data>
+  <data name="RefusalUnchanged" xml:space="preserve">
+    <value>Inget har ändrats sedan det godkändes eller avslogs. Ändra det innan du skickar in det igen.</value>
+  </data>
+  <data name="RefusalNotSubmittable" xml:space="preserve">
+    <value>Detta kan inte skickas in i sitt nuvarande läge.</value>
+  </data>
+  <data name="RefusalClosed" xml:space="preserve">
+    <value>Den här begäran väntar inte längre.</value>
+  </data>
+  <data name="RefusalSubjectChanged" xml:space="preserve">
+    <value>Detta ändrades efter att det skickades in. Skicka in det igen.</value>
+  </data>
+  <data name="RefusalNotAnApprover" xml:space="preserve">
+    <value>Du är inte godkännare för det här steget.</value>
+  </data>
+  <data name="RefusalNotYourTurn" xml:space="preserve">
+    <value>Ett tidigare steg måste godkänna först.</value>
+  </data>
+  <data name="RefusalStepUpRequired" xml:space="preserve">
+    <value>Bekräfta din identitet med tvåstegsverifiering eller en nyckel (passkey) för att godkänna.</value>
+  </data>
+  <data name="RefusalPasskeyRequired" xml:space="preserve">
+    <value>Din avdelning kräver en nyckel (passkey) för detta godkännande.</value>
+  </data>
+  <data name="RefusalReasonRequired" xml:space="preserve">
+    <value>Ange en orsak till avslaget.</value>
+  </data>
+  <data name="RefusalNoApprover" xml:space="preserve">
+    <value>Ett steg anger ingen som kan godkänna det. Kontrollera kedjans roller och medlemmar.</value>
+  </data>
+  <data name="RefusalNotAllowed" xml:space="preserve">
+    <value>Endast den som skickade in eller en avdelningsadministratör kan göra detta.</value>
+  </data>
+  <data name="RefusalSignatureFailed" xml:space="preserve">
+    <value>Godkännandet kunde inte signeras. Försök igen.</value>
+  </data>
+  <data name="RefusalNotRequired" xml:space="preserve">
+    <value>Inget steg i kedjan gäller för detta belopp: inget godkännande behövs.</value>
+  </data>
+</root>

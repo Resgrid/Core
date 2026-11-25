@@ -1,0 +1,84 @@
+@using Resgrid.Model
+@using Resgrid.Model.Approvals
+@model Resgrid.Web.Areas.User.Models.Approvals.MutualAidAgreementEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Approvals.Approvals> approvalText
+@*
+    A mutual-aid agreement document (e-Signature S4): title, partner (a Department Link or a name), dates and plain-text terms, and its
+    approvals. Editing a draft voids a pending approval (the content hash changes); an approved agreement is not edited.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + approvalText["AgreementsTab"];
+    ViewData["Title"] = Model.MutualAidAgreementId > 0 ? Model.Title : approvalText["NewAgreementButton"].Value;
+    ViewData["Subtitle"] = approvalText["AgreementsIntro"].Value;
+    ViewData["Section"] = "Agreements";
+    ViewData["Error"] = Model.Error;
+    ViewData["Message"] = TempData["ApprovalMessage"] as string;
+    var locked = Model.Status == (int)MutualAidAgreementStatuses.Approved;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Approvals/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.Approval != null)
+    {
+        @await Html.PartialAsync("~/Areas/User/Views/Shared/_ApprovalPanel.cshtml", Model.Approval)
+    }
+    <div class="alert alert-info" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @approvalText["PartnerSignatureOwedNote"]</div>
+    <form asp-area="User" asp-controller="Approvals" asp-action="EditAgreement" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="MutualAidAgreementId" value="@Model.MutualAidAgreementId" />
+        <fieldset @(locked ? "disabled" : null)>
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-6 form-group">
+                            <label for="agreement-title">@approvalText["AgreementTitleLabel"]</label>
+                            <input id="agreement-title" name="Title" class="form-control" maxlength="200" required value="@Model.Title" />
+                        </div>
+                        <div class="col-sm-3 form-group">
+                            <label for="agreement-link">@approvalText["DepartmentLinkLabel"]</label>
+                            <select id="agreement-link" name="DepartmentLinkId" class="form-control">
+                                <option value="">—</option>
+                                @foreach (var o in Model.Links) { <option value="@o.Value" selected="@(o.Value == Model.DepartmentLinkId?.ToString() ? "selected" : null)">@o.Text</option> }
+                            </select>
+                        </div>
+                        <div class="col-sm-3 form-group">
+                            <label for="agreement-partner">@approvalText["PartnerLabel"]</label>
+                            <input id="agreement-partner" name="PartnerName" class="form-control" maxlength="200" value="@Model.PartnerName" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3 form-group">
+                            <label for="agreement-effective">@approvalText["EffectiveLabel"]</label>
+                            <input id="agreement-effective" type="date" name="EffectiveOn" class="form-control" value="@Model.EffectiveOn?.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <div class="col-sm-3 form-group">
+                            <label for="agreement-expires">@approvalText["EndsLabel"]</label>
+                            <input id="agreement-expires" type="date" name="ExpiresOn" class="form-control" value="@Model.ExpiresOn?.ToString("yyyy-MM-dd")" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="agreement-terms">@approvalText["TermsLabel"]</label>
+                        <textarea id="agreement-terms" name="Terms" class="form-control" rows="14" maxlength="20000">@Model.Terms</textarea>
+                    </div>
+                    <div class="rgw-heading-actions">
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @approvalText["SaveAgreementButton"]</button>
+                        <a class="btn btn-default" asp-area="User" asp-controller="Approvals" asp-action="Agreements">@approvalText["CancelButton"]</a>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+    @if (Model.MutualAidAgreementId > 0 && !locked)
+    {
+        <form asp-area="User" asp-controller="Approvals" asp-action="DeleteAgreement" asp-route-id="@Model.MutualAidAgreementId" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-default"><i class="fa fa-trash" aria-hidden="true"></i> @approvalText["DeleteAgreementButton"]</button>
+        </form>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

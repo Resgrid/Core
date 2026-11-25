@@ -1,0 +1,135 @@
+@using System.Globalization
+@using Resgrid.Model
+@using Resgrid.Model.Approvals
+@model Resgrid.Web.Areas.User.Models.Approvals.ApprovalChainEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Approvals.Approvals> approvalText
+@*
+    The chain editor (department admins): the chain's name, expiry and self-approval rule, and up to 12 steps. Equal step numbers run in
+    parallel (every one must approve); a threshold limits a step to amounts above it; a step escalates after N hours to the department
+    admins, a role or a member. Saving creates a new version (running requests keep theirs).
+*@
+@{
+    ViewBag.Title = "Resgrid | " + approvalText["EditChainTitle"];
+    ViewData["Title"] = approvalText["EditChainTitle"].Value;
+    ViewData["Subtitle"] = approvalText["Kind" + Model.Kind].Value;
+    ViewData["Section"] = "Chains";
+    ViewData["Error"] = Model.Error;
+    string Selected(string a, string b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase) ? "selected" : null;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Approvals/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <form asp-area="User" asp-controller="Approvals" asp-action="EditChain" method="post" class="rgw-builder-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="ApprovalChainId" value="@Model.ApprovalChainId" />
+        <input type="hidden" name="Kind" value="@((int)Model.Kind)" />
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-6 form-group">
+                        <label for="chain-name">@approvalText["ChainNameLabel"]</label>
+                        <input id="chain-name" name="Name" class="form-control" maxlength="200" required value="@Model.Name" />
+                    </div>
+                    <div class="col-sm-3 form-group">
+                        <label for="chain-expiry">@approvalText["ExpiresInDaysLabel"]</label>
+                        <input id="chain-expiry" name="ExpiresInDays" type="number" min="1" max="90" class="form-control" value="@Model.ExpiresInDays" />
+                    </div>
+                    <div class="col-sm-3 form-group">
+                        <div class="checkbox"><label><input type="checkbox" name="IsActive" value="true" @(Model.IsActive ? "checked" : null) /> @approvalText["ActiveLabel"]</label></div>
+                        <div class="checkbox"><label><input type="checkbox" name="AllowSelfApproval" value="true" @(Model.AllowSelfApproval ? "checked" : null) /> @approvalText["AllowSelfApprovalLabel"]</label></div>
+                    </div>
+                </div>
+                <p class="text-muted small">@approvalText["ChainEditorHelp"]</p>
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-list-ol" aria-hidden="true"></i> @approvalText["StepsHeading"]</h5></div>
+            <div class="ibox-content">
+                <div class="table-responsive">
+                    <table class="table rgw-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">@approvalText["UseStepColumn"]</th>
+                                <th scope="col">@approvalText["StepOrderColumn"]</th>
+                                <th scope="col">@approvalText["ApproverColumn"]</th>
+                                @if (Model.HasAmount)
+                                {
+                                    <th scope="col">@approvalText["ThresholdColumn"]</th>
+                                }
+                                <th scope="col">@approvalText["EscalationColumn"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (var i = 0; i < Model.Steps.Count; i++)
+                            {
+                                var s = Model.Steps[i];
+                                var p = "Steps[" + i.ToString(CultureInfo.InvariantCulture) + "].";
+                                <tr>
+                                    <td><input type="checkbox" name="@(p)Include" value="true" @(s.Include ? "checked" : null) aria-label="@approvalText["UseStepColumn"] @(i + 1)" /></td>
+                                    <td><input type="number" min="1" max="12" name="@(p)StepOrder" value="@s.StepOrder" class="form-control input-sm" style="width:70px" aria-label="@approvalText["StepOrderColumn"]" /></td>
+                                    <td>
+                                        <select name="@(p)ApproverKind" class="form-control input-sm" aria-label="@approvalText["ApproverColumn"]">
+                                            @foreach (ApprovalApproverKinds kind in Enum.GetValues(typeof(ApprovalApproverKinds)))
+                                            {
+                                                <option value="@((int)kind)" selected="@(kind == s.ApproverKind ? "selected" : null)">@approvalText["Approver" + kind]</option>
+                                            }
+                                        </select>
+                                        <select name="@(p)PersonnelRoleId" class="form-control input-sm m-t-xs" aria-label="@approvalText["RoleLabel"]">
+                                            <option value="">@approvalText["RoleLabel"]</option>
+                                            @foreach (var o in Model.Roles) { <option value="@o.Value" selected="@Selected(o.Value, s.PersonnelRoleId?.ToString(CultureInfo.InvariantCulture))">@o.Text</option> }
+                                        </select>
+                                        <select name="@(p)UserId" class="form-control input-sm m-t-xs" aria-label="@approvalText["MemberLabel"]">
+                                            <option value="">@approvalText["MemberLabel"]</option>
+                                            @foreach (var o in Model.Members) { <option value="@o.Value" selected="@Selected(o.Value, s.UserId)">@o.Text</option> }
+                                        </select>
+                                        <select name="@(p)DepartmentGroupId" class="form-control input-sm m-t-xs" aria-label="@approvalText["GroupLabel"]">
+                                            <option value="">@approvalText["SubjectGroupOption"]</option>
+                                            @foreach (var o in Model.Groups) { <option value="@o.Value" selected="@Selected(o.Value, s.DepartmentGroupId?.ToString(CultureInfo.InvariantCulture))">@o.Text</option> }
+                                        </select>
+                                        <select name="@(p)CertificationTypeId" class="form-control input-sm m-t-xs" aria-label="@approvalText["CertificationTypeLabel"]">
+                                            <option value="">@approvalText["CertificationTypeLabel"]</option>
+                                            @foreach (var o in Model.CertificationTypes) { <option value="@o.Value" selected="@Selected(o.Value, s.CertificationTypeId?.ToString(CultureInfo.InvariantCulture))">@o.Text</option> }
+                                        </select>
+                                        <input name="@(p)Label" class="form-control input-sm m-t-xs" maxlength="200" placeholder="@approvalText["StepLabelPlaceholder"]" value="@s.Label" aria-label="@approvalText["StepLabelPlaceholder"]" />
+                                    </td>
+                                    @if (Model.HasAmount)
+                                    {
+                                        <td><input type="number" min="0" step="0.01" name="@(p)MinimumAmount" value="@s.MinimumAmount?.ToString(CultureInfo.InvariantCulture)" class="form-control input-sm" aria-label="@approvalText["ThresholdColumn"]" /></td>
+                                    }
+                                    <td>
+                                        <input type="number" min="0" max="2160" name="@(p)EscalateAfterHours" value="@s.EscalateAfterHours" class="form-control input-sm" placeholder="@approvalText["HoursPlaceholder"]" aria-label="@approvalText["HoursPlaceholder"]" />
+                                        <select name="@(p)EscalateTo" class="form-control input-sm m-t-xs" aria-label="@approvalText["EscalationColumn"]">
+                                            @foreach (ApprovalEscalationTargets target in Enum.GetValues(typeof(ApprovalEscalationTargets)))
+                                            {
+                                                <option value="@((int)target)" selected="@(target == s.EscalateTo ? "selected" : null)">@approvalText["EscalateTo" + target]</option>
+                                            }
+                                        </select>
+                                        <select name="@(p)EscalateToRoleId" class="form-control input-sm m-t-xs" aria-label="@approvalText["RoleLabel"]">
+                                            <option value="">@approvalText["RoleLabel"]</option>
+                                            @foreach (var o in Model.Roles) { <option value="@o.Value" selected="@Selected(o.Value, s.EscalateToRoleId?.ToString(CultureInfo.InvariantCulture))">@o.Text</option> }
+                                        </select>
+                                        <select name="@(p)EscalateToUserId" class="form-control input-sm m-t-xs" aria-label="@approvalText["MemberLabel"]">
+                                            <option value="">@approvalText["MemberLabel"]</option>
+                                            @foreach (var o in Model.Members) { <option value="@o.Value" selected="@Selected(o.Value, s.EscalateToUserId)">@o.Text</option> }
+                                        </select>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="rgw-heading-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @approvalText["SaveChainButton"]</button>
+                    <a class="btn btn-default" asp-area="User" asp-controller="Approvals" asp-action="Chains">@approvalText["CancelButton"]</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

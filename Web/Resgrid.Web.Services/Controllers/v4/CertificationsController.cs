@@ -37,11 +37,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IProtectedReadService _protectedRead;
 		private readonly IDepartmentsService _departments;
 
-		public CertificationsController(ICertificationService certifications, IProtectedReadService protectedRead, IDepartmentsService departments)
+		private readonly ISignatureService _signatures;
+		private readonly IMfaEvidenceService _evidence;
+		private readonly IMfaPolicyService _mfaPolicy;
+
+		public CertificationsController(ICertificationService certifications, IProtectedReadService protectedRead, IDepartmentsService departments,
+			ISignatureService signatures = null, IMfaEvidenceService evidence = null, IMfaPolicyService mfaPolicy = null)
 		{
 			_certifications = certifications;
 			_protectedRead = protectedRead;
 			_departments = departments;
+			_signatures = signatures;
+			_evidence = evidence;
+			_mfaPolicy = mfaPolicy;
 		}
 
 		private string ProtectedGrantToken => Request.Headers[DataProtectionController.GrantHeader].ToString();
@@ -267,9 +275,34 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<ActionResult<CertificationResult>> VerifyCertification(int id, CancellationToken cancellationToken)
 		{
+			// S0: verifying a certification is an L2 signature (floor). Without a fresh step-up on this session nothing is verified.
+			var proof = await ApiSignatureProof.BuildAsync(HttpContext, UserId, DepartmentId, _evidence, _mfaPolicy, cancellationToken);
+			if (_signatures != null && Resgrid.Services.SignatureService.Assess(new SignatureRequest { Use = SignatureUse.CertificationVerification }, proof, DateTime.UtcNow).Level < SignatureLevels.StepUp)
+			{
+				var refused = new CertificationResult { PageSize = 0, Status = ResponseHelper.Failure };
+				ResponseHelper.PopulateV4ResponseData(refused);
+				Response.Headers["X-Resgrid-Reason"] = "certifications_step_up_required";
+				return StatusCode(StatusCodes.Status403Forbidden, refused);
+			}
+
 			try
 			{
 				var saved = await _certifications.VerifyCertificationAsync(id, DepartmentId, UserId, cancellationToken);
+				if (_signatures != null)
+				{
+					var signed = await _signatures.SignAsync(new SignatureRequest
+					{
+						DepartmentId = DepartmentId,
+						Use = SignatureUse.CertificationVerification,
+						SubjectId = saved.PersonnelCertificationId.ToString(System.Globalization.CultureInfo.InvariantCulture),
+						RevisionId = saved.VerifiedOn?.ToString("o", System.Globalization.CultureInfo.InvariantCulture),
+						ArtifactSha256 = _signatures.CertificationArtifactSha256(saved),
+						StatementText = CertificationStatements.Verification(saved, saved.DepartmentCertificationTypeId.HasValue
+							? (await _certifications.GetCertificationTypeByIdAsync(saved.DepartmentCertificationTypeId.Value))?.Type : null)
+					}, proof, cancellationToken);
+					if (!signed.Succeeded)
+						Resgrid.Framework.Logging.LogError($"Certification {saved.PersonnelCertificationId} was verified but its signature was refused: {signed.Outcome}");
+				}
 				return await GetCertification(saved.PersonnelCertificationId);
 			}
 			catch (InvalidOperationException ex) when (ex.Message.StartsWith("certifications_", StringComparison.Ordinal)) { return Failed<CertificationResult>(ex.Message); }

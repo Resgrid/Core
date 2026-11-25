@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Resgrid.Model
 {
 	[Table("DispatchProtocolTriggers")]
-	public class DispatchProtocolTrigger : IEntity
+	public class DispatchProtocolTrigger : IEntity, IDispatchTriggerCriteria
 	{
 		[Key]
 		[Required]
@@ -40,8 +40,29 @@ namespace Resgrid.Model
 		/// </summary>
 		public int? CallTypeId { get; set; }
 
-		/// <summary>Stored but not evaluated: geofence triggers are planned (P4) as "inside station or group geofence X".</summary>
+		/// <summary>Never evaluated: a trigger's area is <see cref="GeofenceGroupId"/> (P4, "inside station or group geofence X"), drawn once on the group.</summary>
 		public string Geofence { get; set; }
+
+		/// <inheritdoc />
+		public int? GeofenceGroupId { get; set; }
+
+		/// <inheritdoc />
+		public int? DaysOfWeek { get; set; }
+
+		/// <inheritdoc />
+		public int? StartMinute { get; set; }
+
+		/// <inheritdoc />
+		public int? EndMinute { get; set; }
+
+		/// <inheritdoc />
+		public string Keywords { get; set; }
+
+		/// <inheritdoc />
+		public int? PoiTypeId { get; set; }
+
+		/// <inheritdoc />
+		public string CallSources { get; set; }
 
 		[NotMapped]
 		[JsonIgnore]

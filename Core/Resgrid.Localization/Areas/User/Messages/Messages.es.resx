@@ -237,4 +237,58 @@
   <data name="NotAttending" xml:space="preserve">
     <value>No asistiré</value>
   </data>
+  <data name="CredentialAudienceLabel" xml:space="preserve">
+    <value>Por certificación</value>
+  </data>
+  <data name="CredentialAudienceNone" xml:space="preserve">
+    <value>Nadie por certificación</value>
+  </data>
+  <data name="CredentialAudienceStatus" xml:space="preserve">
+    <value>Estado de la certificación</value>
+  </data>
+  <data name="CredentialAudienceExpired" xml:space="preserve">
+    <value>ha vencido</value>
+  </data>
+  <data name="CredentialAudienceExpiring" xml:space="preserve">
+    <value>vence en los días indicados</value>
+  </data>
+  <data name="CredentialAudienceMissing" xml:space="preserve">
+    <value>nunca la tuvo</value>
+  </data>
+  <data name="CredentialAudienceDays" xml:space="preserve">
+    <value>Días</value>
+  </data>
+  <data name="CredentialAudienceHelp" xml:space="preserve">
+    <value>Añade a los miembros activos cuya certificación coincide, junto con los destinatarios elegidos arriba.</value>
+  </data>
+  <data name="CredentialAudienceNoMatch" xml:space="preserve">
+    <value>Ningún miembro coincide con el estado de certificación elegido.</value>
+  </data>
+  <data name="RosterAudienceLabel" xml:space="preserve">
+    <value>Lista de la clase</value>
+  </data>
+  <data name="RosterAudienceNone" xml:space="preserve">
+    <value>Ninguna clase</value>
+  </data>
+  <data name="RosterAudienceStatus" xml:space="preserve">
+    <value>Estado en la lista</value>
+  </data>
+  <data name="RosterAudienceEnrolled" xml:space="preserve">
+    <value>Inscritos</value>
+  </data>
+  <data name="RosterAudienceAttended" xml:space="preserve">
+    <value>Asistieron</value>
+  </data>
+  <data name="RosterAudienceAbsent" xml:space="preserve">
+    <value>Ausentes</value>
+  </data>
+  <data name="RosterAudienceWaitlisted" xml:space="preserve">
+    <value>En lista de espera</value>
+  </data>
+  <data name="RosterAudienceHelp" xml:space="preserve">
+    <value>Añade a los destinatarios los miembros activos de la clase con ese estado.</value>
+  </data>
+  <data name="RosterAudienceNoMatch" xml:space="preserve">
+    <value>Nadie en la lista de esa clase tiene ese estado.</value>
+  </data>
 </root>

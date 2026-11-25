@@ -21,6 +21,21 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		public int DeleteTraining { get; set; }
 		public IEnumerable<SelectListItem> DeleteTrainingPermissions { get; set; }
 
+		public int AuthorProtocols { get; set; }
+		public IEnumerable<SelectListItem> AuthorProtocolsPermissions { get; set; }
+
+		public int ApproveProtocols { get; set; }
+		public IEnumerable<SelectListItem> ApproveProtocolsPermissions { get; set; }
+
+		public int ManageProtocolAcknowledgments { get; set; }
+		public IEnumerable<SelectListItem> ManageProtocolAcknowledgmentsPermissions { get; set; }
+
+		public int ManageCourses { get; set; }
+		public IEnumerable<SelectListItem> ManageCoursesPermissions { get; set; }
+
+		public int GradeAssessments { get; set; }
+		public IEnumerable<SelectListItem> GradeAssessmentsPermissions { get; set; }
+
 		public int CreateDocument { get; set; }
 		public IEnumerable<SelectListItem> CreateDocumentPermissions { get; set; }
 

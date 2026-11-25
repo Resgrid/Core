@@ -1,0 +1,112 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolSettingsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@* Protocol library settings (department setting 134): signature levels above the floors, the default review interval, retention and legal hold. *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["SettingsTab"];
+    ViewData["Title"] = localizer["SettingsTab"].Value;
+    ViewData["Subtitle"] = localizer["SettingsIntro"].Value;
+    ViewData["Section"] = "Settings";
+    ViewData["IsManager"] = true;
+    ViewData["IsAdmin"] = true;
+    var kinds = Enum.GetValues(typeof(ProtocolKinds)).Cast<ProtocolKinds>().ToList();
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    <form method="post" asp-controller="Protocols" asp-action="Settings" asp-route-area="User">
+        @Html.AntiForgeryToken()
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-shield" aria-hidden="true"></i> @localizer["SignatureSettingsHeader"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted">@localizer["SignatureFloorsHelp"]</p>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="RequirePasskeyForApproval" value="true" @(Model.RequirePasskeyForApproval ? "checked" : "") />
+                        @localizer["RequirePasskeyForApprovalCheckbox"]
+                    </label>
+                    <input type="hidden" name="RequirePasskeyForApproval" value="false" />
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="ReadAndSignRequiresStepUp" value="true" @(Model.ReadAndSignRequiresStepUp ? "checked" : "") />
+                        @localizer["ReadAndSignStepUpCheckbox"]
+                    </label>
+                    <input type="hidden" name="ReadAndSignRequiresStepUp" value="false" />
+                </div>
+            </div>
+        </div>
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-code-fork" aria-hidden="true"></i> @localizer["DispatchSettingsHeader"]</h5></div>
+            <div class="ibox-content">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="ShowDeterminantInDispatch" value="true" aria-describedby="ShowDeterminantHelp" @(Model.ShowDeterminantInDispatch ? "checked" : "") />
+                        @localizer["ShowDeterminantInDispatchCheckbox"]
+                    </label>
+                    <input type="hidden" name="ShowDeterminantInDispatch" value="false" />
+                    <span id="ShowDeterminantHelp" class="help-block">@localizer["ShowDeterminantInDispatchHelp"]</span>
+                </div>
+            </div>
+        </div>
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-calendar-check-o" aria-hidden="true"></i> @localizer["ReviewSettingsHeader"]</h5></div>
+            <div class="ibox-content">
+                <div class="form-group" style="max-width: 320px;">
+                    <label class="control-label" for="DefaultReviewIntervalDays">@localizer["DefaultReviewIntervalLabel"]</label>
+                    <input class="form-control" type="number" min="0" max="@ProtocolLibrarySettings.MaxReviewIntervalDays" id="DefaultReviewIntervalDays" name="DefaultReviewIntervalDays" value="@Model.DefaultReviewIntervalDays" aria-describedby="DefaultReviewHelp" />
+                    <span id="DefaultReviewHelp" class="help-block">@localizer["DefaultReviewIntervalHelp"]</span>
+                </div>
+                <div class="form-group" style="max-width: 320px;">
+                    <label class="control-label" for="DefaultContentLocale">@localizer["DefaultContentLocaleLabel"]</label>
+                    <select class="form-control" id="DefaultContentLocale" name="DefaultContentLocale" aria-describedby="DefaultContentLocaleHelp">
+                        <option value="">@localizer["DefaultContentLocaleBlank"]</option>
+                        @foreach (var language in new[] { "ar", "de", "el", "en", "es", "fr", "it", "pl", "sv", "uk" })
+                        {
+                            <option value="@language" selected="@(string.Equals(language, Model.DefaultContentLocale, StringComparison.OrdinalIgnoreCase))">@Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolDisplay.LanguageName(language)</option>
+                        }
+                    </select>
+                    <span id="DefaultContentLocaleHelp" class="help-block">@localizer["DefaultContentLocaleHelp"]</span>
+                </div>
+            </div>
+        </div>
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-archive" aria-hidden="true"></i> @localizer["RetentionHeader"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted">@localizer["RetentionHelp"]</p>
+                <div class="rgw-grid">
+                    @for (var i = 0; i < kinds.Count; i++)
+                    {
+                        <div class="form-group">
+                            <label class="control-label" for="retention-@i">@ProtocolDisplay.KindName((int)kinds[i], localizer)</label>
+                            <input class="form-control" type="number" min="0" max="36500" id="retention-@i" name="RetentionDays[@i]" value="@(i < Model.RetentionDays.Count ? Model.RetentionDays[i] : 0)" />
+                        </div>
+                    }
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="LegalHold" value="true" @(Model.LegalHold ? "checked" : "") />
+                        @localizer["DepartmentLegalHoldCheckbox"]
+                    </label>
+                    <input type="hidden" name="LegalHold" value="false" />
+                    <span class="help-block">@localizer["DepartmentLegalHoldHelp"]</span>
+                </div>
+            </div>
+        </div>
+        <div class="rgw-wizard-actions">
+            <span class="rgw-wizard-spacer"></span>
+            <button class="btn btn-primary" type="submit"><i class="fa fa-save" aria-hidden="true"></i> @localizer["SaveSettingsButton"]</button>
+        </div>
+    </form>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

@@ -314,7 +314,31 @@ RecordPermitExpiring = 163,
 		RecurringCallOccurrenceSkipped = 214,
 		RecurringCallOccurrenceDispatched = 215,
 		RecurringCallAlertRaised = 216,
-		RecurringCallAlertResolved = 217
+		RecurringCallAlertResolved = 217,
+
+		// e-Signature S2 (round 3, 220-223): external-signer requests. Raised in process by SignatureRequestService (web, API and
+		// worker 90); payload Events/SignatureRequestEvent.cs carries no signer name, e-mail or phone.
+		SignatureRequested = 220,
+		SignatureCompleted = 221,
+		SignatureDeclined = 222,
+		SignatureExpired = 223,
+
+		// Training T3 (round 4 B, 224-229): LMS assignments, completions, failed assessments, overdue and at-risk requirements and
+		// training-backed enforcement. Raised in process by the LMS requirement engine (web, API and worker 93) and the LMS learner
+		// runtime; payload Events/TrainingWorkflowEvent.cs carries ids, names of the training and dates, never a member's contact data.
+		TrainingAssigned = 224,
+		TrainingCompleted = 225,
+		TrainingFailed = 226,
+		TrainingOverdue = 227,
+		RequirementAtRisk = 228,
+		RequirementEnforced = 229,
+
+		// e-Signature S4 (round 5 E, 236-239): approval chains. Raised in process by ApprovalChainService (web, API and worker 97); payload
+		// Events/ApprovalWorkflowEvent.cs carries ids, the subject's title, amount and step, never a member's or outside party's contact data.
+		ApprovalRequested = 236,
+		ApprovalGranted = 237,
+		ApprovalRejected = 238,
+		ApprovalEscalated = 239
 	}
 
 	public static class WorkflowTriggerEventTypes

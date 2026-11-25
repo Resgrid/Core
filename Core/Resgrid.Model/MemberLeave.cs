@@ -73,7 +73,13 @@ namespace Resgrid.Model
 	public enum MemberPinnedItemKinds
 	{
 		/// <summary>A personnel certification record. RefId is the PersonnelCertificationId.</summary>
-		Certification = 1
+		Certification = 1,
+
+		/// <summary>A protocol the member marked as a favorite in the library (P1). RefId is the DispatchProtocolId.</summary>
+		ProtocolFavorite = 2,
+
+		/// <summary>A protocol the member opened recently (P1, the last few kept). RefId is the DispatchProtocolId; PinnedOn the last view.</summary>
+		ProtocolRecent = 3
 	}
 
 	/// <summary>An item a member pinned to their My Training page (the Vector "pin to To Do" parity row).</summary>

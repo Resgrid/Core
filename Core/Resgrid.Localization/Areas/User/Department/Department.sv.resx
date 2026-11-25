@@ -2609,4 +2609,19 @@
   <data name="ShiftOverSignupHelp" xml:space="preserve">
     <value>Medlemmar kan anmäla sig till en grupp även när alla rollplatser (obligatoriska och valfria) är tagna. De behöver fortfarande en av gruppens roller.</value>
   </data>
+  <data name="DocumentNumberKindProtocol" xml:space="preserve">
+    <value>Protokoll</value>
+  </data>
+  <data name="RunCardConditionProtocolOutcome" xml:space="preserve">
+    <value>En protokollbestämningskod på larmet</value>
+  </data>
+  <data name="RunCardDeterminantEquals" xml:space="preserve">
+    <value>är lika med</value>
+  </data>
+  <data name="RunCardDeterminantStartsWith" xml:space="preserve">
+    <value>börjar med</value>
+  </data>
+  <data name="RunCardDeterminantValue" xml:space="preserve">
+    <value>Bestämningskod (t.ex. 09-E)</value>
+  </data>
 </root>

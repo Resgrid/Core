@@ -53,6 +53,12 @@ namespace Resgrid.Model
 		public bool OpenToAllMembers { get; set; }
 
 		/// <summary>
+		/// Never indexed for department knowledge answers (K1, decision 14: the per-item "no AI" flag, e.g. licensed material whose
+		/// license forbids processing). M0370.
+		/// </summary>
+		public bool ExcludeFromAi { get; set; }
+
+		/// <summary>
 		/// Open trainings only: a member may enrol themselves to be tracked (the self-enrol catalog). Reading an open
 		/// training never assigns it; enrolling does, with the training's due rule.
 		/// </summary>
@@ -107,8 +113,20 @@ namespace Resgrid.Model
 
 		public string CeCourseNumber { get; set; }
 
-		/// <summary>A training category. T1 adds TrainingCategories; until then the column carries no foreign key.</summary>
+		/// <summary>The training category (TrainingCategories, M0349 foreign key, set to null when the category is removed).</summary>
 		public int? CategoryId { get; set; }
+
+		/// <summary><see cref="MethodsOfTraining"/> the completion is recorded with (T1, §13a).</summary>
+		public int? MethodOfTraining { get; set; }
+
+		/// <summary>Training objectives, plain text (ISO detail capture, §13a).</summary>
+		public string Objectives { get; set; }
+
+		/// <summary>Comma separated tags.</summary>
+		public string Tags { get; set; }
+
+		/// <summary>Code for state and third-party exports (Vector "RMS code" parity).</summary>
+		public string ExternalCode { get; set; }
 
 		/// <summary>Archived trainings are hidden from members and lists but kept for reports and transcripts (T-D21).</summary>
 		public DateTime? ArchivedOn { get; set; }

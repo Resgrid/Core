@@ -92,7 +92,8 @@ namespace Resgrid.AdminAssist
 				var keyFeatures = Capabilities.Count(c => c.AreaId == module.Id && c.IsKey);
 				Require(new[] { ProductArea.Core, ProductArea.Recommended, ProductArea.Optional, ProductArea.AddOn }.Contains(module.Tier), "Invalid module tier: " + module.Id);
 				Require(module.Tier == ProductArea.AddOn ? module.Addon != null && addons.Contains(module.Addon) : module.Addon == null, "Add-on modules name their add-on: " + module.Id);
-				Require(keyFeatures is >= 1 and <= 6, "A module needs one to six key features: " + module.Id);
+				// An add-on built dark (no feature released yet) is not listed, so it needs no key feature until one is released.
+				Require(keyFeatures <= 6 && (keyFeatures >= 1 || !this.IsListed(module)), "A module needs one to six key features: " + module.Id);
 				Require(!string.IsNullOrWhiteSpace(module.ValueKey) && !string.IsNullOrWhiteSpace(module.ExampleKey) && !string.IsNullOrWhiteSpace(module.AdoptionKey) &&
 					module.MinimumMinutes > 0 && module.MaximumMinutes >= module.MinimumMinutes, "Module guidance missing: " + module.Id);
 			}

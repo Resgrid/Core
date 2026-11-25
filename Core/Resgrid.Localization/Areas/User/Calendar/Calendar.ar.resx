@@ -411,4 +411,16 @@
   <data name="CheckOutBy" xml:space="preserve">
     <value>سُجّل الانصراف بواسطة {0}</value>
   </data>
+  <data name="CountsAsTrainingLabel" xml:space="preserve">
+    <value>يُحتسب تدريبًا</value>
+  </data>
+  <data name="CountsAsTrainingHelp" xml:space="preserve">
+    <value>يصبح تسجيل الحضور والانصراف في أحداث هذا النوع ساعات تدريب في سجلات الحاضرين. الحضور دون انصراف ينتظر مسؤولًا.</value>
+  </data>
+  <data name="TrainingCategoryLabel" xml:space="preserve">
+    <value>فئة التدريب</value>
+  </data>
+  <data name="TrainingCategoryNone" xml:space="preserve">
+    <value>بدون فئة</value>
+  </data>
 </root>

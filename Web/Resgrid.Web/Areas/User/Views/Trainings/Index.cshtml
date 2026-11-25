@@ -26,6 +26,8 @@
 @await Html.PartialAsync("_Shell")
 
 <div class="wrapper wrapper-content rgw-page">
+    @* e-Signature S3: the member's signatures whose turn it is (evaluations, certifying sign-offs, receipts). *@
+    @await Component.InvokeAsync("PendingSignatures")
     @if (my.OnLeave)
     {
         <div class="alert alert-info" role="status"><i class="fa fa-pause-circle" aria-hidden="true"></i> @localizer["OnLeaveNotice"]</div>
@@ -77,6 +79,12 @@
             </div>
         </div>
     }
+
+    @* Training T3 (LMS): the member's learning requirements and paths, rendered by name so this baseline page needs no LMS type. *@
+    @await Component.InvokeAsync("LmsMyTraining", new { scope = Model.Scope })
+
+    @* K3 (LMS): "Recommended" — what to take next and why, also rendered by name. *@
+    @await Component.InvokeAsync("LmsRecommendations", new { scope = Model.Scope })
 
     @if (my.Certifications.Count > 0)
     {

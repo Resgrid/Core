@@ -1,0 +1,127 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingRecordSubmitView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    Submit outside training (an external submission): a course taken elsewhere, with hours and optional evidence. It waits for an
+    officer and counts once verified. Refused while the department switched member submissions off.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Rec.SubmitTitle"];
+    ViewData["Section"] = "Transcript";
+    ViewData["Title"] = localizer["Rec.SubmitTitle"].Value;
+    ViewData["Subtitle"] = localizer["Rec.SubmitIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var input = Model.Input;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.SubmissionsDisabled)
+    {
+        <div class="rgw-next-action" role="status">
+            <p class="m-b-xs"><strong><i class="fa fa-lock" aria-hidden="true"></i> @localizer["Rec.SubmissionsDisabledHeader"]</strong></p>
+            <p class="m-b-none">@localizer["Rec.SubmissionsDisabledHelp"]</p>
+        </div>
+        <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="Transcript" asp-route-area="User"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["Rec.BackToTranscriptButton"]</a>
+    }
+    else
+    {
+        <div class="rgw-next-action">
+            <p class="m-b-none"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["Rec.SubmitHowItWorks"]</p>
+        </div>
+        <form method="post" asp-controller="TrainingRecords" asp-action="Submit" asp-route-area="User" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="__Invariant" value="Hours" />
+            <input type="hidden" name="__Invariant" value="CeHours" />
+            <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5><i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer["Rec.SubmitCourseSection"]</h5></div>
+                <div class="ibox-content">
+                    <div class="rgw-grid">
+                        <div class="form-group rgw-wide">
+                            <label for="Title" class="required">@localizer["Doc.Course"]</label>
+                            <input id="Title" name="Title" class="form-control" maxlength="@LearningRecord.MaxTitleLength" value="@input.Title" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="CompletedOn" class="required">@localizer["Doc.CompletedOn"]</label>
+                            <input id="CompletedOn" name="CompletedOn" type="date" class="form-control" max="@Model.Today" value="@input.CompletedOn" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="Hours" class="required">@localizer["Doc.Hours"]</label>
+                            <input id="Hours" name="Hours" type="number" min="0.25" max="9999" step="0.25" class="form-control" value="@LearningRecordPresentation.Invariant(input.Hours)" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="CategoryId">@localizer["Doc.Category"]</label>
+                            <select id="CategoryId" name="CategoryId" class="form-control">
+                                <option value="">@localizer["Doc.Uncategorized"]</option>
+                                @foreach (var category in Model.LiveCategories)
+                                {
+                                    <option value="@category.TrainingCategoryId" selected="@(input.CategoryId == category.TrainingCategoryId)">@category.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="MethodOfTraining">@localizer["Doc.Method"]</label>
+                            <select id="MethodOfTraining" name="MethodOfTraining" class="form-control">
+                                <option value="">@localizer["SelectPlaceholder"]</option>
+                                @foreach (var method in Enum.GetValues<MethodsOfTraining>())
+                                {
+                                    <option value="@((int)method)" selected="@(input.MethodOfTraining == (int)method)">@localizer["TrainingMethod." + method]</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5><i class="fa fa-certificate" aria-hidden="true"></i> @localizer["Rec.SubmitCeSection"]</h5></div>
+                <div class="ibox-content">
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label for="CeProvider">@localizer["Doc.CeProvider"]</label>
+                            <input id="CeProvider" name="CeProvider" class="form-control" maxlength="250" value="@input.CeProvider" />
+                        </div>
+                        <div class="form-group">
+                            <label for="CeCourseNumber">@localizer["Doc.CeCourseNumber"]</label>
+                            <input id="CeCourseNumber" name="CeCourseNumber" class="form-control" maxlength="100" value="@input.CeCourseNumber" />
+                        </div>
+                        <div class="form-group">
+                            <label for="CeHours">@localizer["Doc.CeHours"]</label>
+                            <input id="CeHours" name="CeHours" type="number" min="0" max="9999" step="0.25" class="form-control" value="@LearningRecordPresentation.Invariant(input.CeHours)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5><i class="fa fa-paperclip" aria-hidden="true"></i> @localizer["Rec.SubmitEvidenceSection"]</h5></div>
+                <div class="ibox-content">
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label for="evidence">@localizer["Rec.EvidenceLabel"]</label>
+                            <input id="evidence" name="evidence" type="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx" aria-describedby="evidence-help" />
+                            <span class="help-block" id="evidence-help">@localizer["Rec.EvidenceHelp"]</span>
+                        </div>
+                        <div class="form-group rgw-wide">
+                            <label for="Notes">@localizer["Rec.NotesLabel"]</label>
+                            <textarea id="Notes" name="Notes" class="form-control" rows="3" maxlength="@LearningRecord.MaxNotesLength">@input.Notes</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane" aria-hidden="true"></i> @localizer["Rec.SubmitSendButton"]</button>
+            <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="Transcript" asp-route-area="User"><i class="fa fa-times" aria-hidden="true"></i> @localizer["CancelButton"]</a>
+        </form>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

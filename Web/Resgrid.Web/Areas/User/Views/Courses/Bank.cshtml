@@ -1,0 +1,99 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Courses
+@model BankModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* One question bank: its questions (retired ones kept for the attempts that drew them) and the question editor. *@
+@{
+    var bank = Model.Bank;
+    ViewBag.Title = "Resgrid | " + bank.Name;
+    ViewData["Section"] = "CourseLibrary";
+    ViewData["Title"] = bank.Name;
+    ViewData["Subtitle"] = bank.IsShared ? localizer["SharedBadge"].Value : localizer["PrivateBadge"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var editing = Model.Editing ?? new LmsQuestion { LmsQuestionBankId = bank.LmsQuestionBankId, Points = 1 };
+    var options = editing.Options ?? new List<LmsQuestionOption>();
+    var slots = Math.Max(4, options.Count + 1);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <a class="btn btn-white m-b-sm" asp-controller="Courses" asp-action="Banks" asp-route-area="User"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["BanksTitle"]</a>
+    <div class="row">
+        <div class="col-lg-6">
+            <h3>@string.Format(localizer["QuestionsCountFormat"].Value, Model.Questions.Count(q => !q.IsRetired))</h3>
+            <ul class="rgw-journey">
+                @foreach (var question in Model.Questions)
+                {
+                    <li class="@(question.IsRetired ? "text-muted" : "")">
+                        <span>@question.Text <span class="rgw-sub">@localizer[CourseLabels.QuestionKind(question.Kind)]@(question.IsRetired ? " · " + localizer["RetiredBadge"].Value : "")@(string.IsNullOrWhiteSpace(question.Tags) ? "" : " · " + question.Tags)</span></span>
+                        @if (!question.IsRetired && Model.CanAuthor)
+                        {
+                            <span>
+                                <a class="btn btn-white btn-xs" asp-controller="Courses" asp-action="Bank" asp-route-area="User" asp-route-id="@bank.LmsQuestionBankId" asp-route-question="@question.LmsQuestionId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["EditButton"]</a>
+                                <form method="post" asp-controller="Courses" asp-action="RetireQuestion" asp-route-area="User" asp-route-id="@bank.LmsQuestionBankId" class="inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="questionId" value="@question.LmsQuestionId" />
+                                    <button type="submit" class="btn btn-white btn-xs" data-confirm="@localizer["RetireQuestionConfirm"]"><i class="fa fa-archive" aria-hidden="true"></i> @localizer["RetireButton"]</button>
+                                </form>
+                            </span>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="col-lg-6">
+            @if (Model.CanAuthor)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@(Model.Editing == null ? localizer["NewQuestionHeader"] : localizer["EditQuestionHeader"])</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-controller="Courses" asp-action="SaveQuestion" asp-route-area="User" asp-route-id="@bank.LmsQuestionBankId">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="questionId" value="@editing.LmsQuestionId" />
+                            <div class="rgw-grid">
+                                <div class="form-group">
+                                    <label for="q-kind">@localizer["QuestionKindLabel"]</label>
+                                    <select id="q-kind" name="kind" class="form-control">
+                                        @foreach (LmsQuestionKinds k in Enum.GetValues(typeof(LmsQuestionKinds)))
+                                        {
+                                            <option value="@((int)k)" selected="@(editing.Kind == (int)k)">@localizer[CourseLabels.QuestionKind((int)k)]</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group"><label for="q-points">@localizer["PointsLabel"]</label><input id="q-points" name="points" type="number" min="0.5" max="100" step="0.5" class="form-control" value="@editing.Points.ToString(System.Globalization.CultureInfo.InvariantCulture)" /></div>
+                                <div class="form-group"><label for="q-tags">@localizer["TagsLabel"]</label><input id="q-tags" name="tags" class="form-control" value="@editing.Tags" maxlength="500" /></div>
+                            </div>
+                            <div class="form-group"><label for="q-text">@localizer["QuestionTextLabel"]</label><textarea id="q-text" name="text" class="form-control" rows="3" maxlength="4000" required>@editing.Text</textarea></div>
+                            <div class="form-group"><label for="q-image">@localizer["ImageUrlLabel"]</label><input id="q-image" name="imageUrl" type="url" class="form-control" value="@editing.ImageUrl" maxlength="1000" /></div>
+                            <fieldset class="form-group">
+                                <legend class="h5">@localizer["OptionsLabel"]</legend>
+                                <p class="help-block">@localizer["OptionsHelp"]</p>
+                                @for (var i = 0; i < slots; i++)
+                                {
+                                    var option = i < options.Count ? options[i] : null;
+                                    <div class="input-group m-b-xs">
+                                        <span class="input-group-addon"><label class="m-b-none"><input type="checkbox" name="correct" value="@i" checked="@(option?.IsCorrect == true)" aria-label="@localizer["CorrectLabel"]" /></label></span>
+                                        <input name="optionText" class="form-control" value="@option?.Text" maxlength="500" aria-label="@string.Format(localizer["OptionNumberFormat"].Value, i + 1)" />
+                                    </div>
+                                }
+                            </fieldset>
+                            <div class="form-group"><label for="q-explain">@localizer["ExplanationLabel"]</label><textarea id="q-explain" name="explanation" class="form-control" rows="2" maxlength="4000">@editing.Explanation</textarea></div>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["SaveButton"]</button>
+                            @if (Model.Editing != null)
+                            {
+                                <a class="btn btn-white" asp-controller="Courses" asp-action="Bank" asp-route-area="User" asp-route-id="@bank.LmsQuestionBankId">@localizer["CancelButton"]</a>
+                            }
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

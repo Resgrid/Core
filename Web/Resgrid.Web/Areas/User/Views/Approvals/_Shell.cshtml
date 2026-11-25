@@ -1,0 +1,49 @@
+@using Resgrid.Web.Areas.User.Models
+@using Resgrid.Web.Helpers
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Approvals.Approvals> approvalText
+@*
+    Page heading for the approvals pages (module-workspace.css): title, breadcrumb, a one line description and the sections in
+    Shared/_ModuleTabs (My approvals and Delegates for everyone; Requests, Chains and Mutual-aid agreements for department admins).
+    ViewData["Section"]; ViewData["Title"]; ViewData["Subtitle"]; ViewData["Message"] / ViewData["Error"].
+*@
+@{
+    var section = ViewData["Section"] as string;
+    var title = ViewData["Title"] as string ?? approvalText["ApprovalsModuleTitle"].Value;
+    var subtitle = ViewData["Subtitle"] as string;
+    var message = ViewData["Message"] as string;
+    var error = ViewData["Error"] as string;
+    var sections = new ModuleTabsView { Label = approvalText["ApprovalsModuleTitle"].Value };
+    sections.Tabs.Add(new ModuleTab(approvalText["MyApprovalsTab"].Value, "fa-check-square-o", "Approvals", "Index", section == "Index"));
+    sections.Tabs.Add(new ModuleTab(approvalText["DelegatesTab"].Value, "fa-user-plus", "Approvals", "Delegates", section == "Delegates"));
+    if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+    {
+        sections.Tabs.Add(new ModuleTab(approvalText["RequestsTab"].Value, "fa-list", "Approvals", "Requests", section == "Requests"));
+        sections.Tabs.Add(new ModuleTab(approvalText["ChainsTab"].Value, "fa-sitemap", "Approvals", "Chains", section == "Chains"));
+        sections.Tabs.Add(new ModuleTab(approvalText["AgreementsTab"].Value, "fa-handshake-o", "Approvals", "Agreements", section == "Agreements"));
+    }
+}
+<div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">
+    <div class="col-sm-12">
+        <h2>@title</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@approvalText["HomeLink"]</a></li>
+            <li><a asp-controller="Approvals" asp-action="Index" asp-route-area="User">@approvalText["ApprovalsModuleTitle"]</a></li>
+            <li class="active"><strong>@title</strong></li>
+        </ol>
+        @if (!string.IsNullOrEmpty(subtitle))
+        {
+            <small class="text-muted">@subtitle</small>
+        }
+    </div>
+    <div class="col-sm-12 rgw-module-navigation">
+        @await Html.PartialAsync("_ModuleTabs", sections)
+    </div>
+</div>
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="alert alert-success m-t-sm" role="status"><i class="fa fa-check" aria-hidden="true"></i> @message</div>
+}
+@if (!string.IsNullOrEmpty(error))
+{
+    <div class="alert alert-danger m-t-sm" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @error</div>
+}

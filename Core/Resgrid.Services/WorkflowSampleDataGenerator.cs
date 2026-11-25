@@ -767,6 +767,76 @@ namespace Resgrid.Services
 					obj["alert"] = recurringAlert;
 					break;
 
+				case WorkflowTriggerEventType.SignatureRequested:
+				case WorkflowTriggerEventType.SignatureCompleted:
+				case WorkflowTriggerEventType.SignatureDeclined:
+				case WorkflowTriggerEventType.SignatureExpired:
+					var signature = new ScriptObject();
+					signature["request_id"] = 42;
+					signature["subject_kind"] = "TimeReport";
+					signature["subject_id"] = "8d2f5a1c-4b6e-4f0a-9c3d-1e2f3a4b5c6d";
+					signature["title"] = "DTR 2026-0042 2026-11-24";
+					signature["channel"] = "Remote";
+					signature["status"] = eventType == WorkflowTriggerEventType.SignatureCompleted ? "Completed" : eventType == WorkflowTriggerEventType.SignatureDeclined ? "Declined" : eventType == WorkflowTriggerEventType.SignatureExpired ? "Expired" : "Sent";
+					signature["signer_count"] = 1;
+					signature["signed_count"] = eventType == WorkflowTriggerEventType.SignatureCompleted ? 1 : 0;
+					signature["content_code"] = "3F2A-91C0";
+					signature["expires_on"] = DateTime.UtcNow.Date.AddDays(14);
+					signature["sealed_document_id"] = eventType == WorkflowTriggerEventType.SignatureCompleted ? 7 : 0;
+					obj["signature"] = signature;
+					break;
+
+				case WorkflowTriggerEventType.TrainingAssigned:
+				case WorkflowTriggerEventType.TrainingCompleted:
+				case WorkflowTriggerEventType.TrainingFailed:
+				case WorkflowTriggerEventType.TrainingOverdue:
+				case WorkflowTriggerEventType.RequirementAtRisk:
+				case WorkflowTriggerEventType.RequirementEnforced:
+					var trainingEvent = new ScriptObject();
+					trainingEvent["change"] = eventType == WorkflowTriggerEventType.TrainingCompleted ? "Completed" : eventType == WorkflowTriggerEventType.TrainingFailed ? "Failed"
+						: eventType == WorkflowTriggerEventType.TrainingOverdue ? "Overdue" : eventType == WorkflowTriggerEventType.RequirementAtRisk ? "AtRisk"
+						: eventType == WorkflowTriggerEventType.RequirementEnforced ? "Enforced" : "Assigned";
+					trainingEvent["user_id"] = "4b8e1c2d-7a90-4f3e-b1d2-6c5a4e3f2b1a";
+					trainingEvent["subject"] = eventType == WorkflowTriggerEventType.TrainingFailed ? "Assessment" : "Requirement";
+					trainingEvent["requirement_id"] = 12;
+					trainingEvent["requirement_name"] = "Annual SCBA refresher";
+					trainingEvent["requirement_kind"] = "Course";
+					trainingEvent["course_id"] = 31;
+					trainingEvent["path_id"] = 0;
+					trainingEvent["training_name"] = "SCBA refresher 2026";
+					trainingEvent["state"] = eventType == WorkflowTriggerEventType.TrainingCompleted ? "Compliant" : eventType == WorkflowTriggerEventType.RequirementAtRisk ? "AtRisk"
+						: eventType == WorkflowTriggerEventType.TrainingAssigned ? "Pending" : "Overdue";
+					trainingEvent["due_on"] = DateTime.UtcNow.Date.AddDays(eventType == WorkflowTriggerEventType.TrainingAssigned ? 30 : -7);
+					trainingEvent["completed_on"] = eventType == WorkflowTriggerEventType.TrainingCompleted ? DateTime.UtcNow.Date : (DateTime?)null;
+					trainingEvent["days"] = eventType == WorkflowTriggerEventType.TrainingOverdue || eventType == WorkflowTriggerEventType.RequirementEnforced ? 7
+						: eventType == WorkflowTriggerEventType.RequirementAtRisk ? 10 : 0;
+					trainingEvent["certification_type_id"] = eventType == WorkflowTriggerEventType.RequirementEnforced ? 5 : 0;
+					trainingEvent["certification_type_name"] = eventType == WorkflowTriggerEventType.RequirementEnforced ? "SCBA" : null;
+					trainingEvent["score"] = eventType == WorkflowTriggerEventType.TrainingFailed ? 60m : 0m;
+					obj["training_event"] = trainingEvent;
+					break;
+
+				case WorkflowTriggerEventType.ApprovalRequested:
+				case WorkflowTriggerEventType.ApprovalGranted:
+				case WorkflowTriggerEventType.ApprovalRejected:
+				case WorkflowTriggerEventType.ApprovalEscalated:
+					var approval = new ScriptObject();
+					approval["change"] = eventType == WorkflowTriggerEventType.ApprovalGranted ? "Granted" : eventType == WorkflowTriggerEventType.ApprovalRejected ? "Rejected"
+						: eventType == WorkflowTriggerEventType.ApprovalEscalated ? "Escalated" : "Requested";
+					approval["id"] = 42;
+					approval["subject_kind"] = "PurchaseRequisitionApproval";
+					approval["subject_id"] = "8f1c2d3e-4a5b-4c6d-8e7f-9a0b1c2d3e4f";
+					approval["title"] = "REQ-12 Generator rental";
+					approval["amount"] = 7500m;
+					approval["currency"] = "USD";
+					approval["submitted_by_user_id"] = "4b8e1c2d-7a90-4f3e-b1d2-6c5a4e3f2b1a";
+					approval["user_id"] = eventType == WorkflowTriggerEventType.ApprovalRequested || eventType == WorkflowTriggerEventType.ApprovalEscalated ? null : "6c5a4e3f-2b1a-4b8e-9c2d-7a904f3eb1d2";
+					approval["step_label"] = eventType == WorkflowTriggerEventType.ApprovalEscalated ? "Finance chief" : null;
+					approval["reason"] = eventType == WorkflowTriggerEventType.ApprovalRejected ? "Quote missing" : null;
+					approval["content_code"] = "3F2A-91C0";
+					obj["approval"] = approval;
+					break;
+
 				case WorkflowTriggerEventType.StationCoverageGapDetected:
 					var coverageGap = new ScriptObject();
 					coverageGap["call_id"] = 1001;

@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllFilter" xml:space="preserve">
+    <value>Tutte</value>
+  </data>
+  <data name="AskButton" xml:space="preserve">
+    <value>Chiedi</value>
+  </data>
+  <data name="AskHeader" xml:space="preserve">
+    <value>Chiedi alla conoscenza del tuo dipartimento</value>
+  </data>
+  <data name="AskHeaderCall" xml:space="preserve">
+    <value>Fai una domanda sul protocollo di questa chiamata</value>
+  </data>
+  <data name="AskHeaderProtocol" xml:space="preserve">
+    <value>Fai una domanda su questo protocollo</value>
+  </data>
+  <data name="AskHeaderTraining" xml:space="preserve">
+    <value>Fai una domanda su questa formazione</value>
+  </data>
+  <data name="AskHelp" xml:space="preserve">
+    <value>Le risposte provengono solo dai protocolli e dalle formazioni pubblicati del tuo dipartimento e dalla Resgrid Academy, e ogni risposta rimanda alle sue fonti. Controlla la fonte prima di agire.</value>
+  </data>
+  <data name="Asking" xml:space="preserve">
+    <value>Ricerca nei protocolli e nelle formazioni del tuo dipartimento...</value>
+  </data>
+  <data name="AskLabel" xml:space="preserve">
+    <value>La tua domanda</value>
+  </data>
+  <data name="AskPlaceholder" xml:space="preserve">
+    <value>Fai una domanda sui tuoi protocolli o sulla formazione</value>
+  </data>
+  <data name="BudgetNotice" xml:space="preserve">
+    <value>Il tuo dipartimento ha esaurito la quota di IA di questo mese. Queste fonti corrispondono alla tua domanda.</value>
+  </data>
+  <data name="BusyNotice" xml:space="preserve">
+    <value>Le risposte sono occupate al momento. Riprova tra poco. Queste fonti corrispondono alla tua domanda.</value>
+  </data>
+  <data name="ColumnActions" xml:space="preserve">
+    <value>Azioni</value>
+  </data>
+  <data name="ColumnAsked" xml:space="preserve">
+    <value>Posta</value>
+  </data>
+  <data name="ColumnNearest" xml:space="preserve">
+    <value>Fonti più vicine</value>
+  </data>
+  <data name="ColumnQuestion" xml:space="preserve">
+    <value>Domanda</value>
+  </data>
+  <data name="ColumnReason" xml:space="preserve">
+    <value>Motivo</value>
+  </data>
+  <data name="ConflictLabel" xml:space="preserve">
+    <value>Queste fonti non concordano</value>
+  </data>
+  <data name="CorpusHeader" xml:space="preserve">
+    <value>Fonti</value>
+  </data>
+  <data name="CorpusHelp" xml:space="preserve">
+    <value>I protocolli pubblicati e le formazioni iniziate sono sempre inclusi, tranne gli elementi segnati come da non usare per l'IA. Bozze, quiz, libretti e registri di apprendimento non vengono mai usati.</value>
+  </data>
+  <data name="DismissButton" xml:space="preserve">
+    <value>Archivia</value>
+  </data>
+  <data name="DismissedTile" xml:space="preserve">
+    <value>Archiviate</value>
+  </data>
+  <data name="DoseNotice" xml:space="preserve">
+    <value>Le dosi sono citate esattamente come le scrive la fonte. Non è stato calcolato nulla. Controlla la fonte e il tuo strumento di dosaggio.</value>
+  </data>
+  <data name="DosingToolLink" xml:space="preserve">
+    <value>Apri lo strumento di dosaggio del dipartimento</value>
+  </data>
+  <data name="DosingToolUrlHelp" xml:space="preserve">
+    <value>Un link https allo strumento di dosaggio del tuo dipartimento. Le risposte che citano una dose rimandano a esso. Resgrid non calcola mai una dose.</value>
+  </data>
+  <data name="DosingToolUrlLabel" xml:space="preserve">
+    <value>Link allo strumento di dosaggio</value>
+  </data>
+  <data name="DraftFailed" xml:space="preserve">
+    <value>Non è stato possibile aprire una bozza per questo protocollo.</value>
+  </data>
+  <data name="DraftProtocolButton" xml:space="preserve">
+    <value>Bozza di modifica del protocollo</value>
+  </data>
+  <data name="EffectiveLabel" xml:space="preserve">
+    <value>in vigore dal {0}</value>
+  </data>
+  <data name="ErrorNotice" xml:space="preserve">
+    <value>Qualcosa è andato storto. Riprova.</value>
+  </data>
+  <data name="FeedbackGap" xml:space="preserve">
+    <value>Grazie. La domanda è stata aggiunta al report delle lacune di conoscenza.</value>
+  </data>
+  <data name="FeedbackThanks" xml:space="preserve">
+    <value>Grazie per il riscontro.</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Filtra</value>
+  </data>
+  <data name="GapsIntro" xml:space="preserve">
+    <value>Domande a cui i tuoi protocolli e formazioni non hanno risposto e risposte che i membri hanno segnato come non utili. Trasforma una lacuna in una bozza di modifica del protocollo o in una nuova formazione.</value>
+  </data>
+  <data name="GapsLink" xml:space="preserve">
+    <value>Lacune di conoscenza</value>
+  </data>
+  <data name="GapsTab" xml:space="preserve">
+    <value>Lacune di conoscenza</value>
+  </data>
+  <data name="GapsTitle" xml:space="preserve">
+    <value>Lacune di conoscenza</value>
+  </data>
+  <data name="GapSuggestionBody" xml:space="preserve">
+    <value>Lacuna di conoscenza: i membri hanno chiesto «{0}» e i protocolli non hanno risposto.</value>
+  </data>
+  <data name="GapTrainingNoQuestion" xml:space="preserve">
+    <value>Lacuna di conoscenza (domanda non conservata)</value>
+  </data>
+  <data name="GapUpdated" xml:space="preserve">
+    <value>La lacuna è stata aggiornata.</value>
+  </data>
+  <data name="Helpful" xml:space="preserve">
+    <value>Utile</value>
+  </data>
+  <data name="IncludeDocumentsHelp" xml:space="preserve">
+    <value>I documenti diventano fonti delle risposte. I documenti solo per amministratori sono usati solo per gli amministratori. Non usati finché Advanced Data Protection è attivo.</value>
+  </data>
+  <data name="IncludeDocumentsLabel" xml:space="preserve">
+    <value>Includi il modulo Documenti</value>
+  </data>
+  <data name="IndexHeader" xml:space="preserve">
+    <value>Indice</value>
+  </data>
+  <data name="IndexNotBuilt" xml:space="preserve">
+    <value>L'indice non è ancora stato creato. Viene creato in background dopo la prima domanda.</value>
+  </data>
+  <data name="IndexStatus" xml:space="preserve">
+    <value>{0} sezioni indicizzate, {1} con embedding. Ultimo aggiornamento {2}.</value>
+  </data>
+  <data name="IndexWarning" xml:space="preserve">
+    <value>Alcuni elementi non sono stati indicizzati o il servizio di embedding non era disponibile; il prossimo passaggio riproverà.</value>
+  </data>
+  <data name="InvalidUrl" xml:space="preserve">
+    <value>Inserisci un link https.</value>
+  </data>
+  <data name="KeptLocalNotice" xml:space="preserve">
+    <value>Il tuo dipartimento usa Advanced Data Protection, quindi la tua domanda resta in Resgrid. Queste fonti corrispondono.</value>
+  </data>
+  <data name="KeptLocalStatus" xml:space="preserve">
+    <value>Il tuo dipartimento usa Advanced Data Protection: la tua domanda resta in Resgrid e ricevi le fonti corrispondenti.</value>
+  </data>
+  <data name="KeywordOnlyNotice" xml:space="preserve">
+    <value>Il servizio di ricerca non ha risposto in tempo, quindi le fonti sono state trovate solo per parole chiave.</value>
+  </data>
+  <data name="KindAcademy" xml:space="preserve">
+    <value>Resgrid Academy</value>
+  </data>
+  <data name="KindCourse" xml:space="preserve">
+    <value>Corso</value>
+  </data>
+  <data name="KindDocument" xml:space="preserve">
+    <value>Documento</value>
+  </data>
+  <data name="KindProtocol" xml:space="preserve">
+    <value>Protocollo</value>
+  </data>
+  <data name="KindProtocolFile" xml:space="preserve">
+    <value>File del protocollo</value>
+  </data>
+  <data name="KindTraining" xml:space="preserve">
+    <value>Formazione</value>
+  </data>
+  <data name="KindTrainingFile" xml:space="preserve">
+    <value>File della formazione</value>
+  </data>
+  <data name="KnowledgeHeader" xml:space="preserve">
+    <value>Conoscenza</value>
+  </data>
+  <data name="MatchedNotice" xml:space="preserve">
+    <value>Queste fonti corrispondono alla tua domanda.</value>
+  </data>
+  <data name="NearestLabel" xml:space="preserve">
+    <value>Elementi più vicini</value>
+  </data>
+  <data name="NewTrainingButton" xml:space="preserve">
+    <value>Nuova formazione</value>
+  </data>
+  <data name="NextPage" xml:space="preserve">
+    <value>Successiva</value>
+  </data>
+  <data name="NoGaps" xml:space="preserve">
+    <value>Nessuna lacuna di conoscenza qui.</value>
+  </data>
+  <data name="NoNearest" xml:space="preserve">
+    <value>Nessuna trovata</value>
+  </data>
+  <data name="NoRole" xml:space="preserve">
+    <value>Nessun ruolo</value>
+  </data>
+  <data name="NotCovered" xml:space="preserve">
+    <value>I protocolli e le formazioni del tuo dipartimento non trattano questo argomento.</value>
+  </data>
+  <data name="NoteLabel" xml:space="preserve">
+    <value>Nota</value>
+  </data>
+  <data name="NotHelpful" xml:space="preserve">
+    <value>Non utile</value>
+  </data>
+  <data name="OpenSource" xml:space="preserve">
+    <value>Apri</value>
+  </data>
+  <data name="OpenTile" xml:space="preserve">
+    <value>Aperte</value>
+  </data>
+  <data name="PreviousPage" xml:space="preserve">
+    <value>Precedente</value>
+  </data>
+  <data name="ProtocolsCrumb" xml:space="preserve">
+    <value>Protocolli</value>
+  </data>
+  <data name="QuestionNotKept" xml:space="preserve">
+    <value>Domanda non conservata (Advanced Data Protection)</value>
+  </data>
+  <data name="QuestionRequired" xml:space="preserve">
+    <value>Scrivi prima una domanda.</value>
+  </data>
+  <data name="ReasonNotCovered" xml:space="preserve">
+    <value>Non trattato</value>
+  </data>
+  <data name="ReasonThumbsDown" xml:space="preserve">
+    <value>Segnata come non utile</value>
+  </data>
+  <data name="RebuildButton" xml:space="preserve">
+    <value>Ricostruisci l'indice</value>
+  </data>
+  <data name="RebuildQueued" xml:space="preserve">
+    <value>L'indice verrà ricostruito in background entro pochi minuti.</value>
+  </data>
+  <data name="ReopenButton" xml:space="preserve">
+    <value>Riapri</value>
+  </data>
+  <data name="ResolveButton" xml:space="preserve">
+    <value>Risolvi</value>
+  </data>
+  <data name="ResolvedTile" xml:space="preserve">
+    <value>Risolte</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Salva</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Cosa possono usare le risposte di conoscenza del dipartimento.</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Impostazioni della conoscenza salvate.</value>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>Impostazioni</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Impostazioni della conoscenza</value>
+  </data>
+  <data name="SourcesLabel" xml:space="preserve">
+    <value>Fonti</value>
+  </data>
+  <data name="StaleCopyNotice" xml:space="preserve">
+    <value>La tua copia offline di un elemento citato è più vecchia della versione citata.</value>
+  </data>
+  <data name="StatusFilterLabel" xml:space="preserve">
+    <value>Stato</value>
+  </data>
+  <data name="SurfaceApi" xml:space="preserve">
+    <value>App mobile</value>
+  </data>
+  <data name="SurfaceAssistant" xml:space="preserve">
+    <value>Assistente</value>
+  </data>
+  <data name="SurfaceCall" xml:space="preserve">
+    <value>Chiamata</value>
+  </data>
+  <data name="SurfaceLibrary" xml:space="preserve">
+    <value>Libreria dei protocolli</value>
+  </data>
+  <data name="SurfaceProtocol" xml:space="preserve">
+    <value>Pagina del protocollo</value>
+  </data>
+  <data name="SurfaceTraining" xml:space="preserve">
+    <value>Pagina della formazione</value>
+  </data>
+  <data name="UnavailableNotice" xml:space="preserve">
+    <value>Le risposte non sono disponibili al momento. Riprova tra qualche minuto.</value>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>versione {0}</value>
+  </data>
+  <data name="SurfaceHelp" xml:space="preserve">
+    <value>Ricerca nell'aiuto</value>
+  </data>
+  <data name="SurfaceCourse" xml:space="preserve">
+    <value>Corso</value>
+  </data>
+  <data name="AskHeaderCallWide" xml:space="preserve">
+    <value>Fai una domanda su questa chiamata</value>
+  </data>
+  <data name="AskHelpCallWide" xml:space="preserve">
+    <value>Le risposte provengono solo dai protocolli citati da questa chiamata e dal suo tipo, priorità, determinante e tipo di luogo. I dati del paziente e del chiamante non vengono mai usati.</value>
+  </data>
+  <data name="AskHeaderCourse" xml:space="preserve">
+    <value>Chiedi a questo corso</value>
+  </data>
+  <data name="AskHelpCourse" xml:space="preserve">
+    <value>Le risposte provengono solo dalla versione di questo corso che stai seguendo, e ogni parte rimanda alla sua lezione.</value>
+  </data>
+  <data name="CallContextNotice" xml:space="preserve">
+    <value>Risposta per questa chiamata: i suoi protocolli, tipo, priorità, determinante e tipo di luogo.</value>
+  </data>
+  <data name="PracticeHeader" xml:space="preserve">
+    <value>Esercitati</value>
+  </data>
+  <data name="PracticeHelp" xml:space="preserve">
+    <value>Esercitati con un breve scenario scritto dalla versione in vigore di questo protocollo. Le tue risposte vengono valutate solo rispetto al protocollo e nulla viene registrato nel tuo libretto formativo.</value>
+  </data>
+  <data name="PracticeStart" xml:space="preserve">
+    <value>Inizia uno scenario</value>
+  </data>
+  <data name="PracticeStarting" xml:space="preserve">
+    <value>Scrittura dello scenario…</value>
+  </data>
+  <data name="PracticeScenarioLabel" xml:space="preserve">
+    <value>Scenario</value>
+  </data>
+  <data name="PracticeAnswerLabel" xml:space="preserve">
+    <value>La tua risposta</value>
+  </data>
+  <data name="PracticeSubmit" xml:space="preserve">
+    <value>Valuta le mie risposte</value>
+  </data>
+  <data name="PracticeScoring" xml:space="preserve">
+    <value>Valutazione delle risposte…</value>
+  </data>
+  <data name="PracticeAgain" xml:space="preserve">
+    <value>Un altro scenario</value>
+  </data>
+  <data name="PracticeScoreFormat" xml:space="preserve">
+    <value>Punteggio: {0} su {1}</value>
+  </data>
+  <data name="PracticeItemScoreFormat" xml:space="preserve">
+    <value>{0} su {1}</value>
+  </data>
+  <data name="PracticeNotScored" xml:space="preserve">
+    <value>Non è stato possibile valutare questa risposta.</value>
+  </data>
+  <data name="PracticeExcluded" xml:space="preserve">
+    <value>Questo protocollo non viene usato con l'IA.</value>
+  </data>
+  <data name="PracticeKeptLocal" xml:space="preserve">
+    <value>La protezione avanzata dei dati mantiene locali i contenuti di questo dipartimento, quindi l'esercitazione non è disponibile.</value>
+  </data>
+  <data name="PracticeNoContent" xml:space="preserve">
+    <value>Questo protocollo contiene troppo poco testo per esercitarsi.</value>
+  </data>
+  <data name="PracticeRefused" xml:space="preserve">
+    <value>Non è stato possibile verificare lo scenario rispetto al protocollo. Riprova.</value>
+  </data>
+  <data name="PracticeStale" xml:space="preserve">
+    <value>Il protocollo è cambiato da quando è stato scritto questo scenario. Iniziane uno nuovo.</value>
+  </data>
+  <data name="PracticeAnswerRequired" xml:space="preserve">
+    <value>Rispondi ad almeno una domanda.</value>
+  </data>
+  <data name="PracticeOnlyNotice" xml:space="preserve">
+    <value>Solo esercitazione: nulla viene registrato nel tuo libretto formativo.</value>
+  </data>
+</root>

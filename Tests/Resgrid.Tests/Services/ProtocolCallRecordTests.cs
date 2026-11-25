@@ -11,6 +11,7 @@ using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Services;
+using Resgrid.Model.Services;
 
 namespace Resgrid.Tests.Services
 {
@@ -52,13 +53,13 @@ namespace Resgrid.Tests.Services
 
 			_protocols.Setup(x => x.GetAllByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<DispatchProtocol>
 			{
-				new DispatchProtocol { DispatchProtocolId = 1, DepartmentId = DepartmentId, Name = "Structure fire", Code = "SF", ProtocolText = "<p>Size up</p>" },
-				new DispatchProtocol { DispatchProtocolId = 2, DepartmentId = DepartmentId, Name = "Cardiac", Code = "09-E-01", ProtocolText = "<p>Start CPR</p>", MinimumWeight = 10 },
-				new DispatchProtocol { DispatchProtocolId = 3, DepartmentId = DepartmentId, Name = "Retired", Code = "OLD", IsDisabled = true },
-				new DispatchProtocol { DispatchProtocolId = 4, DepartmentId = DepartmentId, Name = "Gone", Code = "GONE", IsDeleted = true },
-				new DispatchProtocol { DispatchProtocolId = 5, DepartmentId = DepartmentId, Name = "Hazmat", Code = "HZ", ProtocolText = "<p>Stay upwind</p>" },
+				new DispatchProtocol { DispatchProtocolId = 1, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 1000, DepartmentId = DepartmentId, Name = "Structure fire", Code = "SF", ProtocolText = "<p>Size up</p>" },
+				new DispatchProtocol { DispatchProtocolId = 2, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 2000, DepartmentId = DepartmentId, Name = "Cardiac", Code = "09-E-01", ProtocolText = "<p>Start CPR</p>", MinimumWeight = 10 },
+				new DispatchProtocol { DispatchProtocolId = 3, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 3000, DepartmentId = DepartmentId, Name = "Retired", Code = "OLD", IsDisabled = true },
+				new DispatchProtocol { DispatchProtocolId = 4, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 4000, DepartmentId = DepartmentId, Name = "Gone", Code = "GONE", IsDeleted = true },
+				new DispatchProtocol { DispatchProtocolId = 5, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 5000, DepartmentId = DepartmentId, Name = "Hazmat", Code = "HZ", ProtocolText = "<p>Stay upwind</p>" },
 				// The generic department query has returned other departments' rows before.
-				new DispatchProtocol { DispatchProtocolId = 7, DepartmentId = OtherDepartmentId, Name = "Theirs", Code = "THR" }
+				new DispatchProtocol { DispatchProtocolId = 7, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 7000, DepartmentId = OtherDepartmentId, Name = "Theirs", Code = "THR" }
 			});
 			_triggers.Setup(x => x.GetTriggersByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<DispatchProtocolTrigger>
 			{
@@ -94,7 +95,8 @@ namespace Resgrid.Tests.Services
 			});
 
 			_service = new ProtocolsService(_protocols.Object, _attachments.Object, _questions.Object, _triggers.Object,
-				Mock.Of<IDispatchProtocolQuestionAnswersRepository>(), null, _cache.Object, _callTypes.Object, _callProtocols.Object, _snapshots.Object);
+				Mock.Of<IDispatchProtocolQuestionAnswersRepository>(), new Lazy<IDispatchTriggerFactsService>(() => Mock.Of<IDispatchTriggerFactsService>()),
+				new Lazy<IProtocolAiSuggestionService>(() => Mock.Of<IProtocolAiSuggestionService>()), null, _cache.Object, _callTypes.Object, _callProtocols.Object, _snapshots.Object);
 		}
 
 		private static Call CallFor(int priority, string type) => new Call { CallId = 900, DepartmentId = DepartmentId, Priority = priority, Type = type, LoggedOn = LoggedOn };
@@ -248,7 +250,7 @@ namespace Resgrid.Tests.Services
 			var row = new CallProtocol { CallProtocolId = 77, CallId = 900, DispatchProtocolId = 1 };
 			_callProtocols.Setup(x => x.GetByIdAsync(77)).ReturnsAsync(row);
 			_callProtocols.Setup(x => x.SaveOrUpdateAsync(row, It.IsAny<CancellationToken>(), true)).ReturnsAsync(row);
-			_protocols.Setup(x => x.GetByIdAsync(1)).ReturnsAsync(new DispatchProtocol { DispatchProtocolId = 1, DepartmentId = DepartmentId });
+			_protocols.Setup(x => x.GetByIdAsync(1)).ReturnsAsync(new DispatchProtocol { DispatchProtocolId = 1, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 1000, DepartmentId = DepartmentId });
 
 			var removed = await _service.RemoveProtocolFromCallAsync(DepartmentId, 900, 77, "  Wrong call type  ", "u1");
 
@@ -263,7 +265,7 @@ namespace Resgrid.Tests.Services
 		public async Task Removal_needs_a_reason_the_right_call_and_the_departments_protocol()
 		{
 			_callProtocols.Setup(x => x.GetByIdAsync(77)).ReturnsAsync(new CallProtocol { CallProtocolId = 77, CallId = 900, DispatchProtocolId = 7 });
-			_protocols.Setup(x => x.GetByIdAsync(7)).ReturnsAsync(new DispatchProtocol { DispatchProtocolId = 7, DepartmentId = OtherDepartmentId });
+			_protocols.Setup(x => x.GetByIdAsync(7)).ReturnsAsync(new DispatchProtocol { DispatchProtocolId = 7, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 7000, DepartmentId = OtherDepartmentId });
 
 			(await _service.RemoveProtocolFromCallAsync(DepartmentId, 900, 77, " ", "u1")).Should().BeNull();
 			(await _service.RemoveProtocolFromCallAsync(DepartmentId, 901, 77, "reason", "u1")).Should().BeNull();
@@ -386,7 +388,7 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public async Task Saving_disabling_or_deleting_drops_the_matching_set_and_the_sync_reference()
 		{
-			_protocols.Setup(x => x.GetByIdAsync(1)).ReturnsAsync(new DispatchProtocol { DispatchProtocolId = 1, DepartmentId = DepartmentId });
+			_protocols.Setup(x => x.GetByIdAsync(1)).ReturnsAsync(new DispatchProtocol { DispatchProtocolId = 1, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 1000, DepartmentId = DepartmentId });
 			_protocols.Setup(x => x.SaveOrUpdateAsync(It.IsAny<DispatchProtocol>(), It.IsAny<CancellationToken>(), true)).ReturnsAsync((DispatchProtocol p, CancellationToken _, bool __) => p);
 
 			await _service.SetProtocolDisabledAsync(1, true, "u1");

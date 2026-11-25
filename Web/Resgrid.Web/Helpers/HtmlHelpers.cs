@@ -24,10 +24,37 @@ namespace Resgrid.Web
 		/// <see cref="SanitizedHtml"/> for rich text that may carry an allow-listed embed (training text): YouTube, Vimeo, Google
 		/// Docs/Sheets and Microsoft Stream/Teams frames are kept with fixed safe attributes; any other frame is removed.
 		/// </summary>
+		/// <summary>
+		/// A protocol version's content (P1): <see cref="SanitizedHtml"/> with an id on each heading (h1–h4) built from letters,
+		/// digits and dashes only, the anchors the outline, review comments and AI citations point at.
+		/// </summary>
+		public static IHtmlContent ProtocolContent(this IHtmlHelper html, string value) => ProtocolContent(html, value, null, null);
+
+		/// <summary>
+		/// A protocol version's content (P1, P3). P3 block documents keep their block anchors and tables through the structured allow-list
+		/// (Resgrid.Framework.StructuredHtml); P1 html gets heading anchors as before. Each medication block's dosing-tool slot is filled with
+		/// the department's dosing-tool link (K1 setting 139) when one is set; doses themselves are shown exactly as authored.
+		/// </summary>
+		public static IHtmlContent ProtocolContent(this IHtmlHelper html, string value, string dosingToolUrl, string dosingLinkText)
+		{
+			var clean = Resgrid.Model.ProtocolContentDocument.DisplayHtml(value);
+			return clean.Length == 0 ? HtmlString.Empty : new HtmlString(Resgrid.Model.ProtocolContentDocument.InjectDosingLinks(clean, dosingToolUrl, dosingLinkText));
+		}
+
 		public static IHtmlContent SanitizedHtmlWithEmbeds(this IHtmlHelper html, string value)
 		{
 			var clean = StringHelpers.SanitizeHtmlWithEmbedsForDisplay(value);
 			return clean.Length == 0 ? HtmlString.Empty : new HtmlString(clean);
+		}
+
+		/// <summary>
+		/// A training's text (K1): <see cref="SanitizedHtmlWithEmbeds"/> with an id on each heading (h1-h4), the same ids the knowledge index
+		/// records as section anchors, so a citation opens the section. Ids are built from letters, numbers and dashes only.
+		/// </summary>
+		public static IHtmlContent TrainingContent(this IHtmlHelper html, string value)
+		{
+			var clean = StringHelpers.SanitizeHtmlWithEmbedsForDisplay(value);
+			return clean.Length == 0 ? HtmlString.Empty : new HtmlString(Resgrid.Model.ProtocolContentDocument.InjectAnchors(clean));
 		}
 
 		/// <summary>

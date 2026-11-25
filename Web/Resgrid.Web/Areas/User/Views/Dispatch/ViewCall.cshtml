@@ -8,6 +8,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.ReportSources> reportSourcesLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> recordsLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.RecurringCalls> recurringLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.Wellness> wellnessLocalizer
 @inject Resgrid.Model.Services.IFeatureToggleService featureToggleService
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.IntakeChannels> intakeLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.CadUpdates> cadUpdatesLocalizer
@@ -106,6 +107,8 @@
                     <a style="text-decoration:none;" class="btn btn-warning" asp-controller="Dispatch" asp-action="CloseCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@localizer["CloseCallHeader"]</a>
                     @* Repeat on a schedule: a new recurring call filled in from this one. *@
                     <a id="repeatCallButton" class="btn btn-default" asp-controller="RecurringCalls" asp-action="New" asp-route-area="User" asp-route-fromCallId="@Model.Call.CallId" title="@recurringLocalizer["RepeatCallHelp"]">@recurringLocalizer["RepeatCall"]</a>
+                    @* Member wellness WL0: the post-call critical-incident / exposure flag (not the call's dispatch priority). *@
+                    <a id="wellnessFlagButton" class="btn btn-default" asp-controller="Wellness" asp-action="FlagCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId" title="@wellnessLocalizer["WellnessFollowUpHelp"]">@wellnessLocalizer["WellnessFollowUpButton"]</a>
                 }
                 @if (canCreateCallRecord || alarmMenuOn)
                 {

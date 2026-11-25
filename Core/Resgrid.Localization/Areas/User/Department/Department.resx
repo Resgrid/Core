@@ -2247,4 +2247,7 @@
   <data name="ShiftOverSignupHelp" xml:space="preserve">
     <value>Members can sign up for a group even when all its role slots (required and optional) are taken. They still need one of the group's roles.</value>
   </data>
+  <data name="DocumentNumberKindProtocol" xml:space="preserve">
+    <value>Protocols</value>
+  </data>
 </root>

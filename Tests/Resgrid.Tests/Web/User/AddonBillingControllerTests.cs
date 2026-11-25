@@ -199,6 +199,7 @@ namespace Resgrid.Tests.Web.User
 		[TestCase(PlanAddonTypes.EnhancedAi, 95, 145)]
 		[TestCase(PlanAddonTypes.IncidentBackOffice, 250, 350)]
 		[TestCase(PlanAddonTypes.DedicatedNumber, 15, 20)]
+		[TestCase(PlanAddonTypes.Lms, 79, 99)]
 		public void Prices_match_the_public_pricing_page(PlanAddonTypes type, int usd, int eur)
 		{
 			// resgrid.com/pricing (int-Public src/components/billing/region.ts): USD through Stripe, EUR through Paddle.
@@ -214,7 +215,7 @@ namespace Resgrid.Tests.Web.User
 			{
 				"https://resgrid.com/features/push-to-talk", "https://resgrid.com/features/readiness-pro", "https://resgrid.com/features/business-ops",
 				"https://resgrid.com/features/incident-back-office", "https://resgrid.com/features/enhanced-ai", "https://resgrid.com/features/dedicated-number",
-				"https://resgrid.com/features/advanced-data-protection"
+				"https://resgrid.com/features/lms", "https://resgrid.com/features/advanced-data-protection"
 			});
 		}
 

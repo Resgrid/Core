@@ -3,32 +3,65 @@
 @using Resgrid.WebCore.Areas.User.Models.Protocols
 @model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolEditorModel
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@inject Resgrid.Model.Services.IProtocolLibraryService protocolLibrary
 @*
-    The protocol editor, shared by New and Edit (one full page, no modals). Triggers, questions and answers are rows posted
-    with the "Index" convention (Triggers.Index / Triggers[key].Field), so the page can add and remove rows freely and a
-    failed save shows every row the author built. Each existing row carries its id; the server checks it is this protocol's.
+    The full-page protocol editor (P1). The protocol's own fields, its library fields, triggers, questions and audience take
+    effect when saved; the text is the draft's (a new version), published only after review. The page carries the protocol's
+    and the draft's row versions: a save against an older copy is refused with who changed it and when (R-P8). The text is
+    autosaved to the draft every 30 seconds while it changes.
 *@
 @{
-    var title = Model.IsNew ? localizer["NewProtocolHeader"].Value : localizer["EditProtocolHeader"].Value;
+    var departmentTime = DepartmentTime.From(ViewData);
+    var title = localizer["EditProtocolHeader"].Value;
     ViewBag.Title = "Resgrid | " + title;
     ViewData["Title"] = title;
-    ViewData["Subtitle"] = Model.IsNew ? localizer["EditorIntroNew"].Value : Model.Name;
-    ViewData["Section"] = Model.IsNew ? "Editor" : "Library";
-    ViewData["CanCreate"] = Model.IsNew;
-
-    var activePriorities = Model.CallPriorities.Where(x => !x.IsDeleted).ToList();
-
-    bool ShowsPriority(int type) => type == (int)ProtocolTriggerTypes.CallPriorty || type == (int)ProtocolTriggerTypes.CallPriortyAndType;
-    bool ShowsType(int type) => type == (int)ProtocolTriggerTypes.CallType || type == (int)ProtocolTriggerTypes.CallPriortyAndType;
+    ViewData["Subtitle"] = Model.Name;
+    ViewData["Section"] = "Library";
+    ViewData["IsManager"] = true;
+    var error = TempData["ProtocolError"] as string;
+    var draftStatus = Model.DraftStatus.HasValue ? ProtocolDisplay.VersionStatusName(Model.DraftStatus.Value, localizer) : null;
+    // A document-backed protocol (P1 R-P5): its content is the file of the draft (or of the version in force until a draft exists);
+    // a new upload replaces it, the editor saves only the rest.
+    var versions = Model.ProtocolId > 0 ? await protocolLibrary.GetVersionsAsync(ClaimsAuthorizationHelper.GetDepartmentId(), Model.ProtocolId) : new List<ProtocolVersion>();
+    var contentVersion = Model.DraftVersionId.HasValue ? versions.FirstOrDefault(v => v.ProtocolVersionId == Model.DraftVersionId.Value)
+        : versions.FirstOrDefault(v => v.Status == (int)ProtocolVersionStatuses.Published);
+    var isDocument = contentVersion != null && contentVersion.IsDocument;
+    // P3: a block draft (or a block version in force with no draft yet) is edited in the block editor.
+    var isBlocks = !isDocument && !Model.ContentLocked && !string.IsNullOrEmpty(Model.ContentJson);
 }
 
 @await Html.PartialAsync("_Shell")
 
 <div class="wrapper wrapper-content rgw-page">
-    <form id="protocolEditorForm" method="post" enctype="multipart/form-data"
-          asp-controller="Protocols" asp-action="@(Model.IsNew ? "New" : "Edit")" asp-route-area="User" asp-route-id="@(Model.IsNew ? null : (int?)Model.ProtocolId)">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @error</div>
+    }
+
+    <div class="rgw-next-action" role="status">
+        <i class="fa fa-code-fork" aria-hidden="true"></i>
+        @if (Model.DraftVersionId.HasValue)
+        {
+            @string.Format(localizer["EditingDraftCallout"].Value, draftStatus, Model.DraftUpdatedBy, departmentTime.Format(Model.DraftUpdatedOn))
+        }
+        else
+        {
+            @string.Format(localizer["EditingNoDraftCallout"].Value, Model.CurrentVersionLabel ?? "-")
+        }
+        <a class="btn btn-xs btn-default" asp-controller="Protocols" asp-action="View" asp-route-area="User" asp-route-id="@Model.ProtocolId" asp-route-versionId="@Model.DraftVersionId" asp-route-preview="true" hidden="@(!Model.DraftVersionId.HasValue)"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["PreviewAsMemberButton"]</a>
+    </div>
+
+    <form id="protocolEditorForm" method="post" enctype="multipart/form-data" asp-controller="Protocols" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.ProtocolId"
+          data-autosave-url="@Url.Action("SaveDraft", "Protocols", new { area = "User", id = Model.ProtocolId })" data-content-locked="@(Model.ContentLocked || isDocument ? "true" : "false")">
         @Html.AntiForgeryToken()
+        <input type="hidden" name="RowVersion" value="@Model.RowVersion" />
+        <input type="hidden" id="DraftRowVersion" name="DraftRowVersion" value="@Model.DraftRowVersion" />
         <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+        <p id="autosaveStatus" class="text-muted small" role="status" aria-live="polite"></p>
 
         <div class="ibox">
             <div class="ibox-title"><h5><i class="fa fa-id-card-o" aria-hidden="true"></i> @localizer["BasicsHeader"]</h5></div>
@@ -43,7 +76,7 @@
                         <input class="form-control" id="Code" name="Code" value="@Model.Code" maxlength="@DispatchProtocol.CodeMaxLength" required pattern="[A-Za-z0-9][A-Za-z0-9 ._/\-]*" aria-describedby="CodeHelp" />
                         <span id="CodeHelp" class="help-block">@string.Format(localizer["CodeHelp"].Value, DispatchProtocol.CodeMaxLength)</span>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group protocol-dispatch-only" hidden="@(!ProtocolKindRules.TriggersApply(Model.Library.Kind))">
                         <label class="control-label" for="MinimumWeight">@localizer["ActivationQuestionWeightLabel"]</label>
                         <input class="form-control" id="MinimumWeight" name="MinimumWeight" type="number" min="0" max="1000" value="@Model.MinimumWeight" aria-describedby="MinimumWeightHelpText" />
                         <span id="MinimumWeightHelpText" class="help-block">@localizer["MinimumWeightEditorHelp"]</span>
@@ -60,6 +93,7 @@
                         <span class="help-block">@localizer["DisabledCheckboxHelp"]</span>
                     </div>
                 </div>
+                @await Html.PartialAsync("_LibraryFields", Model)
             </div>
         </div>
 
@@ -69,145 +103,61 @@
                 <div class="form-group">
                     <label class="control-label" for="editor-container" id="DescriptionLabelText">@localizer["DescriptionLabel"]</label>
                     <input type="hidden" id="Description" name="Description" value="@Model.Description" />
-                    <div id="editor-container" style="width:100%; height: 160px;" aria-labelledby="DescriptionLabelText">@Html.SanitizedHtml(Model.Description)</div>
+                    <div id="editor-container" style="width:100%; height: 140px;" aria-labelledby="DescriptionLabelText">@Html.SanitizedHtml(Model.Description)</div>
                     <span class="help-block">@string.Format(localizer["DescriptionHelp"].Value, DispatchProtocol.DescriptionTextMaxLength)</span>
                 </div>
                 <div class="form-group">
                     <label class="control-label" for="editor-container2" id="ProtocolTextLabelText">@localizer["ProtocolTextLabel"]</label>
-                    <input type="hidden" id="ProtocolText" name="ProtocolText" value="@Model.ProtocolText" />
-                    <div id="editor-container2" style="width:100%; height: 360px;" aria-labelledby="ProtocolTextLabelText">@Html.SanitizedHtml(Model.ProtocolText)</div>
+                    @if (isDocument)
+                    {
+                        <input type="hidden" id="ProtocolText" name="ProtocolText" value="@Model.ProtocolText" />
+                        @await Component.InvokeAsync("ProtocolDocumentContent", new { versionId = contentVersion.ProtocolVersionId, title = Model.Name, protocolId = Model.ProtocolId, showUpload = !Model.ContentLocked })
+                    }
+                    else if (Model.ContentLocked)
+                    {
+                        <div class="alert alert-info" role="status"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["ContentLockedNotice"]</div>
+                        <input type="hidden" id="ProtocolText" name="ProtocolText" value="@Model.ProtocolText" />
+                        <div class="protocol-content well">@Html.ProtocolContent(Model.ProtocolText)</div>
+                    }
+                    else if (isBlocks)
+                    {
+                        <input type="hidden" id="ProtocolText" name="ProtocolText" value="" />
+                        @await Html.PartialAsync("_BlockEditor", Model)
+                    }
+                    else
+                    {
+                        <div class="rgw-next-action" role="status">
+                            <i class="fa fa-th-list" aria-hidden="true"></i> @localizer["ConvertToBlocksCallout"]
+                            <button type="submit" form="convertToBlocksForm" class="btn btn-xs btn-primary" data-confirm="@localizer["ConvertToBlocksConfirm"]"><i class="fa fa-th-list" aria-hidden="true"></i> @localizer["ConvertToBlocksButton"]</button>
+                        </div>
+                        <input type="hidden" id="ProtocolText" name="ProtocolText" value="@Model.ProtocolText" />
+                        <div id="editor-container2" style="width:100%; height: 420px;" aria-labelledby="ProtocolTextLabelText">@Html.SanitizedHtml(Model.ProtocolText)</div>
+                        <span class="help-block">@localizer["ProtocolTextHeadingsHelp"]</span>
+                    }
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="Library_RequiresAcknowledgment" name="Library.RequiresAcknowledgment" value="true" @(Model.Library.RequiresAcknowledgment ? "checked" : "") />
+                        @localizer["RequiresAcknowledgmentCheckbox"]
+                    </label>
+                    <input type="hidden" name="Library.RequiresAcknowledgment" value="false" />
+                    <span class="help-block">@localizer["RequiresAcknowledgmentHelp"]</span>
                 </div>
             </div>
         </div>
 
-        <div class="ibox">
-            <div class="ibox-title"><h5><i class="fa fa-bolt" aria-hidden="true"></i> @localizer["TriggersLabel"]</h5></div>
-            <div class="ibox-content">
-                <p class="text-muted">@localizer["TriggersHelp"] @string.Format(localizer["TriggerTimeZoneHelp"].Value, Model.TimeZoneName)</p>
-                <div id="triggerRows">
-                    @foreach (var t in Model.Triggers)
-                    {
-                        <div class="panel panel-default rgw-builder-item protocol-trigger" data-key="@t.Key">
-                            <input type="hidden" name="Triggers.Index" value="@t.Key" />
-                            <input type="hidden" name="Triggers[@t.Key].Key" value="@t.Key" />
-                            <input type="hidden" name="Triggers[@t.Key].Id" value="@t.Id" />
-                            @if (!string.IsNullOrEmpty(t.CallTypeName))
-                            {
-                                <input type="hidden" name="Triggers[@t.Key].CallTypeName" value="@t.CallTypeName" />
-                            }
-                            <div class="panel-heading rgw-builder-heading">
-                                <span class="rgw-builder-title">@localizer["TriggerLabel"]</span>
-                                <span class="rgw-builder-actions"><button type="button" class="btn btn-xs btn-danger protocol-remove-row"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["RemoveTriggerButton"]</button></span>
-                            </div>
-                            <div class="panel-body">
-                                <div class="rgw-grid">
-                                    <div class="form-group">
-                                        <label class="control-label" for="trigger-type-@t.Key">@localizer["TriggerTypeLabel"]</label>
-                                        <select class="form-control protocol-trigger-type" id="trigger-type-@t.Key" name="Triggers[@t.Key].Type">
-                                            @foreach (ProtocolTriggerTypes value in Enum.GetValues(typeof(ProtocolTriggerTypes)))
-                                            {
-                                                <option value="@((int)value)" selected="@(t.Type == (int)value)">@ProtocolDisplay.TriggerTypeName((int)value, localizer)</option>
-                                            }
-                                        </select>
-                                    </div>
-                                    <div class="form-group protocol-trigger-priority" hidden="@(!ShowsPriority(t.Type))">
-                                        <label class="control-label" for="trigger-priority-@t.Key">@localizer["TriggerCallPriorityLabel"]</label>
-                                        <select class="form-control" id="trigger-priority-@t.Key" name="Triggers[@t.Key].Priority">
-                                            @foreach (var priority in activePriorities)
-                                            {
-                                                <option value="@priority.DepartmentCallPriorityId" selected="@(t.Priority == priority.DepartmentCallPriorityId)">@priority.Name</option>
-                                            }
-                                            @if (t.Priority.HasValue && activePriorities.All(x => x.DepartmentCallPriorityId != t.Priority.Value))
-                                            {
-                                                <option value="@t.Priority" selected>@ProtocolDisplay.PriorityName(t.Priority, Model.CallPriorities, localizer)</option>
-                                            }
-                                        </select>
-                                    </div>
-                                    <div class="form-group protocol-trigger-calltype" hidden="@(!ShowsType(t.Type))">
-                                        <label class="control-label" for="trigger-calltype-@t.Key">@localizer["TriggerCallTypeLabel"]</label>
-                                        <select class="form-control" id="trigger-calltype-@t.Key" name="Triggers[@t.Key].CallTypeId">
-                                            <option value="" selected="@(!t.CallTypeId.HasValue && string.IsNullOrEmpty(t.CallTypeName))">@localizer["NoTypeOption"]</option>
-                                            @foreach (var type in Model.CallTypes)
-                                            {
-                                                <option value="@type.CallTypeId" selected="@(t.CallTypeId == type.CallTypeId)">@type.Type</option>
-                                            }
-                                            @if (t.CallTypeId.HasValue && Model.CallTypes.All(x => x.CallTypeId != t.CallTypeId.Value))
-                                            {
-                                                <option value="@t.CallTypeId" selected>@string.Format(localizer["RemovedNamed"].Value, t.CallTypeId)</option>
-                                            }
-                                        </select>
-                                        @if (!string.IsNullOrEmpty(t.CallTypeName))
-                                        {
-                                            <span class="help-block text-warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @string.Format(localizer["LegacyTypeHelp"].Value, t.CallTypeName)</span>
-                                        }
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="trigger-starts-@t.Key">@localizer["TriggerStartsOnLabel"]</label>
-                                        <input class="form-control" type="datetime-local" id="trigger-starts-@t.Key" name="Triggers[@t.Key].StartsOn" value="@(t.StartsOn?.Length > 16 ? t.StartsOn.Substring(0, 16) : t.StartsOn)" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="trigger-ends-@t.Key">@localizer["TriggerEndsOnLabel"]</label>
-                                        <input class="form-control" type="datetime-local" id="trigger-ends-@t.Key" name="Triggers[@t.Key].EndsOn" value="@(t.EndsOn?.Length > 16 ? t.EndsOn.Substring(0, 16) : t.EndsOn)" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </div>
-                <p id="noTriggersText" class="text-muted" hidden="@(Model.Triggers.Count > 0)">@localizer["NoTriggersHelp"]</p>
-                <button type="button" class="btn btn-success btn-sm" id="addTriggerButton"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddTriggerButton"]</button>
-            </div>
-        </div>
+        @await Html.PartialAsync("_TriggerQuestionBuilder", Model)
+
+        @if (!isDocument && Model.Library.Kind == (int)ProtocolKinds.Dispatch)
+        {
+            @* Protocols P4: the case flow (decision graph), part of the draft's content. *@
+            @await Html.PartialAsync("_CaseFlowBuilder", Model)
+        }
 
         <div class="ibox">
-            <div class="ibox-title"><h5><i class="fa fa-question-circle" aria-hidden="true"></i> @localizer["QuestionsLabel"]</h5></div>
+            <div class="ibox-title"><h5><i class="fa fa-users" aria-hidden="true"></i> @localizer["AudienceLabel"]</h5></div>
             <div class="ibox-content">
-                <p class="text-muted">@localizer["QuestionsHelp"]</p>
-                <div id="questionRows">
-                    @foreach (var q in Model.Questions)
-                    {
-                        <div class="panel panel-default rgw-builder-section protocol-question" data-key="@q.Key">
-                            <input type="hidden" name="Questions.Index" value="@q.Key" />
-                            <input type="hidden" name="Questions[@q.Key].Key" value="@q.Key" />
-                            <input type="hidden" name="Questions[@q.Key].Id" value="@q.Id" />
-                            <div class="panel-heading rgw-builder-heading">
-                                <span class="rgw-builder-title">@localizer["QuestionLabel"]</span>
-                                <span class="rgw-builder-actions"><button type="button" class="btn btn-xs btn-danger protocol-remove-row"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["RemoveQuestionButton"]</button></span>
-                            </div>
-                            <div class="panel-body">
-                                <div class="form-group">
-                                    <label class="control-label" for="question-text-@q.Key">@localizer["QuestionLabel"]</label>
-                                    <textarea class="form-control" rows="2" id="question-text-@q.Key" name="Questions[@q.Key].Text">@q.Text</textarea>
-                                </div>
-                                <div class="protocol-answers">
-                                    @foreach (var a in q.Answers)
-                                    {
-                                        <div class="rgw-grid protocol-answer" data-key="@a.Key">
-                                            <input type="hidden" name="Questions[@q.Key].Answers.Index" value="@a.Key" />
-                                            <input type="hidden" name="Questions[@q.Key].Answers[@a.Key].Key" value="@a.Key" />
-                                            <input type="hidden" name="Questions[@q.Key].Answers[@a.Key].Id" value="@a.Id" />
-                                            <div class="form-group">
-                                                <label class="control-label" for="answer-text-@q.Key-@a.Key">@localizer["AnswerColumn"]</label>
-                                                <input class="form-control" id="answer-text-@q.Key-@a.Key" name="Questions[@q.Key].Answers[@a.Key].Text" value="@a.Text" maxlength="500" />
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="control-label" for="answer-weight-@q.Key-@a.Key">@localizer["WeightColumn"]</label>
-                                                <input class="form-control" type="number" min="0" max="1000" id="answer-weight-@q.Key-@a.Key" name="Questions[@q.Key].Answers[@a.Key].Weight" value="@a.Weight" />
-                                            </div>
-                                            <div class="form-group">
-                                                <span class="control-label">&nbsp;</span>
-                                                <div><button type="button" class="btn btn-xs btn-danger protocol-remove-answer"><i class="fa fa-minus" aria-hidden="true"></i> @localizer["RemoveAnswerButton"]</button></div>
-                                            </div>
-                                        </div>
-                                    }
-                                </div>
-                                <button type="button" class="btn btn-xs btn-success protocol-add-answer"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddAnswerButton"]</button>
-                            </div>
-                        </div>
-                    }
-                </div>
-                <p id="noQuestionsText" class="text-muted" hidden="@(Model.Questions.Count > 0)">@localizer["NoQuestionsHelp"]</p>
-                <button type="button" class="btn btn-success btn-sm" id="addQuestionButton"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddQuestionButton"]</button>
+                @await Html.PartialAsync("_AudiencePicker", Model)
             </div>
         </div>
 
@@ -247,121 +197,84 @@
                     <label class="control-label" for="attachments">@localizer["AddFilesLabel"]</label>
                     <input name="attachments" id="attachments" type="file" multiple aria-describedby="AttachmentsHelp" />
                     <span id="AttachmentsHelp" class="help-block">@string.Format(localizer["AttachmentsLimitsHelp"].Value, ProtocolRules.MaxFilesPerSave, ProtocolRules.MaxAttachmentBytes / 1000000, ProtocolRules.MaxBytesPerSave / 1000000)</span>
-                    @if (!Model.IsNew)
-                    {
-                        <span class="help-block">@localizer["AttachmentsReselectHelp"]</span>
-                    }
+                    <span class="help-block">@localizer["AttachmentsReselectHelp"]</span>
                 </div>
+            </div>
+        </div>
+
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-paper-plane" aria-hidden="true"></i> @localizer["SubmitHeader"]</h5></div>
+            <div class="ibox-content">
+                <div class="form-group">
+                    <label class="control-label" for="Library_ChangeSummary">@localizer["ChangeSummaryLabel"]</label>
+                    <textarea class="form-control" id="Library_ChangeSummary" name="Library.ChangeSummary" rows="3" maxlength="@ProtocolVersion.ChangeSummaryMaxLength" aria-describedby="ChangeSummaryHelp" @(Model.ContentLocked ? "readonly" : "")>@Model.Library.ChangeSummary</textarea>
+                    <span id="ChangeSummaryHelp" class="help-block">@localizer["ChangeSummaryHelp"]</span>
+                </div>
+                @if (Model.DraftVersionId.HasValue && !Model.ContentLocked)
+                {
+                    @* K2 drafting aid (Enhanced AI; hidden without it): a change summary drafted from the redline of this draft against the
+                       version in force, written into the field above for the author to edit. Refused while "Do not use for AI" is ticked. *@
+                    @await Html.PartialAsync("_AuthoringAids", new Resgrid.Web.Areas.User.Models.AuthoringAids.AuthoringAidsPanelModel
+                    {
+                        PanelId = "aids-protocol",
+                        SourceKind = (int)AuthoringAidSourceKinds.ProtocolVersion,
+                        SourceId = Model.DraftVersionId.Value,
+                        OfferQuiz = false,
+                        OfferOutline = false,
+                        OfferChangeSummary = true,
+                        ExcludeSelector = "input[type=checkbox][name='Library.ExcludeFromAi']",
+                        SummaryTargetSelector = "#Library_ChangeSummary"
+                    })
+                }
             </div>
         </div>
 
         <div class="rgw-wizard-actions">
-            <a class="btn btn-default" asp-controller="Protocols" asp-action="@(Model.IsNew ? "Index" : "View")" asp-route-area="User" asp-route-id="@(Model.IsNew ? null : (int?)Model.ProtocolId)"><i class="fa fa-times" aria-hidden="true"></i> @commonLocalizer["Cancel"]</a>
+            <a class="btn btn-default" asp-controller="Protocols" asp-action="View" asp-route-area="User" asp-route-id="@Model.ProtocolId"><i class="fa fa-times" aria-hidden="true"></i> @commonLocalizer["Cancel"]</a>
+            @if (Model.DraftVersionId.HasValue)
+            {
+                <a class="btn btn-default" asp-controller="ProtocolTools" asp-action="Translations" asp-route-area="User" asp-route-id="@Model.ProtocolId" asp-route-versionId="@Model.DraftVersionId" hidden="@(!Model.ContentLocked)"><i class="fa fa-language" aria-hidden="true"></i> @localizer["TranslationsButton"]</a>
+            }
             <span class="rgw-wizard-spacer"></span>
-            <button class="btn btn-primary" type="submit"><i class="fa fa-save" aria-hidden="true"></i> @(Model.IsNew ? localizer["AddProtocolButton"] : localizer["SaveProtocolButton"])</button>
+            <button class="btn btn-primary" type="submit" name="Command" value="save"><i class="fa fa-save" aria-hidden="true"></i> @localizer["SaveProtocolButton"]</button>
+            @if (!Model.ContentLocked)
+            {
+                <button class="btn btn-success" type="submit" name="Command" value="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i> @localizer["SaveAndSubmitButton"]</button>
+            }
         </div>
     </form>
+    @if (!isDocument && !Model.ContentLocked && !isBlocks)
+    {
+        @* P3 "Convert to blocks": its own form (forms cannot nest); the button above submits it. *@
+        <form id="convertToBlocksForm" method="post" asp-controller="Protocols" asp-action="ConvertToBlocks" asp-route-area="User" asp-route-id="@Model.ProtocolId" hidden>
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="draftRowVersion" value="@Model.DraftRowVersion" />
+        </form>
+    }
 </div>
 
-@* Row templates the editor clones; __key__ is replaced with a fresh row key. *@
-<template id="triggerTemplate">
-    <div class="panel panel-default rgw-builder-item protocol-trigger" data-key="__key__">
-        <input type="hidden" name="Triggers.Index" value="__key__" />
-        <input type="hidden" name="Triggers[__key__].Key" value="__key__" />
-        <input type="hidden" name="Triggers[__key__].Id" value="0" />
-        <div class="panel-heading rgw-builder-heading">
-            <span class="rgw-builder-title">@localizer["TriggerLabel"]</span>
-            <span class="rgw-builder-actions"><button type="button" class="btn btn-xs btn-danger protocol-remove-row"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["RemoveTriggerButton"]</button></span>
-        </div>
-        <div class="panel-body">
-            <div class="rgw-grid">
-                <div class="form-group">
-                    <label class="control-label" for="trigger-type-__key__">@localizer["TriggerTypeLabel"]</label>
-                    <select class="form-control protocol-trigger-type" id="trigger-type-__key__" name="Triggers[__key__].Type">
-                        @foreach (ProtocolTriggerTypes value in Enum.GetValues(typeof(ProtocolTriggerTypes)))
-                        {
-                            <option value="@((int)value)">@ProtocolDisplay.TriggerTypeName((int)value, localizer)</option>
-                        }
-                    </select>
-                </div>
-                <div class="form-group protocol-trigger-priority">
-                    <label class="control-label" for="trigger-priority-__key__">@localizer["TriggerCallPriorityLabel"]</label>
-                    <select class="form-control" id="trigger-priority-__key__" name="Triggers[__key__].Priority">
-                        @foreach (var priority in activePriorities)
-                        {
-                            <option value="@priority.DepartmentCallPriorityId" selected="@priority.IsDefault">@priority.Name</option>
-                        }
-                    </select>
-                </div>
-                <div class="form-group protocol-trigger-calltype" hidden>
-                    <label class="control-label" for="trigger-calltype-__key__">@localizer["TriggerCallTypeLabel"]</label>
-                    <select class="form-control" id="trigger-calltype-__key__" name="Triggers[__key__].CallTypeId">
-                        <option value="">@localizer["NoTypeOption"]</option>
-                        @foreach (var type in Model.CallTypes)
-                        {
-                            <option value="@type.CallTypeId">@type.Type</option>
-                        }
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="trigger-starts-__key__">@localizer["TriggerStartsOnLabel"]</label>
-                    <input class="form-control" type="datetime-local" id="trigger-starts-__key__" name="Triggers[__key__].StartsOn" />
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="trigger-ends-__key__">@localizer["TriggerEndsOnLabel"]</label>
-                    <input class="form-control" type="datetime-local" id="trigger-ends-__key__" name="Triggers[__key__].EndsOn" />
-                </div>
-            </div>
-        </div>
-    </div>
-</template>
-
-<template id="questionTemplate">
-    <div class="panel panel-default rgw-builder-section protocol-question" data-key="__key__">
-        <input type="hidden" name="Questions.Index" value="__key__" />
-        <input type="hidden" name="Questions[__key__].Key" value="__key__" />
-        <input type="hidden" name="Questions[__key__].Id" value="0" />
-        <div class="panel-heading rgw-builder-heading">
-            <span class="rgw-builder-title">@localizer["QuestionLabel"]</span>
-            <span class="rgw-builder-actions"><button type="button" class="btn btn-xs btn-danger protocol-remove-row"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["RemoveQuestionButton"]</button></span>
-        </div>
-        <div class="panel-body">
-            <div class="form-group">
-                <label class="control-label" for="question-text-__key__">@localizer["QuestionLabel"]</label>
-                <textarea class="form-control" rows="2" id="question-text-__key__" name="Questions[__key__].Text"></textarea>
-            </div>
-            <div class="protocol-answers"></div>
-            <button type="button" class="btn btn-xs btn-success protocol-add-answer"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddAnswerButton"]</button>
-        </div>
-    </div>
-</template>
-
-<template id="answerTemplate">
-    <div class="rgw-grid protocol-answer" data-key="__akey__">
-        <input type="hidden" name="Questions[__qkey__].Answers.Index" value="__akey__" />
-        <input type="hidden" name="Questions[__qkey__].Answers[__akey__].Key" value="__akey__" />
-        <input type="hidden" name="Questions[__qkey__].Answers[__akey__].Id" value="0" />
-        <div class="form-group">
-            <label class="control-label" for="answer-text-__qkey__-__akey__">@localizer["AnswerColumn"]</label>
-            <input class="form-control" id="answer-text-__qkey__-__akey__" name="Questions[__qkey__].Answers[__akey__].Text" maxlength="500" />
-        </div>
-        <div class="form-group">
-            <label class="control-label" for="answer-weight-__qkey__-__akey__">@localizer["WeightColumn"]</label>
-            <input class="form-control" type="number" min="0" max="1000" id="answer-weight-__qkey__-__akey__" name="Questions[__qkey__].Answers[__akey__].Weight" value="0" />
-        </div>
-        <div class="form-group">
-            <span class="control-label">&nbsp;</span>
-            <div><button type="button" class="btn btn-xs btn-danger protocol-remove-answer"><i class="fa fa-minus" aria-hidden="true"></i> @localizer["RemoveAnswerButton"]</button></div>
-        </div>
-    </div>
-</template>
+<script type="application/json" id="protocolEditorText">@Html.ScriptJson(new
+{
+    saving = localizer["AutosaveSaving"].Value,
+    saved = localizer["AutosaveSaved"].Value,
+    failed = localizer["AutosaveFailed"].Value
+})</script>
 
 @section Styles {
     <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/protocol-content.css" asp-append-version="true" />
 }
 
 @section Scripts
 {
     <script src="~/js/app/internal/protocols/resgrid.protocols.editor.js" asp-append-version="true"></script>
+    @if (!isDocument && !Model.ContentLocked && Model.Library.Kind == (int)ProtocolKinds.Dispatch)
+    {
+        <script src="~/js/app/internal/protocols/resgrid.protocols.caseflow.js" asp-append-version="true"></script>
+    }
+    @if (isBlocks)
+    {
+        <script src="~/js/app/internal/protocols/resgrid.protocols.blocks.js" asp-append-version="true"></script>
+    }
 }

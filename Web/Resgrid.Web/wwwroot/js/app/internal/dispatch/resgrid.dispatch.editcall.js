@@ -795,6 +795,10 @@ var resgrid;
                     protocolPanelStarted = true;
                     resgrid.dispatch.protocolpanel.init({
                         getPriority: function () { return $('#CallPriority').val(); },
+                        // P4: the case flow applies its outcome's priority; the location feeds zone triggers.
+                        setPriority: function (value) { $('#CallPriority').val(value).trigger('change'); },
+                        getLatitude: function () { return $('#Latitude').val(); },
+                        getLongitude: function () { return $('#Longitude').val(); },
                         getType: function () { return $('#Call_Type').val(); },
                         getLoggedOn: function () { return null; },
                         getCallId: function () { return $('#Call_CallId').val(); }

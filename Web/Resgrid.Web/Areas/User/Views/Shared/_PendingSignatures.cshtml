@@ -1,0 +1,24 @@
+@using Resgrid.Model
+@model List<Resgrid.Model.PendingSignatureItem>
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureText
+@*
+    The member's signatures whose turn it is (e-Signature S3): on home and My Training as an rgw-next-action item. Each opens the
+    request's signing page; the list is "My signatures".
+*@
+<div class="rgw-next-action rg-pending-signatures" role="region" aria-label="@signatureText["PendingSignaturesHeader"]">
+    <strong><i class="fa fa-pencil-square-o" aria-hidden="true"></i> @signatureText["PendingSignaturesHeader"] (@Model.Count)</strong>
+    <ul class="list-unstyled m-b-none m-t-xs">
+        @foreach (var item in Model.Take(3))
+        {
+            <li class="m-b-xs">
+                <a asp-area="User" asp-controller="Signatures" asp-action="Step" asp-route-id="@item.SignatureRequestId">@item.Title</a>
+                <span class="label label-info">L@(item.RequiredLevel)</span>
+                <span class="rgw-progress-honest">@string.Format(signatureText["DueByLabel"].Value, item.ExpiresOn.ToString("yyyy-MM-dd"))</span>
+            </li>
+        }
+    </ul>
+    @if (Model.Count > 3)
+    {
+        <a asp-area="User" asp-controller="Signatures" asp-action="Mine">@signatureText["AllMySignaturesLink"]</a>
+    }
+</div>

@@ -1,0 +1,198 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Wellness
+@model WellnessEntryView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.Wellness> localizer
+@*
+    Log, review or edit one exposure entry (member wellness WL0). A suggestion built from dispatch data is reviewed here and becomes an
+    entry only when the member or a wellness officer confirms it. The category, date, call and duration are operational; the substance,
+    PPE, decontamination, narrative and health details are protected (ADP catalog 37). Anniversary reminders are the member's own choice
+    and exist for critical incidents only.
+*@
+@{
+    var title = Model.IsNew ? localizer["LogExposureTitle"].Value : Model.IsSuggestion ? localizer["ReviewSuggestionTitle"].Value : localizer["EntryTitle"].Value;
+    if (!Model.IsSelf && !string.IsNullOrWhiteSpace(Model.MemberName))
+    {
+        title = title + " · " + Model.MemberName;
+    }
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Section"] = Model.IsSelf ? "Mine" : "Report";
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["EntryIntro"].Value;
+    ViewData["Error"] = Model.Error;
+    var readOnly = Model.IsClosed;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.ProtectedWithheld)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["ProtectedWithheldNotice"]</div>
+    }
+    @if (Model.IsSuggestion)
+    {
+        <div class="alert alert-warning" role="status">
+            <i class="fa fa-inbox" aria-hidden="true"></i> @localizer["SuggestionReviewNotice"]
+            @if (!string.IsNullOrWhiteSpace(Model.SuggestionBasis))
+            {
+                <div class="small m-t-xs">@localizer["SuggestedFromLabel"]: @string.Join(", ", Model.SuggestionBasis.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(b => localizer[WellnessPresentation.BasisKey(b)].Value))</div>
+            }
+        </div>
+    }
+    @if (readOnly)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer[WellnessPresentation.StatusKey(Model.Status)]</div>
+    }
+
+    <form method="post" asp-controller="Wellness" asp-action="Save" asp-route-area="User" class="ibox float-e-margins">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="ExposureId" />
+        <input type="hidden" asp-for="RowVersion" />
+        <div class="ibox-title"><h5><i class="fa fa-heartbeat" aria-hidden="true"></i> @localizer["WhatHappenedHeader"]</h5></div>
+        <div class="ibox-content">
+            <fieldset disabled="@readOnly">
+                @if (Model.IsNew && Model.IsOfficer && Model.Members.Count > 0)
+                {
+                    <div class="form-group">
+                        <label for="entry-member">@localizer["MemberLabel"]</label>
+                        <select id="entry-member" name="MemberUserId" class="form-control">
+                            @foreach (var member in Model.Members)
+                            {
+                                <option value="@member.UserId" selected="@(string.Equals(member.UserId, Model.MemberUserId, StringComparison.OrdinalIgnoreCase))">@member.Name</option>
+                            }
+                        </select>
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" asp-for="MemberUserId" />
+                }
+
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="entry-category">@localizer["CategoryColumn"]</label>
+                        <select id="entry-category" asp-for="Category" class="form-control" required>
+                            @foreach (var category in WellnessPresentation.Categories)
+                            {
+                                <option value="@category" selected="@(Model.Category == category)">@localizer[WellnessPresentation.CategoryKey(category)]</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="entry-occurred">@localizer["OccurredOnLabel"]</label>
+                        <input id="entry-occurred" asp-for="OccurredOnLocal" type="datetime-local" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="entry-duration">@localizer["DurationMinutesLabel"]</label>
+                        <input id="entry-duration" asp-for="DurationMinutes" type="number" min="0" max="10080" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="entry-call">@localizer["CallColumn"]</label>
+                        @if (Model.IsSuggestion)
+                        {
+                            <input type="hidden" asp-for="CallId" />
+                            <p class="form-control-static">@Model.CallName</p>
+                        }
+                        else
+                        {
+                            <select id="entry-call" name="CallId" class="form-control">
+                                <option value="">@localizer["NoCallOption"]</option>
+                                @if (Model.CallId.HasValue && !Model.Calls.Any(c => c.CallId == Model.CallId.Value))
+                                {
+                                    <option value="@Model.CallId" selected>@(Model.CallName ?? "#" + Model.CallId)</option>
+                                }
+                                @foreach (var call in Model.Calls)
+                                {
+                                    <option value="@call.CallId" selected="@(Model.CallId == call.CallId)">@call.Label</option>
+                                }
+                            </select>
+                        }
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <div class="ibox-title"><h5><i class="fa fa-lock" aria-hidden="true"></i> @localizer["DetailsHeader"]</h5></div>
+        <div class="ibox-content">
+            <p class="text-muted small">@localizer["DetailsHelp"]</p>
+            <fieldset disabled="@readOnly">
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="entry-substance">@localizer["SubstanceLabel"]</label>
+                        <input id="entry-substance" asp-for="Substance" class="form-control" maxlength="500" />
+                    </div>
+                    <div class="form-group">
+                        <label for="entry-ppe">@localizer["PpeWornLabel"]</label>
+                        <input id="entry-ppe" asp-for="PpeWorn" class="form-control" maxlength="500" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="entry-decon">@localizer["DecontaminationLabel"]</label>
+                    <textarea id="entry-decon" asp-for="Decontamination" class="form-control" rows="2" maxlength="1000"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="entry-narrative">@localizer["NarrativeLabel"]</label>
+                    <textarea id="entry-narrative" asp-for="Narrative" class="form-control" rows="4" maxlength="4000"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="entry-health">@localizer["HealthDetailsLabel"]</label>
+                    <textarea id="entry-health" asp-for="HealthDetails" class="form-control" rows="3" maxlength="4000"></textarea>
+                    <small class="text-muted">@localizer["HealthDetailsHelp"]</small>
+                </div>
+            </fieldset>
+        </div>
+
+        @if (Model.IsSelf)
+        {
+            <div class="ibox-title"><h5><i class="fa fa-bell-o" aria-hidden="true"></i> @localizer["RemindersHeader"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted small">@localizer["RemindersHelp"]</p>
+                <fieldset disabled="@readOnly">
+                    <div class="checkbox">
+                        <label><input type="checkbox" asp-for="RemindMember" /> @localizer["RemindMemberLabel"]</label>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" asp-for="RemindPeerTeam" disabled="@(!Model.PeerTeamConfigured)" /> @localizer["RemindPeerTeamLabel"]</label>
+                        @if (!Model.PeerTeamConfigured)
+                        {
+                            <small class="rgw-sub text-muted">@localizer["NoPeerTeamHelp"]</small>
+                        }
+                    </div>
+                </fieldset>
+            </div>
+        }
+
+        @if (!readOnly)
+        {
+            <div class="ibox-content rgw-toolbar">
+                @if (Model.IsSuggestion)
+                {
+                    <button type="submit" name="intent" value="confirm" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ConfirmButton"]</button>
+                    <button type="submit" name="intent" value="save" class="btn btn-default"><i class="fa fa-save" aria-hidden="true"></i> @localizer["SaveForLaterButton"]</button>
+                }
+                else
+                {
+                    <button type="submit" name="intent" value="save" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["SaveButton"]</button>
+                }
+                <a class="btn btn-default" asp-controller="Wellness" asp-action="@(Model.IsSelf ? "Index" : "Member")" asp-route-area="User" asp-route-userId="@(Model.IsSelf ? null : Model.MemberUserId)"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["BackButton"]</a>
+            </div>
+        }
+    </form>
+
+    @if (Model.IsSuggestion)
+    {
+        <form method="post" asp-controller="Wellness" asp-action="Dismiss" asp-route-area="User" asp-route-id="@Model.ExposureId">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-default btn-sm"><i class="fa fa-times" aria-hidden="true"></i> @localizer["DismissLongButton"]</button>
+        </form>
+    }
+    @if (readOnly)
+    {
+        <a class="btn btn-default" asp-controller="Wellness" asp-action="@(Model.IsSelf ? "Index" : "Member")" asp-route-area="User" asp-route-userId="@(Model.IsSelf ? null : Model.MemberUserId)"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["BackButton"]</a>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

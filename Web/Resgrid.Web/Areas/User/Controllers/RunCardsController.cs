@@ -310,6 +310,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ReferenceStatusBaseTypes = n.ReferenceStatusBaseTypes,
 				ThresholdSeconds = n.ThresholdSeconds,
 				RequiredCount = Math.Max(1, n.RequiredCount),
+				// Protocols P4: only a determinant condition keeps parameters, normalized.
+				ParametersJson = n.ConditionType == (int)RunCardConditionTypes.ProtocolOutcome ? NormalizeOutcomeParameters(n.ParametersJson) : null,
 				YesNodeKey = string.IsNullOrWhiteSpace(n.YesNodeKey) ? null : n.YesNodeKey.Trim(),
 				NoNodeKey = string.IsNullOrWhiteSpace(n.NoNodeKey) ? null : n.NoNodeKey.Trim(),
 				ResponsePackageId = n.ResponsePackageId,
@@ -318,6 +320,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 				SubjectTargets = ToTargets(n.SubjectTargets),
 				ReferenceTargets = ToTargets(n.ReferenceTargets)
 			}).ToList();
+		}
+
+		/// <summary>Protocols P4: a ProtocolOutcome condition's parameters as stored (determinant trimmed); null when unreadable (validation refuses it).</summary>
+		private static string NormalizeOutcomeParameters(string json)
+		{
+			var parameters = RunCardProtocolOutcomeParameters.Parse(json);
+			if (parameters == null)
+				return null;
+
+			parameters.Value = ProtocolDecisionGraphs.NormalizeDeterminant(parameters.Value);
+			return parameters.ToJson();
 		}
 
 		private static List<RunCardTarget> ToTargets(IEnumerable<RunCardTargetInput> targets)

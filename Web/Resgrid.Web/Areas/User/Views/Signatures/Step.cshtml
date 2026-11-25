@@ -1,0 +1,124 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Signatures
+@model SignatureStepPageView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureText
+@*
+    One multi-signer request as a member sees it (e-Signature S3): the shared signature panel for their step — the exact
+    statement, the content code, the level badge and who else must sign; "Sign" (L1 in the session, L2 after a fresh step-up)
+    or "Sign with passkey" bound to this content — every step in signing order, and declining their own step.
+*@
+@{
+    var view = Model.Step;
+    var request = view.Request;
+    ViewBag.Title = "Resgrid | " + request.Title;
+    ViewData["Title"] = request.Title;
+    ViewData["Subtitle"] = signatureText["StepPageIntro"].Value;
+    ViewData["Section"] = "Mine";
+    ViewData["Message"] = Model.Message;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Signatures/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-stat-tiles">
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@signatureText["StatusLabel"]</div><div class="rgw-stat-value">@signatureText["Status" + (SignatureRequestStatuses)request.Status]</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@signatureText["SignedCountLabel"]</div><div class="rgw-stat-value">@view.Signers.Count(s => s.Status == (int)SignatureSignerStatuses.Signed) / @view.Signers.Count</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@signatureText["ExpiresLabel"]</div><div class="rgw-stat-value">@request.ExpiresOn.ToString("yyyy-MM-dd HH:mm") UTC</div></div>
+    </div>
+
+    @if (view.RevisionChanged)
+    {
+        <div class="alert alert-warning" role="status"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @signatureText["RefusalRevisionChanged"]</div>
+    }
+
+    @if (Model.Panel != null)
+    {
+        @await Html.PartialAsync("_SignaturePanel", Model.Panel)
+    }
+    else
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <p><strong>@signatureText["StatementLabel"]</strong></p>
+                <blockquote style="font-size:14px">@request.StatementText</blockquote>
+                <p class="text-muted small"><i class="fa fa-hashtag" aria-hidden="true"></i> @signatureText["ContentCodeLabel"] <span class="rgw-mono">@SignaturePolicy.ShortCode(request.ArtifactSha256)</span></p>
+            </div>
+        </div>
+    }
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-list-ol" aria-hidden="true"></i> @signatureText["StepsHeading"]</h5></div>
+        <div class="ibox-content">
+            <p class="text-muted small">@(request.Ordered ? signatureText["OrderedHelp"] : signatureText["UnorderedHelp"])</p>
+            <div class="table-responsive">
+                <table class="table table-striped rgw-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">@signatureText["StepOrderColumn"]</th>
+                            <th scope="col">@signatureText["SignerColumn"]</th>
+                            <th scope="col">@signatureText["LevelColumn"]</th>
+                            <th scope="col">@signatureText["StatusLabel"]</th>
+                            <th scope="col">@signatureText["SignedOnColumn"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in view.Signers.OrderBy(x => x.SignerOrder).ThenBy(x => x.SignatureRequestSignerId))
+                        {
+                            <tr>
+                                <td>@s.SignerOrder</td>
+                                <td>@SignatureStepPresentation.Describe(s, Model.Names, signatureText)
+                                    @if (s.Status == (int)SignatureSignerStatuses.Declined && !string.IsNullOrWhiteSpace(s.DeclineReason))
+                                    {
+                                        <small class="rgw-sub text-muted">@s.DeclineReason</small>
+                                    }
+                                </td>
+                                <td><span class="label label-default">L@(SignatureStepPresentation.Level(s))</span></td>
+                                <td>@signatureText["SignerStatus" + (SignatureSignerStatuses)s.Status]</td>
+                                <td>@(s.SignedOn.HasValue ? s.SignedOn.Value.ToString("yyyy-MM-dd HH:mm") + " UTC" : "—")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="rgw-wizard-actions">
+                @if (Model.CanDecline)
+                {
+                    <details class="m-b-sm">
+                        <summary class="btn btn-default"><i class="fa fa-times-circle" aria-hidden="true"></i> @signatureText["DeclineButton"]</summary>
+                        <form method="post" asp-area="User" asp-controller="Signatures" asp-action="DeclineStep" asp-route-id="@request.SignatureRequestId" class="m-t-sm">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="signerId" value="@((view.MyStep ?? view.MyWaitingStep)?.SignatureRequestSignerId)" />
+                            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                            <div class="form-group">
+                                <label class="control-label" for="rg-decline-reason">@signatureText["DeclineReasonLabel"]</label>
+                                <textarea class="form-control" id="rg-decline-reason" name="reason" rows="2" maxlength="1000" required></textarea>
+                                <p class="help-block small">@signatureText["DeclineHelp"]</p>
+                            </div>
+                            <button type="submit" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i> @signatureText["DeclineConfirmButton"]</button>
+                        </form>
+                    </details>
+                }
+                @if (Model.CanManage)
+                {
+                    <a class="btn btn-default" asp-area="User" asp-controller="Signatures" asp-action="Detail" asp-route-id="@request.SignatureRequestId" asp-route-returnUrl="@Model.ReturnUrl"><i class="fa fa-info-circle" aria-hidden="true"></i> @signatureText["ViewRequestLink"]</a>
+                }
+                @if (!string.IsNullOrEmpty(Model.SubjectUrl))
+                {
+                    <a class="btn btn-default" href="@Model.SubjectUrl"><i class="fa fa-external-link" aria-hidden="true"></i> @signatureText["OpenDocumentLink"]</a>
+                }
+                <a class="btn btn-link" href="@Model.ReturnUrl"><i class="fa fa-arrow-left" aria-hidden="true"></i> @signatureText["BackLink"]</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/app/common/passkeys/resgrid.passkeys.js" asp-append-version="true"></script>
+    <script src="~/js/app/internal/signatures/resgrid.signatures.js" asp-append-version="true"></script>
+}

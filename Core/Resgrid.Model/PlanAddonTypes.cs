@@ -12,6 +12,14 @@
 		/// <summary>Incident Back Office (large-incident-logistics-finance-plan.md rev 4.1, decision D6): monthly add-on (USD 250 Stripe US / EUR 350 Paddle EU) entitling the whole module — LI-A Foundation, LI-B Logistics, LI-C Business and LI-D Coordination. Registry §4C.</summary>
 		IncidentBackOffice = 6,
 		/// <summary>Dedicated department phone number (call-intake-and-ai-destinations-plan.md, M0323): monthly add-on (USD 15 Stripe US/CA / EUR 20 Paddle EU) for departments with an active paid entity plan; inbound SMS intake and Enhanced AI voice intake.</summary>
-		DedicatedNumber = 7
+		DedicatedNumber = 7,
+		// 8 is reserved for Workforce Pro (shifts plan, registry); do not use it here.
+		/// <summary>
+		/// LMS add-on (protocols-training-knowledge-plan.md §17): courses, requirements, classes and the formal training reports.
+		/// A pack add-on (§17.4): 25-member packs, graduated, monthly, with a per-member seat. The PlanAddons row is M0366
+		/// (LmsAddonConfig.PlanAddonId); general availability is the operator switching the Training.Lms flag on (seeded off),
+		/// not code (§25.4a item 7). The gate (ILmsAccessService) fails closed.
+		/// </summary>
+		Lms = 9
 	}
 }

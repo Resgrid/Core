@@ -81,7 +81,7 @@ namespace Resgrid.Tests.TrainingT0
 			_attempts.Setup(x => x.GetLastAttemptNumberAsync(DepartmentId, It.IsAny<int>(), It.IsAny<string>()))
 				.ReturnsAsync(() => _storedAttempts.Count == 0 ? 0 : _storedAttempts.Max(a => a.AttemptNumber));
 
-			_service = new TrainingService(_trainings, _attachments, _users, _questions, _communication.Object, _departments.Object, _settings.Object,
+			_service = new TrainingService(_trainings, _attachments, _users, _questions, _communication.Object, _departments.Object, _settings.Object, Mock.Of<IKnowledgeIndexQueue>(),
 				null, _attempts.Object, null, _histories.Object, _flags.Object, _leave.Object, _events.Object, _groups.Object);
 		}
 
@@ -275,7 +275,7 @@ namespace Resgrid.Tests.TrainingT0
 		public async Task Saving_a_training_never_writes_its_assignees_so_a_concurrent_completion_survives()
 		{
 			var users = new Mock<ITrainingUserRepository>(MockBehavior.Strict);
-			var service = new TrainingService(_trainings, _attachments, users.Object, _questions, _communication.Object, _departments.Object, _settings.Object,
+			var service = new TrainingService(_trainings, _attachments, users.Object, _questions, _communication.Object, _departments.Object, _settings.Object, Mock.Of<IKnowledgeIndexQueue>(),
 				null, _attempts.Object, null, _histories.Object, _flags.Object, _leave.Object, _events.Object, _groups.Object);
 			var training = SeedQuiz(50, null, TrainingQuizScorerTests.Single(1));
 			var stale = new TrainingUser { TrainingUserId = 1, TrainingId = 1, UserId = Member, Complete = false };
@@ -369,7 +369,7 @@ namespace Resgrid.Tests.TrainingT0
 		public async Task The_department_list_reads_question_counts_in_one_query()
 		{
 			var questions = new Mock<ITrainingQuestionRepository>(MockBehavior.Strict);
-			var service = new TrainingService(_trainings, _attachments, _users, questions.Object, null, _departments.Object, null);
+			var service = new TrainingService(_trainings, _attachments, _users, questions.Object, null, _departments.Object, null, Mock.Of<IKnowledgeIndexQueue>());
 			SeedQuiz(0);
 			_trainings.SeedTraining(new Training { TrainingId = 2, DepartmentId = DepartmentId, Name = "Second" });
 			_trainings.QuestionCounts[1] = 3;

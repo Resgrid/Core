@@ -84,6 +84,14 @@ namespace Resgrid.Web.Areas.User.Models.Security
 			// (and apply) the Create Training row (ClaimsLogic.AddTrainingClaims, GetTrainingManagementScopeAsync).
 			new PermissionScreenEntry(PermissionTypes.AssignTraining, AdminsUpward, DepartmentAdmins),
 			new PermissionScreenEntry(PermissionTypes.DeleteTraining, AdminsUpward, DepartmentAdmins),
+			// Protocols P1: author, approve and publish, manage acknowledgments (P2). No row: department admins only
+			// (ClaimsLogic.AddProtocolClaims, ProtocolAccessService).
+			new PermissionScreenEntry(PermissionTypes.AuthorProtocols, AdminsUpward, DepartmentAdmins),
+			new PermissionScreenEntry(PermissionTypes.ApproveProtocols, AdminsUpward, DepartmentAdmins),
+			new PermissionScreenEntry(PermissionTypes.ManageProtocolAcknowledgments, AdminsUpward, DepartmentAdmins),
+			// Training T2 (132-133): manage LMS courses and banks, grade assessments. No row: department admins only (LmsGateService).
+			new PermissionScreenEntry(PermissionTypes.ManageCourses, AdminsUpward, DepartmentAdmins),
+			new PermissionScreenEntry(PermissionTypes.GradeAssessments, AdminsUpward, DepartmentAdmins),
 			new PermissionScreenEntry(PermissionTypes.CreateDocument, EveryoneFirst, Everyone),
 			new PermissionScreenEntry(PermissionTypes.CreateCalendarEntry, EveryoneFirst, Everyone),
 			new PermissionScreenEntry(PermissionTypes.CreateNote, EveryoneFirst, Everyone),

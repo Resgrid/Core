@@ -1,0 +1,528 @@
+@using System.Globalization
+@using Resgrid.Model
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsClasses
+@model LmsClassSessionView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsClasses.LmsClasses> localizer
+@*
+    One class session (T4, LMS): details and the member's own enrol / withdraw / sign-in; for its instructors and class managers the roster
+    (enrolled, waitlist, pending; attendance; walk-ins; meeting report import; the shift-calendar conflict flag), sign-off into the
+    transcript, the kiosk QR, message by roster status; for class managers instructors, costs and facility / prop booking.
+*@
+@{
+    var session = Model.Session;
+    var detail = Model.Detail;
+    var culture = CultureInfo.CurrentCulture;
+    ViewBag.Title = "Resgrid | " + session.Title;
+    ViewData["Title"] = session.Title;
+    ViewData["Subtitle"] = Model.Local(session.StartsOn).ToString("f", culture) + " – " + Model.Local(session.EndsOn).ToString("t", culture);
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var scheduled = session.Status == (int)LmsClassSessionStatuses.Scheduled;
+    var enrolled = detail.Roster.Where(r => r.Enrollment.Status == (int)LmsClassEnrollmentStatuses.Enrolled).ToList();
+    var waiting = detail.Roster.Where(r => r.Enrollment.Status == (int)LmsClassEnrollmentStatuses.Waitlisted).ToList();
+    var pending = detail.Roster.Where(r => r.Enrollment.Status == (int)LmsClassEnrollmentStatuses.PendingApproval).ToList();
+    string H(decimal value) => value.ToString("0.##", culture);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    <div class="rgw-stat-tiles m-b-sm">
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Col.Status"]</div><div class="rgw-stat-value">@localizer["Status." + (LmsClassSessionStatuses)session.Status]</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Col.Seats"]</div><div class="rgw-stat-value">@detail.SeatsTaken@(session.Capacity > 0 ? " / " + session.Capacity.ToString(culture) : string.Empty)</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Col.Waitlisted"]</div><div class="rgw-stat-value">@waiting.Count</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Col.Attended"]</div><div class="rgw-stat-value">@detail.Count(LmsClassAttendanceStates.Attended)</div></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["Section.Details"]</h5></div>
+                <div class="ibox-content">
+                    @if (!string.IsNullOrWhiteSpace(session.Description))
+                    {
+                        <p style="white-space:pre-line">@session.Description</p>
+                    }
+                    <dl class="dl-horizontal">
+                        @if (!string.IsNullOrWhiteSpace(session.Location))
+                        {
+                            <dt>@localizer["Field.Location"]</dt><dd>@session.Location</dd>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(session.MeetingUrl))
+                        {
+                            <dt>@localizer["Field.MeetingUrl"]</dt><dd><a href="@session.MeetingUrl" target="_blank" rel="noopener noreferrer">@session.MeetingUrl</a></dd>
+                        }
+                        @if (session.CategoryId.HasValue)
+                        {
+                            <dt>@localizer["Field.Category"]</dt><dd>@Model.CategoryName(session.CategoryId)</dd>
+                        }
+                        @if (detail.LessonPlanVersion != null)
+                        {
+                            <dt>@localizer["Field.LessonPlan"]</dt><dd>@detail.LessonPlanVersion.Title @detail.LessonPlanVersion.Number</dd>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(session.Tags))
+                        {
+                            <dt>@localizer["Field.Tags"]</dt><dd>@session.Tags</dd>
+                        }
+                        <dt>@localizer["Rules"]</dt>
+                        <dd>
+                            @(session.EnrollmentOpen ? localizer["Rule.Open"] : localizer["Rule.Closed"])@(session.RequiresApproval ? ", " + localizer["Rule.Approval"].Value : string.Empty)@(session.WaitlistEnabled ? ", " + localizer["Rule.Waitlist"].Value : string.Empty)@(session.CutoffDays > 0 ? ", " + string.Format(culture, localizer["Rule.CutoffFormat"].Value, session.CutoffDays) : string.Empty)
+                        </dd>
+                        @if (session.SignedOffOn.HasValue)
+                        {
+                            <dt>@localizer["SignedOffOn"]</dt><dd>@Model.Local(session.SignedOffOn.Value).ToString("g", culture) — @Model.NameOf(session.SignedOffByUserId)</dd>
+                        }
+                        @if (session.RetainUntil.HasValue)
+                        {
+                            <dt>@localizer["RetainUntil"]</dt><dd>@Model.Local(session.RetainUntil.Value).ToString("d", culture)</dd>
+                        }
+                        @if (session.Status == (int)LmsClassSessionStatuses.Cancelled && !string.IsNullOrWhiteSpace(session.CancelReason))
+                        {
+                            <dt>@localizer["CancelReason"]</dt><dd>@session.CancelReason</dd>
+                        }
+                        @if (detail.CalendarItem != null)
+                        {
+                            <dt>@localizer["Calendar"]</dt><dd><a asp-controller="Calendar" asp-action="View" asp-route-area="User" asp-route-calendarItemId="@detail.CalendarItem.CalendarItemId"><i class="fa fa-calendar" aria-hidden="true"></i> @localizer["OnCalendar"]</a></dd>
+                        }
+                    </dl>
+                    @if (Model.Series.Count > 1)
+                    {
+                        <p class="text-muted">@string.Format(culture, localizer["SeriesFormat"].Value, session.SeriesIndex + 1, Model.Series.Count)
+                            @if (Model.CanManage)
+                            {
+                                <a asp-controller="LmsClasses" asp-action="Series" asp-route-area="User" asp-route-key="@session.SeriesKey">@localizer["SeriesReport"]</a>
+                            }
+                        </p>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5><i class="fa fa-user" aria-hidden="true"></i> @localizer["Section.You"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Mine != null && Model.Mine.IsOnRoster)
+                    {
+                        <p><span class="label label-primary">@localizer["Enrollment." + (LmsClassEnrollmentStatuses)Model.Mine.Status]</span>
+                            @if (Model.Mine.Attendance != (int)LmsClassAttendanceStates.Unmarked)
+                            {
+                                <span class="label label-default">@localizer["Attendance." + (LmsClassAttendanceStates)Model.Mine.Attendance]</span>
+                            }
+                        </p>
+                        @if (Model.Mine.CheckInOn.HasValue)
+                        {
+                            <p>@localizer["SignedInAt"] @Model.Local(Model.Mine.CheckInOn.Value).ToString("t", culture)@(Model.Mine.CheckOutOn.HasValue ? " – " + Model.Local(Model.Mine.CheckOutOn.Value).ToString("t", culture) : string.Empty)</p>
+                            @if (!Model.Mine.CheckOutOn.HasValue && scheduled)
+                            {
+                                <form method="post" asp-controller="LmsClasses" asp-action="SignOutOfClass" asp-route-area="User" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@session.LmsClassSessionId" />
+                                    <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-sign-out" aria-hidden="true"></i> @localizer["SignOut"]</button>
+                                </form>
+                            }
+                        }
+                        @if (scheduled && session.StartsOn > Model.UtcNow && (Model.Mine.Status != (int)LmsClassEnrollmentStatuses.Enrolled || session.AllowSelfUnenroll))
+                        {
+                            <form method="post" asp-controller="LmsClasses" asp-action="Unenroll" asp-route-area="User" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@session.LmsClassSessionId" />
+                                <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-user-times" aria-hidden="true"></i> @localizer["Withdraw"]</button>
+                            </form>
+                        }
+                    }
+                    else if (Model.EnrollRefusal == null && Model.CanAuthor)
+                    {
+                        <form method="post" asp-controller="LmsClasses" asp-action="Enroll" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@session.LmsClassSessionId" />
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-user-plus" aria-hidden="true"></i> @(session.RequiresApproval ? localizer["RequestPlace"] : localizer["Enroll"])</button>
+                        </form>
+                    }
+                    else if (Model.EnrollRefusal != null)
+                    {
+                        <p class="text-muted">@localizer[Model.EnrollRefusal]</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.CanRun)
+    {
+        <div class="rgw-toolbar m-b-sm">
+            @if (Model.CanManage)
+            {
+                <a class="btn btn-white btn-sm" asp-controller="LmsClasses" asp-action="Edit" asp-route-area="User" asp-route-id="@session.LmsClassSessionId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["Edit"]</a>
+            }
+            @if (scheduled && session.QrEnabled)
+            {
+                <a class="btn btn-white btn-sm" asp-controller="LmsClasses" asp-action="Kiosk" asp-route-area="User" asp-route-id="@session.LmsClassSessionId"><i class="fa fa-qrcode" aria-hidden="true"></i> @localizer["ShowQr"]</a>
+            }
+            <a class="btn btn-white btn-sm" asp-controller="Messages" asp-action="Compose" asp-route-area="User" asp-route-rosterSessionId="@session.LmsClassSessionId"><i class="fa fa-envelope-o" aria-hidden="true"></i> @localizer["MessageRoster"]</a>
+            @if (session.Status != (int)LmsClassSessionStatuses.Cancelled && session.StartsOn <= Model.UtcNow)
+            {
+                <form method="post" asp-controller="LmsClasses" asp-action="SignOff" asp-route-area="User" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@session.LmsClassSessionId" />
+                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-check-square-o" aria-hidden="true"></i> @(session.SignedOffOn.HasValue ? localizer["SignOffAgain"] : localizer["SignOff"])</button>
+                </form>
+            }
+        </div>
+        @if (!session.SignedOffOn.HasValue && session.StartsOn <= Model.UtcNow && session.Status != (int)LmsClassSessionStatuses.Cancelled)
+        {
+            <p class="text-muted">@localizer["SignOffHelp"]</p>
+        }
+
+        @if (Model.Import != null)
+        {
+            <div class="alert alert-info" role="status">
+                @string.Format(culture, localizer["ImportResultFormat"].Value, Model.Import.Rows, Model.Import.Matched, Model.Import.WalkIns, Model.Import.Unmatched.Count)
+                @if (Model.Import.Unmatched.Count > 0)
+                {
+                    <ul>@foreach (var row in Model.Import.Unmatched) { <li>@row.Name @row.Email</li> }</ul>
+                }
+            </div>
+        }
+
+        <h3><i class="fa fa-list" aria-hidden="true"></i> @localizer["RosterHeader"]</h3>
+        @if (enrolled.Count == 0)
+        {
+            <p class="text-muted">@localizer["NoRoster"]</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table rgw-table">
+                    <thead><tr><th>@localizer["Col.Member"]</th><th>@localizer["Col.SignIn"]</th><th>@localizer["Col.Attendance"]</th><th>@localizer["Col.Hours"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                    <tbody>
+                        @foreach (var row in enrolled)
+                        {
+                            var e = row.Enrollment;
+                            <tr>
+                                <td>
+                                    @row.Name
+                                    <span class="rgw-sub">
+                                        @if (e.IsWalkIn) { <span class="label label-default">@localizer["WalkIn"]</span> }
+                                        @if (row.OnShift) { <span class="label label-warning" title="@localizer["OnShiftHelp"]"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["OnShift"]</span> }
+                                        @if (row.Inactive) { <span class="label label-danger">@localizer["Inactive"]</span> }
+                                        @e.JobTitle
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (e.CheckInOn.HasValue)
+                                    {
+                                        @Model.Local(e.CheckInOn.Value).ToString("t", culture)@(e.CheckOutOn.HasValue ? " – " + Model.Local(e.CheckOutOn.Value).ToString("t", culture) : string.Empty)
+                                        <span class="rgw-sub">@localizer["Method." + (LmsClassCheckInMethods)e.CheckInMethod]</span>
+                                    }
+                                    else if (e.ImportedMinutes.HasValue)
+                                    {
+                                        @string.Format(culture, localizer["MinutesFormat"].Value, e.ImportedMinutes.Value)<span class="rgw-sub">@localizer["Method.Import"]</span>
+                                    }
+                                    else if (row.CalendarCheckIn != null)
+                                    {
+                                        @Model.Local(row.CalendarCheckIn.CheckInTime).ToString("t", culture)<span class="rgw-sub">@localizer["Method.Calendar"]</span>
+                                    }
+                                </td>
+                                <td><span class="label label-default">@localizer["Attendance." + (LmsClassAttendanceStates)e.Attendance]</span></td>
+                                <td>@H(e.Hours ?? row.ProjectedHours)</td>
+                                <td class="rgw-row-actions">
+                                    <form method="post" asp-controller="LmsClasses" asp-action="Attendance" asp-route-area="User" class="form-inline d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@session.LmsClassSessionId" />
+                                        <input type="hidden" name="enrollmentId" value="@e.LmsClassEnrollmentId" />
+                                        <label class="sr-only" for="att-@e.LmsClassEnrollmentId">@localizer["Col.Attendance"]</label>
+                                        <select id="att-@e.LmsClassEnrollmentId" name="state" class="form-control input-sm">
+                                            @foreach (LmsClassAttendanceStates state in Enum.GetValues(typeof(LmsClassAttendanceStates)))
+                                            {
+                                                <option value="@((int)state)" selected="@(e.Attendance == (int)state)">@localizer["Attendance." + state]</option>
+                                            }
+                                        </select>
+                                        <label class="sr-only" for="hrs-@e.LmsClassEnrollmentId">@localizer["HoursOverride"]</label>
+                                        <input id="hrs-@e.LmsClassEnrollmentId" name="hours" class="form-control input-sm" style="width:6em" inputmode="decimal" placeholder="@localizer["HoursOverride"]" value="@(e.HoursOverride?.ToString("0.##", culture))" />
+                                        <button type="submit" class="btn btn-white btn-xs"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Save"]</button>
+                                    </form>
+                                    @if (session.Status != (int)LmsClassSessionStatuses.SignedOff)
+                                    {
+                                        <form method="post" asp-controller="LmsClasses" asp-action="RemoveMember" asp-route-area="User" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@session.LmsClassSessionId" />
+                                            <input type="hidden" name="enrollmentId" value="@e.LmsClassEnrollmentId" />
+                                            <button type="submit" class="btn btn-white btn-xs"><i class="fa fa-times" aria-hidden="true"></i> @localizer["Remove"]</button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        @if (pending.Count > 0)
+        {
+            <h4>@localizer["PendingHeader"]</h4>
+            <ul class="list-unstyled">
+                @foreach (var row in pending)
+                {
+                    <li class="m-b-xs">@row.Name
+                        <form method="post" asp-controller="LmsClasses" asp-action="Decide" asp-route-area="User" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@session.LmsClassSessionId" />
+                            <input type="hidden" name="enrollmentId" value="@row.Enrollment.LmsClassEnrollmentId" />
+                            <button type="submit" name="approve" value="true" class="btn btn-primary btn-xs"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Approve"]</button>
+                            <button type="submit" name="approve" value="false" class="btn btn-white btn-xs"><i class="fa fa-times" aria-hidden="true"></i> @localizer["Decline"]</button>
+                        </form>
+                    </li>
+                }
+            </ul>
+        }
+
+        @if (waiting.Count > 0)
+        {
+            <h4>@localizer["WaitlistHeader"]</h4>
+            <ol>
+                @foreach (var row in waiting)
+                {
+                    <li>@row.Name @if (row.Inactive) { <span class="label label-danger">@localizer["Inactive"]</span> }</li>
+                }
+            </ol>
+        }
+
+        @if (session.Status != (int)LmsClassSessionStatuses.Cancelled)
+        {
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title"><h5><i class="fa fa-user-plus" aria-hidden="true"></i> @localizer["AddPeople"]</h5></div>
+                        <div class="ibox-content">
+                            <form method="post" asp-controller="LmsClasses" asp-action="AddMember" asp-route-area="User" class="m-b-sm">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@session.LmsClassSessionId" />
+                                <label for="add-member">@localizer["EnrollMember"]</label>
+                                <div class="input-group">
+                                    <select id="add-member" name="userId" class="form-control">
+                                        @foreach (var member in Model.Members)
+                                        {
+                                            <option value="@member.Key">@member.Value</option>
+                                        }
+                                    </select>
+                                    <span class="input-group-btn"><button type="submit" class="btn btn-white"><i class="fa fa-user-plus" aria-hidden="true"></i> @localizer["Enroll"]</button></span>
+                                </div>
+                            </form>
+                            <form method="post" asp-controller="LmsClasses" asp-action="WalkIn" asp-route-area="User" class="m-b-sm">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@session.LmsClassSessionId" />
+                                <label for="walk-in">@localizer["AddWalkIn"]</label>
+                                <div class="input-group">
+                                    <select id="walk-in" name="userId" class="form-control">
+                                        @foreach (var member in Model.Members)
+                                        {
+                                            <option value="@member.Key">@member.Value</option>
+                                        }
+                                    </select>
+                                    <span class="input-group-btn"><button type="submit" class="btn btn-white"><i class="fa fa-sign-in" aria-hidden="true"></i> @localizer["MarkPresent"]</button></span>
+                                </div>
+                            </form>
+                            <form method="post" asp-controller="LmsClasses" asp-action="ImportAttendance" asp-route-area="User" enctype="multipart/form-data">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@session.LmsClassSessionId" />
+                                <label for="import-file">@localizer["ImportAttendance"]</label>
+                                <input id="import-file" name="file" type="file" accept=".csv,.tsv,.txt" class="form-control" />
+                                <span class="help-block">@localizer["ImportAttendanceHelp"]</span>
+                                <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["Import"]</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title"><h5><i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer["InstructorsHeader"]</h5></div>
+                        <div class="ibox-content">
+                            @if (detail.Instructors.Count == 0)
+                            {
+                                <p class="text-muted">@localizer["NoInstructors"]</p>
+                            }
+                            <ul class="list-unstyled">
+                                @foreach (var instructor in detail.Instructors)
+                                {
+                                    <li class="m-b-xs">
+                                        <strong>@instructor.Name</strong> <span class="text-muted">@localizer["Role." + (LmsClassInstructorRoles)instructor.Role]@(instructor.IsMember ? string.Empty : " · " + localizer["Outside"].Value)</span>
+                                        @if (!string.IsNullOrWhiteSpace(instructor.Qualifications)) { <span class="rgw-sub">@instructor.Qualifications</span> }
+                                        @if (Model.CanManage)
+                                        {
+                                            <form method="post" asp-controller="LmsClasses" asp-action="RemoveInstructor" asp-route-area="User" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@session.LmsClassSessionId" />
+                                                <input type="hidden" name="instructorId" value="@instructor.LmsClassInstructorId" />
+                                                <button type="submit" class="btn btn-white btn-xs"><i class="fa fa-times" aria-hidden="true"></i> @localizer["Remove"]</button>
+                                            </form>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                            @if (Model.CanManage)
+                            {
+                                <form method="post" asp-controller="LmsClasses" asp-action="AddInstructor" asp-route-area="User">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@session.LmsClassSessionId" />
+                                    <div class="rgw-grid">
+                                        <div class="form-group">
+                                            <label for="ins-member">@localizer["Col.Member"]</label>
+                                            <select id="ins-member" name="userId" class="form-control">
+                                                <option value="">@localizer["OutsideInstructor"]</option>
+                                                @foreach (var member in Model.Members)
+                                                {
+                                                    <option value="@member.Key">@member.Value</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="form-group"><label for="ins-name">@localizer["OutsideName"]</label><input id="ins-name" name="name" class="form-control" maxlength="200" /></div>
+                                        <div class="form-group"><label for="ins-qual">@localizer["Col.Qualifications"]</label><input id="ins-qual" name="qualifications" class="form-control" maxlength="500" /></div>
+                                        <div class="form-group">
+                                            <label for="ins-role">@localizer["Col.Role"]</label>
+                                            <select id="ins-role" name="role" class="form-control">
+                                                @foreach (LmsClassInstructorRoles role in Enum.GetValues(typeof(LmsClassInstructorRoles)))
+                                                {
+                                                    <option value="@((int)role)">@localizer["Role." + role]</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="form-group"><label for="ins-hours">@localizer["Col.HoursTaught"]</label><input id="ins-hours" name="hoursTaught" class="form-control" inputmode="decimal" /></div>
+                                    </div>
+                                    <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddInstructor"]</button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (Model.CanManage)
+        {
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title"><h5><i class="fa fa-money" aria-hidden="true"></i> @localizer["CostsHeader"]</h5></div>
+                        <div class="ibox-content">
+                            @if (detail.Costs.Count > 0)
+                            {
+                                <table class="table rgw-table">
+                                    <tbody>
+                                        @foreach (var cost in detail.Costs)
+                                        {
+                                            <tr>
+                                                <td>@localizer["Cost." + (LmsClassCostKinds)cost.Kind]<span class="rgw-sub">@cost.Description</span></td>
+                                                <td>@cost.Amount.ToString("N2", culture) @cost.Currency</td>
+                                                <td class="rgw-row-actions">
+                                                    <form method="post" asp-controller="LmsClasses" asp-action="RemoveCost" asp-route-area="User" class="d-inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@session.LmsClassSessionId" />
+                                                        <input type="hidden" name="costId" value="@cost.LmsClassCostLineId" />
+                                                        <button type="submit" class="btn btn-white btn-xs"><i class="fa fa-times" aria-hidden="true"></i> @localizer["Remove"]</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                <p><strong>@localizer["Total"]: @detail.TotalCost.ToString("N2", culture) @session.Currency</strong></p>
+                            }
+                            <form method="post" asp-controller="LmsClasses" asp-action="AddCost" asp-route-area="User">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@session.LmsClassSessionId" />
+                                <div class="rgw-grid">
+                                    <div class="form-group">
+                                        <label for="cost-kind">@localizer["CostKind"]</label>
+                                        <select id="cost-kind" name="kind" class="form-control">
+                                            @foreach (LmsClassCostKinds kind in Enum.GetValues(typeof(LmsClassCostKinds)))
+                                            {
+                                                <option value="@((int)kind)">@localizer["Cost." + kind]</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="form-group"><label for="cost-desc">@localizer["Field.Description"]</label><input id="cost-desc" name="description" class="form-control" maxlength="250" /></div>
+                                    <div class="form-group"><label for="cost-amount">@localizer["Amount"] (@session.Currency)</label><input id="cost-amount" name="amount" class="form-control" inputmode="decimal" required /></div>
+                                </div>
+                                <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddCost"]</button>
+                            </form>
+                            <p class="text-muted m-t-sm">@(Model.TimecardAvailable ? localizer["TimecardOn"] : localizer["TimecardOff"])</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title"><h5><i class="fa fa-building-o" aria-hidden="true"></i> @localizer["BookingsHeader"]</h5></div>
+                        <div class="ibox-content">
+                            <ul class="list-unstyled">
+                                @foreach (var booking in detail.Bookings)
+                                {
+                                    var resource = Model.Resources.FirstOrDefault(r => r.LmsTrainingResourceId == booking.LmsTrainingResourceId);
+                                    <li class="m-b-xs">@(resource?.Name ?? "#" + booking.LmsTrainingResourceId)
+                                        <form method="post" asp-controller="LmsClasses" asp-action="Unbook" asp-route-area="User" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@session.LmsClassSessionId" />
+                                            <input type="hidden" name="bookingId" value="@booking.LmsClassResourceBookingId" />
+                                            <button type="submit" class="btn btn-white btn-xs"><i class="fa fa-times" aria-hidden="true"></i> @localizer["Release"]</button>
+                                        </form>
+                                    </li>
+                                }
+                            </ul>
+                            @if (scheduled && Model.Resources.Count > 0)
+                            {
+                                <form method="post" asp-controller="LmsClasses" asp-action="Book" asp-route-area="User">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@session.LmsClassSessionId" />
+                                    <label for="book-resource">@localizer["BookResource"]</label>
+                                    <div class="input-group">
+                                        <select id="book-resource" name="resourceId" class="form-control">
+                                            @foreach (var resource in Model.Resources)
+                                            {
+                                                <option value="@resource.LmsTrainingResourceId">@resource.Name (@localizer["Resource." + (LmsTrainingResourceKinds)resource.Kind])</option>
+                                            }
+                                        </select>
+                                        <span class="input-group-btn"><button type="submit" class="btn btn-white"><i class="fa fa-calendar-check-o" aria-hidden="true"></i> @localizer["Book"]</button></span>
+                                    </div>
+                                </form>
+                            }
+                            else if (Model.Resources.Count == 0)
+                            {
+                                <p class="text-muted">@localizer["NoResources"] <a asp-controller="LmsClasses" asp-action="Resources" asp-route-area="User">@localizer["Tab.Resources"]</a></p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rgw-toolbar m-t-sm">
+                @if (scheduled)
+                {
+                    <form method="post" asp-controller="LmsClasses" asp-action="Cancel" asp-route-area="User" class="form-inline d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@session.LmsClassSessionId" />
+                        <label class="sr-only" for="cancel-reason">@localizer["CancelReason"]</label>
+                        <input id="cancel-reason" name="reason" class="form-control input-sm" maxlength="500" placeholder="@localizer["CancelReason"]" />
+                        <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["CancelClass"]</button>
+                    </form>
+                }
+                <form method="post" asp-controller="LmsClasses" asp-action="Delete" asp-route-area="User" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@session.LmsClassSessionId" />
+                    <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["DeleteClass"]</button>
+                </form>
+            </div>
+            @if (session.RetainUntil.HasValue)
+            {
+                <p class="text-muted">@string.Format(culture, localizer["RetentionHelpFormat"].Value, Model.Local(session.RetainUntil.Value).ToString("d", culture))</p>
+            }
+        }
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

@@ -363,6 +363,41 @@ Delete Training. Who can archive, restore and delete trainings. A training someo
 
 Default: No permission row: follows the Create Training row (department admins only when neither is saved). Source: PermissionTypes.DeleteTraining.
 
+<a id="permission-authorprotocols"></a>
+## Author Protocols
+
+Author Protocols. Allows creating, copying and importing protocols, editing their library fields, triggers, questions and audience, writing drafts and submitting them for approval, disabling protocols and exporting the library. Authors also see drafts, the review queue and every protocol whatever its audience. Approving and publishing need Approve Protocols. With no saved rule only department administrators may.
+
+Default: No permission row: department admins only. Source: PermissionTypes.AuthorProtocols.
+
+<a id="permission-approveprotocols"></a>
+## Approve Protocols
+
+Approve Protocols. Allows approving or rejecting submitted protocol versions, publishing them now or on a set date, recording "reviewed, no change", retiring and deleting protocols, placing a protocol's legal hold, and managing categories and their approval steps. Each approval is signed with a fresh step-up or a passkey. With no saved rule only department administrators may.
+
+Default: No permission row: department admins only. Source: PermissionTypes.ApproveProtocols.
+
+<a id="permission-manageprotocolacknowledgments"></a>
+## Manage Protocol Acknowledgments
+
+Manage Protocol Acknowledgments. Reserved for read-and-sign acknowledgments: who will assign protocols for members to read and sign, exempt members and read the acknowledgment report. Read-and-sign is not available yet, so saving this rule changes nothing today. With no saved rule only department administrators may.
+
+Default: No permission row: department admins only. Source: PermissionTypes.ManageProtocolAcknowledgments.
+
+<a id="permission-managecourses"></a>
+## Manage Courses
+
+Manage Courses. Allows building courses and question banks, uploading course video, submitting, approving and publishing course versions, assigning courses and reading course results. Each approval is signed with a fresh step-up. Courses are part of the LMS add-on, which is not available yet; Resgrid Academy lessons can be assigned with this permission or Assign Training. With no saved rule only department administrators may.
+
+Default: No permission row: department admins only. Source: PermissionTypes.ManageCourses.
+
+<a id="permission-gradeassessments"></a>
+## Grade Assessments
+
+Grade Assessments. Allows grading free-text answers waiting in the grading queue and reading assessment item analysis. Nobody grades their own attempt. Part of the LMS add-on, which is not available yet. With no saved rule only department administrators may.
+
+Default: No permission row: department admins only. Source: PermissionTypes.GradeAssessments.
+
 <a id="permission-createdocument"></a>
 ## Create Document
 
@@ -3013,6 +3048,153 @@ Certification Settings What happens when a certification expires, grace periods 
 
 My Certifications Your own certification records. See who is qualified and whose certifications are expiring before it affects who can respond. EMT and Driver/Operator certification types are added with their renewal periods, and an annual refresher training is assigned to every member. List the certifications your department tracks and their renewal periods.
 
+<a id="setting-trainingrecordsettings"></a>
+## Training record settings
+
+Training record settings. How training records are kept: rounding of calendar check-in hours, whether members may submit outside training themselves, and the minimum years records are kept after a member leaves.
+
+Default: no rounding, member submissions on, no minimum retention. Source: DepartmentSettingTypes.TrainingRecordSettings.
+
+<a id="field-trainingrecordsettings-hoursroundingminutes"></a>
+## Training record settings / Round check-in hours to
+
+Training record settings / Round check-in hours to. Hours from check-in to check-out on calendar events that count as training are rounded to this step: 5, 6, 10, 15, 30 or 60 minutes, or 0 for the exact minute.
+
+Default: 0 (exact to the minute). Source: TrainingRecordSettings.HoursRoundingMinutes.
+
+<a id="field-trainingrecordsettings-hoursroundingmode"></a>
+## Training record settings / Rounding direction
+
+Training record settings / Rounding direction. Whether check-in hours round to the nearest step, down or up. It has no effect while hours are kept to the exact minute.
+
+Default: 0 (nearest). Source: TrainingRecordSettings.HoursRoundingMode.
+
+<a id="field-trainingrecordsettings-membersubmissionsdisabled"></a>
+## Training record settings / Members may not submit outside training
+
+Training record settings / Members may not submit outside training. When on, members cannot submit outside training themselves. Officers can still record it through an import or a certification credit.
+
+Default: false (members may submit). Source: TrainingRecordSettings.MemberSubmissionsDisabled.
+
+<a id="field-trainingrecordsettings-defaultretentionyears"></a>
+## Training record settings / Keep records after a member leaves (years)
+
+Training record settings / Keep records after a member leaves (years). Minimum years a former member's training records are kept, used when their category sets none. 0 sets no minimum.
+
+Default: 0 (no minimum). Source: TrainingRecordSettings.DefaultRetentionYears.
+
+<a id="training-transcript"></a>
+## Training Transcript
+
+Training Transcript Each member's course completions, training records, calendar attendance, imports and outside certificates, with their hours and whether they count. One record of every member's training and hours for renewals and audits, without adding up sign-in sheets by hand. Before renewing a certification, a member downloads their transcript as a PDF with hours by category, and the training officer opens the same transcript from the member's name. Open Trainings and choose My transcript. Officers who review a member's records pick the member on the transcript. Only verified records count toward hours.
+
+<a id="training-external-submissions"></a>
+## Outside Training Submissions
+
+Outside Training Submissions Members submit courses they completed outside the department, with hours and an optional certificate; an officer verifies or rejects each one in the records queue. Outside courses and continuing education reach the transcript with proof attached, and nothing counts until an officer has checked it. A paramedic finishes an online continuing education course and submits it with the certificate and 4 hours; the training officer verifies it in the queue and the hours count. Members choose Submit outside training on their transcript. Officers open the records queue to verify, reject or resolve possible duplicates. Submissions can be switched off in Training record settings.
+
+<a id="training-categories"></a>
+## Training Categories
+
+Training Categories Group training hours into categories with optional hour targets and retention, start from templates such as ISO, NCCP or OSHA, and categorize existing records in bulk. Hours add up the way your state, insurer or accreditor asks for them, and targets show who is behind. A department applies the ISO template, sets an annual target for company training, then categorizes last year's drill records in bulk by course name. In Trainings, open Training records, then Training categories. Apply a template or add your own, then use Categorize history to give uncategorized records a category.
+
+<a id="training-credit-mappings"></a>
+## Certification Credit Mappings
+
+Certification Credit Mappings Count a training category's verified hours toward a certification's renewal, for the whole category or only one part of it. Renewal hours fill in from the training members already do, instead of being typed onto each certification. Hours in the EMS continuing education category count toward the EMT certification, so a member's renewal progress moves as soon as a session is verified. In Trainings, open Training records, then Certification credits, and map a category to a certification type. Records completed before the mapping was turned on become credits only when you apply history.
+
+<a id="training-history-backfill"></a>
+## Training History Backfill
+
+Training History Backfill Bring training completions and training records from before the transcript onto members' transcripts, with a dry run that counts what would be written. Transcripts start with the history your department already has in Resgrid instead of empty. An officer runs a dry run, sees how many past completions and training records were found, then starts the backfill, which keeps running in the background. In Trainings, open Training records, then History backfill, and run a dry run first. Backfilled records become certification credits only when you apply history to a certification type.
+
+<a id="training-history-import"></a>
+## Training History Import
+
+Training History Import Import completions from another system with a CSV file: check how each row matched a member, fix the rows that did not match, then import. Years of records from a spreadsheet or a previous training system reach members' transcripts without retyping. A department leaving its old records system exports its completions, imports them, and picks the right member for the few rows matched by name only. In Trainings, open Training records, then Import training history. Download the template, fill in one row per completion with the member, course, date and hours, upload it and review the check before importing.
+
+<a id="training-hours-report"></a>
+## Training Hours Report
+
+Training Hours Report Verified training hours by category, member or month, with CSV and PDF export and former members on request. Answer how many hours the department trained, and in what, for budgets, grants and annual reports. For the annual report, the chief exports last year's training hours by category as a PDF. In Trainings, open Training records, then Training hours. Choose the period and grouping, then export to CSV or PDF.
+
+<a id="lms-seats"></a>
+## LMS Seats
+
+LMS Seats Switch the LMS on for members one at a time on their personnel page, or for a whole group at once, within the seats your packs buy. You pay only for the members you train through the LMS; everyone else keeps the free Training module. A combination department enables its 40 career staff for LMS courses and leaves its volunteers on free Training. In Personnel, use LMS seats to enable a group, or open a member and choose Enable LMS. Only active members can hold a seat; add a pack when the seats run out.
+
+<a id="lms-packs"></a>
+## LMS Packs
+
+LMS Packs Buy the LMS add-on in 25-member packs and change the number of packs, with the price shown before any change. The bill follows the seats you need: graduated tiers make large rosters cheaper per member, and added packs are prorated. A department with 110 LMS-enabled members holds 5 packs; when it passes 125 it adds a sixth pack and pays the prorated difference at once. In Subscription, open the LMS card, choose the number of packs and check out. Removing packs takes effect at the next billing date.
+<a id="my-courses"></a>
+## My Courses
+
+My Courses The courses assigned to a member, the courses they can join and the Resgrid Academy lessons, with progress and due dates. Members see what to finish next and pick up where they stopped, on the website or in the mobile app. A new member opens My courses, finishes the Getting started lesson and its short check, and the completion appears on their transcript. Open Trainings and choose Courses. Assigned courses come first; Resgrid Academy lessons are always there while the Training module is on.
+
+<a id="academy"></a>
+## Resgrid Academy
+
+Resgrid Academy Short Resgrid video lessons, each with a three-question check, published by Resgrid for every department at no cost, plus role paths for members, dispatchers, officers and administrators. New members and officers learn the system the same way, and each finished lesson counts on their transcript under Systems training. The training officer assigns the Dispatcher path to new dispatch staff and follows which lessons each person has finished. Open Trainings and choose Academy. People who can assign training assign a lesson or a role path to members, roles or groups. Lessons for modules or add-ons the department does not use stay hidden.
+
+<a id="lms-course-builder"></a>
+## Course Builder
+
+Course Builder Department-built courses with modules, video, documents, protocol lessons, assessments drawn from question banks and surveys, approved and versioned like protocols. Run the department's own training online, with scored assessments, seat time and completions that issue or renew certifications. The EMS coordinator builds a yearly refresher with a video and a 20-question test drawn from a bank with a pass mark of 80%, then assigns it to every EMT. Nothing to set up yet: the course builder is part of the LMS add-on, which is not available yet.
+
+<a id="lms-grading"></a>
+## Assessment Grading
+
+Assessment Grading A queue of free-text answers waiting for a grader, and item analysis showing how hard each question is and how well it separates strong and weak results. Written answers get a fair, recorded grade, and weak questions are found and fixed. A training officer grades three short answers on last week's hazmat test; the analysis shows one question nearly everyone misses, so it is rewritten. Nothing to set up yet: grading is part of the LMS add-on, which is not available yet.
+
+<a id="setting-learningrequirementsettings"></a>
+## Learning requirement settings
+
+Learning requirement settings. Training-backed enforcement for the department (off by default), the largest share of a role's members one enforcement run may remove, and the default at-risk warning for new requirements.
+
+Default: enforcement off, 20%, 14 days. Source: DepartmentSettingTypes.LearningRequirementSettings.
+
+<a id="field-learningrequirementsettings-enforcementenabled"></a>
+## Learning requirement settings / Training-backed enforcement
+
+Learning requirement settings / Training-backed enforcement. When on, a requirement that opts in can expire the certification it backs once a member is overdue past the grace period; the certification module then removes roles after its own grace period. Off by default, never while the LMS add-on is inactive, and turning it on first shows who would lose which role.
+
+Default: false (off). Source: LearningRequirementSettings.EnforcementEnabled.
+
+<a id="field-learningrequirementsettings-maxroleremovalsharepercent"></a>
+## Learning requirement settings / Largest share of a role removed in one run
+
+Learning requirement settings / Largest share of a role removed in one run. A run that would remove more than this percentage of a role's active members is refused, and the department admins are told. Default 20.
+
+Default: 20. Source: LearningRequirementSettings.MaxRoleRemovalSharePercent.
+
+<a id="field-learningrequirementsettings-defaultatriskdays"></a>
+## Learning requirement settings / Default at-risk warning
+
+Learning requirement settings / Default at-risk warning. Days before the due date a new requirement starts showing members at risk. Default 14.
+
+Default: 14. Source: LearningRequirementSettings.DefaultAtRiskDays.
+
+<a id="lms-requirements"></a>
+## Learning Requirements
+
+Learning Requirements Recurring and one-time training requirements by role, group, certification or shift: courses, trainings, hours per category, learning paths and passed skill evaluations, with due dates from when members join or are given a role. Everyone knows what they owe and by when, and officers see who is at risk before an audit. Every engineer completes the pump operations course every 12 months, and every member logs 24 hours of company training per calendar year. Open Trainings, choose Programs and add a requirement.
+
+<a id="lms-compliance-matrix"></a>
+## Compliance Matrix
+
+Compliance Matrix Each member against each requirement: compliant, due later, at risk, overdue, exempt, on leave or not licensed, with CSV and PDF export and a group admin's own group. One page answers who is out of compliance and what is due next. A captain filters the matrix to their station and exempts a member on military leave. Open Trainings, choose Programs, then Compliance.
+
+<a id="lms-learning-paths"></a>
+## Learning Paths and Onboarding
+
+Learning Paths and Onboarding Ordered courses, Academy lessons and trainings with prerequisites and electives; finishing a path can issue a certification. A path per role can be assigned automatically when someone joins or is given the role. New members follow the same onboarding with a due date, without anyone remembering to assign it. New dispatchers get the Dispatcher path with 30 days to finish it, and finishing it issues the department's dispatcher certification. Open Trainings, choose Programs, then Paths to build a path and Onboarding to assign it by role.
+
+<a id="lms-recommendations"></a>
+## Learning recommendations
+
+Learning recommendations Recommends learning paths and courses to each member from their open requirements, the paths they are on, their competency gaps and the courses offered to their roles. Members see what to take next and why, and officers see the same for the members they supervise. A firefighter with no evidence for the ladder competency sees the ladder operations course recommended under My Training, with the reason. Open Trainings, choose Programs, then Recommendations; members also see Recommended on My Training. Explain with AI needs Enhanced AI. The ranking is the same for everyone with the same requirements and gaps; the optional explanation sends only course titles and reasons, never names.
+
 <a id="module-documentsdisabled"></a>
 ## Documents availability
 
@@ -3048,6 +3230,97 @@ Contacts availability. Shows or hides Contacts in the web app's navigation, dash
 
 Default: false. Source: DepartmentModuleSettings.ContactsDisabled.
 
+<a id="setting-protocollibrarysettings"></a>
+## Protocol Library Settings
+
+Protocol Library Settings. Department-wide rules on the Protocols Settings page: whether approvals need a passkey and read-and-sign a step-up, the review interval new protocols start with, and how long superseded and retired versions are kept, with a legal hold that stops any deletion. Missing means the standard signature levels, no default interval and every version kept. Only department administrators can change it.
+
+Default: missing = the standard signature levels (approvals by a fresh step-up or a passkey), no default review interval, every version kept. Source: DepartmentSettingTypes.ProtocolLibrarySettings.
+
+<a id="field-protocollibrarysettings-requirepasskeyforapproval"></a>
+## Protocol Library Settings / Require Passkey for Approval
+
+Protocol Library Settings / Require Passkey for Approval. Approvals and "reviewed, no change" stamps must be signed with a passkey; a step-up by authenticator code or sign-in provider is no longer enough. Approvers without a registered passkey cannot sign until they add one. Off, any fresh step-up or passkey signs.
+
+Default: false (a fresh step-up or a passkey). Source: ProtocolLibrarySettings.RequirePasskeyForApproval.
+
+<a id="field-protocollibrarysettings-readandsignrequiresstepup"></a>
+## Protocol Library Settings / Read-and-Sign Requires Step-Up
+
+Protocol Library Settings / Read-and-Sign Requires Step-Up. Read-and-sign acknowledgments will need a fresh step-up instead of the signed-in session alone. Read-and-sign is not available yet; the choice is saved for when it is.
+
+Default: false (the signed-in session). Source: ProtocolLibrarySettings.ReadAndSignRequiresStepUp.
+
+<a id="field-protocollibrarysettings-defaultreviewintervaldays"></a>
+## Protocol Library Settings / Default Review Interval Days
+
+Protocol Library Settings / Default Review Interval Days. Days between reviews for new and imported protocols that do not set their own interval, 0 to 3650; 0 sets none. Existing protocols keep theirs. Publishing a version or recording "reviewed, no change" restarts the interval, and the protocol's owner, or the department administrators when it has none, is reminded 30 and 7 days before a review is due and again when it is overdue.
+
+Default: 0 (no review interval). Source: ProtocolLibrarySettings.DefaultReviewIntervalDays.
+
+<a id="field-protocollibrarysettings-legalhold"></a>
+## Protocol Library Settings / Legal Hold
+
+Protocol Library Settings / Legal Hold. A department-wide legal hold: while it is on, no superseded or retired protocol version is deleted, whatever the retention days. An approver can also hold a single protocol from its edit page.
+
+Default: false. Source: ProtocolLibrarySettings.LegalHold.
+
+<a id="field-protocollibrarysettings-defaultcontentlocale"></a>
+## Protocol Library Settings / Content Language
+
+Protocol Library Settings / Content Language. The language protocols are written in. Members whose language has no approved translation of a version read it in this language, and block labels such as Caution are written in it. Blank means English.
+
+Default: blank (English). Source: ProtocolLibrarySettings.DefaultContentLocale.
+
+<a id="field-protocollibrarysettings-showdeterminantindispatch"></a>
+## Protocol Library Settings / Determinant in dispatch texts
+
+Protocol Library Settings / Determinant in dispatch texts. Adds the determinant and the protocol name of a call's case flow to the dispatch push title, the dispatch text message and the voice dispatch prompt. Off by default; with it off every dispatch text is as before.
+
+Default: false. Source: ProtocolLibrarySettings.ShowDeterminantInDispatch.
+
+<a id="field-protocollibrarysettings-retention"></a>
+## Protocol Library Settings / Retention
+
+Protocol Library Settings / Retention. Days each protocol kind (Dispatch, SOG, Clinical Guideline, Policy, Procedure, Reference) keeps a version after it is superseded or retired, up to 36500; after that a background job deletes it. 0 keeps that kind's versions. A version still attached to a call is never deleted, and nothing is deleted while a legal hold is on.
+
+Default: empty (every version kept). Source: ProtocolLibrarySettings.Retention.
+
+<a id="field-protocolkindretention-kind"></a>
+## Protocol Kind Retention / Kind
+
+Protocol Kind Retention / Kind. The protocol kind the entry applies to: 0 Dispatch, 1 SOG, 2 Clinical Guideline, 3 Policy, 4 Procedure, 5 Reference. One entry per kind; a kind without an entry keeps every version.
+
+Default: unset. Source: ProtocolKindRetention.Kind.
+
+<a id="field-protocolkindretention-keepdays"></a>
+## Protocol Kind Retention / Keep Days
+
+Protocol Kind Retention / Keep Days. Days after a version of that kind is superseded or retired before it may be deleted, 1 to 36500. An entry of 0 is dropped when saved, so the kind keeps its versions.
+
+Default: 0 (keep). Source: ProtocolKindRetention.KeepDays.
+
+<a id="setting-knowledgesettings"></a>
+## Knowledge Settings
+
+Knowledge Settings. Department-wide rules for knowledge answers on the Knowledge Settings page: whether the Documents module is used, and the department's dosing tool link. Missing means Documents are not used and there is no dosing link. Only department administrators can change it.
+
+Default: missing = Documents not used, no dosing tool link. Source: DepartmentSettingTypes.KnowledgeSettings.
+
+<a id="field-knowledgesettings-includedocuments"></a>
+## Knowledge Settings / Include Documents
+
+Knowledge Settings / Include Documents. Documents join the sources knowledge answers use. Admins-only documents are used only for administrators, and no document is used while Advanced Data Protection is on. Changing it rebuilds the department's knowledge index in the background.
+
+Default: false. Source: KnowledgeSettings.IncludeDocuments.
+
+<a id="field-knowledgesettings-dosingtoolurl"></a>
+## Knowledge Settings / Dosing Tool Link
+
+Knowledge Settings / Dosing Tool Link. An https link to the department's dosing tool. Answers that quote a dose show it; doses are only ever quoted from a source, and neither the model nor Resgrid calculates one. Anything but an https link is refused.
+
+Default: unset (no dosing link). Source: KnowledgeSettings.DosingToolUrl.
+
 <a id="contacts"></a>
 ## Contacts
 
@@ -3061,7 +3334,7 @@ Documents Shared documents such as procedures and preplans. Members find the cur
 <a id="protocols"></a>
 ## Protocols
 
-Protocols Dispatch protocols with scripted questions and instructions. Members find the current procedure, preplan or phone number when they need it instead of searching email. A department uploads its standard operating procedures, adds hospital and mutual-aid contacts and creates a medical dispatch protocol. Create protocols for the call types that need scripted questions.
+Protocols Dispatch protocols with scripted questions and instructions. Members find the current procedure, preplan or phone number when they need it instead of searching email. A department uploads its standard operating procedures, adds hospital and mutual-aid contacts and creates a medical dispatch protocol. Create protocols for the call types that need scripted questions. The library also holds SOGs, clinical guidelines, policies, procedures and references. A change is written as a draft, submitted to the Review Queue, approved with a step-up or passkey signature and published now or on a set date; any two versions can be compared, and a protocol that is still current can be stamped "reviewed, no change". Categories set approval steps, Settings (department administrators) sets signature, review and retention rules, and Import brings protocols in from an exchange file as drafts.
 
 <a id="new-contact"></a>
 ## New Contact
@@ -3107,6 +3380,76 @@ Disable Protocols Stop suggesting and attaching a protocol without deleting it. 
 ## Remove a Protocol from a Call
 
 Remove a Protocol from a Call Take a mis-attached protocol off a call with a reason; the record keeps it, marked removed. On View Call, open the Protocols tab and use Remove from call; the removal is written to the department's audit log.
+
+<a id="protocol-review-queue"></a>
+## Protocol Review Queue
+
+Protocol Review Queue Approve or reject submitted protocol versions with a signed approval, then publish them now or on a set date. Authors and approvers see the queue. An approver opens a submitted version to read the redline against the version in force; its open review comments must be resolved before it can be approved, and a rejection needs a comment. A category can require several steps, each for a named member or role. Every approval is a step-up or passkey (L2) signature bound to the version's exact content, and an approved version is published as a major or minor version, now or on its effective date.
+
+<a id="protocol-review-stamp"></a>
+## Record a Protocol Review
+
+Record a Protocol Review Mark a published protocol "reviewed, no change" with a signed stamp, without a new version. The protocol's owner or an approver records it from the protocol's page. It is signed like an approval, restarts the review interval and its reminders, and members do not have to acknowledge the protocol again.
+
+<a id="protocol-compare"></a>
+## Compare Protocol Versions
+
+Compare Protocol Versions See what changed between two versions of a protocol as a redline. Open Compare from the version history on a protocol's page. Members compare the versions they can read; authors and approvers can include drafts and versions in review.
+
+<a id="protocol-categories"></a>
+## Protocol Categories
+
+Protocol Categories Group the library into categories and set the approval steps each category needs. Authors see the categories; approvers add, change and delete them. A category with no approval steps needs one approval from anyone with Approve Protocols, and a category still in use cannot be deleted.
+
+<a id="protocol-settings"></a>
+## Protocol Settings
+
+Protocol Settings Set signature requirements, the default review interval, version retention and the department-wide legal hold. Department administrators only; saving asks for a recent two-factor step-up and is written to the department's audit log.
+
+<a id="protocol-import"></a>
+## Import Protocols
+
+Import Protocols Bring protocols in from a Resgrid protocol exchange file as drafts for review. A file holds up to 500 protocols. Categories, priorities, call types, groups and roles are matched to yours by name, and anything without a match is left out and listed. Nothing is published by an import. Export writes the whole library, or chosen protocols, in the same format.
+
+<a id="protocol-acknowledgments"></a>
+## My Acknowledgments
+
+My Acknowledgments Every member sees what they owe: protocols that require acknowledgment, assigned when a version is published and whenever the member joins its audience, due a set number of days later, with priority bulletins first. Reading the version and signing records the member, the time and the exact content. A minor version keeps an earlier signature; a major version asks again. A protocol can be linked to a training whose quiz must be passed.
+
+<a id="protocol-compliance"></a>
+## Acknowledgment Compliance
+
+Acknowledgment Compliance The compliance grid lists every protocol in force that needs acknowledgment with its progress, and for one version every assigned member with their state, due date and signature time, filtered by group. Export it as CSV or PDF. Reminders go out at the due date and after, and overdue acknowledgments are escalated to the member's group admin. Standards tags and the proof-of-compliance report come with the LMS add-on.
+
+<a id="protocol-bulletins"></a>
+## Priority Bulletins
+
+Priority Bulletins A priority bulletin carries short content, an audience, an expiry and must-read. It is in force at once, sent by push, and shown as a must-read card at the top of home until each member acknowledges it, never over the dispatch console or a call. An approver countersigns it afterwards or withdraws it, and it leaves the library by itself when it expires. Holders of Approve Protocols issue them.
+
+<a id="protocol-bulk-upload"></a>
+## Upload Protocol Documents
+
+Upload Protocol Documents Upload many PDF and Word files, or a zip, into a category; each becomes a draft document-backed protocol whose title and number come from the file name, and zip folders can become categories. The file is the protocol's content with the same review, publish, audience and acknowledgment, and its text is read for search. A document in Documents can also be moved to Protocols, leaving a redirect at its old link.
+
+<a id="protocol-block-editor"></a>
+## Structured Protocol Content
+
+Structured Protocol Content New protocol drafts are written in a block editor: headings, paragraphs, ordered steps, caution and warning boxes, "contact medical control" gates, tables, images, video links, attachments, links to other protocols, POIs, inventory items, checklists and trainings, medications, adult/pediatric variant groups and scope-of-practice tags. Every block has a stable anchor that review comments and AI citations point at. Medication doses are shown exactly as authored and never calculated; the department dosing-tool link appears with every medication. An older rich-text draft keeps its editor until an author chooses Convert to blocks; published versions and their hashes never change.
+
+<a id="protocol-step-through"></a>
+## Protocol Step-Through on Calls
+
+Protocol Step-Through on Calls A Procedure or Dispatch protocol on a call can be stepped through like a checklist from View Call: each step is marked done, skipped or not applicable, timestamped by the server with who did it, and the log is kept on the call. Incident SOP checklists such as MAYDAY, RIT and hazmat entry are the department's Procedure protocols, started on a call from the same panel. Omni uses the same steps through the v4 API.
+
+<a id="protocol-book"></a>
+## Protocol PDF Book, QR Code and Print View
+
+Protocol PDF Book, QR Code and Print View The PDF book holds a table of contents and every protocol in force with its version, effective date and approver, for one category or the whole library, limited to what the member may read. It is sealed when document sealing is configured and otherwise recorded as sealing pending. Each protocol also has a print view and a QR code poster for apparatus and station walls that opens the version in force.
+
+<a id="protocol-translations"></a>
+## Protocol Content Translations
+
+Protocol Content Translations An author can translate a submitted or published version into another language; only the wording is translated, while doses, links, attachments and the structure stay as in the source. An approver signs each translation at L2, bound to the translation's own content, and the source version's hash and signatures never change. Members read the approved translation in their language, or the department's content language when there is none, set under Protocols settings.
 
 <a id="forms"></a>
 ## Forms
@@ -3913,6 +4256,11 @@ Enhanced AI voice intake Callers to the department's private inbound dispatch nu
 
 Enhanced AI destination advice Enhanced AI recommends the destination for an open call from its nature, note and call notes and your destinations' capabilities and availability, and suggests a change when the call's details change. Catch a patient who now needs a higher level of care, such as a trauma center, without anyone re-checking every destination by hand. A call note reports a penetrating injury, and the advice on the call suggests the trauma center instead of the nearest hospital, for the dispatcher to apply or dismiss. Needs the Enhanced AI add-on with AI destination advice turned on for your department. Add your destinations with their capabilities and destination rules first. The advice shows on View Call and Update Call, nothing changes until someone applies it, and departments using Advanced Data Protection do not get advice.
 
+<a id="ai-knowledge"></a>
+## Knowledge answers
+
+Knowledge answers Members ask a question and get an answer taken only from your department's published protocols and training and the Resgrid Academy, each part linked to its source. Members find what your protocols say in seconds, and the people who write them see the questions the content does not answer. A member asks which protective equipment the hazmat guideline requires and gets the answer with a link to that section of the version in force. Needs the Enhanced AI add-on with knowledge answers turned on for your department. Publish your protocols and start your trainings; members then use Ask on the protocol library, a protocol, a training or a call. Training officers see unanswered questions under Knowledge gaps.
+
 <a id="setting-documentnumberingconfig"></a>
 ## Document Numbering Config
 
@@ -4339,3 +4687,254 @@ Channel recorder Records every transmission on one or all push-to-talk channels 
 ## Tone-out on push-to-talk
 
 Tone-out on push-to-talk Announces each new Resgrid call on a push-to-talk channel: alert tones, then the call read aloud by Resgrid's text-to-speech. Crews who monitor a channel hear dispatches the way they would on the radio, in Resgrid's own wording with your call priority names. A plant's emergency response team monitors its channel, and each new call is toned out with a hi-lo alert followed by the call name, nature, address and priority. Needs the Push-to-Talk add-on, a voice channel and the relay's refresh token. Calls already open when the relay starts are not announced, and scheduled calls are announced when they are dispatched.
+
+<a id="setting-wellnesssettings"></a>
+## Wellness settings
+
+Wellness settings. Who reads members' exposure and critical-incident logs (the wellness officer role), who the peer support team is, and how many years entries are kept.
+
+Default: no wellness officer role, no peer support team, entries kept 30 years. Source: DepartmentSettingTypes.WellnessSettings.
+
+<a id="field-wellnesssettings-wellnessofficerroleid"></a>
+## Wellness settings / Wellness officer role
+
+Wellness settings / Wellness officer role. Members of this personnel role read every member's exposure log and keep screening flags and follow-ups. Department administrators do not see the logs unless they hold the role. None leaves each log to its member.
+
+Default: 0 (none: each member alone reads their log). Source: WellnessSettings.WellnessOfficerRoleId.
+
+<a id="field-wellnesssettings-peerteamcertificationtypeid"></a>
+## Wellness settings / Peer support team certification
+
+Wellness settings / Peer support team certification. Members holding a current certification of this type are the peer support team and receive the critical-incident anniversary reminders a member chooses to share. None turns the team off.
+
+Default: 0 (no peer support team). Source: WellnessSettings.PeerTeamCertificationTypeId.
+
+<a id="field-wellnesssettings-retentionyears"></a>
+## Wellness settings / Keep entries for (years)
+
+Wellness settings / Keep entries for (years). Years an exposure entry is kept after it happened, from 30 (the OSHA 29 CFR 1910.1020 minimum) to 100. A legal hold keeps entries longer.
+
+Default: 30. Source: WellnessSettings.RetentionYears.
+
+<a id="field-wellnesssettings-designatedofficerroleid"></a>
+## Wellness settings / Designated officer role
+
+Wellness settings / Designated officer role. Members of this personnel role receive bloodborne-pathogen and infectious-disease exposure reports (Ryan White Part G) and run the exposure cases. None means the wellness officer role serves.
+
+Default: 0 (the wellness officer role serves). Source: WellnessSettings.DesignatedOfficerRoleId.
+
+<a id="field-wellnesssettings-bbptrainingcertificationtypeid"></a>
+## Wellness settings / Bloodborne-pathogen training certification
+
+Wellness settings / Bloodborne-pathogen training certification. The certification type of the annual bloodborne-pathogen training (OSHA 1910.1030). Each exposure case shows the member's current status of it. None leaves it untracked.
+
+Default: 0 (not tracked). Source: WellnessSettings.BbpTrainingCertificationTypeId.
+
+<a id="field-wellnesssettings-medicalclearancecertificationtypeid"></a>
+## Wellness settings / Medical clearance certification
+
+Wellness settings / Medical clearance certification. The certification type an NFPA 1582 medical evaluation is also recorded as (from the Medical Clearance (NFPA 1582) template). Not cleared suspends it. None keeps clearances in Wellness only.
+
+Default: 0 (clearances kept in Wellness only). Source: WellnessSettings.MedicalClearanceCertificationTypeId.
+
+<a id="field-wellnesssettings-injuryretentionyears"></a>
+## Wellness settings / Keep injury records for (years)
+
+Wellness settings / Keep injury records for (years). Years an injury record is kept after the end of its year, from 5 (OSHA 29 CFR 1904.33) to 100. A legal hold keeps records longer.
+
+Default: 5. Source: WellnessSettings.InjuryRetentionYears.
+
+<a id="member-wellness"></a>
+## My Exposures
+
+My Exposures Each member's own log of carcinogen, bloodborne pathogen, hazardous substance and critical-incident exposures, with entries suggested from dispatch data after a call is flagged. Exposure records for cancer presumption and workers' compensation, kept 30 years, without anyone but the member and the wellness officers reading them. After a structure fire, the officer flags the call; each member on scene confirms a suggested carcinogen entry and adds the PPE worn and decontamination done. Choose the wellness officer role in Personnel, My exposures, Settings. Members open My exposures from Personnel; officers flag a call from its Wellness follow-up button.
+<a id="document-sealing"></a>
+## Sealed documents and Verify a document
+
+Sealed documents and Verify a document Certificates, transcripts, protocol PDFs and signed documents are sealed with a timestamp so anyone can check they have not changed; officers can check any PDF under Verify a document. Hand out documents that outside agencies and courts can trust, and spot altered copies. An inspector checks that a certificate a member brought from another department was issued by Resgrid and has not been edited. Open Verify a document and upload a PDF. Sealing itself is set up by the operator of the installation; until then documents are marked sealing pending.
+
+<a id="external-signatures"></a>
+## External signatures
+
+External signatures Customers, occupants and outside parties sign time reports, bids, contracts, inspections and custody transfers in person on a member's device, or by a Resgrid link with a one-time code. Replace typed names with signatures the other party can verify, sealed with an audit page. A crew boss hands the tablet to the customer's representative to sign the daily shift ticket before leaving the incident. Open the document and use Hand device to signer, or request a signature by link. For links, an admin adds the department's Documenso team token under E-sign settings; links come with the add-on that owns the document.
+
+<a id="ai-authoring-aids"></a>
+## Drafting aids
+
+Drafting aids Draft quiz questions, course outlines and change summaries from the department's own content for authors to review. Authors start from a grounded draft instead of a blank page, and nothing is saved until they accept it. A training officer drafts five quiz questions from the new SCBA training and keeps three. Turn on knowledge answers with Enhanced AI; the aids then appear in the training editor and the course builder. Every number in a draft must appear in the content, content marked no AI is never sent, and departments using Advanced Data Protection do not get drafts.
+
+<a id="ai-call-answers"></a>
+## Ask about a call
+
+Ask about a call Members ask a question on View Call and get an answer taken only from the protocol versions the call cites and its type, priority, determinant and location type, each part linked to its section. Crews and dispatchers find what the call's protocols say for this call in seconds, and patient or caller details are never sent. On a structure fire at a school, a lieutenant asks where crews stage and gets the answer from the cited section of the school protocol. Turn on knowledge answers with Enhanced AI and attach protocols to calls; Ask about this call then appears on View Call's protocols tab. Only the call's type, priority, determinant and location type are used, never the caller, the address, notes or patient details, and departments using Advanced Data Protection get the matching sections without generated text.
+
+<a id="ai-tutor"></a>
+## Tutor and scenario practice
+
+Tutor and scenario practice Learners ask questions about the course they are taking, and members practise on a short scenario written from a protocol, with their own answers scored against that protocol. Members check their understanding between drills, and every answer and score points back to the exact section, without anything being recorded on their transcript. A new EMT practises the cardiac arrest protocol: a short scenario, three questions, and feedback that quotes the steps the protocol lists. Turn on knowledge answers with Enhanced AI and the LMS add-on; Ask this course appears in the course player and Practice on each protocol. Scores and feedback only use numbers written in the protocol, practice never creates a training record, and departments using Advanced Data Protection do not get practice.
+
+<a id="help-search"></a>
+## Help center search
+
+Help center search Free keyword search over the Resgrid Academy and the product reference from the Help menu. Members find the lesson or setting they need without leaving Resgrid. A new member searches for status and opens the orientation lesson. Nothing to set up: open Help, then Search help. With Enhanced AI knowledge answers, How do I questions are answered from the Academy lessons only.
+
+<a id="academy-guidance"></a>
+## Guided tours and What's new
+
+Guided tours and What's new First-run tasks for each role built on the Academy walkthroughs, and a short lesson on each release. New members and administrators know what to do first, and everyone sees what changed. A new dispatcher ticks off opening the call list, checking units and the map. Nothing to set up: each member sees the tour for their role on the dashboard and can hide it.
+<a id="multi-signer-signatures"></a>
+## Multi-signer signatures
+
+Multi-signer signatures Several people sign one document in order: members at level 1 or 2, witnesses, certifying officials, evaluators and outside parties, with reminders until everyone has signed. Sign-offs that need more than one person are recorded in the right order, bound to the exact content, and sealed with an audit page when complete. A training officer evaluates a skill at level 2, then the certifying official signs; each is reminded when it is their turn. Members find what is waiting for them under My signatures and on their home page; requests start from the document that needs signing.
+
+<a id="approval-chains"></a>
+## Approval chains
+
+Approval chains Purchases, Incident Action Plans, invoices, Cal OES MARS packages and mutual-aid agreements are approved by a chain of people in order, with amount thresholds, parallel steps, delegates while someone is on leave and escalation when a step stalls. Every approval is a level 2 signature bound to the exact content: a change voids it, a rejection needs a reason, and the completed chain seals the document. Purchases over 5,000 need the finance chief after the logistics section chief; if the finance chief does not act within 24 hours, the department admins are asked. A department admin defines a chain per kind under Approvals, Chains; members submit from the item's page or Approvals, and approvers find requests under My approvals and on their home page.
+
+<a id="checklist-witness-signature"></a>
+## Checklist witness signature
+
+Checklist witness signature A checklist can require its independent witness to sign at level 2 (a fresh step-up or a passkey) instead of attesting with text alone. Controlled-substance and safety checks get a witness signature bound to the recorded results, included with Checklists at no extra cost. After a drug box check, a second paramedic signs as witness with their passkey before the check counts as complete. Edit the checklist, turn on the independent witness and the witness signature, and publish the new version.
+
+<a id="readiness-signatures"></a>
+## Vendor acceptance and issue receipts
+
+Vendor acceptance and issue receipts Vendors accept completed work orders, and members or recipients sign receipts for issued equipment, in person or by a Resgrid link. Replace verbal hand-offs with signed acceptances and receipts that the other party can verify. The pump repair shop's technician signs the completed work order on the station tablet before driving away. Open a completed work order, or an issued item's Receipt, and request the signature. Remote links need Readiness Pro and the department's e-sign settings.
+<a id="setting-lmsprogramsettings"></a>
+## Training program settings
+
+Training program settings. How training requests are approved and in which currency their costs are entered, and whether Records inspections and pre-plan reviews credit building familiarization.
+
+<a id="field-lmsprogramsettings-requestsupervisorapproval"></a>
+## Training program settings / Supervisor approves training requests
+
+Training program settings / Supervisor approves training requests. The admins of the member's group (or the department admins) approve a training request first.
+
+<a id="field-lmsprogramsettings-requesttrainingofficerapproval"></a>
+## Training program settings / Training officer approves training requests
+
+Training program settings / Training officer approves training requests. A member who manages training records for the whole department approves the request, after the supervisor when both are on.
+
+<a id="field-lmsprogramsettings-requestcurrency"></a>
+## Training program settings / Training request currency
+
+Training program settings / Training request currency. The three-letter currency code training request costs are entered and totalled in.
+
+<a id="field-lmsprogramsettings-familiarizationenabled"></a>
+## Training program settings / Credit building familiarization
+
+Training program settings / Credit building familiarization. Completed occupancy inspections and pre-plan reviews in Records go on the transcript of the person who did them.
+
+<a id="field-lmsprogramsettings-familiarizationcategoryid"></a>
+## Training program settings / Familiarization category
+
+Training program settings / Familiarization category. The training category familiarization credit lands in, for example the ISO pre-fire planning category.
+
+<a id="field-lmsprogramsettings-familiarizationminutes"></a>
+## Training program settings / Minutes per visit
+
+Training program settings / Minutes per visit. The minutes credited for a visit that has no start and end time. A visit with its own times is credited its real length.
+
+<a id="field-lmsprogramsettings-familiarizationfrominspections"></a>
+## Training program settings / Credit from inspections
+
+Training program settings / Credit from inspections. Completed occupancy inspections credit the inspector.
+
+<a id="field-lmsprogramsettings-familiarizationfrompreplanreviews"></a>
+## Training program settings / Credit from pre-plan reviews
+
+Training program settings / Credit from pre-plan reviews. Occupancy and contact pre-plan reviews credit the reviewer.
+
+<a id="lms-training-plan"></a>
+## Annual Training Plan
+
+Annual Training Plan A year of planned sessions and hours per category and month for the department, a group or a shift, compared with the hours actually recorded. The written plan ISO and state audits ask for, and a shortfall against the annual targets that shows in June, not at the audit. The training officer plans 16 hours of company training each month; by June the forecast shows the department will miss the 192-hour target by 20 hours. Nothing to set up yet: the annual plan is part of the LMS add-on, which is not available yet.
+
+<a id="lms-competency-frameworks"></a>
+## Competency Frameworks
+
+Competency Frameworks Job performance requirements, positions and skills, tagged on the courses, trainings and certifications that evidence them, with a gap report per member. Shows for every member which requirements have evidence, how old it is, and which have none. A department imports its state's firefighter framework, tags its courses, and sees a recruit still has no evidence for three requirements. Nothing to set up yet: competency frameworks are part of the LMS add-on, which is not available yet.
+
+<a id="lms-training-requests"></a>
+## Training Requests
+
+Training Requests Members ask to attend an outside class with its cost; the supervisor and a training officer approve it, and the class goes on the transcript once taken. One approved, costed record per outside class, and spending totals per member, course and year. A paramedic asks to attend a 16-hour course costing 450 dollars; the captain and the training officer approve it, and the certificate is verified afterwards. Nothing to set up yet: training requests are part of the LMS add-on, which is not available yet.
+
+<a id="lms-report-catalog"></a>
+## Training Report Catalog
+
+Training Report Catalog Every training report in one place, saved with its settings in folders and sent on a daily, weekly or monthly schedule as CSV or PDF. The reports an audit needs arrive by themselves, already filtered the same way every time. The ISO training report goes to the chief and the training officer as a PDF on the first of every month. Nothing to set up yet: saved and scheduled reports are part of the LMS add-on, which is not available yet.
+
+<a id="lms-certification-cycles"></a>
+## Certification Cycles
+
+Certification Cycles A certification's next cycle starts by itself once its renewal hours are met, and supervisors, admins or named members are alerted when a cycle completes, starts, nears expiry or expires. Recurring credentials keep tracking hours without anyone re-entering them, and the right people hear about them in time. When an EMT reaches the renewal hours, the next two-year cycle starts at the current expiry and the EMS captain gets a note. Nothing to set up yet: certification cycle rules are part of the LMS add-on, which is not available yet.
+
+<a id="lms-credential-audiences"></a>
+## Messages by Certification Status
+
+Messages by Certification Status Send a message to the members whose certification has expired, expires within a number of days, or who never held it. Reminders reach exactly the people who need them, without building a list by hand. The training officer messages everyone whose CPR card expires within 30 days with the date of the next class. Nothing to set up yet: certification-status audiences are part of the LMS add-on, which is not available yet.
+
+<a id="lms-protocol-learning"></a>
+## Protocol Quizzes and Micro-Learning
+
+Protocol Quizzes and Micro-Learning Make a protocol's acknowledgment wait for a quiz drawn from a question bank, and send members one scenario question a week from chosen protocols. Members show they understood a protocol, not only that they opened it, and keep it fresh between reviews. A new mayday procedure needs five questions passed at 80% before the acknowledgment counts, and every Monday each firefighter answers one scenario from it. Nothing to set up yet: protocol quizzes and micro-learning are part of the LMS add-on, which is not available yet.
+<a id="lms-class-sessions"></a>
+## Class Sessions
+
+Class Sessions Instructor-led classes on the calendar with capacity, waitlist, enrolment rules, rotating-QR and GPS sign-in, and an instructor sign-off that writes every attendee's training record. One roster per class that stands as the record: who taught, who attended, what was covered and for how long, kept for the category's retention. A bloodborne pathogens refresher for 20 seats fills up; three members wait on the waitlist, and when one withdraws the next is enrolled and notified. Nothing to set up yet: class sessions are part of the LMS add-on, which is not available yet.
+
+<a id="lms-lesson-plans"></a>
+## Lesson Plans
+
+Lesson Plans Reusable plans for instructor-led sessions: objectives, competencies covered, materials and props, instructor-to-student ratio, safety plan and pre-brief checklist, versioned and approved before use. Live-fire, driving and SCBA sessions are taught from an approved plan, and the roster shows which version was used. The training officer copies the live-fire starter plan, adds the department's burn building and ratios, and a chief approves it before the first evolution. Nothing to set up yet: lesson plans are part of the LMS add-on, which is not available yet.
+
+<a id="lms-training-resources"></a>
+## Facility and Prop Booking
+
+Facility and Prop Booking The department's drill grounds, classrooms, props, apparatus and equipment, booked for class times so nothing is double-booked. Two classes never plan on the same burn building or engine for the same afternoon. The ladder evolution books the training tower and Engine 3 for Saturday morning; a second class asking for the tower then is refused. Nothing to set up yet: facility booking is part of the LMS add-on, which is not available yet.
+<a id="setting-lmsskillsettings"></a>
+## Skill notice settings
+
+Skill notice settings. How skill evaluation and task book notices are delivered, immediately or as a daily or weekly digest, and whether the evaluated members and the department admins receive them.
+
+<a id="field-lmsskillsettings-digestmode"></a>
+## Skill notice settings / Skill notice delivery
+
+Skill notice settings / Skill notice delivery. Immediately, a daily or weekly digest (one message per person with every notice due), or off.
+
+<a id="field-lmsskillsettings-digesthour"></a>
+## Skill notice settings / Skill digest time
+
+Skill notice settings / Skill digest time. The department-local hour daily and weekly digests are sent.
+
+<a id="field-lmsskillsettings-digestweekday"></a>
+## Skill notice settings / Skill weekly digest day
+
+Skill notice settings / Skill weekly digest day. The weekday weekly digests are sent.
+
+<a id="field-lmsskillsettings-notifymembers"></a>
+## Skill notice settings / Notify evaluated members
+
+Skill notice settings / Notify evaluated members. The evaluated members and trainees receive notices about their own evaluations and task books.
+
+<a id="field-lmsskillsettings-notifyofficers"></a>
+## Skill notice settings / Notify department admins
+
+Skill notice settings / Notify department admins. The active department admins receive a notice about every evaluation and task book.
+
+<a id="lms-skill-sheets"></a>
+## Skill Sheets
+
+Skill Sheets Job-performance skill sheets with ordered steps, critical criteria that fail the evaluation, rating scales, timers and evidence, versioned, with a library of Resgrid starters. Every evaluator grades the same skill the same way, and the department can show exactly what was checked. The SCBA donning sheet fails anyone who takes longer than 60 seconds or misses the facepiece seal check. Open Trainings, choose Skills, then Skill sheets, and start from a template.
+
+<a id="lms-skill-evaluations"></a>
+## Skill Evaluations
+
+Skill Evaluations Evaluator mode: grade one member or a whole crew on a skill sheet, with Pass All, annotations and evidence, then sign at L2; passed evaluations land on the transcript and the record is sealed. Skills checked on the drill ground become signed, sealed proof that requirements and certifications can count. A captain grades Engine 2's crew on the hoseline advance on one form, splits out the member who struggled, and signs from a tablet. Publish a skill sheet, set who may evaluate on it, then choose Start an evaluation under Trainings, Skills.
+
+<a id="lms-task-books"></a>
+## Position Task Books
+
+Position Task Books Task books on the NWCG model: initiated with a position code and date, tasks signed by qualified evaluators across dates and incidents, recommended by a final evaluator and certified by the certifying official; certification activates the trainee's certification. Trainee positions move to qualified with a full, signed trail instead of a paper book in a locker. An FFT2 trainee's task book is initiated in March, two incident tasks are signed on wildfires that summer, and the certifying official certifies it in September. Open Trainings, choose Skills, then Definitions, start from a task book starter, set who signs and certifies, then initiate books under Task books.

@@ -716,4 +716,13 @@
   <data name="HelpFieldScheduleName" xml:space="preserve"><value>Erscheint in der Fälligkeitsliste; wählen Sie einen auf einen Blick erkennbaren Namen.</value></data>
   <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>Wie lange nach dem Öffnen Zeit für die Prüfung bleibt. Danach gilt sie als versäumt.</value></data>
   <data name="HelpFieldAssignment" xml:space="preserve"><value>Die automatische Zuweisung leitet die Prüfung an die zuständige Stelle. Wählen Sie Person, Rolle, Gruppe oder Fahrzeug, um dies zu übersteuern.</value></data>
+  <data name="The witness signs at L2 (a fresh step-up or a passkey), bound to the content of the completion" xml:space="preserve">
+    <value>Der Zeuge unterschreibt auf L2 (erneute Identitätsprüfung oder Passkey), gebunden an den Inhalt des Abschlusses</value>
+  </data>
+  <data name="WitnessSignatureRequired" xml:space="preserve">
+    <value>Diese Checkliste muss mit einer Unterschrift bezeugt werden. Öffnen Sie den Durchlauf und unterschreiben Sie als Zeuge.</value>
+  </data>
+  <data name="WitnessSignatureRefused" xml:space="preserve">
+    <value>Die Zeugenunterschrift wurde nicht erfasst, daher wartet die Checkliste weiterhin auf ihren Zeugen.</value>
+  </data>
 </root>

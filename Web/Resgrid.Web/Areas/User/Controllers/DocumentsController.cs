@@ -27,10 +27,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDocumentsService _documentsService;
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IProtocolDocumentService _protocolDocuments;
+		private readonly IProtocolAccessService _protocolAccess;
 
 		public DocumentsController(IDepartmentsService departmentsService, IDocumentsService documentsService,
-			IEventAggregator eventAggregator, IProtectedReadService protectedReadService)
+			IEventAggregator eventAggregator, IProtectedReadService protectedReadService, IProtocolDocumentService protocolDocuments,
+			IProtocolAccessService protocolAccess)
 		{
+			_protocolDocuments = protocolDocuments;
+			_protocolAccess = protocolAccess;
 			_protectedReadService = protectedReadService;
 			_departmentsService = departmentsService;
 			_documentsService = documentsService;
@@ -59,6 +64,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.SelectedType = type;
 
 			model.UserId = UserId;
+			model.CanMoveToProtocols = !string.IsNullOrWhiteSpace(category) && (await _protocolAccess.GetReaderAsync(DepartmentId, UserId)).MayAuthor;
+			model.Message = TempData?["DocumentMessage"] as string;
 
 			return View(model);
 		}
@@ -91,6 +98,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (document.AdminsOnly && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 				return Unauthorized();
 
+			// Moved to Protocols (P1 R-P6): the old link redirects to the protocol, where its read rule applies.
+			if (document.MovedToProtocolId.HasValue)
+				return RedirectToAction("View", "Protocols", new { area = "User", id = document.MovedToProtocolId.Value });
+
 			// ADP: REDACTED on the server; the reveal is client-side (step-up modal then RevealDocument).
 			var protectedRead = await _protectedReadService.ResolveDocumentsForReadAsync(DepartmentId,
 				new[] { document }, null, UserId);
@@ -104,7 +115,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				UploadedByName = await UserHelper.GetFullNameForUser(document.UserId),
 				DescriptionHtml = StringHelpers.SanitizeHtmlInString(document.Description),
 				CanEdit = canManageDocument && ClaimsAuthorizationHelper.CanUpdateDocument(),
-				CanDelete = canManageDocument && ClaimsAuthorizationHelper.CanDeleteDocument()
+				CanDelete = canManageDocument && ClaimsAuthorizationHelper.CanDeleteDocument(),
+				CanMoveToProtocols = !protectedRead.IsProtected && !document.IsProtected && (await _protocolAccess.GetReaderAsync(DepartmentId, UserId)).MayAuthor,
+				Error = TempData?["DocumentError"] as string
 			};
 
 			return View(model);
@@ -166,6 +179,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (document.AdminsOnly && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 				return Unauthorized();
 
+			// Moved to Protocols (P1 R-P6): the old download link redirects to the protocol.
+			if (document.MovedToProtocolId.HasValue)
+				return RedirectToAction("View", "Protocols", new { area = "User", id = document.MovedToProtocolId.Value });
+
 			// ADP: the file decrypts only for a caller presenting a valid grant. A plain <a href>
 			// cannot carry the header, so the view downloads through resgridAdpReveal.download().
 			var protectedRead = await _protectedReadService.ResolveDocumentsForReadAsync(DepartmentId,
@@ -183,6 +200,44 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				FileDownloadName = String.IsNullOrWhiteSpace(document.Filename) ? document.Name : document.Filename
 			};
+		}
+
+		/// <summary>
+		/// "Move to Protocols" (P1 R-P6): the document becomes a document-backed protocol of kind Policy or Reference (a draft for
+		/// review and publish); its old link redirects there. Protected documents stay in Documents.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Protocol_Create)]
+		public async Task<IActionResult> MoveToProtocols(int documentId, int kind, CancellationToken cancellationToken)
+		{
+			var reader = await _protocolAccess.GetReaderAsync(DepartmentId, UserId);
+			var moved = await _protocolDocuments.MoveFromDocumentAsync(reader, documentId, kind, ClaimsAuthorizationHelper.IsUserDepartmentAdmin(), cancellationToken);
+			if (moved.ProtocolId.HasValue)
+				return RedirectToAction("View", "Protocols", new { area = "User", id = moved.ProtocolId.Value });
+
+			if (moved.Error == ProtocolLifecycleErrors.NotAuthorized.ToString())
+				return Unauthorized();
+			if (moved.Error == ProtocolLifecycleErrors.NotFound.ToString())
+				return NotFound();
+
+			TempData["DocumentError"] = moved.Error;
+			return RedirectToAction("ViewDocument", new { documentId });
+		}
+
+		/// <summary>Moves every document of a category to Protocols (the same rules per document); a result count comes back.</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Protocol_Create)]
+		public async Task<IActionResult> MoveCategoryToProtocols(string category, int kind, CancellationToken cancellationToken)
+		{
+			var reader = await _protocolAccess.GetReaderAsync(DepartmentId, UserId);
+			if (!reader.MayAuthor)
+				return Unauthorized();
+
+			var results = await _protocolDocuments.MoveCategoryFromDocumentsAsync(reader, category, kind, ClaimsAuthorizationHelper.IsUserDepartmentAdmin(), cancellationToken);
+			TempData["DocumentMessage"] = results.Count(r => r.ProtocolId.HasValue) + "/" + results.Count;
+			return RedirectToAction("Index", new { category });
 		}
 
 		[HttpPost]

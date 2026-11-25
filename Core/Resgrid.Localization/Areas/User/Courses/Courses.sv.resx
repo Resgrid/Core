@@ -1,0 +1,1405 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Academy.CategoryDescription" xml:space="preserve">
+    <value>Lektioner från Resgrid Akademi (ingen vidareutbildningspoäng).</value>
+  </data>
+  <data name="Academy.CategoryName" xml:space="preserve">
+    <value>Systemutbildning</value>
+  </data>
+  <data name="AcademyBadge" xml:space="preserve">
+    <value>Akademi</value>
+  </data>
+  <data name="AcademyCompletedTile" xml:space="preserve">
+    <value>Slutförda av dig</value>
+  </data>
+  <data name="AcademyIntro" xml:space="preserve">
+    <value>Korta lektioner om alla delar av Resgrid, kostnadsfria för varje organisation. Varje lektion har en snabb kontroll och räknas i ditt utbildningsintyg.</value>
+  </data>
+  <data name="AcademyLessonsHeader" xml:space="preserve">
+    <value>Lektioner och genomgångar</value>
+  </data>
+  <data name="AcademyLessonsTile" xml:space="preserve">
+    <value>Tillgängliga lektioner</value>
+  </data>
+  <data name="AcademySiteLink" xml:space="preserve">
+    <value>Öppna academy.resgrid.com</value>
+  </data>
+  <data name="AcademyTitle" xml:space="preserve">
+    <value>Resgrid Akademi</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Åtgärder</value>
+  </data>
+  <data name="AddLessonLabel" xml:space="preserve">
+    <value>Lägg till en lektion:</value>
+  </data>
+  <data name="AddModuleButton" xml:space="preserve">
+    <value>Lägg till modul</value>
+  </data>
+  <data name="AddonNotice" xml:space="preserve">
+    <value>Att skapa och tilldela kurser kräver LMS-tillägget. Resgrid Akademi är kostnadsfri för alla.</value>
+  </data>
+  <data name="AddOwnerButton" xml:space="preserve">
+    <value>Lägg till ansvarig</value>
+  </data>
+  <data name="AiCaptionsNote" xml:space="preserve">
+    <value>Automatisk textning kommer med Enhanced AI; ladda tills vidare upp en WebVTT-fil.</value>
+  </data>
+  <data name="AnswerKeyCopy" xml:space="preserve">
+    <value>Exemplar med facit</value>
+  </data>
+  <data name="AnswersHiddenNote" xml:space="preserve">
+    <value>Svaren på den här bedömningen visas inte efter ett försök.</value>
+  </data>
+  <data name="ApprovalHeader" xml:space="preserve">
+    <value>Godkänn den här versionen</value>
+  </data>
+  <data name="ApprovalRoundFormat" xml:space="preserve">
+    <value>Omgång {0}</value>
+  </data>
+  <data name="ApprovalsHeader" xml:space="preserve">
+    <value>Godkännanden och signaturer</value>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>Godkänd och signerad.</value>
+  </data>
+  <data name="ApproveSignButton" xml:space="preserve">
+    <value>Godkänn och signera</value>
+  </data>
+  <data name="ApproveStepUpHelp" xml:space="preserve">
+    <value>Du bekräftar din identitet igen före signeringen; signaturen gäller exakt den här versionen.</value>
+  </data>
+  <data name="AssessmentHelp" xml:space="preserve">
+    <value>Frågorna dras och rättas på servern; facit når aldrig webbläsaren eller apparna.</value>
+  </data>
+  <data name="AssessmentPassed" xml:space="preserve">
+    <value>Du har klarat den här bedömningen.</value>
+  </data>
+  <data name="AssessmentTitle" xml:space="preserve">
+    <value>Bedömning</value>
+  </data>
+  <data name="AssignButton" xml:space="preserve">
+    <value>Tilldela</value>
+  </data>
+  <data name="AssignedMessage" xml:space="preserve">
+    <value>Tilldelad till {0} medlemmar ({1} hade den redan, {2} kunde inte tilldelas).</value>
+  </data>
+  <data name="AssignHeader" xml:space="preserve">
+    <value>Tilldela kursen</value>
+  </data>
+  <data name="AssignLessonHeader" xml:space="preserve">
+    <value>Tilldela lektionen ”{0}”</value>
+  </data>
+  <data name="AssignPathButton" xml:space="preserve">
+    <value>Tilldela väg</value>
+  </data>
+  <data name="AssignPathHeader" xml:space="preserve">
+    <value>Tilldela rollvägen ”{0}”</value>
+  </data>
+  <data name="AssignToLabel" xml:space="preserve">
+    <value>Tilldela till</value>
+  </data>
+  <data name="AttemptLimitLabel" xml:space="preserve">
+    <value>Tillåtna försök (0 = obegränsat)</value>
+  </data>
+  <data name="AttemptsAllowedFormat" xml:space="preserve">
+    <value>{0} försök tillåtna</value>
+  </data>
+  <data name="AttemptsTile" xml:space="preserve">
+    <value>Avslutade försök</value>
+  </data>
+  <data name="AttemptsUnlimited" xml:space="preserve">
+    <value>Obegränsat antal försök</value>
+  </data>
+  <data name="AttestationLabel" xml:space="preserve">
+    <value>Be deltagaren bekräfta att hen gör den själv</value>
+  </data>
+  <data name="AttestationText" xml:space="preserve">
+    <value>Jag gör den här bedömningen själv.</value>
+  </data>
+  <data name="AudienceCurrentFormat" xml:space="preserve">
+    <value>{0} målgruppsregler är sparade.</value>
+  </data>
+  <data name="AudienceHeader" xml:space="preserve">
+    <value>Vem som ser den i katalogen</value>
+  </data>
+  <data name="AudienceHelp" xml:space="preserve">
+    <value>Välj ingen för hela organisationen.</value>
+  </data>
+  <data name="AvailableOfflineLabel" xml:space="preserve">
+    <value>Tillgänglig offline (Omni får spara en kopia per enhet)</value>
+  </data>
+  <data name="AverageRatingFormat" xml:space="preserve">
+    <value>Medelbetyg: {0} av 5</value>
+  </data>
+  <data name="AwaitingGradeBadge" xml:space="preserve">
+    <value>Väntar på bedömning</value>
+  </data>
+  <data name="BackToAcademy" xml:space="preserve">
+    <value>Tillbaka till akademin</value>
+  </data>
+  <data name="BackToCourse" xml:space="preserve">
+    <value>Tillbaka till kursen</value>
+  </data>
+  <data name="BackToCourseDetail" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="BankLabel" xml:space="preserve">
+    <value>Frågebank</value>
+  </data>
+  <data name="BanksIntro" xml:space="preserve">
+    <value>Frågepooler som dras slumpmässigt för varje försök. Delade banker är öppna för alla kursförfattare, privata bara för ägaren.</value>
+  </data>
+  <data name="BanksTitle" xml:space="preserve">
+    <value>Frågebanker</value>
+  </data>
+  <data name="BrowseAcademyLink" xml:space="preserve">
+    <value>Bläddra i Resgrid Academy</value>
+  </data>
+  <data name="BuilderTitle" xml:space="preserve">
+    <value>Kursbyggare</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="CaptionsFileLabel" xml:space="preserve">
+    <value>WebVTT-fil</value>
+  </data>
+  <data name="CaptionsLabelLabel" xml:space="preserve">
+    <value>Textningens etikett</value>
+  </data>
+  <data name="CaptionsLocaleLabel" xml:space="preserve">
+    <value>Textningsspråk</value>
+  </data>
+  <data name="CatalogFieldsHeader" xml:space="preserve">
+    <value>Kursuppgifter</value>
+  </data>
+  <data name="CatalogHeader" xml:space="preserve">
+    <value>Kurser du kan gå med i</value>
+  </data>
+  <data name="CategoryLabel" xml:space="preserve">
+    <value>Utbildningskategori</value>
+  </data>
+  <data name="CeDisclaimer" xml:space="preserve">
+    <value>Resgrid ackrediterar inte vidareutbildning: leverantör och nummer sparas som du anger dem.</value>
+  </data>
+  <data name="CeNumberLabel" xml:space="preserve">
+    <value>Kursnummer för vidareutbildning</value>
+  </data>
+  <data name="CeProviderLabel" xml:space="preserve">
+    <value>Leverantör av vidareutbildning</value>
+  </data>
+  <data name="CertificateTemplateLabel" xml:space="preserve">
+    <value>Certifikatmall</value>
+  </data>
+  <data name="ChangeSummaryLabel" xml:space="preserve">
+    <value>Vad som ändrats</value>
+  </data>
+  <data name="ChooseAllHelp" xml:space="preserve">
+    <value>Välj alla som stämmer.</value>
+  </data>
+  <data name="ChooseMember" xml:space="preserve">
+    <value>Välj en medlem…</value>
+  </data>
+  <data name="ChooseOption" xml:space="preserve">
+    <value>Välj…</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Kurskod</value>
+  </data>
+  <data name="CommentLabel" xml:space="preserve">
+    <value>Kommentar</value>
+  </data>
+  <data name="CompletedBadge" xml:space="preserve">
+    <value>Klar</value>
+  </data>
+  <data name="CompletedColumn" xml:space="preserve">
+    <value>Slutförd</value>
+  </data>
+  <data name="CompletedHeader" xml:space="preserve">
+    <value>Slutförda</value>
+  </data>
+  <data name="CompletedOfFormat" xml:space="preserve">
+    <value>{0} av {1}</value>
+  </data>
+  <data name="ContentHelp" xml:space="preserve">
+    <value>Formaterad text (HTML). Den rensas när den sparas; inbäddningar från YouTube, Vimeo och Google Docs är tillåtna.</value>
+  </data>
+  <data name="ContentLabel" xml:space="preserve">
+    <value>Lektionens innehåll</value>
+  </data>
+  <data name="CooldownFormat" xml:space="preserve">
+    <value>Vänta {0} h mellan försök</value>
+  </data>
+  <data name="CooldownLabel" xml:space="preserve">
+    <value>Timmar mellan försök</value>
+  </data>
+  <data name="CorrectAnswerLabel" xml:space="preserve">
+    <value>rätt svar</value>
+  </data>
+  <data name="CorrectLabel" xml:space="preserve">
+    <value>Rätt</value>
+  </data>
+  <data name="CorrectOrderLabel" xml:space="preserve">
+    <value>Rätt ordning:</value>
+  </data>
+  <data name="CourseColumn" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="CourseCompletedMessage" xml:space="preserve">
+    <value>Kursen är slutförd. Den finns i ditt utbildningsintyg.</value>
+  </data>
+  <data name="CoursesHeader" xml:space="preserve">
+    <value>Kurser</value>
+  </data>
+  <data name="CreateBankButton" xml:space="preserve">
+    <value>Skapa bank</value>
+  </data>
+  <data name="CreateCourseButton" xml:space="preserve">
+    <value>Skapa kurs</value>
+  </data>
+  <data name="CrewEndedMessage" xml:space="preserve">
+    <value>Den här gruppvisningen har avslutats.</value>
+  </data>
+  <data name="CrewQrAlt" xml:space="preserve">
+    <value>Kod för gruppvisningen</value>
+  </data>
+  <data name="CrewQrRotates" xml:space="preserve">
+    <value>Koden byts var 30:e sekund, så ett foto av den slutar fungera.</value>
+  </data>
+  <data name="CrewScanConfirm" xml:space="preserve">
+    <value>Markera dig som närvarande vid gruppvisningen? Lektionen som visas räknas som sedd; eventuellt prov gör du sedan på din egen telefon.</value>
+  </data>
+  <data name="CrewScanInstruction" xml:space="preserve">
+    <value>Skanna koden med din egen telefon för att markeras som närvarande.</value>
+  </data>
+  <data name="CrewViewingTitle" xml:space="preserve">
+    <value>Gruppvisning</value>
+  </data>
+  <data name="DateLine" xml:space="preserve">
+    <value>Datum:</value>
+  </data>
+  <data name="Decision.Approved" xml:space="preserve">
+    <value>godkänt</value>
+  </data>
+  <data name="Decision.Pending" xml:space="preserve">
+    <value>väntar</value>
+  </data>
+  <data name="Decision.Rejected" xml:space="preserve">
+    <value>återsänt</value>
+  </data>
+  <data name="Decision.Withdrawn" xml:space="preserve">
+    <value>tillbakadraget</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Radera</value>
+  </data>
+  <data name="DeletedMessage" xml:space="preserve">
+    <value>Raderat.</value>
+  </data>
+  <data name="DeleteLessonConfirm" xml:space="preserve">
+    <value>Ta bort lektionen?</value>
+  </data>
+  <data name="DeleteModuleConfirm" xml:space="preserve">
+    <value>Ta bort modulen och dess lektioner?</value>
+  </data>
+  <data name="DifficultyColumn" xml:space="preserve">
+    <value>Svårighet (p)</value>
+  </data>
+  <data name="DifficultyHelp" xml:space="preserve">
+    <value>Andel rätta svar: högre är lättare.</value>
+  </data>
+  <data name="DiscardButton" xml:space="preserve">
+    <value>Kasta utkast</value>
+  </data>
+  <data name="DiscardConfirm" xml:space="preserve">
+    <value>Kasta utkastet? Det har aldrig skickats in, så inget sparas.</value>
+  </data>
+  <data name="DiscardedMessage" xml:space="preserve">
+    <value>Utkastet kastades.</value>
+  </data>
+  <data name="DiscriminationColumn" xml:space="preserve">
+    <value>Diskriminering (D)</value>
+  </data>
+  <data name="DiscriminationHelp" xml:space="preserve">
+    <value>Andel rätt bland de bästa 27 % av försöken minus de sämsta 27 %: under 0,2 är värt en titt.</value>
+  </data>
+  <data name="DocumentNameLabel" xml:space="preserve">
+    <value>Dokumentnamn</value>
+  </data>
+  <data name="DocumentUrlLabel" xml:space="preserve">
+    <value>Länk till dokumentet (https)</value>
+  </data>
+  <data name="DrawCountLabel" xml:space="preserve">
+    <value>Frågor per försök (0 = alla)</value>
+  </data>
+  <data name="DrawTagsLabel" xml:space="preserve">
+    <value>Bara frågor med taggen</value>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Förfaller</value>
+  </data>
+  <data name="DueDateHelp" xml:space="preserve">
+    <value>Valfritt. Slutet av den dagen i organisationens tidszon.</value>
+  </data>
+  <data name="DueDateLabel" xml:space="preserve">
+    <value>Förfallodatum</value>
+  </data>
+  <data name="DueFormat" xml:space="preserve">
+    <value>Förfaller {0}</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Redigera</value>
+  </data>
+  <data name="EditDraftButton" xml:space="preserve">
+    <value>Redigera utkastet</value>
+  </data>
+  <data name="EditQuestionHeader" xml:space="preserve">
+    <value>Redigera fråga</value>
+  </data>
+  <data name="EndCrewViewingButton" xml:space="preserve">
+    <value>Avsluta visningen</value>
+  </data>
+  <data name="EnrollButton" xml:space="preserve">
+    <value>Anmäl dig</value>
+  </data>
+  <data name="EnrolledColumn" xml:space="preserve">
+    <value>Anmälda</value>
+  </data>
+  <data name="EnrolledMessage" xml:space="preserve">
+    <value>Du är anmäld.</value>
+  </data>
+  <data name="EnrollmentsHeader" xml:space="preserve">
+    <value>Anmälningar</value>
+  </data>
+  <data name="EnrollmentStatus.Completed" xml:space="preserve">
+    <value>Slutförd</value>
+  </data>
+  <data name="EnrollmentStatus.InProgress" xml:space="preserve">
+    <value>Pågår</value>
+  </data>
+  <data name="EnrollmentStatus.NotStarted" xml:space="preserve">
+    <value>Inte påbörjad</value>
+  </data>
+  <data name="EnrollmentStatus.Withdrawn" xml:space="preserve">
+    <value>Borttagen</value>
+  </data>
+  <data name="Error.AddonRequired" xml:space="preserve">
+    <value>Det här kräver LMS-tillägget.</value>
+  </data>
+  <data name="Error.AlreadySubmitted" xml:space="preserve">
+    <value>Detta har redan lämnats in.</value>
+  </data>
+  <data name="Error.AttemptLimitReached" xml:space="preserve">
+    <value>Du har använt alla tillåtna försök.</value>
+  </data>
+  <data name="Error.CodeExpired" xml:space="preserve">
+    <value>Koden har ändrats. Skanna koden på skärmen igen.</value>
+  </data>
+  <data name="Error.CooldownActive" xml:space="preserve">
+    <value>Vänta innan du försöker igen.</value>
+  </data>
+  <data name="Error.FileTooLarge" xml:space="preserve">
+    <value>Filen är för stor.</value>
+  </data>
+  <data name="Error.InvalidInput" xml:space="preserve">
+    <value>Viss information saknas eller är ogiltig.</value>
+  </data>
+  <data name="Error.LapseWindowEnded" xml:space="preserve">
+    <value>LMS-tillägget har upphört och tiden för att slutföra kursen har gått ut.</value>
+  </data>
+  <data name="Error.LessonLocked" xml:space="preserve">
+    <value>Slutför de tidigare lektionerna först.</value>
+  </data>
+  <data name="Error.MediaUnavailable" xml:space="preserve">
+    <value>Videolagringen är inte tillgänglig just nu.</value>
+  </data>
+  <data name="Error.None" xml:space="preserve">
+    <value>Klart.</value>
+  </data>
+  <data name="Error.NotAuthorized" xml:space="preserve">
+    <value>Du har inte behörighet att göra det.</value>
+  </data>
+  <data name="Error.NotDraft" xml:space="preserve">
+    <value>Bara ett utkast kan ändras.</value>
+  </data>
+  <data name="Error.NotEntitled" xml:space="preserve">
+    <value>Lektionen gäller en modul eller ett tillägg som din organisation inte har.</value>
+  </data>
+  <data name="Error.NotFound" xml:space="preserve">
+    <value>Objektet hittades inte.</value>
+  </data>
+  <data name="Error.RequirementNotMet" xml:space="preserve">
+    <value>Det här steget är inte klart än.</value>
+  </data>
+  <data name="Error.ResponseRequired" xml:space="preserve">
+    <value>Svara på uppgiften (eller bifoga den begärda filen) för att slutföra lektionen.</value>
+  </data>
+  <data name="Error.SeatTimeNotMet" xml:space="preserve">
+    <value>Ägna lite mer tid åt lektionen innan du slutför den.</value>
+  </data>
+  <data name="Error.StaleCopy" xml:space="preserve">
+    <value>Någon annan har ändrat detta sedan du öppnade det. Ladda om och försök igen.</value>
+  </data>
+  <data name="Error.TimeExpired" xml:space="preserve">
+    <value>Tiden för försöket har tagit slut.</value>
+  </data>
+  <data name="Error.UnsupportedFile" xml:space="preserve">
+    <value>Den filtypen accepteras inte.</value>
+  </data>
+  <data name="EveryoneOption" xml:space="preserve">
+    <value>Alla i organisationen</value>
+  </data>
+  <data name="ExpiredBadge" xml:space="preserve">
+    <value>Tiden tog slut</value>
+  </data>
+  <data name="ExplanationLabel" xml:space="preserve">
+    <value>Förklaring (visas efter försöket; modellsvar för kortsvar)</value>
+  </data>
+  <data name="FailedBadge" xml:space="preserve">
+    <value>Ej godkänd</value>
+  </data>
+  <data name="FileColumn" xml:space="preserve">
+    <value>Fil</value>
+  </data>
+  <data name="FileRequestHelp" xml:space="preserve">
+    <value>PDF, bild, text, Word eller Excel, upp till 10 MB.</value>
+  </data>
+  <data name="FileRequestLabel" xml:space="preserve">
+    <value>Filbegäran (valfri)</value>
+  </data>
+  <data name="FingerprintFormat" xml:space="preserve">
+    <value>fingeravtryck {0}</value>
+  </data>
+  <data name="FreeResponseLabel" xml:space="preserve">
+    <value>Uppgift med fritt svar (valfri)</value>
+  </data>
+  <data name="GradedMessage" xml:space="preserve">
+    <value>Bedömningen sparades.</value>
+  </data>
+  <data name="GraderNotesLabel" xml:space="preserve">
+    <value>Bedömarens anteckningar</value>
+  </data>
+  <data name="GradingEmpty" xml:space="preserve">
+    <value>Inget väntar på bedömning.</value>
+  </data>
+  <data name="GradingIntro" xml:space="preserve">
+    <value>Kortsvar som väntar på bedömning. Ingen bedömer sitt eget försök.</value>
+  </data>
+  <data name="GradingTitle" xml:space="preserve">
+    <value>Bedömningskö</value>
+  </data>
+  <data name="GroupsLabel" xml:space="preserve">
+    <value>Grupper</value>
+  </data>
+  <data name="HostedVideoLabel" xml:space="preserve">
+    <value>Uppladdad video</value>
+  </data>
+  <data name="HoursColumn" xml:space="preserve">
+    <value>Timmar</value>
+  </data>
+  <data name="HoursFormat" xml:space="preserve">
+    <value>{0} timmar</value>
+  </data>
+  <data name="HoursLabel" xml:space="preserve">
+    <value>Tillgodoräknade timmar</value>
+  </data>
+  <data name="ImageUrlLabel" xml:space="preserve">
+    <value>Bildlänk (https, valfri)</value>
+  </data>
+  <data name="IncludedTile" xml:space="preserve">
+    <value>Ingår</value>
+  </data>
+  <data name="IncorrectLabel" xml:space="preserve">
+    <value>Fel</value>
+  </data>
+  <data name="InForceFormat" xml:space="preserve">
+    <value>Version {0} gäller</value>
+  </data>
+  <data name="InProgressBadge" xml:space="preserve">
+    <value>Pågår</value>
+  </data>
+  <data name="InProgressHeader" xml:space="preserve">
+    <value>Tilldelade och pågående</value>
+  </data>
+  <data name="IssuesCertificationLabel" xml:space="preserve">
+    <value>Slutförande utfärdar eller förnyar</value>
+  </data>
+  <data name="ItemAnalysisFootnote" xml:space="preserve">
+    <value>Diskriminering kräver minst 10 avslutade försök. Försök som väntar på bedömning räknas inte.</value>
+  </data>
+  <data name="ItemAnalysisIntro" xml:space="preserve">
+    <value>Hur varje fråga fungerade i avslutade försök.</value>
+  </data>
+  <data name="ItemAnalysisTitle" xml:space="preserve">
+    <value>Uppgiftsanalys</value>
+  </data>
+  <data name="Kind.Assessment" xml:space="preserve">
+    <value>Bedömning</value>
+  </data>
+  <data name="Kind.Blocks" xml:space="preserve">
+    <value>Läsning</value>
+  </data>
+  <data name="Kind.Cmi5" xml:space="preserve">
+    <value>cmi5-paket</value>
+  </data>
+  <data name="Kind.Document" xml:space="preserve">
+    <value>Dokument</value>
+  </data>
+  <data name="Kind.LiveSession" xml:space="preserve">
+    <value>Direktsession</value>
+  </data>
+  <data name="Kind.ProtocolVersion" xml:space="preserve">
+    <value>Protokoll</value>
+  </data>
+  <data name="Kind.Scorm" xml:space="preserve">
+    <value>SCORM-paket</value>
+  </data>
+  <data name="Kind.Survey" xml:space="preserve">
+    <value>Kursutvärdering</value>
+  </data>
+  <data name="Kind.Video" xml:space="preserve">
+    <value>Videolektion</value>
+  </data>
+  <data name="LapsedNotice" xml:space="preserve">
+    <value>LMS-tillägget har upphört: kurser och register kan fortfarande läsas, tilldelade kurser är öppna till förfallodagen (eller 30 dagar), lagrad video är skrivskyddad i 90 dagar och nya kurser eller tilldelningar kräver tillägget igen.</value>
+  </data>
+  <data name="LengthColumn" xml:space="preserve">
+    <value>Längd</value>
+  </data>
+  <data name="LessonBadge" xml:space="preserve">
+    <value>Lektion</value>
+  </data>
+  <data name="LessonColumn" xml:space="preserve">
+    <value>Lektion</value>
+  </data>
+  <data name="LessonCompletedMessage" xml:space="preserve">
+    <value>Lektionen är klar.</value>
+  </data>
+  <data name="LessonDoneLabel" xml:space="preserve">
+    <value>Du har slutfört den här lektionen.</value>
+  </data>
+  <data name="LibraryIntro" xml:space="preserve">
+    <value>Din organisations kurser: skapa, godkänn, publicera, tilldela och följ upp.</value>
+  </data>
+  <data name="LibraryTitle" xml:space="preserve">
+    <value>Kursbibliotek</value>
+  </data>
+  <data name="Lifecycle.AlreadyDecided" xml:space="preserve">
+    <value>Steget är redan avgjort, eller så har du redan godkänt den här omgången.</value>
+  </data>
+  <data name="Lifecycle.ArtifactChanged" xml:space="preserve">
+    <value>Versionen ändrades efter att den skickades in eller signerades; skicka in den igen.</value>
+  </data>
+  <data name="Lifecycle.ChangeSummaryRequired" xml:space="preserve">
+    <value>Beskriv vad som ändrats innan du publicerar.</value>
+  </data>
+  <data name="Lifecycle.DraftExists" xml:space="preserve">
+    <value>Ett utkast är redan öppet för kursen.</value>
+  </data>
+  <data name="Lifecycle.EffectiveDateInPast" xml:space="preserve">
+    <value>Ikraftträdandedatumet har passerat.</value>
+  </data>
+  <data name="Lifecycle.EmptyContent" xml:space="preserve">
+    <value>Lägg till minst en lektion innan du skickar in.</value>
+  </data>
+  <data name="Lifecycle.InvalidInput" xml:space="preserve">
+    <value>Viss information saknas eller är ogiltig.</value>
+  </data>
+  <data name="Lifecycle.None" xml:space="preserve">
+    <value>Klart.</value>
+  </data>
+  <data name="Lifecycle.NotApproved" xml:space="preserve">
+    <value>Bara en godkänd version kan publiceras.</value>
+  </data>
+  <data name="Lifecycle.NotAuthorized" xml:space="preserve">
+    <value>Du har inte behörighet att göra det.</value>
+  </data>
+  <data name="Lifecycle.NotDraft" xml:space="preserve">
+    <value>Bara ett utkast kan skickas in.</value>
+  </data>
+  <data name="Lifecycle.NotFound" xml:space="preserve">
+    <value>Versionen hittades inte.</value>
+  </data>
+  <data name="Lifecycle.NotInReview" xml:space="preserve">
+    <value>Den här versionen väntar inte på godkännande.</value>
+  </data>
+  <data name="Lifecycle.NotPublished" xml:space="preserve">
+    <value>Inget är publicerat än.</value>
+  </data>
+  <data name="Lifecycle.OpenComments" xml:space="preserve">
+    <value>Lös de öppna granskningskommentarerna först.</value>
+  </data>
+  <data name="Lifecycle.PasskeyRequired" xml:space="preserve">
+    <value>Din organisation kräver en nyckel för den här signaturen.</value>
+  </data>
+  <data name="Lifecycle.RetentionProtected" xml:space="preserve">
+    <value>En version som skickats in sparas och kan inte kastas.</value>
+  </data>
+  <data name="Lifecycle.SignatureRequired" xml:space="preserve">
+    <value>Bekräfta din identitet för att signera godkännandet.</value>
+  </data>
+  <data name="Lifecycle.StaleCopy" xml:space="preserve">
+    <value>Någon annan har ändrat detta sedan du öppnade det. Ladda om och försök igen.</value>
+  </data>
+  <data name="LockedBadge" xml:space="preserve">
+    <value>låst tills de tidigare lektionerna är klara</value>
+  </data>
+  <data name="MajorPolicyLabel" xml:space="preserve">
+    <value>Vid en större version</value>
+  </data>
+  <data name="MajorVersionOption" xml:space="preserve">
+    <value>Större version: välj vad som händer med dem som slutfört den</value>
+  </data>
+  <data name="MarkCompleteButton" xml:space="preserve">
+    <value>Markera som klar</value>
+  </data>
+  <data name="MarkPresentButton" xml:space="preserve">
+    <value>Jag är här</value>
+  </data>
+  <data name="MediaNotConfigured" xml:space="preserve">
+    <value>Videolagring är inte konfigurerad i den här installationen, så videor kan inte laddas upp. Länkar till YouTube och Vimeo fungerar fortfarande.</value>
+  </data>
+  <data name="MediaStatus.Archived" xml:space="preserve">
+    <value>Arkiverad (tillägget har upphört)</value>
+  </data>
+  <data name="MediaStatus.Failed" xml:space="preserve">
+    <value>Kunde inte bearbetas</value>
+  </data>
+  <data name="MediaStatus.Queued" xml:space="preserve">
+    <value>Väntar på bearbetning</value>
+  </data>
+  <data name="MediaStatus.Ready" xml:space="preserve">
+    <value>Klar</value>
+  </data>
+  <data name="MediaStatus.Transcoding" xml:space="preserve">
+    <value>Bearbetas</value>
+  </data>
+  <data name="MediaStatus.Uploading" xml:space="preserve">
+    <value>Laddas upp</value>
+  </data>
+  <data name="MemberColumn" xml:space="preserve">
+    <value>Medlem</value>
+  </data>
+  <data name="MembersLabel" xml:space="preserve">
+    <value>Medlemmar</value>
+  </data>
+  <data name="MinimumSeatLabel" xml:space="preserve">
+    <value>Minsta tid på lektionen (sekunder)</value>
+  </data>
+  <data name="MinorVersionOption" xml:space="preserve">
+    <value>Mindre version: slutföranden står kvar</value>
+  </data>
+  <data name="MinutesFormat" xml:space="preserve">
+    <value>{0} minuter</value>
+  </data>
+  <data name="ModelAnswerLabel" xml:space="preserve">
+    <value>Modellsvar:</value>
+  </data>
+  <data name="ModuleLabel" xml:space="preserve">
+    <value>Modul</value>
+  </data>
+  <data name="ModuleNumberFormat" xml:space="preserve">
+    <value>Modul {0}</value>
+  </data>
+  <data name="ModuleTitleLabel" xml:space="preserve">
+    <value>Modulrubrik</value>
+  </data>
+  <data name="MoveUpButton" xml:space="preserve">
+    <value>Flytta upp</value>
+  </data>
+  <data name="MyCoursesIntro" xml:space="preserve">
+    <value>Kurser som tilldelats dig, Resgrid Academy och kurser du kan gå med i.</value>
+  </data>
+  <data name="MyCoursesTitle" xml:space="preserve">
+    <value>Mina kurser</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Benämning</value>
+  </data>
+  <data name="NameLine" xml:space="preserve">
+    <value>Namn:</value>
+  </data>
+  <data name="NewBankHeader" xml:space="preserve">
+    <value>Ny frågebank</value>
+  </data>
+  <data name="NewCourseHeader" xml:space="preserve">
+    <value>Ny kurs</value>
+  </data>
+  <data name="NewLessonFormat" xml:space="preserve">
+    <value>Ny lektion: {0}</value>
+  </data>
+  <data name="NewQuestionHeader" xml:space="preserve">
+    <value>Ny fråga</value>
+  </data>
+  <data name="NewVersionButton" xml:space="preserve">
+    <value>Påbörja en ny version</value>
+  </data>
+  <data name="NextAttemptFormat" xml:space="preserve">
+    <value>Nästa försök från {0}.</value>
+  </data>
+  <data name="NextButton" xml:space="preserve">
+    <value>Nästa</value>
+  </data>
+  <data name="NextUpLabel" xml:space="preserve">
+    <value>Nästa</value>
+  </data>
+  <data name="NoBanks" xml:space="preserve">
+    <value>Inga frågebanker än.</value>
+  </data>
+  <data name="NoCourses" xml:space="preserve">
+    <value>Inga kurser än.</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>Ingen</value>
+  </data>
+  <data name="NoOpenCourses" xml:space="preserve">
+    <value>Du har inga öppna kurser.</value>
+  </data>
+  <data name="NothingToPlay" xml:space="preserve">
+    <value>Den här kursen har inga lektioner att visa.</value>
+  </data>
+  <data name="Notify.CourseAssigned" xml:space="preserve">
+    <value>Du har tilldelats kursen "{0}". Öppna den: {1}</value>
+  </data>
+  <data name="Notify.CourseAssigned.Title" xml:space="preserve">
+    <value>Ny kurs tilldelad</value>
+  </data>
+  <data name="Notify.CourseNewVersion" xml:space="preserve">
+    <value>En ny större version ({1}) av kursen "{0}" som du slutfört har publicerats.</value>
+  </data>
+  <data name="Notify.CourseNewVersion.Title" xml:space="preserve">
+    <value>Kursen uppdaterad</value>
+  </data>
+  <data name="Notify.CourseReassigned" xml:space="preserve">
+    <value>Kursen "{0}" har en ny större version ({1}) och har tilldelats dig igen.</value>
+  </data>
+  <data name="Notify.CourseReassigned.Title" xml:space="preserve">
+    <value>Kursen tilldelad igen</value>
+  </data>
+  <data name="Notify.InProgressReminder" xml:space="preserve">
+    <value>Du har inte slutfört kursen "{0}". Fortsätt där du slutade: {1}</value>
+  </data>
+  <data name="Notify.InProgressReminder.Title" xml:space="preserve">
+    <value>Kurspåminnelse</value>
+  </data>
+  <data name="NotStartedBadge" xml:space="preserve">
+    <value>Inte påbörjad</value>
+  </data>
+  <data name="OfflineCapLabel" xml:space="preserve">
+    <value>Storleksgräns offline (MB)</value>
+  </data>
+  <data name="OfflineExpiryLabel" xml:space="preserve">
+    <value>Offlinekopian sparas i (dagar)</value>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Öppna</value>
+  </data>
+  <data name="OpenDocumentButton" xml:space="preserve">
+    <value>Öppna dokumentet</value>
+  </data>
+  <data name="OptionalBadge" xml:space="preserve">
+    <value>valfri</value>
+  </data>
+  <data name="OptionCountsColumn" xml:space="preserve">
+    <value>Valda alternativ</value>
+  </data>
+  <data name="OptionNumberFormat" xml:space="preserve">
+    <value>Alternativ {0}</value>
+  </data>
+  <data name="OptionsHelp" xml:space="preserve">
+    <value>Kryssa i rätt alternativ. För ordning, lista dem i rätt ordning. Sant/falskt använder de två första. Kortsvar behöver inga alternativ.</value>
+  </data>
+  <data name="OptionsLabel" xml:space="preserve">
+    <value>Svarsalternativ</value>
+  </data>
+  <data name="OrderHelp" xml:space="preserve">
+    <value>Sätt posterna i rätt ordning: välj den första, sedan den andra och så vidare.</value>
+  </data>
+  <data name="OutlineLabel" xml:space="preserve">
+    <value>Kursöversikt</value>
+  </data>
+  <data name="OverdueBadge" xml:space="preserve">
+    <value>försenad</value>
+  </data>
+  <data name="OverIncludedNote" xml:space="preserve">
+    <value>Lagringen överstiger den inkluderade mängden. Inget debiteras för detta i dag; överväg att ta bort gamla videor.</value>
+  </data>
+  <data name="OverviewLabel" xml:space="preserve">
+    <value>Översikt</value>
+  </data>
+  <data name="OwnersHeader" xml:space="preserve">
+    <value>Kursansvariga</value>
+  </data>
+  <data name="PassedBadge" xml:space="preserve">
+    <value>Godkänd</value>
+  </data>
+  <data name="PassMarkFormat" xml:space="preserve">
+    <value>Godkäntgräns {0} %</value>
+  </data>
+  <data name="PassMarkLabel" xml:space="preserve">
+    <value>Godkäntgräns</value>
+  </data>
+  <data name="PassRateTile" xml:space="preserve">
+    <value>Andel godkända</value>
+  </data>
+  <data name="PathLessonsFormat" xml:space="preserve">
+    <value>{0} lektioner · {1} slutförda av dig</value>
+  </data>
+  <data name="PathNobodyAssigned" xml:space="preserve">
+    <value>Ingen har tilldelats den här vägen ännu.</value>
+  </data>
+  <data name="PathProgressButton" xml:space="preserve">
+    <value>Framsteg ({0} tilldelade)</value>
+  </data>
+  <data name="PathProgressIntro" xml:space="preserve">
+    <value>Varje tilldelad medlems framsteg genom vägens lektioner.</value>
+  </data>
+  <data name="PlaybackSpeedLabel" xml:space="preserve">
+    <value>Uppspelningshastighet</value>
+  </data>
+  <data name="PlayerTitle" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="PointsAwardedFormat" xml:space="preserve">
+    <value>Tilldelade poäng (av {0})</value>
+  </data>
+  <data name="PointsLabel" xml:space="preserve">
+    <value>Poäng</value>
+  </data>
+  <data name="PointsShort" xml:space="preserve">
+    <value>p</value>
+  </data>
+  <data name="Policy.Nothing" xml:space="preserve">
+    <value>Inget: slutföranden står kvar</value>
+  </data>
+  <data name="Policy.Notify" xml:space="preserve">
+    <value>Meddela dem som slutfört den</value>
+  </data>
+  <data name="Policy.Reassign" xml:space="preserve">
+    <value>Tilldela den igen till dem som slutfört den</value>
+  </data>
+  <data name="PresentHeader" xml:space="preserve">
+    <value>Närvarande</value>
+  </data>
+  <data name="PresentMessage" xml:space="preserve">
+    <value>Du är markerad som närvarande. Fortsätt med nästa lektion på din telefon.</value>
+  </data>
+  <data name="PreTestLabel" xml:space="preserve">
+    <value>Förtest (godkänt slutför kursen)</value>
+  </data>
+  <data name="PreTestNote" xml:space="preserve">
+    <value>Förtest: klarar du det är hela kursen slutförd.</value>
+  </data>
+  <data name="PreviousButton" xml:space="preserve">
+    <value>Föregående</value>
+  </data>
+  <data name="PrintHint" xml:space="preserve">
+    <value>Använd webbläsarens utskriftsfunktion för att skriva ut provet.</value>
+  </data>
+  <data name="PrintKeyButton" xml:space="preserve">
+    <value>Med facit</value>
+  </data>
+  <data name="PrintTestButton" xml:space="preserve">
+    <value>Utskrivbart prov</value>
+  </data>
+  <data name="PrivateBadge" xml:space="preserve">
+    <value>Privat bank</value>
+  </data>
+  <data name="ProgressColumn" xml:space="preserve">
+    <value>Framsteg</value>
+  </data>
+  <data name="ProgressHonest" xml:space="preserve">
+    <value>{0} % av de obligatoriska lektionerna är klara</value>
+  </data>
+  <data name="ProgressLabel" xml:space="preserve">
+    <value>Framsteg</value>
+  </data>
+  <data name="ProtocolUnavailable" xml:space="preserve">
+    <value>Den här protokollversionen är inte längre tillgänglig.</value>
+  </data>
+  <data name="ProtocolVersionFormat" xml:space="preserve">
+    <value>Protokollversion {0}, så som den publicerades.</value>
+  </data>
+  <data name="ProtocolVersionHelp" xml:space="preserve">
+    <value>Lektionen visar den här versionen så som den publicerades, även om protokollet ändras senare.</value>
+  </data>
+  <data name="ProtocolVersionLabel" xml:space="preserve">
+    <value>Protokollversion</value>
+  </data>
+  <data name="PublishBeforeAssign" xml:space="preserve">
+    <value>Publicera en version innan du tilldelar kursen.</value>
+  </data>
+  <data name="PublishButton" xml:space="preserve">
+    <value>Publicera</value>
+  </data>
+  <data name="PublishedColumn" xml:space="preserve">
+    <value>Publicerad</value>
+  </data>
+  <data name="PublishedMessage" xml:space="preserve">
+    <value>Versionen är publicerad.</value>
+  </data>
+  <data name="PublishHeader" xml:space="preserve">
+    <value>Publicera den här versionen</value>
+  </data>
+  <data name="PublishHelp" xml:space="preserve">
+    <value>Den som är mitt i kursen behåller den version hen påbörjade; den som inte börjat flyttas till den här.</value>
+  </data>
+  <data name="QuestionColumn" xml:space="preserve">
+    <value>Fråga</value>
+  </data>
+  <data name="QuestionKind.MultiChoice" xml:space="preserve">
+    <value>Flera val</value>
+  </data>
+  <data name="QuestionKind.Ordering" xml:space="preserve">
+    <value>Sätt i ordning</value>
+  </data>
+  <data name="QuestionKind.ShortAnswer" xml:space="preserve">
+    <value>Kortsvar (bedöms manuellt)</value>
+  </data>
+  <data name="QuestionKind.SingleChoice" xml:space="preserve">
+    <value>Ett val</value>
+  </data>
+  <data name="QuestionKind.TrueFalse" xml:space="preserve">
+    <value>Sant eller falskt</value>
+  </data>
+  <data name="QuestionKindLabel" xml:space="preserve">
+    <value>Frågetyp</value>
+  </data>
+  <data name="QuestionNumberFormat" xml:space="preserve">
+    <value>Fråga {0} av {1}</value>
+  </data>
+  <data name="QuestionsCountFormat" xml:space="preserve">
+    <value>{0} frågor</value>
+  </data>
+  <data name="QuestionTextLabel" xml:space="preserve">
+    <value>Fråga</value>
+  </data>
+  <data name="RandomizeLabel" xml:space="preserve">
+    <value>Blanda svarsordningen</value>
+  </data>
+  <data name="RatingHelp" xml:space="preserve">
+    <value>1 är dåligt, 5 är utmärkt.</value>
+  </data>
+  <data name="ReassignDaysLabel" xml:space="preserve">
+    <value>Dagar att slutföra vid ny tilldelning</value>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Skicka tillbaka till utkast</value>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>Versionen skickades tillbaka till utkast.</value>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>Skäl till återsändning</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="RenameButton" xml:space="preserve">
+    <value>Byt namn</value>
+  </data>
+  <data name="RequiredLabel" xml:space="preserve">
+    <value>Krävs för att slutföra kursen</value>
+  </data>
+  <data name="RequiredWatchLabel" xml:space="preserve">
+    <value>Titta på minst (%)</value>
+  </data>
+  <data name="ResponsesColumn" xml:space="preserve">
+    <value>Svar</value>
+  </data>
+  <data name="ResponsesFormat" xml:space="preserve">
+    <value>{0} anonyma svar</value>
+  </data>
+  <data name="ResultColumn" xml:space="preserve">
+    <value>Resultat</value>
+  </data>
+  <data name="ResultTitle" xml:space="preserve">
+    <value>Resultat</value>
+  </data>
+  <data name="ResumeAttemptButton" xml:space="preserve">
+    <value>Fortsätt ditt försök</value>
+  </data>
+  <data name="ResumeButton" xml:space="preserve">
+    <value>Fortsätt</value>
+  </data>
+  <data name="RetakeButton" xml:space="preserve">
+    <value>Försök igen</value>
+  </data>
+  <data name="RetireButton" xml:space="preserve">
+    <value>Avveckla</value>
+  </data>
+  <data name="RetireConfirm" xml:space="preserve">
+    <value>Avveckla kursen? Den försvinner ur katalogen; redan anmälda medlemmar kan fortfarande slutföra den.</value>
+  </data>
+  <data name="RetiredBadge" xml:space="preserve">
+    <value>avvecklad</value>
+  </data>
+  <data name="RetiredMessage" xml:space="preserve">
+    <value>Kursen avvecklades.</value>
+  </data>
+  <data name="RetiredQuestionMessage" xml:space="preserve">
+    <value>Frågan avvecklades.</value>
+  </data>
+  <data name="RetireQuestionConfirm" xml:space="preserve">
+    <value>Avveckla frågan? Försök som drog den behåller sin kopia.</value>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Granska</value>
+  </data>
+  <data name="ReviewQueueHeader" xml:space="preserve">
+    <value>Väntar på godkännande</value>
+  </data>
+  <data name="RightAssign" xml:space="preserve">
+    <value>tilldela</value>
+  </data>
+  <data name="RightEdit" xml:space="preserve">
+    <value>redigera</value>
+  </data>
+  <data name="RightReport" xml:space="preserve">
+    <value>rapporter</value>
+  </data>
+  <data name="RightsColumn" xml:space="preserve">
+    <value>Rättigheter</value>
+  </data>
+  <data name="RolePathsHeader" xml:space="preserve">
+    <value>Rollvägar</value>
+  </data>
+  <data name="RolePathsIntro" xml:space="preserve">
+    <value>Ordnade listor med akademilektioner för en roll. Att tilldela en väg tilldelar varje lektion i den som din organisation har.</value>
+  </data>
+  <data name="RolesLabel" xml:space="preserve">
+    <value>Roller</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="SavedMessage" xml:space="preserve">
+    <value>Sparat.</value>
+  </data>
+  <data name="SaveGradeButton" xml:space="preserve">
+    <value>Spara bedömning</value>
+  </data>
+  <data name="SaveLessonButton" xml:space="preserve">
+    <value>Spara lektion</value>
+  </data>
+  <data name="ScoreColumn" xml:space="preserve">
+    <value>Poäng</value>
+  </data>
+  <data name="SeatTimeRequirement" xml:space="preserve">
+    <value>Den här lektionen kräver minst {0} min (du har {1} min).</value>
+  </data>
+  <data name="SelfEnrollLabel" xml:space="preserve">
+    <value>Medlemmar får anmäla sig själva i katalogen</value>
+  </data>
+  <data name="SharedBadge" xml:space="preserve">
+    <value>Delad</value>
+  </data>
+  <data name="SharedBankLabel" xml:space="preserve">
+    <value>Delad med alla kursförfattare</value>
+  </data>
+  <data name="SharingColumn" xml:space="preserve">
+    <value>Delning</value>
+  </data>
+  <data name="ShowAnswers.AfterPassing" xml:space="preserve">
+    <value>Facit, när det är godkänt</value>
+  </data>
+  <data name="ShowAnswers.Always" xml:space="preserve">
+    <value>Facit efter varje försök</value>
+  </data>
+  <data name="ShowAnswers.CorrectnessOnly" xml:space="preserve">
+    <value>Vilka svar som var rätt, utan facit</value>
+  </data>
+  <data name="ShowAnswers.Never" xml:space="preserve">
+    <value>Bara poäng</value>
+  </data>
+  <data name="ShowAnswersLabel" xml:space="preserve">
+    <value>Visa svar</value>
+  </data>
+  <data name="Signature.ArtifactChanged" xml:space="preserve">
+    <value>versionen ändrades efter signeringen</value>
+  </data>
+  <data name="Signature.SubjectMissing" xml:space="preserve">
+    <value>versionen finns inte längre</value>
+  </data>
+  <data name="Signature.Valid" xml:space="preserve">
+    <value>stämmer med den här versionen</value>
+  </data>
+  <data name="Signature.Voided" xml:space="preserve">
+    <value>makulerad</value>
+  </data>
+  <data name="SizeColumn" xml:space="preserve">
+    <value>Storlek</value>
+  </data>
+  <data name="StandardOption" xml:space="preserve">
+    <value>Standardmall</value>
+  </data>
+  <data name="StartAssessmentButton" xml:space="preserve">
+    <value>Starta bedömningen</value>
+  </data>
+  <data name="StartButton" xml:space="preserve">
+    <value>Börja</value>
+  </data>
+  <data name="StartCrewViewingButton" xml:space="preserve">
+    <value>Titta tillsammans (gruppvisning)</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Läge</value>
+  </data>
+  <data name="StorageIntro" xml:space="preserve">
+    <value>Video som lagras för din organisation, jämfört med de 100 GB som LMS-tillägget ingår med.</value>
+  </data>
+  <data name="StorageTitle" xml:space="preserve">
+    <value>Videolagring</value>
+  </data>
+  <data name="SubmitAttemptButton" xml:space="preserve">
+    <value>Lämna in svar</value>
+  </data>
+  <data name="SubmitConfirm" xml:space="preserve">
+    <value>Skicka dina svar? Du kan inte ändra dem efteråt.</value>
+  </data>
+  <data name="SubmitForApprovalButton" xml:space="preserve">
+    <value>Skicka för godkännande</value>
+  </data>
+  <data name="SubmitSurveyButton" xml:space="preserve">
+    <value>Skicka svar</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Inlämnad</value>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>Versionen skickades för godkännande.</value>
+  </data>
+  <data name="SummaryLabel" xml:space="preserve">
+    <value>Sammanfattning</value>
+  </data>
+  <data name="SurveyAnonymous" xml:space="preserve">
+    <value>Dina svar är anonyma: befäl ser bara summor, från tre svar.</value>
+  </data>
+  <data name="SurveyFormatHelp" xml:space="preserve">
+    <value>En per rad: "rating: text", "text: text" eller "choice: text | alternativ | alternativ".</value>
+  </data>
+  <data name="SurveyQuestionsLabel" xml:space="preserve">
+    <value>Enkätfrågor</value>
+  </data>
+  <data name="SurveyResultsTitle" xml:space="preserve">
+    <value>Kursutvärdering</value>
+  </data>
+  <data name="SurveyThanksMessage" xml:space="preserve">
+    <value>Tack, dina svar sparades anonymt.</value>
+  </data>
+  <data name="SurveyTooFew" xml:space="preserve">
+    <value>Resultaten visas från {0} svar, så att inget svar kan spåras till en medlem.</value>
+  </data>
+  <data name="TagsLabel" xml:space="preserve">
+    <value>Taggar</value>
+  </data>
+  <data name="TestedOutBadge" xml:space="preserve">
+    <value>Godkänd via förtest</value>
+  </data>
+  <data name="TimeLimitFormat" xml:space="preserve">
+    <value>Tidsgräns {0} min</value>
+  </data>
+  <data name="TimeLimitLabel" xml:space="preserve">
+    <value>Tidsgräns (minuter, 0 = ingen)</value>
+  </data>
+  <data name="TimeRemainingFormat" xml:space="preserve">
+    <value>{0} min kvar</value>
+  </data>
+  <data name="TitleLabel" xml:space="preserve">
+    <value>Rubrik</value>
+  </data>
+  <data name="TooFewAttempts" xml:space="preserve">
+    <value>för få försök</value>
+  </data>
+  <data name="TranscriptHeader" xml:space="preserve">
+    <value>Transkription</value>
+  </data>
+  <data name="TranscriptLink" xml:space="preserve">
+    <value>Utbildningsintyg</value>
+  </data>
+  <data name="UploadButton" xml:space="preserve">
+    <value>Ladda upp</value>
+  </data>
+  <data name="UploadCaptionsButton" xml:space="preserve">
+    <value>Ladda upp textning</value>
+  </data>
+  <data name="UploadedColumn" xml:space="preserve">
+    <value>Uppladdad</value>
+  </data>
+  <data name="UploadedMessage" xml:space="preserve">
+    <value>Uppladdat. Videor bearbetas i bakgrunden och spelas när de är klara.</value>
+  </data>
+  <data name="UploadVideoLabel" xml:space="preserve">
+    <value>Ladda upp en video</value>
+  </data>
+  <data name="UsedTile" xml:space="preserve">
+    <value>Använt</value>
+  </data>
+  <data name="VersionColumn" xml:space="preserve">
+    <value>Utgåva</value>
+  </data>
+  <data name="VersionLabelFormat" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+  <data name="VersionSettingsHeader" xml:space="preserve">
+    <value>Versionsinställningar</value>
+  </data>
+  <data name="VersionsHeader" xml:space="preserve">
+    <value>Utgåvor</value>
+  </data>
+  <data name="VersionStatus.Approved" xml:space="preserve">
+    <value>Godkänd</value>
+  </data>
+  <data name="VersionStatus.Draft" xml:space="preserve">
+    <value>Utkast</value>
+  </data>
+  <data name="VersionStatus.InReview" xml:space="preserve">
+    <value>Granskas</value>
+  </data>
+  <data name="VersionStatus.Legacy" xml:space="preserve">
+    <value>Äldre</value>
+  </data>
+  <data name="VersionStatus.Published" xml:space="preserve">
+    <value>Publicerad</value>
+  </data>
+  <data name="VersionStatus.Retired" xml:space="preserve">
+    <value>Avvecklad</value>
+  </data>
+  <data name="VersionStatus.Superseded" xml:space="preserve">
+    <value>Ersatt</value>
+  </data>
+  <data name="VideoHelp" xml:space="preserve">
+    <value>Länkar till YouTube och Vimeo fungerar överallt. Uppladdad video ingår i LMS-tillägget: den omkodas till HLS och strömmas via signerade länkar.</value>
+  </data>
+  <data name="VideoSource.Embed" xml:space="preserve">
+    <value>YouTube eller Vimeo</value>
+  </data>
+  <data name="VideoSource.Hosted" xml:space="preserve">
+    <value>Uppladdad (LMS)</value>
+  </data>
+  <data name="VideoSourceLabel" xml:space="preserve">
+    <value>Videokälla</value>
+  </data>
+  <data name="VideosTile" xml:space="preserve">
+    <value>Videor</value>
+  </data>
+  <data name="VideoUnavailable" xml:space="preserve">
+    <value>Den här videon är inte tillgänglig just nu.</value>
+  </data>
+  <data name="VideoUrlLabel" xml:space="preserve">
+    <value>Länk till YouTube eller Vimeo</value>
+  </data>
+  <data name="WalkthroughBadge" xml:space="preserve">
+    <value>Genomgång</value>
+  </data>
+  <data name="WatchAgainButton" xml:space="preserve">
+    <value>Se igen</value>
+  </data>
+  <data name="WatchRequirement" xml:space="preserve">
+    <value>Titta på minst {0} % (du har sett {1} %).</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="WithdrawConfirm" xml:space="preserve">
+    <value>Ta bort medlemmen från kursen? Framstegen sparas.</value>
+  </data>
+  <data name="WithdrawDraftButton" xml:space="preserve">
+    <value>Tillbaka till utkast</value>
+  </data>
+  <data name="WithdrawnDraftMessage" xml:space="preserve">
+    <value>Versionen är ett utkast igen.</value>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>Medlemmen togs bort från kursen.</value>
+  </data>
+  <data name="YourAnswerLabel" xml:space="preserve">
+    <value>ditt svar</value>
+  </data>
+  <data name="YourAttemptsHeader" xml:space="preserve">
+    <value>Dina försök</value>
+  </data>
+  <data name="AidNothingAccepted" xml:space="preserve">
+    <value>Inget godkändes.</value>
+  </data>
+  <data name="AidBankNameFormat" xml:space="preserve">
+    <value>Utkast till frågor: {0}</value>
+  </data>
+  <data name="AidBankDescription" xml:space="preserve">
+    <value>Frågor som godkänts från utkasthjälpen. Granska dem innan du använder dem i ett prov.</value>
+  </data>
+  <data name="AidQuestionsSaved" xml:space="preserve">
+    <value>{0} fråga/frågor har lagts till i banken "{1}".</value>
+  </data>
+  <data name="AidOpenBank" xml:space="preserve">
+    <value>Öppna banken</value>
+  </data>
+  <data name="AidOutlineSaved" xml:space="preserve">
+    <value>{0} modul(er) har lagts till i utkastet.</value>
+  </data>
+  <data name="Notify.MicroLearning" xml:space="preserve">
+    <value>Veckans protokollfråga ({0}) är klar. Svara under Protokoll, Mina bekräftelser, Veckans frågor.</value>
+  </data>
+  <data name="Notify.MicroLearning.Title" xml:space="preserve">
+    <value>Veckans protokollfråga</value>
+  </data>
+</root>

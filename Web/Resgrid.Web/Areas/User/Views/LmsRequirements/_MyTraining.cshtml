@@ -1,0 +1,125 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Lms
+@model LmsMyTrainingPanel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsPrograms.LmsPrograms> localizer
+@* My Training's requirements and paths (T3 item 8), rendered by the LmsMyTraining view component: the next requirement action first,
+   then every requirement with its state, and each learning path with its steps (locked, available, done). *@
+@{
+    var next = Model.Requirements.FirstOrDefault(r => r.Status.State == LmsRequirementStates.Overdue || r.Status.State == LmsRequirementStates.AtRisk || r.Status.State == LmsRequirementStates.Pending);
+}
+@if (next != null)
+{
+    <div class="rgw-next-action">
+        <strong><i class="fa fa-arrow-circle-right" aria-hidden="true"></i> @localizer["NextRequirementHeader"]</strong>
+        <div class="m-t-xs">
+            @next.Requirement.Name · @next.TargetName
+            @await Html.PartialAsync("~/Areas/User/Views/LmsRequirements/_StatePill.cshtml", next.Status.State)
+            @if (next.Status.ShownDueUtc.HasValue)
+            {
+                <span class="rgw-progress-honest">@string.Format(localizer["DueFormat"].Value, Model.Date(next.Status.ShownDueUtc))</span>
+            }
+            @if (next.CourseId.HasValue)
+            {
+                <a class="btn btn-primary btn-xs" asp-controller="Courses" asp-action="My" asp-route-area="User"><i class="fa fa-play" aria-hidden="true"></i> @localizer["OpenCourses"]</a>
+            }
+            else if (next.TrainingId.HasValue)
+            {
+                <a class="btn btn-primary btn-xs" asp-controller="Trainings" asp-action="View" asp-route-area="User" asp-route-trainingId="@next.TrainingId"><i class="fa fa-play" aria-hidden="true"></i> @localizer["OpenTraining"]</a>
+            }
+        </div>
+    </div>
+}
+
+@if (Model.Requirements.Count > 0)
+{
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5><i class="fa fa-check-circle-o" aria-hidden="true"></i> @localizer["MyRequirementsHeader"] (@Model.Requirements.Count)</h5>
+            @if (Model.CanSeeCompliance)
+            {
+                <div class="ibox-tools"><a asp-controller="LmsRequirements" asp-action="Compliance" asp-route-area="User"><i class="fa fa-th" aria-hidden="true"></i> @localizer["SubCompliance"]</a></div>
+            }
+        </div>
+        <div class="ibox-content">
+            <div class="table-responsive">
+                <table class="table rgw-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">@localizer["Requirement"]</th>
+                            <th scope="col">@localizer["Status"]</th>
+                            <th scope="col">@localizer["DueOn"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Requirements)
+                        {
+                            <tr>
+                                <td>@item.Requirement.Name<div class="rgw-sub">@item.TargetName</div></td>
+                                <td>
+                                    @await Html.PartialAsync("~/Areas/User/Views/LmsRequirements/_StatePill.cshtml", item.Status.State)
+                                    @if (item.Requirement.IsCounted && !item.Status.Satisfied)
+                                    {
+                                        <div class="rgw-progress-honest">@string.Format(localizer["ProgressFormat"].Value, item.Status.Progress.ToString("0.##"), item.Status.Required.ToString("0.##"))</div>
+                                    }
+                                </td>
+                                <td>@Model.Date(item.Status.ShownDueUtc)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+@foreach (var path in Model.Paths)
+{
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5><i class="fa fa-road" aria-hidden="true"></i> @path.Title</h5>
+            <div class="ibox-tools"><span class="rgw-progress-honest">@string.Format(localizer["StepsDoneFormat"].Value, path.Progress.Done, path.Progress.Needed)</span></div>
+        </div>
+        <div class="ibox-content">
+            @if (path.Assignment.CompletedOn.HasValue || path.Progress.Complete)
+            {
+                <p><i class="fa fa-check text-navy" aria-hidden="true"></i> @string.Format(localizer["PathCompletedFormat"].Value, Model.Date(path.Assignment.CompletedOn ?? path.Progress.CompletedOn))</p>
+            }
+            else if (path.Assignment.DueOn.HasValue)
+            {
+                <p class="rgw-progress-honest">@string.Format(localizer["DueFormat"].Value, Model.Date(path.Assignment.DueOn))</p>
+            }
+            <ol class="rgw-journey">
+                @foreach (var step in path.Progress.Steps)
+                {
+                    var title = path.StepTitles.TryGetValue(step.Step.SortOrder, out var t) ? t : null;
+                    <li>
+                        @if (step.State == LmsPathStepStates.Done)
+                        {
+                            <i class="fa fa-check-circle text-navy" aria-hidden="true"></i> @title <span class="sr-only">@localizer["StepDone"]</span>
+                        }
+                        else if (step.State == LmsPathStepStates.Locked)
+                        {
+                            <i class="fa fa-lock text-muted" aria-hidden="true"></i> <span class="text-muted">@title</span> <small class="text-muted">@localizer["StepLocked"]</small>
+                        }
+                        else if (path.StepEnrollmentIds.TryGetValue(step.Step.SortOrder, out var enrollmentId))
+                        {
+                            <i class="fa fa-circle-o" aria-hidden="true"></i> <a asp-controller="Courses" asp-action="Play" asp-route-area="User" asp-route-id="@enrollmentId">@title</a>
+                        }
+                        else if (step.Step.Kind == (int)LmsPathStepKinds.Training)
+                        {
+                            <i class="fa fa-circle-o" aria-hidden="true"></i> <a asp-controller="Trainings" asp-action="View" asp-route-area="User" asp-route-trainingId="@step.Step.TargetRefId">@title</a>
+                        }
+                        else
+                        {
+                            <i class="fa fa-circle-o" aria-hidden="true"></i> @title <small class="text-muted">@localizer["StepAvailable"]</small>
+                        }
+                        @if (step.Step.ElectiveGroup.HasValue)
+                        {
+                            <small class="text-muted">· @localizer["ElectiveBadge"]</small>
+                        }
+                    </li>
+                }
+            </ol>
+        </div>
+    </div>
+}

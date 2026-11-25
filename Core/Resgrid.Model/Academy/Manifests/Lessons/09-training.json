@@ -1,0 +1,212 @@
+{
+  "schema": 1,
+  "id": "09-training",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Training",
+  "minutes": 2.7,
+  "walkthrough": false,
+  "audience": [
+    "member",
+    "training-officer"
+  ],
+  "visibility": [],
+  "pages": [
+    "Trainings",
+    "Certifications"
+  ],
+  "adminAssist": {
+    "areas": [
+      "training",
+      "lms"
+    ],
+    "capabilities": [
+      "trainings",
+      "new-training",
+      "certification-types",
+      "certification-dashboard",
+      "my-certifications",
+      "training-transcript",
+      "my-courses",
+      "academy",
+      "lms-course-builder"
+    ]
+  },
+  "media": {
+    "video": "media/09-training.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/09-training.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Assign learning and track qualifications",
+    "ar": "أسند التعلم وتتبع المؤهلات",
+    "de": "Schulungen zuweisen und Qualifikationen verfolgen",
+    "el": "Αναθέστε εκπαίδευση και παρακολουθήστε τα προσόντα",
+    "es": "Asignar formación y seguir las cualificaciones",
+    "fr": "Attribuer des formations et suivre les qualifications",
+    "it": "Assegnare formazione e seguire le qualifiche",
+    "pl": "Przypisuj szkolenia i śledź kwalifikacje",
+    "sv": "Tilldela utbildning och följ behörigheter",
+    "uk": "Призначайте навчання та відстежуйте кваліфікації"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "Where does a member see the training assigned to them?",
+        "ar": "أين يرى العضو التدريب المسند إليه؟",
+        "de": "Wo sieht ein Mitglied die ihm zugewiesenen Schulungen?",
+        "el": "Πού βλέπει ένα μέλος την εκπαίδευση που του ανατέθηκε;",
+        "es": "¿Dónde ve un miembro la formación que se le asignó?",
+        "fr": "Où un membre voit-il les formations qui lui sont attribuées ?",
+        "it": "Dove vede un membro la formazione assegnata?",
+        "pl": "Gdzie członek widzi przypisane mu szkolenia?",
+        "sv": "Var ser en medlem utbildningen som tilldelats hen?",
+        "uk": "Де учасник бачить призначене йому навчання?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "In My Training",
+            "ar": "في تدريبي",
+            "de": "Unter „Meine Schulungen“",
+            "el": "Στο Η εκπαίδευσή μου",
+            "es": "En Mi formación",
+            "fr": "Dans Ma formation",
+            "it": "In La mia formazione",
+            "pl": "W sekcji Moje szkolenia",
+            "sv": "Under Min utbildning",
+            "uk": "У розділі «Моє навчання»"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "On the billing page",
+            "ar": "في صفحة الفوترة",
+            "de": "Auf der Abrechnungsseite",
+            "el": "Στη σελίδα χρεώσεων",
+            "es": "En la página de facturación",
+            "fr": "Sur la page de facturation",
+            "it": "Nella pagina di fatturazione",
+            "pl": "Na stronie rozliczeń",
+            "sv": "På faktureringssidan",
+            "uk": "На сторінці оплати"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "In the call log",
+            "ar": "في سجل البلاغات",
+            "de": "Im Einsatzprotokoll",
+            "el": "Στο αρχείο κλήσεων",
+            "es": "En el registro de llamadas",
+            "fr": "Dans le journal des interventions",
+            "it": "Nel registro delle chiamate",
+            "pl": "W rejestrze zgłoszeń",
+            "sv": "I larmloggen",
+            "uk": "У журналі викликів"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "What should happen when a certification is close to expiring?",
+        "ar": "ماذا يجب أن يحدث عندما توشك شهادة على الانتهاء؟",
+        "de": "Was sollte passieren, wenn eine Zertifizierung bald abläuft?",
+        "el": "Τι πρέπει να γίνει όταν μια πιστοποίηση πλησιάζει τη λήξη;",
+        "es": "¿Qué debe ocurrir cuando una certificación está por caducar?",
+        "fr": "Que doit-il se passer quand une certification arrive à expiration ?",
+        "it": "Che cosa deve succedere quando una certificazione sta per scadere?",
+        "pl": "Co powinno się stać, gdy certyfikat wkrótce wygaśnie?",
+        "sv": "Vad ska hända när ett certifikat snart går ut?",
+        "uk": "Що має статися, коли сертифікація скоро спливає?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Nothing",
+            "ar": "لا شيء",
+            "de": "Nichts",
+            "el": "Τίποτα",
+            "es": "Nada",
+            "fr": "Rien",
+            "it": "Niente",
+            "pl": "Nic",
+            "sv": "Ingenting",
+            "uk": "Нічого"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "The member renews it and the record is updated",
+            "ar": "يجددها العضو ويُحدَّث السجل",
+            "de": "Das Mitglied erneuert sie und der Eintrag wird aktualisiert",
+            "el": "Το μέλος την ανανεώνει και η εγγραφή ενημερώνεται",
+            "es": "El miembro la renueva y se actualiza el registro",
+            "fr": "Le membre la renouvelle et le dossier est mis à jour",
+            "it": "Il membro la rinnova e il registro viene aggiornato",
+            "pl": "Członek ją odnawia, a wpis jest aktualizowany",
+            "sv": "Medlemmen förnyar det och posten uppdateras",
+            "uk": "Учасник її подовжує, і запис оновлюється"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "The member is deleted",
+            "ar": "يُحذف العضو",
+            "de": "Das Mitglied wird gelöscht",
+            "el": "Το μέλος διαγράφεται",
+            "es": "Se elimina al miembro",
+            "fr": "Le membre est supprimé",
+            "it": "Il membro viene eliminato",
+            "pl": "Członek zostaje usunięty",
+            "sv": "Medlemmen raderas",
+            "uk": "Учасника видаляють"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "f",
+      "text": {
+        "en": "Completed training disappears from the member's transcript.",
+        "ar": "يختفي التدريب المكتمل من السجل التدريبي للعضو.",
+        "de": "Abgeschlossene Schulungen verschwinden aus dem Nachweis des Mitglieds.",
+        "el": "Η ολοκληρωμένη εκπαίδευση εξαφανίζεται από την αναλυτική βαθμολογία του μέλους.",
+        "es": "La formación completada desaparece del expediente del miembro.",
+        "fr": "Les formations terminées disparaissent du relevé du membre.",
+        "it": "La formazione completata scompare dal libretto del membro.",
+        "pl": "Ukończone szkolenia znikają z wykazu szkoleń członka.",
+        "sv": "Slutförd utbildning försvinner från medlemmens utbildningsintyg.",
+        "uk": "Завершене навчання зникає із залікової книжки учасника."
+      }
+    }
+  ]
+}

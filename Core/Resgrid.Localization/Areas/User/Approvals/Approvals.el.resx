@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboveAmountNote" xml:space="preserve">
+    <value>(πάνω από {0})</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Ενέργειες</value>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>Ενεργή</value>
+  </data>
+  <data name="AddDelegateHeading" xml:space="preserve">
+    <value>Προσθήκη αναπληρωτή</value>
+  </data>
+  <data name="AgreementDeletedMessage" xml:space="preserve">
+    <value>Η συμφωνία διαγράφηκε.</value>
+  </data>
+  <data name="AgreementInvalidMessage" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση της συμφωνίας. Ελέγξτε τον τίτλο και τις ημερομηνίες· μια εγκεκριμένη συμφωνία δεν μπορεί να αλλάξει.</value>
+  </data>
+  <data name="AgreementSavedMessage" xml:space="preserve">
+    <value>Η συμφωνία αποθηκεύτηκε.</value>
+  </data>
+  <data name="AgreementTitleLabel" xml:space="preserve">
+    <value>Συμφωνία</value>
+  </data>
+  <data name="AgreementsIntro" xml:space="preserve">
+    <value>Συμφωνίες αμοιβαίας συνδρομής που εγκρίνει και σφραγίζει το τμήμα σας.</value>
+  </data>
+  <data name="AgreementsTab" xml:space="preserve">
+    <value>Συμφωνίες αμοιβαίας συνδρομής</value>
+  </data>
+  <data name="AllMyApprovalsLink" xml:space="preserve">
+    <value>Όλες οι εγκρίσεις μου</value>
+  </data>
+  <data name="AllowSelfApprovalLabel" xml:space="preserve">
+    <value>Να επιτρέπεται στον υποβάλλοντα να εγκρίνει</value>
+  </data>
+  <data name="AmountColumn" xml:space="preserve">
+    <value>Ποσό</value>
+  </data>
+  <data name="ApplyErrorNote" xml:space="preserve">
+    <value>Η έγκριση ισχύει, αλλά η ενότητα δεν μπόρεσε να την εφαρμόσει (την απέρριψαν οι δικοί της κανόνες). Ολοκληρώστε το βήμα στην ενότητα.</value>
+  </data>
+  <data name="ApprovalsHeading" xml:space="preserve">
+    <value>Εγκρίσεις</value>
+  </data>
+  <data name="ApprovalsModuleTitle" xml:space="preserve">
+    <value>Εγκρίσεις</value>
+  </data>
+  <data name="ApproveButton" xml:space="preserve">
+    <value>Έγκριση</value>
+  </data>
+  <data name="ApprovePanelTitle" xml:space="preserve">
+    <value>Η έγκρισή σας</value>
+  </data>
+  <data name="ApprovedByColumn" xml:space="preserve">
+    <value>Εγκρίθηκε από</value>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>Η έγκρισή σας καταγράφηκε.</value>
+  </data>
+  <data name="ApprovedStepsLabel" xml:space="preserve">
+    <value>Εγκεκριμένα βήματα</value>
+  </data>
+  <data name="ApproverColumn" xml:space="preserve">
+    <value>Εγκρίνων</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="CandidatesHeading" xml:space="preserve">
+    <value>Έτοιμα για υποβολή</value>
+  </data>
+  <data name="CertificationTypeLabel" xml:space="preserve">
+    <value>Τύπος πιστοποίησης</value>
+  </data>
+  <data name="ChainDeactivatedMessage" xml:space="preserve">
+    <value>Η αλυσίδα απενεργοποιήθηκε.</value>
+  </data>
+  <data name="ChainEditorHelp" xml:space="preserve">
+    <value>Τα βήματα με τον ίδιο αριθμό εκτελούνται παράλληλα και πρέπει όλα να εγκρίνουν. Ένα όριο περιορίζει ένα βήμα σε ποσά πάνω από αυτό. Η αποθήκευση δημιουργεί νέα έκδοση· τα αιτήματα που έχουν ήδη υποβληθεί κρατούν τα βήματα με τα οποία ξεκίνησαν.</value>
+  </data>
+  <data name="ChainNameLabel" xml:space="preserve">
+    <value>Όνομα αλυσίδας</value>
+  </data>
+  <data name="ChainSavedMessage" xml:space="preserve">
+    <value>Η αλυσίδα εγκρίσεων αποθηκεύτηκε.</value>
+  </data>
+  <data name="ChainsIntro" xml:space="preserve">
+    <value>Ποιος εγκρίνει τι, με ποια σειρά, πάνω από ποια ποσά και πότε κλιμακώνεται ένα βήμα που έχει κολλήσει.</value>
+  </data>
+  <data name="ChainsTab" xml:space="preserve">
+    <value>Αλυσίδες</value>
+  </data>
+  <data name="ChangedSinceApproval" xml:space="preserve">
+    <value>Αυτό άλλαξε μετά την έγκρισή του. Η έγκριση δεν ισχύει πλέον· υποβάλετέ το ξανά.</value>
+  </data>
+  <data name="ChangedSinceSubmission" xml:space="preserve">
+    <value>Αυτό άλλαξε μετά την υποβολή του. Οι προηγούμενες εγκρίσεις δεν μεταφέρονται· υποβάλετέ το ξανά.</value>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>Κωδικός περιεχομένου</value>
+  </data>
+  <data name="DeactivateChainButton" xml:space="preserve">
+    <value>Απενεργοποίηση</value>
+  </data>
+  <data name="DecidedColumn" xml:space="preserve">
+    <value>Απόφαση</value>
+  </data>
+  <data name="DefineChainButton" xml:space="preserve">
+    <value>Ορισμός αλυσίδας</value>
+  </data>
+  <data name="DelegateForLabel" xml:space="preserve">
+    <value>Μέλος</value>
+  </data>
+  <data name="DelegateHelp" xml:space="preserve">
+    <value>Όσο το μέλος βρίσκεται σε άδεια, τα ονομαστικά του βήματα έγκρισης πηγαίνουν και στον αναπληρωτή του. Με ημερομηνίες, ο αναπληρωτής τον αναπληρώνει επίσης στο διάστημα αυτό.</value>
+  </data>
+  <data name="DelegateInvalidMessage" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση του αναπληρωτή. Επιλέξτε δύο διαφορετικά ενεργά μέλη και έγκυρες ημερομηνίες.</value>
+  </data>
+  <data name="DelegateLabel" xml:space="preserve">
+    <value>Αναπληρωτής</value>
+  </data>
+  <data name="DelegateRemovedMessage" xml:space="preserve">
+    <value>Ο αναπληρωτής αφαιρέθηκε.</value>
+  </data>
+  <data name="DelegateSavedMessage" xml:space="preserve">
+    <value>Ο αναπληρωτής αποθηκεύτηκε.</value>
+  </data>
+  <data name="DelegatedNote" xml:space="preserve">
+    <value>Ανατέθηκε: ο ορισμένος εγκρίνων απουσιάζει</value>
+  </data>
+  <data name="DelegatesIntro" xml:space="preserve">
+    <value>Ποιος εγκρίνει για ένα μέλος όσο βρίσκεται σε άδεια.</value>
+  </data>
+  <data name="DelegatesTab" xml:space="preserve">
+    <value>Αναπληρωτές</value>
+  </data>
+  <data name="DeleteAgreementButton" xml:space="preserve">
+    <value>Διαγραφή συμφωνίας</value>
+  </data>
+  <data name="DepartmentLinkLabel" xml:space="preserve">
+    <value>Σύνδεσμος τμημάτων</value>
+  </data>
+  <data name="DownloadSealedLink" xml:space="preserve">
+    <value>Λήψη του σφραγισμένου εγγράφου</value>
+  </data>
+  <data name="DueByLabel" xml:space="preserve">
+    <value>έως {0}</value>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Προθεσμία</value>
+  </data>
+  <data name="EditChainButton" xml:space="preserve">
+    <value>Επεξεργασία αλυσίδας</value>
+  </data>
+  <data name="EditChainTitle" xml:space="preserve">
+    <value>Αλυσίδα εγκρίσεων</value>
+  </data>
+  <data name="EffectiveLabel" xml:space="preserve">
+    <value>Ισχύει από</value>
+  </data>
+  <data name="EndsLabel" xml:space="preserve">
+    <value>Λήξη</value>
+  </data>
+  <data name="EscalatedLabel" xml:space="preserve">
+    <value>Κλιμακώθηκε</value>
+  </data>
+  <data name="EscalatesAfterNote" xml:space="preserve">
+    <value>(κλιμάκωση μετά από {0} ώρ.)</value>
+  </data>
+  <data name="EscalationColumn" xml:space="preserve">
+    <value>Κλιμάκωση</value>
+  </data>
+  <data name="ExpiresInDaysLabel" xml:space="preserve">
+    <value>Λήγει μετά από (ημέρες)</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Ομάδα</value>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Αρχική</value>
+  </data>
+  <data name="HoursPlaceholder" xml:space="preserve">
+    <value>Ώρες (κενό: ποτέ)</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Μέλος</value>
+  </data>
+  <data name="MyApprovalsIntro" xml:space="preserve">
+    <value>Αιτήματα που περιμένουν την έγκρισή σας και αυτά που υποβάλατε.</value>
+  </data>
+  <data name="MyApprovalsTab" xml:space="preserve">
+    <value>Οι εγκρίσεις μου</value>
+  </data>
+  <data name="MyApprovalsTitle" xml:space="preserve">
+    <value>Οι εγκρίσεις μου</value>
+  </data>
+  <data name="MySubmissionsHeader" xml:space="preserve">
+    <value>Οι εκκρεμείς υποβολές μου</value>
+  </data>
+  <data name="NewAgreementButton" xml:space="preserve">
+    <value>Νέα συμφωνία</value>
+  </data>
+  <data name="NextApprovalLabel" xml:space="preserve">
+    <value>Επόμενο προς έγκριση</value>
+  </data>
+  <data name="NoAgreements" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη συμφωνίες αμοιβαίας συνδρομής.</value>
+  </data>
+  <data name="NoApprovalYet" xml:space="preserve">
+    <value>Δεν έχει υποβληθεί ακόμη για έγκριση.</value>
+  </data>
+  <data name="NoCandidates" xml:space="preserve">
+    <value>Τίποτα δεν περιμένει υποβολή.</value>
+  </data>
+  <data name="NoChainDefined" xml:space="preserve">
+    <value>Χωρίς αλυσίδα: αυτά δεν χρειάζονται έγκριση.</value>
+  </data>
+  <data name="NoDelegates" xml:space="preserve">
+    <value>Δεν υπάρχουν αναπληρωτές.</value>
+  </data>
+  <data name="NoPendingSubmissions" xml:space="preserve">
+    <value>Τίποτα σε εκκρεμότητα.</value>
+  </data>
+  <data name="NoRequests" xml:space="preserve">
+    <value>Δεν υπάρχουν αιτήματα.</value>
+  </data>
+  <data name="NothingToApprove" xml:space="preserve">
+    <value>Τίποτα δεν περιμένει την έγκρισή σας.</value>
+  </data>
+  <data name="OnLeaveOnly" xml:space="preserve">
+    <value>Κατά την άδεια</value>
+  </data>
+  <data name="OpenInModuleLink" xml:space="preserve">
+    <value>Άνοιγμα</value>
+  </data>
+  <data name="OpenRequestLink" xml:space="preserve">
+    <value>Άνοιγμα</value>
+  </data>
+  <data name="PartnerLabel" xml:space="preserve">
+    <value>Συνεργαζόμενο τμήμα</value>
+  </data>
+  <data name="PartnerSignatureOwedNote" xml:space="preserve">
+    <value>Η αλυσίδα του τμήματός σας εγκρίνει και σφραγίζει αυτή τη συμφωνία. Η προσυπογραφή του συνεργαζόμενου τμήματος μέσω του συνδέσμου τμημάτων δεν είναι ακόμη διαθέσιμη.</value>
+  </data>
+  <data name="PayrollRunsNote" xml:space="preserve">
+    <value>Οι εκκαθαρίσεις μισθοδοσίας θα αποκτήσουν αλυσίδα εγκρίσεων όταν υπάρξουν εκκαθαρίσεις μισθοδοσίας στο Resgrid.</value>
+  </data>
+  <data name="PendingApprovalsHeader" xml:space="preserve">
+    <value>Περιμένουν την έγκρισή σας</value>
+  </data>
+  <data name="PendingInDepartmentHeader" xml:space="preserve">
+    <value>Σε εκκρεμότητα στο τμήμα</value>
+  </data>
+  <data name="PendingSubmittedLabel" xml:space="preserve">
+    <value>Σε εκκρεμότητα</value>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Απόρριψη</value>
+  </data>
+  <data name="RejectHeading" xml:space="preserve">
+    <value>Απόρριψη</value>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>Αιτιολογία</value>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>Το αίτημα απορρίφθηκε και ενημερώθηκε ο υποβάλλων.</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Αφαίρεση</value>
+  </data>
+  <data name="RequestsIntro" xml:space="preserve">
+    <value>Όλα τα αιτήματα έγκρισης του τμήματος.</value>
+  </data>
+  <data name="RequestsTab" xml:space="preserve">
+    <value>Αιτήματα</value>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Εξέταση</value>
+  </data>
+  <data name="RoleLabel" xml:space="preserve">
+    <value>Ρόλος</value>
+  </data>
+  <data name="SaveAgreementButton" xml:space="preserve">
+    <value>Αποθήκευση συμφωνίας</value>
+  </data>
+  <data name="SaveChainButton" xml:space="preserve">
+    <value>Αποθήκευση αλυσίδας</value>
+  </data>
+  <data name="SaveDelegateButton" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="SealedNote" xml:space="preserve">
+    <value>Εγκρίθηκε και σφραγίστηκε.</value>
+  </data>
+  <data name="SealingPendingNote" xml:space="preserve">
+    <value>Εγκρίθηκε. Η σφράγιση εκκρεμεί: το σφραγισμένο έγγραφο θα δημιουργηθεί μόλις η υπηρεσία σφράγισης είναι διαθέσιμη.</value>
+  </data>
+  <data name="StartsLabel" xml:space="preserve">
+    <value>Έναρξη</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="StepApproved" xml:space="preserve">
+    <value>Εγκρίθηκε</value>
+  </data>
+  <data name="StepColumn" xml:space="preserve">
+    <value>Βήμα</value>
+  </data>
+  <data name="StepLabelPlaceholder" xml:space="preserve">
+    <value>Όνομα βήματος (προαιρετικό)</value>
+  </data>
+  <data name="StepNotYet" xml:space="preserve">
+    <value>Όχι ακόμη</value>
+  </data>
+  <data name="StepOrderColumn" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="StepRejected" xml:space="preserve">
+    <value>Απορρίφθηκε</value>
+  </data>
+  <data name="StepWaiting" xml:space="preserve">
+    <value>Σε αναμονή</value>
+  </data>
+  <data name="StepsHeading" xml:space="preserve">
+    <value>Βήματα</value>
+  </data>
+  <data name="StepsHelp" xml:space="preserve">
+    <value>Τα βήματα εκτελούνται με σειρά· τα βήματα με τον ίδιο αριθμό εκτελούνται παράλληλα. Κάθε έγκριση υπογράφεται σε επίπεδο 2 και δεσμεύεται στον κωδικό περιεχομένου.</value>
+  </data>
+  <data name="SubjectColumn" xml:space="preserve">
+    <value>Αντικείμενο</value>
+  </data>
+  <data name="SubjectGroupOption" xml:space="preserve">
+    <value>Η ομάδα του ίδιου του αντικειμένου</value>
+  </data>
+  <data name="SubjectHeading" xml:space="preserve">
+    <value>Τι εγκρίνεται</value>
+  </data>
+  <data name="SubmitForApprovalButton" xml:space="preserve">
+    <value>Υποβολή για έγκριση</value>
+  </data>
+  <data name="SubmitHeading" xml:space="preserve">
+    <value>Υποβολή για έγκριση</value>
+  </data>
+  <data name="SubmittedByLine" xml:space="preserve">
+    <value>Υποβλήθηκε από {0} στις {1} UTC</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Υποβλήθηκε</value>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>Υποβλήθηκε για έγκριση. Οι εγκρίνοντες ενημερώθηκαν.</value>
+  </data>
+  <data name="TermsLabel" xml:space="preserve">
+    <value>Όροι</value>
+  </data>
+  <data name="ThresholdColumn" xml:space="preserve">
+    <value>Μόνο πάνω από ποσό</value>
+  </data>
+  <data name="UseStepColumn" xml:space="preserve">
+    <value>Χρήση</value>
+  </data>
+  <data name="WaitingForMeLabel" xml:space="preserve">
+    <value>Περιμένουν εμένα</value>
+  </data>
+  <data name="WindowColumn" xml:space="preserve">
+    <value>Πότε</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Απόσυρση</value>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>Το αίτημα αποσύρθηκε.</value>
+  </data>
+  <data name="KindPurchaseRequisitionApproval" xml:space="preserve">
+    <value>Αιτήσεις αγοράς</value>
+  </data>
+  <data name="KindIncidentPlanApproval" xml:space="preserve">
+    <value>Σχέδια δράσης συμβάντος (IAP)</value>
+  </data>
+  <data name="KindInvoiceApproval" xml:space="preserve">
+    <value>Τιμολόγια</value>
+  </data>
+  <data name="KindPayrollRunApproval" xml:space="preserve">
+    <value>Εκκαθαρίσεις μισθοδοσίας</value>
+  </data>
+  <data name="KindCalOesMarsPackageApproval" xml:space="preserve">
+    <value>Πακέτα Cal OES MARS</value>
+  </data>
+  <data name="KindMutualAidAgreementApproval" xml:space="preserve">
+    <value>Συμφωνίες αμοιβαίας συνδρομής</value>
+  </data>
+  <data name="StatusPending" xml:space="preserve">
+    <value>Σε εκκρεμότητα</value>
+  </data>
+  <data name="StatusApproved" xml:space="preserve">
+    <value>Εγκρίθηκε</value>
+  </data>
+  <data name="StatusRejected" xml:space="preserve">
+    <value>Απορρίφθηκε</value>
+  </data>
+  <data name="StatusWithdrawn" xml:space="preserve">
+    <value>Αποσύρθηκε</value>
+  </data>
+  <data name="StatusSuperseded" xml:space="preserve">
+    <value>Αντικαταστάθηκε</value>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>Έληξε</value>
+  </data>
+  <data name="ApproverRole" xml:space="preserve">
+    <value>Οποιοσδήποτε με έναν ρόλο</value>
+  </data>
+  <data name="ApproverNamedMember" xml:space="preserve">
+    <value>Ένα συγκεκριμένο μέλος</value>
+  </data>
+  <data name="ApproverGroupAdmin" xml:space="preserve">
+    <value>Διαχειριστές ομάδας</value>
+  </data>
+  <data name="ApproverCertifyingOfficial" xml:space="preserve">
+    <value>Υπεύθυνος πιστοποίησης</value>
+  </data>
+  <data name="ApproverDepartmentAdmins" xml:space="preserve">
+    <value>Διαχειριστές τμήματος</value>
+  </data>
+  <data name="EscalateToDepartmentAdmins" xml:space="preserve">
+    <value>Κλιμάκωση στους διαχειριστές τμήματος</value>
+  </data>
+  <data name="EscalateToRole" xml:space="preserve">
+    <value>Κλιμάκωση σε ρόλο</value>
+  </data>
+  <data name="EscalateToNamedMember" xml:space="preserve">
+    <value>Κλιμάκωση σε μέλος</value>
+  </data>
+  <data name="AgreementStatusDraft" xml:space="preserve">
+    <value>Πρόχειρο</value>
+  </data>
+  <data name="AgreementStatusInApproval" xml:space="preserve">
+    <value>Σε έγκριση</value>
+  </data>
+  <data name="AgreementStatusApproved" xml:space="preserve">
+    <value>Εγκρίθηκε</value>
+  </data>
+  <data name="AgreementStatusWithdrawn" xml:space="preserve">
+    <value>Αποσύρθηκε</value>
+  </data>
+  <data name="RefusalNone" xml:space="preserve">
+    <value>Ολοκληρώθηκε.</value>
+  </data>
+  <data name="RefusalInvalidRequest" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η επεξεργασία του αιτήματος.</value>
+  </data>
+  <data name="RefusalSubjectNotFound" xml:space="preserve">
+    <value>Το στοιχείο δεν υπάρχει πλέον.</value>
+  </data>
+  <data name="RefusalModuleUnavailable" xml:space="preserve">
+    <value>Αυτή η ενότητα ή το πρόσθετό της δεν είναι ενεργό για το τμήμα σας.</value>
+  </data>
+  <data name="RefusalNoChain" xml:space="preserve">
+    <value>Το τμήμα σας δεν έχει αλυσίδα εγκρίσεων για αυτά.</value>
+  </data>
+  <data name="RefusalAlreadyPending" xml:space="preserve">
+    <value>Αυτό περιμένει ήδη έγκριση.</value>
+  </data>
+  <data name="RefusalUnchanged" xml:space="preserve">
+    <value>Τίποτα δεν άλλαξε από την έγκριση ή την απόρριψη. Αλλάξτε το πριν το υποβάλετε ξανά.</value>
+  </data>
+  <data name="RefusalNotSubmittable" xml:space="preserve">
+    <value>Αυτό δεν μπορεί να υποβληθεί στην τρέχουσα κατάστασή του.</value>
+  </data>
+  <data name="RefusalClosed" xml:space="preserve">
+    <value>Αυτό το αίτημα δεν εκκρεμεί πλέον.</value>
+  </data>
+  <data name="RefusalSubjectChanged" xml:space="preserve">
+    <value>Αυτό άλλαξε μετά την υποβολή του. Υποβάλετέ το ξανά.</value>
+  </data>
+  <data name="RefusalNotAnApprover" xml:space="preserve">
+    <value>Δεν είστε εγκρίνων για αυτό το βήμα.</value>
+  </data>
+  <data name="RefusalNotYourTurn" xml:space="preserve">
+    <value>Πρέπει πρώτα να εγκρίνει ένα προηγούμενο βήμα.</value>
+  </data>
+  <data name="RefusalStepUpRequired" xml:space="preserve">
+    <value>Επιβεβαιώστε την ταυτότητά σας (επαλήθευση δύο βημάτων ή κλειδί πρόσβασης) για να εγκρίνετε.</value>
+  </data>
+  <data name="RefusalPasskeyRequired" xml:space="preserve">
+    <value>Το τμήμα σας απαιτεί κλειδί πρόσβασης για αυτή την έγκριση.</value>
+  </data>
+  <data name="RefusalReasonRequired" xml:space="preserve">
+    <value>Δώστε αιτιολογία για την απόρριψη.</value>
+  </data>
+  <data name="RefusalNoApprover" xml:space="preserve">
+    <value>Ένα βήμα δεν ορίζει κανέναν που μπορεί να το εγκρίνει. Ελέγξτε τους ρόλους και τα μέλη της αλυσίδας.</value>
+  </data>
+  <data name="RefusalNotAllowed" xml:space="preserve">
+    <value>Μόνο ο υποβάλλων ή ένας διαχειριστής τμήματος μπορεί να το κάνει αυτό.</value>
+  </data>
+  <data name="RefusalSignatureFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η υπογραφή της έγκρισης. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="RefusalNotRequired" xml:space="preserve">
+    <value>Κανένα βήμα της αλυσίδας δεν ισχύει για αυτό το ποσό: δεν χρειάζεται έγκριση.</value>
+  </data>
+</root>

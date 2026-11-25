@@ -1,0 +1,54 @@
+@using Resgrid.Web.Areas.User.Models.Courses
+@model CourseWhoLists
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* Who an assignment is for: everyone, or any picked members, groups and roles (active members only), and an optional due date. *@
+@{
+    var prefix = ViewData["WhoPrefix"] as string ?? "who";
+    var withDue = ViewData["WhoDue"] as bool? ?? true;
+    // Rules already stored (a course's catalog audience) are shown selected, so saving other fields keeps them.
+    var selected = (ViewData["WhoSelected"] as IEnumerable<IContentAudienceRule> ?? Enumerable.Empty<IContentAudienceRule>()).ToList();
+    bool Picked(ContentAudienceKinds kind, string id) => selected.Any(r => r.Kind == (int)kind && string.Equals(r.RefId, id, StringComparison.OrdinalIgnoreCase));
+}
+<fieldset>
+    <legend class="sr-only">@localizer["AssignToLabel"]</legend>
+    <div class="checkbox">
+        <label><input type="checkbox" name="@(prefix).Everyone" value="true" /> @localizer["EveryoneOption"]</label>
+    </div>
+    <div class="rgw-grid">
+        <div class="form-group">
+            <label for="@(prefix)_Members">@localizer["MembersLabel"]</label>
+            <select id="@(prefix)_Members" name="@(prefix).Members" class="form-control" multiple size="6">
+                @foreach (var member in Model.Members.OrderBy(m => m.Value))
+                {
+                    <option value="@member.Key" selected="@Picked(ContentAudienceKinds.User, member.Key)">@member.Value</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="@(prefix)_Groups">@localizer["GroupsLabel"]</label>
+            <select id="@(prefix)_Groups" name="@(prefix).Groups" class="form-control" multiple size="6">
+                @foreach (var group in Model.Groups.OrderBy(g => g.Value))
+                {
+                    <option value="@group.Key" selected="@Picked(ContentAudienceKinds.Group, group.Key.ToString())">@group.Value</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="@(prefix)_Roles">@localizer["RolesLabel"]</label>
+            <select id="@(prefix)_Roles" name="@(prefix).Roles" class="form-control" multiple size="6">
+                @foreach (var role in Model.Roles.OrderBy(r => r.Value))
+                {
+                    <option value="@role.Key" selected="@Picked(ContentAudienceKinds.Role, role.Key.ToString())">@role.Value</option>
+                }
+            </select>
+        </div>
+        @if (withDue)
+        {
+            <div class="form-group">
+                <label for="@(prefix)_DueOn">@localizer["DueDateLabel"]</label>
+                <input id="@(prefix)_DueOn" name="@(prefix).DueOn" type="date" class="form-control" />
+                <span class="help-block">@localizer["DueDateHelp"]</span>
+            </div>
+        }
+    </div>
+</fieldset>

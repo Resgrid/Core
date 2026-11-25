@@ -38,6 +38,7 @@ namespace Resgrid.Tests.Web.User
 		private Mock<IAuthorizationService> _authorization;
 		private Mock<IDepartmentsService> _departments;
 		private Mock<IEventAggregator> _events;
+		private Mock<IProtocolLibraryService> _library;
 		private ProtocolsController _controller;
 
 		[SetUp]
@@ -48,6 +49,19 @@ namespace Resgrid.Tests.Web.User
 			_authorization = new Mock<IAuthorizationService>();
 			_departments = new Mock<IDepartmentsService>();
 			_events = new Mock<IEventAggregator>();
+			// P1: New creates a draft protocol through the library (its first draft version holds the text).
+			_library = new Mock<IProtocolLibraryService>();
+			_library.Setup(x => x.GetSettingsAsync(DepartmentId)).ReturnsAsync(new ProtocolLibrarySettings());
+			_library.Setup(x => x.UpdateLibraryFieldsAsync(It.IsAny<ProtocolReader>(), It.IsAny<int>(), It.IsAny<ProtocolLibraryFields>(), It.IsAny<long>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new ProtocolLifecycleResult());
+			_library.Setup(x => x.SetAudienceAsync(It.IsAny<ProtocolReader>(), It.IsAny<int>(), It.IsAny<IEnumerable<IContentAudienceRule>>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new ProtocolLifecycleResult());
+			_library.Setup(x => x.SaveDraftAsync(It.IsAny<ProtocolReader>(), It.IsAny<int>(), It.IsAny<ProtocolDraftInput>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((ProtocolReader _, int id, ProtocolDraftInput input, CancellationToken __) => new ProtocolLifecycleResult
+				{
+					Version = new ProtocolVersion { ProtocolVersionId = 2, DispatchProtocolId = id, ContentHtml = input.ContentHtml, RowVersion = 1 }
+				});
+			CaptureCreated(_ => { });
 
 			_callsService.Setup(x => x.GetCallPrioritiesForDepartmentAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(new List<DepartmentCallPriority>
 			{
@@ -78,7 +92,8 @@ namespace Resgrid.Tests.Web.User
 			Resgrid.Web.Helpers.ClaimsAuthorizationHelper._httpContextAccessor =
 				new HttpContextAccessor { HttpContext = httpContext };
 
-			_controller = new ProtocolsController(_protocolsService.Object, _callsService.Object, _authorization.Object, _departments.Object, _events.Object)
+			_controller = new ProtocolsController(_protocolsService.Object, _callsService.Object, _authorization.Object, _departments.Object, Mock.Of<IMappingService>(), _events.Object,
+				library: _library.Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};
@@ -90,6 +105,14 @@ namespace Resgrid.Tests.Web.User
 		{
 			Resgrid.Web.Helpers.ClaimsAuthorizationHelper._httpContextAccessor = null;
 		}
+
+		private void CaptureCreated(Action<DispatchProtocol> saved) =>
+			_library.Setup(x => x.CreateAsync(It.IsAny<ProtocolCreateRequest>(), It.IsAny<CancellationToken>()))
+				.Callback((ProtocolCreateRequest r, CancellationToken _) => saved(r.Protocol))
+				.ReturnsAsync((ProtocolCreateRequest r, CancellationToken _) => new ProtocolLifecycleResult
+				{
+					Protocol = r.Protocol, Version = new ProtocolVersion { ProtocolVersionId = 1, ContentHtml = r.ContentHtml, RowVersion = 1 }
+				});
 
 		private static DispatchProtocol Existing() => new DispatchProtocol
 		{
@@ -113,9 +136,7 @@ namespace Resgrid.Tests.Web.User
 		public async Task New_saves_a_trigger_by_call_type_id_and_priority_with_its_window_in_utc()
 		{
 			DispatchProtocol saved = null;
-			_protocolsService.Setup(x => x.SaveProtocolAsync(It.IsAny<DispatchProtocol>(), It.IsAny<CancellationToken>()))
-				.Callback<DispatchProtocol, CancellationToken>((p, _) => saved = p)
-				.ReturnsAsync((DispatchProtocol p, CancellationToken _) => p);
+			CaptureCreated(p => saved = p);
 
 			var model = new ProtocolEditorModel
 			{
@@ -130,7 +151,8 @@ namespace Resgrid.Tests.Web.User
 
 			var result = await _controller.New(model, null);
 
-			result.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("View");
+			// A new protocol is a draft: the author lands in its editor, not on a published page.
+			result.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("Edit");
 			saved.Code.Should().Be("SOG-204");
 			var trigger = saved.Triggers.Should().ContainSingle().Subject;
 			trigger.Type.Should().Be(2);
@@ -144,9 +166,7 @@ namespace Resgrid.Tests.Web.User
 		public async Task New_stores_no_type_as_a_null_id_not_a_label()
 		{
 			DispatchProtocol saved = null;
-			_protocolsService.Setup(x => x.SaveProtocolAsync(It.IsAny<DispatchProtocol>(), It.IsAny<CancellationToken>()))
-				.Callback<DispatchProtocol, CancellationToken>((p, _) => saved = p)
-				.ReturnsAsync((DispatchProtocol p, CancellationToken _) => p);
+			CaptureCreated(p => saved = p);
 
 			await _controller.New(new ProtocolEditorModel { Name = "Untyped", Code = "UT", Triggers = new List<ProtocolTriggerInput> { new ProtocolTriggerInput { Key = "t1", Type = 1 } } }, null);
 
@@ -173,11 +193,11 @@ namespace Resgrid.Tests.Web.User
 			var result = await _controller.New(model, null);
 
 			var view = result.Should().BeOfType<ViewResult>().Subject;
-			view.ViewName.Should().Be("Edit");
+			view.ViewName.Should().Be("New");
 			var shown = view.Model.Should().BeOfType<ProtocolEditorModel>().Subject;
 			shown.Triggers.Should().ContainSingle(t => t.Key == "tnew1" && t.Priority == 3);
 			shown.Questions.Should().ContainSingle(q => q.Key == "qnew1" && q.Text == "Conscious?" && q.Answers.Single().Text == "Yes");
-			_protocolsService.Verify(x => x.SaveProtocolAsync(It.IsAny<DispatchProtocol>(), It.IsAny<CancellationToken>()), Times.Never);
+			_library.Verify(x => x.CreateAsync(It.IsAny<ProtocolCreateRequest>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[TestCase("09-E-01-ABCD/123", true)]
@@ -289,9 +309,7 @@ namespace Resgrid.Tests.Web.User
 		public async Task Uploads_are_read_whole_and_limited_in_count()
 		{
 			DispatchProtocol saved = null;
-			_protocolsService.Setup(x => x.SaveProtocolAsync(It.IsAny<DispatchProtocol>(), It.IsAny<CancellationToken>()))
-				.Callback<DispatchProtocol, CancellationToken>((p, _) => saved = p)
-				.ReturnsAsync((DispatchProtocol p, CancellationToken _) => p);
+			CaptureCreated(p => saved = p);
 
 			IFormFile File(string name, int size)
 			{

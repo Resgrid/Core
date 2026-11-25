@@ -1,0 +1,841 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AcademyPathsHeader" xml:space="preserve">
+    <value>Rollvägar i Resgrid Academy</value>
+  </data>
+  <data name="AcademyPathsIntro" xml:space="preserve">
+    <value>Kostnadsfria för alla avdelningar. Resgrid underhåller stegen; du kan tilldela dem och använda dem i krav.</value>
+  </data>
+  <data name="AcademyPrefix" xml:space="preserve">
+    <value>Academy:</value>
+  </data>
+  <data name="ActedOn" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="AddStep" xml:space="preserve">
+    <value>Lägg till steg</value>
+  </data>
+  <data name="AddStepNoScript" xml:space="preserve">
+    <value>Spara för att lägga till fler steg.</value>
+  </data>
+  <data name="AddonNotice" xml:space="preserve">
+    <value>Utbildningskrav ingår i LMS-tillägget. Du kan se dem; för att skapa och ändra dem krävs tillägget.</value>
+  </data>
+  <data name="AlertOnCompletionLabel" xml:space="preserve">
+    <value>Meddela dem också när en medlem slutför eller förnyar det</value>
+  </data>
+  <data name="AlertSupervisorsLabel" xml:space="preserve">
+    <value>Meddela medlemmens gruppadministratörer när medlemmen är försenad</value>
+  </data>
+  <data name="AlertUsersLabel" xml:space="preserve">
+    <value>Meddela också dessa personer</value>
+  </data>
+  <data name="AlertsHeader" xml:space="preserve">
+    <value>Aviseringar</value>
+  </data>
+  <data name="AllGroups" xml:space="preserve">
+    <value>Alla grupper</value>
+  </data>
+  <data name="AllRequirements" xml:space="preserve">
+    <value>Alla krav</value>
+  </data>
+  <data name="AllStates" xml:space="preserve">
+    <value>Alla tillstånd</value>
+  </data>
+  <data name="AndMoreFormat" xml:space="preserve">
+    <value>och {0} till</value>
+  </data>
+  <data name="AssignAction" xml:space="preserve">
+    <value>Tilldela lärväg</value>
+  </data>
+  <data name="AssignHeader" xml:space="preserve">
+    <value>Tilldela den här lärvägen</value>
+  </data>
+  <data name="AssignedFormat" xml:space="preserve">
+    <value>Tilldelad {0} medlem(mar); {1} hade den redan.</value>
+  </data>
+  <data name="AtRiskDaysLabel" xml:space="preserve">
+    <value>Varna så här många dagar före förfallodatum</value>
+  </data>
+  <data name="AudienceHelp" xml:space="preserve">
+    <value>Medlemmar i valfri roll, grupp, certifiering eller skift som du väljer. Medlemmar som ansluter, får rollen eller på annat sätt hamnar i målgruppen senare får ett eget förfallodatum.</value>
+  </data>
+  <data name="AudienceMember" xml:space="preserve">
+    <value>en medlem</value>
+  </data>
+  <data name="AudienceOther" xml:space="preserve">
+    <value>annat</value>
+  </data>
+  <data name="AutoAssignLabel" xml:space="preserve">
+    <value>Tilldela kursen eller lärvägen till varje medlem automatiskt (introduktion)</value>
+  </data>
+  <data name="AutoAssigns" xml:space="preserve">
+    <value>Tilldelar automatiskt</value>
+  </data>
+  <data name="BacksHelp" xml:space="preserve">
+    <value>Utbildningsbaserad tillämpning: när en medlem är försenad längre än respittiden kan medlemmens certifiering av den här typen sättas som utgången. Endast certifieringstyper som går ut visas.</value>
+  </data>
+  <data name="BacksLabel" xml:space="preserve">
+    <value>Kopplad certifiering</value>
+  </data>
+  <data name="BreachFormat" xml:space="preserve">
+    <value>{0}: {1} av {2} medlemmar ({3} %)</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="CategoryLabel" xml:space="preserve">
+    <value>Utbildningskategori</value>
+  </data>
+  <data name="CertificationExpires" xml:space="preserve">
+    <value>Certifiering som går ut</value>
+  </data>
+  <data name="CertificationsLabel" xml:space="preserve">
+    <value>Certifieringar</value>
+  </data>
+  <data name="ChangeMember" xml:space="preserve">
+    <value>Undanta eller förläng</value>
+  </data>
+  <data name="ChooseOption" xml:space="preserve">
+    <value>Välj...</value>
+  </data>
+  <data name="ColActions" xml:space="preserve">
+    <value>Åtgärder</value>
+  </data>
+  <data name="ColHowOften" xml:space="preserve">
+    <value>Hur ofta</value>
+  </data>
+  <data name="ColMembers" xml:space="preserve">
+    <value>Medlemmar</value>
+  </data>
+  <data name="ColRequirement" xml:space="preserve">
+    <value>Krav</value>
+  </data>
+  <data name="ColWhat" xml:space="preserve">
+    <value>Vad</value>
+  </data>
+  <data name="ColWho" xml:space="preserve">
+    <value>Vem</value>
+  </data>
+  <data name="ComplianceIntro" xml:space="preserve">
+    <value>Varje aktiv medlem mot varje krav som gäller medlemmen. Medlemmar utan LMS-plats visas som ej licensierade och är aldrig försenade.</value>
+  </data>
+  <data name="ComplianceTitle" xml:space="preserve">
+    <value>Efterlevnad</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Ta bort det här kravet? Medlemmarnas historik sparas och alla tillämpningsåtgärder som kravet utfört återställs.</value>
+  </data>
+  <data name="ConfirmDeletePath" xml:space="preserve">
+    <value>Ta bort den här lärvägen? Tilldelningar och slutföranden sparas.</value>
+  </data>
+  <data name="ConfirmPreviewLabel" xml:space="preserve">
+    <value>Jag har granskat vem som skulle förlora vilken roll (krävs för att slå på tillämpning)</value>
+  </data>
+  <data name="ConfirmRequired" xml:space="preserve">
+    <value>Granska förhandsvisningen nedan och bekräfta den för att slå på tillämpning.</value>
+  </data>
+  <data name="ConfirmUndo" xml:space="preserve">
+    <value>Ångra den här åtgärden? Certifieringen och de borttagna rollerna ges tillbaka.</value>
+  </data>
+  <data name="CountFormat" xml:space="preserve">
+    <value>{0} bedömningar</value>
+  </data>
+  <data name="CountLabel" xml:space="preserve">
+    <value>Antal godkända bedömningar som krävs</value>
+  </data>
+  <data name="CourseLabel" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="DefaultAtRiskLabel" xml:space="preserve">
+    <value>Standardvarning för nya krav (dagar före förfallodatum)</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>Borttaget.</value>
+  </data>
+  <data name="DepartmentPathsHeader" xml:space="preserve">
+    <value>Avdelningens lärvägar</value>
+  </data>
+  <data name="DescriptionLabel" xml:space="preserve">
+    <value>Beskrivning</value>
+  </data>
+  <data name="DueDateLabel" xml:space="preserve">
+    <value>Förfallodatum</value>
+  </data>
+  <data name="DueDaysFormat" xml:space="preserve">
+    <value>{0} dagar att slutföra</value>
+  </data>
+  <data name="DueDaysHelp" xml:space="preserve">
+    <value>Räknas från den dag medlemmen ansluter, får rollen eller på annat sätt hamnar i målgruppen.</value>
+  </data>
+  <data name="DueDaysLabel" xml:space="preserve">
+    <value>Dagar att slutföra</value>
+  </data>
+  <data name="DueFormat" xml:space="preserve">
+    <value>Förfaller {0}</value>
+  </data>
+  <data name="DueOn" xml:space="preserve">
+    <value>Förfaller</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Redigera</value>
+  </data>
+  <data name="ElectiveBadge" xml:space="preserve">
+    <value>valfri</value>
+  </data>
+  <data name="ElectiveFormat" xml:space="preserve">
+    <value>valfri grupp {0}, {1} krävs</value>
+  </data>
+  <data name="EnforceHelp" xml:space="preserve">
+    <value>Kräver också att tillämpning är påslagen för avdelningen (Tillämpning). Roller som kräver certifieringen tas sedan bort av certifieringsmodulen efter dess egen respittid, och allt ges tillbaka när medlemmen slutför kravet.</value>
+  </data>
+  <data name="EnforceLabel" xml:space="preserve">
+    <value>Tillämpa: låt certifieringen gå ut när medlemmen är försenad</value>
+  </data>
+  <data name="EnforcedBadge" xml:space="preserve">
+    <value>Tillämpas</value>
+  </data>
+  <data name="EnforcementEnabledHelp" xml:space="preserve">
+    <value>Av som standard. Varje krav måste också aktiveras för det. Inget tillämpas medan LMS-tillägget är inaktivt.</value>
+  </data>
+  <data name="EnforcementEnabledLabel" xml:space="preserve">
+    <value>Slå på utbildningsbaserad tillämpning</value>
+  </data>
+  <data name="EnforcementHeader" xml:space="preserve">
+    <value>Tillämpning</value>
+  </data>
+  <data name="EnforcementIntro" xml:space="preserve">
+    <value>Låt en försenad repetitionsutbildning få den kopplade certifieringen att gå ut, med ett skydd som stoppar varje körning som skulle tömma en roll.</value>
+  </data>
+  <data name="EnforcementTitle" xml:space="preserve">
+    <value>Tillämpning</value>
+  </data>
+  <data name="Enforcing" xml:space="preserve">
+    <value>Tillämpar</value>
+  </data>
+  <data name="Err.AddonRequired" xml:space="preserve">
+    <value>Det här kräver LMS-tillägget.</value>
+  </data>
+  <data name="Err.AudienceRequired" xml:space="preserve">
+    <value>Välj vem kravet gäller.</value>
+  </data>
+  <data name="Err.CertificationType" xml:space="preserve">
+    <value>Välj en certifieringstyp för personer som går ut.</value>
+  </data>
+  <data name="Err.CountRequired" xml:space="preserve">
+    <value>Ange hur många godkända bedömningar som krävs (1 till 1000).</value>
+  </data>
+  <data name="Err.DaysRange" xml:space="preserve">
+    <value>Dagar måste vara mellan 0 och 3650 (respit och varning upp till 365).</value>
+  </data>
+  <data name="Err.ExtensionInvalid" xml:space="preserve">
+    <value>Välj ett framtida datum och ange en orsak.</value>
+  </data>
+  <data name="Err.HoursRequired" xml:space="preserve">
+    <value>Ange antal timmar som krävs (mer än 0).</value>
+  </data>
+  <data name="Err.IntervalRequired" xml:space="preserve">
+    <value>Ange antal månader (1 till 120).</value>
+  </data>
+  <data name="Err.Invalid" xml:space="preserve">
+    <value>Det gick inte att spara. Kontrollera formuläret.</value>
+  </data>
+  <data name="Err.NameRequired" xml:space="preserve">
+    <value>Ange ett namn.</value>
+  </data>
+  <data name="Err.NotAuthorized" xml:space="preserve">
+    <value>Du har inte behörighet att göra det.</value>
+  </data>
+  <data name="Err.NotFound" xml:space="preserve">
+    <value>Objektet hittades inte.</value>
+  </data>
+  <data name="Err.PathDuplicateStep" xml:space="preserve">
+    <value>Samma kurs eller utbildning finns med två gånger.</value>
+  </data>
+  <data name="Err.PathElectiveCount" xml:space="preserve">
+    <value>En valfri grupp behöver minst 1 valfritt steg och inte fler än den innehåller.</value>
+  </data>
+  <data name="Err.PathInvalidOrder" xml:space="preserve">
+    <value>Stegens ordning är ogiltig.</value>
+  </data>
+  <data name="Err.PathInvalidStep" xml:space="preserve">
+    <value>Ett steg är inte en kurs eller utbildning som den här avdelningen kan använda.</value>
+  </data>
+  <data name="Err.PathNoSteps" xml:space="preserve">
+    <value>Lägg till minst ett steg.</value>
+  </data>
+  <data name="Err.PathPrerequisiteNotEarlier" xml:space="preserve">
+    <value>Ett steg kan bara kräva tidigare steg.</value>
+  </data>
+  <data name="Err.PathTooManySteps" xml:space="preserve">
+    <value>En lärväg kan ha högst 60 steg.</value>
+  </data>
+  <data name="Err.ReasonRequired" xml:space="preserve">
+    <value>Ange en orsak.</value>
+  </data>
+  <data name="Err.SkillRequired" xml:space="preserve">
+    <value>Ange färdighetskoden.</value>
+  </data>
+  <data name="Err.TargetRequired" xml:space="preserve">
+    <value>Välj vad kravet avser.</value>
+  </data>
+  <data name="Everyone" xml:space="preserve">
+    <value>Alla</value>
+  </data>
+  <data name="ExemptAction" xml:space="preserve">
+    <value>Undanta</value>
+  </data>
+  <data name="ExportCsv" xml:space="preserve">
+    <value>CSV</value>
+  </data>
+  <data name="ExportPdf" xml:space="preserve">
+    <value>PDF</value>
+  </data>
+  <data name="ExtendAction" xml:space="preserve">
+    <value>Förläng</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Filtrera</value>
+  </data>
+  <data name="FilterGroup" xml:space="preserve">
+    <value>Grupp</value>
+  </data>
+  <data name="FilterRequirement" xml:space="preserve">
+    <value>Krav</value>
+  </data>
+  <data name="FilterState" xml:space="preserve">
+    <value>Tillstånd</value>
+  </data>
+  <data name="GraceDaysHelp" xml:space="preserve">
+    <value>Efter förfallodatum visas medlemmen i riskzonen så här många dagar, sedan som försenad.</value>
+  </data>
+  <data name="GraceDaysLabel" xml:space="preserve">
+    <value>Respitdagar</value>
+  </data>
+  <data name="GroupsLabel" xml:space="preserve">
+    <value>Grupper</value>
+  </data>
+  <data name="HistoryHeader" xml:space="preserve">
+    <value>Tillämpningshistorik</value>
+  </data>
+  <data name="HoursFormat" xml:space="preserve">
+    <value>{0} timmar</value>
+  </data>
+  <data name="HoursLabel" xml:space="preserve">
+    <value>Timmar som krävs per period</value>
+  </data>
+  <data name="InForce" xml:space="preserve">
+    <value>Gäller</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Inaktiv</value>
+  </data>
+  <data name="IntervalLabel" xml:space="preserve">
+    <value>Intervall (månader)</value>
+  </data>
+  <data name="IssuesCertificationBadge" xml:space="preserve">
+    <value>Utfärdar en certifiering</value>
+  </data>
+  <data name="IssuesCertificationLabel" xml:space="preserve">
+    <value>Utfärda en certifiering vid slutförande</value>
+  </data>
+  <data name="Kind.Course" xml:space="preserve">
+    <value>Slutför en kurs</value>
+  </data>
+  <data name="Kind.Training" xml:space="preserve">
+    <value>Slutför en utbildning</value>
+  </data>
+  <data name="Kind.CategoryHours" xml:space="preserve">
+    <value>Registrera timmar i en kategori</value>
+  </data>
+  <data name="Kind.Path" xml:space="preserve">
+    <value>Slutför en lärväg</value>
+  </data>
+  <data name="Kind.Evaluations" xml:space="preserve">
+    <value>Klara färdighetsbedömningar</value>
+  </data>
+  <data name="KindLabel" xml:space="preserve">
+    <value>Kravtyp</value>
+  </data>
+  <data name="LastCompleted" xml:space="preserve">
+    <value>Slutförd</value>
+  </data>
+  <data name="LegendOther" xml:space="preserve">
+    <value>Undantagen, tjänstledig eller ej licensierad</value>
+  </data>
+  <data name="LiftExemption" xml:space="preserve">
+    <value>Häv undantag</value>
+  </data>
+  <data name="MaxShareHelp" xml:space="preserve">
+    <value>En körning som skulle ta bort mer än den här andelen av en rolls medlemmar avvisas, och administratörerna meddelas.</value>
+  </data>
+  <data name="MaxShareLabel" xml:space="preserve">
+    <value>Största andel av en rolls medlemmar som en körning får ta bort (%)</value>
+  </data>
+  <data name="Member" xml:space="preserve">
+    <value>Medlem</value>
+  </data>
+  <data name="MembersLabel" xml:space="preserve">
+    <value>Medlemmar</value>
+  </data>
+  <data name="Mode.Off" xml:space="preserve">
+    <value>av</value>
+  </data>
+  <data name="Mode.WarnOnly" xml:space="preserve">
+    <value>endast varna</value>
+  </data>
+  <data name="Mode.Enforce" xml:space="preserve">
+    <value>Tillämpa</value>
+  </data>
+  <data name="MyRequirementsHeader" xml:space="preserve">
+    <value>Mina krav</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="NeedsStepsFormat" xml:space="preserve">
+    <value>kräver steg {0}</value>
+  </data>
+  <data name="NewDueDateLabel" xml:space="preserve">
+    <value>Nytt förfallodatum</value>
+  </data>
+  <data name="NewMembersOnlyLabel" xml:space="preserve">
+    <value>Endast medlemmar som hamnar i målgruppen från och med nu (introduktion)</value>
+  </data>
+  <data name="NewOnboarding" xml:space="preserve">
+    <value>Ny introduktion</value>
+  </data>
+  <data name="NewPath" xml:space="preserve">
+    <value>Ny lärväg</value>
+  </data>
+  <data name="NewRequirement" xml:space="preserve">
+    <value>Nytt krav</value>
+  </data>
+  <data name="NextRequirementHeader" xml:space="preserve">
+    <value>Nästa krav</value>
+  </data>
+  <data name="NoAssignees" xml:space="preserve">
+    <value>Ingen har tilldelats den här lärvägen ännu.</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>Ingen tillämpningsåtgärd ännu.</value>
+  </data>
+  <data name="NoMatrixRows" xml:space="preserve">
+    <value>Inga medlemmar matchar.</value>
+  </data>
+  <data name="NoOnboarding" xml:space="preserve">
+    <value>Ingen introduktion ännu. Lägg till en lärväg per roll som tilldelas när någon ansluter eller får rollen.</value>
+  </data>
+  <data name="NoPaths" xml:space="preserve">
+    <value>Inga lärvägar för avdelningen ännu.</value>
+  </data>
+  <data name="NoRequirements" xml:space="preserve">
+    <value>Inga krav ännu.</value>
+  </data>
+  <data name="NoRolesLost" xml:space="preserve">
+    <value>inga</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>Ingen</value>
+  </data>
+  <data name="NotApplicable" xml:space="preserve">
+    <value>Gäller inte</value>
+  </data>
+  <data name="OnboardingIntro" xml:space="preserve">
+    <value>En lärväg per roll som tilldelas automatiskt med förfallodatum när någon ansluter eller får rollen.</value>
+  </data>
+  <data name="OnboardingTitle" xml:space="preserve">
+    <value>Introduktion</value>
+  </data>
+  <data name="OpenCourses" xml:space="preserve">
+    <value>Mina kurser</value>
+  </data>
+  <data name="OpenTraining" xml:space="preserve">
+    <value>Öppna</value>
+  </data>
+  <data name="PathCompletedFormat" xml:space="preserve">
+    <value>Slutförd {0}</value>
+  </data>
+  <data name="PathCountsFormat" xml:space="preserve">
+    <value>{0} steg · {1} tilldelade · {2} slutförda</value>
+  </data>
+  <data name="PathIntro" xml:space="preserve">
+    <value>Steg med förkunskapskrav och valfria steg; att slutföra lärvägen kan utfärda en certifiering.</value>
+  </data>
+  <data name="PathLabel" xml:space="preserve">
+    <value>Lärväg</value>
+  </data>
+  <data name="PathsIntro" xml:space="preserve">
+    <value>Kurser, Academy-lektioner och utbildningar i ordning, med förkunskapskrav och valfria steg.</value>
+  </data>
+  <data name="PathsTitle" xml:space="preserve">
+    <value>Lärvägar</value>
+  </data>
+  <data name="PausedNotice" xml:space="preserve">
+    <value>LMS-tillägget är inte aktivt, så kraven är pausade: inget blir försenat och inget tillämpas förrän tillägget återaktiveras.</value>
+  </data>
+  <data name="PreviewEmpty" xml:space="preserve">
+    <value>Ingen: ingen medlem är försenad med ett krav som tillämpas.</value>
+  </data>
+  <data name="PreviewHeader" xml:space="preserve">
+    <value>Vem som skulle förlora vilken roll i dag</value>
+  </data>
+  <data name="PreviewModeFormat" xml:space="preserve">
+    <value>Tillämpningsläge för certifiering: {0}. Roller tas bara bort i läget Tillämpa, {1} dagar efter att certifieringen gått ut.</value>
+  </data>
+  <data name="ProgramsTitle" xml:space="preserve">
+    <value>Program</value>
+  </data>
+  <data name="ProgressFormat" xml:space="preserve">
+    <value>{0} av {1}</value>
+  </data>
+  <data name="ProgressHeader" xml:space="preserve">
+    <value>Framsteg</value>
+  </data>
+  <data name="ReasonLabel" xml:space="preserve">
+    <value>Orsak</value>
+  </data>
+  <data name="Recurrence.OneTime" xml:space="preserve">
+    <value>En gång</value>
+  </data>
+  <data name="Recurrence.RollingMonths" xml:space="preserve">
+    <value>Med några månaders intervall</value>
+  </data>
+  <data name="Recurrence.CalendarYear" xml:space="preserve">
+    <value>Varje kalenderår</value>
+  </data>
+  <data name="RecurrenceCalendarYear" xml:space="preserve">
+    <value>Varje kalenderår</value>
+  </data>
+  <data name="RecurrenceLabel" xml:space="preserve">
+    <value>Hur ofta</value>
+  </data>
+  <data name="RecurrenceOneTime" xml:space="preserve">
+    <value>En gång</value>
+  </data>
+  <data name="RecurrenceRolling" xml:space="preserve">
+    <value>Med {0} månaders intervall</value>
+  </data>
+  <data name="RemoveStep" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="Requirement" xml:space="preserve">
+    <value>Krav</value>
+  </data>
+  <data name="RequirementIntro" xml:space="preserve">
+    <value>Vad medlemmarna måste slutföra, vem som måste slutföra det och när.</value>
+  </data>
+  <data name="RequirementTitle" xml:space="preserve">
+    <value>Krav</value>
+  </data>
+  <data name="RequirementsIntro" xml:space="preserve">
+    <value>Kurser, utbildningar, timmar, lärvägar och bedömningar som medlemmarna måste slutföra, med förfallodatum räknat från när de ansluter eller får en roll.</value>
+  </data>
+  <data name="RequirementsTitle" xml:space="preserve">
+    <value>Krav</value>
+  </data>
+  <data name="RolesLabel" xml:space="preserve">
+    <value>Roller</value>
+  </data>
+  <data name="RolesLost" xml:space="preserve">
+    <value>Förlorade roller</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Sparat.</value>
+  </data>
+  <data name="SettingsHeader" xml:space="preserve">
+    <value>Inställningar</value>
+  </data>
+  <data name="ShiftsLabel" xml:space="preserve">
+    <value>Skift</value>
+  </data>
+  <data name="SkillCodeHelp" xml:space="preserve">
+    <value>Koden som färdighetsbedömningar registreras med.</value>
+  </data>
+  <data name="SkillCodeLabel" xml:space="preserve">
+    <value>Färdighetskod</value>
+  </data>
+  <data name="State.Compliant" xml:space="preserve">
+    <value>Uppfyller</value>
+  </data>
+  <data name="State.Pending" xml:space="preserve">
+    <value>Förfaller senare</value>
+  </data>
+  <data name="State.AtRisk" xml:space="preserve">
+    <value>I riskzonen</value>
+  </data>
+  <data name="State.Overdue" xml:space="preserve">
+    <value>Försenad</value>
+  </data>
+  <data name="State.Exempt" xml:space="preserve">
+    <value>Undantagen</value>
+  </data>
+  <data name="State.OnLeave" xml:space="preserve">
+    <value>Tjänstledig</value>
+  </data>
+  <data name="State.NotLicensed" xml:space="preserve">
+    <value>Ej licensierad</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Tillstånd</value>
+  </data>
+  <data name="StepAvailable" xml:space="preserve">
+    <value>tillgängligt</value>
+  </data>
+  <data name="StepDone" xml:space="preserve">
+    <value>klart</value>
+  </data>
+  <data name="StepElectiveLabel" xml:space="preserve">
+    <value>Valfri grupp</value>
+  </data>
+  <data name="StepElectiveRequiredLabel" xml:space="preserve">
+    <value>Valfria som krävs</value>
+  </data>
+  <data name="StepKind.Course" xml:space="preserve">
+    <value>Kurs eller Academy-lektion</value>
+  </data>
+  <data name="StepKind.Training" xml:space="preserve">
+    <value>Utbildning</value>
+  </data>
+  <data name="StepKindLabel" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="StepLocked" xml:space="preserve">
+    <value>låst</value>
+  </data>
+  <data name="StepPrerequisitesLabel" xml:space="preserve">
+    <value>Kräver steg</value>
+  </data>
+  <data name="StepTargetLabel" xml:space="preserve">
+    <value>Kurs eller utbildning</value>
+  </data>
+  <data name="StepsDoneFormat" xml:space="preserve">
+    <value>{0} av {1} steg</value>
+  </data>
+  <data name="StepsHeader" xml:space="preserve">
+    <value>Steg</value>
+  </data>
+  <data name="StepsHelp" xml:space="preserve">
+    <value>Stegen görs i ordning. Kräver steg anger numren på tidigare steg (t.ex. 1,2) som måste vara klara först. Steg med samma nummer på valfri grupp är valfria: deltagaren behöver så många av dem som Valfria som krävs anger.</value>
+  </data>
+  <data name="SubCompliance" xml:space="preserve">
+    <value>Efterlevnad</value>
+  </data>
+  <data name="SubEnforcement" xml:space="preserve">
+    <value>Tillämpning</value>
+  </data>
+  <data name="SubOnboarding" xml:space="preserve">
+    <value>Introduktion</value>
+  </data>
+  <data name="SubPaths" xml:space="preserve">
+    <value>Lärvägar</value>
+  </data>
+  <data name="SubRequirements" xml:space="preserve">
+    <value>Krav</value>
+  </data>
+  <data name="TrainingLabel" xml:space="preserve">
+    <value>Utbildning</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Ångra</value>
+  </data>
+  <data name="UndoReason.0" xml:space="preserve">
+    <value>-</value>
+  </data>
+  <data name="UndoReason.Completed" xml:space="preserve">
+    <value>slutförd</value>
+  </data>
+  <data name="UndoReason.Lapse" xml:space="preserve">
+    <value>tillägget upphörde</value>
+  </data>
+  <data name="UndoReason.NoLongerApplies" xml:space="preserve">
+    <value>gäller inte längre</value>
+  </data>
+  <data name="UndoReason.Manual" xml:space="preserve">
+    <value>ångrad av ett befäl</value>
+  </data>
+  <data name="Undone" xml:space="preserve">
+    <value>Ångrad</value>
+  </data>
+  <data name="UntilLabel" xml:space="preserve">
+    <value>Till och med (valfritt)</value>
+  </data>
+  <data name="WhatHeader" xml:space="preserve">
+    <value>Vad</value>
+  </data>
+  <data name="WhenHeader" xml:space="preserve">
+    <value>När</value>
+  </data>
+  <data name="WhoHeader" xml:space="preserve">
+    <value>Vem</value>
+  </data>
+  <data name="WouldRefuseFormat" xml:space="preserve">
+    <value>Dagens körning skulle avvisas: den skulle ta bort mer än {0} % av dessa rollers medlemmar.</value>
+  </data>
+  <data name="SubRecommendations" xml:space="preserve">
+    <value>Rekommendationer</value>
+  </data>
+  <data name="RecommendationsTitle" xml:space="preserve">
+    <value>Rekommendationer</value>
+  </data>
+  <data name="RecommendationsIntro" xml:space="preserve">
+    <value>Lärvägar och kurser att ta härnäst, utifrån öppna krav, pågående lärvägar, kompetensluckor och de kurser som erbjuds varje roll.</value>
+  </data>
+  <data name="RecommendedHeader" xml:space="preserve">
+    <value>Rekommenderat för dig</value>
+  </data>
+  <data name="RecommendedForFormat" xml:space="preserve">
+    <value>Rekommenderat för {0}</value>
+  </data>
+  <data name="RecommendationsForMembersLink" xml:space="preserve">
+    <value>Dina medlemmar</value>
+  </data>
+  <data name="ShowRecommendationsButton" xml:space="preserve">
+    <value>Visa</value>
+  </data>
+  <data name="RecommendationColumn" xml:space="preserve">
+    <value>Rekommendation</value>
+  </data>
+  <data name="ReasonsColumn" xml:space="preserve">
+    <value>Varför</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Åtgärder</value>
+  </data>
+  <data name="KindCourse" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="KindPath" xml:space="preserve">
+    <value>Lärväg</value>
+  </data>
+  <data name="KindAcademy" xml:space="preserve">
+    <value>Lektion i Resgrid Academy</value>
+  </data>
+  <data name="Reason.RequirementOverdue" xml:space="preserve">
+    <value>Kravet ”{0}” är försenat</value>
+  </data>
+  <data name="Reason.RequirementAtRisk" xml:space="preserve">
+    <value>Kravet ”{0}” är i riskzonen</value>
+  </data>
+  <data name="Reason.RequirementDue" xml:space="preserve">
+    <value>Kravet ”{0}” är inte uppfyllt än</value>
+  </data>
+  <data name="Reason.PathInProgress" xml:space="preserve">
+    <value>Lärvägen ”{0}” pågår</value>
+  </data>
+  <data name="Reason.CompetencyMissing" xml:space="preserve">
+    <value>Inget belägg ännu för kompetensen {0}</value>
+  </data>
+  <data name="Reason.CompetencyAged" xml:space="preserve">
+    <value>Belägget för kompetensen {0} är inaktuellt</value>
+  </data>
+  <data name="Reason.RoleAudience" xml:space="preserve">
+    <value>Erbjuds rollen {0}</value>
+  </data>
+  <data name="RecommendationContinue" xml:space="preserve">
+    <value>Fortsätt</value>
+  </data>
+  <data name="NoRecommendations" xml:space="preserve">
+    <value>Inget att rekommendera just nu.</value>
+  </data>
+  <data name="ExplainButton" xml:space="preserve">
+    <value>Förklara med AI</value>
+  </data>
+  <data name="Explaining" xml:space="preserve">
+    <value>Förklarar…</value>
+  </data>
+  <data name="ExplainFailed" xml:space="preserve">
+    <value>Ingen förklaring är tillgänglig just nu.</value>
+  </data>
+  <data name="ExplainBusy" xml:space="preserve">
+    <value>AI är upptagen eller månadens kvot är förbrukad. Försök igen senare.</value>
+  </data>
+  <data name="AiExplanationNotice" xml:space="preserve">
+    <value>AI-förklaring, skriven endast utifrån de visade skälen.</value>
+  </data>
+  <data name="ExplainPrivacyNote" xml:space="preserve">
+    <value>Endast titlarna och skälen ovan skickas till avdelningens AI-modell, aldrig namn.</value>
+  </data>
+  <data name="AcademyUpdatePolicyLabel" xml:space="preserve">
+    <value>När Resgrid Academy publicerar en större uppdatering av en lektion som krävs här</value>
+  </data>
+  <data name="AcademyUpdatePolicy.Notify" xml:space="preserve">
+    <value>Meddela medlemmarna som har slutfört den</value>
+  </data>
+  <data name="AcademyUpdatePolicy.Reassign" xml:space="preserve">
+    <value>Tilldela den igen till medlemmarna som har slutfört den, med förfallotid enligt kravets dagar</value>
+  </data>
+  <data name="AcademyUpdatePolicy.Nothing" xml:space="preserve">
+    <value>Gör ingenting</value>
+  </data>
+  <data name="AcademyUpdatePolicyHelp" xml:space="preserve">
+    <value>Gäller lektioner i Resgrid Academy, direkt eller i lärvägen. Era egna kurser följer valet som görs när varje version publiceras.</value>
+  </data>
+</root>

@@ -237,4 +237,58 @@
   <data name="NotAttending" xml:space="preserve">
     <value>Δεν θα συμμετάσχω</value>
   </data>
+  <data name="CredentialAudienceLabel" xml:space="preserve">
+    <value>Βάσει πιστοποίησης</value>
+  </data>
+  <data name="CredentialAudienceNone" xml:space="preserve">
+    <value>Κανείς βάσει πιστοποίησης</value>
+  </data>
+  <data name="CredentialAudienceStatus" xml:space="preserve">
+    <value>Κατάσταση πιστοποίησης</value>
+  </data>
+  <data name="CredentialAudienceExpired" xml:space="preserve">
+    <value>έχει λήξει</value>
+  </data>
+  <data name="CredentialAudienceExpiring" xml:space="preserve">
+    <value>λήγει εντός των ημερών</value>
+  </data>
+  <data name="CredentialAudienceMissing" xml:space="preserve">
+    <value>δεν την είχε ποτέ</value>
+  </data>
+  <data name="CredentialAudienceDays" xml:space="preserve">
+    <value>Ημέρες</value>
+  </data>
+  <data name="CredentialAudienceHelp" xml:space="preserve">
+    <value>Προσθέτει τα ενεργά μέλη των οποίων η πιστοποίηση ταιριάζει, μαζί με τους παραλήπτες που επιλέχθηκαν παραπάνω.</value>
+  </data>
+  <data name="CredentialAudienceNoMatch" xml:space="preserve">
+    <value>Κανένα μέλος δεν ταιριάζει με την κατάσταση πιστοποίησης που επιλέξατε.</value>
+  </data>
+  <data name="RosterAudienceLabel" xml:space="preserve">
+    <value>Συμμετέχοντες μαθήματος</value>
+  </data>
+  <data name="RosterAudienceNone" xml:space="preserve">
+    <value>Χωρίς μάθημα</value>
+  </data>
+  <data name="RosterAudienceStatus" xml:space="preserve">
+    <value>Κατάσταση στη λίστα</value>
+  </data>
+  <data name="RosterAudienceEnrolled" xml:space="preserve">
+    <value>Εγγεγραμμένοι</value>
+  </data>
+  <data name="RosterAudienceAttended" xml:space="preserve">
+    <value>Παρόντες</value>
+  </data>
+  <data name="RosterAudienceAbsent" xml:space="preserve">
+    <value>Απόντες</value>
+  </data>
+  <data name="RosterAudienceWaitlisted" xml:space="preserve">
+    <value>Σε αναμονή</value>
+  </data>
+  <data name="RosterAudienceHelp" xml:space="preserve">
+    <value>Προσθέτει στους παραλήπτες τα ενεργά μέλη του μαθήματος με αυτή την κατάσταση.</value>
+  </data>
+  <data name="RosterAudienceNoMatch" xml:space="preserve">
+    <value>Κανείς στη λίστα του μαθήματος δεν έχει αυτή την κατάσταση.</value>
+  </data>
 </root>

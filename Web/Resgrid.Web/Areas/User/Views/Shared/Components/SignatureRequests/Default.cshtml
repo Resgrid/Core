@@ -1,0 +1,143 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Signatures.SignatureRequestPanelModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureText
+@*
+    The external-signer panel (e-Signature S2) on a module page: the shared signature panel in its "Hand device to signer" /
+    "Signed — sealed PDF" states, the remote request form (link + Resgrid one-time code) where the owning add-on is active, the
+    open request's status and the subject's signatures. Each form posts to SignaturesController, which re-checks the member's
+    right to act on the subject.
+*@
+@{
+    var open = Model.Open;
+    var completed = Model.Completed;
+    var message = TempData["SignatureMessage"] as string;
+    var formId = "rg-esign-" + Guid.NewGuid().ToString("N").Substring(0, 8);
+}
+<section class="rg-external-signatures m-t-md" aria-label="@signatureText["ExternalPanelTitle"]">
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <div class="alert alert-info" role="status">@message</div>
+    }
+
+    @if (Model.StepPanel != null)
+    {
+        @* S3: the member's own step in a multi-signer request (L1 in the session, L2 after a fresh step-up). *@
+        @await Html.PartialAsync("_SignaturePanel", Model.StepPanel)
+    }
+
+    @await Html.PartialAsync("_SignaturePanel", Model.Panel)
+
+    @if (Model.Steps.Count > 1 || Model.Steps.Any(s => s.IsMember))
+    {
+        @* S3: every step of the request in signing order (equal numbers sign in parallel). *@
+        <div class="table-responsive">
+            <table class="table table-condensed rgw-table">
+                <caption class="sr-only">@signatureText["StepsHeading"]</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">@signatureText["StepOrderColumn"]</th>
+                        <th scope="col">@signatureText["SignerColumn"]</th>
+                        <th scope="col">@signatureText["LevelColumn"]</th>
+                        <th scope="col">@signatureText["StatusLabel"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var step in Model.Steps)
+                    {
+                        <tr>
+                            <td>@step.SignerOrder</td>
+                            <td>@Resgrid.Web.Areas.User.Models.Signatures.SignatureStepPresentation.Describe(step, Model.Names, signatureText)</td>
+                            <td><span class="label label-default">L@(Resgrid.Web.Areas.User.Models.Signatures.SignatureStepPresentation.Level(step))</span></td>
+                            <td>@signatureText["SignerStatus" + (SignatureSignerStatuses)step.Status]</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (open == null && completed == null && Model.CanRequest && !string.IsNullOrEmpty(Model.MemberSignerUserId) && Model.Summary.CurrentRevisionSha256 != null)
+    {
+        @* S3: the member the module names (the issue receipt's recipient) signs in Resgrid at L2. *@
+        <form method="post" asp-area="User" asp-controller="Signatures" asp-action="RequestMemberSignature" class="m-b-md">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="kind" value="@((int)Model.Kind)" />
+            <input type="hidden" name="subjectId" value="@Model.SubjectId" />
+            <input type="hidden" name="memberUserId" value="@Model.MemberSignerUserId" />
+            <input type="hidden" name="role" value="@((int)Model.MemberSignerRole)" />
+            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+            <button type="submit" class="btn btn-default"><i class="fa fa-user-o" aria-hidden="true"></i> @string.Format(signatureText["MemberRequestButton"].Value, Model.MemberSignerName ?? signatureText["MemberFallbackName"].Value)</button>
+            <p class="help-block small">@signatureText["MemberRequestHelp"]</p>
+        </form>
+    }
+
+    @if (open != null && completed == null)
+    {
+        var signer = Model.SignerOf(open);
+        <div class="alert alert-warning" role="status">
+            <i class="fa fa-hourglass-half" aria-hidden="true"></i>
+            @string.Format(signatureText["OpenRequestStatus"].Value, signatureText["Status" + (SignatureRequestStatuses)open.Status].Value, signatureText["Channel" + (SignatureRequestChannels)open.Channel].Value, open.ExpiresOn.ToString("yyyy-MM-dd HH:mm") + " UTC")
+            @if (!string.IsNullOrEmpty(signer?.ContactMasked))
+            {
+                <span class="text-muted">· @signer.ContactMasked</span>
+            }
+            <a class="m-l-sm" asp-area="User" asp-controller="Signatures" asp-action="Detail" asp-route-id="@open.SignatureRequestId" asp-route-returnUrl="@Model.ReturnUrl">@signatureText["ViewRequestLink"]</a>
+            @if (Model.Steps.Any(s => s.IsMember))
+            {
+                <a class="m-l-sm" asp-area="User" asp-controller="Signatures" asp-action="Step" asp-route-id="@open.SignatureRequestId" asp-route-returnUrl="@Model.ReturnUrl"><i class="fa fa-pencil" aria-hidden="true"></i> @signatureText["OpenSigningPageLink"]</a>
+            }
+            @if (open.Channel == (int)SignatureRequestChannels.InPerson && Model.CanRequest)
+            {
+                <a class="m-l-sm" asp-area="User" asp-controller="Signatures" asp-action="HandDevice" asp-route-id="@open.SignatureRequestId" asp-route-returnUrl="@Model.ReturnUrl"><i class="fa fa-tablet" aria-hidden="true"></i> @signatureText["ContinueInPersonLink"]</a>
+            }
+        </div>
+    }
+
+    @if (Model.CanRequest && completed == null && Model.Summary.CurrentRevisionSha256 != null)
+    {
+        @if (Model.Summary.RemoteAvailable)
+        {
+            <details class="m-b-md">
+                <summary class="btn btn-default btn-sm"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> @signatureText["RemoteRequestButton"]</summary>
+                <form method="post" asp-area="User" asp-controller="Signatures" asp-action="RequestSignature" class="m-t-sm" id="@formId">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="kind" value="@((int)Model.Kind)" />
+                    <input type="hidden" name="subjectId" value="@Model.SubjectId" />
+                    <input type="hidden" name="channel" value="@((int)SignatureRequestChannels.Remote)" />
+                    <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                    <div class="row">
+                        <div class="form-group col-sm-4">
+                            <label class="control-label" for="@(formId)-name">@signatureText["SignerNameLabel"]</label>
+                            <input class="form-control" id="@(formId)-name" name="signerName" maxlength="200" required value="@Model.SuggestedName" autocomplete="off" />
+                        </div>
+                        <div class="form-group col-sm-4">
+                            <label class="control-label" for="@(formId)-email">@signatureText["SignerEmailLabel"]</label>
+                            <input class="form-control" id="@(formId)-email" name="signerEmail" type="email" maxlength="254" value="@Model.SuggestedEmail" autocomplete="off" />
+                        </div>
+                        <div class="form-group col-sm-4">
+                            <label class="control-label" for="@(formId)-phone">@signatureText["SignerPhoneLabel"]</label>
+                            <input class="form-control" id="@(formId)-phone" name="signerPhone" type="tel" maxlength="20" placeholder="+15551234567" autocomplete="off" />
+                        </div>
+                    </div>
+                    <fieldset class="form-group">
+                        <legend class="control-label" style="font-size:inherit;border:0;margin-bottom:4px;">@signatureText["OtpChannelLabel"]</legend>
+                        <label class="radio-inline"><input type="radio" name="otpChannel" value="@((int)SignatureSignerAuthMethods.EmailOtp)" checked /> @signatureText["OtpChannelEmail"]</label>
+                        <label class="radio-inline"><input type="radio" name="otpChannel" value="@((int)SignatureSignerAuthMethods.SmsOtp)" /> @signatureText["OtpChannelSms"]</label>
+                    </fieldset>
+                    <p class="help-block small">@signatureText["RemoteRequestHelp"]</p>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane" aria-hidden="true"></i> @signatureText["SendRequestButton"]</button>
+                </form>
+            </details>
+        }
+        else
+        {
+            <p class="text-muted small"><i class="fa fa-info-circle" aria-hidden="true"></i> @signatureText["RemoteUnavailable" + Model.Summary.RemoteRefusal]</p>
+        }
+    }
+
+    @if (Model.Summary.Signatures.Count > 0)
+    {
+        <h4 class="m-t-md">@signatureText["SignaturesHeading"]</h4>
+        @await Html.PartialAsync("_SignaturesList", new Resgrid.Web.Areas.User.Models.Signatures.SignatureListModel { Items = Model.Summary.Signatures })
+    }
+</section>

@@ -1,0 +1,205 @@
+{
+  "schema": 1,
+  "id": "22-relay",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Relay",
+  "minutes": 1.2,
+  "walkthrough": false,
+  "audience": [
+    "dispatcher"
+  ],
+  "visibility": [],
+  "pages": [],
+  "adminAssist": {
+    "areas": [
+      "relay"
+    ],
+    "capabilities": [
+      "relay",
+      "relay-smtp-dispatch",
+      "relay-tone-detect",
+      "relay-radio-bridge",
+      "relay-lte-donor-radios",
+      "relay-recorder",
+      "relay-dispatch-tone-out"
+    ]
+  },
+  "media": {
+    "video": "media/22-relay.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/22-relay.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Relay: bring an audio dispatch feed into Resgrid",
+    "ar": "Relay: أدخل بث الإرسال الصوتي إلى Resgrid",
+    "de": "Relay: einen Audio-Alarmierungskanal in Resgrid einbinden",
+    "el": "Relay: φέρτε μια ροή ήχου διασποράς στο Resgrid",
+    "es": "Relay: llevar una señal de audio de despacho a Resgrid",
+    "fr": "Relay : intégrer un flux audio d’alerte dans Resgrid",
+    "it": "Relay: portare in Resgrid un flusso audio di allertamento",
+    "pl": "Relay: wprowadź do Resgrid dźwiękowy kanał dysponowania",
+    "sv": "Relay: för in ett ljudflöde från larmcentralen i Resgrid",
+    "uk": "Relay: передавайте аудіопотік диспетчеризації в Resgrid"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "What does Relay do?",
+        "ar": "ماذا يفعل Relay؟",
+        "de": "Was macht Relay?",
+        "el": "Τι κάνει το Relay;",
+        "es": "¿Qué hace Relay?",
+        "fr": "Que fait Relay ?",
+        "it": "Che cosa fa Relay?",
+        "pl": "Do czego służy Relay?",
+        "sv": "Vad gör Relay?",
+        "uk": "Що робить Relay?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Sends invoices",
+            "ar": "يرسل الفواتير",
+            "de": "Versendet Rechnungen",
+            "el": "Στέλνει τιμολόγια",
+            "es": "Envía facturas",
+            "fr": "Envoie des factures",
+            "it": "Invia fatture",
+            "pl": "Wysyła faktury",
+            "sv": "Skickar fakturor",
+            "uk": "Надсилає рахунки"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Brings an audio dispatch feed into Resgrid",
+            "ar": "يُدخل بث الإرسال الصوتي إلى Resgrid",
+            "de": "Bindet einen Audio-Alarmierungskanal in Resgrid ein",
+            "el": "Φέρνει μια ροή ήχου διασποράς στο Resgrid",
+            "es": "Lleva una señal de audio de despacho a Resgrid",
+            "fr": "Intègre un flux audio d’alerte dans Resgrid",
+            "it": "Porta in Resgrid un flusso audio di allertamento",
+            "pl": "Wprowadza do Resgrid dźwiękowy kanał dysponowania",
+            "sv": "För in ett ljudflöde från larmcentralen i Resgrid",
+            "uk": "Передає аудіопотік диспетчеризації в Resgrid"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Schedules shifts",
+            "ar": "يجدول المناوبات",
+            "de": "Plant Schichten",
+            "el": "Προγραμματίζει βάρδιες",
+            "es": "Programa turnos",
+            "fr": "Planifie les gardes",
+            "it": "Programma i turni",
+            "pl": "Planuje zmiany",
+            "sv": "Schemalägger pass",
+            "uk": "Планує зміни"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "Who usually sets up Relay?",
+        "ar": "من يُعِد Relay عادة؟",
+        "de": "Wer richtet Relay normalerweise ein?",
+        "el": "Ποιος ρυθμίζει συνήθως το Relay;",
+        "es": "¿Quién suele configurar Relay?",
+        "fr": "Qui configure habituellement Relay ?",
+        "it": "Chi configura di solito Relay?",
+        "pl": "Kto zwykle konfiguruje Relay?",
+        "sv": "Vem brukar sätta upp Relay?",
+        "uk": "Хто зазвичай налаштовує Relay?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Every member on their phone",
+            "ar": "كل عضو على هاتفه",
+            "de": "Jedes Mitglied auf dem Telefon",
+            "el": "Κάθε μέλος στο τηλέφωνό του",
+            "es": "Cada miembro en su teléfono",
+            "fr": "Chaque membre sur son téléphone",
+            "it": "Ogni membro sul proprio telefono",
+            "pl": "Każdy członek na telefonie",
+            "sv": "Varje medlem i sin telefon",
+            "uk": "Кожен учасник на телефоні"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Visitors",
+            "ar": "الزوار",
+            "de": "Besucher",
+            "el": "Επισκέπτες",
+            "es": "Los visitantes",
+            "fr": "Les visiteurs",
+            "it": "I visitatori",
+            "pl": "Goście",
+            "sv": "Besökare",
+            "uk": "Відвідувачі"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "System operators and dispatch administrators",
+            "ar": "مشغلو النظام ومديرو الإرسال",
+            "de": "Systembetreiber und Leitstellenadministratoren",
+            "el": "Διαχειριστές συστήματος και διασποράς",
+            "es": "Operadores del sistema y administradores de despacho",
+            "fr": "Les opérateurs système et administrateurs du centre d’alerte",
+            "it": "Operatori di sistema e amministratori della centrale",
+            "pl": "Operatorzy systemu i administratorzy dyspozytorni",
+            "sv": "Systemoperatörer och larmcentralens administratörer",
+            "uk": "Оператори системи та адміністратори диспетчерської"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "f",
+      "text": {
+        "en": "Relay replaces the need to create calls in Resgrid.",
+        "ar": "يغني Relay عن إنشاء البلاغات في Resgrid.",
+        "de": "Relay ersetzt das Anlegen von Einsätzen in Resgrid.",
+        "el": "Το Relay αντικαθιστά τη δημιουργία κλήσεων στο Resgrid.",
+        "es": "Relay sustituye la necesidad de crear llamadas en Resgrid.",
+        "fr": "Relay remplace la création d’interventions dans Resgrid.",
+        "it": "Relay sostituisce la creazione di chiamate in Resgrid.",
+        "pl": "Relay zastępuje tworzenie zgłoszeń w Resgrid.",
+        "sv": "Relay ersätter behovet av att skapa larm i Resgrid.",
+        "uk": "Relay замінює створення викликів у Resgrid."
+      }
+    }
+  ]
+}

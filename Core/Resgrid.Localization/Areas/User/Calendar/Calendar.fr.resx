@@ -353,4 +353,16 @@
   <data name="CheckOutBy" xml:space="preserve">
     <value>Départ enregistré par {0}</value>
   </data>
+  <data name="CountsAsTrainingLabel" xml:space="preserve">
+    <value>Compte comme formation</value>
+  </data>
+  <data name="CountsAsTrainingHelp" xml:space="preserve">
+    <value>Le pointage d'arrivée et de départ aux événements de ce type devient des heures de formation sur les relevés des participants. Une arrivée sans départ attend un responsable.</value>
+  </data>
+  <data name="TrainingCategoryLabel" xml:space="preserve">
+    <value>Catégorie de formation</value>
+  </data>
+  <data name="TrainingCategoryNone" xml:space="preserve">
+    <value>Sans catégorie</value>
+  </data>
 </root>

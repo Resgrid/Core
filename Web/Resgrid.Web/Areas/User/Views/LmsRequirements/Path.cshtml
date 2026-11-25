@@ -1,0 +1,232 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Lms
+@model LmsPathEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsPrograms.LmsPrograms> localizer
+@* One learning path (T3 item 4): its steps with prerequisites and electives, the editor for department paths, assignment and each
+   assignee's progress. Academy role paths are read-only here (their steps are maintained as code, A2). *@
+@{
+    var detail = Model.Detail;
+    var form = Model.Form ?? new LmsPathForm();
+    ViewBag.Title = "Resgrid | " + localizer["PathsTitle"];
+    ViewData["Title"] = detail?.Title ?? localizer["NewPath"].Value;
+    ViewData["Subtitle"] = localizer["PathIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["Scope"] = Model.Scope;
+    ViewData["Sub"] = "Paths";
+    ViewData["CanManage"] = Model.Actor?.MayManage == true;
+    ViewData["CanPaths"] = Model.Actor?.MayAssignAcademy == true;
+    ViewData["Paused"] = Model.Paused;
+    string Selected(int? current, string value) => current?.ToString() == value ? "selected" : null;
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a class="btn btn-white" asp-controller="LmsRequirements" asp-action="Path" asp-route-area="User" asp-route-id="@detail?.Path.LmsPathId" asp-route-edit="true"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["Edit"]</a>
+    </text>;
+    ViewData["HeaderActions"] = detail != null && detail.CanEdit && !Model.Editing ? headerActions : null;
+}
+
+@await Html.PartialAsync("_Heading")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.Editing)
+    {
+        <form method="post" asp-controller="LmsRequirements" asp-action="SavePath" asp-route-area="User">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="LmsPathId" value="@form.LmsPathId" />
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label for="path-name">@localizer["NameLabel"]</label>
+                            <input id="path-name" name="Name" class="form-control" maxlength="200" required value="@form.Name" />
+                        </div>
+                        <div class="form-group">
+                            <label for="path-cert">@localizer["IssuesCertificationLabel"]</label>
+                            <select id="path-cert" name="IssuesCertificationTypeId" class="form-control">
+                                <option value="">@localizer["NoneOption"]</option>
+                                @foreach (var option in Model.CertificationTypes)
+                                {
+                                    <option value="@option.Value" selected="@Selected(form.IssuesCertificationTypeId, option.Value)">@option.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="path-description">@localizer["DescriptionLabel"]</label>
+                        <textarea id="path-description" name="Description" class="form-control" rows="2" maxlength="2000">@form.Description</textarea>
+                    </div>
+
+                    <h4>@localizer["StepsHeader"]</h4>
+                    <p class="text-muted small">@localizer["StepsHelp"]</p>
+                    <div class="table-responsive">
+                        <table id="lms-path-steps" class="table rgw-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">@localizer["StepKindLabel"]</th>
+                                    <th scope="col">@localizer["StepTargetLabel"]</th>
+                                    <th scope="col">@localizer["StepPrerequisitesLabel"]</th>
+                                    <th scope="col">@localizer["StepElectiveLabel"]</th>
+                                    <th scope="col">@localizer["StepElectiveRequiredLabel"]</th>
+                                    <th scope="col"><span class="sr-only">@localizer["ColActions"]</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (var i = 0; i < form.Steps.Count; i++)
+                                {
+                                    var step = form.Steps[i];
+                                    @await Html.PartialAsync("_PathStepRow", new LmsPathStepRowView { Index = i, Step = step, Courses = Model.Courses, Trainings = Model.Trainings })
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <template id="lms-path-step-template">
+                        @await Html.PartialAsync("_PathStepRow", new LmsPathStepRowView { Index = -1, Step = new LmsPathStepForm(), Courses = Model.Courses, Trainings = Model.Trainings })
+                    </template>
+                    <button type="button" id="lms-path-add-step" class="btn btn-white btn-sm"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddStep"]</button>
+                    <noscript><p class="text-muted small">@localizer["AddStepNoScript"]</p></noscript>
+                </div>
+            </div>
+            <div class="rgw-toolbar">
+                <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Save"]</button>
+                <a class="btn btn-white" asp-controller="LmsRequirements" asp-action="Paths" asp-route-area="User">@localizer["Cancel"]</a>
+            </div>
+        </form>
+    }
+    else if (detail != null)
+    {
+        @if (!string.IsNullOrWhiteSpace(detail.Path.Description))
+        {
+            <p>@detail.Path.Description</p>
+        }
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-road" aria-hidden="true"></i> @localizer["StepsHeader"]</h5></div>
+            <div class="ibox-content">
+                <ol class="rgw-journey">
+                    @foreach (var step in detail.Steps)
+                    {
+                        <li>
+                            <strong>@step.Title</strong>
+                            <span class="rgw-sub">
+                                @localizer["StepKind." + (LmsPathStepKinds)step.Step.Kind]
+                                @if (step.Step.Prerequisites().Count > 0)
+                                {
+                                    <text>· @string.Format(localizer["NeedsStepsFormat"].Value, string.Join(", ", step.Step.Prerequisites()))</text>
+                                }
+                                @if (step.Step.ElectiveGroup.HasValue)
+                                {
+                                    <text>· @string.Format(localizer["ElectiveFormat"].Value, step.Step.ElectiveGroup, step.Step.ElectiveRequired)</text>
+                                }
+                            </span>
+                        </li>
+                    }
+                </ol>
+                @if (detail.CanEdit)
+                {
+                    <form method="post" asp-controller="LmsRequirements" asp-action="DeletePath" asp-route-area="User" data-confirm="@localizer["ConfirmDeletePath"]">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@detail.Path.LmsPathId" />
+                        <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["Delete"]</button>
+                    </form>
+                }
+            </div>
+        </div>
+
+        @if (detail.CanAssign)
+        {
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5><i class="fa fa-user-plus" aria-hidden="true"></i> @localizer["AssignHeader"]</h5></div>
+                <div class="ibox-content">
+                    <form method="post" asp-controller="LmsRequirements" asp-action="AssignPath" asp-route-area="User">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@detail.Path.LmsPathId" />
+                        <div class="checkbox"><label><input type="checkbox" name="who.Everyone" value="true" /> @localizer["Everyone"]</label></div>
+                        <div class="rgw-grid">
+                            <div class="form-group">
+                                <label for="who-roles">@localizer["RolesLabel"]</label>
+                                <select id="who-roles" name="who.Roles" class="form-control" multiple size="5">
+                                    @foreach (var option in Model.Roles)
+                                    {
+                                        <option value="@option.Value">@option.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="who-groups">@localizer["GroupsLabel"]</label>
+                                <select id="who-groups" name="who.Groups" class="form-control" multiple size="5">
+                                    @foreach (var option in Model.Groups)
+                                    {
+                                        <option value="@option.Value">@option.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="who-members">@localizer["MembersLabel"]</label>
+                                <select id="who-members" name="who.Members" class="form-control" multiple size="5">
+                                    @foreach (var option in Model.Members)
+                                    {
+                                        <option value="@option.Value">@option.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="who-due">@localizer["DueDateLabel"]</label>
+                                <input id="who-due" name="who.DueOn" type="date" class="form-control" />
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-user-plus" aria-hidden="true"></i> @localizer["AssignAction"]</button>
+                    </form>
+                </div>
+            </div>
+        }
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-tasks" aria-hidden="true"></i> @localizer["ProgressHeader"]</h5></div>
+            <div class="ibox-content">
+                @if (Model.Progress.Count == 0)
+                {
+                    <p class="text-muted">@localizer["NoAssignees"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table rgw-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">@localizer["Member"]</th>
+                                    <th scope="col">@localizer["ProgressHeader"]</th>
+                                    <th scope="col">@localizer["DueOn"]</th>
+                                    <th scope="col">@localizer["LastCompleted"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var row in Model.Progress.OrderBy(r => r.CompletedOn.HasValue).ThenBy(r => Model.Names.TryGetValue(r.UserId, out var n) ? n : r.UserId))
+                                {
+                                    var percent = row.Needed <= 0 ? 100 : row.Done * 100 / row.Needed;
+                                    <tr>
+                                        <td>@(Model.Names.TryGetValue(row.UserId, out var name) ? name : row.UserId)</td>
+                                        <td>
+                                            <span class="rgw-progress-honest">@string.Format(localizer["StepsDoneFormat"].Value, row.Done, row.Needed)</span>
+                                            <div class="progress progress-mini" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="@percent"><div class="progress-bar" style="width:@(percent)%"></div></div>
+                                        </td>
+                                        <td>@Model.Date(row.DueOn)</td>
+                                        <td>@Model.Date(row.CompletedOn)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="~/js/app/internal/lms/resgrid.lms.programs.js" asp-append-version="true"></script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

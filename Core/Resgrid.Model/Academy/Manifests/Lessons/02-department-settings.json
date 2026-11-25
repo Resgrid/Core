@@ -1,0 +1,203 @@
+{
+  "schema": 1,
+  "id": "02-department-settings",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Department settings",
+  "minutes": 6.7,
+  "walkthrough": true,
+  "audience": [
+    "administrator"
+  ],
+  "visibility": [],
+  "pages": [
+    "Department"
+  ],
+  "adminAssist": {
+    "areas": [
+      "security"
+    ],
+    "capabilities": [
+      "department-settings",
+      "terminology",
+      "document-numbering"
+    ]
+  },
+  "media": {
+    "video": "deep-dive/media/02-department-settings.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "deep-dive/lessons/02-department-settings/captions.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Configure department-wide behavior",
+    "ar": "اضبط سلوك الإدارة بأكملها",
+    "de": "Das Verhalten der gesamten Organisation konfigurieren",
+    "el": "Ρυθμίστε τη συμπεριφορά όλης της υπηρεσίας",
+    "es": "Configurar el comportamiento de todo el departamento",
+    "fr": "Configurer le comportement de tout le service",
+    "it": "Configurare il comportamento di tutto il dipartimento",
+    "pl": "Skonfiguruj działanie całej jednostki",
+    "sv": "Konfigurera beteendet för hela organisationen",
+    "uk": "Налаштуйте поведінку всього підрозділу"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "What do department settings control?",
+        "ar": "ماذا تتحكم إعدادات الإدارة؟",
+        "de": "Was steuern die Einstellungen der Organisation?",
+        "el": "Τι ελέγχουν οι ρυθμίσεις της υπηρεσίας;",
+        "es": "¿Qué controlan los ajustes del departamento?",
+        "fr": "Que contrôlent les paramètres du service ?",
+        "it": "Che cosa controllano le impostazioni del dipartimento?",
+        "pl": "Co kontrolują ustawienia jednostki?",
+        "sv": "Vad styr organisationens inställningar?",
+        "uk": "Що керують налаштування підрозділу?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "One member's profile picture",
+            "ar": "صورة ملف تعريف عضو واحد",
+            "de": "Das Profilbild eines Mitglieds",
+            "el": "Τη φωτογραφία προφίλ ενός μέλους",
+            "es": "La foto de perfil de un miembro",
+            "fr": "La photo de profil d’un membre",
+            "it": "La foto profilo di un membro",
+            "pl": "Zdjęcie profilowe jednego członka",
+            "sv": "En medlems profilbild",
+            "uk": "Фото профілю одного учасника"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Behavior for the whole department",
+            "ar": "سلوك الإدارة بأكملها",
+            "de": "Das Verhalten der gesamten Organisation",
+            "el": "Τη συμπεριφορά όλης της υπηρεσίας",
+            "es": "El comportamiento de todo el departamento",
+            "fr": "Le comportement de tout le service",
+            "it": "Il comportamento di tutto il dipartimento",
+            "pl": "Działanie całej jednostki",
+            "sv": "Beteendet för hela organisationen",
+            "uk": "Поведінку всього підрозділу"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "A single call's notes",
+            "ar": "ملاحظات بلاغ واحد",
+            "de": "Die Notizen eines einzelnen Einsatzes",
+            "el": "Τις σημειώσεις μιας κλήσης",
+            "es": "Las notas de una sola llamada",
+            "fr": "Les notes d’une seule intervention",
+            "it": "Le note di una sola chiamata",
+            "pl": "Notatki jednego zgłoszenia",
+            "sv": "Anteckningarna för ett enda larm",
+            "uk": "Нотатки одного виклику"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "Who should change department settings?",
+        "ar": "من يجب أن يغيّر إعدادات الإدارة؟",
+        "de": "Wer sollte die Einstellungen der Organisation ändern?",
+        "el": "Ποιος πρέπει να αλλάζει τις ρυθμίσεις της υπηρεσίας;",
+        "es": "¿Quién debería cambiar los ajustes del departamento?",
+        "fr": "Qui devrait modifier les paramètres du service ?",
+        "it": "Chi dovrebbe cambiare le impostazioni del dipartimento?",
+        "pl": "Kto powinien zmieniać ustawienia jednostki?",
+        "sv": "Vem bör ändra organisationens inställningar?",
+        "uk": "Хто має змінювати налаштування підрозділу?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Department administrators",
+            "ar": "مديرو الإدارة",
+            "de": "Administratoren der Organisation",
+            "el": "Οι διαχειριστές της υπηρεσίας",
+            "es": "Los administradores del departamento",
+            "fr": "Les administrateurs du service",
+            "it": "Gli amministratori del dipartimento",
+            "pl": "Administratorzy jednostki",
+            "sv": "Organisationens administratörer",
+            "uk": "Адміністратори підрозділу"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Any member",
+            "ar": "أي عضو",
+            "de": "Jedes beliebige Mitglied",
+            "el": "Οποιοδήποτε μέλος",
+            "es": "Cualquier miembro",
+            "fr": "N’importe quel membre",
+            "it": "Qualsiasi membro",
+            "pl": "Dowolny członek",
+            "sv": "Vilken medlem som helst",
+            "uk": "Будь-який учасник"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Visitors",
+            "ar": "الزوار",
+            "de": "Besucher",
+            "el": "Επισκέπτες",
+            "es": "Los visitantes",
+            "fr": "Les visiteurs",
+            "it": "I visitatori",
+            "pl": "Goście",
+            "sv": "Besökare",
+            "uk": "Відвідувачі"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "f",
+      "text": {
+        "en": "Department settings only affect the person who changed them.",
+        "ar": "لا تؤثر إعدادات الإدارة إلا في من غيّرها.",
+        "de": "Die Einstellungen der Organisation betreffen nur die Person, die sie geändert hat.",
+        "el": "Οι ρυθμίσεις της υπηρεσίας επηρεάζουν μόνο όποιον τις άλλαξε.",
+        "es": "Los ajustes del departamento solo afectan a quien los cambió.",
+        "fr": "Les paramètres du service ne concernent que la personne qui les a modifiés.",
+        "it": "Le impostazioni del dipartimento riguardano solo chi le ha cambiate.",
+        "pl": "Ustawienia jednostki dotyczą tylko osoby, która je zmieniła.",
+        "sv": "Organisationens inställningar påverkar bara den som ändrade dem.",
+        "uk": "Налаштування підрозділу впливають лише на того, хто їх змінив."
+      }
+    }
+  ]
+}

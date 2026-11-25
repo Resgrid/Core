@@ -1,0 +1,208 @@
+{
+  "schema": 1,
+  "id": "13-inventory",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Inventory",
+  "minutes": 3.0,
+  "walkthrough": false,
+  "audience": [
+    "logistics"
+  ],
+  "visibility": [
+    "module:Inventory"
+  ],
+  "pages": [
+    "Inventory"
+  ],
+  "adminAssist": {
+    "areas": [
+      "inventory"
+    ],
+    "capabilities": [
+      "inventory",
+      "inventory-operations",
+      "inventory-status",
+      "inventory-transfer",
+      "inventory-issue",
+      "inventory-purchasing"
+    ]
+  },
+  "media": {
+    "video": "media/13-inventory.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/13-inventory.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Know what is available, issued, and expiring",
+    "ar": "اعرف المتاح والمصروف والذي يوشك على الانتهاء",
+    "de": "Wissen, was verfügbar, ausgegeben und bald abgelaufen ist",
+    "el": "Γνωρίζετε τι είναι διαθέσιμο, χορηγημένο και τι λήγει",
+    "es": "Saber qué está disponible, entregado o por caducar",
+    "fr": "Savoir ce qui est disponible, attribué ou bientôt périmé",
+    "it": "Sapere cosa è disponibile, consegnato e in scadenza",
+    "pl": "Wiedz, co jest dostępne, wydane i wkrótce traci ważność",
+    "sv": "Vet vad som finns, är utlämnat och snart går ut",
+    "uk": "Знайте, що доступне, видане і спливає"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "What does inventory help you know?",
+        "ar": "ماذا يساعدك المخزون على معرفته؟",
+        "de": "Was hilft Ihnen die Inventarverwaltung zu wissen?",
+        "el": "Τι σας βοηθά να γνωρίζετε η απογραφή;",
+        "es": "¿Qué le ayuda a saber el inventario?",
+        "fr": "Que vous aide à savoir l’inventaire ?",
+        "it": "Che cosa ti aiuta a sapere l’inventario?",
+        "pl": "Czego dowiesz się dzięki inwentarzowi?",
+        "sv": "Vad hjälper inventariet dig att veta?",
+        "uk": "Що допомагає знати облік майна?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Who is on shift",
+            "ar": "من في المناوبة",
+            "de": "Wer Schicht hat",
+            "el": "Ποιος έχει βάρδια",
+            "es": "Quién está de turno",
+            "fr": "Qui est de garde",
+            "it": "Chi è di turno",
+            "pl": "Kto jest na zmianie",
+            "sv": "Vem som har pass",
+            "uk": "Хто на зміні"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "What equipment is available, issued and expiring",
+            "ar": "المعدات المتاحة والمصروفة والتي توشك على الانتهاء",
+            "de": "Welche Ausrüstung verfügbar, ausgegeben und bald abgelaufen ist",
+            "el": "Ποιος εξοπλισμός είναι διαθέσιμος, χορηγημένος και λήγει",
+            "es": "Qué equipo está disponible, entregado y por caducar",
+            "fr": "Quel équipement est disponible, attribué et bientôt périmé",
+            "it": "Quale attrezzatura è disponibile, consegnata e in scadenza",
+            "pl": "Jaki sprzęt jest dostępny, wydany i traci ważność",
+            "sv": "Vilken utrustning som finns, är utlämnad och snart går ut",
+            "uk": "Яке спорядження доступне, видане і спливає"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Which calls are open",
+            "ar": "البلاغات المفتوحة",
+            "de": "Welche Einsätze offen sind",
+            "el": "Ποιες κλήσεις είναι ανοιχτές",
+            "es": "Qué llamadas están abiertas",
+            "fr": "Quelles interventions sont ouvertes",
+            "it": "Quali chiamate sono aperte",
+            "pl": "Które zgłoszenia są otwarte",
+            "sv": "Vilka larm som är öppna",
+            "uk": "Які виклики відкриті"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "Why track expiry dates of supplies?",
+        "ar": "لماذا تُتبع تواريخ انتهاء المستلزمات؟",
+        "de": "Warum die Ablaufdaten von Material verfolgen?",
+        "el": "Γιατί να παρακολουθούνται οι ημερομηνίες λήξης των υλικών;",
+        "es": "¿Por qué seguir las fechas de caducidad de los suministros?",
+        "fr": "Pourquoi suivre les dates de péremption des fournitures ?",
+        "it": "Perché seguire le date di scadenza delle forniture?",
+        "pl": "Po co śledzić daty ważności zaopatrzenia?",
+        "sv": "Varför följa utgångsdatum på förnödenheter?",
+        "uk": "Навіщо стежити за термінами придатності запасів?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "They are only decorative",
+            "ar": "إنها للزينة فقط",
+            "de": "Sie sind nur Dekoration",
+            "el": "Είναι μόνο διακοσμητικές",
+            "es": "Son solo decorativas",
+            "fr": "Elles sont purement décoratives",
+            "it": "Sono solo decorative",
+            "pl": "Są tylko ozdobą",
+            "sv": "De är bara dekoration",
+            "uk": "Вони лише для краси"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "So items are replaced before they expire",
+            "ar": "لاستبدال الأصناف قبل انتهاء صلاحيتها",
+            "de": "Damit Artikel vor dem Ablauf ersetzt werden",
+            "el": "Ώστε τα είδη να αντικαθίστανται πριν λήξουν",
+            "es": "Para reponer los artículos antes de que caduquen",
+            "fr": "Pour remplacer les articles avant leur péremption",
+            "it": "Per sostituire gli articoli prima che scadano",
+            "pl": "Aby wymieniać przedmioty przed upływem ważności",
+            "sv": "Så att artiklar byts ut innan de går ut",
+            "uk": "Щоб замінювати речі до закінчення терміну"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "To raise prices",
+            "ar": "لرفع الأسعار",
+            "de": "Um Preise zu erhöhen",
+            "el": "Για αύξηση τιμών",
+            "es": "Para subir los precios",
+            "fr": "Pour augmenter les prix",
+            "it": "Per alzare i prezzi",
+            "pl": "Aby podnieść ceny",
+            "sv": "För att höja priserna",
+            "uk": "Щоб підняти ціни"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "f",
+      "text": {
+        "en": "Inventory cannot show who an item was issued to.",
+        "ar": "لا يستطيع المخزون إظهار من صُرف له الصنف.",
+        "de": "Das Inventar kann nicht zeigen, an wen ein Artikel ausgegeben wurde.",
+        "el": "Η απογραφή δεν μπορεί να δείξει σε ποιον χορηγήθηκε ένα είδος.",
+        "es": "El inventario no puede mostrar a quién se entregó un artículo.",
+        "fr": "L’inventaire ne peut pas montrer à qui un article a été attribué.",
+        "it": "L’inventario non può mostrare a chi è stato consegnato un articolo.",
+        "pl": "Inwentarz nie pokazuje, komu wydano przedmiot.",
+        "sv": "Inventariet kan inte visa vem en artikel lämnats ut till.",
+        "uk": "Облік не може показати, кому видано річ."
+      }
+    }
+  ]
+}

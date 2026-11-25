@@ -171,11 +171,10 @@ namespace Resgrid.Web.Eventing
 				.AddTokenProvider<ResgridAuthenticatorTokenProvider>(TokenOptions.DefaultAuthenticatorProvider)
 				.AddClaimsPrincipalFactory<ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>();
 
+			// The shared helper (every other host uses it): the IPv4-mapped form's prefix is offset by 96 bits. The inline form here
+			// trusted every IPv4 client as a proxy, which made RemoteIpAddress spoofable — the e-sign webhook allowlist relies on it.
 			services.Configure<ForwardedHeadersOptions>(options =>
-			{
-				options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-				options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse($"::ffff:{WebConfig.IngressProxyNetwork}"), WebConfig.IngressProxyNetworkCidr));
-			});
+				Resgrid.Web.Helpers.ForwardedHeadersSetup.Configure(options, WebConfig.IngressProxyNetwork, WebConfig.IngressProxyNetworkCidr));
 
 			services.Configure<IdentityOptions>(options =>
 			{

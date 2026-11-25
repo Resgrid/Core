@@ -1,0 +1,200 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsPrograms
+@model LmsFrameworkView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    One competency framework (R-C7): its items as a tree, what each item is tagged on (courses, trainings, categories, certification
+    types; skill sheets and task-book tasks arrive with T4), and the officer's edits.
+*@
+@{
+    var framework = Model.Framework;
+    ViewBag.Title = "Resgrid | " + framework.Name;
+    ViewData["Title"] = framework.Name;
+    ViewData["Subtitle"] = string.Join(" · ", new[] { framework.Publisher, framework.Edition }.Where(s => !string.IsNullOrWhiteSpace(s)));
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var editable = Model.IsOfficer && Model.CanAuthor;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    <div class="rgw-toolbar m-b-sm">
+        <a class="btn btn-white" asp-controller="LmsPrograms" asp-action="Gaps" asp-route-area="User" asp-route-frameworkId="@framework.LmsCompetencyFrameworkId"><i class="fa fa-list-ul" aria-hidden="true"></i> @localizer["Prg.GapReport"]</a>
+        @if (Model.IsOfficer)
+        {
+            <span class="rgw-toolbar-spacer"></span>
+            <form method="post" asp-controller="LmsPrograms" asp-action="DeleteFramework" asp-route-area="User" class="d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@framework.LmsCompetencyFrameworkId" />
+                <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["Prg.Delete"]</button>
+            </form>
+        }
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(framework.Description))
+    {
+        <p>@framework.Description</p>
+    }
+
+    @if (Model.Items.Count == 0)
+    {
+        <p class="text-muted">@localizer["Prg.NoItems"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead>
+                    <tr>
+                        <th>@localizer["Prg.Col.Code"]</th>
+                        <th>@localizer["Prg.Col.Competency"]</th>
+                        <th>@localizer["Prg.TaggedOn"]</th>
+                        @if (editable)
+                        {
+                            <th class="rgw-row-actions">@localizer["Prg.Actions"]</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var (item, depth) in Model.Items)
+                    {
+                        var tags = Model.Tags.TryGetValue(item.LmsCompetencyItemId, out var list) ? list : new List<LmsCompetencyAlignment>();
+                        <tr>
+                            <td class="rgw-mono">@item.HumanCodingScheme</td>
+                            <td style="padding-inline-start:@(8 + Math.Min(depth, 6) * 18)px">@item.Label
+                                @if (!string.IsNullOrWhiteSpace(item.ItemType)) {<span class="rgw-sub">@item.ItemType</span>}</td>
+                            <td>
+                                @foreach (var tag in tags)
+                                {
+                                    <span class="label label-default m-r-xs"><i class="fa fa-tag" aria-hidden="true"></i> @localizer["Prg.Subject." + (LmsCompetencySubjectKinds)tag.SubjectKind]: @Model.SubjectName(tag)</span>
+                                    @if (editable)
+                                    {
+                                        <form method="post" asp-controller="LmsPrograms" asp-action="Untag" asp-route-area="User" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="frameworkId" value="@framework.LmsCompetencyFrameworkId" />
+                                            <input type="hidden" name="id" value="@tag.LmsCompetencyAlignmentId" />
+                                            <button type="submit" class="btn btn-link btn-xs" title="@localizer["Prg.Untag"]"><i class="fa fa-times" aria-hidden="true"></i><span class="sr-only">@localizer["Prg.Untag"]</span></button>
+                                        </form>
+                                    }
+                                }
+                                @if (tags.Count == 0) {<span class="text-muted">—</span>}
+                            </td>
+                            @if (editable)
+                            {
+                                <td class="rgw-row-actions">
+                                    <form method="post" asp-controller="LmsPrograms" asp-action="Tag" asp-route-area="User" class="form-inline d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="frameworkId" value="@framework.LmsCompetencyFrameworkId" />
+                                        <input type="hidden" name="itemId" value="@item.LmsCompetencyItemId" />
+                                        <label class="sr-only" for="tag-@item.LmsCompetencyItemId">@localizer["Prg.TagOn"]</label>
+                                        <select id="tag-@item.LmsCompetencyItemId" name="subject" class="form-control input-sm" style="max-width:16em">
+                                            @foreach (var group in Model.Subjects.GroupBy(s => s.Kind))
+                                            {
+                                                <optgroup label="@localizer["Prg.Subject." + group.Key]">
+                                                    @foreach (var subject in group)
+                                                    {
+                                                        <option value="@((int)subject.Kind):@subject.Id">@subject.Name</option>
+                                                    }
+                                                </optgroup>
+                                            }
+                                        </select>
+                                        <button type="submit" class="btn btn-white btn-xs"><i class="fa fa-tag" aria-hidden="true"></i> @localizer["Prg.TagOn"]</button>
+                                    </form>
+                                    <form method="post" asp-controller="LmsPrograms" asp-action="DeleteCompetency" asp-route-area="User" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="frameworkId" value="@framework.LmsCompetencyFrameworkId" />
+                                        <input type="hidden" name="id" value="@item.LmsCompetencyItemId" />
+                                        <button type="submit" class="btn btn-white btn-xs"><i class="fa fa-times" aria-hidden="true"></i> @localizer["Prg.Remove"]</button>
+                                    </form>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (editable)
+    {
+        <div class="row">
+            <div class="col-md-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5><i class="fa fa-plus" aria-hidden="true"></i> @localizer["Prg.AddItem"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="text-muted">@localizer["Prg.AddItemHelp"]</p>
+                        <form method="post" asp-controller="LmsPrograms" asp-action="SaveCompetency" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="frameworkId" value="@framework.LmsCompetencyFrameworkId" />
+                            <input type="hidden" name="id" value="0" />
+                            <div class="form-group">
+                                <label for="item-parent">@localizer["Prg.Parent"]</label>
+                                <select id="item-parent" name="parentId" class="form-control">
+                                    <option value="">—</option>
+                                    @foreach (var (item, depth) in Model.Items)
+                                    {
+                                        <option value="@item.LmsCompetencyItemId">@(new string('·', depth)) @item.HumanCodingScheme @item.Label</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="item-code">@localizer["Prg.Col.Code"]</label>
+                                <input id="item-code" name="code" class="form-control" maxlength="100" />
+                            </div>
+                            <div class="form-group">
+                                <label for="item-label">@localizer["Prg.ShortLabel"]</label>
+                                <input id="item-label" name="label" class="form-control" maxlength="500" />
+                            </div>
+                            <div class="form-group">
+                                <label for="item-type">@localizer["Prg.ItemType"]</label>
+                                <input id="item-type" name="itemType" class="form-control" maxlength="60" value="JPR" />
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["Prg.Add"]</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["Prg.EditFramework"]</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-controller="LmsPrograms" asp-action="SaveFramework" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@framework.LmsCompetencyFrameworkId" />
+                            <div class="form-group">
+                                <label for="fw-name">@localizer["Prg.Name"]</label>
+                                <input id="fw-name" name="name" class="form-control" maxlength="250" value="@framework.Name" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="fw-publisher">@localizer["Prg.Publisher"]</label>
+                                <input id="fw-publisher" name="publisher" class="form-control" maxlength="250" value="@framework.Publisher" />
+                            </div>
+                            <div class="form-group">
+                                <label for="fw-edition">@localizer["Prg.Edition"]</label>
+                                <input id="fw-edition" name="edition" class="form-control" maxlength="100" value="@framework.Edition" />
+                            </div>
+                            <div class="form-group">
+                                <label for="fw-description">@localizer["Prg.Description"]</label>
+                                <textarea id="fw-description" name="description" class="form-control" rows="2" maxlength="2000">@framework.Description</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="fw-age">@localizer["Prg.EvidenceMaxAge"]</label>
+                                <input id="fw-age" name="evidenceMaxAgeMonths" type="number" min="0" max="240" class="form-control" value="@framework.EvidenceMaxAgeMonths" />
+                                <span class="help-block">@localizer["Prg.EvidenceMaxAgeHelp"]</span>
+                            </div>
+                            <button type="submit" class="btn btn-white"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Prg.Save"]</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

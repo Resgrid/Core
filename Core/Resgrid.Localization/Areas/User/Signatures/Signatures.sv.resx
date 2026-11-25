@@ -1,0 +1,940 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AnyApprover" xml:space="preserve">
+    <value>valfri godkännare</value>
+  </data>
+  <data name="BindsToContentHelp" xml:space="preserve">
+    <value>Signaturen gäller exakt den här texten. Om texten ändras stämmer den inte längre och en ny signatur behövs.</value>
+  </data>
+  <data name="CertificationVerificationStatement" xml:space="preserve">
+    <value>Jag verifierar certifieringsposten {0} ({1}, mottagen {2}, upphör {3}): jag har kontrollerat den och den är äkta.</value>
+  </data>
+  <data name="CommentLabel" xml:space="preserve">
+    <value>Kommentar (valfritt)</value>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>Innehållskod</value>
+  </data>
+  <data name="IntentApprove" xml:space="preserve">
+    <value>Godkännande</value>
+  </data>
+  <data name="IntentAttest" xml:space="preserve">
+    <value>Intygande</value>
+  </data>
+  <data name="IntentColumn" xml:space="preserve">
+    <value>Innebörd</value>
+  </data>
+  <data name="IntentReview" xml:space="preserve">
+    <value>Granskning</value>
+  </data>
+  <data name="IntentVerify" xml:space="preserve">
+    <value>Verifiering</value>
+  </data>
+  <data name="IntentWitness" xml:space="preserve">
+    <value>Vittne</value>
+  </data>
+  <data name="LevelAttest" xml:space="preserve">
+    <value>inloggad session</value>
+  </data>
+  <data name="LevelBadge" xml:space="preserve">
+    <value>Nivå {0}: {1}</value>
+  </data>
+  <data name="LevelColumn" xml:space="preserve">
+    <value>Nivå</value>
+  </data>
+  <data name="LevelStepUp" xml:space="preserve">
+    <value>identiteten kontrollerad på nytt</value>
+  </data>
+  <data name="MethodPasskey" xml:space="preserve">
+    <value>Nyckel (passkey)</value>
+  </data>
+  <data name="MethodSession" xml:space="preserve">
+    <value>Inloggad session</value>
+  </data>
+  <data name="MethodStepUp" xml:space="preserve">
+    <value>Kontroll med andra faktor</value>
+  </data>
+  <data name="NoSignatures" xml:space="preserve">
+    <value>Inga signaturer ännu.</value>
+  </data>
+  <data name="OthersToSignLabel" xml:space="preserve">
+    <value>Ska signera efter dig:</value>
+  </data>
+  <data name="PasskeyCancelled" xml:space="preserve">
+    <value>Dialogrutan för nyckeln stängdes. Inget signerades.</value>
+  </data>
+  <data name="PasskeyFailed" xml:space="preserve">
+    <value>Nyckeln kunde inte verifieras. Inget signerades.</value>
+  </data>
+  <data name="PasskeyOnlyHelp" xml:space="preserve">
+    <value>Din avdelning kräver en nyckel (passkey) för den här signaturen.</value>
+  </data>
+  <data name="PasskeyRequiredHelp" xml:space="preserve">
+    <value>En nyckel (passkey) krävs.</value>
+  </data>
+  <data name="PasskeyUnsupported" xml:space="preserve">
+    <value>Den här webbläsaren kan inte använda nycklar (passkeys). Använd Signera i stället.</value>
+  </data>
+  <data name="ProtocolApprovalStatement" xml:space="preserve">
+    <value>Jag godkänner den här revideringen av protokoll {0} "{1}" (innehåll {2}) för publicering, som steg {3} av {4} i dess granskning.</value>
+  </data>
+  <data name="ProtocolReviewStatement" xml:space="preserve">
+    <value>Jag har granskat protokoll {0} "{1}" version {2} (innehåll {3}) och det är fortfarande korrekt utan ändring.</value>
+  </data>
+  <data name="SignApproveButton" xml:space="preserve">
+    <value>Signera och godkänn</value>
+  </data>
+  <data name="SignReviewButton" xml:space="preserve">
+    <value>Signera granskningen</value>
+  </data>
+  <data name="SignWithPasskeyButton" xml:space="preserve">
+    <value>Signera med nyckel</value>
+  </data>
+  <data name="SignedOnColumn" xml:space="preserve">
+    <value>Signerad</value>
+  </data>
+  <data name="SignerColumn" xml:space="preserve">
+    <value>Undertecknare</value>
+  </data>
+  <data name="StatementLabel" xml:space="preserve">
+    <value>Du signerar följande försäkran:</value>
+  </data>
+  <data name="StepUpHelp" xml:space="preserve">
+    <value>Signera ber dig bekräfta din identitet med din andra faktor om du inte nyss har gjort det.</value>
+  </data>
+  <data name="VerificationChanged" xml:space="preserve">
+    <value>Innehållet ändrat</value>
+  </data>
+  <data name="VerificationColumn" xml:space="preserve">
+    <value>Kontroll</value>
+  </data>
+  <data name="VerificationMissing" xml:space="preserve">
+    <value>Innehållet hittades inte</value>
+  </data>
+  <data name="VerificationValid" xml:space="preserve">
+    <value>Stämmer</value>
+  </data>
+  <data name="VerificationVoided" xml:space="preserve">
+    <value>Ogiltigförklarad</value>
+  </data>
+  <data name="AdoptTypedButton" xml:space="preserve">
+    <value>Använd namnförtydligandet som signatur</value>
+  </data>
+  <data name="AuditDepartment" xml:space="preserve">
+    <value>Organisation</value>
+  </data>
+  <data name="AuditDocument" xml:space="preserve">
+    <value>Dokument</value>
+  </data>
+  <data name="AuditEvidence" xml:space="preserve">
+    <value>Bevis</value>
+  </data>
+  <data name="AuditMethod" xml:space="preserve">
+    <value>Metod</value>
+  </data>
+  <data name="AuditNoSigners" xml:space="preserve">
+    <value>Inga signaturer är registrerade på dokumentet; det förseglas som det utfärdades.</value>
+  </data>
+  <data name="AuditPageTitle" xml:space="preserve">
+    <value>Resgrids granskningssida</value>
+  </data>
+  <data name="AuditPreparedOn" xml:space="preserve">
+    <value>Upprättad</value>
+  </data>
+  <data name="AuditRevisionHash" xml:space="preserve">
+    <value>Innehållshash (SHA-256)</value>
+  </data>
+  <data name="AuditRole" xml:space="preserve">
+    <value>Roll</value>
+  </data>
+  <data name="AuditSealNote" xml:space="preserve">
+    <value>Sidan ingår i det förseglade dokumentet. Förseglingen (PAdES med RFC 3161-tidsstämpel) visar att filen inte har ändrats sedan den förseglades; kontrollera den under Verifiera ett dokument i Resgrid eller i valfri PDF-läsare.</value>
+  </data>
+  <data name="AuditSigners" xml:space="preserve">
+    <value>Undertecknare</value>
+  </data>
+  <data name="AuditSubject" xml:space="preserve">
+    <value>Ärende</value>
+  </data>
+  <data name="BackLink" xml:space="preserve">
+    <value>Tillbaka</value>
+  </data>
+  <data name="CancelLink" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="ChannelInPerson" xml:space="preserve">
+    <value>På plats</value>
+  </data>
+  <data name="ChannelLabel" xml:space="preserve">
+    <value>Sätt</value>
+  </data>
+  <data name="ChannelRemote" xml:space="preserve">
+    <value>Via länk</value>
+  </data>
+  <data name="ClearSignatureButton" xml:space="preserve">
+    <value>Rensa</value>
+  </data>
+  <data name="ClosedText" xml:space="preserve">
+    <value>Signeringslänken gäller inte längre. Den kan redan ha använts, dragits tillbaka eller gått ut. Be avsändaren om en ny länk.</value>
+  </data>
+  <data name="CodeAttemptsLeft" xml:space="preserve">
+    <value>{0} försök kvar.</value>
+  </data>
+  <data name="CodeHeading" xml:space="preserve">
+    <value>Ange din kod</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Sexsiffrig kod</value>
+  </data>
+  <data name="CodeNotSent" xml:space="preserve">
+    <value>Koden kunde inte skickas just nu. Vänta en minut och försök igen.</value>
+  </data>
+  <data name="CodeSentEmail" xml:space="preserve">
+    <value>Vi har skickat en sexsiffrig kod till {0}.</value>
+  </data>
+  <data name="CodeSentSms" xml:space="preserve">
+    <value>Vi har skickat en sexsiffrig kod via sms till {0}.</value>
+  </data>
+  <data name="CodeWrong" xml:space="preserve">
+    <value>Koden är fel eller har gått ut.</value>
+  </data>
+  <data name="CompletedPdfButton" xml:space="preserve">
+    <value>Slutfört dokument</value>
+  </data>
+  <data name="ConsentButton" xml:space="preserve">
+    <value>Godkänn och skicka min kod</value>
+  </data>
+  <data name="ConsentCheckbox" xml:space="preserve">
+    <value>Jag godkänner att signera dokumentet elektroniskt.</value>
+  </data>
+  <data name="ConsentCodeNote" xml:space="preserve">
+    <value>Sedan skickar vi en engångskod till {0} för att bekräfta att det är du.</value>
+  </data>
+  <data name="ConsentHeading" xml:space="preserve">
+    <value>Samtycke till elektronisk signering</value>
+  </data>
+  <data name="ConsentRequired" xml:space="preserve">
+    <value>Kryssa i rutan för att godkänna innan du fortsätter.</value>
+  </data>
+  <data name="ConsentText" xml:space="preserve">
+    <value>Du ombeds signera ett dokument elektroniskt. Genom att godkänna samtycker du till att hantera dokumentet elektroniskt och till att din elektroniska signatur är lika giltig som en handskriven. Du kan be avsändaren om en papperskopia och du kan återkalla samtycket genom att inte signera. Ditt namn, tidpunkten för signeringen och koden vi skickar sparas med din signatur, och det signerade dokumentet förseglas så att det inte kan ändras.</value>
+  </data>
+  <data name="ContinueButton" xml:space="preserve">
+    <value>Fortsätt</value>
+  </data>
+  <data name="ContinueInPersonLink" xml:space="preserve">
+    <value>Fortsätt på plats</value>
+  </data>
+  <data name="DetailIntro" xml:space="preserve">
+    <value>En extern signaturbegäran: status, undertecknare och dokument.</value>
+  </data>
+  <data name="DoneHeading" xml:space="preserve">
+    <value>Tack.</value>
+  </data>
+  <data name="DoneText" xml:space="preserve">
+    <value>Din signatur har registrerats. Du kan stänga sidan.</value>
+  </data>
+  <data name="DrawSignatureHelp" xml:space="preserve">
+    <value>Signera med finger, penna eller mus. Utan pekdon skriver du namnet och använder det som signatur.</value>
+  </data>
+  <data name="DrawSignatureLabel" xml:space="preserve">
+    <value>Signatur</value>
+  </data>
+  <data name="DrawSignatureRequired" xml:space="preserve">
+    <value>Signera i rutan eller använd namnet som signatur.</value>
+  </data>
+  <data name="ESignAccountHeading" xml:space="preserve">
+    <value>Documenso-team för organisationen</value>
+  </data>
+  <data name="ESignActiveLabel" xml:space="preserve">
+    <value>Använd kontot för signeringslänkar</value>
+  </data>
+  <data name="ESignClusterHeading" xml:space="preserve">
+    <value>Signeringstjänster i installationen</value>
+  </data>
+  <data name="ESignClusterHelp" xml:space="preserve">
+    <value>De ställs in av den som driver Resgrid-installationen. Utan e-signeringsplattformen finns inga signeringslänkar, men signering på plats fungerar. Utan försegling signeras dokument och väntar på försegling tills den har konfigurerats.</value>
+  </data>
+  <data name="ESignIntro" xml:space="preserve">
+    <value>E-signeringskontot som skickar dokument för signering via länk, och läget för dokumentförsegling.</value>
+  </data>
+  <data name="ESignPlatformConfigured" xml:space="preserve">
+    <value>E-signeringsplattform (Documenso)</value>
+  </data>
+  <data name="ESignRemoveButton" xml:space="preserve">
+    <value>Ta bort token</value>
+  </data>
+  <data name="ESignSaved" xml:space="preserve">
+    <value>E-signeringsinställningarna har sparats.</value>
+  </data>
+  <data name="ESignTab" xml:space="preserve">
+    <value>E-signering</value>
+  </data>
+  <data name="ESignTeamIdLabel" xml:space="preserve">
+    <value>Team-ID</value>
+  </data>
+  <data name="ESignTitle" xml:space="preserve">
+    <value>Inställningar för e-signering</value>
+  </data>
+  <data name="ESignTokenHelp" xml:space="preserve">
+    <value>En API-token för teamet. Den lagras krypterad och bara de fyra sista tecknen visas. Lämna tomt för att behålla nuvarande token.</value>
+  </data>
+  <data name="ESignTokenLabel" xml:space="preserve">
+    <value>API-token</value>
+  </data>
+  <data name="EmbedFrameTitle" xml:space="preserve">
+    <value>Signering av dokument</value>
+  </data>
+  <data name="EmbedUnavailable" xml:space="preserve">
+    <value>Signeringstjänsten är inte tillgänglig just nu. Försök igen senare.</value>
+  </data>
+  <data name="ExpiresLabel" xml:space="preserve">
+    <value>Går ut</value>
+  </data>
+  <data name="ExternalPanelHelp" xml:space="preserve">
+    <value>En kund, nyttjare eller extern part kan signera dokumentet på plats på den här enheten, eller via en signeringslänk från Resgrid där det finns.</value>
+  </data>
+  <data name="ExternalPanelTitle" xml:space="preserve">
+    <value>Extern signatur</value>
+  </data>
+  <data name="FinishedButton" xml:space="preserve">
+    <value>Jag har signerat</value>
+  </data>
+  <data name="HandDeviceButton" xml:space="preserve">
+    <value>Lämna enheten till undertecknaren</value>
+  </data>
+  <data name="HandDeviceHelp" xml:space="preserve">
+    <value>Öppnar en signeringssida på enheten för den andra personen: samtycke, namn och ritad signatur, med valfritt vittne.</value>
+  </data>
+  <data name="HandDeviceTitle" xml:space="preserve">
+    <value>Signera på plats</value>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="InPersonSignedMessage" xml:space="preserve">
+    <value>Signerat på plats. Det signerade dokumentet förseglas när försegling finns.</value>
+  </data>
+  <data name="LandingExpires" xml:space="preserve">
+    <value>Länken går ut {0}.</value>
+  </data>
+  <data name="LandingIntro" xml:space="preserve">
+    <value>{0}, {1} ber dig granska och signera ett dokument.</value>
+  </data>
+  <data name="LevelExternal" xml:space="preserve">
+    <value>Extern undertecknare</value>
+  </data>
+  <data name="LevelSealed" xml:space="preserve">
+    <value>Förseglat dokument</value>
+  </data>
+  <data name="LinkOnceHelp" xml:space="preserve">
+    <value>Signeringslänken kunde inte levereras. Du kan ge den till undertecknaren själv; den visas bara nu och kan användas en gång.</value>
+  </data>
+  <data name="MethodExternalLink" xml:space="preserve">
+    <value>Signeringslänk och kod</value>
+  </data>
+  <data name="MethodInPersonOffline" xml:space="preserve">
+    <value>På plats (offline)</value>
+  </data>
+  <data name="MethodInPersonOnline" xml:space="preserve">
+    <value>På plats</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Nej</value>
+  </data>
+  <data name="NoRightToRequest" xml:space="preserve">
+    <value>Du kan inte begära signaturer för detta.</value>
+  </data>
+  <data name="OpenRequestStatus" xml:space="preserve">
+    <value>Signaturbegäran: {0} ({1}), går ut {2}.</value>
+  </data>
+  <data name="OtpChannelEmail" xml:space="preserve">
+    <value>E-post</value>
+  </data>
+  <data name="OtpChannelLabel" xml:space="preserve">
+    <value>Skicka engångskoden via</value>
+  </data>
+  <data name="OtpChannelSms" xml:space="preserve">
+    <value>Sms</value>
+  </data>
+  <data name="PdfFailed" xml:space="preserve">
+    <value>PDF-filen kunde inte skapas.</value>
+  </data>
+  <data name="PrintedNameLabel" xml:space="preserve">
+    <value>Namnförtydligande</value>
+  </data>
+  <data name="ProtocolPdfButton" xml:space="preserve">
+    <value>PDF</value>
+  </data>
+  <data name="RefusalNone" xml:space="preserve">
+    <value>Klart.</value>
+  </data>
+  <data name="RefusalInvalidRequest" xml:space="preserve">
+    <value>Vissa uppgifter saknas eller är ogiltiga.</value>
+  </data>
+  <data name="RefusalSubjectNotFound" xml:space="preserve">
+    <value>Posten hittades inte eller så kan du inte öppna den.</value>
+  </data>
+  <data name="RefusalRemoteNeedsAddon" xml:space="preserve">
+    <value>Signering via länk ingår i tillägget som dokumentet hör till. Signering på plats är tillgänglig.</value>
+  </data>
+  <data name="RefusalProviderUnavailable" xml:space="preserve">
+    <value>Signering via länk är inte konfigurerad för organisationen.</value>
+  </data>
+  <data name="RefusalRevisionChanged" xml:space="preserve">
+    <value>Dokumentet ändrades efter att det visades för signering. Börja om.</value>
+  </data>
+  <data name="RefusalRequestClosed" xml:space="preserve">
+    <value>Begäran är inte längre öppen.</value>
+  </data>
+  <data name="RefusalProviderFailed" xml:space="preserve">
+    <value>E-signeringsplattformen kunde inte förbereda dokumentet. Försök igen senare.</value>
+  </data>
+  <data name="RefusalContactRequired" xml:space="preserve">
+    <value>Ange en giltig e-postadress, eller ett telefonnummer i internationellt format, för engångskoden.</value>
+  </data>
+  <data name="RemoteRequestButton" xml:space="preserve">
+    <value>Begär signatur via länk</value>
+  </data>
+  <data name="RemoteRequestHelp" xml:space="preserve">
+    <value>Resgrid skickar undertecknaren en engångslänk. Innan signeringen samtycker hen till elektronisk signering och anger en engångskod som skickas till e-postadressen eller telefonnumret ovan.</value>
+  </data>
+  <data name="RemoteUnavailableNone" xml:space="preserve">
+    <value>Signering via länk är tillgänglig.</value>
+  </data>
+  <data name="RemoteUnavailableInvalidRequest" xml:space="preserve">
+    <value>Signering via länk erbjuds inte för detta.</value>
+  </data>
+  <data name="RemoteUnavailableSubjectNotFound" xml:space="preserve">
+    <value>Signering via länk erbjuds inte för detta.</value>
+  </data>
+  <data name="RemoteUnavailableRemoteNeedsAddon" xml:space="preserve">
+    <value>Signering via länk ingår i tillägget som dokumentet hör till; signering på plats är kostnadsfri.</value>
+  </data>
+  <data name="RemoteUnavailableProviderUnavailable" xml:space="preserve">
+    <value>Signering via länk är inte konfigurerad (e-signering); signering på plats är tillgänglig.</value>
+  </data>
+  <data name="RemoteUnavailableRevisionChanged" xml:space="preserve">
+    <value>Signering via länk är inte tillgänglig just nu.</value>
+  </data>
+  <data name="RemoteUnavailableRequestClosed" xml:space="preserve">
+    <value>Signering via länk är inte tillgänglig just nu.</value>
+  </data>
+  <data name="RemoteUnavailableProviderFailed" xml:space="preserve">
+    <value>Signering via länk är inte tillgänglig just nu.</value>
+  </data>
+  <data name="RemoteUnavailableContactRequired" xml:space="preserve">
+    <value>Signering via länk är inte tillgänglig just nu.</value>
+  </data>
+  <data name="RequestHeading" xml:space="preserve">
+    <value>Signaturbegäran</value>
+  </data>
+  <data name="RequestNotDeliveredMessage" xml:space="preserve">
+    <value>Begäran skapades men länken kunde inte levereras.</value>
+  </data>
+  <data name="RequestSentMessage" xml:space="preserve">
+    <value>Signeringslänken skickades till {0}.</value>
+  </data>
+  <data name="RequestVoidedMessage" xml:space="preserve">
+    <value>Begäran har dragits tillbaka.</value>
+  </data>
+  <data name="ResendButton" xml:space="preserve">
+    <value>Skicka en ny länk</value>
+  </data>
+  <data name="ResendCodeButton" xml:space="preserve">
+    <value>Skicka en ny kod</value>
+  </data>
+  <data name="RoleCustomer" xml:space="preserve">
+    <value>Kund</value>
+  </data>
+  <data name="RoleOccupant" xml:space="preserve">
+    <value>Nyttjare</value>
+  </data>
+  <data name="RoleExternalParty" xml:space="preserve">
+    <value>Extern part</value>
+  </data>
+  <data name="RoleWitness" xml:space="preserve">
+    <value>Vittne</value>
+  </data>
+  <data name="RoleCounterparty" xml:space="preserve">
+    <value>Motpart</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="SealedPdfButton" xml:space="preserve">
+    <value>Förseglad PDF</value>
+  </data>
+  <data name="SealingKey" xml:space="preserve">
+    <value>Signeringscertifikat</value>
+  </data>
+  <data name="SealingPendingState" xml:space="preserve">
+    <value>försegling väntar</value>
+  </data>
+  <data name="SealingSidecar" xml:space="preserve">
+    <value>Förseglingstjänst (EU DSS)</value>
+  </data>
+  <data name="SealingStore" xml:space="preserve">
+    <value>Lagring av förseglade dokument</value>
+  </data>
+  <data name="SealingTsa" xml:space="preserve">
+    <value>Tidsstämpeltjänst</value>
+  </data>
+  <data name="SendCodeButton" xml:space="preserve">
+    <value>Skicka min kod</value>
+  </data>
+  <data name="SendRequestButton" xml:space="preserve">
+    <value>Skicka begäran</value>
+  </data>
+  <data name="SignNowButton" xml:space="preserve">
+    <value>Signera</value>
+  </data>
+  <data name="SignaturePageTitle" xml:space="preserve">
+    <value>Signaturer</value>
+  </data>
+  <data name="SignaturesHeading" xml:space="preserve">
+    <value>Signaturer</value>
+  </data>
+  <data name="SignaturesModuleTitle" xml:space="preserve">
+    <value>Signaturer</value>
+  </data>
+  <data name="SignedByNote" xml:space="preserve">
+    <value>{0} · {1}</value>
+  </data>
+  <data name="SignedState" xml:space="preserve">
+    <value>Signerad</value>
+  </data>
+  <data name="SignerEmailLabel" xml:space="preserve">
+    <value>E-post</value>
+  </data>
+  <data name="SignerNameLabel" xml:space="preserve">
+    <value>Undertecknarens namn</value>
+  </data>
+  <data name="SignerPhoneLabel" xml:space="preserve">
+    <value>Mobiltelefon</value>
+  </data>
+  <data name="SignerStatusPending" xml:space="preserve">
+    <value>Väntar</value>
+  </data>
+  <data name="SignerStatusOpened" xml:space="preserve">
+    <value>Öppnad</value>
+  </data>
+  <data name="SignerStatusVerified" xml:space="preserve">
+    <value>Kod verifierad</value>
+  </data>
+  <data name="SignerStatusSigned" xml:space="preserve">
+    <value>Signerad</value>
+  </data>
+  <data name="SignerStatusDeclined" xml:space="preserve">
+    <value>Avböjd</value>
+  </data>
+  <data name="SigningBeingConfirmed" xml:space="preserve">
+    <value>Din signatur bekräftas. Det kan ta en minut; du kan stänga sidan.</value>
+  </data>
+  <data name="SigningLinkLabel" xml:space="preserve">
+    <value>Signeringslänk</value>
+  </data>
+  <data name="SigningPageTitle" xml:space="preserve">
+    <value>Signera ett dokument</value>
+  </data>
+  <data name="StatementTimeReport" xml:space="preserve">
+    <value>Jag bekräftar att tiden som registrerats på {0} är korrekt (innehållskod {1}).</value>
+  </data>
+  <data name="StatementBid" xml:space="preserve">
+    <value>Jag godkänner {0} (innehållskod {1}) för kundens räkning.</value>
+  </data>
+  <data name="StatementServiceContract" xml:space="preserve">
+    <value>Jag godkänner {0} (innehållskod {1}) för min organisations räkning.</value>
+  </data>
+  <data name="StatementRecordsInspection" xml:space="preserve">
+    <value>Jag bekräftar att jag har tagit emot resultatet av {0} (innehållskod {1}).</value>
+  </data>
+  <data name="StatementCustodyTransfer" xml:space="preserve">
+    <value>Jag bekräftar att jag har tagit emot bevismaterialet i {0} (innehållskod {1}).</value>
+  </data>
+  <data name="StatusDraft" xml:space="preserve">
+    <value>Utkast</value>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>Väntar på signatur</value>
+  </data>
+  <data name="StatusPartiallySigned" xml:space="preserve">
+    <value>Delvis signerad</value>
+  </data>
+  <data name="StatusCompleted" xml:space="preserve">
+    <value>Slutförd</value>
+  </data>
+  <data name="StatusDeclined" xml:space="preserve">
+    <value>Avböjd</value>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>Utgången</value>
+  </data>
+  <data name="StatusVoided" xml:space="preserve">
+    <value>Återkallad</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="SubjectUnavailable" xml:space="preserve">
+    <value>Det går inte att signera detta just nu.</value>
+  </data>
+  <data name="TooManyRequests" xml:space="preserve">
+    <value>För många förfrågningar. Vänta en minut och försök igen.</value>
+  </data>
+  <data name="VerifyButton" xml:space="preserve">
+    <value>Verifiera</value>
+  </data>
+  <data name="VerifyCodeButton" xml:space="preserve">
+    <value>Bekräfta kod</value>
+  </data>
+  <data name="VerifyFileLabel" xml:space="preserve">
+    <value>PDF-dokument</value>
+  </data>
+  <data name="VerifyFileRequired" xml:space="preserve">
+    <value>Välj en PDF-fil på högst 25 MB.</value>
+  </data>
+  <data name="VerifyFormatColumn" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="VerifyIndicationColumn" xml:space="preserve">
+    <value>Resultat</value>
+  </data>
+  <data name="VerifyIntro" xml:space="preserve">
+    <value>Ladda upp en PDF för att kontrollera signaturer och tidsstämplar, och om Resgrid utfärdade exakt den här filen.</value>
+  </data>
+  <data name="VerifyIssuedElsewhere" xml:space="preserve">
+    <value>Resgrid utfärdade exakt den här filen, för en annan organisation.</value>
+  </data>
+  <data name="VerifyIssuedHere" xml:space="preserve">
+    <value>Resgrid utfärdade exakt den här filen för organisationen.</value>
+  </data>
+  <data name="VerifyIssuedLabel" xml:space="preserve">
+    <value>Utfärdad av Resgrid</value>
+  </data>
+  <data name="VerifyNoSignatures" xml:space="preserve">
+    <value>Dokumentet innehåller inga signaturer.</value>
+  </data>
+  <data name="VerifyNotIssued" xml:space="preserve">
+    <value>Resgrid har ingen uppgift om att ha utfärdat exakt den här filen. En fil som ändrats, även med en byte, stämmer inte.</value>
+  </data>
+  <data name="VerifyNotPdf" xml:space="preserve">
+    <value>Filen är inte en PDF.</value>
+  </data>
+  <data name="VerifyResultHeading" xml:space="preserve">
+    <value>Resultat</value>
+  </data>
+  <data name="VerifySidecarMissing" xml:space="preserve">
+    <value>Valideringstjänsten är inte konfigurerad i installationen, så bara Resgrids egna uppgifter kontrolleras.</value>
+  </data>
+  <data name="VerifySignaturesLabel" xml:space="preserve">
+    <value>Giltiga signaturer</value>
+  </data>
+  <data name="VerifyTab" xml:space="preserve">
+    <value>Verifiera ett dokument</value>
+  </data>
+  <data name="VerifyTimestampColumn" xml:space="preserve">
+    <value>Tidsstämpel</value>
+  </data>
+  <data name="VerifyTimestampedOn" xml:space="preserve">
+    <value>tidsstämplad {0}</value>
+  </data>
+  <data name="VerifyTitle" xml:space="preserve">
+    <value>Verifiera ett dokument</value>
+  </data>
+  <data name="VerifyUploadHeading" xml:space="preserve">
+    <value>Dokument</value>
+  </data>
+  <data name="VerifyValidationUnavailable" xml:space="preserve">
+    <value>Valideringstjänsten svarade inte.</value>
+  </data>
+  <data name="ViewRequestLink" xml:space="preserve">
+    <value>Detaljer</value>
+  </data>
+  <data name="VoidButton" xml:space="preserve">
+    <value>Dra tillbaka begäran</value>
+  </data>
+  <data name="WitnessNameLabel" xml:space="preserve">
+    <value>Vittne (valfritt)</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Åtgärder</value>
+  </data>
+  <data name="AllMySignaturesLink" xml:space="preserve">
+    <value>Alla mina signaturer</value>
+  </data>
+  <data name="AnyEligibleMember" xml:space="preserve">
+    <value>valfri behörig medlem</value>
+  </data>
+  <data name="DeclineButton" xml:space="preserve">
+    <value>Avböj</value>
+  </data>
+  <data name="DeclineConfirmButton" xml:space="preserve">
+    <value>Avböj att signera</value>
+  </data>
+  <data name="DeclineHelp" xml:space="preserve">
+    <value>Om du avböjer avslutas begäran för alla; den som begärde signaturen får veta ditt skäl.</value>
+  </data>
+  <data name="DeclineReasonLabel" xml:space="preserve">
+    <value>Varför avböjer du?</value>
+  </data>
+  <data name="DocumentColumn" xml:space="preserve">
+    <value>Dokument</value>
+  </data>
+  <data name="DueByLabel" xml:space="preserve">
+    <value>senast {0}</value>
+  </data>
+  <data name="IssueReceiptButton" xml:space="preserve">
+    <value>Kvitto</value>
+  </data>
+  <data name="IssueReceiptTitle" xml:space="preserve">
+    <value>Kvitto på utlämnad utrustning</value>
+  </data>
+  <data name="MemberFallbackName" xml:space="preserve">
+    <value>en medlem</value>
+  </data>
+  <data name="MemberRequestButton" xml:space="preserve">
+    <value>Be {0} att signera</value>
+  </data>
+  <data name="MemberRequestHelp" xml:space="preserve">
+    <value>Medlemmen signerar i Resgrid efter en ny identitetskontroll (nivå 2); begäran visas under Mina signaturer och på medlemmens startsida.</value>
+  </data>
+  <data name="MemberRequestSentMessage" xml:space="preserve">
+    <value>Begäran om signatur har skickats.</value>
+  </data>
+  <data name="MySignaturesIntro" xml:space="preserve">
+    <value>Dokument som väntar på din signatur, med det steg som är ditt.</value>
+  </data>
+  <data name="MySignaturesTab" xml:space="preserve">
+    <value>Mina signaturer</value>
+  </data>
+  <data name="MySignaturesTitle" xml:space="preserve">
+    <value>Mina signaturer</value>
+  </data>
+  <data name="NothingToSign" xml:space="preserve">
+    <value>Inget väntar på din signatur.</value>
+  </data>
+  <data name="OpenDocumentLink" xml:space="preserve">
+    <value>Öppna dokumentet</value>
+  </data>
+  <data name="OpenSigningPageLink" xml:space="preserve">
+    <value>Signeringssida</value>
+  </data>
+  <data name="OpenStepButton" xml:space="preserve">
+    <value>Granska och signera</value>
+  </data>
+  <data name="OrderedHelp" xml:space="preserve">
+    <value>Undertecknarna signerar i stegnummerordning; steg med samma nummer kan signera samtidigt.</value>
+  </data>
+  <data name="OutsideSignerFallbackName" xml:space="preserve">
+    <value>extern undertecknare</value>
+  </data>
+  <data name="PendingSignaturesHeader" xml:space="preserve">
+    <value>Väntar på din signatur</value>
+  </data>
+  <data name="ReadinessProRequiredMessage" xml:space="preserve">
+    <value>Leverantörens godtagande av arbetsordrar och kvitton på utlämnad utrustning ingår i Readiness Pro.</value>
+  </data>
+  <data name="SignedCountLabel" xml:space="preserve">
+    <value>Signerade</value>
+  </data>
+  <data name="SignStepButton" xml:space="preserve">
+    <value>Signera</value>
+  </data>
+  <data name="StepDeclinedMessage" xml:space="preserve">
+    <value>Du avböjde att signera. Begäran är stängd.</value>
+  </data>
+  <data name="StepOrderColumn" xml:space="preserve">
+    <value>Steg</value>
+  </data>
+  <data name="StepPageIntro" xml:space="preserve">
+    <value>Läs försäkran, kontrollera innehållskoden och signera ditt steg.</value>
+  </data>
+  <data name="StepPanelTitle" xml:space="preserve">
+    <value>Din signatur</value>
+  </data>
+  <data name="StepsHeading" xml:space="preserve">
+    <value>Undertecknare</value>
+  </data>
+  <data name="StepSignedMessage" xml:space="preserve">
+    <value>Din signatur har registrerats.</value>
+  </data>
+  <data name="UnorderedHelp" xml:space="preserve">
+    <value>Alla undertecknare kan signera när som helst.</value>
+  </data>
+  <data name="VendorAcceptanceHeading" xml:space="preserve">
+    <value>Leverantörens godtagande</value>
+  </data>
+  <data name="WitnessNotYouNote" xml:space="preserve">
+    <value>Den som utförde checklistan kan inte vara vittne till den.</value>
+  </data>
+  <data name="WitnessPanelTitle" xml:space="preserve">
+    <value>Vittnessignatur</value>
+  </data>
+  <data name="WitnessSignatureHelp" xml:space="preserve">
+    <value>Skriv i rutan vad du bevittnade. Din signatur knyts till de visade resultaten (inte till anteckningar eller fritext), och checklistan är klar när du signerar.</value>
+  </data>
+  <data name="WitnessSignButton" xml:space="preserve">
+    <value>Signera som vittne</value>
+  </data>
+  <data name="WitnessSignedMessage" xml:space="preserve">
+    <value>Din vittnessignatur har registrerats och checklistan är klar.</value>
+  </data>
+  <data name="WitnessSignFailedMessage" xml:space="preserve">
+    <value>Vittnessignaturen kunde inte registreras.</value>
+  </data>
+  <data name="YourStepColumn" xml:space="preserve">
+    <value>Ditt steg</value>
+  </data>
+  <data name="YourStepNote" xml:space="preserve">
+    <value>Ditt steg: {0}</value>
+  </data>
+  <data name="RefusalNotYourTurn" xml:space="preserve">
+    <value>Det är inte din tur än: alla tidigare undertecknare har inte signerat.</value>
+  </data>
+  <data name="RefusalNotEligible" xml:space="preserve">
+    <value>Du har inte en certifiering eller roll som det här steget kräver.</value>
+  </data>
+  <data name="RefusalStepUpRequired" xml:space="preserve">
+    <value>Det här steget kräver nivå 2: bekräfta din identitet med din andra faktor eller en nyckel (passkey) och signera sedan.</value>
+  </data>
+  <data name="RefusalPasskeyRequired" xml:space="preserve">
+    <value>Det här steget måste signeras med en nyckel (passkey).</value>
+  </data>
+  <data name="RefusalNotASigner" xml:space="preserve">
+    <value>Du är inte undertecknare för det här steget.</value>
+  </data>
+  <data name="RefusalArtifactMismatch" xml:space="preserve">
+    <value>Bekräftelsen med nyckel gällde ett annat innehåll. Ladda om sidan och signera igen.</value>
+  </data>
+  <data name="RoleMember" xml:space="preserve">
+    <value>Medlem</value>
+  </data>
+  <data name="RoleCertifyingOfficial" xml:space="preserve">
+    <value>Certifierande ansvarig</value>
+  </data>
+  <data name="RoleEvaluator" xml:space="preserve">
+    <value>Bedömare</value>
+  </data>
+  <data name="RoleVendor" xml:space="preserve">
+    <value>Leverantör</value>
+  </data>
+  <data name="RoleRecipient" xml:space="preserve">
+    <value>Mottagare</value>
+  </data>
+  <data name="IntentEvaluate" xml:space="preserve">
+    <value>Bedömning</value>
+  </data>
+  <data name="IntentCertify" xml:space="preserve">
+    <value>Certifiering</value>
+  </data>
+  <data name="IntentAccept" xml:space="preserve">
+    <value>Godtagande</value>
+  </data>
+  <data name="OutcomeStepUpRequired" xml:space="preserve">
+    <value>Bekräfta din identitet med din andra faktor och signera sedan igen.</value>
+  </data>
+  <data name="OutcomePasskeyRequired" xml:space="preserve">
+    <value>En nyckel (passkey) krävs för att signera.</value>
+  </data>
+  <data name="OutcomeArtifactMismatch" xml:space="preserve">
+    <value>Bekräftelsen med nyckel gällde ett annat innehåll.</value>
+  </data>
+  <data name="OutcomeInvalidRequest" xml:space="preserve">
+    <value>Signaturen kunde inte registreras.</value>
+  </data>
+  <data name="StatementWorkOrderVendorAcceptance" xml:space="preserve">
+    <value>Jag godtar arbetet som utförts på {0} (innehållskod {1}).</value>
+  </data>
+  <data name="StatementInventoryIssueReceipt" xml:space="preserve">
+    <value>Jag bekräftar att jag har tagit emot {0} (innehållskod {1}).</value>
+  </data>
+  <data name="StatementSkillEvaluation" xml:space="preserve">
+    <value>Jag bekräftar bedömningen som registrerats för {0} (innehållskod {1}).</value>
+  </data>
+  <data name="StatementChecklistWitness" xml:space="preserve">
+    <value>Jag bevittnade checklistan {0} för {1} och bekräftar att de visade resultaten är det som registrerades (innehållskod {2}).</value>
+  </data>
+  <data name="StatementPurchaseRequisitionApproval" xml:space="preserve">
+    <value>Jag godkänner inköpsrekvisitionen {0} (innehållskod {1}).</value>
+  </data>
+  <data name="StatementIncidentPlanApproval" xml:space="preserve">
+    <value>Jag godkänner handlingsplanen för händelsen {0} (innehållskod {1}).</value>
+  </data>
+  <data name="StatementInvoiceApproval" xml:space="preserve">
+    <value>Jag godkänner att {0} skickas (innehållskod {1}).</value>
+  </data>
+  <data name="StatementPayrollRunApproval" xml:space="preserve">
+    <value>Jag godkänner lönekörningen {0} (innehållskod {1}).</value>
+  </data>
+  <data name="StatementCalOesMarsPackageApproval" xml:space="preserve">
+    <value>Jag godkänner Cal OES MARS-paketet {0} för inlämning (innehållskod {1}).</value>
+  </data>
+  <data name="StatementMutualAidAgreementApproval" xml:space="preserve">
+    <value>Jag godkänner avtalet om ömsesidigt bistånd {0} på avdelningens vägnar (innehållskod {1}).</value>
+  </data>
+  <data name="ApprovalsTab" xml:space="preserve">
+    <value>Godkännanden</value>
+  </data>
+</root>

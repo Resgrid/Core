@@ -1,6 +1,7 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Documents.ViewDocumentView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Documents.Documents> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> protocolText
 @{
     ViewBag.Title = "Resgrid | " + localizer["ViewDocumentHeader"];
 }
@@ -53,6 +54,20 @@
                     @localizer["EditDocumentHeader"]
                 </a>
             }
+            @if (Model.CanMoveToProtocols)
+            {
+                @* P1 R-P6: Documents stays the general file cabinet; anything members must follow or acknowledge moves to Protocols. *@
+                <form asp-controller="Documents" asp-action="MoveToProtocols" asp-route-area="User" method="post" style="display:inline;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="documentId" value="@Model.Document.DocumentId" />
+                    <label class="sr-only" for="moveKind">@protocolText["KindLabel"]</label>
+                    <select id="moveKind" name="kind" class="form-control input-sm" style="display:inline-block; width:auto;">
+                        <option value="@((int)Resgrid.Model.ProtocolKinds.Policy)">@protocolText["KindPolicy"]</option>
+                        <option value="@((int)Resgrid.Model.ProtocolKinds.Reference)">@protocolText["KindReference"]</option>
+                    </select>
+                    <button type="submit" class="btn btn-warning" data-confirm="@protocolText["MoveToProtocolsConfirm"]">@protocolText["MoveToProtocolsButton"]</button>
+                </form>
+            }
             @if (Model.CanDelete)
             {
                 <form asp-controller="Documents" asp-action="DeleteDocument" asp-route-area="User" method="post" style="display:inline;"
@@ -67,6 +82,11 @@
         </div>
     </div>
 </div>
+
+@if (!string.IsNullOrEmpty(Model.Error))
+{
+    <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @(Model.Error == "protected" ? protocolText["MoveProtectedDocumentError"] : protocolText["MoveDocumentFailedError"])</div>
+}
 
 <div class="row">
     <div class="col-lg-12">

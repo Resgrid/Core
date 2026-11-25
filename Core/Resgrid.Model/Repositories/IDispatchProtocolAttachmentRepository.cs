@@ -22,5 +22,11 @@ namespace Resgrid.Model.Repositories
 
 		/// <summary>Every attachment of the department's protocols without their bytes, in one query.</summary>
 		Task<IEnumerable<DispatchProtocolAttachment>> GetAttachmentInfoByDepartmentIdAsync(int departmentId);
+
+		/// <summary>
+		/// Every attachment of the department's protocols without its bytes, with its SHA-256 (P3 offline manifest, M0381). Rows still
+		/// without a hash are hashed by the database first, so the bytes never leave it.
+		/// </summary>
+		Task<IEnumerable<DispatchProtocolAttachment>> GetAttachmentHashesByDepartmentIdAsync(int departmentId);
 	}
 }

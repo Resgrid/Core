@@ -716,4 +716,13 @@
   <data name="HelpFieldScheduleName" xml:space="preserve"><value>Widoczna na liście terminów, więc niech będzie rozpoznawalna na pierwszy rzut oka.</value></data>
   <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>Ile czasu ma załoga na ukończenie kontroli od jej otwarcia. Po tym czasie liczy się jako pominięta.</value></data>
   <data name="HelpFieldAssignment" xml:space="preserve"><value>Automatyczne kierowanie wysyła kontrolę do posiadacza obiektu. Wybierz osobę, rolę, grupę lub pojazd, aby to zmienić.</value></data>
+  <data name="The witness signs at L2 (a fresh step-up or a passkey), bound to the content of the completion" xml:space="preserve">
+    <value>Świadek podpisuje na poziomie L2 (ponowna weryfikacja tożsamości lub klucz dostępu), a podpis jest powiązany z treścią wykonania</value>
+  </data>
+  <data name="WitnessSignatureRequired" xml:space="preserve">
+    <value>Ta lista kontrolna wymaga podpisu świadka. Otwórz wykonanie i podpisz jako świadek.</value>
+  </data>
+  <data name="WitnessSignatureRefused" xml:space="preserve">
+    <value>Podpis świadka nie został zapisany, więc lista kontrolna nadal czeka na świadka.</value>
+  </data>
 </root>

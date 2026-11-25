@@ -1,0 +1,1240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>Nie udało się tego wykonać.</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Działania</value>
+  </data>
+  <data name="AddCost" xml:space="preserve">
+    <value>Dodaj koszt</value>
+  </data>
+  <data name="AddInstructor" xml:space="preserve">
+    <value>Dodaj instruktora</value>
+  </data>
+  <data name="AddonNotice" xml:space="preserve">
+    <value>Zajęcia są częścią dodatku LMS, który nie jest aktywny w tej jednostce.</value>
+  </data>
+  <data name="AddonRequired" xml:space="preserve">
+    <value>Wymaga to aktywnego dodatku LMS.</value>
+  </data>
+  <data name="AddPeople" xml:space="preserve">
+    <value>Dodaj osoby</value>
+  </data>
+  <data name="AddWalkIn" xml:space="preserve">
+    <value>Oznacz obecność osoby bez zapisu</value>
+  </data>
+  <data name="AllTags" xml:space="preserve">
+    <value>Wszystkie tagi</value>
+  </data>
+  <data name="AlreadySignedIn" xml:space="preserve">
+    <value>Zarejestrowano Cię o</value>
+  </data>
+  <data name="Amount" xml:space="preserve">
+    <value>Kwota</value>
+  </data>
+  <data name="Approve" xml:space="preserve">
+    <value>Zatwierdź</value>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>Zatwierdzono.</value>
+  </data>
+  <data name="Attendance.Absent" xml:space="preserve">
+    <value>Nieobecny</value>
+  </data>
+  <data name="Attendance.Attended" xml:space="preserve">
+    <value>Obecny</value>
+  </data>
+  <data name="Attendance.Excused" xml:space="preserve">
+    <value>Usprawiedliwiony</value>
+  </data>
+  <data name="Attendance.Unmarked" xml:space="preserve">
+    <value>Nieoznaczone</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Wstecz</value>
+  </data>
+  <data name="Book" xml:space="preserve">
+    <value>Zarezerwuj</value>
+  </data>
+  <data name="BookedMessage" xml:space="preserve">
+    <value>Zarezerwowano.</value>
+  </data>
+  <data name="BookingsHeader" xml:space="preserve">
+    <value>Obiekty i pomoce</value>
+  </data>
+  <data name="BookResource" xml:space="preserve">
+    <value>Zarezerwuj na te zajęcia</value>
+  </data>
+  <data name="Calendar" xml:space="preserve">
+    <value>Kalendarz</value>
+  </data>
+  <data name="CalendarIsClass" xml:space="preserve">
+    <value>Ten wpis w kalendarzu to zajęcia: zapisy i obecność są na stronie zajęć.</value>
+  </data>
+  <data name="CancelClass" xml:space="preserve">
+    <value>Odwołaj zajęcia</value>
+  </data>
+  <data name="Cancelled" xml:space="preserve">
+    <value>Zajęcia odwołano i powiadomiono uczestników.</value>
+  </data>
+  <data name="CancelReason" xml:space="preserve">
+    <value>Powód odwołania</value>
+  </data>
+  <data name="ClassesIntro" xml:space="preserve">
+    <value>Zajęcia z instruktorem w kalendarzu: zapisy, lista rezerwowa, rejestracja obecności i zatwierdzona lista uczestników.</value>
+  </data>
+  <data name="ClassesTitle" xml:space="preserve">
+    <value>Zajęcia</value>
+  </data>
+  <data name="Col.Absent" xml:space="preserve">
+    <value>Nieobecni</value>
+  </data>
+  <data name="Col.Attendance" xml:space="preserve">
+    <value>Obecność</value>
+  </data>
+  <data name="Col.AttendanceRate" xml:space="preserve">
+    <value>Frekwencja</value>
+  </data>
+  <data name="Col.Attended" xml:space="preserve">
+    <value>Obecni</value>
+  </data>
+  <data name="Col.Attendee" xml:space="preserve">
+    <value>Uczestnik</value>
+  </data>
+  <data name="Col.Attendees" xml:space="preserve">
+    <value>Uczestnicy</value>
+  </data>
+  <data name="Col.Bookings" xml:space="preserve">
+    <value>Rezerwacje (następne 90 dni)</value>
+  </data>
+  <data name="Col.Capacity" xml:space="preserve">
+    <value>Pojemność</value>
+  </data>
+  <data name="Col.Class" xml:space="preserve">
+    <value>Zajęcia</value>
+  </data>
+  <data name="Col.ClassCost" xml:space="preserve">
+    <value>Koszt zajęć</value>
+  </data>
+  <data name="Col.Classes" xml:space="preserve">
+    <value>Zajęcia</value>
+  </data>
+  <data name="Col.ContentSummary" xml:space="preserve">
+    <value>Podsumowanie treści</value>
+  </data>
+  <data name="Col.Course" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="Col.Date" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="Col.Enrolled" xml:space="preserve">
+    <value>Zapisani</value>
+  </data>
+  <data name="Col.Exception" xml:space="preserve">
+    <value>Wyjątek</value>
+  </data>
+  <data name="Col.Hours" xml:space="preserve">
+    <value>Godziny</value>
+  </data>
+  <data name="Col.HoursTaught" xml:space="preserve">
+    <value>Godziny prowadzenia</value>
+  </data>
+  <data name="Col.Instructor" xml:space="preserve">
+    <value>Instruktor</value>
+  </data>
+  <data name="Col.Instructors" xml:space="preserve">
+    <value>Instruktorzy i kwalifikacje</value>
+  </data>
+  <data name="Col.JobTitle" xml:space="preserve">
+    <value>Stanowisko</value>
+  </data>
+  <data name="Col.Kind" xml:space="preserve">
+    <value>Rodzaj</value>
+  </data>
+  <data name="Col.Member" xml:space="preserve">
+    <value>Członek</value>
+  </data>
+  <data name="Col.Pending" xml:space="preserve">
+    <value>Oczekujące</value>
+  </data>
+  <data name="Col.Published" xml:space="preserve">
+    <value>Opublikowany</value>
+  </data>
+  <data name="Col.Qualifications" xml:space="preserve">
+    <value>Kwalifikacje</value>
+  </data>
+  <data name="Col.RequestCost" xml:space="preserve">
+    <value>Koszt wniosków szkoleniowych</value>
+  </data>
+  <data name="Col.Resource" xml:space="preserve">
+    <value>Zasób</value>
+  </data>
+  <data name="Col.Role" xml:space="preserve">
+    <value>Rola</value>
+  </data>
+  <data name="Col.Seats" xml:space="preserve">
+    <value>Miejsca</value>
+  </data>
+  <data name="Col.Series" xml:space="preserve">
+    <value>Cykl</value>
+  </data>
+  <data name="Col.Sessions" xml:space="preserve">
+    <value>Spotkania</value>
+  </data>
+  <data name="Col.SignIn" xml:space="preserve">
+    <value>Rejestracja</value>
+  </data>
+  <data name="Col.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Col.Title" xml:space="preserve">
+    <value>Tytuł</value>
+  </data>
+  <data name="Col.Waitlisted" xml:space="preserve">
+    <value>Rezerwa</value>
+  </data>
+  <data name="Col.WalkIns" xml:space="preserve">
+    <value>Bez zapisu</value>
+  </data>
+  <data name="Col.Year" xml:space="preserve">
+    <value>Rok</value>
+  </data>
+  <data name="Cost.BackfillOvertime" xml:space="preserve">
+    <value>Nadgodziny zastępstw</value>
+  </data>
+  <data name="Cost.Instructor" xml:space="preserve">
+    <value>Instruktor</value>
+  </data>
+  <data name="Cost.Materials" xml:space="preserve">
+    <value>Materiały</value>
+  </data>
+  <data name="Cost.Other" xml:space="preserve">
+    <value>Inne</value>
+  </data>
+  <data name="Cost.OutsideFees" xml:space="preserve">
+    <value>Opłaty zewnętrzne</value>
+  </data>
+  <data name="CostKind" xml:space="preserve">
+    <value>Rodzaj kosztu</value>
+  </data>
+  <data name="CostsHeader" xml:space="preserve">
+    <value>Koszty</value>
+  </data>
+  <data name="CostsIntro" xml:space="preserve">
+    <value>Instruktor, materiały, opłaty zewnętrzne i nadgodziny zastępstw wg kursu, członka lub roku, obok wniosków szkoleniowych.</value>
+  </data>
+  <data name="CostsTitle" xml:space="preserve">
+    <value>Koszty zajęć</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Utwórz</value>
+  </data>
+  <data name="CreateClass" xml:space="preserve">
+    <value>Utwórz zajęcia</value>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>Utworzono.</value>
+  </data>
+  <data name="DecisionNote" xml:space="preserve">
+    <value>Uwaga (wymagana przy zwrocie)</value>
+  </data>
+  <data name="Decline" xml:space="preserve">
+    <value>Odrzuć</value>
+  </data>
+  <data name="DeclinedMessage" xml:space="preserve">
+    <value>Odrzucono.</value>
+  </data>
+  <data name="DeleteClass" xml:space="preserve">
+    <value>Usuń zajęcia</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>Usunięto.</value>
+  </data>
+  <data name="DeleteLessonPlan" xml:space="preserve">
+    <value>Usuń plan zajęć</value>
+  </data>
+  <data name="DraftOnly" xml:space="preserve">
+    <value>Tylko wersja robocza</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edytuj</value>
+  </data>
+  <data name="EditClass" xml:space="preserve">
+    <value>Edytuj zajęcia</value>
+  </data>
+  <data name="EditIntro" xml:space="preserve">
+    <value>Godziny w strefie czasowej jednostki.</value>
+  </data>
+  <data name="EditResource" xml:space="preserve">
+    <value>Edytuj obiekt lub pomoc</value>
+  </data>
+  <data name="Enroll" xml:space="preserve">
+    <value>Zapisz</value>
+  </data>
+  <data name="EnrolledMessage" xml:space="preserve">
+    <value>Zapisano.</value>
+  </data>
+  <data name="EnrollMember" xml:space="preserve">
+    <value>Zapisz członka</value>
+  </data>
+  <data name="Enrollment.Declined" xml:space="preserve">
+    <value>Odrzucony</value>
+  </data>
+  <data name="Enrollment.Enrolled" xml:space="preserve">
+    <value>Zapisany</value>
+  </data>
+  <data name="Enrollment.PendingApproval" xml:space="preserve">
+    <value>Oczekuje na zatwierdzenie</value>
+  </data>
+  <data name="Enrollment.Removed" xml:space="preserve">
+    <value>Usunięty</value>
+  </data>
+  <data name="Enrollment.Waitlisted" xml:space="preserve">
+    <value>Na liście rezerwowej</value>
+  </data>
+  <data name="Enrollment.Withdrawn" xml:space="preserve">
+    <value>Wypisany</value>
+  </data>
+  <data name="Evaluation.CourseAssessment" xml:space="preserve">
+    <value>Przypisz powiązany kurs (jego test) każdemu obecnemu</value>
+  </data>
+  <data name="Evaluation.None" xml:space="preserve">
+    <value>Brak</value>
+  </data>
+  <data name="Exception.Excused" xml:space="preserve">
+    <value>Nieobecność usprawiedliwiona</value>
+  </data>
+  <data name="Exception.Inactive" xml:space="preserve">
+    <value>Nie jest już aktywnym członkiem</value>
+  </data>
+  <data name="Exception.NeverPromoted" xml:space="preserve">
+    <value>Pozostał na liście rezerwowej</value>
+  </data>
+  <data name="Exception.NoShow" xml:space="preserve">
+    <value>Nie przyszedł</value>
+  </data>
+  <data name="Exception.OnShift" xml:space="preserve">
+    <value>Na zmianie w tym czasie</value>
+  </data>
+  <data name="Exception.Pending" xml:space="preserve">
+    <value>Wniosek nierozpatrzony</value>
+  </data>
+  <data name="Exception.Waitlisted" xml:space="preserve">
+    <value>Na liście rezerwowej</value>
+  </data>
+  <data name="Field.AllowSelfUnenroll" xml:space="preserve">
+    <value>Członkowie mogą sami się wypisać</value>
+  </data>
+  <data name="Field.Capacity" xml:space="preserve">
+    <value>Liczba miejsc</value>
+  </data>
+  <data name="Field.CapacityHelp" xml:space="preserve">
+    <value>0 oznacza brak limitu.</value>
+  </data>
+  <data name="Field.Category" xml:space="preserve">
+    <value>Kategoria szkolenia</value>
+  </data>
+  <data name="Field.ChangeSummary" xml:space="preserve">
+    <value>Podsumowanie zmian</value>
+  </data>
+  <data name="Field.CompetencyItems" xml:space="preserve">
+    <value>Objęte kompetencje</value>
+  </data>
+  <data name="Field.ContentSummary" xml:space="preserve">
+    <value>Podsumowanie treści (lista)</value>
+  </data>
+  <data name="Field.ContentSummaryHelp" xml:space="preserve">
+    <value>Co omówiono, zgodnie z zatwierdzoną listą.</value>
+  </data>
+  <data name="Field.Course" xml:space="preserve">
+    <value>Kurs LMS</value>
+  </data>
+  <data name="Field.CourseCode" xml:space="preserve">
+    <value>Kod kursu</value>
+  </data>
+  <data name="Field.Currency" xml:space="preserve">
+    <value>Waluta</value>
+  </data>
+  <data name="Field.CutoffDays" xml:space="preserve">
+    <value>Koniec zapisów (dni przed)</value>
+  </data>
+  <data name="Field.Description" xml:space="preserve">
+    <value>Opis</value>
+  </data>
+  <data name="Field.Duration" xml:space="preserve">
+    <value>Czas trwania (minuty)</value>
+  </data>
+  <data name="Field.End" xml:space="preserve">
+    <value>Koniec</value>
+  </data>
+  <data name="Field.EnrollmentOpen" xml:space="preserve">
+    <value>Członkowie mogą zapisać się sami</value>
+  </data>
+  <data name="Field.GpsRequired" xml:space="preserve">
+    <value>Wymagaj lokalizacji telefonu w promieniu</value>
+  </data>
+  <data name="Field.Instructors" xml:space="preserve">
+    <value>Instruktorzy</value>
+  </data>
+  <data name="Field.Latitude" xml:space="preserve">
+    <value>Szerokość geogr.</value>
+  </data>
+  <data name="Field.LessonPlan" xml:space="preserve">
+    <value>Plan zajęć</value>
+  </data>
+  <data name="Field.Location" xml:space="preserve">
+    <value>Miejsce</value>
+  </data>
+  <data name="Field.Longitude" xml:space="preserve">
+    <value>Długość geogr.</value>
+  </data>
+  <data name="Field.Materials" xml:space="preserve">
+    <value>Materiały</value>
+  </data>
+  <data name="Field.MeetingUrl" xml:space="preserve">
+    <value>Link do spotkania</value>
+  </data>
+  <data name="Field.MeetingUrlHelp" xml:space="preserve">
+    <value>Link Teams, Zoom lub Meet do zajęć zdalnych lub hybrydowych.</value>
+  </data>
+  <data name="Field.Notes" xml:space="preserve">
+    <value>Uwagi</value>
+  </data>
+  <data name="Field.Objectives" xml:space="preserve">
+    <value>Cele</value>
+  </data>
+  <data name="Field.Occurrences" xml:space="preserve">
+    <value>Liczba spotkań</value>
+  </data>
+  <data name="Field.PostEvaluation" xml:space="preserve">
+    <value>Po zajęciach</value>
+  </data>
+  <data name="Field.PostEvaluationHelp" xml:space="preserve">
+    <value>Uruchamiane dla każdego obecnego przy pierwszym zatwierdzeniu.</value>
+  </data>
+  <data name="Field.PreBrief" xml:space="preserve">
+    <value>Lista kontrolna odprawy</value>
+  </data>
+  <data name="Field.Props" xml:space="preserve">
+    <value>Pomoce i obiekty</value>
+  </data>
+  <data name="Field.QrEnabled" xml:space="preserve">
+    <value>Rejestracja zmiennym kodem QR (zdjęcie przestaje działać)</value>
+  </data>
+  <data name="Field.Radius" xml:space="preserve">
+    <value>Promień (metry)</value>
+  </data>
+  <data name="Field.Ratio" xml:space="preserve">
+    <value>Uczestników na instruktora</value>
+  </data>
+  <data name="Field.ReminderHours" xml:space="preserve">
+    <value>Przypomnienie (godziny przed; 0 – brak)</value>
+  </data>
+  <data name="Field.Repeat" xml:space="preserve">
+    <value>Powtarzaj</value>
+  </data>
+  <data name="Field.RequiresApproval" xml:space="preserve">
+    <value>Kierownik zajęć zatwierdza każdy wniosek</value>
+  </data>
+  <data name="Field.RestrictGroups" xml:space="preserve">
+    <value>Zapisać się mogą tylko te grupy</value>
+  </data>
+  <data name="Field.RestrictGroupsHelp" xml:space="preserve">
+    <value>Brak wyboru: wszyscy członkowie.</value>
+  </data>
+  <data name="Field.RetentionYears" xml:space="preserve">
+    <value>Przechowuj listę przez (lata)</value>
+  </data>
+  <data name="Field.RetentionYearsHelp" xml:space="preserve">
+    <value>Puste: okres kategorii (np. 3 lata dla szkoleń z patogenów krwiopochodnych).</value>
+  </data>
+  <data name="Field.Roles" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="Field.SafetyPlan" xml:space="preserve">
+    <value>Plan bezpieczeństwa</value>
+  </data>
+  <data name="Field.Start" xml:space="preserve">
+    <value>Początek</value>
+  </data>
+  <data name="Field.Tags" xml:space="preserve">
+    <value>Tagi</value>
+  </data>
+  <data name="Field.Title" xml:space="preserve">
+    <value>Tytuł</value>
+  </data>
+  <data name="Field.TitleHelp" xml:space="preserve">
+    <value>Pozostaw puste, aby użyć nazwy kursu lub szkolenia.</value>
+  </data>
+  <data name="Field.Training" xml:space="preserve">
+    <value>Szkolenie</value>
+  </data>
+  <data name="Field.VisibleGroups" xml:space="preserve">
+    <value>Widzą je tylko te grupy</value>
+  </data>
+  <data name="Field.VisibleGroupsHelp" xml:space="preserve">
+    <value>Brak wyboru: widoczne dla wszystkich.</value>
+  </data>
+  <data name="Field.WaitlistEnabled" xml:space="preserve">
+    <value>Lista rezerwowa po zapełnieniu (wg kolejności)</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Filtruj</value>
+  </data>
+  <data name="Fingerprint" xml:space="preserve">
+    <value>Odcisk</value>
+  </data>
+  <data name="Footer.Costs" xml:space="preserve">
+    <value>Koszt zajęć {0}, wnioski szkoleniowe {1} ({2}).</value>
+  </data>
+  <data name="Footer.Exceptions" xml:space="preserve">
+    <value>Wyjątków: {0}.</value>
+  </data>
+  <data name="Footer.Sessions" xml:space="preserve">
+    <value>Spotkań: {0}, osób: {1}.</value>
+  </data>
+  <data name="FromStarter" xml:space="preserve">
+    <value>Z szablonu Resgrid</value>
+  </data>
+  <data name="GpsRequiredNotice" xml:space="preserve">
+    <value>Lokalizacja telefonu jest sprawdzana przy rejestracji.</value>
+  </data>
+  <data name="GroupBy" xml:space="preserve">
+    <value>Grupuj według</value>
+  </data>
+  <data name="HoursOverride" xml:space="preserve">
+    <value>Godziny</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Importuj</value>
+  </data>
+  <data name="ImportAttendance" xml:space="preserve">
+    <value>Importuj raport obecności ze spotkania</value>
+  </data>
+  <data name="ImportAttendanceHelp" xml:space="preserve">
+    <value>Raport obecności CSV z Teams, Zoom lub Google Meet. Dopasowanie po e-mailu, potem po nazwisku.</value>
+  </data>
+  <data name="ImportedMessage" xml:space="preserve">
+    <value>Zaimportowano raport ze spotkania.</value>
+  </data>
+  <data name="ImportResultFormat" xml:space="preserve">
+    <value>Raport ze spotkania: osób {0}, dopasowano {1}, dodano bez zapisu {2}, niedopasowanych {3}.</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Nieaktywny</value>
+  </data>
+  <data name="InstructorsHeader" xml:space="preserve">
+    <value>Instruktorzy</value>
+  </data>
+  <data name="KioskInstruction" xml:space="preserve">
+    <value>Zeskanuj ten kod telefonem, aby się zarejestrować.</value>
+  </data>
+  <data name="KioskTitle" xml:space="preserve">
+    <value>Rejestracja na zajęciach</value>
+  </data>
+  <data name="LapsedNotice" xml:space="preserve">
+    <value>Dodatek LMS wygasł: zajęcia pozostają dostępne, istniejące można prowadzić i zatwierdzać, ale nie można tworzyć nowych.</value>
+  </data>
+  <data name="LessonPlanIntro" xml:space="preserve">
+    <value>Zajęcia prowadzi się według opublikowanej wersji; każda przesłana wersja jest przechowywana.</value>
+  </data>
+  <data name="LessonPlansIntro" xml:space="preserve">
+    <value>Cele, kompetencje, materiały, proporcja, plan bezpieczeństwa i lista odprawy, wersjonowane i zatwierdzane przed użyciem.</value>
+  </data>
+  <data name="LessonPlansTitle" xml:space="preserve">
+    <value>Plany zajęć</value>
+  </data>
+  <data name="lms_class_addon_required" xml:space="preserve">
+    <value>Wymaga to aktywnego dodatku LMS.</value>
+  </data>
+  <data name="lms_class_calendar_failed" xml:space="preserve">
+    <value>Nie udało się utworzyć wpisu w kalendarzu.</value>
+  </data>
+  <data name="lms_class_cancelled" xml:space="preserve">
+    <value>Te zajęcia odwołano.</value>
+  </data>
+  <data name="lms_class_capacity_invalid" xml:space="preserve">
+    <value>Liczba miejsc musi wynosić od 0 do 10 000.</value>
+  </data>
+  <data name="lms_class_category_invalid" xml:space="preserve">
+    <value>Wybierz jedną z kategorii szkoleń jednostki.</value>
+  </data>
+  <data name="lms_class_change_summary_required" xml:space="preserve">
+    <value>Opisz zmiany przed przesłaniem.</value>
+  </data>
+  <data name="lms_class_code_expired" xml:space="preserve">
+    <value>Kod wygasł. Zeskanuj ponownie kod z ekranu.</value>
+  </data>
+  <data name="lms_class_cost_invalid" xml:space="preserve">
+    <value>Podaj rodzaj kosztu i kwotę równą 0 lub większą.</value>
+  </data>
+  <data name="lms_class_course_invalid" xml:space="preserve">
+    <value>Wybierz opublikowany kurs lub szkolenie jednostki.</value>
+  </data>
+  <data name="lms_class_enrollment_closed" xml:space="preserve">
+    <value>Zapisów dokonuje kierownik zajęć.</value>
+  </data>
+  <data name="lms_class_enrollment_cutoff" xml:space="preserve">
+    <value>Zapisy na te zajęcia są zamknięte.</value>
+  </data>
+  <data name="lms_class_full" xml:space="preserve">
+    <value>Brak wolnych miejsc na te zajęcia.</value>
+  </data>
+  <data name="lms_class_gps_location_required" xml:space="preserve">
+    <value>Ustaw lokalizację zajęć (szerokość i długość), aby wymagać GPS.</value>
+  </data>
+  <data name="lms_class_gps_required" xml:space="preserve">
+    <value>Te zajęcia wymagają lokalizacji telefonu. Zezwól na dostęp i spróbuj ponownie.</value>
+  </data>
+  <data name="lms_class_gps_too_far" xml:space="preserve">
+    <value>Telefon jest zbyt daleko od miejsca zajęć.</value>
+  </data>
+  <data name="lms_class_hours_invalid" xml:space="preserve">
+    <value>Liczba godzin musi wynosić od 0 do 9999.</value>
+  </data>
+  <data name="lms_class_import_empty" xml:space="preserve">
+    <value>W pliku nie znaleziono wierszy obecności.</value>
+  </data>
+  <data name="lms_class_instructor_invalid" xml:space="preserve">
+    <value>Wybierz członka lub wpisz nazwisko instruktora zewnętrznego.</value>
+  </data>
+  <data name="lms_class_lesson_plan_invalid" xml:space="preserve">
+    <value>Wybierz opublikowany plan zajęć.</value>
+  </data>
+  <data name="lms_class_meeting_url_invalid" xml:space="preserve">
+    <value>Link musi być adresem internetowym (https://...).</value>
+  </data>
+  <data name="lms_class_name_required" xml:space="preserve">
+    <value>Podaj nazwę.</value>
+  </data>
+  <data name="lms_class_not_eligible" xml:space="preserve">
+    <value>Te zajęcia są dla innych grup.</value>
+  </data>
+  <data name="lms_class_not_enrolled" xml:space="preserve">
+    <value>Nie ma Cię na liście tych zajęć.</value>
+  </data>
+  <data name="lms_class_not_found" xml:space="preserve">
+    <value>Nie znaleziono zajęć.</value>
+  </data>
+  <data name="lms_class_not_member" xml:space="preserve">
+    <value>Na liście mogą być tylko obecni członkowie jednostki.</value>
+  </data>
+  <data name="lms_class_not_open" xml:space="preserve">
+    <value>Zajęcia nie są teraz na to otwarte.</value>
+  </data>
+  <data name="lms_class_not_pending" xml:space="preserve">
+    <value>Ten wniosek został już rozpatrzony.</value>
+  </data>
+  <data name="lms_class_not_signed_in" xml:space="preserve">
+    <value>Nie zarejestrowano Twojej obecności na zajęciach.</value>
+  </data>
+  <data name="lms_class_not_started" xml:space="preserve">
+    <value>Zajęcia można zatwierdzić dopiero po ich rozpoczęciu.</value>
+  </data>
+  <data name="lms_class_plan_changed" xml:space="preserve">
+    <value>Treść zmieniła się po przesłaniu; prześlij ponownie.</value>
+  </data>
+  <data name="lms_class_plan_not_approved" xml:space="preserve">
+    <value>Opublikować można tylko zatwierdzoną wersję.</value>
+  </data>
+  <data name="lms_class_plan_not_draft" xml:space="preserve">
+    <value>Zmienić lub przesłać można tylko wersję roboczą.</value>
+  </data>
+  <data name="lms_class_plan_not_found" xml:space="preserve">
+    <value>Nie znaleziono planu zajęć.</value>
+  </data>
+  <data name="lms_class_plan_not_in_review" xml:space="preserve">
+    <value>Ta wersja nie czeka na decyzję.</value>
+  </data>
+  <data name="lms_class_reason_required" xml:space="preserve">
+    <value>Podaj powód zwrotu.</value>
+  </data>
+  <data name="lms_class_resource_conflict" xml:space="preserve">
+    <value>Ten obiekt lub pomoc jest już zarezerwowany na ten czas.</value>
+  </data>
+  <data name="lms_class_retention_hold" xml:space="preserve">
+    <value>Lista jest przechowywana do daty retencji i nie można jej jeszcze usunąć.</value>
+  </data>
+  <data name="lms_class_rules_invalid" xml:space="preserve">
+    <value>Sprawdź zasady (zamknięcie 0–365 dni, przypomnienie 0–336 godzin, 1–52 spotkania).</value>
+  </data>
+  <data name="lms_class_sign_in_closed" xml:space="preserve">
+    <value>Rejestracja nie jest teraz otwarta.</value>
+  </data>
+  <data name="lms_class_signed_off" xml:space="preserve">
+    <value>Zajęcia zatwierdzono; listy nie można już tak zmienić.</value>
+  </data>
+  <data name="lms_class_times_invalid" xml:space="preserve">
+    <value>Zajęcia muszą kończyć się po rozpoczęciu i trwać maksymalnie 14 dni.</value>
+  </data>
+  <data name="lms_class_title_required" xml:space="preserve">
+    <value>Podaj tytuł albo powiąż kurs lub szkolenie.</value>
+  </data>
+  <data name="lms_class_unenroll_closed" xml:space="preserve">
+    <value>Poproś kierownika zajęć o wypisanie.</value>
+  </data>
+  <data name="MajorChange" xml:space="preserve">
+    <value>Istotna zmiana</value>
+  </data>
+  <data name="MarkPresent" xml:space="preserve">
+    <value>Oznacz obecność</value>
+  </data>
+  <data name="MessageRoster" xml:space="preserve">
+    <value>Wyślij wiadomość do uczestników</value>
+  </data>
+  <data name="Method.Calendar" xml:space="preserve">
+    <value>Zameldowanie w kalendarzu</value>
+  </data>
+  <data name="Method.Import" xml:space="preserve">
+    <value>Raport ze spotkania</value>
+  </data>
+  <data name="Method.Manual" xml:space="preserve">
+    <value>Przez instruktora</value>
+  </data>
+  <data name="Method.None" xml:space="preserve">
+    <value>Nie zarejestrowano</value>
+  </data>
+  <data name="Method.Qr" xml:space="preserve">
+    <value>Rejestracja kodem QR</value>
+  </data>
+  <data name="MinutesFormat" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="MyClassesIntro" xml:space="preserve">
+    <value>Zajęcia, na które jesteś zapisany lub które prowadzisz, oraz te, do których możesz jeszcze dołączyć.</value>
+  </data>
+  <data name="MyClassesTitle" xml:space="preserve">
+    <value>Moje zajęcia</value>
+  </data>
+  <data name="NewClass" xml:space="preserve">
+    <value>Nowe zajęcia</value>
+  </data>
+  <data name="NewDraft" xml:space="preserve">
+    <value>Nowa wersja robocza</value>
+  </data>
+  <data name="NewLessonPlan" xml:space="preserve">
+    <value>Nowy plan zajęć</value>
+  </data>
+  <data name="NewQrSecret" xml:space="preserve">
+    <value>Wydaj nowy kod QR (stare zdjęcia przestają działać)</value>
+  </data>
+  <data name="NewResource" xml:space="preserve">
+    <value>Nowy obiekt lub pomoc</value>
+  </data>
+  <data name="NoClasses" xml:space="preserve">
+    <value>Brak zajęć.</value>
+  </data>
+  <data name="NoConflicts" xml:space="preserve">
+    <value>Nikt na zmianie</value>
+  </data>
+  <data name="NoCosts" xml:space="preserve">
+    <value>Brak kosztów zajęć w tym okresie.</value>
+  </data>
+  <data name="NoInstructors" xml:space="preserve">
+    <value>Brak instruktorów.</value>
+  </data>
+  <data name="NoLessonPlans" xml:space="preserve">
+    <value>Brak planów zajęć.</value>
+  </data>
+  <data name="NoMyClasses" xml:space="preserve">
+    <value>Obecnie brak zajęć dla Ciebie.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Brak</value>
+  </data>
+  <data name="NoResources" xml:space="preserve">
+    <value>Brak obiektów i pomocy.</value>
+  </data>
+  <data name="NoRoster" xml:space="preserve">
+    <value>Nikt jeszcze się nie zapisał.</value>
+  </data>
+  <data name="Notice.Cancelled" xml:space="preserve">
+    <value>{0} ({1}) odwołano.</value>
+  </data>
+  <data name="Notice.CancelledTitle" xml:space="preserve">
+    <value>Zajęcia odwołane</value>
+  </data>
+  <data name="Notice.Declined" xml:space="preserve">
+    <value>Twój wniosek na {0} ({1}) został odrzucony.</value>
+  </data>
+  <data name="Notice.Enrolled" xml:space="preserve">
+    <value>Zapisano Cię na {0} ({1}).</value>
+  </data>
+  <data name="Notice.EnrolledTitle" xml:space="preserve">
+    <value>Lista uczestników zajęć</value>
+  </data>
+  <data name="Notice.Promoted" xml:space="preserve">
+    <value>Zwolniło się miejsce: jesteś zapisany na {0} ({1}).</value>
+  </data>
+  <data name="Notice.Reminder" xml:space="preserve">
+    <value>{0} zaczyna się {1}. {2}</value>
+  </data>
+  <data name="Notice.ReminderTitle" xml:space="preserve">
+    <value>Przypomnienie o zajęciach</value>
+  </data>
+  <data name="Notice.Removed" xml:space="preserve">
+    <value>Usunięto Cię z {0} ({1}).</value>
+  </data>
+  <data name="Notice.Waitlisted" xml:space="preserve">
+    <value>Jesteś na liście rezerwowej na {0} ({1}).</value>
+  </data>
+  <data name="OnCalendar" xml:space="preserve">
+    <value>Otwórz w kalendarzu</value>
+  </data>
+  <data name="OnePerLine" xml:space="preserve">
+    <value>Jeden w wierszu.</value>
+  </data>
+  <data name="OnShift" xml:space="preserve">
+    <value>Na zmianie</value>
+  </data>
+  <data name="OnShiftHelp" xml:space="preserve">
+    <value>Na zmianie pokrywającej się z zajęciami.</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Otwórz</value>
+  </data>
+  <data name="OpenClass" xml:space="preserve">
+    <value>Otwórz zajęcia</value>
+  </data>
+  <data name="OpenReport" xml:space="preserve">
+    <value>Otwórz jako raport</value>
+  </data>
+  <data name="Outside" xml:space="preserve">
+    <value>zewnętrzny</value>
+  </data>
+  <data name="OutsideInstructor" xml:space="preserve">
+    <value>Instruktor zewnętrzny (wpisz nazwisko)</value>
+  </data>
+  <data name="OutsideName" xml:space="preserve">
+    <value>Nazwisko instruktora zewnętrznego</value>
+  </data>
+  <data name="PendingHeader" xml:space="preserve">
+    <value>Wnioski do zatwierdzenia</value>
+  </data>
+  <data name="PresentHeader" xml:space="preserve">
+    <value>Zarejestrowani</value>
+  </data>
+  <data name="Publish" xml:space="preserve">
+    <value>Opublikuj</value>
+  </data>
+  <data name="PublishedMessage" xml:space="preserve">
+    <value>Opublikowano.</value>
+  </data>
+  <data name="QrAlt" xml:space="preserve">
+    <value>Kod QR rejestracji</value>
+  </data>
+  <data name="QrRotated" xml:space="preserve">
+    <value>Wydano nowy kod QR.</value>
+  </data>
+  <data name="QrRotates" xml:space="preserve">
+    <value>Kod zmienia się co 30 sekund.</value>
+  </data>
+  <data name="RecentHeader" xml:space="preserve">
+    <value>Ostatnie</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>Zwolnij</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="RemovedMessage" xml:space="preserve">
+    <value>Usunięto z listy.</value>
+  </data>
+  <data name="Repeat.Daily" xml:space="preserve">
+    <value>Codziennie</value>
+  </data>
+  <data name="Repeat.None" xml:space="preserve">
+    <value>Jednorazowo</value>
+  </data>
+  <data name="Repeat.Weekly" xml:space="preserve">
+    <value>Co tydzień</value>
+  </data>
+  <data name="RequestPlace" xml:space="preserve">
+    <value>Poproś o miejsce</value>
+  </data>
+  <data name="Resource.Apparatus" xml:space="preserve">
+    <value>Pojazd</value>
+  </data>
+  <data name="Resource.Equipment" xml:space="preserve">
+    <value>Sprzęt</value>
+  </data>
+  <data name="Resource.Facility" xml:space="preserve">
+    <value>Obiekt</value>
+  </data>
+  <data name="Resource.Other" xml:space="preserve">
+    <value>Inne</value>
+  </data>
+  <data name="Resource.Prop" xml:space="preserve">
+    <value>Pomoc szkoleniowa</value>
+  </data>
+  <data name="ResourcesIntro" xml:space="preserve">
+    <value>Place ćwiczeń, sale, pomoce, pojazdy i sprzęt; zasób nigdy nie jest zarezerwowany podwójnie.</value>
+  </data>
+  <data name="ResourcesTitle" xml:space="preserve">
+    <value>Obiekty i pomoce szkoleniowe</value>
+  </data>
+  <data name="RetainUntil" xml:space="preserve">
+    <value>Lista przechowywana do</value>
+  </data>
+  <data name="RetentionHelpFormat" xml:space="preserve">
+    <value>Zatwierdzona lista jest przechowywana do {0}; usunięcie zajęć je ukrywa, a trwałe usunięcie następuje dopiero po tej dacie.</value>
+  </data>
+  <data name="Role.Assistant" xml:space="preserve">
+    <value>Instruktor pomocniczy</value>
+  </data>
+  <data name="Role.Lead" xml:space="preserve">
+    <value>Instruktor prowadzący</value>
+  </data>
+  <data name="Role.Safety" xml:space="preserve">
+    <value>Oficer bezpieczeństwa</value>
+  </data>
+  <data name="RosterHeader" xml:space="preserve">
+    <value>Lista uczestników</value>
+  </data>
+  <data name="Rule.Approval" xml:space="preserve">
+    <value>wymaga zatwierdzenia</value>
+  </data>
+  <data name="Rule.Closed" xml:space="preserve">
+    <value>tylko przez kierowników zajęć</value>
+  </data>
+  <data name="Rule.CutoffFormat" xml:space="preserve">
+    <value>zamyka się {0} dni wcześniej</value>
+  </data>
+  <data name="Rule.Open" xml:space="preserve">
+    <value>otwarte dla członków</value>
+  </data>
+  <data name="Rule.Waitlist" xml:space="preserve">
+    <value>lista rezerwowa</value>
+  </data>
+  <data name="Rules" xml:space="preserve">
+    <value>Zapisy</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Zapisz</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Zapisano.</value>
+  </data>
+  <data name="SaveDraft" xml:space="preserve">
+    <value>Zapisz wersję roboczą</value>
+  </data>
+  <data name="SeatsFormat" xml:space="preserve">
+    <value>Zajęte miejsca: {0} z {1}</value>
+  </data>
+  <data name="Section.Details" xml:space="preserve">
+    <value>Szczegóły</value>
+  </data>
+  <data name="Section.Enrolment" xml:space="preserve">
+    <value>Zasady zapisów</value>
+  </data>
+  <data name="Section.Records" xml:space="preserve">
+    <value>Dokumentacja i ocena</value>
+  </data>
+  <data name="Section.SignIn" xml:space="preserve">
+    <value>Rejestracja obecności</value>
+  </data>
+  <data name="Section.What" xml:space="preserve">
+    <value>Czego dotyczą zajęcia</value>
+  </data>
+  <data name="Section.When" xml:space="preserve">
+    <value>Kiedy i gdzie</value>
+  </data>
+  <data name="Section.You" xml:space="preserve">
+    <value>Ty</value>
+  </data>
+  <data name="SendBack" xml:space="preserve">
+    <value>Odeślij</value>
+  </data>
+  <data name="SeriesFormat" xml:space="preserve">
+    <value>Spotkanie {0} z {1} w cyklu.</value>
+  </data>
+  <data name="SeriesIntro" xml:space="preserve">
+    <value>Obecność każdego członka na spotkaniach tych zajęć.</value>
+  </data>
+  <data name="SeriesReport" xml:space="preserve">
+    <value>Obecność w cyklu</value>
+  </data>
+  <data name="SeriesTitle" xml:space="preserve">
+    <value>Obecność w cyklu</value>
+  </data>
+  <data name="ShiftPanelHeader" xml:space="preserve">
+    <value>Szkolenia w grafiku zmian (następne 14 dni)</value>
+  </data>
+  <data name="ShowQr" xml:space="preserve">
+    <value>Pokaż kod QR rejestracji</value>
+  </data>
+  <data name="SignedInAt" xml:space="preserve">
+    <value>Zarejestrowano o</value>
+  </data>
+  <data name="SignedInMessage" xml:space="preserve">
+    <value>Zarejestrowano Twoją obecność.</value>
+  </data>
+  <data name="SignedOffFormat" xml:space="preserve">
+    <value>Zatwierdzono: obecnych {0}, nieobecnych {1}; zapisano {2} wpisów, zastąpiono {3}.</value>
+  </data>
+  <data name="SignedOffOn" xml:space="preserve">
+    <value>Zatwierdzono</value>
+  </data>
+  <data name="SignedOutMessage" xml:space="preserve">
+    <value>Zarejestrowano wyjście.</value>
+  </data>
+  <data name="SignInButton" xml:space="preserve">
+    <value>Zarejestruj mnie</value>
+  </data>
+  <data name="SignInClosed" xml:space="preserve">
+    <value>Rejestracja na te zajęcia nie jest teraz otwarta.</value>
+  </data>
+  <data name="SignInConfirm" xml:space="preserve">
+    <value>Zarejestrować obecność na zajęciach teraz?</value>
+  </data>
+  <data name="SignInTitle" xml:space="preserve">
+    <value>Zarejestruj obecność na zajęciach</value>
+  </data>
+  <data name="SignOff" xml:space="preserve">
+    <value>Zatwierdź listę</value>
+  </data>
+  <data name="SignOffAgain" xml:space="preserve">
+    <value>Zatwierdź ponownie</value>
+  </data>
+  <data name="SignOffHelp" xml:space="preserve">
+    <value>Zatwierdzenie tworzy wpis szkoleniowy dla każdego obecnego (żadnego dla nieobecnych) i przechowuje listę przez wymagany okres. Nieoznaczeni są nieobecni, chyba że się zarejestrowali.</value>
+  </data>
+  <data name="SignOut" xml:space="preserve">
+    <value>Zarejestruj wyjście</value>
+  </data>
+  <data name="Starter.evoc" xml:space="preserve">
+    <value>Kierowanie pojazdami uprzywilejowanymi</value>
+  </data>
+  <data name="Starter.evoc.Help" xml:space="preserve">
+    <value>Kontrola przed wyjazdem, cofanie z pomocnikiem, ćwiczenia na torze; godziny za kierownicą i przejechane kilometry.</value>
+  </data>
+  <data name="Starter.hose-evolutions" xml:space="preserve">
+    <value>Coroczne ćwiczenia z wężami</value>
+  </data>
+  <data name="Starter.hose-evolutions.Help" xml:space="preserve">
+    <value>Linie szybkiego natarcia, natarcie klatką schodową i z pionu, układanie węży.</value>
+  </data>
+  <data name="Starter.ladder-evolutions" xml:space="preserve">
+    <value>Coroczne ćwiczenia z drabinami</value>
+  </data>
+  <data name="Starter.ladder-evolutions.Help" xml:space="preserve">
+    <value>Przenoszenie, rozstawianie, ustawienie do ratownictwa i wentylacji, wchodzenie i zabezpieczanie.</value>
+  </data>
+  <data name="Starter.live-fire" xml:space="preserve">
+    <value>Ćwiczenie z ogniem rzeczywistym (plan spalania)</value>
+  </data>
+  <data name="Starter.live-fire.Help" xml:space="preserve">
+    <value>Kontrole przed podpaleniem, role, proporcje i plan bezpieczeństwa dokumentowane przez jednostkę.</value>
+  </data>
+  <data name="Starter.physical-ability" xml:space="preserve">
+    <value>Test sprawności fizycznej</value>
+  </data>
+  <data name="Starter.physical-ability.Help" xml:space="preserve">
+    <value>Stacje na czas z limitami ustalonymi przez jednostkę.</value>
+  </data>
+  <data name="Starter.pump-evolutions" xml:space="preserve">
+    <value>Coroczne ćwiczenia z pompami</value>
+  </data>
+  <data name="Starter.pump-evolutions.Help" xml:space="preserve">
+    <value>Zasilanie z hydrantu, zasysanie, ciśnienia dla linii, pompowanie przekaźnikowe.</value>
+  </data>
+  <data name="Starter.scba" xml:space="preserve">
+    <value>Biegłość w aparatach oddechowych</value>
+  </data>
+  <data name="Starter.scba.Help" xml:space="preserve">
+    <value>Kontrola, zakładanie na czas, sprawdzenie szczelności, gospodarka powietrzem i procedury awaryjne.</value>
+  </data>
+  <data name="StartersHeader" xml:space="preserve">
+    <value>Szablony Resgrid</value>
+  </data>
+  <data name="StartersIntro" xml:space="preserve">
+    <value>Struktura i listy kontrolne napisane przez Resgrid prostym językiem (bez tekstu norm). Kopia staje się wersją roboczą jednostki do dostosowania i zatwierdzenia.</value>
+  </data>
+  <data name="Stat.Pending" xml:space="preserve">
+    <value>Oczekują na zatwierdzenie</value>
+  </data>
+  <data name="Stat.Seats" xml:space="preserve">
+    <value>Zajęte miejsca</value>
+  </data>
+  <data name="Stat.Upcoming" xml:space="preserve">
+    <value>Zaplanowane</value>
+  </data>
+  <data name="Stat.Waitlisted" xml:space="preserve">
+    <value>Na listach rezerwowych</value>
+  </data>
+  <data name="Status.Cancelled" xml:space="preserve">
+    <value>Odwołane</value>
+  </data>
+  <data name="Status.Scheduled" xml:space="preserve">
+    <value>Zaplanowane</value>
+  </data>
+  <data name="Status.SignedOff" xml:space="preserve">
+    <value>Zatwierdzone</value>
+  </data>
+  <data name="StripLabel" xml:space="preserve">
+    <value>Zajęcia</value>
+  </data>
+  <data name="SubmitForApproval" xml:space="preserve">
+    <value>Prześlij do zatwierdzenia</value>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>Przesłano do zatwierdzenia.</value>
+  </data>
+  <data name="Tab.Classes" xml:space="preserve">
+    <value>Zajęcia</value>
+  </data>
+  <data name="Tab.Costs" xml:space="preserve">
+    <value>Koszty zajęć</value>
+  </data>
+  <data name="Tab.LessonPlans" xml:space="preserve">
+    <value>Plany zajęć</value>
+  </data>
+  <data name="Tab.My" xml:space="preserve">
+    <value>Moje zajęcia</value>
+  </data>
+  <data name="Tab.Resources" xml:space="preserve">
+    <value>Obiekty i pomoce</value>
+  </data>
+  <data name="TagFilter" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="TaughtHeader" xml:space="preserve">
+    <value>Zajęcia, które prowadziłeś</value>
+  </data>
+  <data name="TimecardOff" xml:space="preserve">
+    <value>W tej jednostce żadna karta czasu pracy nie przyjmuje jeszcze czasu szkoleń (Workforce Pro).</value>
+  </data>
+  <data name="TimecardOn" xml:space="preserve">
+    <value>Godziny uczestników są przekazywane do ich kart czasu pracy przy zatwierdzeniu.</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Razem</value>
+  </data>
+  <data name="Uncategorized" xml:space="preserve">
+    <value>Bez kategorii</value>
+  </data>
+  <data name="UpcomingHeader" xml:space="preserve">
+    <value>Nadchodzące</value>
+  </data>
+  <data name="UseMyLocation" xml:space="preserve">
+    <value>Użyj mojej lokalizacji</value>
+  </data>
+  <data name="UseStarter" xml:space="preserve">
+    <value>Skopiuj jako wersję roboczą</value>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>Wersja</value>
+  </data>
+  <data name="VersionsHeader" xml:space="preserve">
+    <value>Wersje</value>
+  </data>
+  <data name="VersionStatus.Approved" xml:space="preserve">
+    <value>Zatwierdzona</value>
+  </data>
+  <data name="VersionStatus.Draft" xml:space="preserve">
+    <value>Wersja robocza</value>
+  </data>
+  <data name="VersionStatus.InReview" xml:space="preserve">
+    <value>W przeglądzie</value>
+  </data>
+  <data name="VersionStatus.Legacy" xml:space="preserve">
+    <value>Archiwalna</value>
+  </data>
+  <data name="VersionStatus.Published" xml:space="preserve">
+    <value>Opublikowana</value>
+  </data>
+  <data name="VersionStatus.Retired" xml:space="preserve">
+    <value>Wycofana</value>
+  </data>
+  <data name="VersionStatus.Superseded" xml:space="preserve">
+    <value>Zastąpiona</value>
+  </data>
+  <data name="Virtual" xml:space="preserve">
+    <value>Zdalne</value>
+  </data>
+  <data name="WaitlistHeader" xml:space="preserve">
+    <value>Lista rezerwowa (wg kolejności)</value>
+  </data>
+  <data name="WaitlistPositionFormat" xml:space="preserve">
+    <value>pozycja {0}</value>
+  </data>
+  <data name="WalkIn" xml:space="preserve">
+    <value>Bez zapisu</value>
+  </data>
+  <data name="WalkInMessage" xml:space="preserve">
+    <value>Oznaczono obecność.</value>
+  </data>
+  <data name="Withdraw" xml:space="preserve">
+    <value>Wypisz się</value>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>Wypisano Cię z zajęć.</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Tak</value>
+  </data>
+  <data name="YouTeach" xml:space="preserve">
+    <value>Prowadzisz te zajęcia</value>
+  </data>
+</root>

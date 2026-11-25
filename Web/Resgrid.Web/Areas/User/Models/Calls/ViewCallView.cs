@@ -29,6 +29,9 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public List<DepartmentGroup> Stations { get; set; }
 		public List<DispatchProtocol> Protocols { get; set; }
 
+		/// <summary>The protocol versions the call's protocol rows cite (P1), by ProtocolVersionId.</summary>
+		public Dictionary<int, ProtocolVersion> ProtocolVersions { get; set; } = new Dictionary<int, ProtocolVersion>();
+
 		/// <summary>"Text as dispatched" for the call's protocols, keyed "{DispatchProtocolId}:{ContentHash}".</summary>
 		public Dictionary<string, DispatchProtocolSnapshot> ProtocolSnapshots { get; set; } = new Dictionary<string, DispatchProtocolSnapshot>();
 

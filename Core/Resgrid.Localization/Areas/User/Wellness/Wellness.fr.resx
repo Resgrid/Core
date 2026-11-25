@@ -1,0 +1,700 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PersonnelLink" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Accueil</value>
+  </data>
+  <data name="WellnessModuleLabel" xml:space="preserve">
+    <value>Bien-être</value>
+  </data>
+  <data name="MyExposuresTab" xml:space="preserve">
+    <value>Mes expositions</value>
+  </data>
+  <data name="ReportTab" xml:space="preserve">
+    <value>Rapport des membres</value>
+  </data>
+  <data name="FlagCallTab" xml:space="preserve">
+    <value>Signalements après intervention</value>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="MyExposuresTitle" xml:space="preserve">
+    <value>Mes expositions</value>
+  </data>
+  <data name="MemberExposuresTitle" xml:space="preserve">
+    <value>Journal des expositions : {0}</value>
+  </data>
+  <data name="MyExposuresIntro" xml:space="preserve">
+    <value>Votre propre registre des expositions et des interventions difficiles. Seuls vous et les responsables du bien-être de votre service pouvez le consulter.</value>
+  </data>
+  <data name="MemberExposuresIntro" xml:space="preserve">
+    <value>Le journal des expositions et des incidents critiques de ce membre. À traiter avec soin : seuls le membre et les responsables du bien-être peuvent le consulter.</value>
+  </data>
+  <data name="LogExposureButton" xml:space="preserve">
+    <value>Consigner une exposition</value>
+  </data>
+  <data name="ExportPdfButton" xml:space="preserve">
+    <value>Exporter en PDF</value>
+  </data>
+  <data name="ExportCsvButton" xml:space="preserve">
+    <value>Exporter en CSV</value>
+  </data>
+  <data name="ProtectedWithheldNotice" xml:space="preserve">
+    <value>Certains détails sont protégés par la protection avancée des données de votre service et ne sont pas affichés ici.</value>
+  </data>
+  <data name="ConfirmedEntriesLabel" xml:space="preserve">
+    <value>Entrées confirmées</value>
+  </data>
+  <data name="CriticalIncidentsLabel" xml:space="preserve">
+    <value>Incidents critiques</value>
+  </data>
+  <data name="AwaitingReviewLabel" xml:space="preserve">
+    <value>En attente de vérification</value>
+  </data>
+  <data name="SuggestionsHeader" xml:space="preserve">
+    <value>Suggestions issues des interventions récentes</value>
+  </data>
+  <data name="SuggestionsHelp" xml:space="preserve">
+    <value>Ces suggestions proviennent des données d'alerte après le signalement d'une intervention. Rien n'est enregistré tant que vous ne l'avez pas vérifié et confirmé. Si cela ne vous concerne pas, rejetez-le.</value>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="CategoryColumn" xml:space="preserve">
+    <value>Catégorie</value>
+  </data>
+  <data name="CallColumn" xml:space="preserve">
+    <value>Intervention</value>
+  </data>
+  <data name="DurationColumn" xml:space="preserve">
+    <value>Durée (h:mm)</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="SuggestedFromLabel" xml:space="preserve">
+    <value>Suggéré à partir de</value>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Vérifier</value>
+  </data>
+  <data name="DismissButton" xml:space="preserve">
+    <value>Rejeter</value>
+  </data>
+  <data name="ScreeningHeader" xml:space="preserve">
+    <value>Dépistage renforcé</value>
+  </data>
+  <data name="ScreeningSelfText" xml:space="preserve">
+    <value>Le responsable du bien-être de votre service vous a proposé un suivi de santé supplémentaire. Les étapes ci-dessous vous aident à vous y retrouver.</value>
+  </data>
+  <data name="ScreeningOfficerText" xml:space="preserve">
+    <value>Ce membre est signalé pour un dépistage renforcé.</value>
+  </data>
+  <data name="ReviewOnLabel" xml:space="preserve">
+    <value>Prochaine revue</value>
+  </data>
+  <data name="PlanNotesLabel" xml:space="preserve">
+    <value>Plan de suivi</value>
+  </data>
+  <data name="WithheldValue" xml:space="preserve">
+    <value>Protégé</value>
+  </data>
+  <data name="FollowUpColumn" xml:space="preserve">
+    <value>Suivi</value>
+  </data>
+  <data name="AssigneeColumn" xml:space="preserve">
+    <value>Attribué à</value>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Échéance</value>
+  </data>
+  <data name="StateColumn" xml:space="preserve">
+    <value>État</value>
+  </data>
+  <data name="CompleteButton" xml:space="preserve">
+    <value>Marquer comme fait</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="ScreeningManageHeader" xml:space="preserve">
+    <value>Dépistage et suivi</value>
+  </data>
+  <data name="ScreeningManageHelp" xml:space="preserve">
+    <value>Signalez ce membre pour un dépistage renforcé et tenez un plan de suivi. Le plan est protégé et visible uniquement par le membre et les responsables du bien-être.</value>
+  </data>
+  <data name="ScreeningCategoryLabel" xml:space="preserve">
+    <value>Motif</value>
+  </data>
+  <data name="NoCategoryOption" xml:space="preserve">
+    <value>Non précisé</value>
+  </data>
+  <data name="ProtectedFieldHelp" xml:space="preserve">
+    <value>Protégé : visible uniquement par le membre et les responsables du bien-être.</value>
+  </data>
+  <data name="FlagForScreeningButton" xml:space="preserve">
+    <value>Signaler pour un dépistage renforcé</value>
+  </data>
+  <data name="SaveScreeningButton" xml:space="preserve">
+    <value>Enregistrer le dépistage</value>
+  </data>
+  <data name="ClearScreeningButton" xml:space="preserve">
+    <value>Terminer le dépistage renforcé</value>
+  </data>
+  <data name="AddFollowUpHeader" xml:space="preserve">
+    <value>Ajouter un suivi</value>
+  </data>
+  <data name="FollowUpPrivacyHelp" xml:space="preserve">
+    <value>Les suivis n'enregistrent que le type d'étape et si elle a été faite. Conservez tout détail de santé dans le plan protégé.</value>
+  </data>
+  <data name="AddFollowUpButton" xml:space="preserve">
+    <value>Ajouter le suivi</value>
+  </data>
+  <data name="EntriesHeader" xml:space="preserve">
+    <value>Entrées</value>
+  </data>
+  <data name="NoEntriesSelf" xml:space="preserve">
+    <value>Vous n'avez encore aucune entrée. Vous pouvez consigner une exposition à tout moment.</value>
+  </data>
+  <data name="NoEntriesMember" xml:space="preserve">
+    <value>Ce membre n'a aucune entrée.</value>
+  </data>
+  <data name="RetentionNotice" xml:space="preserve">
+    <value>Les entrées sont conservées au moins 30 ans. Une entrée saisie par erreur peut être marquée comme telle ; elle est conservée mais n'est plus comptée.</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="AnniversaryReminderOnLabel" xml:space="preserve">
+    <value>Rappel d'anniversaire activé</value>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Ouvrir</value>
+  </data>
+  <data name="VoidButton" xml:space="preserve">
+    <value>Saisi par erreur</value>
+  </data>
+  <data name="VoidHelp" xml:space="preserve">
+    <value>L'entrée reste dans le journal pendant sa durée de conservation mais n'est plus comptée.</value>
+  </data>
+  <data name="VoidConfirmButton" xml:space="preserve">
+    <value>Confirmer</value>
+  </data>
+  <data name="SupportNote" xml:space="preserve">
+    <value>Si quelque chose d'une intervention vous reste en tête, vous n'avez pas à le porter seul. Votre équipe de soutien par les pairs et les ressources bien-être de votre service sont là pour vous.</value>
+  </data>
+  <data name="LogExposureTitle" xml:space="preserve">
+    <value>Consigner une exposition</value>
+  </data>
+  <data name="ReviewSuggestionTitle" xml:space="preserve">
+    <value>Vérifier une entrée suggérée</value>
+  </data>
+  <data name="EntryTitle" xml:space="preserve">
+    <value>Entrée d'exposition</value>
+  </data>
+  <data name="EntryIntro" xml:space="preserve">
+    <value>Décrivez ce qui s'est passé avec vos mots. Seuls la catégorie, la date, l'intervention et la durée servent aux décomptes ; tout le reste est protégé.</value>
+  </data>
+  <data name="SuggestionReviewNotice" xml:space="preserve">
+    <value>Cette entrée a été suggérée à partir des données d'alerte. Vérifiez les détails, ajoutez ce que vous souhaitez et confirmez-la, ou rejetez-la si elle ne vous concerne pas.</value>
+  </data>
+  <data name="WhatHappenedHeader" xml:space="preserve">
+    <value>Quand et quoi</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Membre</value>
+  </data>
+  <data name="OccurredOnLabel" xml:space="preserve">
+    <value>Date et heure</value>
+  </data>
+  <data name="DurationMinutesLabel" xml:space="preserve">
+    <value>Durée (minutes)</value>
+  </data>
+  <data name="NoCallOption" xml:space="preserve">
+    <value>Aucune intervention</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Détails (protégés)</value>
+  </data>
+  <data name="DetailsHelp" xml:space="preserve">
+    <value>Ces détails sont protégés : seuls vous et les responsables du bien-être de votre service pouvez les lire, et ils ne sont jamais utilisés par la recherche ni par une fonction d'IA.</value>
+  </data>
+  <data name="SubstanceLabel" xml:space="preserve">
+    <value>Substance ou agent</value>
+  </data>
+  <data name="PpeWornLabel" xml:space="preserve">
+    <value>Équipement de protection porté</value>
+  </data>
+  <data name="DecontaminationLabel" xml:space="preserve">
+    <value>Décontamination ensuite</value>
+  </data>
+  <data name="NarrativeLabel" xml:space="preserve">
+    <value>Ce qui s'est passé</value>
+  </data>
+  <data name="HealthDetailsLabel" xml:space="preserve">
+    <value>Détails de santé</value>
+  </data>
+  <data name="HealthDetailsHelp" xml:space="preserve">
+    <value>Facultatif. Symptômes, traitement ou tout ce que vous souhaitez consigner. Il ne s'agit pas d'une évaluation médicale.</value>
+  </data>
+  <data name="RemindersHeader" xml:space="preserve">
+    <value>Rappels d'anniversaire</value>
+  </data>
+  <data name="RemindersHelp" xml:space="preserve">
+    <value>Pour les incidents critiques, vous pouvez choisir un rappel discret avant chaque anniversaire, pour vous et/ou pour prévenir l'équipe de soutien par les pairs. Vous pouvez le modifier à tout moment.</value>
+  </data>
+  <data name="RemindMemberLabel" xml:space="preserve">
+    <value>Me le rappeler avant l'anniversaire</value>
+  </data>
+  <data name="RemindPeerTeamLabel" xml:space="preserve">
+    <value>Prévenir l'équipe de soutien par les pairs avant l'anniversaire</value>
+  </data>
+  <data name="NoPeerTeamHelp" xml:space="preserve">
+    <value>Votre service n'a pas encore configuré d'équipe de soutien par les pairs.</value>
+  </data>
+  <data name="ConfirmButton" xml:space="preserve">
+    <value>Confirmer l'entrée</value>
+  </data>
+  <data name="SaveForLaterButton" xml:space="preserve">
+    <value>Enregistrer sans confirmer</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Enregistrer</value>
+  </data>
+  <data name="BackButton" xml:space="preserve">
+    <value>Retour</value>
+  </data>
+  <data name="DismissLongButton" xml:space="preserve">
+    <value>Cela ne me concerne pas - rejeter</value>
+  </data>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>Rapport des expositions des membres</value>
+  </data>
+  <data name="ReportIntro" xml:space="preserve">
+    <value>Décomptes par membre pour les responsables du bien-être. Les détails restent dans le journal de chaque membre.</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>Filtrer le rapport</value>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>Du</value>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>Au</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Filtrer</value>
+  </data>
+  <data name="MembersHeader" xml:space="preserve">
+    <value>Membres</value>
+  </data>
+  <data name="NoReportRows" xml:space="preserve">
+    <value>Aucune entrée sur cette période.</value>
+  </data>
+  <data name="LastExposureLabel" xml:space="preserve">
+    <value>La plus récente</value>
+  </data>
+  <data name="ScreeningFlaggedLabel" xml:space="preserve">
+    <value>Dépistage renforcé</value>
+  </data>
+  <data name="OpenFollowUpsValue" xml:space="preserve">
+    <value>{0} suivis ouverts</value>
+  </data>
+  <data name="OpenLogButton" xml:space="preserve">
+    <value>Ouvrir le journal</value>
+  </data>
+  <data name="RecentFlagsHeader" xml:space="preserve">
+    <value>Signalements récents après intervention</value>
+  </data>
+  <data name="NoFlags" xml:space="preserve">
+    <value>Aucune intervention n'a été signalée.</value>
+  </data>
+  <data name="FlaggedOnLabel" xml:space="preserve">
+    <value>Signalé le</value>
+  </data>
+  <data name="SuggestionsColumn" xml:space="preserve">
+    <value>Suggestions</value>
+  </data>
+  <data name="FlagClearedLabel" xml:space="preserve">
+    <value>Levé</value>
+  </data>
+  <data name="SuggestionsBuiltValue" xml:space="preserve">
+    <value>{0} suggérées</value>
+  </data>
+  <data name="SuggestionsPendingLabel" xml:space="preserve">
+    <value>En attente de la fin de l'intervention</value>
+  </data>
+  <data name="FlagCallTitle" xml:space="preserve">
+    <value>Suivi bien-être : intervention {0}</value>
+  </data>
+  <data name="FlagCallPickerTitle" xml:space="preserve">
+    <value>Signalements après intervention</value>
+  </data>
+  <data name="FlagCallIntro" xml:space="preserve">
+    <value>Signalez une intervention comme incident critique ou exposition. Une fois l'intervention terminée, chaque personne que les données d'alerte y placent reçoit une entrée suggérée à vérifier. Personne n'est enregistré sans confirmation.</value>
+  </data>
+  <data name="RecentCallsHeader" xml:space="preserve">
+    <value>Interventions récentes</value>
+  </data>
+  <data name="NoRecentCalls" xml:space="preserve">
+    <value>Aucune intervention ces 30 derniers jours.</value>
+  </data>
+  <data name="CallActiveNotice" xml:space="preserve">
+    <value>Cette intervention est toujours en cours. Les suggestions seront créées à sa fin.</value>
+  </data>
+  <data name="CriticalIncidentHelp" xml:space="preserve">
+    <value>Une intervention potentiellement traumatisante. Indépendant de la priorité d'alerte.</value>
+  </data>
+  <data name="NotFlaggedLabel" xml:space="preserve">
+    <value>Non signalé</value>
+  </data>
+  <data name="FlagButton" xml:space="preserve">
+    <value>Signaler</value>
+  </data>
+  <data name="ClearFlagButton" xml:space="preserve">
+    <value>Lever le signalement</value>
+  </data>
+  <data name="FlagPrivacyHelp" xml:space="preserve">
+    <value>Signaler une intervention n'enregistre que l'intervention et la catégorie. Chaque membre décide de ce qu'il ajoute à son journal.</value>
+  </data>
+  <data name="BackToCallButton" xml:space="preserve">
+    <value>Retour à l'intervention</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Paramètres bien-être</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Qui consulte les journaux d'exposition, qui forme l'équipe de soutien par les pairs et combien de temps les entrées sont conservées.</value>
+  </data>
+  <data name="WellnessOfficerRoleLabel" xml:space="preserve">
+    <value>Rôle de responsable du bien-être</value>
+  </data>
+  <data name="WellnessOfficerRoleHelp" xml:space="preserve">
+    <value>Les membres de ce rôle peuvent consulter le journal de chaque membre et gérer les signalements de dépistage. Les administrateurs ne peuvent pas lire les journaux sans ce rôle.</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>Aucun</value>
+  </data>
+  <data name="PeerTeamLabel" xml:space="preserve">
+    <value>Certification de l'équipe de soutien par les pairs</value>
+  </data>
+  <data name="PeerTeamHelp" xml:space="preserve">
+    <value>Les membres titulaires d'une certification valide de ce type reçoivent les rappels d'anniversaire que les membres choisissent de partager.</value>
+  </data>
+  <data name="RetentionYearsLabel" xml:space="preserve">
+    <value>Conserver les entrées pendant (années)</value>
+  </data>
+  <data name="RetentionYearsHelp" xml:space="preserve">
+    <value>Au moins 30 ans (OSHA 29 CFR 1910.1020). Les entrées sous conservation légale sont gardées plus longtemps.</value>
+  </data>
+  <data name="WellnessFollowUpButton" xml:space="preserve">
+    <value>Suivi bien-être</value>
+  </data>
+  <data name="WellnessFollowUpHelp" xml:space="preserve">
+    <value>Signalez cette intervention comme incident critique ou exposition pour que les membres puissent l'ajouter à leur journal</value>
+  </data>
+  <data name="Msg.Recorded" xml:space="preserve">
+    <value>L'entrée a été enregistrée.</value>
+  </data>
+  <data name="Msg.Confirmed" xml:space="preserve">
+    <value>L'entrée a été confirmée.</value>
+  </data>
+  <data name="Msg.Saved" xml:space="preserve">
+    <value>Enregistré.</value>
+  </data>
+  <data name="Msg.Dismissed" xml:space="preserve">
+    <value>La suggestion a été rejetée.</value>
+  </data>
+  <data name="Msg.Voided" xml:space="preserve">
+    <value>L'entrée a été marquée comme saisie par erreur.</value>
+  </data>
+  <data name="Msg.RemindersSaved" xml:space="preserve">
+    <value>Vos choix de rappel ont été enregistrés.</value>
+  </data>
+  <data name="Msg.ScreeningSaved" xml:space="preserve">
+    <value>Le signalement de dépistage a été enregistré.</value>
+  </data>
+  <data name="Msg.ScreeningCleared" xml:space="preserve">
+    <value>Le dépistage renforcé est terminé.</value>
+  </data>
+  <data name="Msg.FollowUpAdded" xml:space="preserve">
+    <value>Le suivi a été ajouté.</value>
+  </data>
+  <data name="Msg.FollowUpCompleted" xml:space="preserve">
+    <value>Le suivi a été marqué comme fait.</value>
+  </data>
+  <data name="Msg.FollowUpCancelled" xml:space="preserve">
+    <value>Le suivi a été annulé.</value>
+  </data>
+  <data name="Msg.CallFlagged" xml:space="preserve">
+    <value>L'intervention a été signalée. Les suggestions seront proposées à sa fin.</value>
+  </data>
+  <data name="Msg.CallFlagCleared" xml:space="preserve">
+    <value>Le signalement a été levé. Les suggestions non confirmées ont été supprimées.</value>
+  </data>
+  <data name="Msg.SettingsSaved" xml:space="preserve">
+    <value>Les paramètres bien-être ont été enregistrés.</value>
+  </data>
+  <data name="Error.Generic" xml:space="preserve">
+    <value>L'enregistrement a échoué. Vérifiez l'entrée et réessayez.</value>
+  </data>
+  <data name="Error.NotAllowed" xml:space="preserve">
+    <value>Vous n'y avez pas accès.</value>
+  </data>
+  <data name="Error.ExportFailed" xml:space="preserve">
+    <value>L'export n'a pas pu être créé. Réessayez.</value>
+  </data>
+  <data name="Error.role_not_found" xml:space="preserve">
+    <value>Ce rôle est introuvable.</value>
+  </data>
+  <data name="Error.certification_type_not_found" xml:space="preserve">
+    <value>Ce type de certification est introuvable.</value>
+  </data>
+  <data name="Error.member_not_found" xml:space="preserve">
+    <value>Ce membre est introuvable dans ce service.</value>
+  </data>
+  <data name="Error.entry_not_found" xml:space="preserve">
+    <value>Cette entrée est introuvable.</value>
+  </data>
+  <data name="Error.entry_closed" xml:space="preserve">
+    <value>Cette entrée est close et ne peut plus être modifiée.</value>
+  </data>
+  <data name="Error.entry_changed" xml:space="preserve">
+    <value>Quelqu'un d'autre a modifié cette entrée. Rouvrez-la et réessayez.</value>
+  </data>
+  <data name="Error.not_a_suggestion" xml:space="preserve">
+    <value>Seule une entrée suggérée peut être confirmée ou rejetée.</value>
+  </data>
+  <data name="Error.not_confirmed" xml:space="preserve">
+    <value>Seule une entrée confirmée peut être modifiée ainsi.</value>
+  </data>
+  <data name="Error.reminders_critical_incident_only" xml:space="preserve">
+    <value>Les rappels d'anniversaire ne sont proposés que pour les incidents critiques.</value>
+  </data>
+  <data name="Error.category_required" xml:space="preserve">
+    <value>Veuillez choisir une catégorie.</value>
+  </data>
+  <data name="Error.date_invalid" xml:space="preserve">
+    <value>Veuillez saisir une date valide.</value>
+  </data>
+  <data name="Error.duration_invalid" xml:space="preserve">
+    <value>Veuillez saisir une durée entre 0 et 10 080 minutes.</value>
+  </data>
+  <data name="Error.call_not_found" xml:space="preserve">
+    <value>Cette intervention est introuvable dans ce service.</value>
+  </data>
+  <data name="Error.protected_write_refused" xml:space="preserve">
+    <value>Les détails protégés n'ont pas pu être enregistrés. Réessayez.</value>
+  </data>
+  <data name="Error.flag_not_found" xml:space="preserve">
+    <value>Ce signalement est introuvable.</value>
+  </data>
+  <data name="Error.follow_up_kind_required" xml:space="preserve">
+    <value>Veuillez choisir le type de suivi.</value>
+  </data>
+  <data name="Error.follow_up_assignee_invalid" xml:space="preserve">
+    <value>Un suivi peut être attribué au membre ou à un responsable du bien-être.</value>
+  </data>
+  <data name="Error.follow_up_closed" xml:space="preserve">
+    <value>Ce suivi est déjà clos.</value>
+  </data>
+  <data name="Error.follow_up_not_found" xml:space="preserve">
+    <value>Ce suivi est introuvable.</value>
+  </data>
+  <data name="Category.Carcinogen" xml:space="preserve">
+    <value>Cancérogène</value>
+  </data>
+  <data name="Category.BloodbornePathogen" xml:space="preserve">
+    <value>Agent pathogène transmissible par le sang</value>
+  </data>
+  <data name="Category.HazardousSubstance" xml:space="preserve">
+    <value>Substance dangereuse</value>
+  </data>
+  <data name="Category.CriticalIncident" xml:space="preserve">
+    <value>Incident critique</value>
+  </data>
+  <data name="Category.Other" xml:space="preserve">
+    <value>Autre</value>
+  </data>
+  <data name="Status.Suggested" xml:space="preserve">
+    <value>En attente de vérification</value>
+  </data>
+  <data name="Status.Confirmed" xml:space="preserve">
+    <value>Confirmée</value>
+  </data>
+  <data name="Status.Dismissed" xml:space="preserve">
+    <value>Rejetée</value>
+  </data>
+  <data name="Status.Voided" xml:space="preserve">
+    <value>Saisie par erreur</value>
+  </data>
+  <data name="FollowUpKind.screening_appointment" xml:space="preserve">
+    <value>Rendez-vous de dépistage</value>
+  </data>
+  <data name="FollowUpKind.baseline_test" xml:space="preserve">
+    <value>Examen de référence</value>
+  </data>
+  <data name="FollowUpKind.medical_review" xml:space="preserve">
+    <value>Revue médicale</value>
+  </data>
+  <data name="FollowUpKind.wellness_check_in" xml:space="preserve">
+    <value>Point bien-être</value>
+  </data>
+  <data name="FollowUpKind.other" xml:space="preserve">
+    <value>Autre suivi</value>
+  </data>
+  <data name="FollowUpState.Open" xml:space="preserve">
+    <value>Ouvert</value>
+  </data>
+  <data name="FollowUpState.Acknowledged" xml:space="preserve">
+    <value>Pris en compte</value>
+  </data>
+  <data name="FollowUpState.Completed" xml:space="preserve">
+    <value>Fait</value>
+  </data>
+  <data name="FollowUpState.Cancelled" xml:space="preserve">
+    <value>Annulé</value>
+  </data>
+  <data name="Basis.status" xml:space="preserve">
+    <value>statut du personnel</value>
+  </data>
+  <data name="Basis.unit_crew" xml:space="preserve">
+    <value>équipage de l'unité</value>
+  </data>
+  <data name="Basis.check_in" xml:space="preserve">
+    <value>pointage</value>
+  </data>
+  <data name="Basis.unit_response" xml:space="preserve">
+    <value>temps d'intervention de l'unité</value>
+  </data>
+  <data name="Doc.Title" xml:space="preserve">
+    <value>Journal des expositions et incidents critiques</value>
+  </data>
+  <data name="Doc.Member" xml:space="preserve">
+    <value>Membre</value>
+  </data>
+  <data name="Doc.Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="Doc.Category" xml:space="preserve">
+    <value>Catégorie</value>
+  </data>
+  <data name="Doc.Status" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="Doc.Call" xml:space="preserve">
+    <value>Intervention</value>
+  </data>
+  <data name="Doc.Duration" xml:space="preserve">
+    <value>Durée (h:mm)</value>
+  </data>
+  <data name="Doc.Substance" xml:space="preserve">
+    <value>Substance ou agent</value>
+  </data>
+  <data name="Doc.PpeWorn" xml:space="preserve">
+    <value>EPI porté</value>
+  </data>
+  <data name="Doc.Decontamination" xml:space="preserve">
+    <value>Décontamination</value>
+  </data>
+  <data name="Doc.Narrative" xml:space="preserve">
+    <value>Ce qui s'est passé</value>
+  </data>
+  <data name="Doc.HealthDetails" xml:space="preserve">
+    <value>Détails de santé</value>
+  </data>
+  <data name="Doc.Withheld" xml:space="preserve">
+    <value>Masqué (protégé)</value>
+  </data>
+  <data name="Doc.GeneratedOn" xml:space="preserve">
+    <value>Généré le {0}</value>
+  </data>
+  <data name="Doc.Retention" xml:space="preserve">
+    <value>Votre service conserve ces données au moins 30 ans.</value>
+  </data>
+  <data name="Doc.CriticalIncidents" xml:space="preserve">
+    <value>Incidents critiques</value>
+  </data>
+  <data name="Doc.ReportTitle" xml:space="preserve">
+    <value>Rapport des expositions des membres</value>
+  </data>
+  <data name="Doc.Total" xml:space="preserve">
+    <value>Entrées confirmées</value>
+  </data>
+  <data name="Doc.PendingSuggestions" xml:space="preserve">
+    <value>En attente de vérification</value>
+  </data>
+  <data name="Doc.LastExposure" xml:space="preserve">
+    <value>La plus récente</value>
+  </data>
+  <data name="Doc.ScreeningFlagged" xml:space="preserve">
+    <value>Dépistage renforcé</value>
+  </data>
+  <data name="Doc.OpenFollowUps" xml:space="preserve">
+    <value>Suivis ouverts</value>
+  </data>
+  <data name="Doc.Yes" xml:space="preserve">
+    <value>Oui</value>
+  </data>
+</root>

@@ -175,4 +175,35 @@
   <data name="SecurityNoticeWhere" xml:space="preserve"><value>Де: {0}</value></data>
   <data name="SecurityNoticeNotYou" xml:space="preserve"><value>Якщо це були не ви, негайно скиньте пароль на {0}, а потім увійдіть і перевірте свої способи входу. Resgrid ніколи не просить код або пароль електронною поштою.</value></data>
   <data name="SecurityNoticeFooter" xml:space="preserve"><value>Це автоматичне сповіщення про безпеку вашого облікового запису Resgrid.</value></data>
+  <data name="SigningLinkEmailSubject" xml:space="preserve">
+    <value>{0}: документ на підпис</value>
+  </data>
+  <data name="SigningLinkEmailBody" xml:space="preserve">
+    <value>Вітаємо, {0}!
+
+{1} просить вас переглянути й підписати "{2}".
+
+Відкрийте це посилання, щоб підписати:
+{3}
+
+Посилання можна використати один раз, строк його дії спливає {4}. Перед підписанням ви підтвердите одноразовий код.
+
+Якщо ви не очікували цього повідомлення, просто проігноруйте його.</value>
+  </data>
+  <data name="SigningLinkSmsBody" xml:space="preserve">
+    <value>{0} просить вас підписати "{1}": {2}</value>
+  </data>
+  <data name="SigningCodeEmailSubject" xml:space="preserve">
+    <value>{0}: ваш код для підпису</value>
+  </data>
+  <data name="SigningCodeEmailBody" xml:space="preserve">
+    <value>Вітаємо, {0}!
+
+Ваш код для підписання документа від {3}: {1}. Він дійсний {2} хв.
+
+Якщо ви не запитували цей код, просто проігноруйте це повідомлення.</value>
+  </data>
+  <data name="SigningCodeSmsBody" xml:space="preserve">
+    <value>Ваш код для підпису для {2}: {0}. Дійсний {1} хв.</value>
+  </data>
 </root>

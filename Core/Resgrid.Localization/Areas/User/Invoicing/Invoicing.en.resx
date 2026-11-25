@@ -373,4 +373,5 @@
   <data name="TimeSourceCallWindowHelp" xml:space="preserve"><value>The unit never reported On Scene on this call, so the line bills the time from the call being logged to its close. Check the quantity before sending.</value></data>
   <data name="TimeSourceUnitStatus" xml:space="preserve"><value>on-scene time from unit status</value></data>
   <data name="TimeSourceUnitStatusHelp" xml:space="preserve"><value>The unit linked its On Scene status, and the status that ended it, to this call itself.</value></data>
+  <data name="invoicing_approval_required" xml:space="preserve"><value>This invoice needs its approval before it is sent. Submit it for approval, or send it once approved.</value></data>
 </root>

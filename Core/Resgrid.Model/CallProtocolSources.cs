@@ -10,6 +10,11 @@ namespace Resgrid.Model
 		Trigger = 0,
 
 		/// <summary>Picked by hand: no trigger matched, and the dispatcher (or an app) attached it anyway.</summary>
-		Manual = 1
+		Manual = 1,
+		/// <summary>
+		/// Suggested by Enhanced AI from the intake transcript or SMS thread (P4) and confirmed by the dispatcher, who saw the suggestion and
+		/// its prefilled answers before saving. The suggestion id is on the case record.
+		/// </summary>
+		Ai = 2
 	}
 }

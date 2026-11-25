@@ -163,7 +163,25 @@ namespace Resgrid.Services
 			// Member projections carry role names: a rename touches every member, a membership change the members it moved.
 			if (effects.ImmediateSearchProjection)
 				await RefreshPersonnelProjectionsAsync(role.DepartmentId, previous.Concat(incoming), cancellationToken);
+			else
+				// An import defers the search projection to one rebuild after the run, but the members the role gained or lost still
+				// re-evaluate their dynamic training and protocol audiences (worker 83; the T0/T1 gap closed in round 5F).
+				await QueueAudienceChangesAsync(role.DepartmentId, MovedMembers(previous, incoming), cancellationToken);
 			return saved;
+		}
+
+		/// <summary>The members a role save moved: gained or lost (user ids compare without regard to case).</summary>
+		public static List<string> MovedMembers(IEnumerable<string> previous, IEnumerable<string> incoming)
+		{
+			var before = new HashSet<string>((previous ?? Enumerable.Empty<string>()).Where(u => !string.IsNullOrWhiteSpace(u)), StringComparer.OrdinalIgnoreCase);
+			var after = new HashSet<string>((incoming ?? Enumerable.Empty<string>()).Where(u => !string.IsNullOrWhiteSpace(u)), StringComparer.OrdinalIgnoreCase);
+			return after.Where(u => !before.Contains(u)).Concat(before.Where(u => !after.Contains(u))).ToList();
+		}
+
+		private async Task QueueAudienceChangesAsync(int departmentId, IReadOnlyCollection<string> userIds, CancellationToken cancellationToken)
+		{
+			if (_audienceChanges != null && userIds != null && userIds.Count > 0)
+				await _audienceChanges.EnqueueManyAsync(departmentId, userIds.ToList(), ContentAudienceChangeSources.Role, cancellationToken);
 		}
 
 		private async Task RefreshPersonnelProjectionsAsync(int departmentId, IEnumerable<string> userIds, CancellationToken cancellationToken)

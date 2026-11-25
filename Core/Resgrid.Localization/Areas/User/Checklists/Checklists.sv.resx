@@ -716,4 +716,13 @@
   <data name="HelpFieldScheduleName" xml:space="preserve"><value>Visas i förfallolistan, så gör det igenkännbart vid en snabb blick.</value></data>
   <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>Hur lång tid besättningen har på sig att slutföra kontrollen efter att den öppnats. Därefter räknas den som missad.</value></data>
   <data name="HelpFieldAssignment" xml:space="preserve"><value>Automatisk routning skickar kontrollen till den som innehar objektet. Välj person, roll, grupp eller fordon för att åsidosätta.</value></data>
+  <data name="The witness signs at L2 (a fresh step-up or a passkey), bound to the content of the completion" xml:space="preserve">
+    <value>Vittnet signerar på L2 (en ny identitetskontroll eller en nyckel), knutet till innehållet i genomförandet</value>
+  </data>
+  <data name="WitnessSignatureRequired" xml:space="preserve">
+    <value>Den här checklistan måste bevittnas med en signatur. Öppna körningen och signera som vittne.</value>
+  </data>
+  <data name="WitnessSignatureRefused" xml:space="preserve">
+    <value>Vittnessignaturen registrerades inte, så checklistan väntar fortfarande på sitt vittne.</value>
+  </data>
 </root>

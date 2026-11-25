@@ -175,4 +175,35 @@ Zespół Resgrid</value>
   <data name="SecurityNoticeWhere" xml:space="preserve"><value>Gdzie: {0}</value></data>
   <data name="SecurityNoticeNotYou" xml:space="preserve"><value>Jeśli to nie Ty, zresetuj teraz hasło na stronie {0}, a następnie zaloguj się i sprawdź swoje metody logowania. Resgrid nigdy nie prosi o kod ani hasło przez e-mail.</value></data>
   <data name="SecurityNoticeFooter" xml:space="preserve"><value>To jest automatyczne powiadomienie o bezpieczeństwie Twojego konta Resgrid.</value></data>
+  <data name="SigningLinkEmailSubject" xml:space="preserve">
+    <value>{0}: dokument do podpisu</value>
+  </data>
+  <data name="SigningLinkEmailBody" xml:space="preserve">
+    <value>Dzień dobry {0},
+
+{1} prosi o przejrzenie i podpisanie dokumentu "{2}".
+
+Otwórz ten link, aby podpisać:
+{3}
+
+Link działa jednorazowo i wygasa {4}. Przed podpisaniem potwierdzisz jednorazowy kod.
+
+Jeśli nie spodziewasz się tej wiadomości, możesz ją zignorować.</value>
+  </data>
+  <data name="SigningLinkSmsBody" xml:space="preserve">
+    <value>{0} prosi o podpisanie "{1}": {2}</value>
+  </data>
+  <data name="SigningCodeEmailSubject" xml:space="preserve">
+    <value>{0}: Twój kod do podpisu</value>
+  </data>
+  <data name="SigningCodeEmailBody" xml:space="preserve">
+    <value>Dzień dobry {0},
+
+Twój kod do podpisania dokumentu od {3} to {1}. Wygasa za {2} min.
+
+Jeśli nie prosiłeś o ten kod, możesz zignorować tę wiadomość.</value>
+  </data>
+  <data name="SigningCodeSmsBody" xml:space="preserve">
+    <value>Twój kod do podpisu dla {2}: {0}. Wygasa za {1} min.</value>
+  </data>
 </root>

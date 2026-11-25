@@ -1,0 +1,61 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Lms
+@model LmsPathStepRowView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsPrograms.LmsPrograms> localizer
+@* One step row of the path editor. Index -1 is the template the script clones (it renumbers names on add and remove). *@
+@{
+    var step = Model.Step ?? new LmsPathStepForm();
+    var prefix = Model.Index >= 0 ? "Steps[" + Model.Index + "]." : string.Empty;
+    var id = Model.Index >= 0 ? Model.Index.ToString() : "new";
+    string Name(string field) => Model.Index >= 0 ? prefix + field : null;
+    string Selected(int? current, string value) => current?.ToString() == value ? "selected" : null;
+}
+<tr>
+    <td class="lms-step-number">@(Model.Index + 1)</td>
+    <td>
+        <label class="sr-only" for="step-kind-@id">@localizer["StepKindLabel"]</label>
+        <select id="step-kind-@id" name="@Name("Kind")" data-name="Kind" class="form-control input-sm">
+            @foreach (var kind in Enum.GetValues<LmsPathStepKinds>())
+            {
+                <option value="@((int)kind)" selected="@(step.Kind == (int)kind)">@localizer["StepKind." + kind]</option>
+            }
+        </select>
+    </td>
+    <td>
+        <div data-step-kind="0">
+            <label class="sr-only" for="step-course-@id">@localizer["CourseLabel"]</label>
+            <select id="step-course-@id" name="@Name("CourseId")" data-name="CourseId" class="form-control input-sm">
+                <option value="">@localizer["ChooseOption"]</option>
+                @foreach (var option in Model.Courses)
+                {
+                    <option value="@option.Value" selected="@Selected(step.CourseId, option.Value)">@option.Text</option>
+                }
+            </select>
+        </div>
+        <div data-step-kind="1">
+            <label class="sr-only" for="step-training-@id">@localizer["TrainingLabel"]</label>
+            <select id="step-training-@id" name="@Name("TrainingId")" data-name="TrainingId" class="form-control input-sm">
+                <option value="">@localizer["ChooseOption"]</option>
+                @foreach (var option in Model.Trainings)
+                {
+                    <option value="@option.Value" selected="@Selected(step.TrainingId, option.Value)">@option.Text</option>
+                }
+            </select>
+        </div>
+    </td>
+    <td>
+        <label class="sr-only" for="step-prereq-@id">@localizer["StepPrerequisitesLabel"]</label>
+        <input id="step-prereq-@id" name="@Name("Prerequisites")" data-name="Prerequisites" class="form-control input-sm" maxlength="100" value="@step.Prerequisites" placeholder="1,2" />
+    </td>
+    <td>
+        <label class="sr-only" for="step-group-@id">@localizer["StepElectiveLabel"]</label>
+        <input id="step-group-@id" name="@Name("ElectiveGroup")" data-name="ElectiveGroup" type="number" min="1" max="20" class="form-control input-sm" value="@step.ElectiveGroup" />
+    </td>
+    <td>
+        <label class="sr-only" for="step-need-@id">@localizer["StepElectiveRequiredLabel"]</label>
+        <input id="step-need-@id" name="@Name("ElectiveRequired")" data-name="ElectiveRequired" type="number" min="0" max="60" class="form-control input-sm" value="@(step.ElectiveRequired > 0 ? step.ElectiveRequired.ToString() : null)" />
+    </td>
+    <td class="rgw-row-actions">
+        <button type="button" class="btn btn-xs btn-white lms-step-remove"><i class="fa fa-times" aria-hidden="true"></i> @localizer["RemoveStep"]</button>
+    </td>
+</tr>

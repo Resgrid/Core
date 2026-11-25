@@ -121,7 +121,7 @@
 				<thead><tr><th scope="col">@aa["Ui.Area"]</th><th scope="col">@aa["Ui.SetupChoice"]</th></tr></thead>
 				@foreach (var tier in tiers)
 				{
-					var tierAreas = catalog.Areas.Where(a => a.Tier == tier).OrderBy(a => a.Order).ToArray();
+					var tierAreas = catalog.ListedAreas().Where(a => a.Tier == tier).OrderBy(a => a.Order).ToArray();
 					if (tierAreas.Length == 0) { continue; }
 					<tbody>
 						<tr class="scope__tier"><th colspan="2" scope="colgroup">@aa["Ui.Tier." + tier]</th></tr>

@@ -318,6 +318,16 @@ namespace Resgrid.Model
 
 		public int? ProtectedCatalogVersion { get; set; }
 
+		/// <summary>
+		/// Training T1: the learning record this credit was derived from through a category credit mapping (null for a credit
+		/// typed in by hand). Voiding the record removes the credit (R-T4).
+		/// </summary>
+		public int? LearningRecordId { get; set; }
+
+		[NotMapped]
+		[JsonIgnore]
+		public bool IsDerived => LearningRecordId.HasValue && LearningRecordId.Value > 0;
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue
@@ -336,7 +346,7 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new[] { "IdValue", "IdType", "TableName", "IdName" };
+		public IEnumerable<string> IgnoredProperties => new[] { "IdValue", "IdType", "TableName", "IdName", "IsDerived" };
 	}
 
 	// ---- Read models -----------------------------------------------------------------------------------

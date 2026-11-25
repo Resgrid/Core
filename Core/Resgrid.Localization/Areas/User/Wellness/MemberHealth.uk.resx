@@ -1,0 +1,862 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HealthRecordsTab" xml:space="preserve">
+    <value>Медичні записи</value>
+  </data>
+  <data name="ClearancesTab" xml:space="preserve">
+    <value>Медичний допуск</value>
+  </data>
+  <data name="OshaTab" xml:space="preserve">
+    <value>Журнал OSHA</value>
+  </data>
+  <data name="HealthRecordsTitle" xml:space="preserve">
+    <value>Медичні записи</value>
+  </data>
+  <data name="HealthRecordsIntro" xml:space="preserve">
+    <value>Ваші випадки контакту, травми, статус служби та медичний допуск. Їх бачите лише ви та відповідальні за здоров'я у вашому підрозділі.</value>
+  </data>
+  <data name="ReportExposureButton" xml:space="preserve">
+    <value>Повідомити про контакт</value>
+  </data>
+  <data name="ReportInjuryButton" xml:space="preserve">
+    <value>Повідомити про травму</value>
+  </data>
+  <data name="DutyStatusLabel" xml:space="preserve">
+    <value>Статус служби</value>
+  </data>
+  <data name="ExpectedReturnLabel" xml:space="preserve">
+    <value>Очікуване повернення</value>
+  </data>
+  <data name="ClearanceStatusLabel" xml:space="preserve">
+    <value>Медичний допуск</value>
+  </data>
+  <data name="NoClearance" xml:space="preserve">
+    <value>Немає запису</value>
+  </data>
+  <data name="ValidUntilLabel" xml:space="preserve">
+    <value>Наступне обстеження</value>
+  </data>
+  <data name="OpenCasesLabel" xml:space="preserve">
+    <value>Відкриті випадки контакту</value>
+  </data>
+  <data name="OpenInjuriesLabel" xml:space="preserve">
+    <value>Відкриті травми</value>
+  </data>
+  <data name="OpenCasesHeader" xml:space="preserve">
+    <value>Відкриті випадки контакту (призначена відповідальна особа)</value>
+  </data>
+  <data name="NoOpenCases" xml:space="preserve">
+    <value>Немає відкритих випадків контакту.</value>
+  </data>
+  <data name="MemberColumn" xml:space="preserve">
+    <value>Член</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Член</value>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="RouteColumn" xml:space="preserve">
+    <value>Шлях контакту</value>
+  </data>
+  <data name="StageColumn" xml:space="preserve">
+    <value>Етап</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Дії</value>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Відкрити</value>
+  </data>
+  <data name="NotificationOverdue" xml:space="preserve">
+    <value>Відповідь прострочена</value>
+  </data>
+  <data name="OpenInjuriesHeader" xml:space="preserve">
+    <value>Відкриті травми</value>
+  </data>
+  <data name="NoOpenInjuries" xml:space="preserve">
+    <value>Немає відкритих травм.</value>
+  </data>
+  <data name="CaseNumberColumn" xml:space="preserve">
+    <value>№ випадку</value>
+  </data>
+  <data name="MyCasesHeader" xml:space="preserve">
+    <value>Мої випадки контакту</value>
+  </data>
+  <data name="NoCasesSelf" xml:space="preserve">
+    <value>У вас немає випадків контакту. Повідомте тут про контакт із патогенами, що передаються через кров, або з інфекційною хворобою, чи зробіть це із запису про контакт.</value>
+  </data>
+  <data name="MyInjuriesHeader" xml:space="preserve">
+    <value>Мої травми</value>
+  </data>
+  <data name="NoInjuriesSelf" xml:space="preserve">
+    <value>У вас немає зареєстрованих травм.</value>
+  </data>
+  <data name="StateColumn" xml:space="preserve">
+    <value>Стан</value>
+  </data>
+  <data name="DutyBoardHeader" xml:space="preserve">
+    <value>Дошка статусу служби</value>
+  </data>
+  <data name="DutyBoardHelp" xml:space="preserve">
+    <value>Члени з обмеженою службою, поза службою або без повного допуску. Показано лише статус, ніколи причину.</value>
+  </data>
+  <data name="NoDutyBoard" xml:space="preserve">
+    <value>Усі, кого ви контролюєте, на повній службі та мають допуск.</value>
+  </data>
+  <data name="SinceLabel" xml:space="preserve">
+    <value>З</value>
+  </data>
+  <data name="PrivacyNote" xml:space="preserve">
+    <value>Ці записи обмежені: їх бачите ви, призначена відповідальна особа та відповідальні за добробут. Адміністратори й керівники бачать лише статус служби, ніколи медичні подробиці. Вони ніколи не доступні для пошуку і не використовуються ШІ.</value>
+  </data>
+  <data name="Duty.FullDuty" xml:space="preserve">
+    <value>Повна служба</value>
+  </data>
+  <data name="Duty.RestrictedDuty" xml:space="preserve">
+    <value>Обмежена служба</value>
+  </data>
+  <data name="Duty.OffDuty" xml:space="preserve">
+    <value>Поза службою</value>
+  </data>
+  <data name="Clearance.Cleared" xml:space="preserve">
+    <value>Допущений</value>
+  </data>
+  <data name="Clearance.ClearedWithRestrictions" xml:space="preserve">
+    <value>Допущений з обмеженнями</value>
+  </data>
+  <data name="Clearance.NotCleared" xml:space="preserve">
+    <value>Не допущений</value>
+  </data>
+  <data name="InjuryState.Open" xml:space="preserve">
+    <value>Відкрита</value>
+  </data>
+  <data name="InjuryState.Cleared" xml:space="preserve">
+    <value>Повернувся до служби</value>
+  </data>
+  <data name="InjuryState.Voided" xml:space="preserve">
+    <value>Записано помилково</value>
+  </data>
+  <data name="Stage.Reported" xml:space="preserve">
+    <value>Повідомлено</value>
+  </data>
+  <data name="Stage.SourceFollowUpRequested" xml:space="preserve">
+    <value>Запитано з'ясування щодо джерела</value>
+  </data>
+  <data name="Stage.NotificationRequested" xml:space="preserve">
+    <value>Запитано повідомлення (Ryan White)</value>
+  </data>
+  <data name="Stage.NotificationReceived" xml:space="preserve">
+    <value>Отримано відповідь</value>
+  </data>
+  <data name="Stage.FollowUp" xml:space="preserve">
+    <value>Нагляд після контакту</value>
+  </data>
+  <data name="Stage.Closed" xml:space="preserve">
+    <value>Закрито</value>
+  </data>
+  <data name="Stage.Withdrawn" xml:space="preserve">
+    <value>Записано помилково</value>
+  </data>
+  <data name="Route.Percutaneous" xml:space="preserve">
+    <value>Укол голкою або поріз</value>
+  </data>
+  <data name="Route.MucousMembrane" xml:space="preserve">
+    <value>Бризки в очі, ніс або рот</value>
+  </data>
+  <data name="Route.NonIntactSkin" xml:space="preserve">
+    <value>Контакт із пошкодженою шкірою</value>
+  </data>
+  <data name="Route.Airborne" xml:space="preserve">
+    <value>Повітряно-крапельна інфекційна хвороба</value>
+  </data>
+  <data name="Route.Other" xml:space="preserve">
+    <value>Інше</value>
+  </data>
+  <data name="CaseTitle" xml:space="preserve">
+    <value>Випадок контакту</value>
+  </data>
+  <data name="CaseIntro" xml:space="preserve">
+    <value>Контакт із патогенами, що передаються через кров, або з інфекційною хворобою: від повідомлення до закриття. Справу веде призначена відповідальна особа.</value>
+  </data>
+  <data name="ProtectedWithheldNotice" xml:space="preserve">
+    <value>Деякі відомості захищені й приховані без дозволу на захищені дані.</value>
+  </data>
+  <data name="NotificationOverdueHelp" xml:space="preserve">
+    <value>Медичний заклад не відповів на запит про повідомлення протягом 48 годин. Нагадайте закладу або все одно почніть нагляд після контакту.</value>
+  </data>
+  <data name="CaseFactsHeader" xml:space="preserve">
+    <value>Контакт</value>
+  </data>
+  <data name="OccurredLabel" xml:space="preserve">
+    <value>Коли сталося</value>
+  </data>
+  <data name="CallLabel" xml:space="preserve">
+    <value>Виклик</value>
+  </data>
+  <data name="ReportedLabel" xml:space="preserve">
+    <value>Повідомлено</value>
+  </data>
+  <data name="SourceFacilityLabel" xml:space="preserve">
+    <value>Медичний заклад, що прийняв</value>
+  </data>
+  <data name="NotificationDueLabel" xml:space="preserve">
+    <value>Відповідь до</value>
+  </data>
+  <data name="NoPatientIdentityNote" xml:space="preserve">
+    <value>Ніколи не вводьте ім'я чи номер медичної картки пацієнта-джерела. Випадок посилається на виклик; заклад, що прийняв, встановлює джерело за ним.</value>
+  </data>
+  <data name="BbpTrainingHeader" xml:space="preserve">
+    <value>Навчання щодо патогенів, що передаються через кров</value>
+  </data>
+  <data name="ExpiresLabel" xml:space="preserve">
+    <value>Спливає</value>
+  </data>
+  <data name="Bbp.NotTracked" xml:space="preserve">
+    <value>Підрозділ не відстежує</value>
+  </data>
+  <data name="Bbp.Current" xml:space="preserve">
+    <value>Чинне</value>
+  </data>
+  <data name="Bbp.ExpiringSoon" xml:space="preserve">
+    <value>Невдовзі спливає</value>
+  </data>
+  <data name="Bbp.Expired" xml:space="preserve">
+    <value>Сплило</value>
+  </data>
+  <data name="Bbp.None" xml:space="preserve">
+    <value>Немає запису</value>
+  </data>
+  <data name="RecordInjuryButton" xml:space="preserve">
+    <value>Зареєструвати як травму</value>
+  </data>
+  <data name="RecordInjuryHelp" xml:space="preserve">
+    <value>Укол голкою або поріз, забруднений кров'ю, є конфіденційним випадком, що підлягає реєстрації OSHA. Зареєструйте його як травму, щоб він потрапив до журналу OSHA без імені члена.</value>
+  </data>
+  <data name="NextStepHeader" xml:space="preserve">
+    <value>Наступний крок</value>
+  </data>
+  <data name="NextStepHelp" xml:space="preserve">
+    <value>Зазначте, коли відбувся крок, і примітки, а потім виберіть крок. Для запиту щодо джерела потрібно вказати заклад, що прийняв.</value>
+  </data>
+  <data name="StepDateLabel" xml:space="preserve">
+    <value>Коли (порожньо = зараз)</value>
+  </data>
+  <data name="StepNotesLabel" xml:space="preserve">
+    <value>Примітки до цього кроку</value>
+  </data>
+  <data name="ProtectedFieldHelp" xml:space="preserve">
+    <value>Захищено: читають лише член і відповідальні особи.</value>
+  </data>
+  <data name="MoveToFormat" xml:space="preserve">
+    <value>Перейти до: {0}</value>
+  </data>
+  <data name="NotesHeader" xml:space="preserve">
+    <value>Захищені примітки</value>
+  </data>
+  <data name="SourceFollowUpNotesLabel" xml:space="preserve">
+    <value>З'ясування щодо джерела</value>
+  </data>
+  <data name="NotificationResponseLabel" xml:space="preserve">
+    <value>Відповідь на повідомлення</value>
+  </data>
+  <data name="MedicalNotesLabel" xml:space="preserve">
+    <value>Примітки щодо аналізів і лікування</value>
+  </data>
+  <data name="ClosureNotesLabel" xml:space="preserve">
+    <value>Примітки до закриття</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="WithheldValue" xml:space="preserve">
+    <value>Приховано (захищено)</value>
+  </data>
+  <data name="FollowUpsHeader" xml:space="preserve">
+    <value>Завдання нагляду після контакту</value>
+  </data>
+  <data name="NoFollowUps" xml:space="preserve">
+    <value>Завдань нагляду ще немає.</value>
+  </data>
+  <data name="FollowUpColumn" xml:space="preserve">
+    <value>Завдання</value>
+  </data>
+  <data name="AssigneeColumn" xml:space="preserve">
+    <value>Призначено</value>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Термін</value>
+  </data>
+  <data name="CompleteButton" xml:space="preserve">
+    <value>Виконано</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="AddFollowUpButton" xml:space="preserve">
+    <value>Додати завдання</value>
+  </data>
+  <data name="FollowUpPrivacyHelp" xml:space="preserve">
+    <value>Завдання вказує лише свій вид, ніколи результат; воно призначається члену або призначеній відповідальній особі.</value>
+  </data>
+  <data name="FollowUpKind.baseline_testing" xml:space="preserve">
+    <value>Базове обстеження</value>
+  </data>
+  <data name="FollowUpKind.prophylaxis_review" xml:space="preserve">
+    <value>Оцінка профілактики</value>
+  </data>
+  <data name="FollowUpKind.six_week_test" xml:space="preserve">
+    <value>Аналіз через шість тижнів</value>
+  </data>
+  <data name="FollowUpKind.three_month_test" xml:space="preserve">
+    <value>Аналіз через три місяці</value>
+  </data>
+  <data name="FollowUpKind.six_month_test" xml:space="preserve">
+    <value>Аналіз через шість місяців</value>
+  </data>
+  <data name="FollowUpKind.counselling" xml:space="preserve">
+    <value>Консультування</value>
+  </data>
+  <data name="FollowUpKind.other" xml:space="preserve">
+    <value>Інше</value>
+  </data>
+  <data name="FollowUpState.Open" xml:space="preserve">
+    <value>Відкрите</value>
+  </data>
+  <data name="FollowUpState.Acknowledged" xml:space="preserve">
+    <value>Підтверджено</value>
+  </data>
+  <data name="FollowUpState.Completed" xml:space="preserve">
+    <value>Виконано</value>
+  </data>
+  <data name="FollowUpState.Cancelled" xml:space="preserve">
+    <value>Скасовано</value>
+  </data>
+  <data name="ReportExposureTitle" xml:space="preserve">
+    <value>Повідомити про контакт</value>
+  </data>
+  <data name="ReportExposureIntro" xml:space="preserve">
+    <value>Контакт із патогенами, що передаються через кров, або з інфекційною хворобою. Призначену відповідальну особу одразу повідомляють, і вона веде справу далі.</value>
+  </data>
+  <data name="ExistingEntryLabel" xml:space="preserve">
+    <value>З одного з ваших записів про контакт</value>
+  </data>
+  <data name="ExistingEntryHelp" xml:space="preserve">
+    <value>Виберіть уже внесений запис або залиште порожнім для нового.</value>
+  </data>
+  <data name="NewEntryOption" xml:space="preserve">
+    <value>Новий контакт</value>
+  </data>
+  <data name="NoCallOption" xml:space="preserve">
+    <value>Без виклику</value>
+  </data>
+  <data name="NarrativeLabel" xml:space="preserve">
+    <value>Що сталося</value>
+  </data>
+  <data name="PpeWornLabel" xml:space="preserve">
+    <value>Засоби захисту, що були вдягнені</value>
+  </data>
+  <data name="SubmitReportButton" xml:space="preserve">
+    <value>Надіслати повідомлення</value>
+  </data>
+  <data name="ReportInjuryTitle" xml:space="preserve">
+    <value>Повідомити про травму</value>
+  </data>
+  <data name="InjuryTitle" xml:space="preserve">
+    <value>Травма</value>
+  </data>
+  <data name="InjuryIntro" xml:space="preserve">
+    <value>Що сталося, статус служби з датами, обмеження та допуск до повернення на службу. Керівники бачать лише статус служби.</value>
+  </data>
+  <data name="ReturnedOnLabel" xml:space="preserve">
+    <value>Повернення до повної служби</value>
+  </data>
+  <data name="LinkedCaseLabel" xml:space="preserve">
+    <value>Відкрити випадок контакту, з якого походить ця травма</value>
+  </data>
+  <data name="WhatHappenedHeader" xml:space="preserve">
+    <value>Що сталося</value>
+  </data>
+  <data name="LocationLabel" xml:space="preserve">
+    <value>Де сталося</value>
+  </data>
+  <data name="JobTitleLabel" xml:space="preserve">
+    <value>Посада</value>
+  </data>
+  <data name="DescriptionLabel" xml:space="preserve">
+    <value>Що робив член і що сталося</value>
+  </data>
+  <data name="InjuryDetailsLabel" xml:space="preserve">
+    <value>Травма, частина тіла та причина</value>
+  </data>
+  <data name="TreatmentLabel" xml:space="preserve">
+    <value>Лікар, заклад і лікування</value>
+  </data>
+  <data name="OshaHeader" xml:space="preserve">
+    <value>Класифікація OSHA</value>
+  </data>
+  <data name="OshaHelp" xml:space="preserve">
+    <value>Випадок, що підлягає реєстрації, вноситься до журналу OSHA 300 за рік і отримує звіт 301. Дні обчислюються з історії статусу служби.</value>
+  </data>
+  <data name="OshaTypeLabel" xml:space="preserve">
+    <value>Тип травми чи захворювання</value>
+  </data>
+  <data name="DiedOnLabel" xml:space="preserve">
+    <value>Дата смерті</value>
+  </data>
+  <data name="RecordableLabel" xml:space="preserve">
+    <value>Випадок, що підлягає реєстрації OSHA</value>
+  </data>
+  <data name="PrivacyCaseLabel" xml:space="preserve">
+    <value>Конфіденційний випадок</value>
+  </data>
+  <data name="PrivacyCaseHelp" xml:space="preserve">
+    <value>Ім'я приховано в журналі 300 (29 CFR 1904.29(b)).</value>
+  </data>
+  <data name="EmergencyRoomLabel" xml:space="preserve">
+    <value>Лікувався у відділенні невідкладної допомоги</value>
+  </data>
+  <data name="HospitalizedLabel" xml:space="preserve">
+    <value>Госпіталізований на ніч</value>
+  </data>
+  <data name="OshaOfficerOnlyNote" xml:space="preserve">
+    <value>Відповідальні за здоров'я у вашому підрозділі перевірять повідомлення й завершать класифікацію OSHA.</value>
+  </data>
+  <data name="DutyHistoryHeader" xml:space="preserve">
+    <value>Історія статусу служби</value>
+  </data>
+  <data name="RestrictionsLabel" xml:space="preserve">
+    <value>Обмеження</value>
+  </data>
+  <data name="NoPeriods" xml:space="preserve">
+    <value>Повна служба весь час.</value>
+  </data>
+  <data name="FromColumn" xml:space="preserve">
+    <value>З</value>
+  </data>
+  <data name="ToColumn" xml:space="preserve">
+    <value>До</value>
+  </data>
+  <data name="OngoingLabel" xml:space="preserve">
+    <value>Триває</value>
+  </data>
+  <data name="SetDutyStatusHeader" xml:space="preserve">
+    <value>Обмежена служба або поза службою</value>
+  </data>
+  <data name="RestrictionsHelp" xml:space="preserve">
+    <value>Захищено. Керівники бачать лише, що член має обмежену службу.</value>
+  </data>
+  <data name="SetDutyStatusButton" xml:space="preserve">
+    <value>Встановити статус служби</value>
+  </data>
+  <data name="ReturnHeader" xml:space="preserve">
+    <value>Повернення на службу</value>
+  </data>
+  <data name="ReturnHelp" xml:space="preserve">
+    <value>Допуск до повернення на повну службу закриває періоди служби, пов'язані з травмою.</value>
+  </data>
+  <data name="ClearanceNotesLabel" xml:space="preserve">
+    <value>Примітки до допуску</value>
+  </data>
+  <data name="ClearReturnButton" xml:space="preserve">
+    <value>Допустити до повної служби</value>
+  </data>
+  <data name="VoidInjuryButton" xml:space="preserve">
+    <value>Записано помилково</value>
+  </data>
+  <data name="VoidInjuryHelp" xml:space="preserve">
+    <value>Запис зберігається протягом строку зберігання і вилучається з журналу OSHA.</value>
+  </data>
+  <data name="ClearancesTitle" xml:space="preserve">
+    <value>Медичний допуск (NFPA 1582)</value>
+  </data>
+  <data name="ClearancesIntro" xml:space="preserve">
+    <value>Медичні обстеження з охорони праці зі статусом обмежень. Керівники й планування бачать статус; подробиці обмежень захищені.</value>
+  </data>
+  <data name="ClearanceTypeMissingNote" xml:space="preserve">
+    <value>Укажіть у налаштуваннях добробуту тип сертифіката для медичного допуску (із шаблону "Medical Clearance (NFPA 1582)"), щоб кожне обстеження також записувалося як сертифікат.</value>
+  </data>
+  <data name="CurrentClearancesHeader" xml:space="preserve">
+    <value>Поточний допуск за членами</value>
+  </data>
+  <data name="NoClearances" xml:space="preserve">
+    <value>Допуски ще не записано.</value>
+  </data>
+  <data name="EvaluatedOnLabel" xml:space="preserve">
+    <value>Обстежено</value>
+  </data>
+  <data name="HistoryButton" xml:space="preserve">
+    <value>Історія</value>
+  </data>
+  <data name="RecordClearanceHeader" xml:space="preserve">
+    <value>Записати обстеження</value>
+  </data>
+  <data name="RestrictionDetailLabel" xml:space="preserve">
+    <value>Обмеження та причини</value>
+  </data>
+  <data name="ClearanceDetailHelp" xml:space="preserve">
+    <value>Захищено (ADP). Керівники та планування бачать лише: Допущений, Допущений з обмеженнями або Не допущений.</value>
+  </data>
+  <data name="RecordClearanceButton" xml:space="preserve">
+    <value>Зберегти обстеження</value>
+  </data>
+  <data name="HistoryHeaderFormat" xml:space="preserve">
+    <value>Історія допусків: {0}</value>
+  </data>
+  <data name="VoidedLabel" xml:space="preserve">
+    <value>Анульовано</value>
+  </data>
+  <data name="VoidButton" xml:space="preserve">
+    <value>Анулювати</value>
+  </data>
+  <data name="HealthSettingsHeader" xml:space="preserve">
+    <value>Випадки контакту, травми та медичний допуск</value>
+  </data>
+  <data name="DesignatedOfficerRoleLabel" xml:space="preserve">
+    <value>Роль призначеної відповідальної особи</value>
+  </data>
+  <data name="DesignatedOfficerRoleHelp" xml:space="preserve">
+    <value>Члени цієї ролі отримують повідомлення про контакт із патогенами, що передаються через кров, та інфекційними хворобами (Ryan White, частина G) і ведуть випадки.</value>
+  </data>
+  <data name="SameAsWellnessOfficerOption" xml:space="preserve">
+    <value>Роль відповідального за добробут</value>
+  </data>
+  <data name="BbpTrainingTypeLabel" xml:space="preserve">
+    <value>Сертифікат навчання щодо патогенів, що передаються через кров</value>
+  </data>
+  <data name="BbpTrainingTypeHelp" xml:space="preserve">
+    <value>Кожен випадок контакту показує поточний стан члена щодо цього щорічного навчання (OSHA 1910.1030).</value>
+  </data>
+  <data name="ClearanceTypeLabel" xml:space="preserve">
+    <value>Сертифікат медичного допуску</value>
+  </data>
+  <data name="ClearanceTypeHelp" xml:space="preserve">
+    <value>Кожне обстеження NFPA 1582 також записується як сертифікат цього типу; «Не допущений» призупиняє його.</value>
+  </data>
+  <data name="InjuryRetentionYearsLabel" xml:space="preserve">
+    <value>Зберігати записи про травми (роки)</value>
+  </data>
+  <data name="InjuryRetentionYearsHelp" xml:space="preserve">
+    <value>Після кінця року травми: щонайменше 5 (OSHA 1904.33). Випадки контакту й допуски зберігаються 30 років, як записи про контакт.</value>
+  </data>
+  <data name="OshaTitle" xml:space="preserve">
+    <value>OSHA 300 і 301</value>
+  </data>
+  <data name="OshaIntro" xml:space="preserve">
+    <value>Річний журнал травм, що підлягають реєстрації, та звіти про інциденти, складені із записів про травми. Конфіденційні випадки показано без імені.</value>
+  </data>
+  <data name="ShowButton" xml:space="preserve">
+    <value>Показати</value>
+  </data>
+  <data name="Export300Csv" xml:space="preserve">
+    <value>Журнал 300 (CSV)</value>
+  </data>
+  <data name="Export300Pdf" xml:space="preserve">
+    <value>Журнал 300 (PDF)</value>
+  </data>
+  <data name="Export301Csv" xml:space="preserve">
+    <value>Звіти 301 (CSV)</value>
+  </data>
+  <data name="Export301Pdf" xml:space="preserve">
+    <value>Звіти 301 (PDF)</value>
+  </data>
+  <data name="NoCasesOnLog" xml:space="preserve">
+    <value>Цього року немає випадків, що підлягають реєстрації.</value>
+  </data>
+  <data name="PrivacyMaskNote" xml:space="preserve">
+    <value>Конфіденційний випадок показує «Конфіденційний випадок» замість імені тут і в кожному експорті журналу 300.</value>
+  </data>
+  <data name="OutcomeColumn" xml:space="preserve">
+    <value>Наслідок</value>
+  </data>
+  <data name="Outcome.Death" xml:space="preserve">
+    <value>Смерть</value>
+  </data>
+  <data name="Outcome.DaysAwayFromWork" xml:space="preserve">
+    <value>Дні відсутності на роботі</value>
+  </data>
+  <data name="Outcome.JobTransferOrRestriction" xml:space="preserve">
+    <value>Переведення або обмеження</value>
+  </data>
+  <data name="Outcome.OtherRecordable" xml:space="preserve">
+    <value>Інший випадок, що підлягає реєстрації</value>
+  </data>
+  <data name="Osha.LogTitle" xml:space="preserve">
+    <value>Журнал травм і захворювань, пов'язаних з роботою (за формою OSHA 300)</value>
+  </data>
+  <data name="Osha.ReportTitle" xml:space="preserve">
+    <value>Звіт про травму чи захворювання (за формою OSHA 301)</value>
+  </data>
+  <data name="Osha.Establishment" xml:space="preserve">
+    <value>Підприємство</value>
+  </data>
+  <data name="Osha.Year" xml:space="preserve">
+    <value>Рік</value>
+  </data>
+  <data name="Osha.CaseNumber" xml:space="preserve">
+    <value>№ випадку</value>
+  </data>
+  <data name="Osha.EmployeeName" xml:space="preserve">
+    <value>Ім'я працівника</value>
+  </data>
+  <data name="Osha.JobTitle" xml:space="preserve">
+    <value>Посада</value>
+  </data>
+  <data name="Osha.DateOfInjury" xml:space="preserve">
+    <value>Дата травми чи початку захворювання</value>
+  </data>
+  <data name="Osha.Where" xml:space="preserve">
+    <value>Місце події</value>
+  </data>
+  <data name="Osha.Description" xml:space="preserve">
+    <value>Травма чи захворювання, уражені частини тіла та предмет або речовина</value>
+  </data>
+  <data name="Osha.Death" xml:space="preserve">
+    <value>Смерть</value>
+  </data>
+  <data name="Osha.DaysAwayCase" xml:space="preserve">
+    <value>Дні відсутності на роботі</value>
+  </data>
+  <data name="Osha.RestrictedCase" xml:space="preserve">
+    <value>Переведення або обмеження</value>
+  </data>
+  <data name="Osha.OtherRecordable" xml:space="preserve">
+    <value>Інший випадок, що підлягає реєстрації</value>
+  </data>
+  <data name="Osha.DaysAway" xml:space="preserve">
+    <value>Відсутність на роботі (дні)</value>
+  </data>
+  <data name="Osha.DaysRestricted" xml:space="preserve">
+    <value>Переведення або обмеження (дні)</value>
+  </data>
+  <data name="Osha.Type.Injury" xml:space="preserve">
+    <value>Травма</value>
+  </data>
+  <data name="Osha.Type.SkinDisorder" xml:space="preserve">
+    <value>Ураження шкіри</value>
+  </data>
+  <data name="Osha.Type.RespiratoryCondition" xml:space="preserve">
+    <value>Захворювання органів дихання</value>
+  </data>
+  <data name="Osha.Type.Poisoning" xml:space="preserve">
+    <value>Отруєння</value>
+  </data>
+  <data name="Osha.Type.HearingLoss" xml:space="preserve">
+    <value>Втрата слуху</value>
+  </data>
+  <data name="Osha.Type.AllOtherIllnesses" xml:space="preserve">
+    <value>Усі інші захворювання</value>
+  </data>
+  <data name="Osha.Totals" xml:space="preserve">
+    <value>Підсумки</value>
+  </data>
+  <data name="Osha.TimeOfEvent" xml:space="preserve">
+    <value>Час події</value>
+  </data>
+  <data name="Osha.WhatHappened" xml:space="preserve">
+    <value>Що робив працівник і що сталося?</value>
+  </data>
+  <data name="Osha.InjuryDetails" xml:space="preserve">
+    <value>Яка травма чи захворювання і що їх спричинило?</value>
+  </data>
+  <data name="Osha.Treatment" xml:space="preserve">
+    <value>Лікар, заклад і лікування</value>
+  </data>
+  <data name="Osha.EmergencyRoom" xml:space="preserve">
+    <value>Лікувався у відділенні невідкладної допомоги</value>
+  </data>
+  <data name="Osha.Hospitalized" xml:space="preserve">
+    <value>Госпіталізований на ніч як стаціонарний пацієнт</value>
+  </data>
+  <data name="Osha.DateOfDeath" xml:space="preserve">
+    <value>Дата смерті</value>
+  </data>
+  <data name="Osha.PrivacyCase" xml:space="preserve">
+    <value>Конфіденційний випадок</value>
+  </data>
+  <data name="Osha.PrivacyCaseName" xml:space="preserve">
+    <value>Конфіденційний випадок</value>
+  </data>
+  <data name="Osha.EmployeeDetailsNote" xml:space="preserve">
+    <value>Адресу, дату народження, дату прийняття на роботу та стать працівника доповнюють з особової справи.</value>
+  </data>
+  <data name="Osha.Withheld" xml:space="preserve">
+    <value>Приховано (захищено)</value>
+  </data>
+  <data name="Osha.Yes" xml:space="preserve">
+    <value>Так</value>
+  </data>
+  <data name="Osha.No" xml:space="preserve">
+    <value>Ні</value>
+  </data>
+  <data name="Osha.Retention" xml:space="preserve">
+    <value>Зберігайте ці записи п'ять років після закінчення року, якого вони стосуються (29 CFR 1904.33).</value>
+  </data>
+  <data name="Osha.Generated" xml:space="preserve">
+    <value>Створено {0}</value>
+  </data>
+  <data name="Msg.ExposureReported" xml:space="preserve">
+    <value>Про контакт повідомлено, призначену відповідальну особу поінформовано.</value>
+  </data>
+  <data name="Msg.CaseMoved" xml:space="preserve">
+    <value>Випадок перейшов до наступного кроку.</value>
+  </data>
+  <data name="Msg.Saved" xml:space="preserve">
+    <value>Збережено.</value>
+  </data>
+  <data name="Msg.FollowUpAdded" xml:space="preserve">
+    <value>Завдання нагляду додано.</value>
+  </data>
+  <data name="Msg.FollowUpCompleted" xml:space="preserve">
+    <value>Завдання нагляду виконано.</value>
+  </data>
+  <data name="Msg.FollowUpCancelled" xml:space="preserve">
+    <value>Завдання нагляду скасовано.</value>
+  </data>
+  <data name="Msg.InjuryReported" xml:space="preserve">
+    <value>Про травму повідомлено.</value>
+  </data>
+  <data name="Msg.DutyStatusSaved" xml:space="preserve">
+    <value>Статус служби встановлено.</value>
+  </data>
+  <data name="Msg.ReturnedToDuty" xml:space="preserve">
+    <value>Члена допущено до повної служби.</value>
+  </data>
+  <data name="Msg.InjuryVoided" xml:space="preserve">
+    <value>Травму позначено як записану помилково.</value>
+  </data>
+  <data name="Msg.ClearanceRecorded" xml:space="preserve">
+    <value>Обстеження записано.</value>
+  </data>
+  <data name="Msg.ClearanceVoided" xml:space="preserve">
+    <value>Обстеження анульовано.</value>
+  </data>
+  <data name="Error.Generic" xml:space="preserve">
+    <value>Не вдалося зберегти. Перевірте форму та спробуйте ще раз.</value>
+  </data>
+  <data name="Error.NotAllowed" xml:space="preserve">
+    <value>У вас немає доступу для цієї дії.</value>
+  </data>
+  <data name="Error.ExportFailed" xml:space="preserve">
+    <value>Не вдалося створити експорт. Спробуйте пізніше.</value>
+  </data>
+  <data name="Error.date_invalid" xml:space="preserve">
+    <value>Введіть правильну дату (не в майбутньому).</value>
+  </data>
+  <data name="Error.member_not_found" xml:space="preserve">
+    <value>Ця особа не є чинним членом підрозділу.</value>
+  </data>
+  <data name="Error.route_required" xml:space="preserve">
+    <value>Виберіть шлях контакту.</value>
+  </data>
+  <data name="Error.entry_not_bloodborne" xml:space="preserve">
+    <value>Випадок можна відкрити лише з підтвердженого запису про контакт із патогенами, що передаються через кров (або інший).</value>
+  </data>
+  <data name="Error.case_exists" xml:space="preserve">
+    <value>Для цього запису вже є відкритий випадок.</value>
+  </data>
+  <data name="Error.call_not_found" xml:space="preserve">
+    <value>Цей виклик не знайдено в підрозділі.</value>
+  </data>
+  <data name="Error.case_changed" xml:space="preserve">
+    <value>Хтось інший змінив цей випадок. Оновіть його та спробуйте ще раз.</value>
+  </data>
+  <data name="Error.stage_not_allowed" xml:space="preserve">
+    <value>Випадок не може перейти до цього кроку з поточного етапу.</value>
+  </data>
+  <data name="Error.facility_required" xml:space="preserve">
+    <value>Укажіть заклад, що прийняв, щоб запитати з'ясування щодо джерела.</value>
+  </data>
+  <data name="Error.follow_ups_open" xml:space="preserve">
+    <value>Виконайте або скасуйте відкриті завдання нагляду перед закриттям випадку.</value>
+  </data>
+  <data name="Error.case_closed" xml:space="preserve">
+    <value>Цей випадок закрито.</value>
+  </data>
+  <data name="Error.follow_up_assignee_invalid" xml:space="preserve">
+    <value>Завдання призначається члену, що мав контакт, або призначеній відповідальній особі.</value>
+  </data>
+  <data name="Error.duty_status_required" xml:space="preserve">
+    <value>Виберіть обмежену службу або поза службою.</value>
+  </data>
+  <data name="Error.return_date_invalid" xml:space="preserve">
+    <value>Очікуване повернення має бути після дати початку.</value>
+  </data>
+  <data name="Error.date_before_current_status" xml:space="preserve">
+    <value>Ця дата раніша за початок поточного статусу служби.</value>
+  </data>
+  <data name="Error.injury_not_open" xml:space="preserve">
+    <value>Допуск до служби можливий лише для відкритої травми.</value>
+  </data>
+  <data name="Error.clearance_status_required" xml:space="preserve">
+    <value>Виберіть статус допуску.</value>
+  </data>
+  <data name="Error.valid_until_invalid" xml:space="preserve">
+    <value>Наступне обстеження має бути після дати обстеження.</value>
+  </data>
+  <data name="Error.injury_changed" xml:space="preserve">
+    <value>Хтось інший змінив цю травму. Оновіть її та спробуйте ще раз.</value>
+  </data>
+  <data name="Error.protected_write_refused" xml:space="preserve">
+    <value>Захищені відомості зараз не вдалося зберегти. Спробуйте пізніше.</value>
+  </data>
+</root>

@@ -4714,4 +4714,7 @@
   <data name="Error.IMP-CONFIG-UNAVAILABLE" xml:space="preserve">
     <value>Τα Αρχεία δεν είναι ενεργά για το τμήμα σας, οπότε η αρίθμηση αρχείων δεν μπορεί να αλλάξει εδώ. Αναιρέστε αυτήν την αλλαγή.</value>
   </data>
+  <data name="TabProtocols" xml:space="preserve">
+    <value>Πρωτόκολλα</value>
+  </data>
 </root>

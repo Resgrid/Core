@@ -473,6 +473,123 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(5),
 					stoppingToken);
 
+				// Worker ID 84: Protocols P1 lifecycle (M0343). Publishes approved versions whose effective date has come, retires
+				// versions past their expiry, sends T-30 / T-7 / overdue review reminders and purges versions past their kind's
+				// retention. Each step starts from a query for due work; four small queries when idle.
+				_logger.Log(LogLevel.Information, "Scheduling Protocol Lifecycle");
+				await Client.ScheduleAsync("Protocol Lifecycle",
+					new Commands.ProtocolLifecycleCommand(84),
+					Cron.MinuteIntervals(5),
+					stoppingToken);
+
+				// Worker ID 89: K1 department knowledge index (M0368). Drains the reindex queue (protocol and training publish, retire,
+				// audience and AI-flag changes) and runs each department's nightly repair pass; starts from a query for departments with
+				// due work and asks the Enhanced AI gate once per department per run. Two small queries when idle.
+				_logger.Log(LogLevel.Information, "Scheduling Knowledge Index");
+				await Client.ScheduleAsync("Knowledge Index",
+					new Commands.KnowledgeIndexCommand(89),
+					Cron.MinuteIntervals(5),
+					stoppingToken);
+
+				// Worker ID 86: Protocols P2 acknowledgments and the P1 wave-2 file text (M0353, M0354). Queues PDF/DOCX attachments without
+				// text, extracts queued files, completes quiz-gated acknowledgments once the training is passed, and sends reminders at the due
+				// date and after with the escalation to the supervisor or group admin. Each step starts from a due-work query; four when idle.
+				_logger.Log(LogLevel.Information, "Scheduling Protocol Acknowledgments");
+				await Client.ScheduleAsync("Protocol Acknowledgments",
+					new Commands.ProtocolAcknowledgmentCommand(86),
+					Cron.MinuteIntervals(5),
+					stoppingToken);
+
+				// Worker ID 85: Training T1 history backfill (M0348, R-T3). Runs queued per-department backfill jobs (resumable, a dry run
+				// only counts); a single query when idle. No billing gate: the transcript is free.
+				_logger.Log(LogLevel.Information, "Scheduling Training Records");
+				await Client.ScheduleAsync("Training Records",
+					new Commands.TrainingRecordsCommand(85),
+					Cron.MinuteIntervals(5),
+					stoppingToken);
+
+				// Worker ID 91: member wellness WL0 (M0376). Builds post-call exposure suggestions for flagged calls that have ended,
+				// sends the opt-in critical-incident anniversary reminders (from 09:00 department-local, claimed before sending) and erases
+				// entries past their retention (30 years minimum) that no legal hold covers. Three small queries when idle; no billing gate.
+				_logger.Log(LogLevel.Information, "Scheduling Member Wellness");
+				await Client.ScheduleAsync("Member Wellness",
+					new Commands.WellnessCommand(91),
+					Cron.MinuteIntervals(15),
+					stoppingToken);
+
+				// Worker ID 90: e-Signature S1/S2 (M0371-M0374). Webhook hints (each re-fetches its envelope), envelope reconcile,
+				// request expiry, pending seals with backoff (nothing while sealing is unconfigured; never a local-time seal) and
+				// B-LTA re-timestamps. Due-work queries only; no billing gate.
+				_logger.Log(LogLevel.Information, "Scheduling Signatures");
+				await Client.ScheduleAsync("Signatures",
+					new Commands.SignaturesCommand(90),
+					Cron.MinuteIntervals(5),
+					stoppingToken);
+
+				// Worker ID 97: e-Signature S4 approval chains (M0413-M0414). Announces approval steps whose turn started (a named approver
+				// on leave is delegated first), escalates steps past their hours and syncs approvals whose signature request closed
+				// elsewhere. Due-work queries only; no department sweep and no billing gate. Request expiry and reminders stay with 90.
+				_logger.Log(LogLevel.Information, "Scheduling Approvals");
+				await Client.ScheduleAsync("Approvals",
+					new Commands.ApprovalsCommand(97),
+					Cron.MinuteIntervals(5),
+					stoppingToken);
+
+				// Worker ID 87: Training T2 LMS hosted video (M0359, decision 9). Claims queued uploads and transcodes them to HLS plus one MP4
+				// rendition with ffmpeg (LmsConfig.FfmpegExecutable); a stale claim goes back to the queue. One small query when idle, none
+				// when the LMS media store is not configured.
+				_logger.Log(LogLevel.Information, "Scheduling LMS Media");
+				await Client.ScheduleAsync("LMS Media",
+					new Commands.LmsMediaCommand(87),
+					Cron.MinuteIntervals(2),
+					stoppingToken);
+
+				// Worker ID 88: Training T2 / A1 LMS sweeps (M0360). Seeds the Academy system course set when its manifest version rose,
+				// sends in-progress lesson reminders (claimed before sending) and archives hosted media 90 days after a lapse (rule 6).
+				// Each step queries for due work first and asks the LMS gate once per department with due work (R-L9).
+				_logger.Log(LogLevel.Information, "Scheduling LMS Sweeps");
+				await Client.ScheduleAsync("LMS Sweeps",
+					new Commands.LmsSweepCommand(88),
+					Cron.MinuteIntervals(30),
+					stoppingToken);
+
+				// Worker ID 94: Training T3 part 2 LMS programs (M0387-M0390). Sends due scheduled reports (claimed before sending, inactive
+				// recipients skipped), runs certification cycle auto-renew and alerts once per department-local day, and credits building
+				// familiarization from Records visits. Three due-work queries when idle; the LMS gate once per department with due work (R-L9).
+				_logger.Log(LogLevel.Information, "Scheduling LMS Programs");
+				await Client.ScheduleAsync("LMS Programs",
+					new Commands.LmsProgramsCommand(94),
+					Cron.MinuteIntervals(15),
+					stoppingToken);
+
+				// Worker ID 95: Training T4 part 1 LMS class sessions (M0403-M0405). Sends class reminders (claimed before sending, active members
+				// only), promotes waitlisted members into free seats in order, and purges deleted rosters only once their retention has passed.
+				// Three due-work queries when idle; the LMS gate once per department with due work (R-L9).
+				_logger.Log(LogLevel.Information, "Scheduling LMS Classes");
+				await Client.ScheduleAsync("LMS Classes",
+					new Commands.LmsClassesCommand(95),
+					Cron.MinuteIntervals(10),
+					stoppingToken);
+
+				// Worker ID 96: Training T4 part 2 skills (M0407-M0410). Sends the skill evaluation and task book notices that are due (immediate, or
+				// the department's daily or weekly digest; claimed before sending, inactive members skipped) and expires open position task books
+				// past their validity. Two due-work queries when idle; no department sweep and no billing gate (R-L9).
+				_logger.Log(LogLevel.Information, "Scheduling LMS Skills");
+				await Client.ScheduleAsync("LMS Skills",
+					new Commands.LmsSkillsCommand(96),
+					Cron.MinuteIntervals(5),
+					stoppingToken);
+
+				// Worker ID 93: Training T3 learning requirements (M0383-M0385). Links Academy role-path assignments to their system paths, runs
+				// each department's daily pass (claimed per department-local day: states, notices, onboarding, enforcement under the blast-radius
+				// guard, paths) and undoes enforcement for members who completed. Starts from a due-work query; the LMS gate once per department
+				// per day (R-L9). Two small queries when idle.
+				_logger.Log(LogLevel.Information, "Scheduling LMS Requirements");
+				await Client.ScheduleAsync("LMS Requirements",
+					new Commands.LmsRequirementsCommand(93),
+					Cron.MinuteIntervals(15),
+					stoppingToken);
+
 				// Worker ID 79: background POI imports (Mapping > POIs > Import). The upload only reads the file; this geocodes
 				// address-only rows and saves the POIs, resuming an import whose worker stopped. A single query when idle.
 				_logger.Log(LogLevel.Information, "Scheduling POI Imports");

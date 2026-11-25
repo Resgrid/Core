@@ -1,0 +1,97 @@
+@using Resgrid.Web.Areas.User.Models.LmsPrograms
+@model LmsProgramsHomeView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@* Trainings → Programs home (T3 part 2, LMS): tiles that drill into each program section the person may use. *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Prg.HomeTitle"];
+    ViewData["Title"] = localizer["Prg.HomeTitle"].Value;
+    ViewData["Subtitle"] = localizer["Prg.HomeIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    <div class="rgw-stat-tiles m-b-md">
+        @if (Model.IsOfficer)
+        {
+            <a class="rgw-stat-tile" asp-controller="LmsPrograms" asp-action="Plans" asp-route-area="User">
+                <span class="rgw-stat-value">@Model.Plans</span>
+                <span class="rgw-stat-label"><i class="fa fa-calendar" aria-hidden="true"></i> @localizer["Prg.Tab.Plans"]</span>
+            </a>
+        }
+        <a class="rgw-stat-tile" asp-controller="LmsPrograms" asp-action="Frameworks" asp-route-area="User">
+            <span class="rgw-stat-value">@Model.Frameworks</span>
+            <span class="rgw-stat-label"><i class="fa fa-sitemap" aria-hidden="true"></i> @localizer["Prg.Tab.Frameworks"]</span>
+        </a>
+        <a class="rgw-stat-tile" asp-controller="LmsPrograms" asp-action="Requests" asp-route-area="User">
+            <span class="rgw-stat-value">@Model.MyOpenRequests</span>
+            <span class="rgw-stat-label"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> @localizer["Prg.MyOpenRequests"]</span>
+        </a>
+        <a class="rgw-stat-tile" asp-controller="LmsPrograms" asp-action="Requests" asp-route-area="User">
+            <span class="rgw-stat-value">@Model.AwaitingMe</span>
+            <span class="rgw-stat-label"><i class="fa fa-gavel" aria-hidden="true"></i> @localizer["Prg.AwaitingMe"]</span>
+        </a>
+        @if (Model.IsOfficer)
+        {
+            <a class="rgw-stat-tile" asp-controller="LmsPrograms" asp-action="Reports" asp-route-area="User">
+                <span class="rgw-stat-value">@Model.SavedReports</span>
+                <span class="rgw-stat-label"><i class="fa fa-table" aria-hidden="true"></i> @localizer["Prg.SavedReports"]</span>
+            </a>
+        }
+        @if (Model.CanManageCertifications)
+        {
+            <a class="rgw-stat-tile" asp-controller="LmsPrograms" asp-action="Cycles" asp-route-area="User">
+                <span class="rgw-stat-value">@Model.CycleRules</span>
+                <span class="rgw-stat-label"><i class="fa fa-refresh" aria-hidden="true"></i> @localizer["Prg.Tab.Cycles"]</span>
+            </a>
+        }
+    </div>
+
+    <div class="rgw-card-grid">
+        @if (Model.IsOfficer)
+        {
+            <div class="rgw-card">
+                <h4><i class="fa fa-calendar" aria-hidden="true"></i> @localizer["Prg.PlansTitle"]</h4>
+                <p class="rgw-card-meta">@localizer["Prg.PlansIntro"]</p>
+                <a class="btn btn-white btn-sm" asp-controller="LmsPrograms" asp-action="Plans" asp-route-area="User"><i class="fa fa-arrow-right" aria-hidden="true"></i> @localizer["Prg.Open"]</a>
+            </div>
+        }
+        <div class="rgw-card">
+            <h4><i class="fa fa-sitemap" aria-hidden="true"></i> @localizer["Prg.FrameworksTitle"]</h4>
+            <p class="rgw-card-meta">@localizer["Prg.FrameworksIntro"]</p>
+            <a class="btn btn-white btn-sm" asp-controller="LmsPrograms" asp-action="Frameworks" asp-route-area="User"><i class="fa fa-arrow-right" aria-hidden="true"></i> @localizer["Prg.Open"]</a>
+            <a class="btn btn-white btn-sm" asp-controller="LmsPrograms" asp-action="Gaps" asp-route-area="User"><i class="fa fa-list-ul" aria-hidden="true"></i> @localizer["Prg.MyGaps"]</a>
+        </div>
+        <div class="rgw-card">
+            <h4><i class="fa fa-paper-plane-o" aria-hidden="true"></i> @localizer["Prg.RequestsTitle"]</h4>
+            <p class="rgw-card-meta">@localizer["Prg.RequestsIntro"]</p>
+            <a class="btn btn-white btn-sm" asp-controller="LmsPrograms" asp-action="Requests" asp-route-area="User"><i class="fa fa-arrow-right" aria-hidden="true"></i> @localizer["Prg.Open"]</a>
+            <a class="btn btn-white btn-sm" asp-controller="LmsPrograms" asp-action="NccpExport" asp-route-area="User" asp-route-format="csv"><i class="fa fa-download" aria-hidden="true"></i> @localizer["Prg.MyNccpExport"]</a>
+        </div>
+        @if (Model.IsOfficer)
+        {
+            <div class="rgw-card">
+                <h4><i class="fa fa-table" aria-hidden="true"></i> @localizer["Prg.ReportsTitle"]</h4>
+                <p class="rgw-card-meta">@localizer["Prg.ReportsIntro"]</p>
+                <a class="btn btn-white btn-sm" asp-controller="LmsPrograms" asp-action="Reports" asp-route-area="User"><i class="fa fa-arrow-right" aria-hidden="true"></i> @localizer["Prg.Open"]</a>
+            </div>
+        }
+        @if (Model.CanManageCertifications)
+        {
+            <div class="rgw-card">
+                <h4><i class="fa fa-refresh" aria-hidden="true"></i> @localizer["Prg.CyclesTitle"]</h4>
+                <p class="rgw-card-meta">@localizer["Prg.CyclesIntro"]</p>
+                <a class="btn btn-white btn-sm" asp-controller="LmsPrograms" asp-action="Cycles" asp-route-area="User"><i class="fa fa-arrow-right" aria-hidden="true"></i> @localizer["Prg.Open"]</a>
+            </div>
+        }
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

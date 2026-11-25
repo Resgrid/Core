@@ -16,6 +16,11 @@ namespace Resgrid.Model.Checklists
 		public decimal PassThreshold { get; set; } = 100;
 		public bool RequireLocation { get; set; }
 		public bool RequiresIndependentWitness { get; set; }
+		/// <summary>
+		/// S3 (free with Checklists): the independent witness signs at L2 (a fresh step-up or a passkey) bound to the completion's
+		/// operational content hash, instead of attesting with text alone. Only meaningful with <see cref="RequiresIndependentWitness"/>.
+		/// </summary>
+		public bool RequireWitnessSignature { get; set; }
 		public List<ChecklistSection> Sections { get; set; } = new List<ChecklistSection>();
 		public static ChecklistForm FromTemplate(ChecklistTemplate template, bool assetsAvailable = false)
 		{

@@ -716,4 +716,13 @@
   <data name="HelpFieldScheduleName" xml:space="preserve"><value>Shown on the due list, so make it recognisable at a glance.</value></data>
   <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>How long the crew has to finish the check once it opens. After that it counts as missed.</value></data>
   <data name="HelpFieldAssignment" xml:space="preserve"><value>Automatic routing sends the check to whoever holds the target. Pick a person, role, group or unit to override that.</value></data>
+  <data name="The witness signs at L2 (a fresh step-up or a passkey), bound to the content of the completion" xml:space="preserve">
+    <value>The witness signs at L2 (a fresh step-up or a passkey), bound to the content of the completion</value>
+  </data>
+  <data name="WitnessSignatureRequired" xml:space="preserve">
+    <value>This checklist must be witnessed with a signature. Open the run and sign as witness.</value>
+  </data>
+  <data name="WitnessSignatureRefused" xml:space="preserve">
+    <value>The witness signature was not recorded, so the checklist still awaits its witness.</value>
+  </data>
 </root>

@@ -38,11 +38,18 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<IProtocolsService> _protocols;
 		private Mock<IAuthorizationService> _authorization;
 		private Mock<ICallsService> _calls;
+		private Mock<IProtocolAccessService> _access;
 
 		[SetUp]
 		public void SetUp()
 		{
 			_protocols = new Mock<IProtocolsService>();
+			// These tests are about the endpoints, not the read rule (ProtocolAudienceGuardTests covers that): every protocol is readable.
+			_access = new Mock<IProtocolAccessService>();
+			_access.Setup(x => x.GetReaderAsync(DepartmentId, UserId)).ReturnsAsync(ProtocolReader.Nobody(DepartmentId));
+			_access.Setup(x => x.FilterReadableAsync(It.IsAny<ProtocolReader>(), It.IsAny<IEnumerable<DispatchProtocol>>()))
+				.ReturnsAsync((ProtocolReader _, IEnumerable<DispatchProtocol> list) => list?.ToList() ?? new List<DispatchProtocol>());
+			_access.Setup(x => x.CanReadAsync(It.IsAny<ProtocolReader>(), It.IsAny<DispatchProtocol>())).ReturnsAsync(true);
 			_authorization = new Mock<IAuthorizationService>();
 			_calls = new Mock<ICallsService>();
 
@@ -66,7 +73,7 @@ namespace Resgrid.Tests.Web.Services
 			Resgrid.Web.Helpers.ClaimsAuthorizationHelper._httpContextAccessor = null;
 		}
 
-		private V4.ProtocolsController Protocols() => new V4.ProtocolsController(_protocols.Object, _authorization.Object, _calls.Object, Mock.Of<IEventAggregator>())
+		private V4.ProtocolsController Protocols() => new V4.ProtocolsController(_protocols.Object, _authorization.Object, _calls.Object, Mock.Of<IEventAggregator>(), _access.Object)
 		{
 			ControllerContext = new ControllerContext { HttpContext = ApiClaims._httpContextAccessor.HttpContext }
 		};
@@ -123,7 +130,8 @@ namespace Resgrid.Tests.Web.Services
 		public async Task Get_protocols_for_call_runs_the_shared_matcher()
 		{
 			var context = new ProtocolCallContext { Priority = 2, CallTypeId = 70, AtUtc = DateTime.UtcNow };
-			_protocols.Setup(x => x.BuildCallContextAsync(DepartmentId, 2, 70, null, null)).ReturnsAsync(context);
+			// P4: the shared trigger engine's facts come along (none here: no nature, location or POI was sent).
+			_protocols.Setup(x => x.BuildCallContextWithFactsAsync(DepartmentId, 2, 70, null, It.Is<DispatchTriggerCallInput>(d => d.Nature == null && d.LocationPoiId == null && d.LoggedOnUtc == null))).ReturnsAsync(context);
 			_protocols.Setup(x => x.GetProtocolsForCallAsync(DepartmentId, context)).ReturnsAsync(new List<ProtocolMatch>
 			{
 				new ProtocolMatch

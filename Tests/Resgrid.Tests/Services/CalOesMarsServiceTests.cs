@@ -156,7 +156,7 @@ namespace Resgrid.Tests.Services
 
 			_service = new CalOesMarsService(agencies.Object, resources.Object, rateProfiles.Object, rateLines.Object, inputs.Object, agreements.Object, items.Object, lines.Object,
 				_deployments.Object, timeTracking.Object, entries.Object, units.Object, profiles.Object, departments.Object, events.Object, null,
-				new CalOesMarsReimbursementCalculator(), new ManualCalOesMarsGateway(), new Lazy<ICommunicationService>(() => communication.Object), null, new Lazy<ICompensationCostService>(() => _compensation.Object));
+				new CalOesMarsReimbursementCalculator(), new ManualCalOesMarsGateway(), Mock.Of<IApprovalGateService>(g => g.CheckAsync(It.IsAny<int>(), It.IsAny<SignatureSubjectKinds>(), It.IsAny<string>()) == Task.FromResult(new Resgrid.Model.Approvals.ApprovalGateResult())), new Lazy<ICommunicationService>(() => communication.Object), null, new Lazy<ICompensationCostService>(() => _compensation.Object));
 		}
 
 		private static Mock<TRepo> Repo<TRepo, T>(List<T> store, Func<T, string> id, Action<T, string> setId) where TRepo : class, IRepository<T> where T : class, IEntity

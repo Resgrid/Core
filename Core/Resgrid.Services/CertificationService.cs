@@ -43,6 +43,8 @@ namespace Resgrid.Services
 		private readonly Lazy<IProtectedReadService> _protectedRead;
 		/// <summary>The caller's Protected Data Grant (request-bound in the web hosts, workload elsewhere); a grant holder reads decrypted values.</summary>
 		private readonly IProtectedGrantContext _grant;
+		/// <summary>Training T1: a credit typed in by hand also goes on the transcript (SourceKind ManualCredit).</summary>
+		private readonly Lazy<ILearningRecordWriter> _learningRecords;
 
 		public const string SystemUserId = "system";
 		/// <summary>Domain error: the holder may not sign off (verify or reinstate) their own record.</summary>
@@ -66,8 +68,10 @@ namespace Resgrid.Services
 			Lazy<IProtectedReadService> protectedRead = null,
 			IProtectedGrantContext grant = null,
 			Lazy<ISearchProjectionService> searchProjections = null,
-			IContentAudienceChangeQueue audienceChanges = null)
+			IContentAudienceChangeQueue audienceChanges = null,
+			Lazy<ILearningRecordWriter> learningRecords = null)
 		{
+			_learningRecords = learningRecords;
 			_audienceChanges = audienceChanges;
 			_grant = grant;
 			_departmentCertificationTypeRepository = departmentCertificationTypeRepository;
@@ -564,7 +568,13 @@ namespace Resgrid.Services
 				await ProtectBinaryAsync(saved.DepartmentId, CertificationProtectedFields.CreditDataFieldId, saved.PersonnelCertificationCreditId.ToString(), saved.Data, bytes => saved.Data = bytes, () => MarkProtected(saved), cancellationToken);
 				saved = await _credits.SaveOrUpdateAsync(saved, cancellationToken);
 			}
-			Audit(saved.DepartmentId, userId, AuditLogTypes.CertificationCreditAdded, null, Snapshot(new { saved.PersonnelCertificationCreditId, saved.PersonnelCertificationId, saved.CreditDate, saved.Hours, saved.Category }));
+			Audit(saved.DepartmentId, userId, AuditLogTypes.CertificationCreditAdded, null, Snapshot(new { saved.PersonnelCertificationCreditId, saved.PersonnelCertificationId, saved.CreditDate, saved.Hours, saved.Category, saved.LearningRecordId }));
+			// A derived credit came from a learning record already; only a credit typed in by hand writes one (never fails the add).
+			if (!saved.IsDerived && _learningRecords != null)
+			{
+				try { await _learningRecords.Value.WriteManualCreditAsync(saved, userId, cancellationToken); }
+				catch (Exception ex) when (!(ex is OperationCanceledException)) { Framework.Logging.LogException(ex, $"Transcript record for credit {saved.PersonnelCertificationCreditId} was not written"); }
+			}
 			_eventAggregator.SendMessage(new CertificationCreditAddedEvent
 			{
 				DepartmentId = saved.DepartmentId, Certification = record, TypeCode = type?.Code, TypeName = type?.Type, PersonnelCertificationCreditId = saved.PersonnelCertificationCreditId,
@@ -579,6 +589,11 @@ namespace Resgrid.Services
 			if (credit == null || credit.DepartmentId != departmentId)
 				throw new InvalidOperationException("certifications_credit_not_found");
 			await _credits.DeleteAsync(credit, cancellationToken);
+			if (!credit.IsDerived && _learningRecords != null)
+			{
+				try { await _learningRecords.Value.RemoveManualCreditAsync(credit, userId, cancellationToken); }
+				catch (Exception ex) when (!(ex is OperationCanceledException)) { Framework.Logging.LogException(ex, $"Transcript record of credit {credit.PersonnelCertificationCreditId} was not voided"); }
+			}
 			Audit(departmentId, userId, AuditLogTypes.CertificationCreditRemoved, Snapshot(new { credit.PersonnelCertificationCreditId, credit.PersonnelCertificationId, credit.CreditDate, credit.Hours, credit.Category }), null);
 			return true;
 		}

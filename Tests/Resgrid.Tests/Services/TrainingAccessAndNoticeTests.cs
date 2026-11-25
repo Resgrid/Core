@@ -215,7 +215,8 @@ namespace Resgrid.Tests.Services
 				Mock.Of<ITrainingQuestionRepository>(),
 				Mock.Of<ICommunicationService>(),
 				Mock.Of<IDepartmentsService>(),
-				Mock.Of<IDepartmentSettingsService>());
+				Mock.Of<IDepartmentSettingsService>(),
+				Mock.Of<IKnowledgeIndexQueue>());
 		}
 
 		[Test]

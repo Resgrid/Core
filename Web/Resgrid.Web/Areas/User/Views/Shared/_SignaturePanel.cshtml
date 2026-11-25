@@ -1,0 +1,114 @@
+@model Resgrid.Web.Areas.User.Models.Signatures.SignaturePanelModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureText
+@*
+    The shared signature panel (S0, plan §23): the exact statement the signer agrees to (stored with the signature), the
+    content hash short code, the level badge and who else must sign. "Sign" posts to an action that requires a fresh step-up
+    (the form is held and replayed across it); "Sign with passkey" runs a passkey assertion whose challenge embeds this
+    content's hash and posts it to the passkey action. Pages that render it load resgrid.passkeys.js and resgrid.signatures.js.
+*@
+@{
+    var level = Model.RequiredLevel >= 4 ? signatureText["LevelExternal"].Value
+        : Model.RequiredLevel == 3 ? signatureText["LevelSealed"].Value
+        : Model.RequiredLevel >= 2 ? signatureText["LevelStepUp"].Value : signatureText["LevelAttest"].Value;
+    var panelId = "signature-panel-" + Guid.NewGuid().ToString("N").Substring(0, 8);
+}
+<div class="panel panel-default rg-signature-panel" id="@panelId" data-passkey-options="@Model.PasskeyOptionsUrl">
+    <div class="panel-heading">
+        <strong><i class="fa fa-pencil-square-o" aria-hidden="true"></i> @Model.Title</strong>
+        <span class="label label-info pull-right"><i class="fa fa-shield" aria-hidden="true"></i> @string.Format(signatureText["LevelBadge"].Value, Model.RequiredLevel, level)</span>
+    </div>
+    <div class="panel-body">
+        <p class="m-b-xs"><strong>@signatureText["StatementLabel"]</strong></p>
+        <blockquote class="m-b-sm" style="font-size: 14px;">@Model.Statement</blockquote>
+        <p class="text-muted small">
+            <i class="fa fa-hashtag" aria-hidden="true"></i> @signatureText["ContentCodeLabel"] <span class="rgw-mono">@Model.ShortCode</span>
+            <span class="sr-only">@Model.ArtifactSha256</span>
+            · @signatureText["BindsToContentHelp"]
+        </p>
+        @if (Model.OthersToSign.Count > 0)
+        {
+            <p class="small"><i class="fa fa-users" aria-hidden="true"></i> @signatureText["OthersToSignLabel"] @string.Join(", ", Model.OthersToSign)</p>
+        }
+        @if (!string.IsNullOrEmpty(Model.Note))
+        {
+            <p class="text-muted small">@Model.Note</p>
+        }
+        @if (Model.RequirePasskey)
+        {
+            <p class="text-warning small"><i class="fa fa-key" aria-hidden="true"></i> @signatureText["PasskeyRequiredHelp"]</p>
+        }
+        @if (Model.Signed)
+        {
+            @* S1/S2 "Signed — sealed PDF": the actions give way to the result and the sealed document. *@
+            <div class="alert alert-success m-b-none" role="status">
+                <i class="fa fa-check-circle" aria-hidden="true"></i> <strong>@signatureText["SignedState"]</strong>
+                @if (!string.IsNullOrEmpty(Model.SignedNote))
+                {
+                    <span>· @Model.SignedNote</span>
+                }
+                @if (!string.IsNullOrEmpty(Model.SealedPdfUrl))
+                {
+                    <a class="btn btn-default btn-sm m-l-sm" href="@Model.SealedPdfUrl"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> @signatureText["SealedPdfButton"]</a>
+                }
+                else
+                {
+                    <span class="text-muted small"> · @signatureText["SealingPendingState"]</span>
+                }
+            </div>
+        }
+        else if (Model.Disabled)
+        {
+            <div class="alert alert-warning m-b-none" role="status"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.DisabledReason</div>
+        }
+        else if (string.IsNullOrEmpty(Model.SignAction) && !string.IsNullOrEmpty(Model.HandDeviceAction))
+        {
+            @* S2 in person: a member's device is handed to the outside signer (drawn signature, printed name, optional witness). *@
+            <form method="post" action="@Model.HandDeviceAction" class="rg-signature-handdevice">
+                @Html.AntiForgeryToken()
+                @foreach (var field in Model.HandDeviceFields)
+                {
+                    <input type="hidden" name="@field.Key" value="@field.Value" />
+                }
+                <div class="rgw-wizard-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-tablet" aria-hidden="true"></i> @signatureText["HandDeviceButton"]</button>
+                </div>
+                <p class="help-block small">@signatureText["HandDeviceHelp"]</p>
+            </form>
+        }
+        else
+        {
+            <form method="post" action="@Model.SignAction" class="rg-signature-form">
+                @Html.AntiForgeryToken()
+                @foreach (var field in Model.Fields)
+                {
+                    <input type="hidden" name="@field.Key" value="@field.Value" />
+                }
+                @if (!string.IsNullOrEmpty(Model.CommentField))
+                {
+                    <div class="form-group">
+                        <label class="control-label" for="@(panelId)-comment">@signatureText["CommentLabel"]</label>
+                        <textarea class="form-control rg-signature-comment" id="@(panelId)-comment" name="@Model.CommentField" rows="2" maxlength="2000"></textarea>
+                    </div>
+                }
+                <div class="rgw-wizard-actions">
+                    @if (!Model.RequirePasskey)
+                    {
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @Model.SubmitLabel</button>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.PasskeyAction))
+                    {
+                        <button type="button" class="btn btn-default rg-signature-passkey" data-action="@Model.PasskeyAction"><i class="fa fa-key" aria-hidden="true"></i> @signatureText["SignWithPasskeyButton"]</button>
+                    }
+                </div>
+                <p class="help-block small">@(Model.RequirePasskey ? signatureText["PasskeyOnlyHelp"] : signatureText["StepUpHelp"])</p>
+                <p class="text-danger small rg-signature-error" role="alert" hidden></p>
+            </form>
+        }
+    </div>
+</div>
+<script type="application/json" class="rg-signature-text">@Html.ScriptJson(new
+{
+    cancelled = signatureText["PasskeyCancelled"].Value,
+    unsupported = signatureText["PasskeyUnsupported"].Value,
+    failed = signatureText["PasskeyFailed"].Value
+})</script>

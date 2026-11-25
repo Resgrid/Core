@@ -1,0 +1,132 @@
+@using Resgrid.Model
+@using Resgrid.Framework
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolEditorModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    The creation wizard (P1 §18.2): kind → basics → content → triggers → audience → review. It creates the protocol as a
+    draft (nothing is published) and opens the full-page editor. The shared workspace script drives the steps and fills the
+    review step from the fields.
+*@
+@{
+    var title = localizer["NewProtocolHeader"].Value;
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["EditorIntroNew"].Value;
+    ViewData["Section"] = "Editor";
+    ViewData["CanCreate"] = true;
+    ViewData["IsManager"] = true;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox">
+        <div class="ibox-content">
+            <form id="protocolEditorForm" class="rgw-wizard" method="post" enctype="multipart/form-data" asp-controller="Protocols" asp-action="New" asp-route-area="User">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+                <ol class="rgw-steps"></ol>
+
+                <div class="rgw-step" data-title="@localizer["WizardKindStep"]">
+                    <p class="text-muted">@localizer["WizardKindHelp"]</p>
+                    <div class="rgw-card-grid" role="radiogroup" aria-label="@localizer["KindLabel"]">
+                        @foreach (ProtocolKinds kind in ProtocolKindRules.AuthorableKinds)
+                        {
+                            <label class="rgw-card" style="cursor: pointer;">
+                                <span><input type="radio" class="protocol-kind" name="Library.Kind" value="@((int)kind)" @(Model.Library.Kind == (int)kind ? "checked" : "") /> <strong>@ProtocolDisplay.KindName((int)kind, localizer)</strong></span>
+                                <span class="rgw-card-meta">@localizer["KindHelp" + kind]</span>
+                            </label>
+                        }
+                    </div>
+                </div>
+
+                <div class="rgw-step" data-title="@localizer["WizardBasicsStep"]" hidden>
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label class="control-label required" for="Name">@localizer["ProtocolNameLabel"]</label>
+                            <input class="form-control" id="Name" name="Name" value="@Model.Name" maxlength="100" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label required" for="Code">@localizer["ProtocolCodeLabel"]</label>
+                            <input class="form-control" id="Code" name="Code" value="@Model.Code" maxlength="@DispatchProtocol.CodeMaxLength" required pattern="[A-Za-z0-9][A-Za-z0-9 ._/\-]*" aria-describedby="CodeHelp" />
+                            <span id="CodeHelp" class="help-block">@string.Format(localizer["CodeHelp"].Value, DispatchProtocol.CodeMaxLength)</span>
+                        </div>
+                    </div>
+                    @{ ViewData["ShowKind"] = false; }
+                    @await Html.PartialAsync("_LibraryFields", Model)
+                    <div class="form-group">
+                        <label class="control-label" for="editor-container" id="DescriptionLabelText">@localizer["DescriptionLabel"]</label>
+                        <input type="hidden" id="Description" name="Description" value="@Model.Description" />
+                        <div id="editor-container" style="width:100%; height: 120px;" aria-labelledby="DescriptionLabelText">@Html.SanitizedHtml(Model.Description)</div>
+                        <span class="help-block">@string.Format(localizer["DescriptionHelp"].Value, DispatchProtocol.DescriptionTextMaxLength)</span>
+                    </div>
+                </div>
+
+                <div class="rgw-step" data-title="@localizer["WizardContentStep"]" hidden>
+                    <div class="form-group">
+                        <label class="control-label" for="editor-container2" id="ProtocolTextLabelText">@localizer["ProtocolTextLabel"]</label>
+                        <input type="hidden" id="ProtocolText" name="ProtocolText" value="@Model.ProtocolText" />
+                        <div id="editor-container2" style="width:100%; height: 360px;" aria-labelledby="ProtocolTextLabelText">@Html.SanitizedHtml(Model.ProtocolText)</div>
+                        <span class="help-block">@localizer["ProtocolTextHeadingsHelp"]</span>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="Library_RequiresAcknowledgment" name="Library.RequiresAcknowledgment" value="true" @(Model.Library.RequiresAcknowledgment ? "checked" : "") />
+                            @localizer["RequiresAcknowledgmentCheckbox"]
+                        </label>
+                        <input type="hidden" name="Library.RequiresAcknowledgment" value="false" />
+                        <span class="help-block">@localizer["RequiresAcknowledgmentHelp"]</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="attachments">@localizer["AddFilesLabel"]</label>
+                        <input name="attachments" id="attachments" type="file" multiple aria-describedby="AttachmentsHelp" />
+                        <span id="AttachmentsHelp" class="help-block">@string.Format(localizer["AttachmentsLimitsHelp"].Value, ProtocolRules.MaxFilesPerSave, ProtocolRules.MaxAttachmentBytes / 1000000, ProtocolRules.MaxBytesPerSave / 1000000)</span>
+                    </div>
+                </div>
+
+                <div class="rgw-step" data-title="@localizer["WizardTriggersStep"]" hidden>
+                    <div class="form-group protocol-dispatch-only" hidden="@(!ProtocolKindRules.TriggersApply(Model.Library.Kind))">
+                        <label class="control-label" for="MinimumWeight">@localizer["ActivationQuestionWeightLabel"]</label>
+                        <input class="form-control" id="MinimumWeight" name="MinimumWeight" type="number" min="0" max="1000" value="@Model.MinimumWeight" style="max-width: 160px;" aria-describedby="MinimumWeightHelpText" />
+                        <span id="MinimumWeightHelpText" class="help-block">@localizer["MinimumWeightEditorHelp"]</span>
+                    </div>
+                    @await Html.PartialAsync("_TriggerQuestionBuilder", Model)
+                </div>
+
+                <div class="rgw-step" data-title="@localizer["WizardAudienceStep"]" hidden>
+                    @await Html.PartialAsync("_AudiencePicker", Model)
+                </div>
+
+                <div class="rgw-step" data-title="@localizer["WizardReviewStep"]" hidden>
+                    <p class="text-muted">@localizer["WizardReviewHelp"]</p>
+                    <dl class="rgw-review"></dl>
+                    <div class="form-group">
+                        <label class="control-label" for="Library_ChangeSummary">@localizer["ChangeSummaryLabel"]</label>
+                        <textarea class="form-control" id="Library_ChangeSummary" name="Library.ChangeSummary" rows="2" maxlength="@ProtocolVersion.ChangeSummaryMaxLength">@Model.Library.ChangeSummary</textarea>
+                        <span class="help-block">@localizer["ChangeSummaryHelp"]</span>
+                    </div>
+                </div>
+
+                <div class="rgw-wizard-actions">
+                    <a class="btn btn-default" asp-controller="Protocols" asp-action="Index" asp-route-area="User"><i class="fa fa-times" aria-hidden="true"></i> @commonLocalizer["Cancel"]</a>
+                    <span class="rgw-wizard-spacer"></span>
+                    <button type="button" class="btn btn-default rgw-step-prev"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["BackButton"]</button>
+                    <button type="button" class="btn btn-primary rgw-step-next">@localizer["NextButton"] <i class="fa fa-arrow-right" aria-hidden="true"></i></button>
+                    <button type="submit" class="btn btn-success rgw-step-submit"><i class="fa fa-check" aria-hidden="true"></i> @localizer["CreateDraftButton"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+
+@section Scripts
+{
+    <script src="~/js/app/common/workspace/resgrid.common.workspace.js" asp-append-version="true"></script>
+    <script src="~/js/app/internal/protocols/resgrid.protocols.editor.js" asp-append-version="true"></script>
+}

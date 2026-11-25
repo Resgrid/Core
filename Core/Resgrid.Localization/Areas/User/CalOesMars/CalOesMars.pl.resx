@@ -564,4 +564,5 @@
   <data name="SurveyBlocker_rate_locked" xml:space="preserve"><value>Profil stawek nie jest już edytowalny.</value></data>
   <data name="SurveyBlocker_workforce_unavailable" xml:space="preserve"><value>Dane płacowe nie są dostępne dla tej jednostki.</value></data>
   <data name="workforce_disabled" xml:space="preserve"><value>Dane płacowe nie są włączone dla tej jednostki.</value></data>
+  <data name="calmars_approval_required" xml:space="preserve"><value>Ten pakiet wymaga zatwierdzenia przed przekazaniem do portalu. Najpierw prześlij go do zatwierdzenia.</value></data>
 </root>

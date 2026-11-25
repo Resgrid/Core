@@ -1,0 +1,201 @@
+{
+  "schema": 1,
+  "id": "13-assistant",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Assistant",
+  "minutes": 6.0,
+  "walkthrough": true,
+  "audience": [
+    "officer"
+  ],
+  "visibility": [
+    "addon:EnhancedAi"
+  ],
+  "pages": [],
+  "adminAssist": {
+    "areas": [
+      "ai"
+    ],
+    "capabilities": [
+      "chatbot-settings"
+    ]
+  },
+  "media": {
+    "video": "deep-dive/media/13-assistant.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "deep-dive/lessons/13-assistant/captions.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Use the Assistant and understand AI prerequisites",
+    "ar": "استخدم المساعد وافهم متطلبات الذكاء الاصطناعي",
+    "de": "Den Assistenten nutzen und die KI-Voraussetzungen verstehen",
+    "el": "Χρησιμοποιήστε τον Βοηθό και κατανοήστε τις προϋποθέσεις ΤΝ",
+    "es": "Usar el Asistente y entender los requisitos de IA",
+    "fr": "Utiliser l’Assistant et comprendre les prérequis de l’IA",
+    "it": "Usare l’Assistente e capire i requisiti dell’IA",
+    "pl": "Korzystaj z Asystenta i poznaj wymagania AI",
+    "sv": "Använd Assistenten och förstå kraven för AI",
+    "uk": "Користуйтеся Асистентом і зрозумійте вимоги до ШІ"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "What does the Assistant need before it can be used?",
+        "ar": "ماذا يحتاج المساعد قبل استخدامه؟",
+        "de": "Was braucht der Assistent, bevor er genutzt werden kann?",
+        "el": "Τι χρειάζεται ο Βοηθός για να χρησιμοποιηθεί;",
+        "es": "¿Qué necesita el Asistente para poder usarse?",
+        "fr": "De quoi l’Assistant a-t-il besoin pour être utilisé ?",
+        "it": "Di che cosa ha bisogno l’Assistente per poter essere usato?",
+        "pl": "Czego potrzebuje Asystent, aby można go było używać?",
+        "sv": "Vad behöver Assistenten innan den kan användas?",
+        "uk": "Що потрібно Асистенту, щоб ним можна було користуватися?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "A fax machine",
+            "ar": "جهاز فاكس",
+            "de": "Ein Faxgerät",
+            "el": "Μια συσκευή φαξ",
+            "es": "Un fax",
+            "fr": "Un télécopieur",
+            "it": "Un fax",
+            "pl": "Faks",
+            "sv": "En faxmaskin",
+            "uk": "Факс"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Nothing at all",
+            "ar": "لا شيء إطلاقًا",
+            "de": "Gar nichts",
+            "el": "Τίποτα απολύτως",
+            "es": "Nada en absoluto",
+            "fr": "Rien du tout",
+            "it": "Proprio nulla",
+            "pl": "Zupełnie nic",
+            "sv": "Ingenting alls",
+            "uk": "Зовсім нічого"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "The AI features the department has enabled",
+            "ar": "ميزات الذكاء الاصطناعي التي فعّلتها الإدارة",
+            "de": "Die KI-Funktionen, die die Organisation aktiviert hat",
+            "el": "Τις λειτουργίες ΤΝ που έχει ενεργοποιήσει η υπηρεσία",
+            "es": "Las funciones de IA que el departamento haya activado",
+            "fr": "Les fonctions d’IA activées par le service",
+            "it": "Le funzioni di IA attivate dal dipartimento",
+            "pl": "Funkcje AI włączone przez jednostkę",
+            "sv": "AI-funktioner som organisationen har aktiverat",
+            "uk": "Функції ШІ, увімкнені підрозділом"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "What should you do with an answer from the Assistant?",
+        "ar": "ماذا تفعل بإجابة المساعد؟",
+        "de": "Was sollten Sie mit einer Antwort des Assistenten tun?",
+        "el": "Τι πρέπει να κάνετε με μια απάντηση του Βοηθού;",
+        "es": "¿Qué debe hacer con una respuesta del Asistente?",
+        "fr": "Que faire d’une réponse de l’Assistant ?",
+        "it": "Che cosa fare con una risposta dell’Assistente?",
+        "pl": "Co zrobić z odpowiedzią Asystenta?",
+        "sv": "Vad ska du göra med ett svar från Assistenten?",
+        "uk": "Що робити з відповіддю Асистента?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Act on it without checking",
+            "ar": "العمل بها دون تحقق",
+            "de": "Ohne Prüfung danach handeln",
+            "el": "Ενέργεια χωρίς έλεγχο",
+            "es": "Actuar sin comprobarla",
+            "fr": "Agir sans vérifier",
+            "it": "Agire senza verificare",
+            "pl": "Działać bez sprawdzania",
+            "sv": "Agera utan att kontrollera",
+            "uk": "Діяти без перевірки"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Check it before relying on it",
+            "ar": "التحقق منها قبل الاعتماد عليها",
+            "de": "Sie prüfen, bevor man sich darauf verlässt",
+            "el": "Έλεγχος πριν βασιστείτε σε αυτή",
+            "es": "Comprobarla antes de confiar en ella",
+            "fr": "La vérifier avant de s’y fier",
+            "it": "Verificarla prima di farci affidamento",
+            "pl": "Sprawdzić ją, zanim się na niej oprzesz",
+            "sv": "Kontrollera det innan du litar på det",
+            "uk": "Перевірити, перш ніж покладатися"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Share it as official policy",
+            "ar": "نشرها كسياسة رسمية",
+            "de": "Sie als offizielle Richtlinie verbreiten",
+            "el": "Κοινοποίηση ως επίσημη πολιτική",
+            "es": "Compartirla como política oficial",
+            "fr": "La diffuser comme politique officielle",
+            "it": "Condividerla come politica ufficiale",
+            "pl": "Udostępnić ją jako oficjalną politykę",
+            "sv": "Dela det som officiell policy",
+            "uk": "Поширити як офіційну політику"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "f",
+      "text": {
+        "en": "The Assistant works without any AI features enabled.",
+        "ar": "يعمل المساعد دون تفعيل أي ميزات للذكاء الاصطناعي.",
+        "de": "Der Assistent funktioniert ohne aktivierte KI-Funktionen.",
+        "el": "Ο Βοηθός λειτουργεί χωρίς ενεργοποιημένες λειτουργίες ΤΝ.",
+        "es": "El Asistente funciona sin ninguna función de IA activada.",
+        "fr": "L’Assistant fonctionne sans aucune fonction d’IA activée.",
+        "it": "L’Assistente funziona senza alcuna funzione di IA attivata.",
+        "pl": "Asystent działa bez włączonych funkcji AI.",
+        "sv": "Assistenten fungerar utan några aktiverade AI-funktioner.",
+        "uk": "Асистент працює без увімкнених функцій ШІ."
+      }
+    }
+  ]
+}

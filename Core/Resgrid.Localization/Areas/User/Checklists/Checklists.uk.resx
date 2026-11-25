@@ -716,4 +716,13 @@
   <data name="HelpFieldScheduleName" xml:space="preserve"><value>Показується у списку до виконання, тож зробіть її впізнаваною з першого погляду.</value></data>
   <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>Скільки часу має підрозділ, щоб завершити перевірку після її відкриття. Після цього вона вважається пропущеною.</value></data>
   <data name="HelpFieldAssignment" xml:space="preserve"><value>Автоматична маршрутизація надсилає перевірку тому, хто відповідає за об'єкт. Оберіть особу, роль, групу чи техніку, щоб змінити це.</value></data>
+  <data name="The witness signs at L2 (a fresh step-up or a passkey), bound to the content of the completion" xml:space="preserve">
+    <value>Свідок підписує на рівні L2 (нова перевірка особи або ключ доступу), з прив'язкою до вмісту виконання</value>
+  </data>
+  <data name="WitnessSignatureRequired" xml:space="preserve">
+    <value>Цей контрольний список потрібно засвідчити підписом свідка. Відкрийте виконання й підпишіть як свідок.</value>
+  </data>
+  <data name="WitnessSignatureRefused" xml:space="preserve">
+    <value>Підпис свідка не записано, тому контрольний список досі очікує на свідка.</value>
+  </data>
 </root>

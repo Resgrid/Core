@@ -184,6 +184,308 @@ namespace Resgrid.Services
 					return "Training Assignment Exemption Changed";
 				case AuditLogTypes.MemberLeavePeriodChanged:
 					return "Member Leave Period Changed";
+				case AuditLogTypes.SignatureRecorded:
+					return "Signature Recorded";
+				case AuditLogTypes.SignatureVoided:
+					return "Signature Voided";
+				case AuditLogTypes.ProtocolVersionSubmitted:
+					return "Protocol Version Submitted";
+				case AuditLogTypes.ProtocolVersionWithdrawn:
+					return "Protocol Version Withdrawn";
+				case AuditLogTypes.ProtocolVersionApproved:
+					return "Protocol Version Approved";
+				case AuditLogTypes.ProtocolVersionRejected:
+					return "Protocol Version Rejected";
+				case AuditLogTypes.ProtocolVersionPublished:
+					return "Protocol Version Published";
+				case AuditLogTypes.ProtocolVersionScheduled:
+					return "Protocol Version Scheduled";
+				case AuditLogTypes.ProtocolRetired:
+					return "Protocol Retired";
+				case AuditLogTypes.ProtocolReviewRecorded:
+					return "Protocol Review Recorded";
+				case AuditLogTypes.ProtocolsImported:
+					return "Protocols Imported";
+				case AuditLogTypes.ProtocolCategoryChanged:
+					return "Protocol Category Changed";
+				case AuditLogTypes.ProtocolLibrarySettingsChanged:
+					return "Protocol Library Settings Changed";
+				case AuditLogTypes.LearningRecordVerified:
+					return "Training Record Verified";
+				case AuditLogTypes.LearningRecordRejected:
+					return "Training Record Rejected";
+				case AuditLogTypes.LearningRecordVoided:
+					return "Training Record Voided";
+				case AuditLogTypes.LearningRecordsCategorized:
+					return "Training Records Categorized";
+				case AuditLogTypes.LearningRecordDuplicateResolved:
+					return "Training Record Duplicate Resolved";
+				case AuditLogTypes.ExternalTrainingSubmitted:
+					return "Outside Training Submitted";
+				case AuditLogTypes.TrainingCategoryChanged:
+					return "Training Category Changed";
+				case AuditLogTypes.CategoryCreditMappingChanged:
+					return "Training Credit Mapping Changed";
+				case AuditLogTypes.TrainingHistoryApplied:
+					return "Training History Applied to Credits";
+				case AuditLogTypes.TrainingHistoryBackfillRequested:
+					return "Training History Backfill Requested";
+				case AuditLogTypes.TrainingHistoryImported:
+					return "Training History Imported";
+				case AuditLogTypes.TrainingRecordSettingsChanged:
+					return "Training Record Settings Changed";
+				case AuditLogTypes.LmsSeatsChanged:
+					return "LMS Seats Changed";
+				case AuditLogTypes.LmsPacksChanged:
+					return "LMS Packs Changed";
+				case AuditLogTypes.ResponderExposureRecorded:
+					return "Exposure Entry Recorded";
+				case AuditLogTypes.ResponderExposureUpdated:
+					return "Exposure Entry Updated";
+				case AuditLogTypes.ResponderExposureConfirmed:
+					return "Exposure Entry Confirmed";
+				case AuditLogTypes.ResponderExposureDismissed:
+					return "Exposure Suggestion Dismissed";
+				case AuditLogTypes.ResponderExposureVoided:
+					return "Exposure Entry Voided";
+				case AuditLogTypes.ResponderExposuresExported:
+					return "Exposure Entries Exported";
+				case AuditLogTypes.CallExposureFlagChanged:
+					return "Call Exposure Flag Changed";
+				case AuditLogTypes.ResponderScreeningFlagChanged:
+					return "Screening Flag Changed";
+				case AuditLogTypes.ResponderFollowUpChanged:
+					return "Screening Follow-up Changed";
+				case AuditLogTypes.WellnessSettingsChanged:
+					return "Wellness Settings Changed";
+				case AuditLogTypes.ExposureIncidentReported:
+					return "Exposure Case Reported";
+				case AuditLogTypes.ExposureIncidentStageChanged:
+					return "Exposure Case Stage Changed";
+				case AuditLogTypes.ExposureIncidentUpdated:
+					return "Exposure Case Updated";
+				case AuditLogTypes.ExposureIncidentFollowUpChanged:
+					return "Exposure Case Follow-up Changed";
+				case AuditLogTypes.MemberInjuryReported:
+					return "Injury Reported";
+				case AuditLogTypes.MemberInjuryUpdated:
+					return "Injury Updated";
+				case AuditLogTypes.MemberDutyStatusChanged:
+					return "Duty Status Changed";
+				case AuditLogTypes.MemberReturnedToDuty:
+					return "Returned to Duty";
+				case AuditLogTypes.MemberInjuryVoided:
+					return "Injury Voided";
+				case AuditLogTypes.MedicalClearanceRecorded:
+					return "Medical Clearance Recorded";
+				case AuditLogTypes.MedicalClearanceVoided:
+					return "Medical Clearance Voided";
+				case AuditLogTypes.OshaLogExported:
+					return "OSHA Log Exported";
+				case AuditLogTypes.KnowledgeSettingsChanged:
+					return "Knowledge Settings Changed";
+				case AuditLogTypes.KnowledgeIndexRebuildRequested:
+					return "Knowledge Index Rebuild Requested";
+				case AuditLogTypes.KnowledgeGapStatusChanged:
+					return "Knowledge Gap Status Changed";
+				case AuditLogTypes.SignatureRequestCreated:
+					return "Signature Request Created";
+				case AuditLogTypes.SignatureRequestResent:
+					return "Signature Request Resent";
+				case AuditLogTypes.SignatureRequestVoided:
+					return "Signature Request Voided";
+				case AuditLogTypes.SignatureRequestCompleted:
+					return "Signature Request Completed";
+				case AuditLogTypes.SignatureRequestDeclined:
+					return "Signature Request Declined";
+				case AuditLogTypes.SignatureRequestExpired:
+					return "Signature Request Expired";
+				case AuditLogTypes.ExternalSignatureCaptured:
+					return "External Signature Captured";
+				case AuditLogTypes.DocumentSealed:
+					return "Document Sealed";
+				case AuditLogTypes.DocumentSealingFailed:
+					return "Document Sealing Failed";
+				case AuditLogTypes.ESignAccountChanged:
+					return "E-Sign Account Changed";
+				case AuditLogTypes.ProtocolDocumentUploaded:
+					return "Protocol Document Uploaded";
+				case AuditLogTypes.ProtocolDocumentMoved:
+					return "Document Moved to Protocols";
+				case AuditLogTypes.ProtocolAcknowledged:
+					return "Protocol Acknowledged";
+				case AuditLogTypes.ProtocolAcknowledgmentSettingsChanged:
+					return "Protocol Acknowledgment Settings Changed";
+				case AuditLogTypes.ProtocolBulletinIssued:
+					return "Priority Bulletin Issued";
+				case AuditLogTypes.ProtocolBulletinCountersigned:
+					return "Priority Bulletin Countersigned";
+				case AuditLogTypes.ProtocolBulletinWithdrawn:
+					return "Priority Bulletin Withdrawn";
+				case AuditLogTypes.LmsCourseCreated:
+					return "Course Created";
+				case AuditLogTypes.LmsCourseChanged:
+					return "Course Changed";
+				case AuditLogTypes.LmsCourseVersionSubmitted:
+					return "Course Version Submitted";
+				case AuditLogTypes.LmsCourseVersionWithdrawn:
+					return "Course Version Withdrawn";
+				case AuditLogTypes.LmsCourseVersionApproved:
+					return "Course Version Approved";
+				case AuditLogTypes.LmsCourseVersionRejected:
+					return "Course Version Rejected";
+				case AuditLogTypes.LmsCourseVersionPublished:
+					return "Course Version Published";
+				case AuditLogTypes.LmsCourseRetired:
+					return "Course Retired";
+				case AuditLogTypes.LmsCourseAssigned:
+					return "Course Assigned";
+				case AuditLogTypes.LmsEnrollmentWithdrawn:
+					return "Course Enrollment Withdrawn";
+				case AuditLogTypes.LmsQuestionBankChanged:
+					return "Question Bank Changed";
+				case AuditLogTypes.LmsAttemptGraded:
+					return "Assessment Attempt Graded";
+				case AuditLogTypes.LmsMediaUploaded:
+					return "Course Video Uploaded";
+				case AuditLogTypes.LmsCrewViewingStarted:
+					return "Crew Viewing Started";
+				case AuditLogTypes.AcademyPathAssigned:
+					return "Academy Role Path Assigned";
+				case AuditLogTypes.ProtocolContentConverted:
+					return "Protocol Content Converted to Blocks";
+				case AuditLogTypes.ProtocolTranslationSaved:
+					return "Protocol Translation Saved";
+				case AuditLogTypes.ProtocolTranslationApproved:
+					return "Protocol Translation Approved";
+				case AuditLogTypes.ProtocolTranslationWithdrawn:
+					return "Protocol Translation Withdrawn";
+				case AuditLogTypes.ProtocolBookExported:
+					return "Protocol Book Exported";
+				case AuditLogTypes.SignatureStepSigned:
+					return "Signature Step Signed";
+				case AuditLogTypes.SignatureStepDeclined:
+					return "Signature Step Declined";
+				case AuditLogTypes.ChecklistWitnessSigned:
+					return "Checklist Witness Signed";
+				case AuditLogTypes.LmsTrainingPlanChanged:
+					return "Annual Training Plan Changed";
+				case AuditLogTypes.LmsCompetencyFrameworkChanged:
+					return "Competency Framework Changed";
+				case AuditLogTypes.LmsCompetencyFrameworkImported:
+					return "Competency Framework Imported";
+				case AuditLogTypes.LmsTrainingRequestSubmitted:
+					return "Training Request Submitted";
+				case AuditLogTypes.LmsTrainingRequestDecided:
+					return "Training Request Decided";
+				case AuditLogTypes.LmsTrainingRequestCompleted:
+					return "Training Request Completed";
+				case AuditLogTypes.LmsReportDefinitionChanged:
+					return "Saved Training Report Changed";
+				case AuditLogTypes.LmsCertificationCycleRuleChanged:
+					return "Certification Cycle Rule Changed";
+				case AuditLogTypes.LmsCertificationCycleAutoRenewed:
+					return "Certification Cycle Renewed Automatically";
+				case AuditLogTypes.LmsProgramSettingsChanged:
+					return "Training Program Settings Changed";
+				case AuditLogTypes.LearningRequirementCreated:
+					return "Learning Requirement Created";
+				case AuditLogTypes.LearningRequirementChanged:
+					return "Learning Requirement Changed";
+				case AuditLogTypes.LearningRequirementDeleted:
+					return "Learning Requirement Deleted";
+				case AuditLogTypes.LearningRequirementMemberChanged:
+					return "Learning Requirement Exemption or Extension";
+				case AuditLogTypes.LearningRequirementSettingsChanged:
+					return "Learning Requirement Settings Changed";
+				case AuditLogTypes.LearningRequirementEnforced:
+					return "Training Requirement Enforced";
+				case AuditLogTypes.LearningRequirementEnforcementUndone:
+					return "Training Requirement Enforcement Undone";
+				case AuditLogTypes.LearningRequirementEnforcementRefused:
+					return "Training Requirement Enforcement Refused";
+				case AuditLogTypes.LmsPathChanged:
+					return "Learning Path Changed";
+				case AuditLogTypes.LmsPathAssigned:
+					return "Learning Path Assigned";
+				case AuditLogTypes.LmsPathCompleted:
+					return "Learning Path Completed";
+				case AuditLogTypes.ApprovalChainChanged:
+					return "Approval Chain Changed";
+				case AuditLogTypes.ApprovalDelegateChanged:
+					return "Approval Delegate Changed";
+				case AuditLogTypes.ApprovalSubmitted:
+					return "Approval Submitted";
+				case AuditLogTypes.ApprovalGranted:
+					return "Approval Granted";
+				case AuditLogTypes.ApprovalRejected:
+					return "Approval Rejected";
+				case AuditLogTypes.ApprovalWithdrawn:
+					return "Approval Withdrawn";
+				case AuditLogTypes.ApprovalEscalated:
+					return "Approval Escalated";
+				case AuditLogTypes.ApprovalSuperseded:
+					return "Approval Superseded";
+				case AuditLogTypes.MutualAidAgreementChanged:
+					return "Mutual Aid Agreement Changed";
+				case AuditLogTypes.ProtocolLearningSettingsChanged:
+					return "Protocol Learning Settings Changed";
+				case AuditLogTypes.LmsClassSessionChanged:
+					return "Class Session Changed";
+				case AuditLogTypes.LmsClassSessionCancelled:
+					return "Class Session Cancelled";
+				case AuditLogTypes.LmsClassSessionDeleted:
+					return "Class Session Deleted";
+				case AuditLogTypes.LmsClassRosterChanged:
+					return "Class Roster Changed";
+				case AuditLogTypes.LmsClassAttendanceChanged:
+					return "Class Attendance Changed";
+				case AuditLogTypes.LmsClassSignedOff:
+					return "Class Signed Off";
+				case AuditLogTypes.LmsClassRosterPurged:
+					return "Class Roster Purged";
+				case AuditLogTypes.LmsLessonPlanChanged:
+					return "Lesson Plan Changed";
+				case AuditLogTypes.LmsLessonPlanSubmitted:
+					return "Lesson Plan Submitted";
+				case AuditLogTypes.LmsLessonPlanDecided:
+					return "Lesson Plan Approved or Rejected";
+				case AuditLogTypes.LmsLessonPlanPublished:
+					return "Lesson Plan Published";
+				case AuditLogTypes.LmsTrainingResourceChanged:
+					return "Training Resource Changed";
+				case AuditLogTypes.ProtocolDeterminantOverridden:
+					return "Protocol Determinant Overridden";
+				case AuditLogTypes.ProtocolCallerInstructionSent:
+					return "Protocol Instruction Texted To Caller";
+				case AuditLogTypes.ProtocolAiSuggestionConfirmed:
+					return "Protocol AI Suggestion Confirmed";
+				case AuditLogTypes.LmsSkillSheetChanged:
+					return "Skill Sheet Changed";
+				case AuditLogTypes.LmsSkillSheetPublished:
+					return "Skill Sheet Published";
+				case AuditLogTypes.LmsSkillEvaluationStarted:
+					return "Skill Evaluation Started";
+				case AuditLogTypes.LmsSkillEvaluationSubmitted:
+					return "Skill Evaluation Submitted";
+				case AuditLogTypes.LmsSkillEvaluationCompleted:
+					return "Skill Evaluation Completed";
+				case AuditLogTypes.LmsSkillEvaluationSplit:
+					return "Skill Evaluation Member Split Out";
+				case AuditLogTypes.LmsSkillEvaluationVoided:
+					return "Skill Evaluation Voided";
+				case AuditLogTypes.LmsTaskBookDefinitionChanged:
+					return "Task Book Definition Changed";
+				case AuditLogTypes.LmsTaskBookInitiated:
+					return "Task Book Initiated";
+				case AuditLogTypes.LmsTaskBookCertificationRequested:
+					return "Task Book Certification Requested";
+				case AuditLogTypes.LmsTaskBookCertified:
+					return "Task Book Certified";
+				case AuditLogTypes.LmsTaskBookClosed:
+					return "Task Book Closed";
+				case AuditLogTypes.LmsSkillSettingsChanged:
+					return "Skill Notice Settings Changed";
 				case AuditLogTypes.AdminAssistReviewChanged:
 					return "Admin Assist Review Changed";
 				case AuditLogTypes.DepartmentSettingsChanged:

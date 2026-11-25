@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboveAmountNote" xml:space="preserve">
+    <value>(powyżej {0})</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Akcje</value>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>Aktywny</value>
+  </data>
+  <data name="AddDelegateHeading" xml:space="preserve">
+    <value>Dodaj zastępcę</value>
+  </data>
+  <data name="AgreementDeletedMessage" xml:space="preserve">
+    <value>Porozumienie zostało usunięte.</value>
+  </data>
+  <data name="AgreementInvalidMessage" xml:space="preserve">
+    <value>Nie udało się zapisać porozumienia. Sprawdź tytuł i daty; zatwierdzonego porozumienia nie można zmienić.</value>
+  </data>
+  <data name="AgreementSavedMessage" xml:space="preserve">
+    <value>Porozumienie zostało zapisane.</value>
+  </data>
+  <data name="AgreementTitleLabel" xml:space="preserve">
+    <value>Porozumienie</value>
+  </data>
+  <data name="AgreementsIntro" xml:space="preserve">
+    <value>Porozumienia o pomocy wzajemnej, które Twój oddział zatwierdza i pieczętuje.</value>
+  </data>
+  <data name="AgreementsTab" xml:space="preserve">
+    <value>Porozumienia o pomocy wzajemnej</value>
+  </data>
+  <data name="AllMyApprovalsLink" xml:space="preserve">
+    <value>Wszystkie moje zatwierdzenia</value>
+  </data>
+  <data name="AllowSelfApprovalLabel" xml:space="preserve">
+    <value>Pozwól zgłaszającemu zatwierdzać</value>
+  </data>
+  <data name="AmountColumn" xml:space="preserve">
+    <value>Kwota</value>
+  </data>
+  <data name="ApplyErrorNote" xml:space="preserve">
+    <value>Zatwierdzenie pozostaje w mocy, ale moduł nie mógł go zastosować (odmówiły jego własne reguły). Dokończ etap w module.</value>
+  </data>
+  <data name="ApprovalsHeading" xml:space="preserve">
+    <value>Zatwierdzenia</value>
+  </data>
+  <data name="ApprovalsModuleTitle" xml:space="preserve">
+    <value>Zatwierdzenia</value>
+  </data>
+  <data name="ApproveButton" xml:space="preserve">
+    <value>Zatwierdź</value>
+  </data>
+  <data name="ApprovePanelTitle" xml:space="preserve">
+    <value>Twoje zatwierdzenie</value>
+  </data>
+  <data name="ApprovedByColumn" xml:space="preserve">
+    <value>Zatwierdzone przez</value>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>Twoje zatwierdzenie zostało zapisane.</value>
+  </data>
+  <data name="ApprovedStepsLabel" xml:space="preserve">
+    <value>Zatwierdzone etapy</value>
+  </data>
+  <data name="ApproverColumn" xml:space="preserve">
+    <value>Zatwierdzający</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Anuluj</value>
+  </data>
+  <data name="CandidatesHeading" xml:space="preserve">
+    <value>Gotowe do przesłania</value>
+  </data>
+  <data name="CertificationTypeLabel" xml:space="preserve">
+    <value>Typ certyfikatu</value>
+  </data>
+  <data name="ChainDeactivatedMessage" xml:space="preserve">
+    <value>Łańcuch został wyłączony.</value>
+  </data>
+  <data name="ChainEditorHelp" xml:space="preserve">
+    <value>Etapy o tym samym numerze przebiegają równolegle i wszystkie muszą zatwierdzić. Próg ogranicza etap do kwot powyżej niego. Zapisanie tworzy nową wersję; wnioski już przesłane zachowują etapy, z którymi się rozpoczęły.</value>
+  </data>
+  <data name="ChainNameLabel" xml:space="preserve">
+    <value>Nazwa łańcucha</value>
+  </data>
+  <data name="ChainSavedMessage" xml:space="preserve">
+    <value>Łańcuch zatwierdzania został zapisany.</value>
+  </data>
+  <data name="ChainsIntro" xml:space="preserve">
+    <value>Kto zatwierdza co, w jakiej kolejności, powyżej jakich kwot i kiedy zablokowany etap jest eskalowany.</value>
+  </data>
+  <data name="ChainsTab" xml:space="preserve">
+    <value>Łańcuchy</value>
+  </data>
+  <data name="ChangedSinceApproval" xml:space="preserve">
+    <value>Zmieniono to po zatwierdzeniu. Zatwierdzenie już się nie liczy; prześlij ponownie.</value>
+  </data>
+  <data name="ChangedSinceSubmission" xml:space="preserve">
+    <value>Zmieniono to po przesłaniu. Wcześniejsze zatwierdzenia nie są przenoszone; prześlij ponownie.</value>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>Kod treści</value>
+  </data>
+  <data name="DeactivateChainButton" xml:space="preserve">
+    <value>Wyłącz</value>
+  </data>
+  <data name="DecidedColumn" xml:space="preserve">
+    <value>Data decyzji</value>
+  </data>
+  <data name="DefineChainButton" xml:space="preserve">
+    <value>Zdefiniuj łańcuch</value>
+  </data>
+  <data name="DelegateForLabel" xml:space="preserve">
+    <value>Członek</value>
+  </data>
+  <data name="DelegateHelp" xml:space="preserve">
+    <value>Gdy członek jest na urlopie, jego imienne etapy zatwierdzania trafiają także do jego zastępcy. Przy podanych datach zastępca zastępuje go również w tym okresie.</value>
+  </data>
+  <data name="DelegateInvalidMessage" xml:space="preserve">
+    <value>Nie udało się zapisać zastępcy. Wybierz dwóch różnych aktywnych członków i prawidłowe daty.</value>
+  </data>
+  <data name="DelegateLabel" xml:space="preserve">
+    <value>Zastępca</value>
+  </data>
+  <data name="DelegateRemovedMessage" xml:space="preserve">
+    <value>Zastępca został usunięty.</value>
+  </data>
+  <data name="DelegateSavedMessage" xml:space="preserve">
+    <value>Zastępca został zapisany.</value>
+  </data>
+  <data name="DelegatedNote" xml:space="preserve">
+    <value>Przekazano: wskazany zatwierdzający jest nieobecny</value>
+  </data>
+  <data name="DelegatesIntro" xml:space="preserve">
+    <value>Kto zatwierdza za członka, gdy jest na urlopie.</value>
+  </data>
+  <data name="DelegatesTab" xml:space="preserve">
+    <value>Zastępcy</value>
+  </data>
+  <data name="DeleteAgreementButton" xml:space="preserve">
+    <value>Usuń porozumienie</value>
+  </data>
+  <data name="DepartmentLinkLabel" xml:space="preserve">
+    <value>Powiązanie oddziałów</value>
+  </data>
+  <data name="DownloadSealedLink" xml:space="preserve">
+    <value>Pobierz zapieczętowany dokument</value>
+  </data>
+  <data name="DueByLabel" xml:space="preserve">
+    <value>termin: {0}</value>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Termin</value>
+  </data>
+  <data name="EditChainButton" xml:space="preserve">
+    <value>Edytuj łańcuch</value>
+  </data>
+  <data name="EditChainTitle" xml:space="preserve">
+    <value>Łańcuch zatwierdzania</value>
+  </data>
+  <data name="EffectiveLabel" xml:space="preserve">
+    <value>Obowiązuje od</value>
+  </data>
+  <data name="EndsLabel" xml:space="preserve">
+    <value>Koniec</value>
+  </data>
+  <data name="EscalatedLabel" xml:space="preserve">
+    <value>Eskalowano</value>
+  </data>
+  <data name="EscalatesAfterNote" xml:space="preserve">
+    <value>(eskalacja po {0} h)</value>
+  </data>
+  <data name="EscalationColumn" xml:space="preserve">
+    <value>Eskalacja</value>
+  </data>
+  <data name="ExpiresInDaysLabel" xml:space="preserve">
+    <value>Wygasa po (dniach)</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Grupa</value>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="HoursPlaceholder" xml:space="preserve">
+    <value>Godziny (puste: nigdy)</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Członek</value>
+  </data>
+  <data name="MyApprovalsIntro" xml:space="preserve">
+    <value>Wnioski czekające na Twoje zatwierdzenie oraz te, które przesłałeś.</value>
+  </data>
+  <data name="MyApprovalsTab" xml:space="preserve">
+    <value>Moje zatwierdzenia</value>
+  </data>
+  <data name="MyApprovalsTitle" xml:space="preserve">
+    <value>Moje zatwierdzenia</value>
+  </data>
+  <data name="MySubmissionsHeader" xml:space="preserve">
+    <value>Moje oczekujące wnioski</value>
+  </data>
+  <data name="NewAgreementButton" xml:space="preserve">
+    <value>Nowe porozumienie</value>
+  </data>
+  <data name="NextApprovalLabel" xml:space="preserve">
+    <value>Następne do zatwierdzenia</value>
+  </data>
+  <data name="NoAgreements" xml:space="preserve">
+    <value>Brak porozumień o pomocy wzajemnej.</value>
+  </data>
+  <data name="NoApprovalYet" xml:space="preserve">
+    <value>Jeszcze nie przesłano do zatwierdzenia.</value>
+  </data>
+  <data name="NoCandidates" xml:space="preserve">
+    <value>Nic nie czeka na przesłanie.</value>
+  </data>
+  <data name="NoChainDefined" xml:space="preserve">
+    <value>Brak łańcucha: te elementy nie wymagają zatwierdzenia.</value>
+  </data>
+  <data name="NoDelegates" xml:space="preserve">
+    <value>Brak zastępców.</value>
+  </data>
+  <data name="NoPendingSubmissions" xml:space="preserve">
+    <value>Nic nie oczekuje.</value>
+  </data>
+  <data name="NoRequests" xml:space="preserve">
+    <value>Brak wniosków.</value>
+  </data>
+  <data name="NothingToApprove" xml:space="preserve">
+    <value>Nic nie czeka na Twoje zatwierdzenie.</value>
+  </data>
+  <data name="OnLeaveOnly" xml:space="preserve">
+    <value>Podczas urlopu</value>
+  </data>
+  <data name="OpenInModuleLink" xml:space="preserve">
+    <value>Otwórz</value>
+  </data>
+  <data name="OpenRequestLink" xml:space="preserve">
+    <value>Otwórz</value>
+  </data>
+  <data name="PartnerLabel" xml:space="preserve">
+    <value>Oddział partnerski</value>
+  </data>
+  <data name="PartnerSignatureOwedNote" xml:space="preserve">
+    <value>Łańcuch Twojego oddziału zatwierdza i pieczętuje to porozumienie. Kontrasygnata oddziału partnerskiego w ramach powiązania oddziałów nie jest jeszcze dostępna.</value>
+  </data>
+  <data name="PayrollRunsNote" xml:space="preserve">
+    <value>Naliczenia listy płac otrzymają łańcuch zatwierdzania, gdy naliczenia listy płac pojawią się w Resgrid.</value>
+  </data>
+  <data name="PendingApprovalsHeader" xml:space="preserve">
+    <value>Czekające na Twoje zatwierdzenie</value>
+  </data>
+  <data name="PendingInDepartmentHeader" xml:space="preserve">
+    <value>Oczekujące w oddziale</value>
+  </data>
+  <data name="PendingSubmittedLabel" xml:space="preserve">
+    <value>Oczekujące</value>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Odrzuć</value>
+  </data>
+  <data name="RejectHeading" xml:space="preserve">
+    <value>Odrzuć</value>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>Powód</value>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>Wniosek został odrzucony, a zgłaszający został powiadomiony.</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="RequestsIntro" xml:space="preserve">
+    <value>Wszystkie wnioski o zatwierdzenie w oddziale.</value>
+  </data>
+  <data name="RequestsTab" xml:space="preserve">
+    <value>Wnioski</value>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Przejrzyj</value>
+  </data>
+  <data name="RoleLabel" xml:space="preserve">
+    <value>Rola</value>
+  </data>
+  <data name="SaveAgreementButton" xml:space="preserve">
+    <value>Zapisz porozumienie</value>
+  </data>
+  <data name="SaveChainButton" xml:space="preserve">
+    <value>Zapisz łańcuch</value>
+  </data>
+  <data name="SaveDelegateButton" xml:space="preserve">
+    <value>Zapisz</value>
+  </data>
+  <data name="SealedNote" xml:space="preserve">
+    <value>Zatwierdzono i zapieczętowano.</value>
+  </data>
+  <data name="SealingPendingNote" xml:space="preserve">
+    <value>Zatwierdzono. Pieczętowanie oczekuje: zapieczętowany dokument zostanie utworzony, gdy tylko usługa pieczętowania będzie dostępna.</value>
+  </data>
+  <data name="StartsLabel" xml:space="preserve">
+    <value>Początek</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="StepApproved" xml:space="preserve">
+    <value>Zatwierdzony</value>
+  </data>
+  <data name="StepColumn" xml:space="preserve">
+    <value>Etap</value>
+  </data>
+  <data name="StepLabelPlaceholder" xml:space="preserve">
+    <value>Nazwa etapu (opcjonalnie)</value>
+  </data>
+  <data name="StepNotYet" xml:space="preserve">
+    <value>Jeszcze nie</value>
+  </data>
+  <data name="StepOrderColumn" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="StepRejected" xml:space="preserve">
+    <value>Odrzucony</value>
+  </data>
+  <data name="StepWaiting" xml:space="preserve">
+    <value>Oczekuje</value>
+  </data>
+  <data name="StepsHeading" xml:space="preserve">
+    <value>Etapy</value>
+  </data>
+  <data name="StepsHelp" xml:space="preserve">
+    <value>Etapy przebiegają po kolei; etapy o tym samym numerze przebiegają równolegle. Każde zatwierdzenie jest podpisywane na poziomie 2 i powiązane z kodem treści.</value>
+  </data>
+  <data name="SubjectColumn" xml:space="preserve">
+    <value>Przedmiot</value>
+  </data>
+  <data name="SubjectGroupOption" xml:space="preserve">
+    <value>Własna grupa przedmiotu</value>
+  </data>
+  <data name="SubjectHeading" xml:space="preserve">
+    <value>Co jest zatwierdzane</value>
+  </data>
+  <data name="SubmitForApprovalButton" xml:space="preserve">
+    <value>Prześlij do zatwierdzenia</value>
+  </data>
+  <data name="SubmitHeading" xml:space="preserve">
+    <value>Prześlij do zatwierdzenia</value>
+  </data>
+  <data name="SubmittedByLine" xml:space="preserve">
+    <value>Przesłane przez {0} dnia {1} UTC</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Przesłano</value>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>Przesłano do zatwierdzenia. Zatwierdzający zostali powiadomieni.</value>
+  </data>
+  <data name="TermsLabel" xml:space="preserve">
+    <value>Warunki</value>
+  </data>
+  <data name="ThresholdColumn" xml:space="preserve">
+    <value>Tylko powyżej kwoty</value>
+  </data>
+  <data name="UseStepColumn" xml:space="preserve">
+    <value>Użyj</value>
+  </data>
+  <data name="WaitingForMeLabel" xml:space="preserve">
+    <value>Czeka na mnie</value>
+  </data>
+  <data name="WindowColumn" xml:space="preserve">
+    <value>Kiedy</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Wycofaj</value>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>Wniosek został wycofany.</value>
+  </data>
+  <data name="KindPurchaseRequisitionApproval" xml:space="preserve">
+    <value>Zapotrzebowania zakupowe</value>
+  </data>
+  <data name="KindIncidentPlanApproval" xml:space="preserve">
+    <value>Plany działań w zdarzeniu (IAP)</value>
+  </data>
+  <data name="KindInvoiceApproval" xml:space="preserve">
+    <value>Faktury</value>
+  </data>
+  <data name="KindPayrollRunApproval" xml:space="preserve">
+    <value>Naliczenia listy płac</value>
+  </data>
+  <data name="KindCalOesMarsPackageApproval" xml:space="preserve">
+    <value>Pakiety Cal OES MARS</value>
+  </data>
+  <data name="KindMutualAidAgreementApproval" xml:space="preserve">
+    <value>Porozumienia o pomocy wzajemnej</value>
+  </data>
+  <data name="StatusPending" xml:space="preserve">
+    <value>Oczekujący</value>
+  </data>
+  <data name="StatusApproved" xml:space="preserve">
+    <value>Zatwierdzony</value>
+  </data>
+  <data name="StatusRejected" xml:space="preserve">
+    <value>Odrzucony</value>
+  </data>
+  <data name="StatusWithdrawn" xml:space="preserve">
+    <value>Wycofany</value>
+  </data>
+  <data name="StatusSuperseded" xml:space="preserve">
+    <value>Zastąpiony</value>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>Wygasły</value>
+  </data>
+  <data name="ApproverRole" xml:space="preserve">
+    <value>Każdy w roli</value>
+  </data>
+  <data name="ApproverNamedMember" xml:space="preserve">
+    <value>Wskazany członek</value>
+  </data>
+  <data name="ApproverGroupAdmin" xml:space="preserve">
+    <value>Administratorzy grupy</value>
+  </data>
+  <data name="ApproverCertifyingOfficial" xml:space="preserve">
+    <value>Osoba certyfikująca</value>
+  </data>
+  <data name="ApproverDepartmentAdmins" xml:space="preserve">
+    <value>Administratorzy oddziału</value>
+  </data>
+  <data name="EscalateToDepartmentAdmins" xml:space="preserve">
+    <value>Eskaluj do administratorów oddziału</value>
+  </data>
+  <data name="EscalateToRole" xml:space="preserve">
+    <value>Eskaluj do roli</value>
+  </data>
+  <data name="EscalateToNamedMember" xml:space="preserve">
+    <value>Eskaluj do członka</value>
+  </data>
+  <data name="AgreementStatusDraft" xml:space="preserve">
+    <value>Wersja robocza</value>
+  </data>
+  <data name="AgreementStatusInApproval" xml:space="preserve">
+    <value>W zatwierdzaniu</value>
+  </data>
+  <data name="AgreementStatusApproved" xml:space="preserve">
+    <value>Zatwierdzone</value>
+  </data>
+  <data name="AgreementStatusWithdrawn" xml:space="preserve">
+    <value>Wycofane</value>
+  </data>
+  <data name="RefusalNone" xml:space="preserve">
+    <value>Gotowe.</value>
+  </data>
+  <data name="RefusalInvalidRequest" xml:space="preserve">
+    <value>Nie udało się przetworzyć wniosku.</value>
+  </data>
+  <data name="RefusalSubjectNotFound" xml:space="preserve">
+    <value>Element już nie istnieje.</value>
+  </data>
+  <data name="RefusalModuleUnavailable" xml:space="preserve">
+    <value>Ten moduł lub jego dodatek nie jest aktywny w Twoim oddziale.</value>
+  </data>
+  <data name="RefusalNoChain" xml:space="preserve">
+    <value>Twój oddział nie ma łańcucha zatwierdzania dla tych elementów.</value>
+  </data>
+  <data name="RefusalAlreadyPending" xml:space="preserve">
+    <value>To już czeka na zatwierdzenie.</value>
+  </data>
+  <data name="RefusalUnchanged" xml:space="preserve">
+    <value>Nic się nie zmieniło od zatwierdzenia lub odrzucenia. Wprowadź zmiany przed ponownym przesłaniem.</value>
+  </data>
+  <data name="RefusalNotSubmittable" xml:space="preserve">
+    <value>Nie można tego przesłać w obecnym stanie.</value>
+  </data>
+  <data name="RefusalClosed" xml:space="preserve">
+    <value>Ten wniosek nie oczekuje już na decyzję.</value>
+  </data>
+  <data name="RefusalSubjectChanged" xml:space="preserve">
+    <value>Zmieniono to po przesłaniu. Prześlij ponownie.</value>
+  </data>
+  <data name="RefusalNotAnApprover" xml:space="preserve">
+    <value>Nie jesteś zatwierdzającym dla tego etapu.</value>
+  </data>
+  <data name="RefusalNotYourTurn" xml:space="preserve">
+    <value>Najpierw musi zatwierdzić wcześniejszy etap.</value>
+  </data>
+  <data name="RefusalStepUpRequired" xml:space="preserve">
+    <value>Potwierdź tożsamość (weryfikacja dwuetapowa lub klucz dostępu), aby zatwierdzić.</value>
+  </data>
+  <data name="RefusalPasskeyRequired" xml:space="preserve">
+    <value>Twój oddział wymaga klucza dostępu do tego zatwierdzenia.</value>
+  </data>
+  <data name="RefusalReasonRequired" xml:space="preserve">
+    <value>Podaj powód odrzucenia.</value>
+  </data>
+  <data name="RefusalNoApprover" xml:space="preserve">
+    <value>Etap nie wskazuje nikogo, kto mógłby go zatwierdzić. Sprawdź role i członków łańcucha.</value>
+  </data>
+  <data name="RefusalNotAllowed" xml:space="preserve">
+    <value>Może to zrobić tylko zgłaszający lub administrator oddziału.</value>
+  </data>
+  <data name="RefusalSignatureFailed" xml:space="preserve">
+    <value>Nie udało się podpisać zatwierdzenia. Spróbuj ponownie.</value>
+  </data>
+  <data name="RefusalNotRequired" xml:space="preserve">
+    <value>Żaden etap łańcucha nie dotyczy tej kwoty: nie wymaga ona zatwierdzenia.</value>
+  </data>
+</root>

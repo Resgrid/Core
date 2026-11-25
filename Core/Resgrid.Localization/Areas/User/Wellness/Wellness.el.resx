@@ -1,0 +1,700 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PersonnelLink" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Αρχική</value>
+  </data>
+  <data name="WellnessModuleLabel" xml:space="preserve">
+    <value>Ευεξία</value>
+  </data>
+  <data name="MyExposuresTab" xml:space="preserve">
+    <value>Οι εκθέσεις μου</value>
+  </data>
+  <data name="ReportTab" xml:space="preserve">
+    <value>Αναφορά μελών</value>
+  </data>
+  <data name="FlagCallTab" xml:space="preserve">
+    <value>Σημάνσεις μετά την κλήση</value>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>Ρυθμίσεις</value>
+  </data>
+  <data name="MyExposuresTitle" xml:space="preserve">
+    <value>Οι εκθέσεις μου</value>
+  </data>
+  <data name="MemberExposuresTitle" xml:space="preserve">
+    <value>Αρχείο εκθέσεων: {0}</value>
+  </data>
+  <data name="MyExposuresIntro" xml:space="preserve">
+    <value>Το δικό σας αρχείο εκθέσεων και δύσκολων κλήσεων. Μόνο εσείς και οι υπεύθυνοι ευεξίας της υπηρεσίας σας μπορούν να το δουν.</value>
+  </data>
+  <data name="MemberExposuresIntro" xml:space="preserve">
+    <value>Το αρχείο εκθέσεων και κρίσιμων συμβάντων αυτού του μέλους. Χειριστείτε το με προσοχή: μόνο το μέλος και οι υπεύθυνοι ευεξίας μπορούν να το δουν.</value>
+  </data>
+  <data name="LogExposureButton" xml:space="preserve">
+    <value>Καταγραφή έκθεσης</value>
+  </data>
+  <data name="ExportPdfButton" xml:space="preserve">
+    <value>Εξαγωγή PDF</value>
+  </data>
+  <data name="ExportCsvButton" xml:space="preserve">
+    <value>Εξαγωγή CSV</value>
+  </data>
+  <data name="ProtectedWithheldNotice" xml:space="preserve">
+    <value>Ορισμένα στοιχεία προστατεύονται από την Προηγμένη Προστασία Δεδομένων της υπηρεσίας σας και δεν εμφανίζονται εδώ.</value>
+  </data>
+  <data name="ConfirmedEntriesLabel" xml:space="preserve">
+    <value>Επιβεβαιωμένες καταχωρίσεις</value>
+  </data>
+  <data name="CriticalIncidentsLabel" xml:space="preserve">
+    <value>Κρίσιμα συμβάντα</value>
+  </data>
+  <data name="AwaitingReviewLabel" xml:space="preserve">
+    <value>Σε αναμονή ελέγχου</value>
+  </data>
+  <data name="SuggestionsHeader" xml:space="preserve">
+    <value>Προτάσεις από πρόσφατες κλήσεις</value>
+  </data>
+  <data name="SuggestionsHelp" xml:space="preserve">
+    <value>Αυτά προτάθηκαν από τα αρχεία διαχείρισης κλήσεων αφού σημάνθηκε μια κλήση. Τίποτα δεν καταγράφεται μέχρι να το ελέγξετε και να το επιβεβαιώσετε. Αν δεν σας αφορά, απορρίψτε το.</value>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>Ημερομηνία</value>
+  </data>
+  <data name="CategoryColumn" xml:space="preserve">
+    <value>Κατηγορία</value>
+  </data>
+  <data name="CallColumn" xml:space="preserve">
+    <value>Κλήση</value>
+  </data>
+  <data name="DurationColumn" xml:space="preserve">
+    <value>Διάρκεια (ω:λλ)</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Ενέργειες</value>
+  </data>
+  <data name="SuggestedFromLabel" xml:space="preserve">
+    <value>Προτάθηκε από</value>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Έλεγχος</value>
+  </data>
+  <data name="DismissButton" xml:space="preserve">
+    <value>Απόρριψη</value>
+  </data>
+  <data name="ScreeningHeader" xml:space="preserve">
+    <value>Ενισχυμένος έλεγχος</value>
+  </data>
+  <data name="ScreeningSelfText" xml:space="preserve">
+    <value>Ο υπεύθυνος ευεξίας της υπηρεσίας σας πρότεινε επιπλέον ελέγχους υγείας για εσάς. Οι παρακάτω ενέργειες σας βοηθούν να παρακολουθείτε την πορεία.</value>
+  </data>
+  <data name="ScreeningOfficerText" xml:space="preserve">
+    <value>Αυτό το μέλος έχει σημανθεί για ενισχυμένο έλεγχο.</value>
+  </data>
+  <data name="ReviewOnLabel" xml:space="preserve">
+    <value>Επόμενος έλεγχος</value>
+  </data>
+  <data name="PlanNotesLabel" xml:space="preserve">
+    <value>Σχέδιο παρακολούθησης</value>
+  </data>
+  <data name="WithheldValue" xml:space="preserve">
+    <value>Προστατευμένο</value>
+  </data>
+  <data name="FollowUpColumn" xml:space="preserve">
+    <value>Παρακολούθηση</value>
+  </data>
+  <data name="AssigneeColumn" xml:space="preserve">
+    <value>Ανατέθηκε σε</value>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Προθεσμία</value>
+  </data>
+  <data name="StateColumn" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="CompleteButton" xml:space="preserve">
+    <value>Σήμανση ως ολοκληρωμένο</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="ScreeningManageHeader" xml:space="preserve">
+    <value>Έλεγχος και παρακολούθηση</value>
+  </data>
+  <data name="ScreeningManageHelp" xml:space="preserve">
+    <value>Σημάνετε αυτό το μέλος για ενισχυμένο έλεγχο και τηρήστε σχέδιο παρακολούθησης. Το σχέδιο προστατεύεται και είναι ορατό μόνο στο μέλος και στους υπεύθυνους ευεξίας.</value>
+  </data>
+  <data name="ScreeningCategoryLabel" xml:space="preserve">
+    <value>Αφορμή</value>
+  </data>
+  <data name="NoCategoryOption" xml:space="preserve">
+    <value>Δεν καθορίστηκε</value>
+  </data>
+  <data name="ProtectedFieldHelp" xml:space="preserve">
+    <value>Προστατευμένο: ορατό μόνο στο μέλος και στους υπεύθυνους ευεξίας.</value>
+  </data>
+  <data name="FlagForScreeningButton" xml:space="preserve">
+    <value>Σήμανση για ενισχυμένο έλεγχο</value>
+  </data>
+  <data name="SaveScreeningButton" xml:space="preserve">
+    <value>Αποθήκευση ελέγχου</value>
+  </data>
+  <data name="ClearScreeningButton" xml:space="preserve">
+    <value>Λήξη ενισχυμένου ελέγχου</value>
+  </data>
+  <data name="AddFollowUpHeader" xml:space="preserve">
+    <value>Προσθήκη παρακολούθησης</value>
+  </data>
+  <data name="FollowUpPrivacyHelp" xml:space="preserve">
+    <value>Οι ενέργειες παρακολούθησης καταγράφουν μόνο το είδος του βήματος και αν ολοκληρώθηκε. Κρατήστε τυχόν στοιχεία υγείας στο προστατευμένο σχέδιο.</value>
+  </data>
+  <data name="AddFollowUpButton" xml:space="preserve">
+    <value>Προσθήκη</value>
+  </data>
+  <data name="EntriesHeader" xml:space="preserve">
+    <value>Καταχωρίσεις</value>
+  </data>
+  <data name="NoEntriesSelf" xml:space="preserve">
+    <value>Δεν έχετε ακόμη καταχωρίσεις. Μπορείτε να καταγράψετε μια έκθεση οποιαδήποτε στιγμή.</value>
+  </data>
+  <data name="NoEntriesMember" xml:space="preserve">
+    <value>Αυτό το μέλος δεν έχει καταχωρίσεις.</value>
+  </data>
+  <data name="RetentionNotice" xml:space="preserve">
+    <value>Οι καταχωρίσεις διατηρούνται για τουλάχιστον 30 χρόνια. Μια λανθασμένη καταχώριση μπορεί να σημανθεί ως τέτοια· διατηρείται αλλά δεν προσμετράται.</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="AnniversaryReminderOnLabel" xml:space="preserve">
+    <value>Υπενθύμιση επετείου ενεργή</value>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Άνοιγμα</value>
+  </data>
+  <data name="VoidButton" xml:space="preserve">
+    <value>Καταχωρίστηκε κατά λάθος</value>
+  </data>
+  <data name="VoidHelp" xml:space="preserve">
+    <value>Η καταχώριση παραμένει στο αρχείο για την περίοδο διατήρησης αλλά δεν προσμετράται.</value>
+  </data>
+  <data name="VoidConfirmButton" xml:space="preserve">
+    <value>Επιβεβαίωση</value>
+  </data>
+  <data name="SupportNote" xml:space="preserve">
+    <value>Αν κάτι από μια κλήση σας απασχολεί ακόμη, δεν χρειάζεται να το διαχειριστείτε μόνοι. Η ομάδα υποστήριξης συναδέλφων και οι πόροι ευεξίας της υπηρεσίας σας είναι εδώ για εσάς.</value>
+  </data>
+  <data name="LogExposureTitle" xml:space="preserve">
+    <value>Καταγραφή έκθεσης</value>
+  </data>
+  <data name="ReviewSuggestionTitle" xml:space="preserve">
+    <value>Έλεγχος προτεινόμενης καταχώρισης</value>
+  </data>
+  <data name="EntryTitle" xml:space="preserve">
+    <value>Καταχώριση έκθεσης</value>
+  </data>
+  <data name="EntryIntro" xml:space="preserve">
+    <value>Καταγράψτε τι συνέβη με δικά σας λόγια. Μόνο η κατηγορία, η ημερομηνία, η κλήση και η διάρκεια χρησιμοποιούνται στις μετρήσεις· όλα τα άλλα προστατεύονται.</value>
+  </data>
+  <data name="SuggestionReviewNotice" xml:space="preserve">
+    <value>Αυτή η καταχώριση προτάθηκε από τα αρχεία διαχείρισης κλήσεων. Ελέγξτε τα στοιχεία, προσθέστε ό,τι θέλετε και επιβεβαιώστε την - ή απορρίψτε την αν δεν σας αφορά.</value>
+  </data>
+  <data name="WhatHappenedHeader" xml:space="preserve">
+    <value>Πότε και τι</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Μέλος</value>
+  </data>
+  <data name="OccurredOnLabel" xml:space="preserve">
+    <value>Ημερομηνία και ώρα</value>
+  </data>
+  <data name="DurationMinutesLabel" xml:space="preserve">
+    <value>Διάρκεια (λεπτά)</value>
+  </data>
+  <data name="NoCallOption" xml:space="preserve">
+    <value>Χωρίς κλήση</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Λεπτομέρειες (προστατευμένες)</value>
+  </data>
+  <data name="DetailsHelp" xml:space="preserve">
+    <value>Αυτά τα στοιχεία προστατεύονται: μόνο εσείς και οι υπεύθυνοι ευεξίας της υπηρεσίας σας μπορούν να τα διαβάσουν και δεν χρησιμοποιούνται ποτέ στην αναζήτηση ή από λειτουργίες τεχνητής νοημοσύνης.</value>
+  </data>
+  <data name="SubstanceLabel" xml:space="preserve">
+    <value>Ουσία ή παράγοντας</value>
+  </data>
+  <data name="PpeWornLabel" xml:space="preserve">
+    <value>Εξοπλισμός προστασίας που φορέθηκε</value>
+  </data>
+  <data name="DecontaminationLabel" xml:space="preserve">
+    <value>Απολύμανση μετά</value>
+  </data>
+  <data name="NarrativeLabel" xml:space="preserve">
+    <value>Τι συνέβη</value>
+  </data>
+  <data name="HealthDetailsLabel" xml:space="preserve">
+    <value>Στοιχεία υγείας</value>
+  </data>
+  <data name="HealthDetailsHelp" xml:space="preserve">
+    <value>Προαιρετικό. Συμπτώματα, θεραπεία ή ό,τι θέλετε να καταγραφεί. Δεν πρόκειται για ιατρική αξιολόγηση.</value>
+  </data>
+  <data name="RemindersHeader" xml:space="preserve">
+    <value>Υπενθυμίσεις επετείου</value>
+  </data>
+  <data name="RemindersHelp" xml:space="preserve">
+    <value>Για κρίσιμα συμβάντα, μπορείτε να επιλέξετε μια διακριτική υπενθύμιση πριν από κάθε επέτειο - για εσάς ή/και για να ενημερωθεί η ομάδα υποστήριξης συναδέλφων. Μπορείτε να το αλλάξετε οποιαδήποτε στιγμή.</value>
+  </data>
+  <data name="RemindMemberLabel" xml:space="preserve">
+    <value>Υπενθύμισέ μου πριν από την επέτειο</value>
+  </data>
+  <data name="RemindPeerTeamLabel" xml:space="preserve">
+    <value>Ενημέρωσε την ομάδα υποστήριξης συναδέλφων πριν από την επέτειο</value>
+  </data>
+  <data name="NoPeerTeamHelp" xml:space="preserve">
+    <value>Η υπηρεσία σας δεν έχει ορίσει ακόμη ομάδα υποστήριξης συναδέλφων.</value>
+  </data>
+  <data name="ConfirmButton" xml:space="preserve">
+    <value>Επιβεβαίωση καταχώρισης</value>
+  </data>
+  <data name="SaveForLaterButton" xml:space="preserve">
+    <value>Αποθήκευση χωρίς επιβεβαίωση</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="BackButton" xml:space="preserve">
+    <value>Πίσω</value>
+  </data>
+  <data name="DismissLongButton" xml:space="preserve">
+    <value>Δεν με αφορά - απόρριψη</value>
+  </data>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>Αναφορά εκθέσεων μελών</value>
+  </data>
+  <data name="ReportIntro" xml:space="preserve">
+    <value>Μετρήσεις ανά μέλος για τους υπεύθυνους ευεξίας. Οι λεπτομέρειες μένουν στο αρχείο κάθε μέλους.</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>Φιλτράρισμα αναφοράς</value>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>Από</value>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>Έως</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Φιλτράρισμα</value>
+  </data>
+  <data name="MembersHeader" xml:space="preserve">
+    <value>Μέλη</value>
+  </data>
+  <data name="NoReportRows" xml:space="preserve">
+    <value>Δεν υπάρχουν καταχωρίσεις σε αυτή την περίοδο.</value>
+  </data>
+  <data name="LastExposureLabel" xml:space="preserve">
+    <value>Πιο πρόσφατη</value>
+  </data>
+  <data name="ScreeningFlaggedLabel" xml:space="preserve">
+    <value>Ενισχυμένος έλεγχος</value>
+  </data>
+  <data name="OpenFollowUpsValue" xml:space="preserve">
+    <value>{0} ανοιχτές ενέργειες</value>
+  </data>
+  <data name="OpenLogButton" xml:space="preserve">
+    <value>Άνοιγμα αρχείου</value>
+  </data>
+  <data name="RecentFlagsHeader" xml:space="preserve">
+    <value>Πρόσφατες σημάνσεις μετά την κλήση</value>
+  </data>
+  <data name="NoFlags" xml:space="preserve">
+    <value>Δεν έχει σημανθεί καμία κλήση.</value>
+  </data>
+  <data name="FlaggedOnLabel" xml:space="preserve">
+    <value>Σημάνθηκε</value>
+  </data>
+  <data name="SuggestionsColumn" xml:space="preserve">
+    <value>Προτάσεις</value>
+  </data>
+  <data name="FlagClearedLabel" xml:space="preserve">
+    <value>Καταργήθηκε</value>
+  </data>
+  <data name="SuggestionsBuiltValue" xml:space="preserve">
+    <value>{0} προτάθηκαν</value>
+  </data>
+  <data name="SuggestionsPendingLabel" xml:space="preserve">
+    <value>Αναμονή λήξης της κλήσης</value>
+  </data>
+  <data name="FlagCallTitle" xml:space="preserve">
+    <value>Παρακολούθηση ευεξίας: κλήση {0}</value>
+  </data>
+  <data name="FlagCallPickerTitle" xml:space="preserve">
+    <value>Σημάνσεις μετά την κλήση</value>
+  </data>
+  <data name="FlagCallIntro" xml:space="preserve">
+    <value>Σημάνετε μια κλήση ως κρίσιμο συμβάν ή έκθεση. Μόλις λήξει η κλήση, σε όσους τοποθετούν εκεί τα αρχεία διαχείρισης κλήσεων προτείνεται μια καταχώριση για έλεγχο. Κανείς δεν καταγράφεται χωρίς επιβεβαίωση.</value>
+  </data>
+  <data name="RecentCallsHeader" xml:space="preserve">
+    <value>Πρόσφατες κλήσεις</value>
+  </data>
+  <data name="NoRecentCalls" xml:space="preserve">
+    <value>Δεν υπάρχουν κλήσεις τις τελευταίες 30 ημέρες.</value>
+  </data>
+  <data name="CallActiveNotice" xml:space="preserve">
+    <value>Η κλήση είναι ακόμη ενεργή. Οι προτάσεις δημιουργούνται μόλις λήξει.</value>
+  </data>
+  <data name="CriticalIncidentHelp" xml:space="preserve">
+    <value>Μια δυνητικά τραυματική κλήση. Είναι ξεχωριστό από την προτεραιότητα αποστολής της κλήσης.</value>
+  </data>
+  <data name="NotFlaggedLabel" xml:space="preserve">
+    <value>Χωρίς σήμανση</value>
+  </data>
+  <data name="FlagButton" xml:space="preserve">
+    <value>Σήμανση</value>
+  </data>
+  <data name="ClearFlagButton" xml:space="preserve">
+    <value>Κατάργηση σήμανσης</value>
+  </data>
+  <data name="FlagPrivacyHelp" xml:space="preserve">
+    <value>Η σήμανση καταγράφει μόνο την κλήση και την κατηγορία. Τα μέλη αποφασίζουν τι θα προσθέσουν στο αρχείο τους.</value>
+  </data>
+  <data name="BackToCallButton" xml:space="preserve">
+    <value>Επιστροφή στην κλήση</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Ρυθμίσεις ευεξίας</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Ποιος διαβάζει τα αρχεία εκθέσεων των μελών, ποια είναι η ομάδα υποστήριξης συναδέλφων και για πόσο διατηρούνται οι καταχωρίσεις.</value>
+  </data>
+  <data name="WellnessOfficerRoleLabel" xml:space="preserve">
+    <value>Ρόλος υπεύθυνου ευεξίας</value>
+  </data>
+  <data name="WellnessOfficerRoleHelp" xml:space="preserve">
+    <value>Τα μέλη αυτού του ρόλου μπορούν να διαβάζουν το αρχείο εκθέσεων κάθε μέλους και να διαχειρίζονται τις σημάνσεις ελέγχου. Οι διαχειριστές δεν μπορούν να διαβάσουν τα αρχεία αν δεν έχουν αυτόν τον ρόλο.</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>Κανένας</value>
+  </data>
+  <data name="PeerTeamLabel" xml:space="preserve">
+    <value>Πιστοποίηση ομάδας υποστήριξης συναδέλφων</value>
+  </data>
+  <data name="PeerTeamHelp" xml:space="preserve">
+    <value>Τα μέλη με ισχύουσα πιστοποίηση αυτού του τύπου λαμβάνουν τις υπενθυμίσεις επετείου που επιλέγουν να μοιραστούν τα μέλη.</value>
+  </data>
+  <data name="RetentionYearsLabel" xml:space="preserve">
+    <value>Διατήρηση καταχωρίσεων (έτη)</value>
+  </data>
+  <data name="RetentionYearsHelp" xml:space="preserve">
+    <value>Τουλάχιστον 30 χρόνια (OSHA 29 CFR 1910.1020). Οι καταχωρίσεις υπό νομική δέσμευση διατηρούνται περισσότερο.</value>
+  </data>
+  <data name="WellnessFollowUpButton" xml:space="preserve">
+    <value>Παρακολούθηση ευεξίας</value>
+  </data>
+  <data name="WellnessFollowUpHelp" xml:space="preserve">
+    <value>Σημάνετε αυτή την κλήση ως κρίσιμο συμβάν ή έκθεση ώστε τα μέλη να την προσθέσουν στο αρχείο τους</value>
+  </data>
+  <data name="Msg.Recorded" xml:space="preserve">
+    <value>Η καταχώριση καταγράφηκε.</value>
+  </data>
+  <data name="Msg.Confirmed" xml:space="preserve">
+    <value>Η καταχώριση επιβεβαιώθηκε.</value>
+  </data>
+  <data name="Msg.Saved" xml:space="preserve">
+    <value>Αποθηκεύτηκε.</value>
+  </data>
+  <data name="Msg.Dismissed" xml:space="preserve">
+    <value>Η πρόταση απορρίφθηκε.</value>
+  </data>
+  <data name="Msg.Voided" xml:space="preserve">
+    <value>Η καταχώριση σημάνθηκε ως λανθασμένη.</value>
+  </data>
+  <data name="Msg.RemindersSaved" xml:space="preserve">
+    <value>Οι επιλογές υπενθύμισης αποθηκεύτηκαν.</value>
+  </data>
+  <data name="Msg.ScreeningSaved" xml:space="preserve">
+    <value>Η σήμανση ελέγχου αποθηκεύτηκε.</value>
+  </data>
+  <data name="Msg.ScreeningCleared" xml:space="preserve">
+    <value>Ο ενισχυμένος έλεγχος ολοκληρώθηκε.</value>
+  </data>
+  <data name="Msg.FollowUpAdded" xml:space="preserve">
+    <value>Η ενέργεια παρακολούθησης προστέθηκε.</value>
+  </data>
+  <data name="Msg.FollowUpCompleted" xml:space="preserve">
+    <value>Η ενέργεια σημάνθηκε ως ολοκληρωμένη.</value>
+  </data>
+  <data name="Msg.FollowUpCancelled" xml:space="preserve">
+    <value>Η ενέργεια ακυρώθηκε.</value>
+  </data>
+  <data name="Msg.CallFlagged" xml:space="preserve">
+    <value>Η κλήση σημάνθηκε. Οι προτάσεις θα δοθούν μόλις λήξει.</value>
+  </data>
+  <data name="Msg.CallFlagCleared" xml:space="preserve">
+    <value>Η σήμανση καταργήθηκε. Οι προτάσεις που δεν επιβεβαιώθηκαν αφαιρέθηκαν.</value>
+  </data>
+  <data name="Msg.SettingsSaved" xml:space="preserve">
+    <value>Οι ρυθμίσεις ευεξίας αποθηκεύτηκαν.</value>
+  </data>
+  <data name="Error.Generic" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση. Ελέγξτε την καταχώριση και δοκιμάστε ξανά.</value>
+  </data>
+  <data name="Error.NotAllowed" xml:space="preserve">
+    <value>Δεν έχετε πρόσβαση σε αυτό.</value>
+  </data>
+  <data name="Error.ExportFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η δημιουργία της εξαγωγής. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="Error.role_not_found" xml:space="preserve">
+    <value>Ο ρόλος δεν βρέθηκε.</value>
+  </data>
+  <data name="Error.certification_type_not_found" xml:space="preserve">
+    <value>Ο τύπος πιστοποίησης δεν βρέθηκε.</value>
+  </data>
+  <data name="Error.member_not_found" xml:space="preserve">
+    <value>Το μέλος δεν βρέθηκε σε αυτή την υπηρεσία.</value>
+  </data>
+  <data name="Error.entry_not_found" xml:space="preserve">
+    <value>Η καταχώριση δεν βρέθηκε.</value>
+  </data>
+  <data name="Error.entry_closed" xml:space="preserve">
+    <value>Η καταχώριση έχει κλείσει και δεν μπορεί πλέον να αλλάξει.</value>
+  </data>
+  <data name="Error.entry_changed" xml:space="preserve">
+    <value>Κάποιος άλλος άλλαξε την καταχώριση. Ανοίξτε την ξανά και δοκιμάστε πάλι.</value>
+  </data>
+  <data name="Error.not_a_suggestion" xml:space="preserve">
+    <value>Μόνο μια προτεινόμενη καταχώριση μπορεί να επιβεβαιωθεί ή να απορριφθεί.</value>
+  </data>
+  <data name="Error.not_confirmed" xml:space="preserve">
+    <value>Μόνο μια επιβεβαιωμένη καταχώριση μπορεί να αλλάξει με αυτόν τον τρόπο.</value>
+  </data>
+  <data name="Error.reminders_critical_incident_only" xml:space="preserve">
+    <value>Οι υπενθυμίσεις επετείου προσφέρονται μόνο για κρίσιμα συμβάντα.</value>
+  </data>
+  <data name="Error.category_required" xml:space="preserve">
+    <value>Επιλέξτε κατηγορία.</value>
+  </data>
+  <data name="Error.date_invalid" xml:space="preserve">
+    <value>Εισαγάγετε έγκυρη ημερομηνία.</value>
+  </data>
+  <data name="Error.duration_invalid" xml:space="preserve">
+    <value>Εισαγάγετε διάρκεια από 0 έως 10.080 λεπτά.</value>
+  </data>
+  <data name="Error.call_not_found" xml:space="preserve">
+    <value>Η κλήση δεν βρέθηκε σε αυτή την υπηρεσία.</value>
+  </data>
+  <data name="Error.protected_write_refused" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση των προστατευμένων στοιχείων. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="Error.flag_not_found" xml:space="preserve">
+    <value>Η σήμανση δεν βρέθηκε.</value>
+  </data>
+  <data name="Error.follow_up_kind_required" xml:space="preserve">
+    <value>Επιλέξτε το είδος της ενέργειας.</value>
+  </data>
+  <data name="Error.follow_up_assignee_invalid" xml:space="preserve">
+    <value>Μια ενέργεια μπορεί να ανατεθεί στο μέλος ή σε υπεύθυνο ευεξίας.</value>
+  </data>
+  <data name="Error.follow_up_closed" xml:space="preserve">
+    <value>Η ενέργεια έχει ήδη κλείσει.</value>
+  </data>
+  <data name="Error.follow_up_not_found" xml:space="preserve">
+    <value>Η ενέργεια δεν βρέθηκε.</value>
+  </data>
+  <data name="Category.Carcinogen" xml:space="preserve">
+    <value>Καρκινογόνο</value>
+  </data>
+  <data name="Category.BloodbornePathogen" xml:space="preserve">
+    <value>Αιματογενές παθογόνο</value>
+  </data>
+  <data name="Category.HazardousSubstance" xml:space="preserve">
+    <value>Επικίνδυνη ουσία</value>
+  </data>
+  <data name="Category.CriticalIncident" xml:space="preserve">
+    <value>Κρίσιμο συμβάν</value>
+  </data>
+  <data name="Category.Other" xml:space="preserve">
+    <value>Άλλο</value>
+  </data>
+  <data name="Status.Suggested" xml:space="preserve">
+    <value>Σε αναμονή ελέγχου</value>
+  </data>
+  <data name="Status.Confirmed" xml:space="preserve">
+    <value>Επιβεβαιωμένο</value>
+  </data>
+  <data name="Status.Dismissed" xml:space="preserve">
+    <value>Απορρίφθηκε</value>
+  </data>
+  <data name="Status.Voided" xml:space="preserve">
+    <value>Καταχωρίστηκε κατά λάθος</value>
+  </data>
+  <data name="FollowUpKind.screening_appointment" xml:space="preserve">
+    <value>Ραντεβού ελέγχου</value>
+  </data>
+  <data name="FollowUpKind.baseline_test" xml:space="preserve">
+    <value>Εξέταση αναφοράς</value>
+  </data>
+  <data name="FollowUpKind.medical_review" xml:space="preserve">
+    <value>Ιατρική επανεξέταση</value>
+  </data>
+  <data name="FollowUpKind.wellness_check_in" xml:space="preserve">
+    <value>Συνάντηση ευεξίας</value>
+  </data>
+  <data name="FollowUpKind.other" xml:space="preserve">
+    <value>Άλλη ενέργεια</value>
+  </data>
+  <data name="FollowUpState.Open" xml:space="preserve">
+    <value>Ανοιχτή</value>
+  </data>
+  <data name="FollowUpState.Acknowledged" xml:space="preserve">
+    <value>Ελήφθη υπόψη</value>
+  </data>
+  <data name="FollowUpState.Completed" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+  </data>
+  <data name="FollowUpState.Cancelled" xml:space="preserve">
+    <value>Ακυρώθηκε</value>
+  </data>
+  <data name="Basis.status" xml:space="preserve">
+    <value>κατάσταση προσωπικού</value>
+  </data>
+  <data name="Basis.unit_crew" xml:space="preserve">
+    <value>πλήρωμα οχήματος</value>
+  </data>
+  <data name="Basis.check_in" xml:space="preserve">
+    <value>δήλωση παρουσίας</value>
+  </data>
+  <data name="Basis.unit_response" xml:space="preserve">
+    <value>χρόνοι απόκρισης οχήματος</value>
+  </data>
+  <data name="Doc.Title" xml:space="preserve">
+    <value>Αρχείο εκθέσεων και κρίσιμων συμβάντων</value>
+  </data>
+  <data name="Doc.Member" xml:space="preserve">
+    <value>Μέλος</value>
+  </data>
+  <data name="Doc.Date" xml:space="preserve">
+    <value>Ημερομηνία</value>
+  </data>
+  <data name="Doc.Category" xml:space="preserve">
+    <value>Κατηγορία</value>
+  </data>
+  <data name="Doc.Status" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="Doc.Call" xml:space="preserve">
+    <value>Κλήση</value>
+  </data>
+  <data name="Doc.Duration" xml:space="preserve">
+    <value>Διάρκεια (ω:λλ)</value>
+  </data>
+  <data name="Doc.Substance" xml:space="preserve">
+    <value>Ουσία ή παράγοντας</value>
+  </data>
+  <data name="Doc.PpeWorn" xml:space="preserve">
+    <value>ΜΑΠ που φορέθηκαν</value>
+  </data>
+  <data name="Doc.Decontamination" xml:space="preserve">
+    <value>Απολύμανση</value>
+  </data>
+  <data name="Doc.Narrative" xml:space="preserve">
+    <value>Τι συνέβη</value>
+  </data>
+  <data name="Doc.HealthDetails" xml:space="preserve">
+    <value>Στοιχεία υγείας</value>
+  </data>
+  <data name="Doc.Withheld" xml:space="preserve">
+    <value>Δεν εμφανίζεται (προστατευμένο)</value>
+  </data>
+  <data name="Doc.GeneratedOn" xml:space="preserve">
+    <value>Δημιουργήθηκε {0}</value>
+  </data>
+  <data name="Doc.Retention" xml:space="preserve">
+    <value>Η υπηρεσία σας διατηρεί αυτά τα αρχεία για τουλάχιστον 30 χρόνια.</value>
+  </data>
+  <data name="Doc.CriticalIncidents" xml:space="preserve">
+    <value>Κρίσιμα συμβάντα</value>
+  </data>
+  <data name="Doc.ReportTitle" xml:space="preserve">
+    <value>Αναφορά εκθέσεων μελών</value>
+  </data>
+  <data name="Doc.Total" xml:space="preserve">
+    <value>Επιβεβαιωμένες καταχωρίσεις</value>
+  </data>
+  <data name="Doc.PendingSuggestions" xml:space="preserve">
+    <value>Σε αναμονή ελέγχου</value>
+  </data>
+  <data name="Doc.LastExposure" xml:space="preserve">
+    <value>Πιο πρόσφατη</value>
+  </data>
+  <data name="Doc.ScreeningFlagged" xml:space="preserve">
+    <value>Ενισχυμένος έλεγχος</value>
+  </data>
+  <data name="Doc.OpenFollowUps" xml:space="preserve">
+    <value>Ανοιχτές ενέργειες</value>
+  </data>
+  <data name="Doc.Yes" xml:space="preserve">
+    <value>Ναι</value>
+  </data>
+</root>

@@ -373,4 +373,5 @@
   <data name="TimeSourceCallWindowHelp" xml:space="preserve"><value>Підрозділ жодного разу не повідомив «На місці» на цьому виклику, тому рядок нараховує час від реєстрації виклику до його закриття. Перевірте кількість перед надсиланням.</value></data>
   <data name="TimeSourceUnitStatus" xml:space="preserve"><value>час на місці зі статусу підрозділу</value></data>
   <data name="TimeSourceUnitStatusHelp" xml:space="preserve"><value>Підрозділ сам пов’язав свій статус «На місці» та статус, що його завершив, із цим викликом.</value></data>
+  <data name="invoicing_approval_required" xml:space="preserve"><value>Цей рахунок потрібно затвердити перед надсиланням. Подайте його на затвердження або надішліть після затвердження.</value></data>
 </root>

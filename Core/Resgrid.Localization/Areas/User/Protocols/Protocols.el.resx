@@ -622,4 +622,2470 @@
   <data name="PanelChoose" xml:space="preserve">
     <value>Επιλέξτε πρωτόκολλο…</value>
   </data>
+  <data name="AcknowledgmentLabel" xml:space="preserve">
+    <value>Βεβαίωση ανάγνωσης</value>
+  </data>
+  <data name="AddCategoryHeader" xml:space="preserve">
+    <value>Προσθήκη κατηγορίας</value>
+  </data>
+  <data name="AddCommentButton" xml:space="preserve">
+    <value>Προσθήκη σχολίου</value>
+  </data>
+  <data name="AiLabel" xml:space="preserve">
+    <value>AI</value>
+  </data>
+  <data name="AllKinds" xml:space="preserve">
+    <value>Όλα τα είδη</value>
+  </data>
+  <data name="AllProtocols" xml:space="preserve">
+    <value>Όλα τα πρωτόκολλα</value>
+  </data>
+  <data name="AnyApproverLabel" xml:space="preserve">
+    <value>Οποιοσδήποτε εγκρίνων</value>
+  </data>
+  <data name="AnyAudience" xml:space="preserve">
+    <value>Οποιοδήποτε κοινό</value>
+  </data>
+  <data name="AnyKindLabel" xml:space="preserve">
+    <value>Οποιοδήποτε είδος</value>
+  </data>
+  <data name="AnyOwner" xml:space="preserve">
+    <value>Οποιοσδήποτε υπεύθυνος</value>
+  </data>
+  <data name="ApprovalStepsHeader" xml:space="preserve">
+    <value>Βήματα έγκρισης</value>
+  </data>
+  <data name="ApprovalStepsHelp" xml:space="preserve">
+    <value>Επιλέξτε τους ρόλους ή τα μέλη που εγκρίνουν, με τη σειρά. Αφήστε κενό για ένα μόνο βήμα, για το οποίο μπορεί να αποφασίσει οποιοδήποτε μέλος με το δικαίωμα «Έγκριση και δημοσίευση πρωτοκόλλων».</value>
+  </data>
+  <data name="ApproveHeader" xml:space="preserve">
+    <value>Έγκριση αυτής της έκδοσης</value>
+  </data>
+  <data name="ApprovedLabel" xml:space="preserve">
+    <value>Εγκρίθηκε</value>
+  </data>
+  <data name="AudienceCertificationLabel" xml:space="preserve">
+    <value>Πιστοποίηση</value>
+  </data>
+  <data name="AudienceEveryoneLabel" xml:space="preserve">
+    <value>Όλοι</value>
+  </data>
+  <data name="AudienceEveryoneOption" xml:space="preserve">
+    <value>Όλοι στο τμήμα</value>
+  </data>
+  <data name="AudienceGroupLabel" xml:space="preserve">
+    <value>Ομάδα</value>
+  </data>
+  <data name="AudienceHelp" xml:space="preserve">
+    <value>Μόνο τα μέλη για τα οποία προορίζεται το πρωτόκολλο μπορούν να το διαβάσουν, στη βιβλιοθήκη, στις εφαρμογές και στην αναζήτηση. Οι συντονιστές διαβάζουν πάντα τα πρωτόκολλα αποστολής, και οι συντάκτες και οι εγκρίνοντες διαβάζουν όλα τα πρωτόκολλα.</value>
+  </data>
+  <data name="AudienceLabel" xml:space="preserve">
+    <value>Κοινό</value>
+  </data>
+  <data name="AudienceRestrictedLabel" xml:space="preserve">
+    <value>Περιορισμένο κοινό</value>
+  </data>
+  <data name="AudienceRestrictedOption" xml:space="preserve">
+    <value>Μόνο μέλη αυτών των ομάδων, ρόλων, βαρδιών, τύπων μονάδων ή πιστοποιήσεων</value>
+  </data>
+  <data name="AudienceRoleLabel" xml:space="preserve">
+    <value>Ρόλος</value>
+  </data>
+  <data name="AudienceShiftLabel" xml:space="preserve">
+    <value>Βάρδια</value>
+  </data>
+  <data name="AudienceUnitTypeLabel" xml:space="preserve">
+    <value>Τύπος μονάδας</value>
+  </data>
+  <data name="AutosaveFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αυτόματη αποθήκευση του πρόχειρου. Αποθηκεύστε τη σελίδα για να διατηρήσετε τις αλλαγές σας.</value>
+  </data>
+  <data name="AutosaveSaved" xml:space="preserve">
+    <value>Το πρόχειρο αποθηκεύτηκε</value>
+  </data>
+  <data name="AutosaveSaving" xml:space="preserve">
+    <value>Αποθήκευση του πρόχειρου...</value>
+  </data>
+  <data name="BackButton" xml:space="preserve">
+    <value>Πίσω</value>
+  </data>
+  <data name="BackToProtocolButton" xml:space="preserve">
+    <value>Επιστροφή στο πρωτόκολλο</value>
+  </data>
+  <data name="CallColumn" xml:space="preserve">
+    <value>Κλήση</value>
+  </data>
+  <data name="CallsColumn" xml:space="preserve">
+    <value>Κλήσεις</value>
+  </data>
+  <data name="CategoriesHeader" xml:space="preserve">
+    <value>Κατηγορίες</value>
+  </data>
+  <data name="CategoriesIntro" xml:space="preserve">
+    <value>Οργανώστε τη βιβλιοθήκη σε ένθετες κατηγορίες και ορίστε ποιος εγκρίνει τις εκδόσεις της καθεμιάς.</value>
+  </data>
+  <data name="CategoriesTab" xml:space="preserve">
+    <value>Κατηγορίες</value>
+  </data>
+  <data name="CategoryLabel" xml:space="preserve">
+    <value>Κατηγορία</value>
+  </data>
+  <data name="ChangeSummaryHelp" xml:space="preserve">
+    <value>Τι άλλαξε και γιατί. Απαιτείται για τη δημοσίευση και φυλάσσεται μαζί με την έκδοση.</value>
+  </data>
+  <data name="ChangeSummaryLabel" xml:space="preserve">
+    <value>Σύνοψη αλλαγών</value>
+  </data>
+  <data name="ChangesSinceHeader" xml:space="preserve">
+    <value>Αλλαγές από {0}</value>
+  </data>
+  <data name="CitedVersionLabel" xml:space="preserve">
+    <value>Κείμενο όπως διαβιβάστηκε ({0})</value>
+  </data>
+  <data name="CommentRefused" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση του σχολίου.</value>
+  </data>
+  <data name="CompareButton" xml:space="preserve">
+    <value>Σύγκριση</value>
+  </data>
+  <data name="CompareFromLabel" xml:space="preserve">
+    <value>Από</value>
+  </data>
+  <data name="CompareHeader" xml:space="preserve">
+    <value>Σύγκριση εκδόσεων</value>
+  </data>
+  <data name="CompareToLabel" xml:space="preserve">
+    <value>Προς</value>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>Κωδικός περιεχομένου</value>
+  </data>
+  <data name="ContentLockedNotice" xml:space="preserve">
+    <value>Αυτή η έκδοση βρίσκεται σε έλεγχο ή έχει εγκριθεί, οπότε το κείμενό της είναι κλειδωμένο. Ανακαλέστε την για να επεξεργαστείτε ξανά το κείμενο.</value>
+  </data>
+  <data name="CopyButton" xml:space="preserve">
+    <value>Αντιγραφή ως νέο</value>
+  </data>
+  <data name="CreateDraftButton" xml:space="preserve">
+    <value>Δημιουργία πρόχειρου</value>
+  </data>
+  <data name="DefaultApprovalStep" xml:space="preserve">
+    <value>Ένα βήμα, οποιοσδήποτε εγκρίνων</value>
+  </data>
+  <data name="DefaultReviewIntervalHelp" xml:space="preserve">
+    <value>Τα νέα πρωτόκολλα ξεκινούν με αυτό το διάστημα επανεξέτασης σε ημέρες. Το 0 σημαίνει χωρίς κύκλο επανεξέτασης.</value>
+  </data>
+  <data name="DefaultReviewIntervalLabel" xml:space="preserve">
+    <value>Προεπιλεγμένο διάστημα επανεξέτασης (ημέρες)</value>
+  </data>
+  <data name="DeleteCategoryConfirm" xml:space="preserve">
+    <value>Διαγραφή της κατηγορίας</value>
+  </data>
+  <data name="DeletedTextLabel" xml:space="preserve">
+    <value>Κείμενο που αφαιρέθηκε</value>
+  </data>
+  <data name="DepartmentLegalHoldCheckbox" xml:space="preserve">
+    <value>Νομική δέσμευση σε ολόκληρη τη βιβλιοθήκη</value>
+  </data>
+  <data name="DepartmentLegalHoldHelp" xml:space="preserve">
+    <value>Όσο είναι ενεργή, καμία έκδοση δεν εκκαθαρίζεται, ό,τι κι αν ορίζουν οι περίοδοι διατήρησης.</value>
+  </data>
+  <data name="DiscardDraftButton" xml:space="preserve">
+    <value>Απόρριψη πρόχειρου</value>
+  </data>
+  <data name="DiscardDraftConfirm" xml:space="preserve">
+    <value>Απόρριψη αυτού του πρόχειρου; Το κείμενό του διαγράφεται.</value>
+  </data>
+  <data name="DraftDiscardedMessage" xml:space="preserve">
+    <value>Το πρόχειρο απορρίφθηκε.</value>
+  </data>
+  <data name="EditDraftButton" xml:space="preserve">
+    <value>Επεξεργασία του πρόχειρου</value>
+  </data>
+  <data name="EditingDraftCallout" xml:space="preserve">
+    <value>Επεξεργάζεστε το πρόχειρο ({0}), που αποθηκεύτηκε τελευταία από {1} στις {2}. Το ισχύον κείμενο δεν αλλάζει μέχρι να εγκριθεί και να δημοσιευτεί αυτή η έκδοση.</value>
+  </data>
+  <data name="EditingNoDraftCallout" xml:space="preserve">
+    <value>Η έκδοση {0} είναι σε ισχύ. Αν αλλάξετε το κείμενο και το αποθηκεύσετε, ξεκινά μια νέα πρόχειρη έκδοση.</value>
+  </data>
+  <data name="EffectiveColumn" xml:space="preserve">
+    <value>Ισχύει από</value>
+  </data>
+  <data name="EffectiveOnHelp" xml:space="preserve">
+    <value>Αφήστε κενό για δημοσίευση τώρα. Μια μεταγενέστερη ημερομηνία και ώρα ({0}) προγραμματίζει την έκδοση· τίθεται σε ισχύ αυτόματα.</value>
+  </data>
+  <data name="EffectiveOnLabel" xml:space="preserve">
+    <value>Σε ισχύ από</value>
+  </data>
+  <data name="ErrorCategoryName" xml:space="preserve">
+    <value>Εισαγάγετε όνομα κατηγορίας.</value>
+  </data>
+  <data name="ErrorKind" xml:space="preserve">
+    <value>Επιλέξτε είδος πρωτοκόλλου.</value>
+  </data>
+  <data name="ExcludeFromAiCheckbox" xml:space="preserve">
+    <value>Εξαίρεση από το AI</value>
+  </data>
+  <data name="ExcludeFromAiHelp" xml:space="preserve">
+    <value>Κρατήστε αυτό το πρωτόκολλο εκτός κάθε ευρετηρίου και απάντησης AI (για αδειοδοτημένο ή ευαίσθητο περιεχόμενο).</value>
+  </data>
+  <data name="ExcludedFromAi" xml:space="preserve">
+    <value>Εξαιρείται από το AI</value>
+  </data>
+  <data name="ExpiresLabel" xml:space="preserve">
+    <value>Λήγει</value>
+  </data>
+  <data name="ExpiresOnLabel" xml:space="preserve">
+    <value>Λήγει στις</value>
+  </data>
+  <data name="ExportButton" xml:space="preserve">
+    <value>Εξαγωγή</value>
+  </data>
+  <data name="FavoriteButton" xml:space="preserve">
+    <value>Προσθήκη στα αγαπημένα</value>
+  </data>
+  <data name="FavoriteLabel" xml:space="preserve">
+    <value>Αγαπημένο</value>
+  </data>
+  <data name="FavoritesHeader" xml:space="preserve">
+    <value>Αγαπημένα</value>
+  </data>
+  <data name="FirstVersionHeader" xml:space="preserve">
+    <value>Πρώτη έκδοση</value>
+  </data>
+  <data name="FormerMemberOption" xml:space="preserve">
+    <value>Πρώην μέλος</value>
+  </data>
+  <data name="FullTextToggle" xml:space="preserve">
+    <value>Εμφάνιση ολόκληρου του κειμένου</value>
+  </data>
+  <data name="ImportButton" xml:space="preserve">
+    <value>Εισαγωγή</value>
+  </data>
+  <data name="ImportErrorFile" xml:space="preserve">
+    <value>Επιλέξτε αρχείο JSON έως 10 MB.</value>
+  </data>
+  <data name="ImportErrorFormat" xml:space="preserve">
+    <value>Το αρχείο δεν είναι εξαγωγή πρωτοκόλλων του Resgrid (μορφή resgrid-protocols, έκδοση 1).</value>
+  </data>
+  <data name="ImportErrorNotAuthorized" xml:space="preserve">
+    <value>Δεν έχετε δικαίωμα σύνταξης πρωτοκόλλων.</value>
+  </data>
+  <data name="ImportErrorTooMany" xml:space="preserve">
+    <value>Το αρχείο περιέχει πάρα πολλά πρωτόκολλα. Εισαγάγετε έως 500 τη φορά.</value>
+  </data>
+  <data name="ImportFileLabel" xml:space="preserve">
+    <value>Αρχείο εξαγωγής πρωτοκόλλων (JSON)</value>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>Εισαγάγετε πρωτόκολλα που εξήχθησαν από το Resgrid ή γράφτηκαν στην ίδια ανοιχτή μορφή. Κάθε πρωτόκολλο δημιουργείται ως πρόχειρο για έλεγχο και δημοσίευση· η εισαγωγή δεν δημοσιεύει τίποτα. Οι προτεραιότητες, οι τύποι κλήσεων, οι κατηγορίες, οι ομάδες, οι ρόλοι και οι βάρδιες αντιστοιχίζονται με εκείνες του τμήματος βάσει ονόματος.</value>
+  </data>
+  <data name="ImportIntro" xml:space="preserve">
+    <value>Φέρτε πρωτόκολλα από εξαγωγή JSON.</value>
+  </data>
+  <data name="ImportSkippedHeader" xml:space="preserve">
+    <value>Δεν εισήχθησαν</value>
+  </data>
+  <data name="ImportTab" xml:space="preserve">
+    <value>Εισαγωγή</value>
+  </data>
+  <data name="ImportWarningsHeader" xml:space="preserve">
+    <value>Εισήχθησαν με αλλαγές</value>
+  </data>
+  <data name="ImportedMessage" xml:space="preserve">
+    <value>Εισήχθησαν {0} πρωτόκολλα ως πρόχειρα.</value>
+  </data>
+  <data name="InForceLabel" xml:space="preserve">
+    <value>Σε ισχύ</value>
+  </data>
+  <data name="InsertedLabel" xml:space="preserve">
+    <value>Κείμενο που προστέθηκε</value>
+  </data>
+  <data name="KindClinicalGuideline" xml:space="preserve">
+    <value>Κλινική οδηγία</value>
+  </data>
+  <data name="KindDispatch" xml:space="preserve">
+    <value>Πρωτόκολλο αποστολής</value>
+  </data>
+  <data name="KindHelp" xml:space="preserve">
+    <value>Τα πρωτόκολλα αποστολής και οι διαδικασίες μπορούν να προτείνονται σε κλήσεις μέσω των εναυσμάτων τους. Οι πολιτικές και οι SOG ζητούν από προεπιλογή από τα μέλη βεβαίωση ανάγνωσης.</value>
+  </data>
+  <data name="KindHelpClinicalGuideline" xml:space="preserve">
+    <value>Κλινική καθοδήγηση για τη φροντίδα ασθενών.</value>
+  </data>
+  <data name="KindHelpDispatch" xml:space="preserve">
+    <value>Αντιστοιχίζεται σε κλήσεις βάσει τύπου, προτεραιότητας και ώρας, με βασικές ερωτήσεις.</value>
+  </data>
+  <data name="KindHelpPolicy" xml:space="preserve">
+    <value>Πολιτική του τμήματος την οποία τα μέλη αναμένεται να βεβαιώσουν ότι διάβασαν.</value>
+  </data>
+  <data name="KindHelpProcedure" xml:space="preserve">
+    <value>Διαδικασία βήμα προς βήμα ή λίστα ελέγχου· μπορεί να προτείνεται σε κλήσεις.</value>
+  </data>
+  <data name="KindHelpReference" xml:space="preserve">
+    <value>Υλικό αναφοράς: χάρτες, επαφές, πίνακες.</value>
+  </data>
+  <data name="KindHelpSog" xml:space="preserve">
+    <value>Τυποποιημένη επιχειρησιακή διαδικασία ή οδηγία.</value>
+  </data>
+  <data name="KindLabel" xml:space="preserve">
+    <value>Είδος</value>
+  </data>
+  <data name="KindPolicy" xml:space="preserve">
+    <value>Πολιτική</value>
+  </data>
+  <data name="KindProcedure" xml:space="preserve">
+    <value>Διαδικασία ή λίστα ελέγχου</value>
+  </data>
+  <data name="KindReference" xml:space="preserve">
+    <value>Υλικό αναφοράς</value>
+  </data>
+  <data name="KindSog" xml:space="preserve">
+    <value>SOP / SOG</value>
+  </data>
+  <data name="KpiDueForReview" xml:space="preserve">
+    <value>Προς επανεξέταση (30 ημέρες)</value>
+  </data>
+  <data name="KpiInReview" xml:space="preserve">
+    <value>Σε έλεγχο</value>
+  </data>
+  <data name="KpiPublished" xml:space="preserve">
+    <value>Δημοσιευμένα</value>
+  </data>
+  <data name="LastReviewedLabel" xml:space="preserve">
+    <value>Τελευταία επανεξέταση</value>
+  </data>
+  <data name="LegalHoldCheckbox" xml:space="preserve">
+    <value>Νομική δέσμευση</value>
+  </data>
+  <data name="LegalHoldHelp" xml:space="preserve">
+    <value>Καμία έκδοση αυτού του πρωτοκόλλου δεν εκκαθαρίζεται όσο ισχύει η δέσμευση.</value>
+  </data>
+  <data name="LegalHoldLabel" xml:space="preserve">
+    <value>Νομική δέσμευση</value>
+  </data>
+  <data name="LicenseLabel" xml:space="preserve">
+    <value>Άδεια χρήσης</value>
+  </data>
+  <data name="LicensedContentCheckbox" xml:space="preserve">
+    <value>Περιεχόμενο με άδεια χρήσης</value>
+  </data>
+  <data name="LicensedContentHelp" xml:space="preserve">
+    <value>Περιεχόμενο τρίτων με άδεια χρήσης: δεν κοινοποιείται ποτέ εκτός του τμήματος ούτε δημοσιοποιείται.</value>
+  </data>
+  <data name="LicensedContentLabel" xml:space="preserve">
+    <value>Περιεχόμενο με άδεια χρήσης</value>
+  </data>
+  <data name="LifecycleErrorAlreadyDecided" xml:space="preserve">
+    <value>Για αυτό το βήμα έχει ήδη ληφθεί απόφαση, ή εγκρίνατε προηγούμενο βήμα αυτού του ελέγχου.</value>
+  </data>
+  <data name="LifecycleErrorArtifactChanged" xml:space="preserve">
+    <value>Το κείμενο δεν ταιριάζει πλέον με αυτό που υπογράφηκε. Η έκδοση πρέπει να ελεγχθεί ξανά.</value>
+  </data>
+  <data name="LifecycleErrorChangeSummaryRequired" xml:space="preserve">
+    <value>Εισαγάγετε σύνοψη αλλαγών για να δημοσιεύσετε.</value>
+  </data>
+  <data name="LifecycleErrorDraftExists" xml:space="preserve">
+    <value>Αυτό το πρωτόκολλο έχει ήδη ανοιχτό πρόχειρο.</value>
+  </data>
+  <data name="LifecycleErrorEffectiveDateInPast" xml:space="preserve">
+    <value>Η ημερομηνία έναρξης ισχύος είναι στο παρελθόν.</value>
+  </data>
+  <data name="LifecycleErrorEmptyContent" xml:space="preserve">
+    <value>Το πρόχειρο δεν έχει κείμενο. Γράψτε το πρωτόκολλο πριν το υποβάλετε.</value>
+  </data>
+  <data name="LifecycleErrorInvalidInput" xml:space="preserve">
+    <value>Ορισμένες τιμές δεν είναι έγκυρες.</value>
+  </data>
+  <data name="LifecycleErrorNotApproved" xml:space="preserve">
+    <value>Μόνο μια εγκεκριμένη έκδοση μπορεί να δημοσιευτεί.</value>
+  </data>
+  <data name="LifecycleErrorNotAuthorized" xml:space="preserve">
+    <value>Δεν έχετε δικαίωμα για αυτήν την ενέργεια.</value>
+  </data>
+  <data name="LifecycleErrorNotDraft" xml:space="preserve">
+    <value>Μόνο ένα πρόχειρο μπορεί να αλλάξει ή να υποβληθεί.</value>
+  </data>
+  <data name="LifecycleErrorNotFound" xml:space="preserve">
+    <value>Το πρωτόκολλο ή η έκδοση δεν βρέθηκε.</value>
+  </data>
+  <data name="LifecycleErrorNotInReview" xml:space="preserve">
+    <value>Αυτή η έκδοση δεν αναμένει έλεγχο.</value>
+  </data>
+  <data name="LifecycleErrorNotPublished" xml:space="preserve">
+    <value>Αυτό το πρωτόκολλο δεν έχει έκδοση σε ισχύ.</value>
+  </data>
+  <data name="LifecycleErrorOpenComments" xml:space="preserve">
+    <value>Επιλύστε τα ανοιχτά σχόλια ελέγχου πριν από την έγκριση.</value>
+  </data>
+  <data name="LifecycleErrorPasskeyRequired" xml:space="preserve">
+    <value>Το τμήμα σας απαιτεί κλειδί πρόσβασης για αυτήν την υπογραφή. Χρησιμοποιήστε την επιλογή «Υπογραφή με κλειδί πρόσβασης».</value>
+  </data>
+  <data name="LifecycleErrorRetentionProtected" xml:space="preserve">
+    <value>Οι υποβληθείσες και οι δημοσιευμένες εκδόσεις διατηρούνται και δεν μπορούν να διαγραφούν.</value>
+  </data>
+  <data name="LifecycleErrorSignatureRequired" xml:space="preserve">
+    <value>Αυτή η υπογραφή χρειάζεται νέο έλεγχο ταυτότητας. Επαληθεύστε με τον δεύτερο παράγοντα ή με κλειδί πρόσβασης και υπογράψτε ξανά.</value>
+  </data>
+  <data name="LifecycleErrorStaleCopy" xml:space="preserve">
+    <value>Κάποιος άλλος άλλαξε αυτό το πρωτόκολλο αφότου το ανοίξατε.</value>
+  </data>
+  <data name="LifecycleLabel" xml:space="preserve">
+    <value>Κύκλος ζωής</value>
+  </data>
+  <data name="LoggedColumn" xml:space="preserve">
+    <value>Καταγράφηκε</value>
+  </data>
+  <data name="MajorVersionOption" xml:space="preserve">
+    <value>Κύρια (επόμενος ακέραιος)</value>
+  </data>
+  <data name="MembersLabel" xml:space="preserve">
+    <value>Μέλη</value>
+  </data>
+  <data name="MessageLabel" xml:space="preserve">
+    <value>Μήνυμα</value>
+  </data>
+  <data name="MinorVersionOption" xml:space="preserve">
+    <value>Δευτερεύουσα (επόμενο δεκαδικό)</value>
+  </data>
+  <data name="NewVersionButton" xml:space="preserve">
+    <value>Νέα έκδοση</value>
+  </data>
+  <data name="NextButton" xml:space="preserve">
+    <value>Επόμενο</value>
+  </data>
+  <data name="NoCallsYet" xml:space="preserve">
+    <value>Καμία κλήση δεν έχει παραπέμψει ακόμη σε αυτό το πρωτόκολλο.</value>
+  </data>
+  <data name="NoCategoriesYet" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη κατηγορίες.</value>
+  </data>
+  <data name="NoCategoryOption" xml:space="preserve">
+    <value>Χωρίς κατηγορία</value>
+  </data>
+  <data name="NoOutline" xml:space="preserve">
+    <value>Οι επικεφαλίδες του κειμένου σχηματίζουν εδώ τη διάρθρωση.</value>
+  </data>
+  <data name="NoReviewCycle" xml:space="preserve">
+    <value>Χωρίς κύκλο επανεξέτασης</value>
+  </data>
+  <data name="NoTextChanges" xml:space="preserve">
+    <value>Το κείμενο είναι ίδιο.</value>
+  </data>
+  <data name="NotCurrentVersionNotice" xml:space="preserve">
+    <value>Διαβάζετε {0}. Η έκδοση σε ισχύ είναι {1}.</value>
+  </data>
+  <data name="NotPublishedYet" xml:space="preserve">
+    <value>Δεν έχει δημοσιευτεί</value>
+  </data>
+  <data name="NotRequiredLabel" xml:space="preserve">
+    <value>Δεν απαιτείται</value>
+  </data>
+  <data name="NotSubmittedYet" xml:space="preserve">
+    <value>Δεν έχει υποβληθεί ακόμη.</value>
+  </data>
+  <data name="NumberHelp" xml:space="preserve">
+    <value>Ο δικός σας αριθμός για αυτό, όπως SOG-204. Αν μείνει κενό, εκδίδεται αριθμός από το μοτίβο αρίθμησης πρωτοκόλλων του τμήματος (Τμήμα, Αρίθμηση εγγράφων).</value>
+  </data>
+  <data name="NumberLabel" xml:space="preserve">
+    <value>Αριθμός</value>
+  </data>
+  <data name="OnHoldLabel" xml:space="preserve">
+    <value>Σε δέσμευση</value>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Άνοιγμα</value>
+  </data>
+  <data name="OpenDraftNote" xml:space="preserve">
+    <value>Επόμενη έκδοση: {0}</value>
+  </data>
+  <data name="OpenLabel" xml:space="preserve">
+    <value>ανοιχτό</value>
+  </data>
+  <data name="OpenReviewButton" xml:space="preserve">
+    <value>Άνοιγμα του ελέγχου</value>
+  </data>
+  <data name="OpenVersionCallout" xml:space="preserve">
+    <value>Μια νέα έκδοση βρίσκεται σε εξέλιξη: {0}.</value>
+  </data>
+  <data name="OutlineHeader" xml:space="preserve">
+    <value>Διάρθρωση</value>
+  </data>
+  <data name="OwnerHelp" xml:space="preserve">
+    <value>Ο υπεύθυνος διατηρεί το πρωτόκολλο επίκαιρο: σε αυτόν πηγαίνουν οι υπενθυμίσεις επανεξέτασης και οι προτάσεις των μελών.</value>
+  </data>
+  <data name="OwnerLabel" xml:space="preserve">
+    <value>Υπεύθυνος</value>
+  </data>
+  <data name="ParentCategoryLabel" xml:space="preserve">
+    <value>Γονική κατηγορία</value>
+  </data>
+  <data name="PendingLabel" xml:space="preserve">
+    <value>Σε αναμονή</value>
+  </data>
+  <data name="PreviewAsMemberButton" xml:space="preserve">
+    <value>Προεπισκόπηση ως μέλος</value>
+  </data>
+  <data name="PreviewAsMemberNotice" xml:space="preserve">
+    <value>Έτσι θα βλέπουν τα μέλη αυτήν την έκδοση μόλις δημοσιευτεί.</value>
+  </data>
+  <data name="PrintButton" xml:space="preserve">
+    <value>Εκτύπωση</value>
+  </data>
+  <data name="ProtocolCopiedMessage" xml:space="preserve">
+    <value>Δημιουργήθηκε αντίγραφο ως νέο πρόχειρο πρωτόκολλο.</value>
+  </data>
+  <data name="ProtocolCreatedMessage" xml:space="preserve">
+    <value>Το πρωτόκολλο δημιουργήθηκε ως πρόχειρο. Ολοκληρώστε το εδώ και, στη συνέχεια, υποβάλετέ το για έλεγχο.</value>
+  </data>
+  <data name="ProtocolTextHeadingsHelp" xml:space="preserve">
+    <value>Χρησιμοποιήστε επικεφαλίδες για να δομήσετε το κείμενο: από αυτές προκύπτουν η διάρθρωση και τα σημεία αγκύρωσης στα οποία παραπέμπουν τα σχόλια ελέγχου.</value>
+  </data>
+  <data name="PublishButton" xml:space="preserve">
+    <value>Δημοσίευση</value>
+  </data>
+  <data name="PublishHeader" xml:space="preserve">
+    <value>Δημοσίευση</value>
+  </data>
+  <data name="QuestionOption" xml:space="preserve">
+    <value>Ερώτηση</value>
+  </data>
+  <data name="ReadAndSignStepUpCheckbox" xml:space="preserve">
+    <value>Οι βεβαιώσεις ανάγνωσης και υπογραφής απαιτούν νέο έλεγχο ταυτότητας (L2) αντί για τη συνεδρία σύνδεσης (L1)</value>
+  </data>
+  <data name="RecentHeader" xml:space="preserve">
+    <value>Πρόσφατα ανοιγμένα</value>
+  </data>
+  <data name="RecordReviewHeader" xml:space="preserve">
+    <value>Επανεξετάστηκε, χωρίς αλλαγή</value>
+  </data>
+  <data name="RecordReviewHelp" xml:space="preserve">
+    <value>Καταγράψτε ότι η έκδοση σε ισχύ επανεξετάστηκε και παραμένει σωστή. Η επόμενη ημερομηνία επανεξέτασης μετατίθεται· δεν δημιουργείται νέα έκδοση και κανείς δεν χρειάζεται να βεβαιώσει ξανά την ανάγνωσή της.</value>
+  </data>
+  <data name="RecordedBeforeVersions" xml:space="preserve">
+    <value>Καταγράφηκε πριν από τη διαχείριση εκδόσεων</value>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Απόρριψη</value>
+  </data>
+  <data name="RejectHeader" xml:space="preserve">
+    <value>Απόρριψη</value>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>Αιτία</value>
+  </data>
+  <data name="RejectedLabel" xml:space="preserve">
+    <value>Απορρίφθηκε</value>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>Η έκδοση επεστράφη στους συντάκτες της ως πρόχειρο.</value>
+  </data>
+  <data name="ReplyButton" xml:space="preserve">
+    <value>Απάντηση</value>
+  </data>
+  <data name="ReplyLabel" xml:space="preserve">
+    <value>Απάντηση</value>
+  </data>
+  <data name="RequirePasskeyForApprovalCheckbox" xml:space="preserve">
+    <value>Οι εγκρίσεις και οι σφραγίδες επανεξέτασης πρέπει να υπογράφονται με κλειδί πρόσβασης</value>
+  </data>
+  <data name="RequiredLabel" xml:space="preserve">
+    <value>Απαιτείται</value>
+  </data>
+  <data name="RequiresAcknowledgmentCheckbox" xml:space="preserve">
+    <value>Τα μέλη πρέπει να βεβαιώσουν την ανάγνωση αυτής της έκδοσης</value>
+  </data>
+  <data name="RequiresAcknowledgmentHelp" xml:space="preserve">
+    <value>Ενεργό από προεπιλογή για πολιτικές και SOG. Οι αναθέσεις ανάγνωσης και υπογραφής έρχονται σε επόμενη ενημέρωση.</value>
+  </data>
+  <data name="ResolveButton" xml:space="preserve">
+    <value>Επίλυση</value>
+  </data>
+  <data name="ResolvedLabel" xml:space="preserve">
+    <value>Επιλύθηκε</value>
+  </data>
+  <data name="RetentionHeader" xml:space="preserve">
+    <value>Διατήρηση</value>
+  </data>
+  <data name="RetentionHelp" xml:space="preserve">
+    <value>Οι αντικατεστημένες και οι αποσυρμένες εκδόσεις διατηρούνται από προεπιλογή. Εισαγάγετε τις ημέρες που κάθε είδος τις διατηρεί πριν μπορούν να εκκαθαριστούν· το 0 τις διατηρεί. Μια έκδοση στην οποία παραπέμπει κλήση, καθώς και οτιδήποτε τελεί υπό νομική δέσμευση, δεν εκκαθαρίζεται ποτέ.</value>
+  </data>
+  <data name="RetireButton" xml:space="preserve">
+    <value>Απόσυρση</value>
+  </data>
+  <data name="RetireConfirm" xml:space="preserve">
+    <value>Απόσυρση του πρωτοκόλλου</value>
+  </data>
+  <data name="RetiredMessage" xml:space="preserve">
+    <value>Το πρωτόκολλο αποσύρθηκε. Οι εκδόσεις του παραμένουν για τις κλήσεις και το ιστορικό που παραπέμπουν σε αυτές.</value>
+  </data>
+  <data name="ReviewAny" xml:space="preserve">
+    <value>Οποιαδήποτε ημερομηνία επανεξέτασης</value>
+  </data>
+  <data name="ReviewCommentLabel" xml:space="preserve">
+    <value>Σχόλιο</value>
+  </data>
+  <data name="ReviewCommentsHeader" xml:space="preserve">
+    <value>Σχόλια ελέγχου</value>
+  </data>
+  <data name="ReviewDue30" xml:space="preserve">
+    <value>Προς επανεξέταση εντός 30 ημερών</value>
+  </data>
+  <data name="ReviewDueCallout" xml:space="preserve">
+    <value>Αυτό το πρωτόκολλο πρέπει να επανεξεταστεί έως τις {0}.</value>
+  </data>
+  <data name="ReviewDueLabel" xml:space="preserve">
+    <value>Επανεξέταση έως</value>
+  </data>
+  <data name="ReviewHeader" xml:space="preserve">
+    <value>Επανεξέταση</value>
+  </data>
+  <data name="ReviewIntervalHelp" xml:space="preserve">
+    <value>Ημέρες μεταξύ επανεξετάσεων. Ο υπεύθυνος λαμβάνει υπενθύμιση 30 και 7 ημέρες νωρίτερα, καθώς και όταν η επανεξέταση καθυστερεί. Κενό σημαίνει χωρίς κύκλο επανεξέτασης.</value>
+  </data>
+  <data name="ReviewIntervalLabel" xml:space="preserve">
+    <value>Διάστημα επανεξέτασης (ημέρες)</value>
+  </data>
+  <data name="ReviewNowButton" xml:space="preserve">
+    <value>Επανεξέταση</value>
+  </data>
+  <data name="ReviewOverdue" xml:space="preserve">
+    <value>Εκπρόθεσμη</value>
+  </data>
+  <data name="ReviewOverdueCallout" xml:space="preserve">
+    <value>Η επανεξέταση αυτού του πρωτοκόλλου έπρεπε να γίνει έως τις {0}.</value>
+  </data>
+  <data name="ReviewQueueCallout" xml:space="preserve">
+    <value>{0} εκδόσεις περιμένουν την έγκρισή σας.</value>
+  </data>
+  <data name="ReviewQueueEmpty" xml:space="preserve">
+    <value>Τίποτα δεν περιμένει έλεγχο.</value>
+  </data>
+  <data name="ReviewQueueIntro" xml:space="preserve">
+    <value>Εκδόσεις που υποβλήθηκαν για έλεγχο, με τα βήματα για τα οποία μπορείτε να αποφασίσετε.</value>
+  </data>
+  <data name="ReviewQueueTab" xml:space="preserve">
+    <value>Ουρά ελέγχου</value>
+  </data>
+  <data name="ReviewRecordedMessage" xml:space="preserve">
+    <value>Η επανεξέταση καταγράφηκε και υπογράφηκε. Η επόμενη ημερομηνία επανεξέτασης μετατέθηκε.</value>
+  </data>
+  <data name="ReviewSettingsHeader" xml:space="preserve">
+    <value>Κύκλος επανεξέτασης</value>
+  </data>
+  <data name="SaveAndSubmitButton" xml:space="preserve">
+    <value>Αποθήκευση και υποβολή για έλεγχο</value>
+  </data>
+  <data name="SaveCategoryButton" xml:space="preserve">
+    <value>Αποθήκευση κατηγορίας</value>
+  </data>
+  <data name="SaveSettingsButton" xml:space="preserve">
+    <value>Αποθήκευση ρυθμίσεων</value>
+  </data>
+  <data name="ScheduledNotice" xml:space="preserve">
+    <value>Η έκδοση {0} έχει προγραμματιστεί να τεθεί σε ισχύ στις {1}.</value>
+  </data>
+  <data name="SectionLabel" xml:space="preserve">
+    <value>Ενότητα</value>
+  </data>
+  <data name="SendSuggestionButton" xml:space="preserve">
+    <value>Αποστολή</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Επίπεδα υπογραφής, κύκλοι επανεξέτασης και διατήρηση για τη βιβλιοθήκη πρωτοκόλλων.</value>
+  </data>
+  <data name="SettingsSavedMessage" xml:space="preserve">
+    <value>Οι ρυθμίσεις πρωτοκόλλων αποθηκεύτηκαν.</value>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>Ρυθμίσεις</value>
+  </data>
+  <data name="ShowButton" xml:space="preserve">
+    <value>Εμφάνιση</value>
+  </data>
+  <data name="SignatureFloorsHelp" xml:space="preserve">
+    <value>Οι εγκρίσεις και οι σφραγίδες επανεξέτασης απαιτούν πάντα νέο έλεγχο ταυτότητας (L2)· η ανάγνωση και υπογραφή απαιτεί τουλάχιστον τη συνεδρία σύνδεσης (L1). Μπορείτε να απαιτήσετε περισσότερα, ποτέ λιγότερα.</value>
+  </data>
+  <data name="SignatureSettingsHeader" xml:space="preserve">
+    <value>Υπογραφές</value>
+  </data>
+  <data name="SignaturesTab" xml:space="preserve">
+    <value>Υπογραφές</value>
+  </data>
+  <data name="SortOrderLabel" xml:space="preserve">
+    <value>Σειρά ταξινόμησης</value>
+  </data>
+  <data name="StaleProtocolMessage" xml:space="preserve">
+    <value>{0} άλλαξε αυτό το πρωτόκολλο στις {1}, αφότου το ανοίξατε. Φορτώστε ξανά τη σελίδα για να δείτε αυτές τις αλλαγές και, στη συνέχεια, κάντε ξανά τις δικές σας.</value>
+  </data>
+  <data name="StatusApproved" xml:space="preserve">
+    <value>Εγκρίθηκε</value>
+  </data>
+  <data name="StatusDraft" xml:space="preserve">
+    <value>Πρόχειρο</value>
+  </data>
+  <data name="StatusInReview" xml:space="preserve">
+    <value>Σε έλεγχο</value>
+  </data>
+  <data name="StatusPublished" xml:space="preserve">
+    <value>Δημοσιεύτηκε</value>
+  </data>
+  <data name="StatusRetired" xml:space="preserve">
+    <value>Αποσύρθηκε</value>
+  </data>
+  <data name="StatusScheduled" xml:space="preserve">
+    <value>Προγραμματισμένο</value>
+  </data>
+  <data name="StepColumn" xml:space="preserve">
+    <value>Βήμα</value>
+  </data>
+  <data name="SubmitHeader" xml:space="preserve">
+    <value>Υποβολή για έλεγχο</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Υποβλήθηκε</value>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>Η έκδοση υποβλήθηκε για έλεγχο.</value>
+  </data>
+  <data name="SuggestHeader" xml:space="preserve">
+    <value>Προτείνετε μια αλλαγή ή κάντε μια ερώτηση</value>
+  </data>
+  <data name="SuggestHelp" xml:space="preserve">
+    <value>Το μήνυμά σας φτάνει στον υπεύθυνο του πρωτοκόλλου και φυλάσσεται με το επόμενο πρόχειρο.</value>
+  </data>
+  <data name="SuggestKindLabel" xml:space="preserve">
+    <value>Τύπος</value>
+  </data>
+  <data name="SuggestionOption" xml:space="preserve">
+    <value>Πρόταση</value>
+  </data>
+  <data name="TagsHelp" xml:space="preserve">
+    <value>Χωρίστε τις ετικέτες με κόμματα.</value>
+  </data>
+  <data name="TagsLabel" xml:space="preserve">
+    <value>Ετικέτες</value>
+  </data>
+  <data name="ThreadsHeader" xml:space="preserve">
+    <value>Προτάσεις και ερωτήσεις</value>
+  </data>
+  <data name="TriggersKindHelp" xml:space="preserve">
+    <value>Μόνο τα πρωτόκολλα αποστολής και οι διαδικασίες προτείνονται σε κλήσεις, οπότε αυτό το είδος δεν έχει εναύσματα ούτε βασικές ερωτήσεις.</value>
+  </data>
+  <data name="UnfavoriteButton" xml:space="preserve">
+    <value>Αφαίρεση από τα αγαπημένα</value>
+  </data>
+  <data name="UsageHelp" xml:space="preserve">
+    <value>Χρησιμοποιήθηκε σε {0} κλήσεις τις τελευταίες 30 ημέρες. Οι πιο πρόσφατες κλήσεις που παραπέμπουν σε αυτό:</value>
+  </data>
+  <data name="UsageTab" xml:space="preserve">
+    <value>Χρήση</value>
+  </data>
+  <data name="VersionColumn" xml:space="preserve">
+    <value>Έκδοση</value>
+  </data>
+  <data name="VersionKindLabel" xml:space="preserve">
+    <value>Αριθμός έκδοσης</value>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>Έκδοση</value>
+  </data>
+  <data name="VersionStatusApproved" xml:space="preserve">
+    <value>Εγκρίθηκε</value>
+  </data>
+  <data name="VersionStatusDraft" xml:space="preserve">
+    <value>Πρόχειρο</value>
+  </data>
+  <data name="VersionStatusInReview" xml:space="preserve">
+    <value>Σε έλεγχο</value>
+  </data>
+  <data name="VersionStatusLegacy" xml:space="preserve">
+    <value>Παλαιό κείμενο</value>
+  </data>
+  <data name="VersionStatusPublished" xml:space="preserve">
+    <value>Δημοσιεύτηκε</value>
+  </data>
+  <data name="VersionStatusRetired" xml:space="preserve">
+    <value>Αποσύρθηκε</value>
+  </data>
+  <data name="VersionStatusSuperseded" xml:space="preserve">
+    <value>Αντικαταστάθηκε</value>
+  </data>
+  <data name="VersionsTab" xml:space="preserve">
+    <value>Εκδόσεις</value>
+  </data>
+  <data name="WholeProtocolOption" xml:space="preserve">
+    <value>Ολόκληρο το πρωτόκολλο</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Ανάκληση σε πρόχειρο</value>
+  </data>
+  <data name="WithdrawnLabel" xml:space="preserve">
+    <value>Ανακλήθηκε</value>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>Η έκδοση ανακλήθηκε και είναι ξανά πρόχειρο.</value>
+  </data>
+  <data name="WizardAudienceStep" xml:space="preserve">
+    <value>Κοινό</value>
+  </data>
+  <data name="WizardBasicsStep" xml:space="preserve">
+    <value>Βασικά στοιχεία</value>
+  </data>
+  <data name="WizardContentStep" xml:space="preserve">
+    <value>Περιεχόμενο</value>
+  </data>
+  <data name="WizardKindHelp" xml:space="preserve">
+    <value>Τι είδους πρωτόκολλο είναι; Το είδος καθορίζει αν μπορεί να προτείνεται σε κλήσεις και αν τα μέλη βεβαιώνουν την ανάγνωσή του από προεπιλογή.</value>
+  </data>
+  <data name="WizardKindStep" xml:space="preserve">
+    <value>Είδος</value>
+  </data>
+  <data name="WizardReviewHelp" xml:space="preserve">
+    <value>Ελέγξτε τι καταχωρίσατε. Το πρωτόκολλο δημιουργείται ως πρόχειρο· μπορείτε να συνεχίσετε να το επεξεργάζεστε πριν το υποβάλετε για έλεγχο.</value>
+  </data>
+  <data name="WizardReviewStep" xml:space="preserve">
+    <value>Επισκόπηση</value>
+  </data>
+  <data name="WizardTriggersStep" xml:space="preserve">
+    <value>Εναύσματα</value>
+  </data>
+  <data name="WordsAdded" xml:space="preserve">
+    <value>Προστέθηκαν {0} λέξεις</value>
+  </data>
+  <data name="WordsRemoved" xml:space="preserve">
+    <value>Αφαιρέθηκαν {0} λέξεις</value>
+  </data>
+  <data name="AckAwaitingQuizLabel" xml:space="preserve">
+    <value>Υπογράφηκε· αναμένεται το κουίζ στο {0}</value>
+  </data>
+  <data name="AckBundleOrderHelp" xml:space="preserve">
+    <value>Η θέση του πρωτοκόλλου στο πακέτο ένταξης ενός νέου μέλους: οι μικρότεροι αριθμοί έρχονται πρώτοι.</value>
+  </data>
+  <data name="AckBundleOrderLabel" xml:space="preserve">
+    <value>Σειρά ένταξης</value>
+  </data>
+  <data name="AckCannotSignNotice" xml:space="preserve">
+    <value>Αυτή η έκδοση δεν μπορεί να επιβεβαιωθεί τώρα. Διαβάστε την ισχύουσα έκδοση.</value>
+  </data>
+  <data name="AckCarriedForwardLabel" xml:space="preserve">
+    <value>Μεταφέρθηκε από την προηγούμενη δευτερεύουσα έκδοση</value>
+  </data>
+  <data name="AckCompletedHeader" xml:space="preserve">
+    <value>Επιβεβαιωμένα</value>
+  </data>
+  <data name="AckDueDaysHelp" xml:space="preserve">
+    <value>Ημέρες που έχει ένα μέλος για επιβεβαίωση, από την ανάθεση ή την ένταξη στο κοινό. Κενό για {0} ημέρες.</value>
+  </data>
+  <data name="AckDueDaysLabel" xml:space="preserve">
+    <value>Ημέρες για επιβεβαίωση</value>
+  </data>
+  <data name="AckDueLabel" xml:space="preserve">
+    <value>Προθεσμία {0}</value>
+  </data>
+  <data name="AckDueWasLabel" xml:space="preserve">
+    <value>Έληξε {0}</value>
+  </data>
+  <data name="AckFutureVersionNotice" xml:space="preserve">
+    <value>Αυτή η έκδοση ισχύει από {0}. Μπορείτε να την επιβεβαιώσετε ήδη.</value>
+  </data>
+  <data name="AckNoQuizOption" xml:space="preserve">
+    <value>Χωρίς κουίζ</value>
+  </data>
+  <data name="AckNotAssignedNotice" xml:space="preserve">
+    <value>Δεν σας ζητείται να επιβεβαιώσετε αυτή την έκδοση.</value>
+  </data>
+  <data name="AckOfflineLabel" xml:space="preserve">
+    <value>Υπογράφηκε εκτός σύνδεσης</value>
+  </data>
+  <data name="AckOutstandingLabel" xml:space="preserve">
+    <value>Προς επιβεβαίωση</value>
+  </data>
+  <data name="AckPromptAwaitingQuiz" xml:space="preserve">
+    <value>Υπογράψατε αυτό το πρωτόκολλο. Ολοκληρώνεται μόλις περάσετε το κουίζ στο {0}.</value>
+  </data>
+  <data name="AckPromptDue" xml:space="preserve">
+    <value>Σας ζητείται να διαβάσετε και να υπογράψετε την {0} έως {1}.</value>
+  </data>
+  <data name="AckPromptOverdue" xml:space="preserve">
+    <value>Η επιβεβαίωσή σας για την {0} έληγε στις {1}.</value>
+  </data>
+  <data name="AckQuizRequiredNotice" xml:space="preserve">
+    <value>Μετά την υπογραφή, περάστε το κουίζ στο {0} για να ολοκληρωθεί η επιβεβαίωση.</value>
+  </data>
+  <data name="AckQuizTrainingHelp" xml:space="preserve">
+    <value>Μια εκπαίδευση με κουίζ. Ανατίθεται μαζί με το πρωτόκολλο και η επιβεβαίωση ολοκληρώνεται μόνο όταν περάσει το κουίζ.</value>
+  </data>
+  <data name="AckQuizTrainingLabel" xml:space="preserve">
+    <value>Εκπαίδευση με κουίζ</value>
+  </data>
+  <data name="AckSettingsButton" xml:space="preserve">
+    <value>Ρυθμίσεις επιβεβαίωσης</value>
+  </data>
+  <data name="AckSettingsHeader" xml:space="preserve">
+    <value>Ρυθμίσεις της επιβεβαίωσης</value>
+  </data>
+  <data name="AckSettingsInvalidTraining" xml:space="preserve">
+    <value>Επιλέξτε μια εκπαίδευση αυτής της υπηρεσίας που έχει κουίζ.</value>
+  </data>
+  <data name="AckSettingsSavedMessage" xml:space="preserve">
+    <value>Οι ρυθμίσεις επιβεβαίωσης αποθηκεύτηκαν.</value>
+  </data>
+  <data name="AckSignedNotice" xml:space="preserve">
+    <value>Υπογράψατε αυτή την έκδοση στις {0}.</value>
+  </data>
+  <data name="AckSourceAudienceEntry" xml:space="preserve">
+    <value>Ανατέθηκε κατά την ένταξη στο κοινό</value>
+  </data>
+  <data name="AckState_acknowledged" xml:space="preserve">
+    <value>Επιβεβαιώθηκε</value>
+  </data>
+  <data name="AckState_awaiting_quiz" xml:space="preserve">
+    <value>Αναμονή κουίζ</value>
+  </data>
+  <data name="AckState_open" xml:space="preserve">
+    <value>Δεν έχει υπογραφεί ακόμη</value>
+  </data>
+  <data name="AckState_overdue" xml:space="preserve">
+    <value>Εκπρόθεσμο</value>
+  </data>
+  <data name="AckState_withdrawn" xml:space="preserve">
+    <value>Αποσύρθηκε</value>
+  </data>
+  <data name="AckState_superseded" xml:space="preserve">
+    <value>Αντικαταστάθηκε από νεότερη έκδοση</value>
+  </data>
+  <data name="AcknowledgedLabel" xml:space="preserve">
+    <value>Επιβεβαιώσεις</value>
+  </data>
+  <data name="AcknowledgedMessage" xml:space="preserve">
+    <value>Ευχαριστούμε. Η επιβεβαίωσή σας καταγράφηκε.</value>
+  </data>
+  <data name="AcknowledgedAwaitingQuizMessage" xml:space="preserve">
+    <value>Η υπογραφή σας καταγράφηκε. Περάστε το κουίζ για να ολοκληρωθεί η επιβεβαίωση.</value>
+  </data>
+  <data name="AcknowledgeOutcomeAcknowledged" xml:space="preserve">
+    <value>Επιβεβαιώθηκε.</value>
+  </data>
+  <data name="AcknowledgeOutcomeAwaitingQuiz" xml:space="preserve">
+    <value>Υπογράφηκε. Περάστε το κουίζ για ολοκλήρωση.</value>
+  </data>
+  <data name="AcknowledgeOutcomeNotAssigned" xml:space="preserve">
+    <value>Δεν απαιτείται από εσάς επιβεβαίωση αυτής της έκδοσης.</value>
+  </data>
+  <data name="AcknowledgeOutcomeNotOpened" xml:space="preserve">
+    <value>Ανοίξτε και διαβάστε την έκδοση πριν την υπογράψετε.</value>
+  </data>
+  <data name="AcknowledgeOutcomeReadNewerVersion" xml:space="preserve">
+    <value>Ισχύει νεότερη έκδοση. Διαβάστε την και υπογράψτε αυτή.</value>
+  </data>
+  <data name="AcknowledgeOutcomeContentChanged" xml:space="preserve">
+    <value>Το περιεχόμενο άλλαξε από τότε που το ανοίξατε. Διαβάστε το ξανά πριν υπογράψετε.</value>
+  </data>
+  <data name="AcknowledgeOutcomeStepUpRequired" xml:space="preserve">
+    <value>Η υπηρεσία σας ζητά δεύτερο βήμα επαλήθευσης για την υπογραφή. Δοκιμάστε ξανά και ολοκληρώστε το.</value>
+  </data>
+  <data name="AcknowledgeOutcomeAlreadyAcknowledged" xml:space="preserve">
+    <value>Έχετε ήδη επιβεβαιώσει αυτή την έκδοση.</value>
+  </data>
+  <data name="AcknowledgeOutcomeInvalidRequest" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η καταγραφή της επιβεβαίωσης.</value>
+  </data>
+  <data name="ActionsLabel" xml:space="preserve">
+    <value>Ενέργειες</value>
+  </data>
+  <data name="AllGroupsOption" xml:space="preserve">
+    <value>Όλες οι ομάδες</value>
+  </data>
+  <data name="AllProtocolsOption" xml:space="preserve">
+    <value>Όλα τα πρωτόκολλα (επισκόπηση)</value>
+  </data>
+  <data name="AssignedLabel" xml:space="preserve">
+    <value>Ανατέθηκαν</value>
+  </data>
+  <data name="AvailableLabel" xml:space="preserve">
+    <value>Διαθέσιμο</value>
+  </data>
+  <data name="BankQuizzesLabel" xml:space="preserve">
+    <value>Κουίζ επιβεβαίωσης από τράπεζες ερωτήσεων</value>
+  </data>
+  <data name="BulkUploadButton" xml:space="preserve">
+    <value>Μεταφόρτωση ως πρόχειρα</value>
+  </data>
+  <data name="BulkUploadCreatedDraft" xml:space="preserve">
+    <value>Δημιουργήθηκε πρόχειρο</value>
+  </data>
+  <data name="BulkUploadDuplicate" xml:space="preserve">
+    <value>Το ίδιο αρχείο μεταφορτώθηκε δύο φορές</value>
+  </data>
+  <data name="BulkUploadFilesHelp" xml:space="preserve">
+    <value>Αρχεία PDF και Word (DOCX), ή ένα zip με αυτά, έως {0} αρχεία. Ένα όνομα όπως "SOG-204 Mayday.pdf" δίνει αριθμό και τίτλο.</value>
+  </data>
+  <data name="BulkUploadFilesLabel" xml:space="preserve">
+    <value>Αρχεία</value>
+  </data>
+  <data name="BulkUploadIntro" xml:space="preserve">
+    <value>Φέρτε μονομιάς έναν φάκελο με διαδικασίες και πολιτικές. Κάθε αρχείο γίνεται πρόχειρο για μία διέλευση ελέγχου και δημοσίευσης.</value>
+  </data>
+  <data name="BulkUploadNoFiles" xml:space="preserve">
+    <value>Επιλέξτε τουλάχιστον ένα αρχείο PDF, DOCX ή zip.</value>
+  </data>
+  <data name="BulkUploadResultSummary" xml:space="preserve">
+    <value>{0} από {1} αρχεία έγιναν πρόχειρα πρωτοκόλλων.</value>
+  </data>
+  <data name="BulkUploadTab" xml:space="preserve">
+    <value>Μαζική μεταφόρτωση</value>
+  </data>
+  <data name="BulletinApprovalLabel" xml:space="preserve">
+    <value>Έγκριση</value>
+  </data>
+  <data name="BulletinAudienceHelp" xml:space="preserve">
+    <value>Χωρίς επιλογή ομάδας ή ρόλου, το δελτίο πηγαίνει σε όλη την υπηρεσία.</value>
+  </data>
+  <data name="BulletinAwaitingApproval" xml:space="preserve">
+    <value>Αναμένει προσυπογραφή</value>
+  </data>
+  <data name="BulletinContentHelp" xml:space="preserve">
+    <value>Σύντομα: έως {0} χαρακτήρες. Μια μεγαλύτερη οδηγία ανήκει σε πρωτόκολλο.</value>
+  </data>
+  <data name="BulletinContentLabel" xml:space="preserve">
+    <value>Κείμενο δελτίου</value>
+  </data>
+  <data name="BulletinCountersignedBy" xml:space="preserve">
+    <value>Προσυπογράφηκε από {0}</value>
+  </data>
+  <data name="BulletinCountersignedMessage" xml:space="preserve">
+    <value>Το δελτίο προσυπογράφηκε.</value>
+  </data>
+  <data name="BulletinExpiredLabel" xml:space="preserve">
+    <value>Έληξε</value>
+  </data>
+  <data name="BulletinExpiresHelp" xml:space="preserve">
+    <value>Αποχωρεί μόνο του από τη βιβλιοθήκη αυτή την ώρα· έως {0} ημέρες μπροστά.</value>
+  </data>
+  <data name="BulletinExpiresLabel" xml:space="preserve">
+    <value>Λήγει</value>
+  </data>
+  <data name="BulletinInvalidMessage" xml:space="preserve">
+    <value>Ελέγξτε τίτλο, κείμενο και λήξη (στο μέλλον, εντός των επιτρεπόμενων ημερών).</value>
+  </data>
+  <data name="BulletinIssuedBy" xml:space="preserve">
+    <value>Εκδόθηκε από {0} στις {1}</value>
+  </data>
+  <data name="BulletinIssuedMessage" xml:space="preserve">
+    <value>Το δελτίο ισχύει και στάλθηκε.</value>
+  </data>
+  <data name="BulletinMustReadLabel" xml:space="preserve">
+    <value>Υποχρεωτική ανάγνωση: κάθε μέλος του κοινού πρέπει να το επιβεβαιώσει</value>
+  </data>
+  <data name="BulletinTitleLabel" xml:space="preserve">
+    <value>Τίτλος</value>
+  </data>
+  <data name="BulletinWithdrawReasonLabel" xml:space="preserve">
+    <value>Αιτία</value>
+  </data>
+  <data name="BulletinWithdrawnLabel" xml:space="preserve">
+    <value>Αποσύρθηκε</value>
+  </data>
+  <data name="BulletinWithdrawnMessage" xml:space="preserve">
+    <value>Το δελτίο αποσύρθηκε.</value>
+  </data>
+  <data name="BulletinsIntro" xml:space="preserve">
+    <value>Ειδοποιήσεις ασφαλείας και προσωρινές οδηγίες που δεν μπορούν να περιμένουν κύκλο ελέγχου. Ισχύουν αμέσως και εγκρίνονται μετά.</value>
+  </data>
+  <data name="BulletinsListHeader" xml:space="preserve">
+    <value>Δελτία</value>
+  </data>
+  <data name="BulletinsTab" xml:space="preserve">
+    <value>Δελτία</value>
+  </data>
+  <data name="ComingWithCoursesLabel" xml:space="preserve">
+    <value>Έρχεται με τα μαθήματα LMS</value>
+  </data>
+  <data name="ComplianceHeader" xml:space="preserve">
+    <value>Συμμόρφωση επιβεβαιώσεων πρωτοκόλλων</value>
+  </data>
+  <data name="ComplianceIntro" xml:space="preserve">
+    <value>Ποιος έχει διαβάσει και υπογράψει κάθε έκδοση πρωτοκόλλου, ανά ομάδα.</value>
+  </data>
+  <data name="ComplianceTab" xml:space="preserve">
+    <value>Συμμόρφωση</value>
+  </data>
+  <data name="CountersignButton" xml:space="preserve">
+    <value>Προσυπογραφή</value>
+  </data>
+  <data name="CurrentDocumentLabel" xml:space="preserve">
+    <value>Σε ισχύ: {0} (έκδοση {1})</value>
+  </data>
+  <data name="DocumentFileHelp" xml:space="preserve">
+    <value>PDF ή Word (DOCX), έως 30 MB.</value>
+  </data>
+  <data name="DocumentFileLabel" xml:space="preserve">
+    <value>Αρχείο</value>
+  </data>
+  <data name="DocumentMissingNotice" xml:space="preserve">
+    <value>Αυτή η έκδοση δεν έχει αρχείο.</value>
+  </data>
+  <data name="DocumentProtocolCreatedMessage" xml:space="preserve">
+    <value>Το πρωτόκολλο δημιουργήθηκε ως πρόχειρο από το αρχείο.</value>
+  </data>
+  <data name="DocumentTitleHelp" xml:space="preserve">
+    <value>Κενό: ο τίτλος λαμβάνεται από το όνομα του αρχείου.</value>
+  </data>
+  <data name="DocumentTitleLabel" xml:space="preserve">
+    <value>Τίτλος</value>
+  </data>
+  <data name="DocumentVersionUploadedMessage" xml:space="preserve">
+    <value>Το αρχείο είναι το περιεχόμενο της νέας πρόχειρης έκδοσης.</value>
+  </data>
+  <data name="DocxNoViewerNotice" xml:space="preserve">
+    <value>Τα αρχεία Word ανοίγουν στο Word. Κατεβάστε το ή διαβάστε το κείμενο παρακάτω.</value>
+  </data>
+  <data name="DownloadDocumentButton" xml:space="preserve">
+    <value>Λήψη</value>
+  </data>
+  <data name="DueLabel" xml:space="preserve">
+    <value>Προθεσμία</value>
+  </data>
+  <data name="ExportCsvButton" xml:space="preserve">
+    <value>Εξαγωγή CSV</value>
+  </data>
+  <data name="ExportPdfButton" xml:space="preserve">
+    <value>Εξαγωγή PDF</value>
+  </data>
+  <data name="ExtractedTextHeader" xml:space="preserve">
+    <value>Κείμενο του εγγράφου</value>
+  </data>
+  <data name="ExtractedTextNone_encrypted" xml:space="preserve">
+    <value>Το έγγραφο είναι προστατευμένο, οπότε το κείμενο δεν διαβάστηκε.</value>
+  </data>
+  <data name="ExtractedTextNone_scanned" xml:space="preserve">
+    <value>Το έγγραφο δεν έχει επίπεδο κειμένου (μοιάζει σαρωμένο).</value>
+  </data>
+  <data name="ExtractedTextNone_too_large" xml:space="preserve">
+    <value>Το έγγραφο είναι πολύ μεγάλο για να διαβαστεί το κείμενο.</value>
+  </data>
+  <data name="ExtractedTextNone_unsupported" xml:space="preserve">
+    <value>Δεν μπορεί να διαβαστεί κείμενο από αυτό το είδος αρχείου.</value>
+  </data>
+  <data name="ExtractedTextNone_unreadable" xml:space="preserve">
+    <value>Το κείμενο του εγγράφου δεν διαβάστηκε.</value>
+  </data>
+  <data name="ExtractedTextNone_timeout" xml:space="preserve">
+    <value>Η ανάγνωση του κειμένου κράτησε πολύ και διακόπηκε.</value>
+  </data>
+  <data name="ExtractedTextPending" xml:space="preserve">
+    <value>Το κείμενο διαβάζεται και θα εμφανιστεί εδώ σύντομα.</value>
+  </data>
+  <data name="FoldersAsCategoriesLabel" xml:space="preserve">
+    <value>Οι φάκελοι ενός zip γίνονται κατηγορίες</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Ομάδα</value>
+  </data>
+  <data name="HideCompletedButton" xml:space="preserve">
+    <value>Απόκρυψη επιβεβαιωμένων</value>
+  </data>
+  <data name="ImportCreatedListHeader" xml:space="preserve">
+    <value>Δημιουργήθηκαν ως πρόχειρα</value>
+  </data>
+  <data name="ImportPreviewButton" xml:space="preserve">
+    <value>Προεπισκόπηση</value>
+  </data>
+  <data name="ImportPreviewListHeader" xml:space="preserve">
+    <value>Θα δημιουργούνταν ως πρόχειρα</value>
+  </data>
+  <data name="ImportPreviewMessage" xml:space="preserve">
+    <value>Προεπισκόπηση του {1}: θα δημιουργούνταν {0} πρωτόκολλα ως πρόχειρα. Δεν αποθηκεύτηκε τίποτα.</value>
+  </data>
+  <data name="IssueBulletinButton" xml:space="preserve">
+    <value>Έκδοση δελτίου</value>
+  </data>
+  <data name="IssueBulletinConfirm" xml:space="preserve">
+    <value>Έκδοση του δελτίου τώρα και αποστολή στο κοινό;</value>
+  </data>
+  <data name="IssueBulletinHeader" xml:space="preserve">
+    <value>Νέο δελτίο προτεραιότητας</value>
+  </data>
+  <data name="IssueBulletinHelp" xml:space="preserve">
+    <value>Το δελτίο ισχύει αμέσως και αποστέλλεται με ειδοποίηση. Ακολουθεί η έγκριση: ένας εγκρίνων το προσυπογράφει ή το αποσύρει.</value>
+  </data>
+  <data name="KindBulletin" xml:space="preserve">
+    <value>Δελτίο προτεραιότητας</value>
+  </data>
+  <data name="LifecycleErrorFileRequired" xml:space="preserve">
+    <value>Μεταφορτώστε πρώτα το έγγραφο.</value>
+  </data>
+  <data name="LifecycleErrorFileTypeNotAllowed" xml:space="preserve">
+    <value>Μόνο αρχεία PDF και Word (DOCX) μπορούν να είναι περιεχόμενο πρωτοκόλλου.</value>
+  </data>
+  <data name="LifecycleErrorFileTooLarge" xml:space="preserve">
+    <value>Το αρχείο είναι μεγαλύτερο από 30 MB.</value>
+  </data>
+  <data name="LmsAcknowledgmentExtrasHeader" xml:space="preserve">
+    <value>Με το πρόσθετο LMS</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Μέλος</value>
+  </data>
+  <data name="MicroLearningLabel" xml:space="preserve">
+    <value>Εβδομαδιαίες ερωτήσεις σεναρίων από επιλεγμένα πρωτόκολλα</value>
+  </data>
+  <data name="MoveCategoryToProtocolsLabel" xml:space="preserve">
+    <value>Μετακίνηση της κατηγορίας στα πρωτόκολλα ως</value>
+  </data>
+  <data name="MoveDocumentFailedError" xml:space="preserve">
+    <value>Το έγγραφο δεν μετακινήθηκε στα πρωτόκολλα. Μόνο αρχεία PDF και Word (DOCX) έως 30 MB μπορούν.</value>
+  </data>
+  <data name="MoveProtectedDocumentError" xml:space="preserve">
+    <value>Ένα προστατευμένο έγγραφο παραμένει στα έγγραφα.</value>
+  </data>
+  <data name="MoveToProtocolsButton" xml:space="preserve">
+    <value>Μετακίνηση στα πρωτόκολλα</value>
+  </data>
+  <data name="MoveToProtocolsConfirm" xml:space="preserve">
+    <value>Μετακίνηση στα πρωτόκολλα; Γίνεται πρόχειρο πρωτόκολλο για έλεγχο και ο παλιός σύνδεσμος ανοίγει το πρωτόκολλο.</value>
+  </data>
+  <data name="MovedCategoryMessage" xml:space="preserve">
+    <value>Μετακινήθηκαν στα πρωτόκολλα: {0}.</value>
+  </data>
+  <data name="MustReadHeader" xml:space="preserve">
+    <value>Υποχρεωτική ανάγνωση</value>
+  </data>
+  <data name="MyAcknowledgmentsIntro" xml:space="preserve">
+    <value>Πρωτόκολλα και δελτία που σας ζητείται να διαβάσετε και να υπογράψετε.</value>
+  </data>
+  <data name="MyAcknowledgmentsTab" xml:space="preserve">
+    <value>Οι επιβεβαιώσεις μου</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="NewDocumentProtocolHeader" xml:space="preserve">
+    <value>Νέο πρωτόκολλο από έγγραφο</value>
+  </data>
+  <data name="NewDocumentProtocolIntro" xml:space="preserve">
+    <value>Μεταφορτώστε αρχείο PDF ή Word. Γίνεται το περιεχόμενο του πρωτοκόλλου, με τον ίδιο έλεγχο, δημοσίευση και επιβεβαίωση.</value>
+  </data>
+  <data name="NoAcknowledgmentVersion" xml:space="preserve">
+    <value>Καμία δημοσιευμένη έκδοση του πρωτοκόλλου δεν απαιτεί επιβεβαίωση.</value>
+  </data>
+  <data name="NoAcknowledgmentsYet" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη επιβεβαιώσεις.</value>
+  </data>
+  <data name="NoBulletins" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη δελτία.</value>
+  </data>
+  <data name="NoCompletedAcknowledgments" xml:space="preserve">
+    <value>Τίποτα δεν έχει επιβεβαιωθεί ακόμη.</value>
+  </data>
+  <data name="NothingToAcknowledge" xml:space="preserve">
+    <value>Δεν έχετε τίποτα να επιβεβαιώσετε.</value>
+  </data>
+  <data name="OpenDocumentButton" xml:space="preserve">
+    <value>Άνοιγμα σε νέα καρτέλα</value>
+  </data>
+  <data name="OverdueLabel" xml:space="preserve">
+    <value>Εκπρόθεσμα</value>
+  </data>
+  <data name="PageNumberLabel" xml:space="preserve">
+    <value>Σελίδα {0}</value>
+  </data>
+  <data name="ReadAndSignButton" xml:space="preserve">
+    <value>Ανάγνωση και υπογραφή</value>
+  </data>
+  <data name="ReadAndSignHeader" xml:space="preserve">
+    <value>Επιβεβαίωση</value>
+  </data>
+  <data name="ReadAndSignHelp" xml:space="preserve">
+    <value>Η υπογραφή καταγράφει το όνομά σας, την ώρα και ακριβώς αυτή την έκδοση.</value>
+  </data>
+  <data name="ReadAndSignStatement" xml:space="preserve">
+    <value>Διάβασα το πρωτόκολλο {0} "{1}" έκδοση {2} (περιεχόμενο {3}), το κατανοώ και θα το ακολουθώ.</value>
+  </data>
+  <data name="ReadBulletinButton" xml:space="preserve">
+    <value>Ανάγνωση</value>
+  </data>
+  <data name="RequiresAcknowledgmentLabel" xml:space="preserve">
+    <value>Τα μέλη πρέπει να το διαβάσουν και να το υπογράψουν</value>
+  </data>
+  <data name="ResultLabel" xml:space="preserve">
+    <value>Αποτέλεσμα</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="ShowCompletedButton" xml:space="preserve">
+    <value>Εμφάνιση επιβεβαιωμένων</value>
+  </data>
+  <data name="SignAcknowledgmentButton" xml:space="preserve">
+    <value>Υπογραφή</value>
+  </data>
+  <data name="SignedLabel" xml:space="preserve">
+    <value>Υπογράφηκε</value>
+  </data>
+  <data name="StandardsReportButton" xml:space="preserve">
+    <value>Απόδειξη συμμόρφωσης</value>
+  </data>
+  <data name="StandardsReportEmpty" xml:space="preserve">
+    <value>Κανένα πρωτόκολλο δεν έχει ακόμη ετικέτα προτύπου. Προσθέστε πρότυπα στις ρυθμίσεις επιβεβαίωσης ενός πρωτοκόλλου.</value>
+  </data>
+  <data name="StandardsReportIntro" xml:space="preserve">
+    <value>Πρωτόκολλα ανά πρότυπο (CFAI, CAAS, CALEA, NFPA, ISO 45001 και δικά σας), με αποδείξεις επιβεβαιώσεων και εγκρίσεων.</value>
+  </data>
+  <data name="StandardsReportLmsOnly" xml:space="preserve">
+    <value>Η αναφορά απόδειξης συμμόρφωσης περιλαμβάνεται στο πρόσθετο LMS.</value>
+  </data>
+  <data name="StandardsTagsHelp" xml:space="preserve">
+    <value>Χωρισμένα με κόμμα, π.χ. CFAI, CALEA.</value>
+  </data>
+  <data name="StandardsTagsLabel" xml:space="preserve">
+    <value>Πρότυπα</value>
+  </data>
+  <data name="StandardsTagsLmsOnly" xml:space="preserve">
+    <value>Η αντιστοίχιση με πρότυπα περιλαμβάνεται στο πρόσθετο LMS.</value>
+  </data>
+  <data name="StateLabel" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="TakeQuizButton" xml:space="preserve">
+    <value>Κάντε το κουίζ</value>
+  </data>
+  <data name="UploadBlockedByReview" xml:space="preserve">
+    <value>Μια έκδοση του πρωτοκόλλου είναι σε έλεγχο. Αποσύρετέ την ή ολοκληρώστε τον έλεγχο πριν μεταφορτώσετε νέο αρχείο.</value>
+  </data>
+  <data name="UploadDocumentButton" xml:space="preserve">
+    <value>Μεταφόρτωση</value>
+  </data>
+  <data name="UploadNewVersionButton" xml:space="preserve">
+    <value>Μεταφόρτωση νέας έκδοσης</value>
+  </data>
+  <data name="UploadNewVersionHelp" xml:space="preserve">
+    <value>Το αρχείο γίνεται το περιεχόμενο της επόμενης έκδοσης, πρόχειρο για έλεγχο και δημοσίευση. Μέχρι τότε ισχύει η τρέχουσα έκδοση.</value>
+  </data>
+  <data name="VerifiedApprovalsLabel" xml:space="preserve">
+    <value>{0} επαληθευμένες εγκρίσεις</value>
+  </data>
+  <data name="WithdrawBulletinButton" xml:space="preserve">
+    <value>Απόσυρση</value>
+  </data>
+  <data name="WithdrawBulletinConfirm" xml:space="preserve">
+    <value>Απόσυρση του δελτίου; Παύει να ισχύει αμέσως.</value>
+  </data>
+  <data name="WizardProtocolsFileHelp" xml:space="preserve">
+    <value>Αρχείο εξαγωγής από βιβλιοθήκη πρωτοκόλλων Resgrid (μορφή resgrid-protocols, έκδοση 1), έως 10 MB και 500 πρωτόκολλα.</value>
+  </data>
+  <data name="WizardProtocolsHelp" xml:space="preserve">
+    <value>Μεταφέρετε πρωτόκολλα στην ανοιχτή μορφή ανταλλαγής. Πρώτα προεπισκόπηση· η εισαγωγή δημιουργεί πρόχειρα για μία διέλευση ελέγχου και δημοσίευσης. Τίποτα δεν δημοσιεύεται.</value>
+  </data>
+  <data name="BlockLabelCaution" xml:space="preserve">
+    <value>Προσοχή</value>
+  </data>
+  <data name="BlockLabelWarning" xml:space="preserve">
+    <value>Προειδοποίηση</value>
+  </data>
+  <data name="BlockLabelContactMedicalControl" xml:space="preserve">
+    <value>Επικοινωνήστε με τον ιατρικό έλεγχο</value>
+  </data>
+  <data name="BlockLabelContact" xml:space="preserve">
+    <value>Επικοινωνία</value>
+  </data>
+  <data name="BlockLabelScopeOfPractice" xml:space="preserve">
+    <value>Πεδίο αρμοδιότητας</value>
+  </data>
+  <data name="BlockLabelMedication" xml:space="preserve">
+    <value>Φάρμακο</value>
+  </data>
+  <data name="BlockLabelIndication" xml:space="preserve">
+    <value>Ένδειξη</value>
+  </data>
+  <data name="BlockLabelConcentration" xml:space="preserve">
+    <value>Συγκέντρωση</value>
+  </data>
+  <data name="BlockLabelDosePerKg" xml:space="preserve">
+    <value>Δόση ανά kg</value>
+  </data>
+  <data name="BlockLabelMaxSingleDose" xml:space="preserve">
+    <value>Μέγιστη εφάπαξ δόση</value>
+  </data>
+  <data name="BlockLabelMaxTotalDose" xml:space="preserve">
+    <value>Μέγιστη συνολική δόση</value>
+  </data>
+  <data name="BlockLabelRoute" xml:space="preserve">
+    <value>Οδός χορήγησης</value>
+  </data>
+  <data name="BlockLabelRepeatInterval" xml:space="preserve">
+    <value>Διάστημα επανάληψης</value>
+  </data>
+  <data name="BlockLabelInventoryItem" xml:space="preserve">
+    <value>Είδος αποθέματος</value>
+  </data>
+  <data name="BlockLabelDoseAsAuthored" xml:space="preserve">
+    <value>Οι δόσεις εμφανίζονται όπως γράφτηκαν. Τίποτα δεν υπολογίζεται.</value>
+  </data>
+  <data name="BlockLabelVideo" xml:space="preserve">
+    <value>Σύνδεσμος βίντεο</value>
+  </data>
+  <data name="BlockLabelAttachment" xml:space="preserve">
+    <value>Συνημμένο αρχείο</value>
+  </data>
+  <data name="BlockLabelLinkProtocol" xml:space="preserve">
+    <value>Σχετικό πρωτόκολλο</value>
+  </data>
+  <data name="BlockLabelLinkPoi" xml:space="preserve">
+    <value>Σημείο ενδιαφέροντος</value>
+  </data>
+  <data name="BlockLabelLinkInventory" xml:space="preserve">
+    <value>Συνδεδεμένο είδος αποθέματος</value>
+  </data>
+  <data name="BlockLabelLinkChecklist" xml:space="preserve">
+    <value>Σχετική λίστα ελέγχου</value>
+  </data>
+  <data name="BlockLabelLinkTraining" xml:space="preserve">
+    <value>Σχετική εκπαίδευση</value>
+  </data>
+  <data name="BlockLabelLinkUrl" xml:space="preserve">
+    <value>Ιστοσελίδα</value>
+  </data>
+  <data name="BlockTypeHeading" xml:space="preserve">
+    <value>Επικεφαλίδα</value>
+  </data>
+  <data name="BlockTypeParagraph" xml:space="preserve">
+    <value>Παράγραφος</value>
+  </data>
+  <data name="BlockTypeSteps" xml:space="preserve">
+    <value>Αριθμημένα βήματα</value>
+  </data>
+  <data name="BlockTypeCaution" xml:space="preserve">
+    <value>Προσοχή</value>
+  </data>
+  <data name="BlockTypeWarning" xml:space="preserve">
+    <value>Προειδοποίηση</value>
+  </data>
+  <data name="BlockTypeGate" xml:space="preserve">
+    <value>Επικοινωνήστε με τον ιατρικό έλεγχο</value>
+  </data>
+  <data name="BlockTypeTable" xml:space="preserve">
+    <value>Πίνακας</value>
+  </data>
+  <data name="BlockTypeImage" xml:space="preserve">
+    <value>Εικόνα</value>
+  </data>
+  <data name="BlockTypeVideo" xml:space="preserve">
+    <value>Σύνδεσμος βίντεο</value>
+  </data>
+  <data name="BlockTypeAttachment" xml:space="preserve">
+    <value>Συνημμένο</value>
+  </data>
+  <data name="BlockTypeLink" xml:space="preserve">
+    <value>Σύνδεσμος</value>
+  </data>
+  <data name="BlockTypeMedication" xml:space="preserve">
+    <value>Φάρμακο</value>
+  </data>
+  <data name="BlockTypeVariants" xml:space="preserve">
+    <value>Παραλλαγές ενηλίκων / παίδων</value>
+  </data>
+  <data name="BlockTypeHtml" xml:space="preserve">
+    <value>Μορφοποιημένο κείμενο</value>
+  </data>
+  <data name="BlockMoveUp" xml:space="preserve">
+    <value>Μετακίνηση πάνω</value>
+  </data>
+  <data name="BlockMoveDown" xml:space="preserve">
+    <value>Μετακίνηση κάτω</value>
+  </data>
+  <data name="BlockRemove" xml:space="preserve">
+    <value>Αφαίρεση μπλοκ</value>
+  </data>
+  <data name="BlockAddStep" xml:space="preserve">
+    <value>Προσθήκη βήματος</value>
+  </data>
+  <data name="BlockRemoveStep" xml:space="preserve">
+    <value>Αφαίρεση βήματος</value>
+  </data>
+  <data name="BlockAddRow" xml:space="preserve">
+    <value>Προσθήκη γραμμής</value>
+  </data>
+  <data name="BlockAddColumn" xml:space="preserve">
+    <value>Προσθήκη στήλης</value>
+  </data>
+  <data name="BlockRemoveRow" xml:space="preserve">
+    <value>Αφαίρεση τελευταίας γραμμής</value>
+  </data>
+  <data name="BlockRemoveColumn" xml:space="preserve">
+    <value>Αφαίρεση τελευταίας στήλης</value>
+  </data>
+  <data name="BlockAddVariant" xml:space="preserve">
+    <value>Προσθήκη παραλλαγής</value>
+  </data>
+  <data name="BlockRemoveVariant" xml:space="preserve">
+    <value>Αφαίρεση παραλλαγής</value>
+  </data>
+  <data name="BlockAddBlock" xml:space="preserve">
+    <value>Προσθήκη μπλοκ</value>
+  </data>
+  <data name="BlockEditorEmpty" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη μπλοκ. Προσθέστε παρακάτω επικεφαλίδα, βήματα ή φάρμακο.</value>
+  </data>
+  <data name="BlockSelectNone" xml:space="preserve">
+    <value>Καμία επιλογή</value>
+  </data>
+  <data name="BlockPreviewFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η φόρτωση της προεπισκόπησης.</value>
+  </data>
+  <data name="BlockFieldText" xml:space="preserve">
+    <value>Κείμενο επικεφαλίδας</value>
+  </data>
+  <data name="BlockFieldLevel" xml:space="preserve">
+    <value>Επίπεδο επικεφαλίδας</value>
+  </data>
+  <data name="BlockFieldTitle" xml:space="preserve">
+    <value>Τίτλος (προαιρετικός)</value>
+  </data>
+  <data name="BlockFieldBody" xml:space="preserve">
+    <value>Κείμενο</value>
+  </data>
+  <data name="BlockFieldStep" xml:space="preserve">
+    <value>Βήμα</value>
+  </data>
+  <data name="BlockFieldContact" xml:space="preserve">
+    <value>Ποιον και πώς να επικοινωνήσετε</value>
+  </data>
+  <data name="BlockFieldCaption" xml:space="preserve">
+    <value>Λεζάντα</value>
+  </data>
+  <data name="BlockFieldHeaderRow" xml:space="preserve">
+    <value>Η πρώτη γραμμή είναι κεφαλίδα</value>
+  </data>
+  <data name="BlockFieldCell" xml:space="preserve">
+    <value>Κελί</value>
+  </data>
+  <data name="BlockFieldUrl" xml:space="preserve">
+    <value>Διεύθυνση ιστού (https)</value>
+  </data>
+  <data name="BlockFieldAttachment" xml:space="preserve">
+    <value>Συνημμένο πρωτοκόλλου</value>
+  </data>
+  <data name="BlockFieldAlt" xml:space="preserve">
+    <value>Περιγραφή για αναγνώστες οθόνης</value>
+  </data>
+  <data name="BlockFieldLabel" xml:space="preserve">
+    <value>Κείμενο συνδέσμου</value>
+  </data>
+  <data name="BlockFieldLinkKind" xml:space="preserve">
+    <value>Σύνδεση με</value>
+  </data>
+  <data name="BlockFieldLinkTarget" xml:space="preserve">
+    <value>Συνδεδεμένο στοιχείο</value>
+  </data>
+  <data name="BlockFieldLinkId" xml:space="preserve">
+    <value>Αριθμός ή αναγνωριστικό στοιχείου</value>
+  </data>
+  <data name="BlockFieldScopes" xml:space="preserve">
+    <value>Πεδίο αρμοδιότητας (τύποι πιστοποίησης)</value>
+  </data>
+  <data name="BlockFieldVariantLabel" xml:space="preserve">
+    <value>Όνομα παραλλαγής</value>
+  </data>
+  <data name="BlockFieldDrug" xml:space="preserve">
+    <value>Φαρμακευτική ουσία</value>
+  </data>
+  <data name="BlockFieldInventoryItemId" xml:space="preserve">
+    <value>Αναγνωριστικό είδους αποθέματος</value>
+  </data>
+  <data name="BlockFieldInventoryItemName" xml:space="preserve">
+    <value>Όνομα είδους αποθέματος</value>
+  </data>
+  <data name="BlockFieldNotes" xml:space="preserve">
+    <value>Σημειώσεις</value>
+  </data>
+  <data name="BlockLevel2" xml:space="preserve">
+    <value>Ενότητα</value>
+  </data>
+  <data name="BlockLevel3" xml:space="preserve">
+    <value>Υποενότητα</value>
+  </data>
+  <data name="BlockLevel4" xml:space="preserve">
+    <value>Δευτερεύουσα επικεφαλίδα</value>
+  </data>
+  <data name="BlockAdultLabel" xml:space="preserve">
+    <value>Ενήλικες</value>
+  </data>
+  <data name="BlockPediatricLabel" xml:space="preserve">
+    <value>Παιδιατρικό</value>
+  </data>
+  <data name="BlockDoseNoticeEditor" xml:space="preserve">
+    <value>Οι δόσεις εμφανίζονται ακριβώς όπως γράφονται εδώ. Το Resgrid δεν υπολογίζει ποτέ δόση· ο σύνδεσμος του εργαλείου δοσολογίας του φορέα εμφανίζεται σε κάθε φάρμακο.</value>
+  </data>
+  <data name="RichBold" xml:space="preserve">
+    <value>Έντονα</value>
+  </data>
+  <data name="RichItalic" xml:space="preserve">
+    <value>Πλάγια</value>
+  </data>
+  <data name="RichBullets" xml:space="preserve">
+    <value>Λίστα κουκκίδων</value>
+  </data>
+  <data name="RichNumbers" xml:space="preserve">
+    <value>Αριθμημένη λίστα</value>
+  </data>
+  <data name="BlockEditorHelp" xml:space="preserve">
+    <value>Δημιουργήστε το πρωτόκολλο από μπλοκ: οι επικεφαλίδες σχηματίζουν τη διάρθρωση, τα αριθμημένα βήματα και τα σημεία επικοινωνίας με τον ιατρικό έλεγχο εκτελούνται βήμα-βήμα σε ένα συμβάν, και κάθε μπλοκ έχει σταθερή άγκυρα για σχόλια ελέγχου και παραπομπές ΤΝ.</value>
+  </data>
+  <data name="BlockEditorNeedsScript" xml:space="preserve">
+    <value>Ο επεξεργαστής μπλοκ χρειάζεται JavaScript. Ενεργοποιήστε το για να επεξεργαστείτε το προσχέδιο.</value>
+  </data>
+  <data name="BlockPreviewButton" xml:space="preserve">
+    <value>Ανανέωση προεπισκόπησης</value>
+  </data>
+  <data name="BlockPreviewHeader" xml:space="preserve">
+    <value>Προεπισκόπηση όπως θα τη διαβάσουν τα μέλη</value>
+  </data>
+  <data name="BlockPreviewHelp" xml:space="preserve">
+    <value>Επιλέξτε Ανανέωση προεπισκόπησης για να δείτε τα μπλοκ ακριβώς όπως θα τα διαβάσουν τα μέλη.</value>
+  </data>
+  <data name="ConvertToBlocksCallout" xml:space="preserve">
+    <value>Αυτό το προσχέδιο είναι μορφοποιημένο κείμενο. Μετατρέψτε το σε μπλοκ για να προσθέσετε βήματα, προφυλάξεις, φάρμακα και άλλο δομημένο περιεχόμενο· οι δημοσιευμένες εκδόσεις δεν αλλάζουν.</value>
+  </data>
+  <data name="ConvertToBlocksButton" xml:space="preserve">
+    <value>Μετατροπή σε μπλοκ</value>
+  </data>
+  <data name="ConvertToBlocksConfirm" xml:space="preserve">
+    <value>Μετατροπή του κειμένου αυτού του προσχεδίου σε μπλοκ; Οι δημοσιευμένες εκδόσεις δεν αλλάζουν.</value>
+  </data>
+  <data name="ConvertedToBlocksMessage" xml:space="preserve">
+    <value>Το προσχέδιο μετατράπηκε σε μπλοκ.</value>
+  </data>
+  <data name="DosingToolLinkText" xml:space="preserve">
+    <value>Άνοιγμα του εργαλείου δοσολογίας του φορέα</value>
+  </data>
+  <data name="StepThroughHeader" xml:space="preserve">
+    <value>Βήμα προς βήμα</value>
+  </data>
+  <data name="StepThroughSubtitle" xml:space="preserve">
+    <value>Συμβάν {0} · {1}</value>
+  </data>
+  <data name="StepProgressLabel" xml:space="preserve">
+    <value>Ολοκληρωμένα βήματα</value>
+  </data>
+  <data name="StepProgressFormat" xml:space="preserve">
+    <value>{0} από {1}</value>
+  </data>
+  <data name="StepStartedLabel" xml:space="preserve">
+    <value>Ξεκίνησε</value>
+  </data>
+  <data name="StepNotStarted" xml:space="preserve">
+    <value>Δεν ξεκίνησε</value>
+  </data>
+  <data name="CitedVersionColumn" xml:space="preserve">
+    <value>Έκδοση που χρησιμοποιήθηκε</value>
+  </data>
+  <data name="StepsCompletedBy" xml:space="preserve">
+    <value>Ολοκληρώθηκε από {0} στις {1}.</value>
+  </data>
+  <data name="StepsHeader" xml:space="preserve">
+    <value>Βήματα</value>
+  </data>
+  <data name="StepStateDone" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+  </data>
+  <data name="StepStateSkipped" xml:space="preserve">
+    <value>Παραλείφθηκε</value>
+  </data>
+  <data name="StepStateNotApplicable" xml:space="preserve">
+    <value>Δεν ισχύει</value>
+  </data>
+  <data name="StepStatePending" xml:space="preserve">
+    <value>Δεν έγινε ακόμη</value>
+  </data>
+  <data name="StepMarkDone" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+  </data>
+  <data name="StepMarkSkipped" xml:space="preserve">
+    <value>Παράλειψη</value>
+  </data>
+  <data name="StepMarkNotApplicable" xml:space="preserve">
+    <value>Δεν ισχύει</value>
+  </data>
+  <data name="StepMarkPending" xml:space="preserve">
+    <value>Αναίρεση</value>
+  </data>
+  <data name="BackToCallButton" xml:space="preserve">
+    <value>Επιστροφή στο συμβάν</value>
+  </data>
+  <data name="CompleteStepsButton" xml:space="preserve">
+    <value>Ολοκλήρωση λίστας ελέγχου</value>
+  </data>
+  <data name="CompleteStepsConfirm" xml:space="preserve">
+    <value>Ολοκλήρωση αυτής της λίστας; Τα βήματα που δεν έγιναν καταγράφονται ως μη ολοκληρωμένα.</value>
+  </data>
+  <data name="StepSaveFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση του βήματος. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="StepsCompletedMessage" xml:space="preserve">
+    <value>Η λίστα ελέγχου ολοκληρώθηκε.</value>
+  </data>
+  <data name="StepsCompletedLabel" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+  </data>
+  <data name="SopChecklistsHeader" xml:space="preserve">
+    <value>Βήμα-βήμα και λίστες ελέγχου SOP</value>
+  </data>
+  <data name="IncidentSopLabel" xml:space="preserve">
+    <value>SOP συμβάντος</value>
+  </data>
+  <data name="StartSopLabel" xml:space="preserve">
+    <value>Έναρξη λίστας ελέγχου SOP</value>
+  </data>
+  <data name="StartSopButton" xml:space="preserve">
+    <value>Έναρξη λίστας</value>
+  </data>
+  <data name="StepErrorNotFound" xml:space="preserve">
+    <value>Αυτό το πρωτόκολλο δεν είναι σε αυτό το συμβάν.</value>
+  </data>
+  <data name="StepErrorNotAuthorized" xml:space="preserve">
+    <value>Δεν μπορείτε να αλλάξετε αυτή τη λίστα.</value>
+  </data>
+  <data name="StepErrorNoSteps" xml:space="preserve">
+    <value>Αυτό το πρωτόκολλο δεν έχει βήματα.</value>
+  </data>
+  <data name="StepErrorUnknownStep" xml:space="preserve">
+    <value>Αυτό το βήμα δεν υπάρχει στην έκδοση που χρησιμοποιεί το συμβάν.</value>
+  </data>
+  <data name="StepErrorCompleted" xml:space="preserve">
+    <value>Αυτή η λίστα έχει ολοκληρωθεί.</value>
+  </data>
+  <data name="StepErrorConflict" xml:space="preserve">
+    <value>Κάποιος άλλος αποθήκευε την ίδια στιγμή. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="StepErrorNotAttachable" xml:space="preserve">
+    <value>Αυτό το πρωτόκολλο δεν μπορεί να προστεθεί στο συμβάν (είναι απενεργοποιημένο, διαγραμμένο ή αφαιρέθηκε από το συμβάν).</value>
+  </data>
+  <data name="QrCodeHeader" xml:space="preserve">
+    <value>Αφίσα κωδικού QR</value>
+  </data>
+  <data name="QrCodeButton" xml:space="preserve">
+    <value>Κωδικός QR</value>
+  </data>
+  <data name="QrCodeAlt" xml:space="preserve">
+    <value>Κωδικός QR για {0}</value>
+  </data>
+  <data name="QrCodeUnavailable" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η δημιουργία του κωδικού QR.</value>
+  </data>
+  <data name="QrCodeHelp" xml:space="preserve">
+    <value>Εκτυπώστε αυτή την αφίσα για όχημα ή τοίχο σταθμού. Η σάρωση ανοίγει την ισχύουσα έκδοση για τα μέλη που μπορούν να διαβάσουν το πρωτόκολλο.</value>
+  </data>
+  <data name="DeepLinkLabel" xml:space="preserve">
+    <value>Άμεσος σύνδεσμος</value>
+  </data>
+  <data name="PrintViewButton" xml:space="preserve">
+    <value>Προβολή εκτύπωσης</value>
+  </data>
+  <data name="BookTab" xml:space="preserve">
+    <value>Βιβλίο PDF</value>
+  </data>
+  <data name="BookHeader" xml:space="preserve">
+    <value>Βιβλίο PDF πρωτοκόλλων</value>
+  </data>
+  <data name="BookHelp" xml:space="preserve">
+    <value>Κατεβάστε όλη τη βιβλιοθήκη ή μία κατηγορία (με τις υποκατηγορίες της) ως ένα PDF: πίνακας περιεχομένων και κάθε ισχύον πρωτόκολλο με έκδοση, ημερομηνία ισχύος και εγκρίνοντα. Περιλαμβάνονται μόνο πρωτόκολλα που μπορείτε να διαβάσετε.</value>
+  </data>
+  <data name="BookReadableCount" xml:space="preserve">
+    <value>Πρωτόκολλα που μπορείτε να διαβάσετε</value>
+  </data>
+  <data name="BookSealingLabel" xml:space="preserve">
+    <value>Ηλεκτρονική σφραγίδα</value>
+  </data>
+  <data name="BookSealingReady" xml:space="preserve">
+    <value>Σφραγισμένο (L3)</value>
+  </data>
+  <data name="BookSealingPending" xml:space="preserve">
+    <value>Χωρίς σφραγίδα, εκκρεμεί σφράγιση</value>
+  </data>
+  <data name="BookUnsealedNotice" xml:space="preserve">
+    <value>Η σφράγιση δεν έχει ρυθμιστεί, οπότε το PDF δεν σφραγίζεται. Η εξαγωγή καταγράφεται ως εκκρεμής και σφραγίζεται όταν ρυθμιστεί η σφράγιση.</value>
+  </data>
+  <data name="BookWholeLibrary" xml:space="preserve">
+    <value>Ολόκληρη η βιβλιοθήκη</value>
+  </data>
+  <data name="BookDownloadButton" xml:space="preserve">
+    <value>Λήψη PDF</value>
+  </data>
+  <data name="BookLibraryTitle" xml:space="preserve">
+    <value>Βιβλιοθήκη πρωτοκόλλων</value>
+  </data>
+  <data name="BookContents" xml:space="preserve">
+    <value>Περιεχόμενα</value>
+  </data>
+  <data name="BookVersion" xml:space="preserve">
+    <value>Έκδοση</value>
+  </data>
+  <data name="BookEffective" xml:space="preserve">
+    <value>Ισχύει από</value>
+  </data>
+  <data name="BookApprovedBy" xml:space="preserve">
+    <value>Εγκρίθηκε από</value>
+  </data>
+  <data name="BookContent" xml:space="preserve">
+    <value>Περιεχόμενο</value>
+  </data>
+  <data name="BookGenerated" xml:space="preserve">
+    <value>Δημιουργήθηκε</value>
+  </data>
+  <data name="BookDocumentBacked" xml:space="preserve">
+    <value>Αυτό το πρωτόκολλο είναι έγγραφο· ανοίξτε το στο Resgrid για να διαβάσετε το αρχείο.</value>
+  </data>
+  <data name="BookEmpty" xml:space="preserve">
+    <value>Δεν υπάρχουν δημοσιευμένα πρωτόκολλα.</value>
+  </data>
+  <data name="BookUncategorized" xml:space="preserve">
+    <value>Χωρίς κατηγορία</value>
+  </data>
+  <data name="BookFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η δημιουργία του βιβλίου PDF.</value>
+  </data>
+  <data name="TranslationsButton" xml:space="preserve">
+    <value>Μεταφράσεις</value>
+  </data>
+  <data name="TranslationsHeader" xml:space="preserve">
+    <value>Μεταφράσεις περιεχομένου</value>
+  </data>
+  <data name="TranslationHeader" xml:space="preserve">
+    <value>Μετάφραση: {0}</value>
+  </data>
+  <data name="TranslationsSourceCallout" xml:space="preserve">
+    <value>Αυτή η έκδοση είναι γραμμένη στα {0}. Κάθε μετάφραση εγκρίνεται χωριστά· η έκδοση, το hash και οι υπογραφές της δεν αλλάζουν ποτέ.</value>
+  </data>
+  <data name="NoTranslations" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη μεταφράσεις.</value>
+  </data>
+  <data name="TranslationLanguageColumn" xml:space="preserve">
+    <value>Γλώσσα</value>
+  </data>
+  <data name="TranslationUpdatedColumn" xml:space="preserve">
+    <value>Τελευταία αλλαγή</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Ενέργειες</value>
+  </data>
+  <data name="TranslationStatusDraft" xml:space="preserve">
+    <value>Προσχέδιο μετάφρασης</value>
+  </data>
+  <data name="TranslationStatusApproved" xml:space="preserve">
+    <value>Εγκεκριμένη μετάφραση</value>
+  </data>
+  <data name="TranslationStatusWithdrawn" xml:space="preserve">
+    <value>Αποσυρμένη μετάφραση</value>
+  </data>
+  <data name="TranslationSourceChanged" xml:space="preserve">
+    <value>Η πηγή άλλαξε</value>
+  </data>
+  <data name="TranslationSourceChangedNotice" xml:space="preserve">
+    <value>Το αρχικό περιεχόμενο άλλαξε μετά τη μετάφραση. Δεν μπορεί να εγκριθεί και δεν εμφανίζεται στα μέλη· ξεκινήστε νέα μετάφραση της τρέχουσας έκδοσης.</value>
+  </data>
+  <data name="WithdrawTranslationButton" xml:space="preserve">
+    <value>Απόσυρση μετάφρασης</value>
+  </data>
+  <data name="WithdrawTranslationConfirm" xml:space="preserve">
+    <value>Απόσυρση αυτής της μετάφρασης; Τα μέλη σε αυτή τη γλώσσα θα βλέπουν το πρωτότυπο.</value>
+  </data>
+  <data name="StartTranslationButton" xml:space="preserve">
+    <value>Έναρξη μετάφρασης</value>
+  </data>
+  <data name="TranslationRulesCallout" xml:space="preserve">
+    <value>Μεταφράζεται μόνο η διατύπωση. Οι δόσεις, οι σύνδεσμοι, τα συνημμένα και η δομή μένουν ακριβώς όπως στο πρωτότυπο.</value>
+  </data>
+  <data name="TranslationWordingHeader" xml:space="preserve">
+    <value>Μεταφρασμένη διατύπωση</value>
+  </data>
+  <data name="TranslationSourceColumn" xml:space="preserve">
+    <value>Πρωτότυπο</value>
+  </data>
+  <data name="TranslationTranslatedColumn" xml:space="preserve">
+    <value>Μετάφραση</value>
+  </data>
+  <data name="TranslationDosesLocked" xml:space="preserve">
+    <value>Οι δόσεις δεν μεταφράζονται</value>
+  </data>
+  <data name="SaveTranslationButton" xml:space="preserve">
+    <value>Αποθήκευση μετάφρασης</value>
+  </data>
+  <data name="TranslationPreviewHeader" xml:space="preserve">
+    <value>Η μετάφραση όπως θα τη διαβάσουν τα μέλη</value>
+  </data>
+  <data name="ApproveTranslationHeader" xml:space="preserve">
+    <value>Έγκριση της μετάφρασης</value>
+  </data>
+  <data name="ApproveTranslationHelp" xml:space="preserve">
+    <value>Η έγκριση υπογράφει τη μετάφραση σε επίπεδο L2 (πρόσθετη επαλήθευση), δεμένη στο περιεχόμενο της μετάφρασης. Η αρχική έκδοση δεν αλλάζει.</value>
+  </data>
+  <data name="ApproveTranslationButton" xml:space="preserve">
+    <value>Έγκριση με πρόσθετη επαλήθευση</value>
+  </data>
+  <data name="TranslationApprovalStatement" xml:space="preserve">
+    <value>Εγκρίνω τη μετάφραση ({3}) του πρωτοκόλλου {0} «{1}» έκδοση {2} (περιεχόμενο μετάφρασης {4}) για τα μέλη που διαβάζουν σε αυτή τη γλώσσα.</value>
+  </data>
+  <data name="TranslationSavedMessage" xml:space="preserve">
+    <value>Η μετάφραση αποθηκεύτηκε.</value>
+  </data>
+  <data name="TranslationApprovedMessage" xml:space="preserve">
+    <value>Η μετάφραση εγκρίθηκε· τα μέλη σε αυτή τη γλώσσα τη βλέπουν πλέον.</value>
+  </data>
+  <data name="TranslationWithdrawnMessage" xml:space="preserve">
+    <value>Η μετάφραση αποσύρθηκε.</value>
+  </data>
+  <data name="TranslationShownNotice" xml:space="preserve">
+    <value>Εμφανίζεται στα {0} (εγκεκριμένη μετάφραση).</value>
+  </data>
+  <data name="TranslationFallbackNotice" xml:space="preserve">
+    <value>Δεν υπάρχει εγκεκριμένη μετάφραση στη γλώσσα σας, οπότε εμφανίζεται στη γλώσσα του φορέα.</value>
+  </data>
+  <data name="ContentLanguageLabel" xml:space="preserve">
+    <value>Γλώσσα περιεχομένου</value>
+  </data>
+  <data name="TranslationErrorNotFound" xml:space="preserve">
+    <value>Η μετάφραση ή η έκδοση δεν βρέθηκε.</value>
+  </data>
+  <data name="TranslationErrorNotAuthorized" xml:space="preserve">
+    <value>Δεν μπορείτε να το κάνετε αυτό με τις μεταφράσεις.</value>
+  </data>
+  <data name="TranslationErrorSourceNotLocked" xml:space="preserve">
+    <value>Μόνο υποβληθείσα, εγκεκριμένη ή δημοσιευμένη έκδοση μπορεί να μεταφραστεί.</value>
+  </data>
+  <data name="TranslationErrorInvalidLocale" xml:space="preserve">
+    <value>Επιλέξτε γλώσσα διαφορετική από αυτή της έκδοσης.</value>
+  </data>
+  <data name="TranslationErrorAlreadyExists" xml:space="preserve">
+    <value>Αυτή η έκδοση έχει ήδη μετάφραση σε αυτή τη γλώσσα.</value>
+  </data>
+  <data name="TranslationErrorStaleCopy" xml:space="preserve">
+    <value>Κάποιος άλλος αποθήκευσε τη μετάφραση αφού την ανοίξατε. Επαναφορτώστε για να δείτε τις αλλαγές.</value>
+  </data>
+  <data name="TranslationErrorNotDraft" xml:space="preserve">
+    <value>Μόνο προσχέδιο μετάφρασης μπορεί να αλλάξει ή να εγκριθεί.</value>
+  </data>
+  <data name="TranslationErrorEmptyContent" xml:space="preserve">
+    <value>Η μετάφραση είναι κενή.</value>
+  </data>
+  <data name="TranslationErrorSignatureRequired" xml:space="preserve">
+    <value>Η έγκριση απαιτεί νέα πρόσθετη επαλήθευση.</value>
+  </data>
+  <data name="TranslationErrorPasskeyRequired" xml:space="preserve">
+    <value>Ο φορέας σας απαιτεί κλειδί πρόσβασης για εγκρίσεις.</value>
+  </data>
+  <data name="TranslationErrorSourceChanged" xml:space="preserve">
+    <value>Το αρχικό περιεχόμενο άλλαξε μετά τη μετάφραση.</value>
+  </data>
+  <data name="StaleVersionMessage" xml:space="preserve">
+    <value>Βλέπετε την {0}. Η {1} ισχύει από {2}.</value>
+  </data>
+  <data name="StaleRetiredMessage" xml:space="preserve">
+    <value>Βλέπετε την {0}. Αυτό το πρωτόκολλο δεν ισχύει πλέον.</value>
+  </data>
+  <data name="DefaultContentLocaleLabel" xml:space="preserve">
+    <value>Γλώσσα σύνταξης των πρωτοκόλλων</value>
+  </data>
+  <data name="DefaultContentLocaleBlank" xml:space="preserve">
+    <value>Αγγλικά (προεπιλογή)</value>
+  </data>
+  <data name="DefaultContentLocaleHelp" xml:space="preserve">
+    <value>Τα μέλη χωρίς εγκεκριμένη μετάφραση μιας έκδοσης στη γλώσσα τους τη διαβάζουν σε αυτή τη γλώσσα, και οι ετικέτες μπλοκ όπως «Προσοχή» γράφονται σε αυτήν.</value>
+  </data>
+  <data name="BankQuizHeader" xml:space="preserve">
+    <value>Κουίζ πρωτοκόλλου</value>
+  </data>
+  <data name="AckAwaitingBankQuizLabel" xml:space="preserve">
+    <value>Υπογράφηκε· αναμένεται το κουίζ του πρωτοκόλλου</value>
+  </data>
+  <data name="TakeBankQuizButton" xml:space="preserve">
+    <value>Κάντε το κουίζ</value>
+  </data>
+  <data name="ResumeBankQuizButton" xml:space="preserve">
+    <value>Συνέχεια του κουίζ</value>
+  </data>
+  <data name="BankQuizRequiredNotice" xml:space="preserve">
+    <value>Η επιβεβαίωσή σας ολοκληρώνεται όταν περάσετε ένα κουίζ {0} ερωτήσεων (βάση επιτυχίας {1}%).</value>
+  </data>
+  <data name="BankQuizPassedNotice" xml:space="preserve">
+    <value>Το κουίζ πέρασε ({0}%).</value>
+  </data>
+  <data name="QuizIntro" xml:space="preserve">
+    <value>{0} ερωτήσεις, βάση επιτυχίας {1}%. Οι απαντήσεις σας βαθμολογούνται στον διακομιστή· οι σωστές απαντήσεις δεν εμφανίζονται.</value>
+  </data>
+  <data name="QuizChooseAll" xml:space="preserve">
+    <value>Επιλέξτε όλες τις απαντήσεις που ισχύουν.</value>
+  </data>
+  <data name="SubmitQuizButton" xml:space="preserve">
+    <value>Υποβολή απαντήσεων</value>
+  </data>
+  <data name="QuizResultPassed" xml:space="preserve">
+    <value>Επιτυχία: {0}% ({1} από {2} σωστές, βάση {3}%).</value>
+  </data>
+  <data name="QuizResultFailed" xml:space="preserve">
+    <value>Αποτυχία: {0}% ({1} από {2} σωστές, βάση {3}%). Μπορείτε να κάνετε νέο κουίζ.</value>
+  </data>
+  <data name="QuizAckCompletedMessage" xml:space="preserve">
+    <value>Η επιβεβαίωσή σας ολοκληρώθηκε.</value>
+  </data>
+  <data name="QuizError_NotAssigned" xml:space="preserve">
+    <value>Δεν οφείλετε επιβεβαίωση αυτής της έκδοσης ή δεν απαιτεί κουίζ.</value>
+  </data>
+  <data name="QuizError_NoQuestions" xml:space="preserve">
+    <value>Η τράπεζα ερωτήσεων δεν έχει ακόμη ερωτήσεις για κλήρωση. Ενημερώστε τον υπεύθυνο εκπαίδευσης.</value>
+  </data>
+  <data name="QuizError_AlreadySubmitted" xml:space="preserve">
+    <value>Αυτό το κουίζ έχει ήδη γίνει.</value>
+  </data>
+  <data name="QuizError_NotAuthorized" xml:space="preserve">
+    <value>Δεν μπορείτε να κάνετε αυτό το κουίζ.</value>
+  </data>
+  <data name="QuizError_NotFound" xml:space="preserve">
+    <value>Το κουίζ δεν βρέθηκε.</value>
+  </data>
+  <data name="LearningSettingsHeader" xml:space="preserve">
+    <value>Κουίζ από τράπεζα ερωτήσεων και μικρομάθηση</value>
+  </data>
+  <data name="LearningBankLabel" xml:space="preserve">
+    <value>Τράπεζα ερωτήσεων</value>
+  </data>
+  <data name="LearningNoBankOption" xml:space="preserve">
+    <value>Χωρίς τράπεζα ερωτήσεων</value>
+  </data>
+  <data name="LearningBankHelp" xml:space="preserve">
+    <value>Μια κοινόχρηστη τράπεζα ερωτήσεων της υπηρεσίας συνδεδεμένη με αυτό το πρωτόκολλο (σε παρένθεση οι ερωτήσεις που μπορούν να κληρωθούν). Τα κουίζ και η εβδομαδιαία μικρομάθηση κληρώνουν από αυτήν ερωτήσεις μονής επιλογής, πολλαπλής επιλογής και σωστού/λάθους.</value>
+  </data>
+  <data name="LearningQuizRequiredLabel" xml:space="preserve">
+    <value>Η επιβεβαίωση απαιτεί επιτυχία σε κουίζ από την τράπεζα</value>
+  </data>
+  <data name="LearningQuestionCountLabel" xml:space="preserve">
+    <value>Ερωτήσεις ανά κουίζ</value>
+  </data>
+  <data name="LearningPassMarkLabel" xml:space="preserve">
+    <value>Βάση επιτυχίας (%)</value>
+  </data>
+  <data name="LearningTagsLabel" xml:space="preserve">
+    <value>Μόνο ερωτήσεις με ετικέτες</value>
+  </data>
+  <data name="LearningTagsHelp" xml:space="preserve">
+    <value>Προαιρετικό, χωρισμένο με κόμματα. Αφήστε κενό για κλήρωση από όλη την τράπεζα.</value>
+  </data>
+  <data name="LearningMicroLabel" xml:space="preserve">
+    <value>Συμπερίληψη στην εβδομαδιαία μικρομάθηση</value>
+  </data>
+  <data name="LearningLmsOnly" xml:space="preserve">
+    <value>Περιλαμβάνεται στο πρόσθετο LMS.</value>
+  </data>
+  <data name="LearningSettingsError_InvalidInput" xml:space="preserve">
+    <value>Επιλέξτε μια κοινόχρηστη τράπεζα ερωτήσεων της υπηρεσίας για υποχρεωτικό κουίζ.</value>
+  </data>
+  <data name="LearningSettingsError_NoQuestions" xml:space="preserve">
+    <value>Η τράπεζα ερωτήσεων δεν έχει ερωτήσεις μονής επιλογής, πολλαπλής επιλογής ή σωστού/λάθους για κλήρωση.</value>
+  </data>
+  <data name="LearningSettingsError_AddonRequired" xml:space="preserve">
+    <value>Τα κουίζ από τράπεζες ερωτήσεων και η μικρομάθηση απαιτούν το πρόσθετο LMS.</value>
+  </data>
+  <data name="LearningSettingsError_NotAuthorized" xml:space="preserve">
+    <value>Δεν μπορείτε να αλλάξετε τις ρυθμίσεις μάθησης αυτού του πρωτοκόλλου.</value>
+  </data>
+  <data name="LearningSettingsError_NotFound" xml:space="preserve">
+    <value>Το πρωτόκολλο δεν βρέθηκε.</value>
+  </data>
+  <data name="MicroLearningSelectionHeader" xml:space="preserve">
+    <value>Εβδομαδιαία μικρομάθηση</value>
+  </data>
+  <data name="MicroLearningSelectionHelp" xml:space="preserve">
+    <value>Κάθε Δευτέρα στις 09:00 ώρα υπηρεσίας, κάθε ενεργό μέλος με θέση LMS στο κοινό ενός επιλεγμένου πρωτοκόλλου λαμβάνει μία ερώτηση σεναρίου από τις τράπεζες ερωτήσεων που του αντιστοιχούν: τη συνδεδεμένη τράπεζα ή μια κοινόχρηστη τράπεζα με ετικέτα τον κωδικό ή τον αριθμό του πρωτοκόλλου.</value>
+  </data>
+  <data name="MicroLearningSaveButton" xml:space="preserve">
+    <value>Αποθήκευση επιλογής</value>
+  </data>
+  <data name="MicroLearningSavedMessage" xml:space="preserve">
+    <value>Η επιλογή μικρομάθησης αποθηκεύτηκε: {0} πρωτόκολλα.</value>
+  </data>
+  <data name="WeeklyQuestionsHeader" xml:space="preserve">
+    <value>Εβδομαδιαίες ερωτήσεις</value>
+  </data>
+  <data name="WeeklyQuestionsIntro" xml:space="preserve">
+    <value>Μία ερώτηση σεναρίου την εβδομάδα από τα πρωτόκολλα της υπηρεσίας σας. Απαντήστε μία φορά και δείτε τη σωστή απάντηση και την αιτιολόγηση.</value>
+  </data>
+  <data name="WeeklyNoQuestions" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη εβδομαδιαίες ερωτήσεις.</value>
+  </data>
+  <data name="WeeklyAnswerButton" xml:space="preserve">
+    <value>Απάντηση</value>
+  </data>
+  <data name="WeeklyCorrect" xml:space="preserve">
+    <value>Σωστό</value>
+  </data>
+  <data name="WeeklyIncorrect" xml:space="preserve">
+    <value>Όχι ακριβώς</value>
+  </data>
+  <data name="WeeklyCorrectAnswerLabel" xml:space="preserve">
+    <value>(η σωστή απάντηση)</value>
+  </data>
+  <data name="WeeklyExplanationLabel" xml:space="preserve">
+    <value>Γιατί:</value>
+  </data>
+  <data name="WeeklyWeekLabel" xml:space="preserve">
+    <value>Εβδομάδα {0}</value>
+  </data>
+  <data name="WeeklyChooseAnswer" xml:space="preserve">
+    <value>Επιλέξτε πρώτα μια απάντηση.</value>
+  </data>
+  <data name="LifecycleErrorDecisionGraphInvalid" xml:space="preserve">
+    <value>Η ροή περιστατικού έχει προβλήματα: χρειάζεται ακριβώς ένα πρώτο βήμα, κάθε διαδρομή πρέπει να καταλήγει σε αποτέλεσμα με κωδικό, και δεν πρέπει να κάνει βρόχο. Διορθώστε τη πριν από τον έλεγχο.</value>
+  </data>
+  <data name="LifecycleErrorDecisionGraphNotAllowed" xml:space="preserve">
+    <value>Η ροή περιστατικού ανήκει σε συντεταγμένο πρωτόκολλο αποστολής, όχι σε άλλο είδος ή σε ανεβασμένο έγγραφο.</value>
+  </data>
+  <data name="GraphLabelCaseFlow" xml:space="preserve">
+    <value>Ροή περιστατικού</value>
+  </data>
+  <data name="GraphLabelEntryQuestion" xml:space="preserve">
+    <value>Αρχική ερώτηση</value>
+  </data>
+  <data name="GraphLabelKeyQuestion" xml:space="preserve">
+    <value>Βασική ερώτηση</value>
+  </data>
+  <data name="GraphLabelInstruction" xml:space="preserve">
+    <value>Οδηγία</value>
+  </data>
+  <data name="GraphLabelOutcome" xml:space="preserve">
+    <value>Αποτέλεσμα</value>
+  </data>
+  <data name="GraphLabelDeterminant" xml:space="preserve">
+    <value>Κωδικός εκτίμησης</value>
+  </data>
+  <data name="GraphLabelPriority" xml:space="preserve">
+    <value>Προτεραιότητα</value>
+  </data>
+  <data name="GraphLabelResponse" xml:space="preserve">
+    <value>Απόκριση</value>
+  </data>
+  <data name="GraphLabelPostDispatch" xml:space="preserve">
+    <value>Μετά την αποστολή</value>
+  </data>
+  <data name="GraphLabelGoTo" xml:space="preserve">
+    <value>μετάβαση στο βήμα {0}</value>
+  </data>
+  <data name="GraphLabelAnyAnswer" xml:space="preserve">
+    <value>Οποιαδήποτε απάντηση</value>
+  </data>
+  <data name="GraphLabelYes" xml:space="preserve">
+    <value>Ναι</value>
+  </data>
+  <data name="GraphLabelNo" xml:space="preserve">
+    <value>Όχι</value>
+  </data>
+  <data name="GraphLabelStart" xml:space="preserve">
+    <value>Έναρξη</value>
+  </data>
+  <data name="AiSuggestSuggested" xml:space="preserve">
+    <value>Προτάθηκε.</value>
+  </data>
+  <data name="AiSuggestNotEntitled" xml:space="preserve">
+    <value>Οι προτάσεις πρωτοκόλλου με ΤΝ απαιτούν το πρόσθετο Enhanced AI.</value>
+  </data>
+  <data name="AiSuggestProtectionUnsupported" xml:space="preserve">
+    <value>Οι προτάσεις ΤΝ είναι ανενεργές όσο είναι ενεργή η Προηγμένη Προστασία Δεδομένων.</value>
+  </data>
+  <data name="AiSuggestUnconfigured" xml:space="preserve">
+    <value>Δεν έχει ρυθμιστεί μοντέλο ΤΝ σε αυτή την εγκατάσταση.</value>
+  </data>
+  <data name="AiSuggestNoCandidates" xml:space="preserve">
+    <value>Κανένα δημοσιευμένο πρωτόκολλο αποστολής με ροή περιστατικού δεν μπορεί να χρησιμοποιηθεί με ΤΝ.</value>
+  </data>
+  <data name="AiSuggestNoInput" xml:space="preserve">
+    <value>Η κλήση δεν έχει ακόμη κείμενο ή συνομιλία SMS για ανάγνωση.</value>
+  </data>
+  <data name="AiSuggestNoMatch" xml:space="preserve">
+    <value>Η ΤΝ δεν βρήκε κατάλληλο πρωτόκολλο. Επιλέξτε ένα χειροκίνητα.</value>
+  </data>
+  <data name="AiSuggestUnavailable" xml:space="preserve">
+    <value>Η ΤΝ δεν απαντά αυτή τη στιγμή. Δοκιμάστε ξανά ή επιλέξτε πρωτόκολλο χειροκίνητα.</value>
+  </data>
+  <data name="AiSuggestNotFound" xml:space="preserve">
+    <value>Η κλήση δεν βρέθηκε.</value>
+  </data>
+  <data name="CaseDone" xml:space="preserve">
+    <value>Αποθηκεύτηκε.</value>
+  </data>
+  <data name="CaseNotFound" xml:space="preserve">
+    <value>Αυτό το πρωτόκολλο δεν είναι σε αυτή την κλήση.</value>
+  </data>
+  <data name="CaseNoCase" xml:space="preserve">
+    <value>Αυτό το πρωτόκολλο δεν έχει καταγεγραμμένο περιστατικό στην κλήση.</value>
+  </data>
+  <data name="CaseOverrideReasonRequired" xml:space="preserve">
+    <value>Ένας διαφορετικός κωδικός χρειάζεται αιτιολόγηση.</value>
+  </data>
+  <data name="CaseDeterminantInvalid" xml:space="preserve">
+    <value>Ο κωδικός αποτελείται από γράμματα, ψηφία, κενά και . _ / - (έως 32).</value>
+  </data>
+  <data name="CaseNotAnInstruction" xml:space="preserve">
+    <value>Αυτό το βήμα δεν είναι οδηγία που μπορεί να σταλεί στον καλούντα.</value>
+  </data>
+  <data name="CaseNoThread" xml:space="preserve">
+    <value>Η κλήση δεν έχει ανοιχτή συνομιλία SMS με τον καλούντα.</value>
+  </data>
+  <data name="CaseOptedOut" xml:space="preserve">
+    <value>Ο καλών έχει απενεργοποιήσει τα SMS (STOP)· δεν στάλθηκε τίποτα.</value>
+  </data>
+  <data name="CaseHeldByAnotherDispatcher" xml:space="preserve">
+    <value>Άλλος συντονιστής είναι συνδεδεμένος στη συνομιλία του καλούντα.</value>
+  </data>
+  <data name="CaseSendFailed" xml:space="preserve">
+    <value>Το μήνυμα δεν στάλθηκε. Καταγράφηκε στην κλήση.</value>
+  </data>
+  <data name="CaseCallerDone" xml:space="preserve">
+    <value>Στάλθηκε στον καλούντα και καταγράφηκε στην κλήση.</value>
+  </data>
+  <data name="CaseCallerNotFound" xml:space="preserve">
+    <value>Αυτό το πρωτόκολλο δεν είναι σε αυτή την κλήση.</value>
+  </data>
+  <data name="CaseCallerNoCase" xml:space="preserve">
+    <value>Αυτό το πρωτόκολλο δεν έχει καταγεγραμμένο περιστατικό στην κλήση.</value>
+  </data>
+  <data name="CaseCallerOverrideReasonRequired" xml:space="preserve">
+    <value>Ένας διαφορετικός κωδικός χρειάζεται αιτιολόγηση.</value>
+  </data>
+  <data name="CaseCallerDeterminantInvalid" xml:space="preserve">
+    <value>Ο κωδικός αποτελείται από γράμματα, ψηφία, κενά και . _ / - (έως 32).</value>
+  </data>
+  <data name="CaseCallerNotAnInstruction" xml:space="preserve">
+    <value>Αυτό το βήμα δεν είναι οδηγία που μπορεί να σταλεί στον καλούντα.</value>
+  </data>
+  <data name="CaseCallerNoThread" xml:space="preserve">
+    <value>Η κλήση δεν έχει ανοιχτή συνομιλία SMS με τον καλούντα.</value>
+  </data>
+  <data name="CaseCallerOptedOut" xml:space="preserve">
+    <value>Ο καλών έχει απενεργοποιήσει τα SMS (STOP)· δεν στάλθηκε τίποτα.</value>
+  </data>
+  <data name="CaseCallerHeldByAnotherDispatcher" xml:space="preserve">
+    <value>Άλλος συντονιστής είναι συνδεδεμένος στη συνομιλία του καλούντα.</value>
+  </data>
+  <data name="CaseCallerSendFailed" xml:space="preserve">
+    <value>Το μήνυμα δεν στάλθηκε. Καταγράφηκε στην κλήση.</value>
+  </data>
+  <data name="TriggerConditionsLabel" xml:space="preserve">
+    <value>Συνθήκες</value>
+  </data>
+  <data name="TriggerConditionsHelp" xml:space="preserve">
+    <value>Κάθε συνθήκη που ορίζετε πρέπει επίσης να ισχύει: η κλήση μέσα σε περιοχή σταθμού ή ομάδας, αυτές τις ημέρες και ώρες (ώρα υπηρεσίας), με λέξη στη φύση ή στις σημειώσεις, σε σημείο ενδιαφέροντος αυτού του τύπου ή από αυτές τις πηγές. Ένας ενεργοποιητής για κάθε κλήση χρειάζεται τουλάχιστον μία.</value>
+  </data>
+  <data name="TriggerKeywordsLabel" xml:space="preserve">
+    <value>Λέξεις στη φύση ή στις σημειώσεις</value>
+  </data>
+  <data name="TriggerKeywordsPlaceholder" xml:space="preserve">
+    <value>πόνος στο στήθος, δεν αναπνέει</value>
+  </data>
+  <data name="TriggerZoneLabel" xml:space="preserve">
+    <value>Μέσα στην περιοχή του</value>
+  </data>
+  <data name="TriggerAnyOption" xml:space="preserve">
+    <value>Οποιοδήποτε</value>
+  </data>
+  <data name="TriggerPoiTypeLabel" xml:space="preserve">
+    <value>Τύπος σημείου ενδιαφέροντος στη θέση</value>
+  </data>
+  <data name="TriggerFromLabel" xml:space="preserve">
+    <value>Από (ώρα)</value>
+  </data>
+  <data name="TriggerToLabel" xml:space="preserve">
+    <value>Έως (ώρα)</value>
+  </data>
+  <data name="TriggerDaysLabel" xml:space="preserve">
+    <value>Ημέρες</value>
+  </data>
+  <data name="TriggerSourcesLabel" xml:space="preserve">
+    <value>Ήρθε μέσω</value>
+  </data>
+  <data name="CallSourceUser" xml:space="preserve">
+    <value>Συντονιστής (φόρμα κλήσης)</value>
+  </data>
+  <data name="CallSourceEmailImport" xml:space="preserve">
+    <value>Εισαγωγή email</value>
+  </data>
+  <data name="CallSourceAudioImport" xml:space="preserve">
+    <value>Εισαγωγή ήχου</value>
+  </data>
+  <data name="CallSourceChatbot" xml:space="preserve">
+    <value>Ψηφιακός βοηθός</value>
+  </data>
+  <data name="CallSourceIntake" xml:space="preserve">
+    <value>Κανάλι λήψης (SMS, email, συνομιλία, webhook)</value>
+  </data>
+  <data name="CallSourceVoiceIntake" xml:space="preserve">
+    <value>Φωνητική λήψη (ΤΝ)</value>
+  </data>
+  <data name="ErrorTriggerConditions" xml:space="preserve">
+    <value>Μια συνθήκη ενεργοποίησης δεν είναι έγκυρη: ελέγξτε την περιοχή, τον τύπο σημείου, το χρονικό παράθυρο (και τις δύο ώρες) και ότι ένας ενεργοποιητής για κάθε κλήση έχει τουλάχιστον μία συνθήκη.</value>
+  </data>
+  <data name="ConditionsTrigger" xml:space="preserve">
+    <value>Οποιαδήποτε κλήση (μόνο συνθήκες)</value>
+  </data>
+  <data name="DispatchSettingsHeader" xml:space="preserve">
+    <value>Κείμενα αποστολής</value>
+  </data>
+  <data name="ShowDeterminantInDispatchCheckbox" xml:space="preserve">
+    <value>Προσθήκη του κωδικού και του ονόματος πρωτοκόλλου στις ειδοποιήσεις, στα SMS και στα φωνητικά μηνύματα αποστολής</value>
+  </data>
+  <data name="ShowDeterminantInDispatchHelp" xml:space="preserve">
+    <value>Ανενεργό από προεπιλογή. Όταν είναι ενεργό, οι διασώστες βλέπουν τον κωδικό και το πρωτόκολλο μετά το όνομα της κλήσης· οι παλαιότερες εφαρμογές τα δείχνουν μέσα στο κείμενο.</value>
+  </data>
+  <data name="CaseFlowHeader" xml:space="preserve">
+    <value>Ροή περιστατικού (διάγραμμα αποφάσεων)</value>
+  </data>
+  <data name="CaseFlowLockedNotice" xml:space="preserve">
+    <value>Η ροή περιστατικού είναι μέρος της έκδοσης υπό έλεγχο και δεν αλλάζει μέχρι να αποσυρθεί ή να δημοσιευτεί.</value>
+  </data>
+  <data name="CaseFlowHelp" xml:space="preserve">
+    <value>Οι συντονιστές ακολουθούν αυτά τα βήματα στη φόρμα κλήσης: αρχικές ερωτήσεις, βασικές ερωτήσεις και οδηγίες οδηγούν σε αποτέλεσμα με κωδικό, προτεινόμενη προτεραιότητα και τι λέγεται στον καλούντα. Η ροή αποθηκεύεται με το πρόχειρο, εμφανίζεται στο κείμενο και εγκρίνεται με την έκδοση.</value>
+  </data>
+  <data name="CaseFlowLicensingNotice" xml:space="preserve">
+    <value>Γράψτε δικές σας ερωτήσεις και κωδικούς. Αδειοδοτημένο περιεχόμενο πρωτοκόλλων (π.χ. MPDS) επιτρέπεται μόνο στην υπηρεσία σας με επιλεγμένο «Αδειοδοτημένο περιεχόμενο»· δεν κοινοποιείται, δεν δημοσιεύεται και δεν χρησιμοποιείται από ΤΝ.</value>
+  </data>
+  <data name="CaseFlowAddQuestion" xml:space="preserve">
+    <value>Προσθήκη ερώτησης</value>
+  </data>
+  <data name="CaseFlowAddInstruction" xml:space="preserve">
+    <value>Προσθήκη οδηγίας</value>
+  </data>
+  <data name="CaseFlowAddOutcome" xml:space="preserve">
+    <value>Προσθήκη αποτελέσματος</value>
+  </data>
+  <data name="CaseFlowEmpty" xml:space="preserve">
+    <value>Δεν υπάρχει ακόμη ροή περιστατικού. Χωρίς αυτήν, το πρωτόκολλο επισυνάπτεται στις κλήσεις όπως πριν.</value>
+  </data>
+  <data name="CaseFlowFirstStep" xml:space="preserve">
+    <value>Πρώτο βήμα</value>
+  </data>
+  <data name="CaseFlowMakeFirst" xml:space="preserve">
+    <value>Ορισμός ως πρώτο</value>
+  </data>
+  <data name="CaseFlowStepLabel" xml:space="preserve">
+    <value>Σύντομο όνομα</value>
+  </data>
+  <data name="CaseFlowStepText" xml:space="preserve">
+    <value>Η ερώτηση όπως διαβάζεται στον καλούντα</value>
+  </data>
+  <data name="CaseFlowInstructionText" xml:space="preserve">
+    <value>Κείμενο για ανάγνωση</value>
+  </data>
+  <data name="CaseFlowStage" xml:space="preserve">
+    <value>Στάδιο</value>
+  </data>
+  <data name="CaseFlowAnswerType" xml:space="preserve">
+    <value>Απαντάται με</value>
+  </data>
+  <data name="CaseFlowTypeYesNo" xml:space="preserve">
+    <value>Ναι / όχι</value>
+  </data>
+  <data name="CaseFlowTypeChoice" xml:space="preserve">
+    <value>Μία από πολλές απαντήσεις</value>
+  </data>
+  <data name="CaseFlowTypeNumber" xml:space="preserve">
+    <value>Αριθμός</value>
+  </data>
+  <data name="CaseFlowTypeFreeText" xml:space="preserve">
+    <value>Ελεύθερο κείμενο</value>
+  </data>
+  <data name="CaseFlowMin" xml:space="preserve">
+    <value>Ελάχιστη τιμή</value>
+  </data>
+  <data name="CaseFlowMax" xml:space="preserve">
+    <value>Μέγιστη τιμή</value>
+  </data>
+  <data name="CaseFlowNext" xml:space="preserve">
+    <value>Έπειτα</value>
+  </data>
+  <data name="CaseFlowChooseStep" xml:space="preserve">
+    <value>Επιλέξτε βήμα…</value>
+  </data>
+  <data name="CaseFlowSpeak" xml:space="preserve">
+    <value>Διάθεση «Αναπαραγωγής» (κείμενο σε ομιλία) στον συντονιστή</value>
+  </data>
+  <data name="CaseFlowSendToCaller" xml:space="preserve">
+    <value>Μπορεί να σταλεί με SMS στον καλούντα</value>
+  </data>
+  <data name="CaseFlowNoPriority" xml:space="preserve">
+    <value>Χωρίς πρόταση</value>
+  </data>
+  <data name="CaseFlowProblems" xml:space="preserve">
+    <value>Για διόρθωση πριν από τον έλεγχο:</value>
+  </data>
+  <data name="CaseFlowProblemRoot" xml:space="preserve">
+    <value>Ακριβώς ένα βήμα πρέπει να είναι το πρώτο.</value>
+  </data>
+  <data name="CaseFlowProblemNext" xml:space="preserve">
+    <value>κάθε απάντηση χρειάζεται επόμενο βήμα.</value>
+  </data>
+  <data name="CaseFlowProblemDeterminant" xml:space="preserve">
+    <value>ένα αποτέλεσμα χρειάζεται κωδικό.</value>
+  </data>
+  <data name="CaseFlowProblemLoop" xml:space="preserve">
+    <value>Η ροή περιστατικού κάνει βρόχο.</value>
+  </data>
+  <data name="CaseFlowProblemUnreachable" xml:space="preserve">
+    <value>δεν είναι προσβάσιμο από το πρώτο βήμα.</value>
+  </data>
+  <data name="CaseAiSuggestButton" xml:space="preserve">
+    <value>Πρόταση με ΤΝ</value>
+  </data>
+  <data name="CasePlayButton" xml:space="preserve">
+    <value>Αναπαραγωγή</value>
+  </data>
+  <data name="CaseChangeAnswer" xml:space="preserve">
+    <value>Αλλαγή</value>
+  </data>
+  <data name="CaseOverridden" xml:space="preserve">
+    <value>Παρακάμφθηκε</value>
+  </data>
+  <data name="CasePriorityApplied" xml:space="preserve">
+    <value>εφαρμόστηκε στην κλήση</value>
+  </data>
+  <data name="CaseOverrideDeterminant" xml:space="preserve">
+    <value>Παράκαμψη του κωδικού</value>
+  </data>
+  <data name="CaseOverrideReason" xml:space="preserve">
+    <value>Αιτιολογία (υποχρεωτική)</value>
+  </data>
+  <data name="CaseInvalid" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η εκτέλεση αυτής της ροής. Επισυνάψτε το πρωτόκολλο χωρίς αυτήν ή ενημερώστε τον υπεύθυνο.</value>
+  </data>
+  <data name="CaseAiPrefilled" xml:space="preserve">
+    <value>Προτάθηκε από το Enhanced AI. Ελέγξτε κάθε απάντηση πριν αποθηκεύσετε.</value>
+  </data>
+  <data name="CaseAiAsking" xml:space="preserve">
+    <value>Ερώτηση στο Enhanced AI…</value>
+  </data>
+  <data name="CaseAiFailed" xml:space="preserve">
+    <value>Η πρόταση δεν ήταν δυνατή.</value>
+  </data>
+  <data name="CaseSourceAi" xml:space="preserve">
+    <value>Πρόταση Enhanced AI, επιβεβαιωμένη από τον συντονιστή</value>
+  </data>
+  <data name="CaseOverrideFrom" xml:space="preserve">
+    <value>υπολογισμένος {0}· αιτιολογία: {1}</value>
+  </data>
+  <data name="CaseNotComplete" xml:space="preserve">
+    <value>Το περιστατικό δεν κατέληξε σε αποτέλεσμα.</value>
+  </data>
+  <data name="CaseCallerTexts" xml:space="preserve">
+    <value>Στάλθηκε στον καλούντα</value>
+  </data>
+  <data name="CaseSendToCallerButton" xml:space="preserve">
+    <value>Αποστολή στον καλούντα: {0}</value>
+  </data>
+  <data name="CaseOverrideSave" xml:space="preserve">
+    <value>Αποθήκευση κωδικού</value>
+  </data>
+  <data name="CaseOverrideHelp" xml:space="preserve">
+    <value>Αφήστε τον κωδικό κενό για επιστροφή σε αυτόν της ροής. Κάθε άλλος χρειάζεται αιτιολογία, που φυλάσσεται στην κλήση.</value>
+  </data>
+  <data name="CaseExportSection" xml:space="preserve">
+    <value>Περιστατικά πρωτοκόλλου</value>
+  </data>
 </root>

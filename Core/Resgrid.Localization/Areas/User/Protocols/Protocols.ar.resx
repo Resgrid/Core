@@ -622,4 +622,2470 @@
   <data name="PanelChoose" xml:space="preserve">
     <value>اختر بروتوكولًا…</value>
   </data>
+  <data name="AcknowledgmentLabel" xml:space="preserve">
+    <value>الإقرار</value>
+  </data>
+  <data name="AddCategoryHeader" xml:space="preserve">
+    <value>إضافة فئة</value>
+  </data>
+  <data name="AddCommentButton" xml:space="preserve">
+    <value>إضافة تعليق</value>
+  </data>
+  <data name="AiLabel" xml:space="preserve">
+    <value>الذكاء الاصطناعي</value>
+  </data>
+  <data name="AllKinds" xml:space="preserve">
+    <value>كل الأنواع</value>
+  </data>
+  <data name="AllProtocols" xml:space="preserve">
+    <value>كل البروتوكولات</value>
+  </data>
+  <data name="AnyApproverLabel" xml:space="preserve">
+    <value>أي معتمِد</value>
+  </data>
+  <data name="AnyAudience" xml:space="preserve">
+    <value>أي جمهور</value>
+  </data>
+  <data name="AnyKindLabel" xml:space="preserve">
+    <value>أي نوع</value>
+  </data>
+  <data name="AnyOwner" xml:space="preserve">
+    <value>أي مالك</value>
+  </data>
+  <data name="ApprovalStepsHeader" xml:space="preserve">
+    <value>خطوات الاعتماد</value>
+  </data>
+  <data name="ApprovalStepsHelp" xml:space="preserve">
+    <value>اختر الأدوار أو الأعضاء الذين يعتمدون، بالترتيب. اتركه فارغًا لتكون هناك خطوة واحدة يمكن لأي عضو لديه صلاحية «اعتماد البروتوكولات ونشرها» البت فيها.</value>
+  </data>
+  <data name="ApproveHeader" xml:space="preserve">
+    <value>اعتماد هذا الإصدار</value>
+  </data>
+  <data name="ApprovedLabel" xml:space="preserve">
+    <value>معتمد</value>
+  </data>
+  <data name="AudienceCertificationLabel" xml:space="preserve">
+    <value>الشهادة</value>
+  </data>
+  <data name="AudienceEveryoneLabel" xml:space="preserve">
+    <value>الجميع</value>
+  </data>
+  <data name="AudienceEveryoneOption" xml:space="preserve">
+    <value>كل من في القسم</value>
+  </data>
+  <data name="AudienceGroupLabel" xml:space="preserve">
+    <value>المجموعة</value>
+  </data>
+  <data name="AudienceHelp" xml:space="preserve">
+    <value>لا يستطيع قراءة هذا البروتوكول إلا الأعضاء المخصص لهم، في المكتبة والتطبيقات والبحث. يقرأ موظفو الإرسال بروتوكولات الإرسال دائمًا، ويقرأ المؤلفون والمعتمِدون كل البروتوكولات.</value>
+  </data>
+  <data name="AudienceLabel" xml:space="preserve">
+    <value>الجمهور المستهدف</value>
+  </data>
+  <data name="AudienceRestrictedLabel" xml:space="preserve">
+    <value>جمهور مقيّد</value>
+  </data>
+  <data name="AudienceRestrictedOption" xml:space="preserve">
+    <value>أعضاء هذه المجموعات أو الأدوار أو الورديات أو أنواع الوحدات أو الشهادات فقط</value>
+  </data>
+  <data name="AudienceRoleLabel" xml:space="preserve">
+    <value>الدور</value>
+  </data>
+  <data name="AudienceShiftLabel" xml:space="preserve">
+    <value>الوردية</value>
+  </data>
+  <data name="AudienceUnitTypeLabel" xml:space="preserve">
+    <value>نوع الوحدة</value>
+  </data>
+  <data name="AutosaveFailed" xml:space="preserve">
+    <value>تعذر حفظ المسودة تلقائيًا. احفظ الصفحة للإبقاء على تغييراتك.</value>
+  </data>
+  <data name="AutosaveSaved" xml:space="preserve">
+    <value>تم حفظ المسودة</value>
+  </data>
+  <data name="AutosaveSaving" xml:space="preserve">
+    <value>جارٍ حفظ المسودة...</value>
+  </data>
+  <data name="BackButton" xml:space="preserve">
+    <value>رجوع</value>
+  </data>
+  <data name="BackToProtocolButton" xml:space="preserve">
+    <value>العودة إلى البروتوكول</value>
+  </data>
+  <data name="CallColumn" xml:space="preserve">
+    <value>البلاغ</value>
+  </data>
+  <data name="CallsColumn" xml:space="preserve">
+    <value>البلاغات</value>
+  </data>
+  <data name="CategoriesHeader" xml:space="preserve">
+    <value>الفئات</value>
+  </data>
+  <data name="CategoriesIntro" xml:space="preserve">
+    <value>نظّم المكتبة في فئات متداخلة وحدد من يعتمد إصدارات كل فئة.</value>
+  </data>
+  <data name="CategoriesTab" xml:space="preserve">
+    <value>الفئات</value>
+  </data>
+  <data name="CategoryLabel" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="ChangeSummaryHelp" xml:space="preserve">
+    <value>ما الذي تغيّر ولماذا. مطلوب للنشر ويُحفظ مع الإصدار.</value>
+  </data>
+  <data name="ChangeSummaryLabel" xml:space="preserve">
+    <value>ملخص التغييرات</value>
+  </data>
+  <data name="ChangesSinceHeader" xml:space="preserve">
+    <value>التغييرات منذ {0}</value>
+  </data>
+  <data name="CitedVersionLabel" xml:space="preserve">
+    <value>النص كما أُرسل ({0})</value>
+  </data>
+  <data name="CommentRefused" xml:space="preserve">
+    <value>تعذر حفظ التعليق.</value>
+  </data>
+  <data name="CompareButton" xml:space="preserve">
+    <value>مقارنة</value>
+  </data>
+  <data name="CompareFromLabel" xml:space="preserve">
+    <value>من</value>
+  </data>
+  <data name="CompareHeader" xml:space="preserve">
+    <value>مقارنة الإصدارات</value>
+  </data>
+  <data name="CompareToLabel" xml:space="preserve">
+    <value>إلى</value>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>رمز المحتوى</value>
+  </data>
+  <data name="ContentLockedNotice" xml:space="preserve">
+    <value>هذا الإصدار قيد المراجعة أو معتمد، لذا نصه مقفل. اسحبه لتعديل النص مرة أخرى.</value>
+  </data>
+  <data name="CopyButton" xml:space="preserve">
+    <value>نسخ كجديد</value>
+  </data>
+  <data name="CreateDraftButton" xml:space="preserve">
+    <value>إنشاء مسودة</value>
+  </data>
+  <data name="DefaultApprovalStep" xml:space="preserve">
+    <value>خطوة واحدة، أي معتمِد</value>
+  </data>
+  <data name="DefaultReviewIntervalHelp" xml:space="preserve">
+    <value>تبدأ البروتوكولات الجديدة بفترة المراجعة هذه بالأيام. القيمة 0 تعني عدم وجود دورة مراجعة.</value>
+  </data>
+  <data name="DefaultReviewIntervalLabel" xml:space="preserve">
+    <value>فترة المراجعة الافتراضية (بالأيام)</value>
+  </data>
+  <data name="DeleteCategoryConfirm" xml:space="preserve">
+    <value>حذف الفئة</value>
+  </data>
+  <data name="DeletedTextLabel" xml:space="preserve">
+    <value>النص المحذوف</value>
+  </data>
+  <data name="DepartmentLegalHoldCheckbox" xml:space="preserve">
+    <value>حجز قانوني على المكتبة بأكملها</value>
+  </data>
+  <data name="DepartmentLegalHoldHelp" xml:space="preserve">
+    <value>ما دام مفعّلًا، لا يُحذف أي إصدار نهائيًا، مهما كانت فترات الاحتفاظ.</value>
+  </data>
+  <data name="DiscardDraftButton" xml:space="preserve">
+    <value>إلغاء المسودة</value>
+  </data>
+  <data name="DiscardDraftConfirm" xml:space="preserve">
+    <value>هل تريد إلغاء هذه المسودة؟ سيُحذف نصها.</value>
+  </data>
+  <data name="DraftDiscardedMessage" xml:space="preserve">
+    <value>تم إلغاء المسودة.</value>
+  </data>
+  <data name="EditDraftButton" xml:space="preserve">
+    <value>تعديل المسودة</value>
+  </data>
+  <data name="EditingDraftCallout" xml:space="preserve">
+    <value>أنت تعدّل المسودة ({0})، وآخر من حفظها {1} في {2}. لا يتغير النص الساري حتى يُعتمد هذا الإصدار ويُنشر.</value>
+  </data>
+  <data name="EditingNoDraftCallout" xml:space="preserve">
+    <value>الإصدار {0} ساري المفعول. يؤدي تغيير النص وحفظه إلى بدء إصدار مسودة جديد.</value>
+  </data>
+  <data name="EffectiveColumn" xml:space="preserve">
+    <value>ساري من</value>
+  </data>
+  <data name="EffectiveOnHelp" xml:space="preserve">
+    <value>اتركه فارغًا للنشر الآن. يؤدي تحديد تاريخ ووقت لاحقين ({0}) إلى جدولة الإصدار؛ ويصبح ساريًا تلقائيًا.</value>
+  </data>
+  <data name="EffectiveOnLabel" xml:space="preserve">
+    <value>تاريخ السريان</value>
+  </data>
+  <data name="ErrorCategoryName" xml:space="preserve">
+    <value>أدخل اسم الفئة.</value>
+  </data>
+  <data name="ErrorKind" xml:space="preserve">
+    <value>اختر نوع البروتوكول.</value>
+  </data>
+  <data name="ExcludeFromAiCheckbox" xml:space="preserve">
+    <value>استبعاد من الذكاء الاصطناعي</value>
+  </data>
+  <data name="ExcludeFromAiHelp" xml:space="preserve">
+    <value>أبقِ هذا البروتوكول خارج كل فهارس الذكاء الاصطناعي وإجاباته (للمحتوى المرخّص أو الحساس).</value>
+  </data>
+  <data name="ExcludedFromAi" xml:space="preserve">
+    <value>مستبعد من الذكاء الاصطناعي</value>
+  </data>
+  <data name="ExpiresLabel" xml:space="preserve">
+    <value>ينتهي</value>
+  </data>
+  <data name="ExpiresOnLabel" xml:space="preserve">
+    <value>تاريخ الانتهاء</value>
+  </data>
+  <data name="ExportButton" xml:space="preserve">
+    <value>تصدير</value>
+  </data>
+  <data name="FavoriteButton" xml:space="preserve">
+    <value>إضافة إلى المفضلة</value>
+  </data>
+  <data name="FavoriteLabel" xml:space="preserve">
+    <value>مفضّل</value>
+  </data>
+  <data name="FavoritesHeader" xml:space="preserve">
+    <value>المفضلة</value>
+  </data>
+  <data name="FirstVersionHeader" xml:space="preserve">
+    <value>الإصدار الأول</value>
+  </data>
+  <data name="FormerMemberOption" xml:space="preserve">
+    <value>عضو سابق</value>
+  </data>
+  <data name="FullTextToggle" xml:space="preserve">
+    <value>عرض النص الكامل</value>
+  </data>
+  <data name="ImportButton" xml:space="preserve">
+    <value>استيراد</value>
+  </data>
+  <data name="ImportErrorFile" xml:space="preserve">
+    <value>اختر ملف JSON بحجم 10 ميغابايت أو أقل.</value>
+  </data>
+  <data name="ImportErrorFormat" xml:space="preserve">
+    <value>الملف ليس تصديرًا لبروتوكولات Resgrid (التنسيق resgrid-protocols، الإصدار 1).</value>
+  </data>
+  <data name="ImportErrorNotAuthorized" xml:space="preserve">
+    <value>ليست لديك صلاحية تأليف البروتوكولات.</value>
+  </data>
+  <data name="ImportErrorTooMany" xml:space="preserve">
+    <value>يحتوي الملف على عدد كبير جدًا من البروتوكولات. استورد 500 بروتوكول كحد أقصى في كل مرة.</value>
+  </data>
+  <data name="ImportFileLabel" xml:space="preserve">
+    <value>ملف تصدير البروتوكولات (JSON)</value>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>استورد بروتوكولات مُصدَّرة من Resgrid أو مكتوبة بالتنسيق المفتوح نفسه. يُنشأ كل بروتوكول كمسودة للمراجعة والنشر؛ ولا يَنشر الاستيراد أي شيء. تُطابَق الأولويات وأنواع البلاغات والفئات والمجموعات والأدوار والورديات مع ما لدى هذا القسم حسب الاسم.</value>
+  </data>
+  <data name="ImportIntro" xml:space="preserve">
+    <value>أدخِل البروتوكولات من ملف تصدير JSON.</value>
+  </data>
+  <data name="ImportSkippedHeader" xml:space="preserve">
+    <value>لم يتم استيرادها</value>
+  </data>
+  <data name="ImportTab" xml:space="preserve">
+    <value>استيراد</value>
+  </data>
+  <data name="ImportWarningsHeader" xml:space="preserve">
+    <value>تم استيرادها مع تغييرات</value>
+  </data>
+  <data name="ImportedMessage" xml:space="preserve">
+    <value>عدد البروتوكولات المستوردة كمسودات: {0}.</value>
+  </data>
+  <data name="InForceLabel" xml:space="preserve">
+    <value>ساري</value>
+  </data>
+  <data name="InsertedLabel" xml:space="preserve">
+    <value>النص المضاف</value>
+  </data>
+  <data name="KindClinicalGuideline" xml:space="preserve">
+    <value>إرشاد سريري</value>
+  </data>
+  <data name="KindDispatch" xml:space="preserve">
+    <value>بروتوكول الإرسال</value>
+  </data>
+  <data name="KindHelp" xml:space="preserve">
+    <value>يمكن اقتراح بروتوكولات الإرسال والإجراءات على البلاغات عبر مشغّلاتها. تطلب السياسات وأدلة SOG من الأعضاء الإقرار بها افتراضيًا.</value>
+  </data>
+  <data name="KindHelpClinicalGuideline" xml:space="preserve">
+    <value>إرشادات سريرية لرعاية المرضى.</value>
+  </data>
+  <data name="KindHelpDispatch" xml:space="preserve">
+    <value>يُطابَق مع البلاغات حسب النوع والأولوية والوقت، مع أسئلة رئيسية.</value>
+  </data>
+  <data name="KindHelpPolicy" xml:space="preserve">
+    <value>سياسة للقسم يُتوقع من الأعضاء الإقرار بها.</value>
+  </data>
+  <data name="KindHelpProcedure" xml:space="preserve">
+    <value>إجراء خطوة بخطوة أو قائمة تحقق؛ يمكن اقتراحه على البلاغات.</value>
+  </data>
+  <data name="KindHelpReference" xml:space="preserve">
+    <value>مواد مرجعية: خرائط وجهات اتصال وجداول.</value>
+  </data>
+  <data name="KindHelpSog" xml:space="preserve">
+    <value>إجراء تشغيل قياسي أو دليل توجيهي.</value>
+  </data>
+  <data name="KindLabel" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="KindPolicy" xml:space="preserve">
+    <value>سياسة</value>
+  </data>
+  <data name="KindProcedure" xml:space="preserve">
+    <value>إجراء أو قائمة تحقق</value>
+  </data>
+  <data name="KindReference" xml:space="preserve">
+    <value>مرجع</value>
+  </data>
+  <data name="KindSog" xml:space="preserve">
+    <value>SOP / SOG</value>
+  </data>
+  <data name="KpiDueForReview" xml:space="preserve">
+    <value>مستحقة المراجعة (30 يومًا)</value>
+  </data>
+  <data name="KpiInReview" xml:space="preserve">
+    <value>قيد المراجعة</value>
+  </data>
+  <data name="KpiPublished" xml:space="preserve">
+    <value>منشورة</value>
+  </data>
+  <data name="LastReviewedLabel" xml:space="preserve">
+    <value>آخر مراجعة</value>
+  </data>
+  <data name="LegalHoldCheckbox" xml:space="preserve">
+    <value>حجز قانوني</value>
+  </data>
+  <data name="LegalHoldHelp" xml:space="preserve">
+    <value>لا يُحذف أي من إصدارات هذا البروتوكول نهائيًا ما دام قيد الحجز.</value>
+  </data>
+  <data name="LegalHoldLabel" xml:space="preserve">
+    <value>حجز قانوني</value>
+  </data>
+  <data name="LicenseLabel" xml:space="preserve">
+    <value>الترخيص</value>
+  </data>
+  <data name="LicensedContentCheckbox" xml:space="preserve">
+    <value>محتوى مرخّص</value>
+  </data>
+  <data name="LicensedContentHelp" xml:space="preserve">
+    <value>محتوى تابع لجهة خارجية بموجب ترخيص: لا تتم مشاركته أبدًا خارج القسم ولا يُتاح للعامة.</value>
+  </data>
+  <data name="LicensedContentLabel" xml:space="preserve">
+    <value>محتوى مرخّص</value>
+  </data>
+  <data name="LifecycleErrorAlreadyDecided" xml:space="preserve">
+    <value>تم البت في هذه الخطوة بالفعل، أو أنك اعتمدت خطوة سابقة من هذه المراجعة.</value>
+  </data>
+  <data name="LifecycleErrorArtifactChanged" xml:space="preserve">
+    <value>لم يعد النص مطابقًا لما تم توقيعه. يجب مراجعة الإصدار مرة أخرى.</value>
+  </data>
+  <data name="LifecycleErrorChangeSummaryRequired" xml:space="preserve">
+    <value>أدخل ملخص التغييرات للنشر.</value>
+  </data>
+  <data name="LifecycleErrorDraftExists" xml:space="preserve">
+    <value>لهذا البروتوكول مسودة مفتوحة بالفعل.</value>
+  </data>
+  <data name="LifecycleErrorEffectiveDateInPast" xml:space="preserve">
+    <value>تاريخ السريان في الماضي.</value>
+  </data>
+  <data name="LifecycleErrorEmptyContent" xml:space="preserve">
+    <value>المسودة لا تحتوي على نص. اكتب البروتوكول قبل تقديمه.</value>
+  </data>
+  <data name="LifecycleErrorInvalidInput" xml:space="preserve">
+    <value>بعض القيم غير صالحة.</value>
+  </data>
+  <data name="LifecycleErrorNotApproved" xml:space="preserve">
+    <value>لا يمكن نشر إلا إصدار معتمد.</value>
+  </data>
+  <data name="LifecycleErrorNotAuthorized" xml:space="preserve">
+    <value>ليست لديك صلاحية للقيام بذلك.</value>
+  </data>
+  <data name="LifecycleErrorNotDraft" xml:space="preserve">
+    <value>لا يمكن تغيير أو تقديم إلا المسودة.</value>
+  </data>
+  <data name="LifecycleErrorNotFound" xml:space="preserve">
+    <value>لم يتم العثور على البروتوكول أو الإصدار.</value>
+  </data>
+  <data name="LifecycleErrorNotInReview" xml:space="preserve">
+    <value>هذا الإصدار لا ينتظر المراجعة.</value>
+  </data>
+  <data name="LifecycleErrorNotPublished" xml:space="preserve">
+    <value>ليس لهذا البروتوكول إصدار ساري.</value>
+  </data>
+  <data name="LifecycleErrorOpenComments" xml:space="preserve">
+    <value>عالج تعليقات المراجعة المفتوحة قبل الاعتماد.</value>
+  </data>
+  <data name="LifecycleErrorPasskeyRequired" xml:space="preserve">
+    <value>يتطلب قسمك مفتاح مرور لهذا التوقيع. استخدم «التوقيع بمفتاح المرور».</value>
+  </data>
+  <data name="LifecycleErrorRetentionProtected" xml:space="preserve">
+    <value>يُحتفظ بالإصدارات المقدَّمة والمنشورة ولا يمكن حذفها.</value>
+  </data>
+  <data name="LifecycleErrorSignatureRequired" xml:space="preserve">
+    <value>يحتاج هذا التوقيع إلى تحقق جديد من الهوية. تحقق باستخدام العامل الثاني أو مفتاح مرور ثم وقّع مرة أخرى.</value>
+  </data>
+  <data name="LifecycleErrorStaleCopy" xml:space="preserve">
+    <value>غيّر شخص آخر هذا البروتوكول منذ أن فتحته.</value>
+  </data>
+  <data name="LifecycleLabel" xml:space="preserve">
+    <value>دورة الحياة</value>
+  </data>
+  <data name="LoggedColumn" xml:space="preserve">
+    <value>تاريخ التسجيل</value>
+  </data>
+  <data name="MajorVersionOption" xml:space="preserve">
+    <value>رئيسي (العدد الصحيح التالي)</value>
+  </data>
+  <data name="MembersLabel" xml:space="preserve">
+    <value>الأعضاء</value>
+  </data>
+  <data name="MessageLabel" xml:space="preserve">
+    <value>الرسالة</value>
+  </data>
+  <data name="MinorVersionOption" xml:space="preserve">
+    <value>فرعي (الرقم العشري التالي)</value>
+  </data>
+  <data name="NewVersionButton" xml:space="preserve">
+    <value>إصدار جديد</value>
+  </data>
+  <data name="NextButton" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="NoCallsYet" xml:space="preserve">
+    <value>لم يُشِر أي بلاغ إلى هذا البروتوكول بعد.</value>
+  </data>
+  <data name="NoCategoriesYet" xml:space="preserve">
+    <value>لا توجد فئات بعد.</value>
+  </data>
+  <data name="NoCategoryOption" xml:space="preserve">
+    <value>بلا فئة</value>
+  </data>
+  <data name="NoOutline" xml:space="preserve">
+    <value>تُكوِّن العناوين في النص مخططًا هنا.</value>
+  </data>
+  <data name="NoReviewCycle" xml:space="preserve">
+    <value>بلا دورة مراجعة</value>
+  </data>
+  <data name="NoTextChanges" xml:space="preserve">
+    <value>النص لم يتغير.</value>
+  </data>
+  <data name="NotCurrentVersionNotice" xml:space="preserve">
+    <value>أنت تقرأ {0}. الإصدار الساري هو {1}.</value>
+  </data>
+  <data name="NotPublishedYet" xml:space="preserve">
+    <value>غير منشور</value>
+  </data>
+  <data name="NotRequiredLabel" xml:space="preserve">
+    <value>غير مطلوب</value>
+  </data>
+  <data name="NotSubmittedYet" xml:space="preserve">
+    <value>لم يُقدَّم بعد.</value>
+  </data>
+  <data name="NumberHelp" xml:space="preserve">
+    <value>رقمك الخاص له، مثل SOG-204. إذا تُرك فارغًا، يُصدر نمط ترقيم البروتوكولات في القسم رقمًا (القسم، ترقيم المستندات).</value>
+  </data>
+  <data name="NumberLabel" xml:space="preserve">
+    <value>الرقم</value>
+  </data>
+  <data name="OnHoldLabel" xml:space="preserve">
+    <value>قيد الحجز</value>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>فتح</value>
+  </data>
+  <data name="OpenDraftNote" xml:space="preserve">
+    <value>الإصدار التالي: {0}</value>
+  </data>
+  <data name="OpenLabel" xml:space="preserve">
+    <value>مفتوح</value>
+  </data>
+  <data name="OpenReviewButton" xml:space="preserve">
+    <value>فتح المراجعة</value>
+  </data>
+  <data name="OpenVersionCallout" xml:space="preserve">
+    <value>يجري إعداد إصدار جديد: {0}.</value>
+  </data>
+  <data name="OutlineHeader" xml:space="preserve">
+    <value>المخطط</value>
+  </data>
+  <data name="OwnerHelp" xml:space="preserve">
+    <value>يحافظ المالك على تحديث البروتوكول: تصل إليه تذكيرات المراجعة واقتراحات الأعضاء.</value>
+  </data>
+  <data name="OwnerLabel" xml:space="preserve">
+    <value>المالك</value>
+  </data>
+  <data name="ParentCategoryLabel" xml:space="preserve">
+    <value>الفئة الأم</value>
+  </data>
+  <data name="PendingLabel" xml:space="preserve">
+    <value>معلّق</value>
+  </data>
+  <data name="PreviewAsMemberButton" xml:space="preserve">
+    <value>معاينة كعضو</value>
+  </data>
+  <data name="PreviewAsMemberNotice" xml:space="preserve">
+    <value>هكذا سيرى الأعضاء هذا الإصدار بعد نشره.</value>
+  </data>
+  <data name="PrintButton" xml:space="preserve">
+    <value>طباعة</value>
+  </data>
+  <data name="ProtocolCopiedMessage" xml:space="preserve">
+    <value>تم إنشاء نسخة كبروتوكول مسودة جديد.</value>
+  </data>
+  <data name="ProtocolCreatedMessage" xml:space="preserve">
+    <value>تم إنشاء البروتوكول كمسودة. أكمله هنا، ثم قدّمه للمراجعة.</value>
+  </data>
+  <data name="ProtocolTextHeadingsHelp" xml:space="preserve">
+    <value>استخدم العناوين لتنظيم النص: فهي تُكوِّن المخطط والمواضع التي تشير إليها تعليقات المراجعة.</value>
+  </data>
+  <data name="PublishButton" xml:space="preserve">
+    <value>نشر</value>
+  </data>
+  <data name="PublishHeader" xml:space="preserve">
+    <value>النشر</value>
+  </data>
+  <data name="QuestionOption" xml:space="preserve">
+    <value>سؤال</value>
+  </data>
+  <data name="ReadAndSignStepUpCheckbox" xml:space="preserve">
+    <value>تتطلب إقرارات الاطلاع والتوقيع تحققًا جديدًا من الهوية (L2) بدلًا من جلسة تسجيل الدخول (L1)</value>
+  </data>
+  <data name="RecentHeader" xml:space="preserve">
+    <value>المفتوحة مؤخرًا</value>
+  </data>
+  <data name="RecordReviewHeader" xml:space="preserve">
+    <value>تمت المراجعة، بلا تغيير</value>
+  </data>
+  <data name="RecordReviewHelp" xml:space="preserve">
+    <value>سجّل أن الإصدار الساري قد رُوجع وما زال صحيحًا. يتغير تاريخ المراجعة التالية؛ ولا يُنشأ إصدار جديد ولا يحتاج أحد إلى الإقرار به مجددًا.</value>
+  </data>
+  <data name="RecordedBeforeVersions" xml:space="preserve">
+    <value>مُسجَّل قبل إدارة الإصدارات</value>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>رفض</value>
+  </data>
+  <data name="RejectHeader" xml:space="preserve">
+    <value>الرفض</value>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>السبب</value>
+  </data>
+  <data name="RejectedLabel" xml:space="preserve">
+    <value>مرفوض</value>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>أُعيد الإصدار إلى مؤلفيه كمسودة.</value>
+  </data>
+  <data name="ReplyButton" xml:space="preserve">
+    <value>رد</value>
+  </data>
+  <data name="ReplyLabel" xml:space="preserve">
+    <value>الرد</value>
+  </data>
+  <data name="RequirePasskeyForApprovalCheckbox" xml:space="preserve">
+    <value>يجب توقيع الاعتمادات وأختام المراجعة بمفتاح مرور</value>
+  </data>
+  <data name="RequiredLabel" xml:space="preserve">
+    <value>مطلوب</value>
+  </data>
+  <data name="RequiresAcknowledgmentCheckbox" xml:space="preserve">
+    <value>يجب على الأعضاء الإقرار بهذا الإصدار</value>
+  </data>
+  <data name="RequiresAcknowledgmentHelp" xml:space="preserve">
+    <value>مفعّل افتراضيًا للسياسات وأدلة SOG. ستتوفر مهام الاطلاع والتوقيع في تحديث لاحق.</value>
+  </data>
+  <data name="ResolveButton" xml:space="preserve">
+    <value>حل</value>
+  </data>
+  <data name="ResolvedLabel" xml:space="preserve">
+    <value>تم الحل</value>
+  </data>
+  <data name="RetentionHeader" xml:space="preserve">
+    <value>الاحتفاظ</value>
+  </data>
+  <data name="RetentionHelp" xml:space="preserve">
+    <value>يُحتفظ بالإصدارات المستبدلة والموقوفة افتراضيًا. أدخل عدد الأيام التي يحتفظ بها كل نوع قبل أن يجوز حذفها نهائيًا؛ القيمة 0 تحتفظ بها. لا يُحذف نهائيًا أبدًا أي إصدار يشير إليه بلاغ، ولا أي شيء قيد الحجز القانوني.</value>
+  </data>
+  <data name="RetireButton" xml:space="preserve">
+    <value>إيقاف العمل</value>
+  </data>
+  <data name="RetireConfirm" xml:space="preserve">
+    <value>إيقاف العمل بالبروتوكول</value>
+  </data>
+  <data name="RetiredMessage" xml:space="preserve">
+    <value>تم إيقاف العمل بالبروتوكول. تبقى إصداراته من أجل البلاغات والسجل التي تشير إليها.</value>
+  </data>
+  <data name="ReviewAny" xml:space="preserve">
+    <value>أي تاريخ مراجعة</value>
+  </data>
+  <data name="ReviewCommentLabel" xml:space="preserve">
+    <value>التعليق</value>
+  </data>
+  <data name="ReviewCommentsHeader" xml:space="preserve">
+    <value>تعليقات المراجعة</value>
+  </data>
+  <data name="ReviewDue30" xml:space="preserve">
+    <value>مستحقة خلال 30 يومًا</value>
+  </data>
+  <data name="ReviewDueCallout" xml:space="preserve">
+    <value>موعد مراجعة هذا البروتوكول هو {0}.</value>
+  </data>
+  <data name="ReviewDueLabel" xml:space="preserve">
+    <value>موعد المراجعة</value>
+  </data>
+  <data name="ReviewHeader" xml:space="preserve">
+    <value>المراجعة</value>
+  </data>
+  <data name="ReviewIntervalHelp" xml:space="preserve">
+    <value>عدد الأيام بين المراجعات. يتلقى المالك تذكيرًا قبل 30 يومًا و7 أيام، وعند تأخر المراجعة. تركه فارغًا يعني عدم وجود دورة مراجعة.</value>
+  </data>
+  <data name="ReviewIntervalLabel" xml:space="preserve">
+    <value>فترة المراجعة (بالأيام)</value>
+  </data>
+  <data name="ReviewNowButton" xml:space="preserve">
+    <value>مراجعة</value>
+  </data>
+  <data name="ReviewOverdue" xml:space="preserve">
+    <value>متأخرة</value>
+  </data>
+  <data name="ReviewOverdueCallout" xml:space="preserve">
+    <value>كان موعد مراجعة هذا البروتوكول {0}.</value>
+  </data>
+  <data name="ReviewQueueCallout" xml:space="preserve">
+    <value>عدد الإصدارات بانتظار اعتمادك: {0}.</value>
+  </data>
+  <data name="ReviewQueueEmpty" xml:space="preserve">
+    <value>لا شيء بانتظار المراجعة.</value>
+  </data>
+  <data name="ReviewQueueIntro" xml:space="preserve">
+    <value>الإصدارات المقدَّمة للمراجعة، مع الخطوات التي يمكنك البت فيها.</value>
+  </data>
+  <data name="ReviewQueueTab" xml:space="preserve">
+    <value>قائمة انتظار المراجعة</value>
+  </data>
+  <data name="ReviewRecordedMessage" xml:space="preserve">
+    <value>تم تسجيل المراجعة وتوقيعها. تغيّر تاريخ المراجعة التالية.</value>
+  </data>
+  <data name="ReviewSettingsHeader" xml:space="preserve">
+    <value>دورة المراجعة</value>
+  </data>
+  <data name="SaveAndSubmitButton" xml:space="preserve">
+    <value>حفظ وتقديم للمراجعة</value>
+  </data>
+  <data name="SaveCategoryButton" xml:space="preserve">
+    <value>حفظ الفئة</value>
+  </data>
+  <data name="SaveSettingsButton" xml:space="preserve">
+    <value>حفظ الإعدادات</value>
+  </data>
+  <data name="ScheduledNotice" xml:space="preserve">
+    <value>الإصدار {0} مجدول ليصبح ساريًا في {1}.</value>
+  </data>
+  <data name="SectionLabel" xml:space="preserve">
+    <value>المقطع</value>
+  </data>
+  <data name="SendSuggestionButton" xml:space="preserve">
+    <value>إرسال</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>مستويات التوقيع ودورات المراجعة والاحتفاظ لمكتبة البروتوكولات.</value>
+  </data>
+  <data name="SettingsSavedMessage" xml:space="preserve">
+    <value>تم حفظ إعدادات البروتوكولات.</value>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="ShowButton" xml:space="preserve">
+    <value>عرض</value>
+  </data>
+  <data name="SignatureFloorsHelp" xml:space="preserve">
+    <value>تتطلب الاعتمادات وأختام المراجعة دائمًا تحققًا جديدًا من الهوية (L2)؛ ويتطلب الاطلاع والتوقيع جلسة تسجيل الدخول على الأقل (L1). يمكنك طلب المزيد، لا أقل أبدًا.</value>
+  </data>
+  <data name="SignatureSettingsHeader" xml:space="preserve">
+    <value>التوقيعات</value>
+  </data>
+  <data name="SignaturesTab" xml:space="preserve">
+    <value>التوقيعات</value>
+  </data>
+  <data name="SortOrderLabel" xml:space="preserve">
+    <value>ترتيب الفرز</value>
+  </data>
+  <data name="StaleProtocolMessage" xml:space="preserve">
+    <value>غيّر {0} هذا البروتوكول في {1}، بعد أن فتحته. أعد تحميل الصفحة لرؤية تلك التغييرات، ثم أجرِ تغييراتك مرة أخرى.</value>
+  </data>
+  <data name="StatusApproved" xml:space="preserve">
+    <value>معتمد</value>
+  </data>
+  <data name="StatusDraft" xml:space="preserve">
+    <value>مسودة</value>
+  </data>
+  <data name="StatusInReview" xml:space="preserve">
+    <value>قيد المراجعة</value>
+  </data>
+  <data name="StatusPublished" xml:space="preserve">
+    <value>منشور</value>
+  </data>
+  <data name="StatusRetired" xml:space="preserve">
+    <value>موقوف</value>
+  </data>
+  <data name="StatusScheduled" xml:space="preserve">
+    <value>مجدول</value>
+  </data>
+  <data name="StepColumn" xml:space="preserve">
+    <value>الخطوة</value>
+  </data>
+  <data name="SubmitHeader" xml:space="preserve">
+    <value>تقديم للمراجعة</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>تاريخ التقديم</value>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>تم تقديم الإصدار للمراجعة.</value>
+  </data>
+  <data name="SuggestHeader" xml:space="preserve">
+    <value>اقترح تغييرًا أو اطرح سؤالًا</value>
+  </data>
+  <data name="SuggestHelp" xml:space="preserve">
+    <value>تصل رسالتك إلى مالك البروتوكول وتُحفظ مع المسودة التالية.</value>
+  </data>
+  <data name="SuggestKindLabel" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="SuggestionOption" xml:space="preserve">
+    <value>اقتراح</value>
+  </data>
+  <data name="TagsHelp" xml:space="preserve">
+    <value>افصل بين الوسوم بفواصل.</value>
+  </data>
+  <data name="TagsLabel" xml:space="preserve">
+    <value>الوسوم</value>
+  </data>
+  <data name="ThreadsHeader" xml:space="preserve">
+    <value>الاقتراحات والأسئلة</value>
+  </data>
+  <data name="TriggersKindHelp" xml:space="preserve">
+    <value>لا تُقترح على البلاغات إلا بروتوكولات الإرسال والإجراءات، لذا لا توجد لهذا النوع مشغّلات ولا أسئلة رئيسية.</value>
+  </data>
+  <data name="UnfavoriteButton" xml:space="preserve">
+    <value>إزالة من المفضلة</value>
+  </data>
+  <data name="UsageHelp" xml:space="preserve">
+    <value>عدد البلاغات التي استخدمته خلال آخر 30 يومًا: {0}. أحدث البلاغات التي تشير إليه:</value>
+  </data>
+  <data name="UsageTab" xml:space="preserve">
+    <value>الاستخدام</value>
+  </data>
+  <data name="VersionColumn" xml:space="preserve">
+    <value>الإصدار</value>
+  </data>
+  <data name="VersionKindLabel" xml:space="preserve">
+    <value>رقم الإصدار</value>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>الإصدار</value>
+  </data>
+  <data name="VersionStatusApproved" xml:space="preserve">
+    <value>معتمد</value>
+  </data>
+  <data name="VersionStatusDraft" xml:space="preserve">
+    <value>مسودة</value>
+  </data>
+  <data name="VersionStatusInReview" xml:space="preserve">
+    <value>قيد المراجعة</value>
+  </data>
+  <data name="VersionStatusLegacy" xml:space="preserve">
+    <value>نص قديم</value>
+  </data>
+  <data name="VersionStatusPublished" xml:space="preserve">
+    <value>منشور</value>
+  </data>
+  <data name="VersionStatusRetired" xml:space="preserve">
+    <value>موقوف</value>
+  </data>
+  <data name="VersionStatusSuperseded" xml:space="preserve">
+    <value>مستبدَل</value>
+  </data>
+  <data name="VersionsTab" xml:space="preserve">
+    <value>الإصدارات</value>
+  </data>
+  <data name="WholeProtocolOption" xml:space="preserve">
+    <value>البروتوكول بأكمله</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>سحب إلى مسودة</value>
+  </data>
+  <data name="WithdrawnLabel" xml:space="preserve">
+    <value>مسحوب</value>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>تم سحب الإصدار وأصبح مسودة مرة أخرى.</value>
+  </data>
+  <data name="WizardAudienceStep" xml:space="preserve">
+    <value>الجمهور المستهدف</value>
+  </data>
+  <data name="WizardBasicsStep" xml:space="preserve">
+    <value>الأساسيات</value>
+  </data>
+  <data name="WizardContentStep" xml:space="preserve">
+    <value>المحتوى</value>
+  </data>
+  <data name="WizardKindHelp" xml:space="preserve">
+    <value>ما نوع هذا البروتوكول؟ يحدد النوع ما إذا كان يمكن اقتراحه على البلاغات وما إذا كان الأعضاء يقرّون به افتراضيًا.</value>
+  </data>
+  <data name="WizardKindStep" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="WizardReviewHelp" xml:space="preserve">
+    <value>تحقق مما أدخلته. يُنشأ البروتوكول كمسودة؛ ويمكنك مواصلة تعديله قبل تقديمه للمراجعة.</value>
+  </data>
+  <data name="WizardReviewStep" xml:space="preserve">
+    <value>المراجعة</value>
+  </data>
+  <data name="WizardTriggersStep" xml:space="preserve">
+    <value>المشغّلات</value>
+  </data>
+  <data name="WordsAdded" xml:space="preserve">
+    <value>الكلمات المضافة: {0}</value>
+  </data>
+  <data name="WordsRemoved" xml:space="preserve">
+    <value>الكلمات المحذوفة: {0}</value>
+  </data>
+  <data name="AckAwaitingQuizLabel" xml:space="preserve">
+    <value>تم التوقيع؛ بانتظار الاختبار في {0}</value>
+  </data>
+  <data name="AckBundleOrderHelp" xml:space="preserve">
+    <value>موضع هذا البروتوكول في حزمة تهيئة العضو الجديد: الأرقام الأصغر تأتي أولاً.</value>
+  </data>
+  <data name="AckBundleOrderLabel" xml:space="preserve">
+    <value>ترتيب التهيئة</value>
+  </data>
+  <data name="AckCannotSignNotice" xml:space="preserve">
+    <value>لا يمكن الإقرار بهذه النسخة الآن. اقرأ النسخة السارية بدلاً منها.</value>
+  </data>
+  <data name="AckCarriedForwardLabel" xml:space="preserve">
+    <value>مُرحَّل من النسخة الفرعية السابقة</value>
+  </data>
+  <data name="AckCompletedHeader" xml:space="preserve">
+    <value>تم الإقرار</value>
+  </data>
+  <data name="AckDueDaysHelp" xml:space="preserve">
+    <value>الأيام المتاحة للعضو للإقرار، تُحسب من يوم تكليفه أو انضمامه إلى الجمهور. اتركه فارغاً لـ {0} يوماً.</value>
+  </data>
+  <data name="AckDueDaysLabel" xml:space="preserve">
+    <value>أيام الإقرار</value>
+  </data>
+  <data name="AckDueLabel" xml:space="preserve">
+    <value>مستحق في {0}</value>
+  </data>
+  <data name="AckDueWasLabel" xml:space="preserve">
+    <value>كان مستحقاً في {0}</value>
+  </data>
+  <data name="AckFutureVersionNotice" xml:space="preserve">
+    <value>تسري هذه النسخة في {0}. يمكنك الإقرار بها الآن.</value>
+  </data>
+  <data name="AckNoQuizOption" xml:space="preserve">
+    <value>بلا اختبار</value>
+  </data>
+  <data name="AckNotAssignedNotice" xml:space="preserve">
+    <value>لا يُطلب منك الإقرار بهذه النسخة.</value>
+  </data>
+  <data name="AckOfflineLabel" xml:space="preserve">
+    <value>وُقِّع دون اتصال</value>
+  </data>
+  <data name="AckOutstandingLabel" xml:space="preserve">
+    <value>بانتظار الإقرار</value>
+  </data>
+  <data name="AckPromptAwaitingQuiz" xml:space="preserve">
+    <value>لقد وقّعت هذا البروتوكول. يكتمل بمجرد اجتيازك الاختبار في {0}.</value>
+  </data>
+  <data name="AckPromptDue" xml:space="preserve">
+    <value>يُطلب منك قراءة {0} وتوقيعها بحلول {1}.</value>
+  </data>
+  <data name="AckPromptOverdue" xml:space="preserve">
+    <value>كان إقرارك بـ {0} مستحقاً في {1}.</value>
+  </data>
+  <data name="AckQuizRequiredNotice" xml:space="preserve">
+    <value>بعد التوقيع، اجتز الاختبار في {0} لإكمال الإقرار.</value>
+  </data>
+  <data name="AckQuizTrainingHelp" xml:space="preserve">
+    <value>تدريب يتضمن اختباراً. يُكلَّف به الأعضاء مع البروتوكول، ولا يكتمل الإقرار إلا باجتياز الاختبار.</value>
+  </data>
+  <data name="AckQuizTrainingLabel" xml:space="preserve">
+    <value>تدريب الاختبار</value>
+  </data>
+  <data name="AckSettingsButton" xml:space="preserve">
+    <value>إعدادات الإقرار</value>
+  </data>
+  <data name="AckSettingsHeader" xml:space="preserve">
+    <value>إعدادات الإقرار بالبروتوكول</value>
+  </data>
+  <data name="AckSettingsInvalidTraining" xml:space="preserve">
+    <value>اختر تدريباً تابعاً لهذه الإدارة يتضمن اختباراً.</value>
+  </data>
+  <data name="AckSettingsSavedMessage" xml:space="preserve">
+    <value>تم حفظ إعدادات الإقرار.</value>
+  </data>
+  <data name="AckSignedNotice" xml:space="preserve">
+    <value>وقّعت هذه النسخة في {0}.</value>
+  </data>
+  <data name="AckSourceAudienceEntry" xml:space="preserve">
+    <value>كُلِّف عند الانضمام إلى الجمهور</value>
+  </data>
+  <data name="AckState_acknowledged" xml:space="preserve">
+    <value>تم الإقرار</value>
+  </data>
+  <data name="AckState_awaiting_quiz" xml:space="preserve">
+    <value>بانتظار الاختبار</value>
+  </data>
+  <data name="AckState_open" xml:space="preserve">
+    <value>لم يُوقَّع بعد</value>
+  </data>
+  <data name="AckState_overdue" xml:space="preserve">
+    <value>متأخر</value>
+  </data>
+  <data name="AckState_withdrawn" xml:space="preserve">
+    <value>مسحوب</value>
+  </data>
+  <data name="AckState_superseded" xml:space="preserve">
+    <value>استُبدل بنسخة أحدث</value>
+  </data>
+  <data name="AcknowledgedLabel" xml:space="preserve">
+    <value>المُقَرّ بها</value>
+  </data>
+  <data name="AcknowledgedMessage" xml:space="preserve">
+    <value>شكراً. تم تسجيل إقرارك.</value>
+  </data>
+  <data name="AcknowledgedAwaitingQuizMessage" xml:space="preserve">
+    <value>تم تسجيل توقيعك. اجتز الاختبار لإكمال الإقرار.</value>
+  </data>
+  <data name="AcknowledgeOutcomeAcknowledged" xml:space="preserve">
+    <value>تم الإقرار.</value>
+  </data>
+  <data name="AcknowledgeOutcomeAwaitingQuiz" xml:space="preserve">
+    <value>تم التوقيع. اجتز الاختبار للإكمال.</value>
+  </data>
+  <data name="AcknowledgeOutcomeNotAssigned" xml:space="preserve">
+    <value>لا يُطلب منك إقرار بهذه النسخة.</value>
+  </data>
+  <data name="AcknowledgeOutcomeNotOpened" xml:space="preserve">
+    <value>افتح النسخة واقرأها قبل توقيعها.</value>
+  </data>
+  <data name="AcknowledgeOutcomeReadNewerVersion" xml:space="preserve">
+    <value>توجد نسخة أحدث سارية. اقرأها ووقّعها.</value>
+  </data>
+  <data name="AcknowledgeOutcomeContentChanged" xml:space="preserve">
+    <value>تغيّر المحتوى منذ فتحه. اقرأه مجدداً قبل التوقيع.</value>
+  </data>
+  <data name="AcknowledgeOutcomeStepUpRequired" xml:space="preserve">
+    <value>تطلب إدارتك خطوة تحقق ثانية للتوقيع. حاول مجدداً وأكملها.</value>
+  </data>
+  <data name="AcknowledgeOutcomeAlreadyAcknowledged" xml:space="preserve">
+    <value>سبق أن أقررت بهذه النسخة.</value>
+  </data>
+  <data name="AcknowledgeOutcomeInvalidRequest" xml:space="preserve">
+    <value>تعذّر تسجيل الإقرار.</value>
+  </data>
+  <data name="ActionsLabel" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="AllGroupsOption" xml:space="preserve">
+    <value>كل المجموعات</value>
+  </data>
+  <data name="AllProtocolsOption" xml:space="preserve">
+    <value>كل البروتوكولات (نظرة عامة)</value>
+  </data>
+  <data name="AssignedLabel" xml:space="preserve">
+    <value>المكلَّفون</value>
+  </data>
+  <data name="AvailableLabel" xml:space="preserve">
+    <value>متاح</value>
+  </data>
+  <data name="BankQuizzesLabel" xml:space="preserve">
+    <value>اختبارات الإقرار من بنوك الأسئلة</value>
+  </data>
+  <data name="BulkUploadButton" xml:space="preserve">
+    <value>رفع كمسودات</value>
+  </data>
+  <data name="BulkUploadCreatedDraft" xml:space="preserve">
+    <value>أُنشئت مسودة</value>
+  </data>
+  <data name="BulkUploadDuplicate" xml:space="preserve">
+    <value>رُفع الملف نفسه مرتين</value>
+  </data>
+  <data name="BulkUploadFilesHelp" xml:space="preserve">
+    <value>ملفات PDF وWord (DOCX)، أو ملف zip يضمها، حتى {0} ملفاً. اسم مثل "SOG-204 Mayday.pdf" يحدد الرقم والعنوان.</value>
+  </data>
+  <data name="BulkUploadFilesLabel" xml:space="preserve">
+    <value>الملفات</value>
+  </data>
+  <data name="BulkUploadIntro" xml:space="preserve">
+    <value>أدخل مجلداً كاملاً من الإجراءات والسياسات دفعة واحدة. يصبح كل ملف مسودة لجولة مراجعة ونشر واحدة.</value>
+  </data>
+  <data name="BulkUploadNoFiles" xml:space="preserve">
+    <value>اختر ملف PDF أو DOCX أو zip واحداً على الأقل.</value>
+  </data>
+  <data name="BulkUploadResultSummary" xml:space="preserve">
+    <value>تحوّل {0} من أصل {1} ملفاً إلى مسودات بروتوكولات.</value>
+  </data>
+  <data name="BulkUploadTab" xml:space="preserve">
+    <value>رفع جماعي</value>
+  </data>
+  <data name="BulletinApprovalLabel" xml:space="preserve">
+    <value>الاعتماد</value>
+  </data>
+  <data name="BulletinAudienceHelp" xml:space="preserve">
+    <value>إن لم تختر مجموعة أو دوراً تُرسل النشرة إلى الإدارة كلها.</value>
+  </data>
+  <data name="BulletinAwaitingApproval" xml:space="preserve">
+    <value>بانتظار التوقيع المصادِق</value>
+  </data>
+  <data name="BulletinContentHelp" xml:space="preserve">
+    <value>اجعلها قصيرة: حتى {0} حرفاً. التوجيه الأطول مكانه بروتوكول.</value>
+  </data>
+  <data name="BulletinContentLabel" xml:space="preserve">
+    <value>نص النشرة</value>
+  </data>
+  <data name="BulletinCountersignedBy" xml:space="preserve">
+    <value>صادق عليه {0}</value>
+  </data>
+  <data name="BulletinCountersignedMessage" xml:space="preserve">
+    <value>تمت المصادقة على النشرة.</value>
+  </data>
+  <data name="BulletinExpiredLabel" xml:space="preserve">
+    <value>منتهية</value>
+  </data>
+  <data name="BulletinExpiresHelp" xml:space="preserve">
+    <value>تغادر المكتبة تلقائياً في هذا الوقت؛ بحد أقصى {0} يوماً.</value>
+  </data>
+  <data name="BulletinExpiresLabel" xml:space="preserve">
+    <value>تنتهي في</value>
+  </data>
+  <data name="BulletinInvalidMessage" xml:space="preserve">
+    <value>تحقق من العنوان والنص والانتهاء (في المستقبل وضمن الأيام المسموح بها).</value>
+  </data>
+  <data name="BulletinIssuedBy" xml:space="preserve">
+    <value>أصدرها {0} في {1}</value>
+  </data>
+  <data name="BulletinIssuedMessage" xml:space="preserve">
+    <value>النشرة سارية وقد أُرسلت.</value>
+  </data>
+  <data name="BulletinMustReadLabel" xml:space="preserve">
+    <value>قراءة إلزامية: على كل عضو في الجمهور الإقرار بها</value>
+  </data>
+  <data name="BulletinTitleLabel" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="BulletinWithdrawReasonLabel" xml:space="preserve">
+    <value>السبب</value>
+  </data>
+  <data name="BulletinWithdrawnLabel" xml:space="preserve">
+    <value>مسحوبة</value>
+  </data>
+  <data name="BulletinWithdrawnMessage" xml:space="preserve">
+    <value>سُحبت النشرة.</value>
+  </data>
+  <data name="BulletinsIntro" xml:space="preserve">
+    <value>تنبيهات السلامة والتوجيهات المؤقتة التي لا تحتمل انتظار دورة مراجعة. تسري فوراً وتُعتمد لاحقاً.</value>
+  </data>
+  <data name="BulletinsListHeader" xml:space="preserve">
+    <value>النشرات</value>
+  </data>
+  <data name="BulletinsTab" xml:space="preserve">
+    <value>النشرات</value>
+  </data>
+  <data name="ComingWithCoursesLabel" xml:space="preserve">
+    <value>يأتي مع دورات نظام إدارة التعلم</value>
+  </data>
+  <data name="ComplianceHeader" xml:space="preserve">
+    <value>الامتثال لإقرارات البروتوكولات</value>
+  </data>
+  <data name="ComplianceIntro" xml:space="preserve">
+    <value>من قرأ كل نسخة بروتوكول ووقّعها، حسب المجموعة.</value>
+  </data>
+  <data name="ComplianceTab" xml:space="preserve">
+    <value>الامتثال</value>
+  </data>
+  <data name="CountersignButton" xml:space="preserve">
+    <value>صادِق بالتوقيع</value>
+  </data>
+  <data name="CurrentDocumentLabel" xml:space="preserve">
+    <value>السارية: {0} (النسخة {1})</value>
+  </data>
+  <data name="DocumentFileHelp" xml:space="preserve">
+    <value>PDF أو Word (DOCX)، حتى 30 ميغابايت.</value>
+  </data>
+  <data name="DocumentFileLabel" xml:space="preserve">
+    <value>الملف</value>
+  </data>
+  <data name="DocumentMissingNotice" xml:space="preserve">
+    <value>لا يوجد ملف لهذه النسخة.</value>
+  </data>
+  <data name="DocumentProtocolCreatedMessage" xml:space="preserve">
+    <value>أُنشئ البروتوكول كمسودة من الملف.</value>
+  </data>
+  <data name="DocumentTitleHelp" xml:space="preserve">
+    <value>اتركه فارغاً لأخذ العنوان من اسم الملف.</value>
+  </data>
+  <data name="DocumentTitleLabel" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="DocumentVersionUploadedMessage" xml:space="preserve">
+    <value>الملف هو محتوى نسخة المسودة الجديدة.</value>
+  </data>
+  <data name="DocxNoViewerNotice" xml:space="preserve">
+    <value>تُفتح ملفات Word في برنامج Word. نزّله أو اقرأ النص أدناه.</value>
+  </data>
+  <data name="DownloadDocumentButton" xml:space="preserve">
+    <value>تنزيل</value>
+  </data>
+  <data name="DueLabel" xml:space="preserve">
+    <value>الاستحقاق</value>
+  </data>
+  <data name="ExportCsvButton" xml:space="preserve">
+    <value>تصدير CSV</value>
+  </data>
+  <data name="ExportPdfButton" xml:space="preserve">
+    <value>تصدير PDF</value>
+  </data>
+  <data name="ExtractedTextHeader" xml:space="preserve">
+    <value>نص المستند</value>
+  </data>
+  <data name="ExtractedTextNone_encrypted" xml:space="preserve">
+    <value>المستند محمي، لذا تعذّرت قراءة نصه.</value>
+  </data>
+  <data name="ExtractedTextNone_scanned" xml:space="preserve">
+    <value>لا يحتوي المستند على طبقة نصية (يبدو ممسوحاً ضوئياً).</value>
+  </data>
+  <data name="ExtractedTextNone_too_large" xml:space="preserve">
+    <value>المستند أكبر من أن يُقرأ نصه.</value>
+  </data>
+  <data name="ExtractedTextNone_unsupported" xml:space="preserve">
+    <value>لا يمكن قراءة النص من هذا النوع من الملفات.</value>
+  </data>
+  <data name="ExtractedTextNone_unreadable" xml:space="preserve">
+    <value>تعذّرت قراءة نص المستند.</value>
+  </data>
+  <data name="ExtractedTextNone_timeout" xml:space="preserve">
+    <value>استغرقت قراءة النص وقتاً طويلاً فأُوقفت.</value>
+  </data>
+  <data name="ExtractedTextPending" xml:space="preserve">
+    <value>تجري قراءة النص وسيظهر هنا قريباً.</value>
+  </data>
+  <data name="FoldersAsCategoriesLabel" xml:space="preserve">
+    <value>تتحول مجلدات ملف zip إلى فئات</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>المجموعة</value>
+  </data>
+  <data name="HideCompletedButton" xml:space="preserve">
+    <value>إخفاء ما تم الإقرار به</value>
+  </data>
+  <data name="ImportCreatedListHeader" xml:space="preserve">
+    <value>أُنشئت كمسودات</value>
+  </data>
+  <data name="ImportPreviewButton" xml:space="preserve">
+    <value>معاينة</value>
+  </data>
+  <data name="ImportPreviewListHeader" xml:space="preserve">
+    <value>ستُنشأ كمسودات</value>
+  </data>
+  <data name="ImportPreviewMessage" xml:space="preserve">
+    <value>معاينة {1}: سيُنشأ {0} بروتوكولاً كمسودات. لم يُحفظ شيء.</value>
+  </data>
+  <data name="IssueBulletinButton" xml:space="preserve">
+    <value>إصدار النشرة</value>
+  </data>
+  <data name="IssueBulletinConfirm" xml:space="preserve">
+    <value>هل تصدر هذه النشرة الآن وترسلها إلى الجمهور؟</value>
+  </data>
+  <data name="IssueBulletinHeader" xml:space="preserve">
+    <value>نشرة أولوية جديدة</value>
+  </data>
+  <data name="IssueBulletinHelp" xml:space="preserve">
+    <value>تسري النشرة فوراً وتُرسل كإشعار فوري. يلي ذلك الاعتماد: يصادق عليها أحد المعتمِدين أو يسحبها.</value>
+  </data>
+  <data name="KindBulletin" xml:space="preserve">
+    <value>نشرة أولوية</value>
+  </data>
+  <data name="LifecycleErrorFileRequired" xml:space="preserve">
+    <value>ارفع المستند أولاً.</value>
+  </data>
+  <data name="LifecycleErrorFileTypeNotAllowed" xml:space="preserve">
+    <value>لا يمكن أن يكون محتوى البروتوكول إلا ملف PDF أو Word (DOCX).</value>
+  </data>
+  <data name="LifecycleErrorFileTooLarge" xml:space="preserve">
+    <value>حجم الملف أكبر من 30 ميغابايت.</value>
+  </data>
+  <data name="LmsAcknowledgmentExtrasHeader" xml:space="preserve">
+    <value>مع الإضافة LMS</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>العضو</value>
+  </data>
+  <data name="MicroLearningLabel" xml:space="preserve">
+    <value>أسئلة سيناريو أسبوعية من بروتوكولات مختارة</value>
+  </data>
+  <data name="MoveCategoryToProtocolsLabel" xml:space="preserve">
+    <value>نقل هذه الفئة إلى البروتوكولات بصفتها</value>
+  </data>
+  <data name="MoveDocumentFailedError" xml:space="preserve">
+    <value>تعذّر نقل المستند إلى البروتوكولات. يمكن نقل ملفات PDF وWord (DOCX) حتى 30 ميغابايت فقط.</value>
+  </data>
+  <data name="MoveProtectedDocumentError" xml:space="preserve">
+    <value>يبقى المستند المحمي في المستندات.</value>
+  </data>
+  <data name="MoveToProtocolsButton" xml:space="preserve">
+    <value>نقل إلى البروتوكولات</value>
+  </data>
+  <data name="MoveToProtocolsConfirm" xml:space="preserve">
+    <value>هل تنقله إلى البروتوكولات؟ يصبح مسودة بروتوكول للمراجعة، ويفتح الرابط القديم البروتوكول.</value>
+  </data>
+  <data name="MovedCategoryMessage" xml:space="preserve">
+    <value>نُقلت إلى البروتوكولات: {0}.</value>
+  </data>
+  <data name="MustReadHeader" xml:space="preserve">
+    <value>قراءة إلزامية</value>
+  </data>
+  <data name="MyAcknowledgmentsIntro" xml:space="preserve">
+    <value>البروتوكولات والنشرات المطلوب منك قراءتها وتوقيعها.</value>
+  </data>
+  <data name="MyAcknowledgmentsTab" xml:space="preserve">
+    <value>إقراراتي</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="NewDocumentProtocolHeader" xml:space="preserve">
+    <value>بروتوكول جديد من مستند</value>
+  </data>
+  <data name="NewDocumentProtocolIntro" xml:space="preserve">
+    <value>ارفع ملف PDF أو Word. يصبح محتوى البروتوكول، مع المراجعة والنشر والإقرار نفسها.</value>
+  </data>
+  <data name="NoAcknowledgmentVersion" xml:space="preserve">
+    <value>لا تتطلب أي نسخة منشورة من هذا البروتوكول إقراراً.</value>
+  </data>
+  <data name="NoAcknowledgmentsYet" xml:space="preserve">
+    <value>لا توجد إقرارات بعد.</value>
+  </data>
+  <data name="NoBulletins" xml:space="preserve">
+    <value>لا توجد نشرات بعد.</value>
+  </data>
+  <data name="NoCompletedAcknowledgments" xml:space="preserve">
+    <value>لم يُقَرّ بشيء بعد.</value>
+  </data>
+  <data name="NothingToAcknowledge" xml:space="preserve">
+    <value>ليس لديك ما تقرّ به.</value>
+  </data>
+  <data name="OpenDocumentButton" xml:space="preserve">
+    <value>فتح في علامة تبويب جديدة</value>
+  </data>
+  <data name="OverdueLabel" xml:space="preserve">
+    <value>المتأخرة</value>
+  </data>
+  <data name="PageNumberLabel" xml:space="preserve">
+    <value>الصفحة {0}</value>
+  </data>
+  <data name="ReadAndSignButton" xml:space="preserve">
+    <value>اقرأ ووقّع</value>
+  </data>
+  <data name="ReadAndSignHeader" xml:space="preserve">
+    <value>إقرار</value>
+  </data>
+  <data name="ReadAndSignHelp" xml:space="preserve">
+    <value>يسجّل التوقيع اسمك والوقت وهذه النسخة بعينها.</value>
+  </data>
+  <data name="ReadAndSignStatement" xml:space="preserve">
+    <value>قرأت البروتوكول {0} "{1}" النسخة {2} (المحتوى {3})، وأفهمه وسألتزم به.</value>
+  </data>
+  <data name="ReadBulletinButton" xml:space="preserve">
+    <value>اقرأ</value>
+  </data>
+  <data name="RequiresAcknowledgmentLabel" xml:space="preserve">
+    <value>على الأعضاء قراءته وتوقيعه</value>
+  </data>
+  <data name="ResultLabel" xml:space="preserve">
+    <value>النتيجة</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="ShowCompletedButton" xml:space="preserve">
+    <value>إظهار ما تم الإقرار به</value>
+  </data>
+  <data name="SignAcknowledgmentButton" xml:space="preserve">
+    <value>توقيع</value>
+  </data>
+  <data name="SignedLabel" xml:space="preserve">
+    <value>تم التوقيع</value>
+  </data>
+  <data name="StandardsReportButton" xml:space="preserve">
+    <value>إثبات الامتثال</value>
+  </data>
+  <data name="StandardsReportEmpty" xml:space="preserve">
+    <value>لم يُوسَم أي بروتوكول بمعيار بعد. أضف المعايير في إعدادات الإقرار لأي بروتوكول.</value>
+  </data>
+  <data name="StandardsReportIntro" xml:space="preserve">
+    <value>البروتوكولات حسب المعيار (CFAI وCAAS وCALEA وNFPA وISO 45001 ومعاييرك)، مع أدلة الإقرار والاعتماد.</value>
+  </data>
+  <data name="StandardsReportLmsOnly" xml:space="preserve">
+    <value>تقرير إثبات الامتثال متاح مع الإضافة LMS.</value>
+  </data>
+  <data name="StandardsTagsHelp" xml:space="preserve">
+    <value>مفصولة بفواصل، مثل CFAI وCALEA.</value>
+  </data>
+  <data name="StandardsTagsLabel" xml:space="preserve">
+    <value>المعايير</value>
+  </data>
+  <data name="StandardsTagsLmsOnly" xml:space="preserve">
+    <value>ربط المعايير متاح مع الإضافة LMS.</value>
+  </data>
+  <data name="StateLabel" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="TakeQuizButton" xml:space="preserve">
+    <value>خض الاختبار</value>
+  </data>
+  <data name="UploadBlockedByReview" xml:space="preserve">
+    <value>إحدى نسخ هذا البروتوكول قيد المراجعة. اسحبها أو أكمل مراجعتها قبل رفع ملف جديد.</value>
+  </data>
+  <data name="UploadDocumentButton" xml:space="preserve">
+    <value>رفع</value>
+  </data>
+  <data name="UploadNewVersionButton" xml:space="preserve">
+    <value>رفع نسخة جديدة</value>
+  </data>
+  <data name="UploadNewVersionHelp" xml:space="preserve">
+    <value>يصبح الملف محتوى النسخة التالية، مسودةً للمراجعة والنشر. وتبقى النسخة السارية حتى ذلك الحين.</value>
+  </data>
+  <data name="VerifiedApprovalsLabel" xml:space="preserve">
+    <value>{0} اعتمادات موثَّقة</value>
+  </data>
+  <data name="WithdrawBulletinButton" xml:space="preserve">
+    <value>سحب</value>
+  </data>
+  <data name="WithdrawBulletinConfirm" xml:space="preserve">
+    <value>هل تسحب هذه النشرة؟ ينتهي سريانها الآن.</value>
+  </data>
+  <data name="WizardProtocolsFileHelp" xml:space="preserve">
+    <value>ملف مُصدَّر من مكتبة بروتوكولات Resgrid (الصيغة resgrid-protocols، الإصدار 1)، حتى 10 ميغابايت و500 بروتوكول.</value>
+  </data>
+  <data name="WizardProtocolsHelp" xml:space="preserve">
+    <value>انقل البروتوكولات بصيغة التبادل المفتوحة. عاين أولاً؛ ينشئ الاستيراد مسودات لجولة مراجعة ونشر واحدة. لا يُنشر شيء.</value>
+  </data>
+  <data name="BlockLabelCaution" xml:space="preserve">
+    <value>تنبيه</value>
+  </data>
+  <data name="BlockLabelWarning" xml:space="preserve">
+    <value>تحذير</value>
+  </data>
+  <data name="BlockLabelContactMedicalControl" xml:space="preserve">
+    <value>اتصل بالإشراف الطبي</value>
+  </data>
+  <data name="BlockLabelContact" xml:space="preserve">
+    <value>جهة الاتصال</value>
+  </data>
+  <data name="BlockLabelScopeOfPractice" xml:space="preserve">
+    <value>نطاق الممارسة</value>
+  </data>
+  <data name="BlockLabelMedication" xml:space="preserve">
+    <value>دواء</value>
+  </data>
+  <data name="BlockLabelIndication" xml:space="preserve">
+    <value>دواعي الاستعمال</value>
+  </data>
+  <data name="BlockLabelConcentration" xml:space="preserve">
+    <value>التركيز</value>
+  </data>
+  <data name="BlockLabelDosePerKg" xml:space="preserve">
+    <value>الجرعة لكل كغ</value>
+  </data>
+  <data name="BlockLabelMaxSingleDose" xml:space="preserve">
+    <value>الجرعة الفردية القصوى</value>
+  </data>
+  <data name="BlockLabelMaxTotalDose" xml:space="preserve">
+    <value>الجرعة الإجمالية القصوى</value>
+  </data>
+  <data name="BlockLabelRoute" xml:space="preserve">
+    <value>طريق الإعطاء</value>
+  </data>
+  <data name="BlockLabelRepeatInterval" xml:space="preserve">
+    <value>الفاصل الزمني للتكرار</value>
+  </data>
+  <data name="BlockLabelInventoryItem" xml:space="preserve">
+    <value>صنف المخزون</value>
+  </data>
+  <data name="BlockLabelDoseAsAuthored" xml:space="preserve">
+    <value>تُعرض الجرعات كما كُتبت. لا يُحسب أي شيء.</value>
+  </data>
+  <data name="BlockLabelVideo" xml:space="preserve">
+    <value>رابط فيديو</value>
+  </data>
+  <data name="BlockLabelAttachment" xml:space="preserve">
+    <value>ملف مرفق</value>
+  </data>
+  <data name="BlockLabelLinkProtocol" xml:space="preserve">
+    <value>بروتوكول ذو صلة</value>
+  </data>
+  <data name="BlockLabelLinkPoi" xml:space="preserve">
+    <value>نقطة اهتمام</value>
+  </data>
+  <data name="BlockLabelLinkInventory" xml:space="preserve">
+    <value>صنف مخزون مرتبط</value>
+  </data>
+  <data name="BlockLabelLinkChecklist" xml:space="preserve">
+    <value>قائمة تحقق ذات صلة</value>
+  </data>
+  <data name="BlockLabelLinkTraining" xml:space="preserve">
+    <value>تدريب ذو صلة</value>
+  </data>
+  <data name="BlockLabelLinkUrl" xml:space="preserve">
+    <value>صفحة ويب</value>
+  </data>
+  <data name="BlockTypeHeading" xml:space="preserve">
+    <value>عنوان</value>
+  </data>
+  <data name="BlockTypeParagraph" xml:space="preserve">
+    <value>فقرة</value>
+  </data>
+  <data name="BlockTypeSteps" xml:space="preserve">
+    <value>خطوات مرتبة</value>
+  </data>
+  <data name="BlockTypeCaution" xml:space="preserve">
+    <value>تنبيه</value>
+  </data>
+  <data name="BlockTypeWarning" xml:space="preserve">
+    <value>تحذير</value>
+  </data>
+  <data name="BlockTypeGate" xml:space="preserve">
+    <value>اتصل بالإشراف الطبي</value>
+  </data>
+  <data name="BlockTypeTable" xml:space="preserve">
+    <value>جدول</value>
+  </data>
+  <data name="BlockTypeImage" xml:space="preserve">
+    <value>صورة</value>
+  </data>
+  <data name="BlockTypeVideo" xml:space="preserve">
+    <value>رابط فيديو</value>
+  </data>
+  <data name="BlockTypeAttachment" xml:space="preserve">
+    <value>مرفق</value>
+  </data>
+  <data name="BlockTypeLink" xml:space="preserve">
+    <value>رابط</value>
+  </data>
+  <data name="BlockTypeMedication" xml:space="preserve">
+    <value>دواء</value>
+  </data>
+  <data name="BlockTypeVariants" xml:space="preserve">
+    <value>نسخ للبالغين / للأطفال</value>
+  </data>
+  <data name="BlockTypeHtml" xml:space="preserve">
+    <value>نص منسق</value>
+  </data>
+  <data name="BlockMoveUp" xml:space="preserve">
+    <value>نقل للأعلى</value>
+  </data>
+  <data name="BlockMoveDown" xml:space="preserve">
+    <value>نقل للأسفل</value>
+  </data>
+  <data name="BlockRemove" xml:space="preserve">
+    <value>إزالة الكتلة</value>
+  </data>
+  <data name="BlockAddStep" xml:space="preserve">
+    <value>إضافة خطوة</value>
+  </data>
+  <data name="BlockRemoveStep" xml:space="preserve">
+    <value>إزالة الخطوة</value>
+  </data>
+  <data name="BlockAddRow" xml:space="preserve">
+    <value>إضافة صف</value>
+  </data>
+  <data name="BlockAddColumn" xml:space="preserve">
+    <value>إضافة عمود</value>
+  </data>
+  <data name="BlockRemoveRow" xml:space="preserve">
+    <value>إزالة الصف الأخير</value>
+  </data>
+  <data name="BlockRemoveColumn" xml:space="preserve">
+    <value>إزالة العمود الأخير</value>
+  </data>
+  <data name="BlockAddVariant" xml:space="preserve">
+    <value>إضافة نسخة</value>
+  </data>
+  <data name="BlockRemoveVariant" xml:space="preserve">
+    <value>إزالة النسخة</value>
+  </data>
+  <data name="BlockAddBlock" xml:space="preserve">
+    <value>إضافة كتلة</value>
+  </data>
+  <data name="BlockEditorEmpty" xml:space="preserve">
+    <value>لا توجد كتل بعد. أضف عنوانًا أو خطوات أو دواءً أدناه.</value>
+  </data>
+  <data name="BlockSelectNone" xml:space="preserve">
+    <value>لم يُحدد شيء</value>
+  </data>
+  <data name="BlockPreviewFailed" xml:space="preserve">
+    <value>تعذر تحميل المعاينة.</value>
+  </data>
+  <data name="BlockFieldText" xml:space="preserve">
+    <value>نص العنوان</value>
+  </data>
+  <data name="BlockFieldLevel" xml:space="preserve">
+    <value>مستوى العنوان</value>
+  </data>
+  <data name="BlockFieldTitle" xml:space="preserve">
+    <value>العنوان (اختياري)</value>
+  </data>
+  <data name="BlockFieldBody" xml:space="preserve">
+    <value>النص</value>
+  </data>
+  <data name="BlockFieldStep" xml:space="preserve">
+    <value>خطوة</value>
+  </data>
+  <data name="BlockFieldContact" xml:space="preserve">
+    <value>من وكيفية الاتصال</value>
+  </data>
+  <data name="BlockFieldCaption" xml:space="preserve">
+    <value>التسمية التوضيحية</value>
+  </data>
+  <data name="BlockFieldHeaderRow" xml:space="preserve">
+    <value>الصف الأول عنوان</value>
+  </data>
+  <data name="BlockFieldCell" xml:space="preserve">
+    <value>خلية</value>
+  </data>
+  <data name="BlockFieldUrl" xml:space="preserve">
+    <value>عنوان الويب (https)</value>
+  </data>
+  <data name="BlockFieldAttachment" xml:space="preserve">
+    <value>مرفق البروتوكول</value>
+  </data>
+  <data name="BlockFieldAlt" xml:space="preserve">
+    <value>وصف لقارئات الشاشة</value>
+  </data>
+  <data name="BlockFieldLabel" xml:space="preserve">
+    <value>نص الرابط</value>
+  </data>
+  <data name="BlockFieldLinkKind" xml:space="preserve">
+    <value>رابط إلى</value>
+  </data>
+  <data name="BlockFieldLinkTarget" xml:space="preserve">
+    <value>العنصر المرتبط</value>
+  </data>
+  <data name="BlockFieldLinkId" xml:space="preserve">
+    <value>رقم العنصر أو معرّفه</value>
+  </data>
+  <data name="BlockFieldScopes" xml:space="preserve">
+    <value>نطاق الممارسة (أنواع الشهادات)</value>
+  </data>
+  <data name="BlockFieldVariantLabel" xml:space="preserve">
+    <value>اسم النسخة</value>
+  </data>
+  <data name="BlockFieldDrug" xml:space="preserve">
+    <value>الدواء</value>
+  </data>
+  <data name="BlockFieldInventoryItemId" xml:space="preserve">
+    <value>معرّف صنف المخزون</value>
+  </data>
+  <data name="BlockFieldInventoryItemName" xml:space="preserve">
+    <value>اسم صنف المخزون</value>
+  </data>
+  <data name="BlockFieldNotes" xml:space="preserve">
+    <value>ملاحظات</value>
+  </data>
+  <data name="BlockLevel2" xml:space="preserve">
+    <value>قسم</value>
+  </data>
+  <data name="BlockLevel3" xml:space="preserve">
+    <value>قسم فرعي</value>
+  </data>
+  <data name="BlockLevel4" xml:space="preserve">
+    <value>عنوان ثانوي</value>
+  </data>
+  <data name="BlockAdultLabel" xml:space="preserve">
+    <value>بالغ</value>
+  </data>
+  <data name="BlockPediatricLabel" xml:space="preserve">
+    <value>أطفال</value>
+  </data>
+  <data name="BlockDoseNoticeEditor" xml:space="preserve">
+    <value>تُعرض الجرعات تمامًا كما كُتبت هنا. لا يحسب Resgrid أي جرعة أبدًا، ويظهر رابط أداة الجرعات الخاصة بالإدارة مع كل دواء.</value>
+  </data>
+  <data name="RichBold" xml:space="preserve">
+    <value>غامق</value>
+  </data>
+  <data name="RichItalic" xml:space="preserve">
+    <value>مائل</value>
+  </data>
+  <data name="RichBullets" xml:space="preserve">
+    <value>قائمة نقطية</value>
+  </data>
+  <data name="RichNumbers" xml:space="preserve">
+    <value>قائمة مرقمة</value>
+  </data>
+  <data name="BlockEditorHelp" xml:space="preserve">
+    <value>أنشئ البروتوكول من كتل: العناوين تكوّن المخطط، ويمكن تنفيذ الخطوات المرتبة ونقاط الاتصال بالإشراف الطبي خطوة بخطوة أثناء البلاغ، ولكل كتلة مرساة ثابتة تشير إليها تعليقات المراجعة واستشهادات الذكاء الاصطناعي.</value>
+  </data>
+  <data name="BlockEditorNeedsScript" xml:space="preserve">
+    <value>يتطلب محرر الكتل JavaScript. فعّله لتحرير هذه المسودة.</value>
+  </data>
+  <data name="BlockPreviewButton" xml:space="preserve">
+    <value>تحديث المعاينة</value>
+  </data>
+  <data name="BlockPreviewHeader" xml:space="preserve">
+    <value>معاينة كما سيقرؤها الأعضاء</value>
+  </data>
+  <data name="BlockPreviewHelp" xml:space="preserve">
+    <value>اختر تحديث المعاينة لرؤية الكتل تمامًا كما سيقرؤها الأعضاء.</value>
+  </data>
+  <data name="ConvertToBlocksCallout" xml:space="preserve">
+    <value>هذه المسودة نص منسق. حوّلها إلى كتل لإضافة خطوات وتنبيهات وأدوية ومحتوى منظم آخر؛ لا تتغير الإصدارات المنشورة.</value>
+  </data>
+  <data name="ConvertToBlocksButton" xml:space="preserve">
+    <value>تحويل إلى كتل</value>
+  </data>
+  <data name="ConvertToBlocksConfirm" xml:space="preserve">
+    <value>تحويل نص هذه المسودة إلى كتل؟ لا تتغير الإصدارات المنشورة.</value>
+  </data>
+  <data name="ConvertedToBlocksMessage" xml:space="preserve">
+    <value>تم تحويل المسودة إلى كتل.</value>
+  </data>
+  <data name="DosingToolLinkText" xml:space="preserve">
+    <value>افتح أداة الجرعات الخاصة بالإدارة</value>
+  </data>
+  <data name="StepThroughHeader" xml:space="preserve">
+    <value>التنفيذ خطوة بخطوة</value>
+  </data>
+  <data name="StepThroughSubtitle" xml:space="preserve">
+    <value>البلاغ {0} · {1}</value>
+  </data>
+  <data name="StepProgressLabel" xml:space="preserve">
+    <value>الخطوات المنجزة</value>
+  </data>
+  <data name="StepProgressFormat" xml:space="preserve">
+    <value>{0} من {1}</value>
+  </data>
+  <data name="StepStartedLabel" xml:space="preserve">
+    <value>بدأ</value>
+  </data>
+  <data name="StepNotStarted" xml:space="preserve">
+    <value>لم يبدأ</value>
+  </data>
+  <data name="CitedVersionColumn" xml:space="preserve">
+    <value>الإصدار المستخدم</value>
+  </data>
+  <data name="StepsCompletedBy" xml:space="preserve">
+    <value>أنهاه {0} في {1}.</value>
+  </data>
+  <data name="StepsHeader" xml:space="preserve">
+    <value>الخطوات</value>
+  </data>
+  <data name="StepStateDone" xml:space="preserve">
+    <value>منجز</value>
+  </data>
+  <data name="StepStateSkipped" xml:space="preserve">
+    <value>تم تخطيه</value>
+  </data>
+  <data name="StepStateNotApplicable" xml:space="preserve">
+    <value>غير منطبق</value>
+  </data>
+  <data name="StepStatePending" xml:space="preserve">
+    <value>لم يُنجز بعد</value>
+  </data>
+  <data name="StepMarkDone" xml:space="preserve">
+    <value>منجز</value>
+  </data>
+  <data name="StepMarkSkipped" xml:space="preserve">
+    <value>تخطي</value>
+  </data>
+  <data name="StepMarkNotApplicable" xml:space="preserve">
+    <value>غير منطبق</value>
+  </data>
+  <data name="StepMarkPending" xml:space="preserve">
+    <value>تراجع</value>
+  </data>
+  <data name="BackToCallButton" xml:space="preserve">
+    <value>العودة إلى البلاغ</value>
+  </data>
+  <data name="CompleteStepsButton" xml:space="preserve">
+    <value>إنهاء قائمة التحقق</value>
+  </data>
+  <data name="CompleteStepsConfirm" xml:space="preserve">
+    <value>إنهاء قائمة التحقق هذه؟ تبقى الخطوات غير المنجزة مسجلة على أنها غير منجزة.</value>
+  </data>
+  <data name="StepSaveFailed" xml:space="preserve">
+    <value>تعذر حفظ الخطوة. حاول مرة أخرى.</value>
+  </data>
+  <data name="StepsCompletedMessage" xml:space="preserve">
+    <value>تم إنهاء قائمة التحقق.</value>
+  </data>
+  <data name="StepsCompletedLabel" xml:space="preserve">
+    <value>منتهية</value>
+  </data>
+  <data name="SopChecklistsHeader" xml:space="preserve">
+    <value>التنفيذ خطوة بخطوة وقوائم الإجراءات القياسية</value>
+  </data>
+  <data name="IncidentSopLabel" xml:space="preserve">
+    <value>إجراء قياسي للحادث</value>
+  </data>
+  <data name="StartSopLabel" xml:space="preserve">
+    <value>بدء قائمة إجراء قياسي</value>
+  </data>
+  <data name="StartSopButton" xml:space="preserve">
+    <value>بدء قائمة التحقق</value>
+  </data>
+  <data name="StepErrorNotFound" xml:space="preserve">
+    <value>هذا البروتوكول ليس على هذا البلاغ.</value>
+  </data>
+  <data name="StepErrorNotAuthorized" xml:space="preserve">
+    <value>لا يمكنك تغيير قائمة التحقق هذه.</value>
+  </data>
+  <data name="StepErrorNoSteps" xml:space="preserve">
+    <value>لا يحتوي هذا البروتوكول على خطوات لتنفيذها.</value>
+  </data>
+  <data name="StepErrorUnknownStep" xml:space="preserve">
+    <value>هذه الخطوة ليست في الإصدار الذي يستخدمه هذا البلاغ.</value>
+  </data>
+  <data name="StepErrorCompleted" xml:space="preserve">
+    <value>قائمة التحقق هذه منتهية.</value>
+  </data>
+  <data name="StepErrorConflict" xml:space="preserve">
+    <value>كان شخص آخر يحفظ في اللحظة نفسها. حاول مرة أخرى.</value>
+  </data>
+  <data name="StepErrorNotAttachable" xml:space="preserve">
+    <value>لا يمكن إضافة هذا البروتوكول إلى البلاغ (معطل أو محذوف أو أُزيل من البلاغ).</value>
+  </data>
+  <data name="QrCodeHeader" xml:space="preserve">
+    <value>ملصق رمز QR</value>
+  </data>
+  <data name="QrCodeButton" xml:space="preserve">
+    <value>رمز QR</value>
+  </data>
+  <data name="QrCodeAlt" xml:space="preserve">
+    <value>رمز QR لـ {0}</value>
+  </data>
+  <data name="QrCodeUnavailable" xml:space="preserve">
+    <value>تعذر رسم رمز QR.</value>
+  </data>
+  <data name="QrCodeHelp" xml:space="preserve">
+    <value>اطبع هذا الملصق لمركبة أو لجدار المحطة. يفتح مسحه الإصدار الساري للأعضاء المسموح لهم بقراءة البروتوكول.</value>
+  </data>
+  <data name="DeepLinkLabel" xml:space="preserve">
+    <value>رابط مباشر</value>
+  </data>
+  <data name="PrintViewButton" xml:space="preserve">
+    <value>عرض الطباعة</value>
+  </data>
+  <data name="BookTab" xml:space="preserve">
+    <value>كتاب PDF</value>
+  </data>
+  <data name="BookHeader" xml:space="preserve">
+    <value>كتاب PDF للبروتوكولات</value>
+  </data>
+  <data name="BookHelp" xml:space="preserve">
+    <value>نزّل المكتبة كاملة أو فئة واحدة (مع فئاتها الفرعية) كملف PDF واحد: جدول محتويات، ثم كل بروتوكول ساري مع إصداره وتاريخ نفاذه ومعتمده. تُضمّن فقط البروتوكولات التي يمكنك قراءتها.</value>
+  </data>
+  <data name="BookReadableCount" xml:space="preserve">
+    <value>البروتوكولات التي يمكنك قراءتها</value>
+  </data>
+  <data name="BookSealingLabel" xml:space="preserve">
+    <value>الختم الإلكتروني</value>
+  </data>
+  <data name="BookSealingReady" xml:space="preserve">
+    <value>مختوم (L3)</value>
+  </data>
+  <data name="BookSealingPending" xml:space="preserve">
+    <value>غير مختوم، الختم معلق</value>
+  </data>
+  <data name="BookUnsealedNotice" xml:space="preserve">
+    <value>الختم غير مُهيأ، لذا لا يُختم ملف PDF. يُسجل التصدير على أن الختم معلق ويُختم بمجرد تهيئة الختم.</value>
+  </data>
+  <data name="BookWholeLibrary" xml:space="preserve">
+    <value>المكتبة كاملة</value>
+  </data>
+  <data name="BookDownloadButton" xml:space="preserve">
+    <value>تنزيل PDF</value>
+  </data>
+  <data name="BookLibraryTitle" xml:space="preserve">
+    <value>مكتبة البروتوكولات</value>
+  </data>
+  <data name="BookContents" xml:space="preserve">
+    <value>المحتويات</value>
+  </data>
+  <data name="BookVersion" xml:space="preserve">
+    <value>الإصدار</value>
+  </data>
+  <data name="BookEffective" xml:space="preserve">
+    <value>ساري من</value>
+  </data>
+  <data name="BookApprovedBy" xml:space="preserve">
+    <value>اعتمده</value>
+  </data>
+  <data name="BookContent" xml:space="preserve">
+    <value>المحتوى</value>
+  </data>
+  <data name="BookGenerated" xml:space="preserve">
+    <value>أُنشئ في</value>
+  </data>
+  <data name="BookDocumentBacked" xml:space="preserve">
+    <value>هذا البروتوكول مستند؛ افتحه في Resgrid لقراءة الملف.</value>
+  </data>
+  <data name="BookEmpty" xml:space="preserve">
+    <value>لا توجد بروتوكولات منشورة.</value>
+  </data>
+  <data name="BookUncategorized" xml:space="preserve">
+    <value>غير مصنف</value>
+  </data>
+  <data name="BookFailed" xml:space="preserve">
+    <value>تعذر إنشاء كتاب PDF.</value>
+  </data>
+  <data name="TranslationsButton" xml:space="preserve">
+    <value>الترجمات</value>
+  </data>
+  <data name="TranslationsHeader" xml:space="preserve">
+    <value>ترجمات المحتوى</value>
+  </data>
+  <data name="TranslationHeader" xml:space="preserve">
+    <value>الترجمة: {0}</value>
+  </data>
+  <data name="TranslationsSourceCallout" xml:space="preserve">
+    <value>هذا الإصدار مكتوب بـ {0}. تُعتمد كل ترجمة على حدة؛ ولا يتغير الإصدار ولا بصمته ولا تواقيعه أبدًا.</value>
+  </data>
+  <data name="NoTranslations" xml:space="preserve">
+    <value>لا توجد ترجمات بعد.</value>
+  </data>
+  <data name="TranslationLanguageColumn" xml:space="preserve">
+    <value>اللغة</value>
+  </data>
+  <data name="TranslationUpdatedColumn" xml:space="preserve">
+    <value>آخر تغيير</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="TranslationStatusDraft" xml:space="preserve">
+    <value>ترجمة مسودة</value>
+  </data>
+  <data name="TranslationStatusApproved" xml:space="preserve">
+    <value>ترجمة معتمدة</value>
+  </data>
+  <data name="TranslationStatusWithdrawn" xml:space="preserve">
+    <value>ترجمة مسحوبة</value>
+  </data>
+  <data name="TranslationSourceChanged" xml:space="preserve">
+    <value>تغيّر المصدر</value>
+  </data>
+  <data name="TranslationSourceChangedNotice" xml:space="preserve">
+    <value>تغيّر محتوى المصدر بعد إعداد هذه الترجمة. لا يمكن اعتمادها ولا تُعرض للأعضاء؛ ابدأ ترجمة جديدة للإصدار الحالي.</value>
+  </data>
+  <data name="WithdrawTranslationButton" xml:space="preserve">
+    <value>سحب الترجمة</value>
+  </data>
+  <data name="WithdrawTranslationConfirm" xml:space="preserve">
+    <value>سحب هذه الترجمة؟ سيرى الأعضاء الذين يقرؤون بهذه اللغة المصدر.</value>
+  </data>
+  <data name="StartTranslationButton" xml:space="preserve">
+    <value>بدء الترجمة</value>
+  </data>
+  <data name="TranslationRulesCallout" xml:space="preserve">
+    <value>تُترجم الصياغة فقط. تبقى الجرعات والروابط والمرفقات والبنية تمامًا كما في المصدر.</value>
+  </data>
+  <data name="TranslationWordingHeader" xml:space="preserve">
+    <value>الصياغة المترجمة</value>
+  </data>
+  <data name="TranslationSourceColumn" xml:space="preserve">
+    <value>المصدر</value>
+  </data>
+  <data name="TranslationTranslatedColumn" xml:space="preserve">
+    <value>الترجمة</value>
+  </data>
+  <data name="TranslationDosesLocked" xml:space="preserve">
+    <value>الجرعات لا تُترجم</value>
+  </data>
+  <data name="SaveTranslationButton" xml:space="preserve">
+    <value>حفظ الترجمة</value>
+  </data>
+  <data name="TranslationPreviewHeader" xml:space="preserve">
+    <value>الترجمة كما سيقرؤها الأعضاء</value>
+  </data>
+  <data name="ApproveTranslationHeader" xml:space="preserve">
+    <value>اعتماد الترجمة</value>
+  </data>
+  <data name="ApproveTranslationHelp" xml:space="preserve">
+    <value>يوقّع الاعتماد هذه الترجمة بالمستوى L2 (تحقق إضافي)، مرتبطًا بمحتوى الترجمة نفسه. لا يتغير الإصدار المصدر.</value>
+  </data>
+  <data name="ApproveTranslationButton" xml:space="preserve">
+    <value>اعتماد مع تحقق إضافي</value>
+  </data>
+  <data name="TranslationApprovalStatement" xml:space="preserve">
+    <value>أعتمد ترجمة {3} للبروتوكول {0} "{1}" الإصدار {2} (محتوى الترجمة {4}) للأعضاء الذين يقرؤون بتلك اللغة.</value>
+  </data>
+  <data name="TranslationSavedMessage" xml:space="preserve">
+    <value>تم حفظ الترجمة.</value>
+  </data>
+  <data name="TranslationApprovedMessage" xml:space="preserve">
+    <value>تم اعتماد الترجمة؛ يراها الآن الأعضاء الذين يقرؤون بتلك اللغة.</value>
+  </data>
+  <data name="TranslationWithdrawnMessage" xml:space="preserve">
+    <value>تم سحب الترجمة.</value>
+  </data>
+  <data name="TranslationShownNotice" xml:space="preserve">
+    <value>معروض بـ {0} (ترجمة معتمدة).</value>
+  </data>
+  <data name="TranslationFallbackNotice" xml:space="preserve">
+    <value>لا توجد ترجمة معتمدة بلغتك، لذا يُعرض هذا بلغة الإدارة.</value>
+  </data>
+  <data name="ContentLanguageLabel" xml:space="preserve">
+    <value>لغة المحتوى</value>
+  </data>
+  <data name="TranslationErrorNotFound" xml:space="preserve">
+    <value>لم يتم العثور على تلك الترجمة أو الإصدار.</value>
+  </data>
+  <data name="TranslationErrorNotAuthorized" xml:space="preserve">
+    <value>لا يمكنك القيام بذلك مع الترجمات.</value>
+  </data>
+  <data name="TranslationErrorSourceNotLocked" xml:space="preserve">
+    <value>يمكن ترجمة الإصدار المقدَّم أو المعتمد أو المنشور فقط.</value>
+  </data>
+  <data name="TranslationErrorInvalidLocale" xml:space="preserve">
+    <value>اختر لغة غير لغة الإصدار نفسه.</value>
+  </data>
+  <data name="TranslationErrorAlreadyExists" xml:space="preserve">
+    <value>لهذا الإصدار ترجمة بتلك اللغة بالفعل.</value>
+  </data>
+  <data name="TranslationErrorStaleCopy" xml:space="preserve">
+    <value>حفظ شخص آخر هذه الترجمة منذ أن فتحتها. أعد التحميل لرؤية تغييراته.</value>
+  </data>
+  <data name="TranslationErrorNotDraft" xml:space="preserve">
+    <value>يمكن تغيير أو اعتماد الترجمة المسودة فقط.</value>
+  </data>
+  <data name="TranslationErrorEmptyContent" xml:space="preserve">
+    <value>الترجمة فارغة.</value>
+  </data>
+  <data name="TranslationErrorSignatureRequired" xml:space="preserve">
+    <value>يتطلب الاعتماد تحققًا إضافيًا حديثًا.</value>
+  </data>
+  <data name="TranslationErrorPasskeyRequired" xml:space="preserve">
+    <value>تتطلب إدارتك مفتاح مرور للاعتمادات.</value>
+  </data>
+  <data name="TranslationErrorSourceChanged" xml:space="preserve">
+    <value>تغيّر محتوى المصدر بعد إعداد هذه الترجمة.</value>
+  </data>
+  <data name="StaleVersionMessage" xml:space="preserve">
+    <value>أنت تعرض {0}. {1} ساري منذ {2}.</value>
+  </data>
+  <data name="StaleRetiredMessage" xml:space="preserve">
+    <value>أنت تعرض {0}. لم يعد هذا البروتوكول ساريًا.</value>
+  </data>
+  <data name="DefaultContentLocaleLabel" xml:space="preserve">
+    <value>لغة كتابة البروتوكولات</value>
+  </data>
+  <data name="DefaultContentLocaleBlank" xml:space="preserve">
+    <value>الإنجليزية (افتراضي)</value>
+  </data>
+  <data name="DefaultContentLocaleHelp" xml:space="preserve">
+    <value>يقرأ الأعضاء الذين لا توجد ترجمة معتمدة بلغتهم الإصدار بهذه اللغة، وتُكتب بها تسميات الكتل مثل تنبيه.</value>
+  </data>
+  <data name="BankQuizHeader" xml:space="preserve">
+    <value>اختبار البروتوكول</value>
+  </data>
+  <data name="AckAwaitingBankQuizLabel" xml:space="preserve">
+    <value>تم التوقيع؛ بانتظار اختبار البروتوكول</value>
+  </data>
+  <data name="TakeBankQuizButton" xml:space="preserve">
+    <value>خض الاختبار</value>
+  </data>
+  <data name="ResumeBankQuizButton" xml:space="preserve">
+    <value>تابع الاختبار</value>
+  </data>
+  <data name="BankQuizRequiredNotice" xml:space="preserve">
+    <value>يكتمل إقرارك عندما تنجح في اختبار من {0} أسئلة (درجة النجاح {1}%).</value>
+  </data>
+  <data name="BankQuizPassedNotice" xml:space="preserve">
+    <value>تم اجتياز الاختبار ({0}%).</value>
+  </data>
+  <data name="QuizIntro" xml:space="preserve">
+    <value>{0} أسئلة، درجة النجاح {1}%. تُصحَّح إجاباتك على الخادم ولا تُعرض الإجابات الصحيحة.</value>
+  </data>
+  <data name="QuizChooseAll" xml:space="preserve">
+    <value>اختر كل الإجابات المنطبقة.</value>
+  </data>
+  <data name="SubmitQuizButton" xml:space="preserve">
+    <value>إرسال الإجابات</value>
+  </data>
+  <data name="QuizResultPassed" xml:space="preserve">
+    <value>ناجح: {0}% ({1} من {2} صحيحة، درجة النجاح {3}%).</value>
+  </data>
+  <data name="QuizResultFailed" xml:space="preserve">
+    <value>غير ناجح: {0}% ({1} من {2} صحيحة، درجة النجاح {3}%). يمكنك إجراء اختبار جديد.</value>
+  </data>
+  <data name="QuizAckCompletedMessage" xml:space="preserve">
+    <value>اكتمل إقرارك.</value>
+  </data>
+  <data name="QuizError_NotAssigned" xml:space="preserve">
+    <value>لا يلزمك إقرار بهذا الإصدار، أو أنه لا يتطلب اختبارًا.</value>
+  </data>
+  <data name="QuizError_NoQuestions" xml:space="preserve">
+    <value>لا يحتوي بنك الأسئلة بعد على أسئلة يمكن سحبها. أبلغ مسؤول التدريب.</value>
+  </data>
+  <data name="QuizError_AlreadySubmitted" xml:space="preserve">
+    <value>تم إنجاز هذا الاختبار بالفعل.</value>
+  </data>
+  <data name="QuizError_NotAuthorized" xml:space="preserve">
+    <value>لا يمكنك إجراء هذا الاختبار.</value>
+  </data>
+  <data name="QuizError_NotFound" xml:space="preserve">
+    <value>تعذر العثور على الاختبار.</value>
+  </data>
+  <data name="LearningSettingsHeader" xml:space="preserve">
+    <value>اختبار من بنك الأسئلة والتعلم المصغّر</value>
+  </data>
+  <data name="LearningBankLabel" xml:space="preserve">
+    <value>بنك الأسئلة</value>
+  </data>
+  <data name="LearningNoBankOption" xml:space="preserve">
+    <value>بدون بنك أسئلة</value>
+  </data>
+  <data name="LearningBankHelp" xml:space="preserve">
+    <value>بنك أسئلة مشترك في القسم ومرتبط بهذا البروتوكول (عدد الأسئلة القابلة للسحب بين قوسين). تسحب الاختبارات والتعلم المصغّر الأسبوعي منه أسئلة الاختيار الواحد والاختيار المتعدد وصح/خطأ.</value>
+  </data>
+  <data name="LearningQuizRequiredLabel" xml:space="preserve">
+    <value>يتطلب الإقرار اجتياز اختبار مسحوب من البنك</value>
+  </data>
+  <data name="LearningQuestionCountLabel" xml:space="preserve">
+    <value>عدد الأسئلة في الاختبار</value>
+  </data>
+  <data name="LearningPassMarkLabel" xml:space="preserve">
+    <value>درجة النجاح (%)</value>
+  </data>
+  <data name="LearningTagsLabel" xml:space="preserve">
+    <value>الأسئلة الموسومة فقط بـ</value>
+  </data>
+  <data name="LearningTagsHelp" xml:space="preserve">
+    <value>اختياري، مفصولة بفواصل. اتركه فارغًا للسحب من البنك كله.</value>
+  </data>
+  <data name="LearningMicroLabel" xml:space="preserve">
+    <value>التضمين في التعلم المصغّر الأسبوعي</value>
+  </data>
+  <data name="LearningLmsOnly" xml:space="preserve">
+    <value>ضمن إضافة LMS.</value>
+  </data>
+  <data name="LearningSettingsError_InvalidInput" xml:space="preserve">
+    <value>اختر بنك أسئلة مشتركًا في القسم لاختبار إلزامي.</value>
+  </data>
+  <data name="LearningSettingsError_NoQuestions" xml:space="preserve">
+    <value>لا يحتوي بنك الأسئلة على أسئلة اختيار واحد أو اختيار متعدد أو صح/خطأ للسحب.</value>
+  </data>
+  <data name="LearningSettingsError_AddonRequired" xml:space="preserve">
+    <value>تتطلب اختبارات بنوك الأسئلة والتعلم المصغّر إضافة LMS.</value>
+  </data>
+  <data name="LearningSettingsError_NotAuthorized" xml:space="preserve">
+    <value>لا يمكنك تغيير إعدادات التعلم لهذا البروتوكول.</value>
+  </data>
+  <data name="LearningSettingsError_NotFound" xml:space="preserve">
+    <value>تعذر العثور على البروتوكول.</value>
+  </data>
+  <data name="MicroLearningSelectionHeader" xml:space="preserve">
+    <value>التعلم المصغّر الأسبوعي</value>
+  </data>
+  <data name="MicroLearningSelectionHelp" xml:space="preserve">
+    <value>كل يوم اثنين الساعة 09:00 بتوقيت القسم، يتلقى كل عضو نشط لديه مقعد LMS ضمن جمهور بروتوكول محدد سؤال سيناريو واحدًا من بنوك الأسئلة المرتبطة به: بنكه المرتبط، أو بنك مشترك موسوم برمز البروتوكول أو رقمه.</value>
+  </data>
+  <data name="MicroLearningSaveButton" xml:space="preserve">
+    <value>حفظ الاختيار</value>
+  </data>
+  <data name="MicroLearningSavedMessage" xml:space="preserve">
+    <value>تم حفظ اختيار التعلم المصغّر: {0} بروتوكولات.</value>
+  </data>
+  <data name="WeeklyQuestionsHeader" xml:space="preserve">
+    <value>الأسئلة الأسبوعية</value>
+  </data>
+  <data name="WeeklyQuestionsIntro" xml:space="preserve">
+    <value>سؤال سيناريو واحد كل أسبوع من بروتوكولات قسمك. أجب مرة واحدة، ثم اطّلع على الإجابة الصحيحة وسببها.</value>
+  </data>
+  <data name="WeeklyNoQuestions" xml:space="preserve">
+    <value>لا توجد أسئلة أسبوعية بعد.</value>
+  </data>
+  <data name="WeeklyAnswerButton" xml:space="preserve">
+    <value>أجب</value>
+  </data>
+  <data name="WeeklyCorrect" xml:space="preserve">
+    <value>صحيح</value>
+  </data>
+  <data name="WeeklyIncorrect" xml:space="preserve">
+    <value>ليس تمامًا</value>
+  </data>
+  <data name="WeeklyCorrectAnswerLabel" xml:space="preserve">
+    <value>(الإجابة الصحيحة)</value>
+  </data>
+  <data name="WeeklyExplanationLabel" xml:space="preserve">
+    <value>السبب:</value>
+  </data>
+  <data name="WeeklyWeekLabel" xml:space="preserve">
+    <value>الأسبوع {0}</value>
+  </data>
+  <data name="WeeklyChooseAnswer" xml:space="preserve">
+    <value>اختر إجابة أولًا.</value>
+  </data>
+  <data name="LifecycleErrorDecisionGraphInvalid" xml:space="preserve">
+    <value>في مسار الحالة مشكلات: يجب أن تكون له خطوة أولى واحدة، وأن ينتهي كل مسار بنتيجة لها رمز محدِّد، وألا يدور في حلقة. أصلحه قبل المراجعة.</value>
+  </data>
+  <data name="LifecycleErrorDecisionGraphNotAllowed" xml:space="preserve">
+    <value>مسار الحالة خاص ببروتوكول إرسال مؤلَّف، وليس لنوع آخر أو لمستند مرفوع.</value>
+  </data>
+  <data name="GraphLabelCaseFlow" xml:space="preserve">
+    <value>مسار الحالة</value>
+  </data>
+  <data name="GraphLabelEntryQuestion" xml:space="preserve">
+    <value>سؤال البدء</value>
+  </data>
+  <data name="GraphLabelKeyQuestion" xml:space="preserve">
+    <value>سؤال رئيسي</value>
+  </data>
+  <data name="GraphLabelInstruction" xml:space="preserve">
+    <value>تعليمات</value>
+  </data>
+  <data name="GraphLabelOutcome" xml:space="preserve">
+    <value>النتيجة</value>
+  </data>
+  <data name="GraphLabelDeterminant" xml:space="preserve">
+    <value>الرمز المحدِّد</value>
+  </data>
+  <data name="GraphLabelPriority" xml:space="preserve">
+    <value>الأولوية</value>
+  </data>
+  <data name="GraphLabelResponse" xml:space="preserve">
+    <value>الاستجابة</value>
+  </data>
+  <data name="GraphLabelPostDispatch" xml:space="preserve">
+    <value>بعد الإرسال</value>
+  </data>
+  <data name="GraphLabelGoTo" xml:space="preserve">
+    <value>انتقل إلى الخطوة {0}</value>
+  </data>
+  <data name="GraphLabelAnyAnswer" xml:space="preserve">
+    <value>أي إجابة</value>
+  </data>
+  <data name="GraphLabelYes" xml:space="preserve">
+    <value>نعم</value>
+  </data>
+  <data name="GraphLabelNo" xml:space="preserve">
+    <value>لا</value>
+  </data>
+  <data name="GraphLabelStart" xml:space="preserve">
+    <value>البداية</value>
+  </data>
+  <data name="AiSuggestSuggested" xml:space="preserve">
+    <value>تم الاقتراح.</value>
+  </data>
+  <data name="AiSuggestNotEntitled" xml:space="preserve">
+    <value>تتطلب اقتراحات البروتوكول بالذكاء الاصطناعي إضافة الذكاء الاصطناعي المحسّن.</value>
+  </data>
+  <data name="AiSuggestProtectionUnsupported" xml:space="preserve">
+    <value>اقتراحات الذكاء الاصطناعي معطلة أثناء تفعيل حماية البيانات المتقدمة.</value>
+  </data>
+  <data name="AiSuggestUnconfigured" xml:space="preserve">
+    <value>لم يُضبط أي نموذج ذكاء اصطناعي في هذا التثبيت.</value>
+  </data>
+  <data name="AiSuggestNoCandidates" xml:space="preserve">
+    <value>لا يوجد بروتوكول إرسال منشور بمسار حالة يمكن استخدامه مع الذكاء الاصطناعي.</value>
+  </data>
+  <data name="AiSuggestNoInput" xml:space="preserve">
+    <value>لا يحتوي البلاغ على نص أو محادثة رسائل لقراءتها بعد.</value>
+  </data>
+  <data name="AiSuggestNoMatch" xml:space="preserve">
+    <value>لم يجد الذكاء الاصطناعي بروتوكولًا مناسبًا. اختر واحدًا يدويًا.</value>
+  </data>
+  <data name="AiSuggestUnavailable" xml:space="preserve">
+    <value>الذكاء الاصطناعي لا يستجيب الآن. حاول مجددًا أو اختر بروتوكولًا يدويًا.</value>
+  </data>
+  <data name="AiSuggestNotFound" xml:space="preserve">
+    <value>لم يُعثر على البلاغ.</value>
+  </data>
+  <data name="CaseDone" xml:space="preserve">
+    <value>تم الحفظ.</value>
+  </data>
+  <data name="CaseNotFound" xml:space="preserve">
+    <value>هذا البروتوكول ليس في هذا البلاغ.</value>
+  </data>
+  <data name="CaseNoCase" xml:space="preserve">
+    <value>لا توجد حالة مسجلة لهذا البروتوكول في البلاغ.</value>
+  </data>
+  <data name="CaseOverrideReasonRequired" xml:space="preserve">
+    <value>يتطلب رمز محدِّد مختلف ذكر السبب.</value>
+  </data>
+  <data name="CaseDeterminantInvalid" xml:space="preserve">
+    <value>الرمز المحدِّد حروف وأرقام ومسافات و . _ / - (32 كحد أقصى).</value>
+  </data>
+  <data name="CaseNotAnInstruction" xml:space="preserve">
+    <value>هذه الخطوة ليست تعليمات يمكن إرسالها للمتصل.</value>
+  </data>
+  <data name="CaseNoThread" xml:space="preserve">
+    <value>لا توجد محادثة رسائل مفتوحة مع المتصل في هذا البلاغ.</value>
+  </data>
+  <data name="CaseOptedOut" xml:space="preserve">
+    <value>ألغى المتصل الاشتراك في الرسائل (STOP)؛ لم يُرسل شيء.</value>
+  </data>
+  <data name="CaseHeldByAnotherDispatcher" xml:space="preserve">
+    <value>مرسل آخر متصل بمحادثة المتصل.</value>
+  </data>
+  <data name="CaseSendFailed" xml:space="preserve">
+    <value>تعذر إرسال الرسالة. تم تسجيلها في البلاغ.</value>
+  </data>
+  <data name="CaseCallerDone" xml:space="preserve">
+    <value>أُرسلت للمتصل وسُجلت في البلاغ.</value>
+  </data>
+  <data name="CaseCallerNotFound" xml:space="preserve">
+    <value>هذا البروتوكول ليس في هذا البلاغ.</value>
+  </data>
+  <data name="CaseCallerNoCase" xml:space="preserve">
+    <value>لا توجد حالة مسجلة لهذا البروتوكول في البلاغ.</value>
+  </data>
+  <data name="CaseCallerOverrideReasonRequired" xml:space="preserve">
+    <value>يتطلب رمز محدِّد مختلف ذكر السبب.</value>
+  </data>
+  <data name="CaseCallerDeterminantInvalid" xml:space="preserve">
+    <value>الرمز المحدِّد حروف وأرقام ومسافات و . _ / - (32 كحد أقصى).</value>
+  </data>
+  <data name="CaseCallerNotAnInstruction" xml:space="preserve">
+    <value>هذه الخطوة ليست تعليمات يمكن إرسالها للمتصل.</value>
+  </data>
+  <data name="CaseCallerNoThread" xml:space="preserve">
+    <value>لا توجد محادثة رسائل مفتوحة مع المتصل في هذا البلاغ.</value>
+  </data>
+  <data name="CaseCallerOptedOut" xml:space="preserve">
+    <value>ألغى المتصل الاشتراك في الرسائل (STOP)؛ لم يُرسل شيء.</value>
+  </data>
+  <data name="CaseCallerHeldByAnotherDispatcher" xml:space="preserve">
+    <value>مرسل آخر متصل بمحادثة المتصل.</value>
+  </data>
+  <data name="CaseCallerSendFailed" xml:space="preserve">
+    <value>تعذر إرسال الرسالة. تم تسجيلها في البلاغ.</value>
+  </data>
+  <data name="TriggerConditionsLabel" xml:space="preserve">
+    <value>الشروط</value>
+  </data>
+  <data name="TriggerConditionsHelp" xml:space="preserve">
+    <value>يجب أن يتحقق كل شرط تضبطه: أن يكون البلاغ داخل منطقة محطة أو مجموعة، في هذه الأيام والساعات (بتوقيت القسم)، مع كلمة في الطبيعة أو الملاحظات، عند نقطة اهتمام من هذا النوع، أو من هذه المصادر. يحتاج المشغِّل لأي بلاغ إلى شرط واحد على الأقل.</value>
+  </data>
+  <data name="TriggerKeywordsLabel" xml:space="preserve">
+    <value>كلمات في الطبيعة أو الملاحظات</value>
+  </data>
+  <data name="TriggerKeywordsPlaceholder" xml:space="preserve">
+    <value>ألم في الصدر، لا يتنفس</value>
+  </data>
+  <data name="TriggerZoneLabel" xml:space="preserve">
+    <value>داخل منطقة</value>
+  </data>
+  <data name="TriggerAnyOption" xml:space="preserve">
+    <value>أي</value>
+  </data>
+  <data name="TriggerPoiTypeLabel" xml:space="preserve">
+    <value>نوع نقطة الاهتمام في الموقع</value>
+  </data>
+  <data name="TriggerFromLabel" xml:space="preserve">
+    <value>من (الوقت)</value>
+  </data>
+  <data name="TriggerToLabel" xml:space="preserve">
+    <value>حتى (الوقت)</value>
+  </data>
+  <data name="TriggerDaysLabel" xml:space="preserve">
+    <value>الأيام</value>
+  </data>
+  <data name="TriggerSourcesLabel" xml:space="preserve">
+    <value>ورد عبر</value>
+  </data>
+  <data name="CallSourceUser" xml:space="preserve">
+    <value>المرسل (نموذج البلاغ)</value>
+  </data>
+  <data name="CallSourceEmailImport" xml:space="preserve">
+    <value>استيراد البريد الإلكتروني</value>
+  </data>
+  <data name="CallSourceAudioImport" xml:space="preserve">
+    <value>استيراد صوتي</value>
+  </data>
+  <data name="CallSourceChatbot" xml:space="preserve">
+    <value>روبوت المحادثة</value>
+  </data>
+  <data name="CallSourceIntake" xml:space="preserve">
+    <value>قناة الاستقبال (رسائل، بريد، دردشة، webhook)</value>
+  </data>
+  <data name="CallSourceVoiceIntake" xml:space="preserve">
+    <value>الاستقبال الصوتي (ذكاء اصطناعي)</value>
+  </data>
+  <data name="ErrorTriggerConditions" xml:space="preserve">
+    <value>شرط المشغِّل غير صالح: تحقق من المنطقة ونوع نقطة الاهتمام ونافذة الوقت (كلا الوقتين) وأن مشغِّل أي بلاغ له شرط واحد على الأقل.</value>
+  </data>
+  <data name="ConditionsTrigger" xml:space="preserve">
+    <value>أي بلاغ (الشروط فقط)</value>
+  </data>
+  <data name="DispatchSettingsHeader" xml:space="preserve">
+    <value>نصوص الإرسال</value>
+  </data>
+  <data name="ShowDeterminantInDispatchCheckbox" xml:space="preserve">
+    <value>إضافة الرمز المحدِّد واسم البروتوكول إلى إشعارات الإرسال والرسائل النصية والصوتية</value>
+  </data>
+  <data name="ShowDeterminantInDispatchHelp" xml:space="preserve">
+    <value>معطّل افتراضيًا. عند تفعيله يرى المستجيبون الرمز المحدِّد والبروتوكول بعد اسم البلاغ؛ وتعرضه التطبيقات القديمة ضمن النص.</value>
+  </data>
+  <data name="CaseFlowHeader" xml:space="preserve">
+    <value>مسار الحالة (مخطط القرار)</value>
+  </data>
+  <data name="CaseFlowLockedNotice" xml:space="preserve">
+    <value>مسار الحالة جزء من الإصدار قيد المراجعة ولا يمكن تغييره حتى يُسحب أو يُنشر.</value>
+  </data>
+  <data name="CaseFlowHelp" xml:space="preserve">
+    <value>يتبع المرسلون هذه الخطوات في نموذج البلاغ: تقود أسئلة البدء والأسئلة الرئيسية والتعليمات إلى نتيجة لها رمز محدِّد وأولوية مقترحة وما يُقال للمتصل. يُحفظ المسار مع المسودة ويظهر في نص البروتوكول ويُعتمد مع الإصدار.</value>
+  </data>
+  <data name="CaseFlowLicensingNotice" xml:space="preserve">
+    <value>اكتب أسئلتك ورموزك الخاصة. لا يجوز الاحتفاظ بمحتوى بروتوكولات مرخّص (مثل MPDS) إلا داخل قسمك مع تحديد «محتوى مرخّص»؛ ولا يُشارك أو يُنشر أو يُستخدم بالذكاء الاصطناعي.</value>
+  </data>
+  <data name="CaseFlowAddQuestion" xml:space="preserve">
+    <value>إضافة سؤال</value>
+  </data>
+  <data name="CaseFlowAddInstruction" xml:space="preserve">
+    <value>إضافة تعليمات</value>
+  </data>
+  <data name="CaseFlowAddOutcome" xml:space="preserve">
+    <value>إضافة نتيجة</value>
+  </data>
+  <data name="CaseFlowEmpty" xml:space="preserve">
+    <value>لا يوجد مسار حالة بعد. بدونه يُرفق البروتوكول بالبلاغات كما كان.</value>
+  </data>
+  <data name="CaseFlowFirstStep" xml:space="preserve">
+    <value>الخطوة الأولى</value>
+  </data>
+  <data name="CaseFlowMakeFirst" xml:space="preserve">
+    <value>اجعلها الأولى</value>
+  </data>
+  <data name="CaseFlowStepLabel" xml:space="preserve">
+    <value>اسم مختصر</value>
+  </data>
+  <data name="CaseFlowStepText" xml:space="preserve">
+    <value>السؤال كما يُقرأ للمتصل</value>
+  </data>
+  <data name="CaseFlowInstructionText" xml:space="preserve">
+    <value>النص الذي يُقرأ بصوت عالٍ</value>
+  </data>
+  <data name="CaseFlowStage" xml:space="preserve">
+    <value>المرحلة</value>
+  </data>
+  <data name="CaseFlowAnswerType" xml:space="preserve">
+    <value>تُجاب بـ</value>
+  </data>
+  <data name="CaseFlowTypeYesNo" xml:space="preserve">
+    <value>نعم / لا</value>
+  </data>
+  <data name="CaseFlowTypeChoice" xml:space="preserve">
+    <value>إجابة واحدة من عدة إجابات</value>
+  </data>
+  <data name="CaseFlowTypeNumber" xml:space="preserve">
+    <value>رقم</value>
+  </data>
+  <data name="CaseFlowTypeFreeText" xml:space="preserve">
+    <value>نص حر</value>
+  </data>
+  <data name="CaseFlowMin" xml:space="preserve">
+    <value>أدنى قيمة</value>
+  </data>
+  <data name="CaseFlowMax" xml:space="preserve">
+    <value>أعلى قيمة</value>
+  </data>
+  <data name="CaseFlowNext" xml:space="preserve">
+    <value>ثم</value>
+  </data>
+  <data name="CaseFlowChooseStep" xml:space="preserve">
+    <value>اختر خطوة…</value>
+  </data>
+  <data name="CaseFlowSpeak" xml:space="preserve">
+    <value>إتاحة «تشغيل» (تحويل النص إلى كلام) للمرسل</value>
+  </data>
+  <data name="CaseFlowSendToCaller" xml:space="preserve">
+    <value>يمكن إرسالها للمتصل برسالة نصية</value>
+  </data>
+  <data name="CaseFlowNoPriority" xml:space="preserve">
+    <value>بلا اقتراح</value>
+  </data>
+  <data name="CaseFlowProblems" xml:space="preserve">
+    <value>يجب إصلاحه قبل المراجعة:</value>
+  </data>
+  <data name="CaseFlowProblemRoot" xml:space="preserve">
+    <value>يجب أن تكون خطوة واحدة فقط هي الأولى.</value>
+  </data>
+  <data name="CaseFlowProblemNext" xml:space="preserve">
+    <value>كل إجابة تحتاج إلى خطوة تالية.</value>
+  </data>
+  <data name="CaseFlowProblemDeterminant" xml:space="preserve">
+    <value>تحتاج النتيجة إلى رمز محدِّد.</value>
+  </data>
+  <data name="CaseFlowProblemLoop" xml:space="preserve">
+    <value>يدور مسار الحالة في حلقة.</value>
+  </data>
+  <data name="CaseFlowProblemUnreachable" xml:space="preserve">
+    <value>لا يمكن الوصول إليها من الخطوة الأولى.</value>
+  </data>
+  <data name="CaseAiSuggestButton" xml:space="preserve">
+    <value>اقتراح بالذكاء الاصطناعي</value>
+  </data>
+  <data name="CasePlayButton" xml:space="preserve">
+    <value>تشغيل</value>
+  </data>
+  <data name="CaseChangeAnswer" xml:space="preserve">
+    <value>تغيير</value>
+  </data>
+  <data name="CaseOverridden" xml:space="preserve">
+    <value>تم التجاوز</value>
+  </data>
+  <data name="CasePriorityApplied" xml:space="preserve">
+    <value>طُبقت على البلاغ</value>
+  </data>
+  <data name="CaseOverrideDeterminant" xml:space="preserve">
+    <value>تجاوز الرمز المحدِّد</value>
+  </data>
+  <data name="CaseOverrideReason" xml:space="preserve">
+    <value>السبب (مطلوب)</value>
+  </data>
+  <data name="CaseInvalid" xml:space="preserve">
+    <value>تعذر اتباع مسار الحالة هذا. أرفق البروتوكول بدونه أو أبلغ مالك البروتوكول.</value>
+  </data>
+  <data name="CaseAiPrefilled" xml:space="preserve">
+    <value>مقترح من الذكاء الاصطناعي المحسّن. تحقق من كل إجابة قبل الحفظ.</value>
+  </data>
+  <data name="CaseAiAsking" xml:space="preserve">
+    <value>جارٍ سؤال الذكاء الاصطناعي المحسّن…</value>
+  </data>
+  <data name="CaseAiFailed" xml:space="preserve">
+    <value>تعذر تقديم الاقتراح.</value>
+  </data>
+  <data name="CaseSourceAi" xml:space="preserve">
+    <value>اقتراح الذكاء الاصطناعي المحسّن، أكده المرسل</value>
+  </data>
+  <data name="CaseOverrideFrom" xml:space="preserve">
+    <value>المحسوب {0}؛ السبب: {1}</value>
+  </data>
+  <data name="CaseNotComplete" xml:space="preserve">
+    <value>لم تصل الحالة إلى نتيجة.</value>
+  </data>
+  <data name="CaseCallerTexts" xml:space="preserve">
+    <value>أُرسل للمتصل</value>
+  </data>
+  <data name="CaseSendToCallerButton" xml:space="preserve">
+    <value>إرسال للمتصل: {0}</value>
+  </data>
+  <data name="CaseOverrideSave" xml:space="preserve">
+    <value>حفظ الرمز المحدِّد</value>
+  </data>
+  <data name="CaseOverrideHelp" xml:space="preserve">
+    <value>اترك الرمز فارغًا للعودة إلى ما وصل إليه مسار الحالة. أي رمز آخر يحتاج إلى سبب يُحفظ في البلاغ.</value>
+  </data>
+  <data name="CaseExportSection" xml:space="preserve">
+    <value>حالات البروتوكول</value>
+  </data>
 </root>

@@ -125,7 +125,7 @@ namespace Resgrid.Providers.Authentication
 			}
 		}
 
-		public string CreateAssertionOptions(UserSessionClientApplication client, IReadOnlyList<byte[]> allowCredentialIds)
+		public string CreateAssertionOptions(UserSessionClientApplication client, IReadOnlyList<byte[]> allowCredentialIds, byte[] challenge = null)
 		{
 			var server = ServerFor(client);
 			var options = server.GetAssertionOptions(new GetAssertionOptionsParams
@@ -133,6 +133,12 @@ namespace Resgrid.Providers.Authentication
 				AllowedCredentials = (allowCredentialIds ?? Array.Empty<byte[]>()).Select(id => new PublicKeyCredentialDescriptor(id)).ToList(),
 				UserVerification = UserVerificationRequirement.Required
 			});
+
+			// A signing ceremony binds the assertion to the content: the authenticator signs client data that carries this exact
+			// challenge, and the same options are what the assertion is verified against.
+			if (challenge != null && challenge.Length >= 16)
+				options.Challenge = challenge;
+
 			return options.ToJson();
 		}
 

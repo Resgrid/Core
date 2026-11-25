@@ -742,6 +742,38 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.AiDestinationsController.ConvertAdvice(Resgrid.Model.AiDestinationAdvice,Resgrid.Model.AiDestinationAdviceDetails)">
             <summary>The v4 shape of an advice row with its display names.</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ApprovalsController">
+            <summary>
+            e-Signature S4 approval chains for Omni (the older apps get no client change; their members approve in the browser from the
+            notification link): the member's pending approvals, one request (subject, amount, content code, steps), approving at L2 with the
+            session's server-side step-up evidence (v4 has no passkey-bound signing), rejecting with a reason, withdrawing, and submitting a
+            subject. Every call goes through the approval service's own access rules.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ApprovalsController.GetMyApprovals">
+            <summary>The approvals waiting for the member (escalated first).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ApprovalsController.GetApproval(System.Int32)">
+            <summary>One request as the member may see it (submitter, approver or department admin); 404 otherwise.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ApprovalsController.Approve(Resgrid.Web.Services.Controllers.v4.ApprovalActionInput,System.Threading.CancellationToken)">
+            <summary>Approve the member's step at L2: the session's step-up evidence is read server-side, never from the body.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ApprovalsController.Reject(Resgrid.Web.Services.Controllers.v4.ApprovalActionInput,System.Threading.CancellationToken)">
+            <summary>Reject the member's step; a reason is required.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ApprovalsController.Submit(Resgrid.Web.Services.Controllers.v4.ApprovalSubmitData,System.Threading.CancellationToken)">
+            <summary>Submit (or re-submit after a change) a subject to its kind's chain.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.ApprovalDetailData.Status">
+            <summary>Pending, Approved, Rejected, Withdrawn, Superseded or Expired.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.ApprovalDetailData.Changed">
+            <summary>The subject changed after it was submitted (or approved): the approval no longer counts.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.ApprovalOutcomeData.Refusal">
+            <summary>None, StepUpRequired, NotYourTurn, NotAnApprover, SubjectChanged, Closed, ReasonRequired…</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.AuthenticationController">
             <summary>
             Second-factor completion for a login MFA transaction (passkey plan sections 7.2 and 7.5 rule 3; workbook section
@@ -1351,7 +1383,7 @@
             placeholder (no grant) comes back as null, with calls.subjectidentifiers in RedactedFields.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ProtocolRequests(System.Collections.Generic.List{System.Int32},System.Collections.Generic.Dictionary{System.Int32,System.Collections.Generic.List{System.Int32}})">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ProtocolRequests(System.Collections.Generic.List{System.Int32},System.Collections.Generic.Dictionary{System.Int32,System.Collections.Generic.List{System.Int32}},System.Collections.Generic.Dictionary{System.Int32,Resgrid.Model.ProtocolCaseInput})">
             <summary>
             The protocols a v4 client asked to attach. Ids alone (the older apps) attach the pick as before; a protocol the client also
             sent answers for (ProtocolAnswers) has them scored, and as on the web forms a suggested protocol with questions then
@@ -2153,6 +2185,16 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ChecklistRunsController.CompleteChecklistRun(Resgrid.Web.Services.Models.v4.Checklists.ChecklistProgressInput)">
             <summary>Replays with the same validated answers/evidence produce one completion and one set of Workflow events. Different stale content returns 409.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChecklistRunsController.SignChecklistRunWitness(Resgrid.Web.Services.Models.v4.Checklists.ChecklistWitnessInput,System.Threading.CancellationToken)">
+            <summary>
+            e-Signature S3 (free with Checklists): the witness of a form that requires a witness signature signs at L2 — a step-up recorded
+            for this session — bound to the completion's operational content hash; the run completes in the same transaction. A refused
+            signature (StepUpRequired...) leaves the run awaiting its witness. AttestChecklistRun answers 409 for such a form.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChecklistRunsController.GetChecklistRunWitnessSignature(System.String)">
+            <summary>S3: the witness signature panel of a run: whether the form requires it, the statement, the content hash and the signatures.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ChecklistRunsController.UploadChecklistRunEvidence(Resgrid.Web.Services.Models.v4.Checklists.ChecklistEvidenceInput)">
             <summary>In-memory image transport for native clients, with the same size, scan, revision and ADP rules as multipart uploads.</summary>
@@ -3503,6 +3545,31 @@
             <param name="departmentId">Optional department scope. In SystemApiKey mode: if provided, validates the group belongs to this department. If omitted, returns any group matching the code. In OAuth mode: ignored, always validates against the token.</param>
             <returns>GroupResult with the matching group (including its DepartmentId), or a not-found response.</returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.GuidanceController">
+            <summary>
+            A3 in-product guidance for Omni (protocols-training-knowledge-plan §15): the member's role tour and the release's "What's new" lesson,
+            both remembered per member, and the free keyword search over the Resgrid Academy and the product reference (no AI; "How do I…?"
+            answers use Knowledge/Ask with ScopeKind 5, the Academy, when the department has knowledge answers). Every member may use these.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.GuidanceController.GetDashboard(System.Threading.CancellationToken)">
+            <summary>The home card: the member's role tour while it is open, and the newest release lesson not yet read.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.GuidanceController.GetTours(System.Threading.CancellationToken)">
+            <summary>Every guided tour with the member's progress; their role's tour first.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.GuidanceController.GetWhatsNew(System.String,System.Threading.CancellationToken)">
+            <summary>A release's "What's new" lesson (the newest when release is empty).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.GuidanceController.SetTourTask(Resgrid.Web.Services.Models.v4.Guidance.GuidanceTourTaskInput,System.Threading.CancellationToken)">
+            <summary>Marks one tour task done or not done for the member.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.GuidanceController.Dismiss(Resgrid.Web.Services.Models.v4.Guidance.GuidanceDismissInput,System.Threading.CancellationToken)">
+            <summary>Closes a tour ("tour:…") or a release lesson ("whatsnew:…") for the member; it stays closed.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.GuidanceController.Search(System.String,System.Threading.CancellationToken)">
+            <summary>Free keyword search over the Academy lessons the department can see and the product reference (no AI).</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.HealthController">
             <summary>
             Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
@@ -4137,6 +4204,185 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.InvoicesController.CreatePaymentLink(Resgrid.Web.Services.Models.v4.Invoicing.CreatePaymentLinkInput)">
             <summary>Phase B2: opens (or reuses) the invoice's online payment request and returns the shareable pay-page link. 400 with Status=Failure and the payments_* code when not offered.</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.KnowledgeController">
+            <summary>
+            Department knowledge answers with citations (K1) for Omni: status, ask (optionally about one protocol or training, or about the
+            protocol version a call cites) and thumbs up/down. 404 unless the department has Ai.Knowledge (Enhanced AI); the free tier keeps the
+            deterministic Search endpoints. Answers come only from what the member may open.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.KnowledgeController.GetStatus(System.Threading.CancellationToken)">
+            <summary>Whether Ask is available to the member right now.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.KnowledgeController.Ask(Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeAskInput,System.Threading.CancellationToken)">
+            <summary>
+            Asks the department's knowledge. Every part of an answer cites the sources it rests on; "NotCovered" comes with the closest items;
+            doses are only ever quoted from a source, never computed. Do not include patient or personal details in the question.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.KnowledgeController.Feedback(Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeFeedbackInput,System.Threading.CancellationToken)">
+            <summary>Thumbs up or down on one of the member's own answers; a thumbs-down goes to the knowledge gaps report.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.KnowledgePracticeController">
+            <summary>
+            Scenario practice on a protocol (K3 tutor) for Omni: status, a scenario from the protocol's version in force, and the member's answers
+            scored against the sections it cites. Practice only: nothing is written to the transcript, a certification or a quiz. 404 unless the
+            department has the tutor (Enhanced AI knowledge answers and the LMS add-on); the older apps are not changed.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.KnowledgePracticeController.GetStatus(System.Threading.CancellationToken)">
+            <summary>Whether practice is available to the member right now.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.KnowledgePracticeController.Start(Resgrid.Web.Services.Models.v4.Knowledge.KnowledgePracticeStartInput,System.Threading.CancellationToken)">
+            <summary>A new practice scenario from the protocol's version in force; every question cites the sections it is asked from.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.KnowledgePracticeController.Score(Resgrid.Web.Services.Models.v4.Knowledge.KnowledgePracticeScoreInput,System.Threading.CancellationToken)">
+            <summary>Scores the member's answers to one of their own scenarios against the cited sections only. Do not include patient or personal details.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.LmsClassesController">
+            <summary>
+            Training T4 part 1 class sessions (LMS add-on, dark behind Training.Lms), for Omni: my classes, enrol and withdraw, QR sign-in (GPS
+            only when the session asks) and sign-out; for instructors and class managers the roster, attendance marking, the rotating code to
+            show as a QR, and the sign-off. 404 unless the Trainings module and the operator flag are on; new enrolments need an active add-on
+            (lapse rule 3), existing sessions can still be run and signed off.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsClassesController.ActorAsync">
+            <summary>The module and the flag (one gate read); null when classes are dark here.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsClassesController.GetMyClasses">
+            <summary>The member's classes (enrolled, waitlisted, pending, teaching) and the visible ones they can still enrol in.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsClassesController.SignIn(Resgrid.Web.Services.Models.v4.Lms.LmsClassSignInInput,System.Threading.CancellationToken)">
+            <summary>QR sign-in: the code scanned from the instructor's screen (an old code is refused); latitude/longitude when the session requires GPS.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsClassesController.GetRoster(System.Int32)">
+            <summary>The roster of a session, for its instructors and class managers.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsClassesController.GetSignInCode(System.Int32)">
+            <summary>The current rotating code (and the web sign-in URL) for the instructor's device to show as a QR.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.LmsController">
+            <summary>
+            The LMS learner runtime (Training T2 and the A1 Academy, protocols-training-knowledge-plan §13 T2, §15): the member's courses,
+            the player's outline and progress (seat time capped by the server's clock), lesson completion, assessments drawn and scored
+            on the server (questions and options go out, the key never does, R-T11), the offline video manifest (R-C9), crew-viewing
+            scans (R-C4) and the Academy catalog. Department LMS content follows the LMS gate and its lapse rules; Academy content runs for
+            every department. Every endpoint is refused while the Trainings module is off. Omni would use this; Omni is not built here.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsController.GetMyCourses">
+            <summary>The member's LMS courses (open first, then completed), Academy lessons included.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsController.GetCourse(System.Int32)">
+            <summary>The player outline of one enrollment: the version the member takes, each lesson with its progress and lock.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsController.SaveProgress(Resgrid.Web.Services.Models.v4.Lms.LmsProgressInput,System.Threading.CancellationToken)">
+            <summary>Saves progress on a lesson change or heartbeat (seat time, video position, watched percent).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsController.CompleteLesson(Resgrid.Web.Services.Models.v4.Lms.LmsCompleteLessonInput,System.Threading.CancellationToken)">
+            <summary>Completes a lesson when its rules are met (seat time, watched percent, a free response); the last one completes the course.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsController.StartAttempt(Resgrid.Web.Services.Models.v4.Lms.LmsStartAttemptInput,System.Threading.CancellationToken)">
+            <summary>Starts (or resumes) an assessment attempt: the drawn questions and options, never the key; a server-side deadline when timed.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsController.SubmitAttempt(Resgrid.Web.Services.Models.v4.Lms.LmsSubmitAttemptInput,System.Threading.CancellationToken)">
+            <summary>Submits an attempt: scored on the server; the review follows the lesson's answer-review policy.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsController.GetAttemptResult(System.Int32)">
+            <summary>The member's own finished attempt, as the answer-review policy allows.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsController.GetOfflineManifest">
+            <summary>
+            The hosted videos of the member's open courses marked available offline (R-C9): one rendition each within the lesson's size
+            cap, a signed URL and the date the cached copy must be deleted by. Empty when hosted video is not playable (lapse rule 6).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsController.CrewScan(Resgrid.Web.Services.Models.v4.Lms.LmsCrewScanInput,System.Threading.CancellationToken)">
+            <summary>A crew-viewing scan from the member's own phone (R-C4): marks them present and completes the lesson shown.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsController.GetAcademy">
+            <summary>The Resgrid Academy lessons the department may take (visibility follows entitlement), with the member's state.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsController.Enroll(System.Int32,System.Threading.CancellationToken)">
+            <summary>Enrols the member in an Academy lesson (or a self-enrollable department course) and returns the enrollment.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.LmsProgramsController">
+            <summary>
+            Training T3 part 2 (LMS add-on, dark behind Training.Lms): training requests (submit, withdraw, report taken, decide) and the
+            member's competency gaps, for Omni. 404 unless the Trainings module and the operator flag are on; new requests need an active
+            add-on (lapse rule 3), open ones can still be decided, withdrawn and completed.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsProgramsController.ActorAsync">
+            <summary>The module and the flag (one gate read); null when the programs are dark here.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsProgramsController.CompleteTrainingRequest(Resgrid.Web.Services.Models.v4.Lms.LmsTrainingRequestCompleteInput,System.Threading.CancellationToken)">
+            <summary>The member took the class: writes the external submission an officer verifies (evidence can be added on the web).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.LmsRequirementsController">
+            <summary>
+            The member's learning requirements and learning paths (Training T3, LMS) for Omni's My Training: each requirement with its state and
+            due date, and each path with its steps (locked, available, done) and the enrollment to play. Read-only; the older apps are not
+            changed. Every endpoint is refused while the Trainings module is off; department requirements and paths follow the LMS gate
+            (dark while the Training.Lms flag is off), Academy role paths run for every department.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsRequirementsController.GetMyRequirements">
+            <summary>The member's learning requirements, the next action first (overdue, at risk, due later, then the rest).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsRequirementsController.GetMyPaths(System.Threading.CancellationToken)">
+            <summary>The member's learning paths with their steps; steps that unlocked since are enrolled as the list is read.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsRequirementsController.GetRecommendations(System.String,System.Threading.CancellationToken)">
+            <summary>
+            K3: learning paths and courses recommended to a member (the caller by default; officers may name a member in their scope), ranked
+            deterministically from open requirements, paths in progress, competency gaps and the courses offered to the member's roles, each with
+            its reasons. Read-only. 404 unless the department has the LMS add-on; 403 outside the caller's scope.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsRequirementsController.ExplainRecommendations(Resgrid.Web.Services.Models.v4.Lms.LmsRecommendationExplainInput,System.Threading.CancellationToken)">
+            <summary>
+            K3: an optional AI explanation of a member's recommendations, one sentence per item written only from its reasons (Enhanced AI with
+            knowledge answers; nothing is saved). 404 unless the department has both the LMS add-on and Enhanced AI knowledge answers.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.LmsSkillsController">
+            <summary>
+            Training T4 evaluator mode for Omni (LMS add-on, dark behind Training.Lms): the evaluator's pending evaluations and signatures, the
+            sheets they may run (cacheable for offline use), start / save / evidence / submit online, a whole evaluation submitted offline with
+            an outbox idempotency key (a replay returns the first result), and signing the evaluation at L2 (step-up from the session's server-side
+            evidence; v4 has no passkey-bound signing). The member's own results and task books too. 404 unless the Trainings module and the
+            operator flag are on; new evaluations need an active add-on (lapse rule 3). Omni itself is out of scope for this build.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsSkillsController.ActorAsync">
+            <summary>The module and the flag (one gate read); null when skills are dark here.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsSkillsController.GetMyPendingEvaluations">
+            <summary>The evaluator's open evaluations and the evaluator signatures waiting for them.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsSkillsController.GetEvaluatorSheets">
+            <summary>The published sheets the member may evaluate on, with their steps (cache them for offline evaluations by ContentHash).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsSkillsController.GetMyResults">
+            <summary>The member's own evaluations (results), newest first.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsSkillsController.AddEvidence(Resgrid.Web.Services.Models.v4.Lms.LmsSkillEvidenceInput,System.Threading.CancellationToken)">
+            <summary>Evidence as base64 (a replay of the same file for the same step returns the stored one).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsSkillsController.SubmitOfflineEvaluation(Resgrid.Web.Services.Models.v4.Lms.LmsSkillOfflineInput,System.Threading.CancellationToken)">
+            <summary>
+            A whole evaluation captured offline (the Omni outbox): created, graded and submitted in one call. The idempotency key is required;
+            a replay returns what the first delivery made (submitted, or left in progress when the engine refused it).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsSkillsController.SignEvaluation(Resgrid.Web.Services.Models.v4.Lms.LmsSkillSignInput,System.Threading.CancellationToken)">
+            <summary>The evaluator (or the next signer) signs the evaluation's open step at L2: a step-up recorded for this session (no passkey on v4).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.LmsSkillsController.GetTaskBooks">
+            <summary>The member's task books, and for evaluators the open books they may sign tasks of.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.MappingController">
             <summary>
             Mapping operations
@@ -4453,6 +4699,35 @@
             The department a map resource request may read: a bearer caller with Call_View (exactly as these routes always
             required), or a valid signed URL for this resource. Null means not allowed.
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.MemberHealthController">
+            <summary>
+            Member wellness WL1 (protocols-training-knowledge-plan §13b) for Omni: the signed-in member's duty status, injuries and exposure cases,
+            reporting a bloodborne-pathogen or infectious-disease exposure, reporting an injury, and the duty board for supervisors and staffing
+            (operational only: duty and clearance status, never why). The member endpoints act on the caller's own records only; there is no
+            parameter naming another member. Officer work (case steps, duty status, clearances, the OSHA log) stays on the web.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MemberHealthController.GetMyHealth">
+            <summary>The signed-in member's duty status, clearance status, exposure cases and injuries.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MemberHealthController.GetMyDutyStatus">
+            <summary>The signed-in member's operational duty and clearance status.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MemberHealthController.GetMyInjuries">
+            <summary>The signed-in member's injuries (newest first), with their own details revealed for the caller's grant.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MemberHealthController.GetDutyBoard">
+            <summary>
+            Members on restricted or off duty, or not fully cleared, that the caller supervises (department admins and health officers:
+            everyone; group admins: their group; anyone else: themselves). Operational only.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MemberHealthController.ReportExposure(Resgrid.Web.Services.Models.v4.Wellness.ReportExposureInput,System.Threading.CancellationToken)">
+            <summary>Reports a bloodborne-pathogen or infectious-disease exposure for the signed-in member; the designated officers are told.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MemberHealthController.ReportInjury(Resgrid.Web.Services.Models.v4.Wellness.ReportInjuryInput,System.Threading.CancellationToken)">
+            <summary>Reports an injury for the signed-in member; the health officers are told and keep the duty status and OSHA facts.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.MessagesController">
             <summary>
@@ -4888,48 +5163,204 @@
             taken ONLY from a valid, non-exempt grant issued to this same user (fail closed when grants are unavailable).
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ProtocolAcknowledgmentsController">
+            <summary>
+            Protocol acknowledgment for Omni (P2; the older apps get no client change and their members acknowledge in the browser from
+            the notification link, R-S7): the member's acknowledgments and must-read bulletins, read-and-sign with the version id and the
+            content hash read (accepted only while that version is the one in force, R-P11), and the primary file of a document-backed
+            version behind the per-version read rule (R-P4). Round 5F (LMS): the question-bank acknowledgment quiz (questions without a key,
+            scored on the server) and the member's weekly micro-learning questions, through IProtocolLearningExtensions.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolAcknowledgmentsController.GetMyAcknowledgments(System.Boolean)">
+            <summary>The member's outstanding acknowledgments (bulletins first, then the onboarding bundle's order), and completed ones when asked.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolAcknowledgmentsController.GetMustRead">
+            <summary>The member's must-read bulletins in force, not yet acknowledged (Omni decides where to show them: never over a call).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolAcknowledgmentsController.Acknowledge(Resgrid.Web.Services.Models.v4.Protocols.AcknowledgeProtocolInput,System.Threading.CancellationToken)">
+            <summary>
+            Read-and-sign with the version id and the content hash the member read. Online, the app has shown the version; offline
+            (queued), it is accepted only while that version is still the one in force, else the answer is ReadNewerVersion with the
+            version to read (R-P11). A department that requires a step-up for read-and-sign needs this session's second-factor evidence.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolAcknowledgmentsController.GetBankQuiz(System.Int32,System.String,System.Threading.CancellationToken)">
+            <summary>Starts (or resumes) the question-bank quiz of a version the member owes (LMS). Questions and options only; never a key.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolAcknowledgmentsController.SubmitBankQuiz(Resgrid.Web.Services.Models.v4.Protocols.SubmitBankQuizInput,System.Threading.CancellationToken)">
+            <summary>Scores a quiz attempt on the server; a pass completes a signed acknowledgment that was waiting for it.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolAcknowledgmentsController.GetWeeklyQuestions">
+            <summary>The member's weekly micro-learning questions (LMS), newest first.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolAcknowledgmentsController.AnswerWeeklyQuestion(Resgrid.Web.Services.Models.v4.Protocols.AnswerWeeklyQuestionInput,System.Threading.CancellationToken)">
+            <summary>Answers a weekly question once; the answer returns the correct keys and the explanation.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolAcknowledgmentsController.GetVersionFile(System.Int32)">
+            <summary>The primary file of a document-backed version (PDF or DOCX), only for a member who may read that version.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ProtocolCasesController">
+            <summary>
+            Protocols P4 for Omni's dispatch form (the older apps get no client change and keep their read-only protocol list, R-S7): the
+            department's case flows, a preview walk, instruction audio, the Enhanced AI protocol suggestion for a call, the determinant
+            override after a call is saved (reason required) and the caller follow-up text over the call's intake SMS thread. A case is saved
+            with the call through SaveCall/EditCall's optional ProtocolCases.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolCasesController.GetCaseFlows">
+            <summary>The department's published, enabled Dispatch protocols with a valid case flow (the version in force's graph).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolCasesController.GetCaseFlow(System.Int32)">
+            <summary>One protocol's case flow; 404 when it has none in force.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolCasesController.EvaluateCase(Resgrid.Web.Services.Models.v4.ProtocolCases.EvaluateProtocolCaseInput)">
+            <summary>Walks a protocol's case flow with answers (a preview; nothing is saved). The determinant is the server's.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolCasesController.GetInstructionAudio(System.Int32,System.String,System.Threading.CancellationToken)">
+            <summary>The audio of an instruction step marked "speak" (Piper TTS) as URLs to play in order; empty when there is none.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolCasesController.SuggestProtocol(Resgrid.Web.Services.Models.v4.ProtocolCases.SuggestProtocolInput,System.Threading.CancellationToken)">
+            <summary>
+            Enhanced AI: suggests a protocol and prefills its answers from the call's text or intake SMS thread. Nothing is attached; the
+            dispatcher checks the answers and saves them with EditCall (ProtocolCases with AiSuggestionId), which records Source = AI.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolCasesController.OverrideDeterminant(Resgrid.Web.Services.Models.v4.ProtocolCases.OverrideProtocolDeterminantInput,System.Threading.CancellationToken)">
+            <summary>Overrides (or restores) the determinant of a protocol on a saved call; a reason is required for any other determinant.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolCasesController.SendCallerInstruction(Resgrid.Web.Services.Models.v4.ProtocolCases.SendProtocolCallerInstructionInput,System.Threading.CancellationToken)">
+            <summary>Texts a case instruction to the caller over the call's intake SMS thread (text only, logged on the call).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ProtocolContentController">
+            <summary>
+            Protocols P3 for Omni (the older apps get no client change; their v4 GetProtocol keeps returning ProtocolText): the offline manifest
+            by hash, the staleness answer ("v3 viewed, v4 effective since …"), a version in the reader's language (approved translation or the
+            source) with its steps, and step-through on a call (the incident SOP checklists included). Every read applies the protocol read
+            rule (R-P4); call writes need the right to edit the call.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolContentController.GetOfflineManifest">
+            <summary>The offline manifest: the readable protocols in force with their version hash, the SHA-256 of each file and the approved translations.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolContentController.GetStaleness(System.Int32,System.Nullable{System.Int32},System.String)">
+            <summary>Whether the version (or the content hash) a device shows is still the one in force, with the sentence to show when it is not.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolContentController.GetVersionContent(System.Int32,System.String)">
+            <summary>A version as the reader is shown it: the approved translation in <paramref name="locale"/>, else the source; with its steps.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolContentController.GetCallChecklists(System.Int32)">
+            <summary>The call's step-through checklists, each step with its state, time and who.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolContentController.GetSopLibrary">
+            <summary>The incident SOP library: Procedure protocols in force the member may read and start on a call (MAYDAY, RIT, hazmat entry).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolContentController.StartCallChecklist(Resgrid.Web.Services.Models.v4.ProtocolContent.StartCallChecklistInput,System.Threading.CancellationToken)">
+            <summary>Starts a protocol (an incident SOP checklist) on a call; attached as a manual pick when it is not on the call yet.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolContentController.RecordCallStep(Resgrid.Web.Services.Models.v4.ProtocolContent.RecordCallStepInput,System.Threading.CancellationToken)">
+            <summary>One step event (state 1 done, 2 skipped, 3 not applicable, 0 back to pending), timestamped by the server.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ProtocolsController">
             <summary>
-            The options for Protocols in the Resgrid system: the department's protocols, matching them to a call, and writing them
-            (create, update in place, disable). Attachment bytes leave only through <see cref="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetFile(System.Int32)"/>.
+            The options for Protocols in the Resgrid system: the department's protocols, matching them to a call, writing them
+            (create, update in place, disable) and, from P1, their versions and lifecycle (draft, submit, approve with an L2
+            signature, publish, review). Every read applies the protocol read rule (R-P4): the older apps' endpoints return only
+            published protocols in the caller's audience. Attachment bytes leave only through <see cref="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetFile(System.Int32)"/>.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetAllProtocols">
             <summary>
-            Gets the department's enabled protocols (disabled and deleted ones are left out). No attachment bytes: a file comes
-            from <see cref="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetFile(System.Int32)"/>.
+            Gets the department's protocols the caller may read: enabled and published, in the caller's audience (or Dispatch
+            protocols for dispatchers). Drafts, disabled, retired and deleted protocols are left out. No attachment bytes: a file
+            comes from <see cref="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetFile(System.Int32)"/>.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetProtocol(System.Int32)">
             <summary>
-            Gets a single protocol by id. A deleted protocol is still returned inside its department: calls that cite it keep
-            showing it.
+            Gets a single protocol by id when the caller may read it. A deleted protocol is still returned inside its department
+            (calls that cite it keep showing it); a draft or an out-of-audience protocol is a 404 for members.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetFile(System.Int32)">
             <summary>
-            Gets a protocol attachment by its id: the one endpoint the bytes leave through. Unknown, or another department's, is a 404.
+            Gets a protocol attachment by its id: the one endpoint the bytes leave through. Unknown, another department's, or of a
+            protocol the caller may not read, is a 404.
             </summary>
             <param name="protocolAttachmentId">ID of the protocol attachment</param>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetProtocolsForCall(System.Int32,System.Nullable{System.Int32},System.String,System.Nullable{System.DateTime},System.Nullable{System.Int32})">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetProtocolsForCall(System.Int32,System.Nullable{System.Int32},System.String,System.Nullable{System.DateTime},System.Nullable{System.Int32},System.String,System.Nullable{System.Double},System.Nullable{System.Double},System.Nullable{System.Int32})">
             <summary>
-            Every enabled protocol evaluated for a call: the matcher the web call forms use (D18). Pass the call's priority id and
-            its type (by id, or by name), and optionally the call's logged time in UTC (now when left out) or an existing call's id,
-            whose logged time is then used and whose protocols are left out.
+            Every enabled, published Dispatch or Procedure protocol evaluated for a call: the matcher the web call forms use
+            (D18). Pass the call's priority id and its type (by id, or by name), and optionally the call's logged time in UTC (now
+            when left out) or an existing call's id, whose logged time is then used and whose protocols are left out.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.SaveProtocol(Resgrid.Web.Services.Models.v4.Protocols.ProtocolInput,System.Threading.CancellationToken)">
-            <summary>Creates a protocol with its triggers, questions and answers.</summary>
+            <summary>
+            Creates a protocol with its triggers, questions and answers. From P1 it is a draft: its text is the first draft's
+            content, and nothing is in force until a version is approved and published.
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.UpdateProtocol(Resgrid.Web.Services.Models.v4.Protocols.ProtocolInput,System.Threading.CancellationToken)">
             <summary>
             Updates a protocol in place: its triggers, questions and answers are matched by id (changed, added or removed), so ids
-            stay stable. An id that is not one of this protocol's rows is refused (400).
+            stay stable. An id that is not one of this protocol's rows is refused (400). The text goes to the open draft (P1); the
+            text in force changes only when a version is published.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.SetDisabled(Resgrid.Web.Services.Models.v4.Protocols.SetProtocolDisabledInput,System.Threading.CancellationToken)">
             <summary>Disables (or enables) a protocol. A disabled protocol is never suggested, listed for the apps or attached.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetVersions(System.Int32)">
+            <summary>The protocol's versions the caller may read (no content): members see published history, authors and approvers every version.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.IsCitedByViewableCallAsync(System.Nullable{System.Int32},Resgrid.Model.ProtocolVersion)">
+            <summary>The call is the caller's to view, is in the department and cites exactly this version.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetVersion(System.Int32,System.Nullable{System.Int32})">
+            <summary>
+            One version with its sanitized content and approval steps, when the caller may read it. With <paramref name="callId"/>, a version the
+            call cites (a legacy version from before versions existed, or an older one) is readable by anyone who may view the call, as the call
+            page shows it (P1, R-P2); without it, the library's own rules apply.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.SaveDraft(Resgrid.Web.Services.Models.v4.Protocols.SaveProtocolDraftInput,System.Threading.CancellationToken)">
+            <summary>
+            Saves the open draft's content (creating a draft from the version in force when there is none). A save against an
+            older copy than the stored one is refused with Error "StaleCopy" and who saved it when.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.SubmitVersion(Resgrid.Web.Services.Models.v4.Protocols.ProtocolVersionActionInput,System.Threading.CancellationToken)">
+            <summary>Submits a draft for review (its approval steps open). Comment: the change summary.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.ApproveVersion(Resgrid.Web.Services.Models.v4.Protocols.ProtocolVersionActionInput,System.Threading.CancellationToken)">
+            <summary>
+            Approves the caller's step with an L2 signature bound to the version's content hash. The API session must have
+            completed a step-up within the step-up window (MFA step-up endpoints); without it the answer is Error
+            "SignatureRequired". Passkey-bound signing is web-only in this release.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.RejectVersion(Resgrid.Web.Services.Models.v4.Protocols.ProtocolVersionActionInput,System.Threading.CancellationToken)">
+            <summary>Rejects the version back to draft; the comment is required.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.PublishVersion(Resgrid.Web.Services.Models.v4.Protocols.PublishProtocolVersionInput,System.Threading.CancellationToken)">
+            <summary>Publishes an approved version now, or schedules it for EffectiveOnUtc. The change summary is required.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.RecordReview(Resgrid.Web.Services.Models.v4.Protocols.RecordProtocolReviewInput,System.Threading.CancellationToken)">
+            <summary>"Reviewed, no change": an L2-signed stamp on the version in force that resets the next review date.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetReviewQueue">
+            <summary>The versions waiting for approval; CanDecide marks the steps the caller may decide.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetVersionSignatures(System.Int32)">
+            <summary>The signatures on a version (approvals and review stamps), each checked against the content as stored now.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.ProofAsync(System.Threading.CancellationToken)">
+            <summary>The API session's step-up proof, from server-side evidence only (never the request body).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.CurrentVersionsAsync(System.Collections.Generic.IEnumerable{Resgrid.Model.DispatchProtocol})">
+            <summary>The versions in force of the listed protocols (headers), one query.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.ValidateReferencesAsync(Resgrid.Model.DispatchProtocol,Resgrid.Model.DispatchProtocol)">
             <summary>The call types and priorities the triggers name must be the department's (or what the trigger already had).</summary>
@@ -6222,6 +6653,99 @@
             ShiftActionErrors as the snake_case codes the mobile apps translate.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.SignaturesController">
+            <summary>
+            External signatures for apps (e-Signature S2). Built for Omni (no client changes to the older apps): read a subject's
+            signatures and requests, fetch what an offline in-person capture must bind to (the revision hash and the statement), and
+            submit an offline in-person capture (Method InPersonOffline), which is refused when the subject's revision changed since
+            the device bound it. Every call re-checks the member's right to act on the subject in its own module.
+            </summary>
+            <summary>
+            e-Signature S3 for Omni (the older apps get no client change; their members sign in the browser from the notification link):
+            the member's pending steps, one request's step view (the revision hash and statement an offline in-person capture binds
+            to), signing a member step (step-up from the session's server-side evidence — v4 has no passkey-bound signing) and
+            declining it. Offline in-person capture for an ordered request's external step is CaptureOffline with the request and
+            step ids.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SignaturesController.GetSubjectSignatures(System.Int32,System.String)">
+            <summary>The subject's external-signer requests (contacts masked) and signatures, with the current revision hash.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SignaturesController.GetSigningArtifact(System.Int32,System.String)">
+            <summary>What an in-person capture binds to: the title, the revision hash, the statement and the consent text.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SignaturesController.CaptureOffline(Resgrid.Web.Services.Controllers.v4.CaptureOfflineInput,System.Threading.CancellationToken)">
+            <summary>An offline in-person capture (Omni outbox): accepted only if the subject is still at the bound revision.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SignaturesController.CanActOnAsync(Resgrid.Model.SignatureSubjectKinds,System.String)">
+            <summary>The member may act on the subject in its own module (the web pages' rule).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SignaturesController.GetMyPendingSignatures">
+            <summary>The member's steps whose turn it is, in open requests.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SignaturesController.GetSignatureStep(System.Int32)">
+            <summary>
+            One request as the member sees it: the statement and revision hash every signature binds to, the member's step, every
+            step's state (outside signers' contacts never leave the server) and why the member cannot sign now.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SignaturesController.SignStep(Resgrid.Web.Services.Controllers.v4.SignatureStepInputData,System.Threading.CancellationToken)">
+            <summary>Signs the member's step at its level: L2 needs a step-up recorded for this session (no passkey on v4).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SignaturesController.MaySeeAsync(Resgrid.Model.SignatureStepView)">
+            <summary>A signer of the request, or a member who may act on its subject in its module.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SignaturesController.CanActOnRequestAsync(Resgrid.Model.SignatureRequestRecord)">
+            <summary>The subject's module rule; for an evaluation also the member who requested it (T4 registers its own rule).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SignaturesController.CanActOnReadinessAsync(Resgrid.Model.SignatureSubjectKinds,System.String)">
+            <summary>The web pages' Readiness Pro rules: work-order managers of the order's group; members holding Issue Inventory.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.SubjectSignatureRequestData.ContactMasked">
+            <summary>Masked ("j***@example.com"); the full contact never leaves the server.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.SubjectSignatureData.State">
+            <summary>SignatureVerificationStates: 0 valid, 1 content changed, 2 voided, 3 subject missing.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.CaptureOfflineInput.BoundRevisionSha256">
+            <summary>The revision hash the device showed (from GetSigningArtifact while it was online).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.CaptureOfflineInput.SignatureImage">
+            <summary>data:image/png;base64,… (at most 512 KB).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.CaptureOfflineInput.SignatureRequestId">
+            <summary>S3 (optional): the ordered request whose external step this capture answers (from GetSignatureStep).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.CaptureOfflineInput.SignatureRequestSignerId">
+            <summary>S3 (optional): the external step; null takes the first external step whose turn it is.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.CaptureOfflineData.Refusal">
+            <summary>None, RevisionChanged, SubjectNotFound, InvalidRequest…</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.PendingSignatureData.RequiredLevel">
+            <summary>1 attest (session), 2 step-up.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.SignatureStepData.Channel">
+            <summary>How external steps sign: 0 remote link, 1 in person (Omni may capture these offline).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.SignatureStepData.ArtifactSha256">
+            <summary>The revision hash every signature of the request binds to (an offline capture sends it back).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.SignatureStepData.CurrentRevisionSha256">
+            <summary>The subject's hash now; when it differs from ArtifactSha256 the request can no longer be signed.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.SignatureStepData.Blocked">
+            <summary>None, NotYourTurn, NotEligible, NotASigner, RevisionChanged, RequestClosed…</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.SignatureStepSignerData.Kind">
+            <summary>0 external (L4), 1 member (L1/L2).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.SignatureStepInputData.Reason">
+            <summary>DeclineStep only.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.SignatureStepOutcomeData.Refusal">
+            <summary>None, StepUpRequired, NotYourTurn, NotEligible, NotASigner, RevisionChanged, RequestClosed…</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.SsoAdminController">
             <summary>
             Allows department administrators to configure SSO (SAML 2.0 / OIDC),
@@ -6481,7 +7005,15 @@
             their own attempts, self-enrolment, "flag this question" and certification pins; and the officer's report. Every endpoint
             is refused while the department's Trainings module is switched off. Which trainings a member may open, take or report on
             comes from IAuthorizationService.GetTrainingManagementScopeAsync, as on the web pages. Omni's Training screen uses this.
+            Training T1 adds the one transcript: a member's learning records, the department's training categories and outside
+            training submissions (Pending until an officer verifies them on the web).
             </summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.v4.TrainingsController.EvidenceTypes">
+            <summary>Evidence types an outside training submission may carry, by extension; the stored content type follows it.</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.v4.TrainingsController.MaxSubmissionRequestBytes">
+            <summary>A 10 MB evidence file is about 13.4 MB as base64; the rest of the body is small.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.TrainingsController.TrainingDisabledAsync">
             <summary>True when the department switched the Trainings module off (T0 item 1b): every endpoint then answers 404.</summary>
@@ -6532,6 +7064,37 @@
             The officer's report for a training they may assign and report on (Assign Training, scoped to their group for a group
             admin): per-assignee state, due moment, attempts, last score, extension and exemption, and the completion KPIs.
             Per-question answers are not part of it (R-T12).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TrainingsController.GetTranscript(System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            A member's transcript, newest first: course completions, training records, calendar attendance, imports and outside
+            certificates with their hours and status (voided records are left out; only verified records count toward hours).
+            Without <paramref name="userId"/> it is the caller's own. Another member's transcript is read only by a reviewer of
+            their records: a department-wide record manager (Assign Training), or the admin of a group the member is in.
+            </summary>
+            <param name="userId">The member; empty for the caller.</param>
+            <param name="from">Optional start (UTC) of the completion window.</param>
+            <param name="to">Optional end (UTC) of the completion window.</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TrainingsController.GetTrainingCategories">
+            <summary>The department's training categories (removed ones left out), for the submission form and the transcript.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TrainingsController.SubmitExternalTraining(Resgrid.Web.Services.Models.v4.Trainings.SubmitExternalTrainingInput,System.Threading.CancellationToken)">
+            <summary>
+            The member submits a course they completed outside the department, with optional evidence (base64; PDF, JPG, JPEG,
+            PNG, GIF, DOC or DOCX; at most 10 MB decoded). It is Pending until an officer verifies it. Refused with
+            <c>submissions_disabled</c> when the department does not take outside training from members; other refusals name the
+            field (see <see cref="P:Resgrid.Web.Services.Models.v4.Trainings.ExternalTrainingSubmissionResult.Error"/>).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TrainingsController.IsServiceCode(System.InvalidOperationException)">
+            <summary>A refusal code thrown by the learning record service (learning_record_*), as opposed to an unexpected failure.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TrainingsController.BuildExternalSubmission(Resgrid.Web.Services.Models.v4.Trainings.SubmitExternalTrainingInput,System.String,System.Collections.Generic.IReadOnlyCollection{Resgrid.Model.TrainingCategory},System.DateTime,Resgrid.Model.LearningRecordDraft@,System.String@,System.String@,System.Byte[]@)">
+            <summary>
+            Checks an outside training submission as the web form does and builds the Pending draft and the evidence file. Returns
+            the refusal code, or null when the submission may go to the service.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.TrainingsController.MapTraining(Resgrid.Model.Training,Resgrid.Web.Services.Models.v4.Trainings.TrainingAssignmentData,System.Boolean)">
@@ -6920,6 +7483,29 @@
             restricts the host to known weather API domains per source type.
             Returns null if the URL is empty, invalid, or not on the allowlist.
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.WellnessController">
+            <summary>
+            Member wellness WL0 (protocols-training-knowledge-plan §13b): the member's own exposure and critical-incident log for Omni - list
+            my entries and suggestions, log an entry, confirm or dismiss a suggestion built after a flagged call. Every endpoint acts on the
+            signed-in member's own entries; there is no parameter naming another member, so the restricted tier holds by construction (the
+            officer views stay on the web). Nothing confirms itself: a suggestion counts only after this member confirms it.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WellnessController.GetMyExposures">
+            <summary>The signed-in member's entries (newest first), suggestions awaiting their review, counts and screening follow-ups.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WellnessController.CreateExposure(Resgrid.Web.Services.Models.v4.Wellness.CreateExposureInput,System.Threading.CancellationToken)">
+            <summary>Logs an entry for the signed-in member. It is confirmed by the act of logging it.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WellnessController.ConfirmSuggestion(Resgrid.Web.Services.Models.v4.Wellness.ConfirmExposureSuggestionInput,System.Threading.CancellationToken)">
+            <summary>Confirms one of the signed-in member's suggestions, optionally with their details.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WellnessController.DismissSuggestion(Resgrid.Web.Services.Models.v4.Wellness.DismissExposureSuggestionInput,System.Threading.CancellationToken)">
+            <summary>Dismisses one of the signed-in member's suggestions ("this doesn't apply to me").</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WellnessController.IsOwnAsync(System.String)">
+            <summary>The API acts on the caller's own entries only, even for a wellness officer (whose views are on the web).</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.WorkflowCredentialKeysController">
             <summary>
@@ -9426,6 +10012,12 @@
         </member>
         <member name="F:Resgrid.Web.Services.Helpers.ApiPasskeys.PasskeyClients">
             <summary>The clients a passkey can be bound to, in display order (plan section 6.5).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Helpers.ApiSignatureProof">
+            <summary>
+            What an API caller can prove for a signature (S0): the validated session's latest second-factor evidence, read from the
+            server-side evidence store (never from the request body or token claims). The signing service decides the level.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Helpers.ApiStepUpEvidence">
             <summary>
@@ -11960,6 +12552,14 @@
             (null) to attach the protocols in ProtocolIds as before, without answers.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.ProtocolCases">
+            <summary>
+            Optional (Protocols P4): for a protocol whose version has a case flow, the case answers by step key, an optional determinant
+            override with its reason (required when it differs from the computed determinant), the priority applied, and an Enhanced AI
+            suggestion id the dispatcher confirmed. Keyed by protocol id; the server walks the cited version's graph and records the case.
+            Leave it out (null) and the protocol is attached as before. Older apps never send it.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.LinkedCallId">
             <summary>
             Optional. Id of another call in the department to link this call to; existing links are kept. Leave it out
@@ -12345,6 +12945,14 @@
             protocol id. The server scores them and records each question and answer in words on the call; a protocol a trigger
             suggested is then attached only when every question is answered and the score reaches its minimum weight. Leave it out
             (null) to attach the protocols in ProtocolIds as before, without answers.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.ProtocolCases">
+            <summary>
+            Optional (Protocols P4): for a protocol whose version has a case flow, the case answers by step key, an optional determinant
+            override with its reason (required when it differs from the computed determinant), the priority applied, and an Enhanced AI
+            suggestion id the dispatcher confirmed. Keyed by protocol id; the server walks the cited version's graph and records the case.
+            Leave it out (null) and the protocol is attached as before. Older apps never send it.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.DispatchOn">
@@ -12750,8 +13358,41 @@
         <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.CallProtocolResultData.RecordedAnswers">
             <summary>On a call: the questions and the answers chosen, in words, as recorded when it was attached.</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.CallProtocolResultData.Determinant">
+            <summary>P4: the determinant in force on the call for this protocol (the case flow's, or the dispatcher's override); null when none.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.CallProtocolResultData.OverrideReason">
+            <summary>P4: why the dispatcher overrode the computed determinant; null when not overridden.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.CallProtocolResultData.Case">
+            <summary>P4: the case recorded on the call (path in words, outcome, priority suggested and applied, instructions, caller texts); null when none.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.CallProtocolResultData.ProtocolVersionId">
+            <summary>On a call (P1): the protocol version the call cites; Protocols/GetVersion returns its text.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.CallProtocolResultData.ContentHash">
+            <summary>On a call (P1): SHA-256 of the text as dispatched (null for rows recorded before content hashes).</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.CallProtocolAnswerResultData.Answer">
             <summary>Null when the question was left unanswered.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.ProtocolTriggerResultData.GeofenceGroupId">
+            <summary>P4 trigger criteria (shared trigger engine; all optional): inside this station or group's geofence.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.ProtocolTriggerResultData.DaysOfWeek">
+            <summary>P4: department-local days (Sunday = 1 … Saturday = 64), null for every day.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.ProtocolTriggerResultData.StartMinute">
+            <summary>P4: department-local daily window, minutes after midnight (a start after the end runs overnight).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.ProtocolTriggerResultData.Keywords">
+            <summary>P4: words in the nature or notes, comma separated.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.ProtocolTriggerResultData.PoiTypeId">
+            <summary>P4: the POI type at the call's location.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.ProtocolTriggerResultData.CallSources">
+            <summary>P4: the call sources (intake classification), comma-separated CallSources values.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CallProtocols.CallProtocolsResult">
             <summary>
@@ -16647,6 +17288,75 @@
             Default constructor
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Guidance.GuidanceTourTaskData">
+            <summary>One task of a guided tour.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Guidance.GuidanceTourTaskData.Key">
+            <summary>The task's key (send it back to mark it done).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Guidance.GuidanceTourTaskData.PageUrl">
+            <summary>The web page the task opens (relative); null when there is none.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Guidance.GuidanceTourTaskData.LessonUrl">
+            <summary>The Academy lesson that teaches it (absolute); null when the Academy is switched off.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Guidance.GuidanceTourData">
+            <summary>A guided tour with the member's progress.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Guidance.GuidanceTourData.Key">
+            <summary>administrator, dispatcher, training-officer or member.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Guidance.GuidanceTourData.IsMine">
+            <summary>The tour for the member's role.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Guidance.GuidanceWhatsNewItemData">
+            <summary>One item of a release's "What's new" lesson.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Guidance.GuidanceWhatsNewData">
+            <summary>A release's "What's new" lesson.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Guidance.GuidanceWhatsNewData.Release">
+            <summary>The release ("2026.12"); dismiss with the key "whatsnew:" + Release.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Guidance.GuidanceDashboardResult">
+            <summary>The home card: the member's role tour while open, and the newest unread release lesson.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Guidance.GuidanceDashboardData">
+            <summary>The home card's content.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Guidance.GuidanceToursResult">
+            <summary>Every tour with the member's progress.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Guidance.GuidanceWhatsNewResult">
+            <summary>One release lesson.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Guidance.GuidanceTourTaskInput">
+            <summary>Marks a tour task done or not done.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Guidance.GuidanceDismissInput">
+            <summary>Closes a tour ("tour:member") or a release lesson ("whatsnew:2026.12") for the member.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Guidance.GuidanceSavedResult">
+            <summary>Whether a guidance change was saved.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Guidance.GuidanceSearchHitData">
+            <summary>One search hit.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Guidance.GuidanceSearchHitData.Kind">
+            <summary>Lesson, Feature or Reference.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Guidance.GuidanceSearchHitData.Url">
+            <summary>The Academy lesson, or the public documentation page.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Guidance.GuidanceSearchHitData.PageUrl">
+            <summary>The web page (relative), when there is one.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Guidance.GuidanceSearchResult">
+            <summary>Keyword search results (free, no AI).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Guidance.GuidanceSearchData">
+            <summary>Lessons first, then features and reference articles.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Health.HealthResult">
             <summary>
             Result of the Health check API
@@ -17098,6 +17808,336 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.PaymentLinkData.PayUrl">
             <summary>The stable Resgrid pay page for the invoice (share this; it survives provider session expiry).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeStatusData.Reason">
+            <summary>Why not available: NotEntitled, Unconfigured or Invalid.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeStatusData.QuestionsKeptLocal">
+            <summary>Advanced Data Protection keeps questions local: answers are the matching sources only.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeOfflineVersionInput">
+            <summary>An item version the client holds offline; a cited item with a newer version is flagged stale.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeOfflineVersionInput.SourceKind">
+            <summary>0 Protocol, 1 ProtocolFile, 2 Training, 3 TrainingFile, 4 Course, 5 Academy, 6 Document.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeAskInput.Question">
+            <summary>The question, at most 1,000 characters. Do not include patient or personal details.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeAskInput.ScopeKind">
+            <summary>Ask about one item only (0 Protocol, 2 Training) with <see cref="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeAskInput.ScopeItemId"/>, or 5 alone for "How do I…?" over the Resgrid Academy.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeAskInput.ScopeVersionId">
+            <summary>K3: with ScopeKind 4 (Course), the course version the learner takes; blank picks the member's own enrollment.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeAskInput.CallId">
+            <summary>
+            "Ask about this call's protocol": the call and its CallProtocolId (grounded in the version the call cites). K3: the call alone asks about
+            the whole call — every protocol version it cites and its type, priority, determinant and location type (never patient or caller details).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeCitationData.Ref">
+            <summary>The id the answer parts cite this source by ("S1").</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeCitationData.Anchor">
+            <summary>The heading anchor of the cited section (or page-N for file text).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeCitationData.OfflineCopyStale">
+            <summary>The client's offline copy of this item is older than the version cited.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeCitationData.WebPath">
+            <summary>The web app path (or Academy URL) of the exact section.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeAnswerData.Outcome">
+            <summary>Answered, NotCovered, Matched, BudgetExhausted, Busy, Unavailable, Unconfigured or Invalid.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeAnswerData.Nearest">
+            <summary>The closest items when the department's content does not cover the question.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeAnswerData.RetrievalMode">
+            <summary>Hybrid, or KeywordOnly (embeddings unavailable or the question kept local).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeAnswerData.QuotesDose">
+            <summary>The answer quotes a dose (verbatim from its source); show DosingToolUrl when set. Nothing is calculated.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeAnswerData.ExchangeId">
+            <summary>Send it back with Feedback.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeAnswerData.CallContextUsed">
+            <summary>K3: the answer was grounded in the whole call (its cited versions and operational fields).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgeFeedbackInput.Helpful">
+            <summary>False (thumbs-down) adds the question to the department's knowledge gaps report.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgePracticeStatusData.Reason">
+            <summary>Why not available: Unconfigured, KeptLocal (Advanced Data Protection) or Invalid.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgePracticeQuestionData.Key">
+            <summary>"Q1", "Q2"…; answers name it.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgePracticeScenarioData.Outcome">
+            <summary>Ready, or why not: Excluded, KeptLocal, NoContent, NotFound, Refused, BudgetExhausted, Busy, Unavailable or Unconfigured.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgePracticeScenarioData.ExchangeId">
+            <summary>Send it back with Score.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgePracticeAnswerInput.Text">
+            <summary>The member's answer in their own words, at most 1,000 characters. Do not include patient or personal details.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgePracticeItemData.Score">
+            <summary>0, 1 or 2; null when the item could not be scored.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgePracticeResultData.Outcome">
+            <summary>Scored, or why not: Stale, NotFound, Refused, KeptLocal, BudgetExhausted, Busy, Unavailable, Unconfigured or Invalid.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Knowledge.KnowledgePracticeResultData.QuotesDose">
+            <summary>Feedback quotes a dose (verbatim from the protocol); show DosingToolUrl when set. Nothing is calculated.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsMyCourseData">
+            <summary>One of the member's LMS courses (Academy lessons included).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsMyCourseData.VersionLabel">
+            <summary>The version the member takes (R-L12: they finish the version they started).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsMyCourseData.Status">
+            <summary>LmsEnrollmentStatuses name: NotStarted, InProgress, Completed.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsMyCourseData.CanRun">
+            <summary>False when the department's LMS lapsed past its window (or is dark): completed history stays readable.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsLessonData">
+            <summary>A lesson as the player shows it (content is sanitized HTML; video sources carry a URL the client may play).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsLessonData.Kind">
+            <summary>LmsLessonKinds name: Blocks, Video, Document, ProtocolVersion, Assessment, Survey.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsLessonData.Progress">
+            <summary>LmsLessonProgressStatuses name.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsLessonData.VideoSource">
+            <summary>LmsVideoSources name: Hosted, Embed, Academy.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsLessonData.VideoUrl">
+            <summary>Embed and Academy videos: the URL; hosted video streams from the web player's signed playlist.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsLessonData.MayAnswerOffline">
+            <summary>R-T11: only an untimed, unlimited, non-pre-test quiz that issues no certification may be answered offline.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsProgressInput">
+            <summary>A progress heartbeat or lesson change (seconds are capped by the server's clock).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsActionResult">
+            <summary>The outcome of an LMS action: Status is Success or Failure; Error names the LmsErrors value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsActionResult.EnrollmentId">
+            <summary>The enrollment the action concerned (Enroll returns the new or existing one).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsQuestionData">
+            <summary>A question without its key.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsQuestionData.Kind">
+            <summary>LmsQuestionKinds name: SingleChoice, MultiChoice, TrueFalse, Ordering, ShortAnswer.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsAnswerInput.Keys">
+            <summary>Chosen option keys (choice) or keys in order (ordering).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsAnswerInput.Text">
+            <summary>A short answer.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsReviewedQuestionData.CorrectKeys">
+            <summary>Only when the lesson's answer-review policy allows it.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsAttemptOutcomeResult.Passed">
+            <summary>Null while short answers wait for a grader.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsOfflineVideoData">
+            <summary>One hosted video Omni may cache offline (R-C9): one rendition, its cap and the cache expiry.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsAcademyLessonData">
+            <summary>An Academy lesson the department may take (visibility follows entitlement).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsClassData">
+            <summary>A class session as a member sees it.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsClassData.Capacity">
+            <summary>0 for no limit.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsClassData.Status">
+            <summary>LmsClassSessionStatuses name: Scheduled, Cancelled, SignedOff.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsClassData.EnrollmentStatus">
+            <summary>The member's LmsClassEnrollmentStatuses name (PendingApproval, Enrolled, Waitlisted, Withdrawn, Declined, Removed); null when not on the roster.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsClassData.Attendance">
+            <summary>LmsClassAttendanceStates name: Unmarked, Attended, Absent, Excused.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsClassData.EnrollRefusal">
+            <summary>Why the member cannot enrol themselves (lms_class_*), null when they can.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsClassResult.Error">
+            <summary>A refusal code (lms_class_*), when the action was refused.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsClassRosterRowData">
+            <summary>One roster row for an instructor.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsClassRosterRowData.CheckInMethod">
+            <summary>LmsClassCheckInMethods name: None, Manual, Qr, Import, Calendar.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsClassCodeResult">
+            <summary>The rotating sign-in code an instructor's device shows as a QR (it changes every 30 seconds).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsClassCodeResult.SignInUrl">
+            <summary>The web sign-in URL the QR encodes.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsClassSignInInput.Latitude">
+            <summary>Optional; required only when the session asks for GPS.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsClassAttendanceInput.Attendance">
+            <summary>LmsClassAttendanceStates name or value: Attended, Absent, Excused, Unmarked.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsTrainingRequestData">
+            <summary>A training request (an outside class with its cost and approval).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsTrainingRequestData.Status">
+            <summary>LmsTrainingRequestStatuses name: Submitted, Approved, Rejected, Withdrawn, Completed, Cancelled.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsTrainingRequestData.CurrentStep">
+            <summary>LmsTrainingRequestSteps name of the step waiting for a decision (Supervisor, TrainingOfficer); null when none.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsTrainingRequestData.LearningRecordId">
+            <summary>The external submission (T1) written when the member reported the class taken.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsTrainingRequestResult.Error">
+            <summary>A refusal code (lms_program_*), when the action was refused.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsCompetencyGapData">
+            <summary>One item of the member's competency gap list.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsCompetencyGapData.State">
+            <summary>LmsCompetencyEvidenceStates name: Current, Aged, None, NotTagged.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsMyRequirementData">
+            <summary>One of the member's learning requirements (T3) with its state; Omni's My Training "requirements" list.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsMyRequirementData.Kind">
+            <summary>Course, Training, CategoryHours, Path or Evaluations.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsMyRequirementData.TargetName">
+            <summary>The course, training, category, path or skill the member is asked to finish.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsMyRequirementData.State">
+            <summary>Compliant, Pending, AtRisk, Overdue, Exempt, OnLeave or NotLicensed.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsMyRequirementData.DueOn">
+            <summary>The open due date (leave and lapse applied), or the next renewal when compliant; UTC.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsMyRequirementData.Progress">
+            <summary>Hours or evaluations done this period (counted requirements); 1/0 otherwise.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsMyPathStepData">
+            <summary>One step of a learning path as the learner sees it.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsMyPathStepData.Kind">
+            <summary>Course (an LMS course or an Academy lesson) or Training.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsMyPathStepData.State">
+            <summary>Locked, Available or Done.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsMyPathStepData.EnrollmentId">
+            <summary>The open enrollment to play (LmsController.GetCourse), when the course step is enrolled.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsMyPathData">
+            <summary>One of the member's learning paths with progress; Omni's My Training "paths" list.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsRecommendationReasonData">
+            <summary>One reason a learning item is recommended (K3).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsRecommendationReasonData.Reason">
+            <summary>RequirementOverdue, RequirementAtRisk, RequirementDue, PathInProgress, CompetencyMissing, CompetencyAged or RoleAudience.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsRecommendationReasonData.Detail">
+            <summary>What the reason names: the requirement, the competency or the role.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsRecommendationData">
+            <summary>One recommended course or learning path, best first (K3).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsRecommendationData.Key">
+            <summary>"Course:12" or "Path:3": the key the explanation texts use.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsRecommendationData.TargetKind">
+            <summary>Course or Path.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsRecommendationData.IsAcademy">
+            <summary>A Resgrid Academy lesson.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsRecommendationData.EnrollmentId">
+            <summary>The caller's own open enrollment in the course ("Continue"); never set for another member.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsRecommendationsData.CanExplain">
+            <summary>An AI explanation may be asked for (ExplainRecommendations).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsRecommendationExplainInput.UserId">
+            <summary>The member; blank for the caller.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsRecommendationExplainData.Outcome">
+            <summary>Answered, or why not: Unconfigured, KeptLocal, BudgetExhausted, Busy, Unavailable, Refused or Invalid.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsRecommendationExplainData.Texts">
+            <summary>One sentence per recommendation key ("Course:12").</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsSkillSheetData">
+            <summary>A skill sheet version as a device caches it for offline evaluations.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsSkillSheetData.Kind">
+            <summary>LmsSkillSheetKinds name: SkillSheet, ObservationReport.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsSkillSheetData.ContentHash">
+            <summary>SHA-256 of the version (steps and grading): a device's cache key.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsSkillSheetData.NextSignerRequired">
+            <summary>The evaluator must pick a next signer from <see cref="P:Resgrid.Web.Services.Models.v4.Lms.LmsSkillSheetData.NextSignerUserIds"/>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsSkillSheetData.Steps">
+            <summary>The steps (Type is the LmsSkillStepTypes value).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsSkillEvaluationData">
+            <summary>An evaluation as the evaluator's device and the member's list show it.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsSkillEvaluationData.Mode">
+            <summary>LmsSkillEvaluationModes name: Individual, Crew.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsSkillEvaluationData.Status">
+            <summary>LmsSkillEvaluationStatuses name: InProgress, AwaitingSignature, Completed, Voided.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsSkillEvaluationData.Result">
+            <summary>LmsSkillEvaluationResults name: Pending, Passed, Failed.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsSkillEvaluationData.SignatureRequestId">
+            <summary>The S3 evaluator request the evaluator signs (Signatures/SignStep or SignEvaluation).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsSkillEvaluationData.Answers">
+            <summary>The answers (only on a single evaluation read).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsSkillEvaluationResult.Error">
+            <summary>The refusal code ("lms_skill_*") when the action was refused.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsSkillPendingData">
+            <summary>The evaluator's pending work: open evaluations and evaluator signatures waiting for them.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsSkillStartInput.IdempotencyKey">
+            <summary>The outbox key: a replay of the same start returns the same evaluation.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Lms.LmsSkillOfflineInput">
+            <summary>A whole evaluation captured offline (the Omni outbox).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsSkillEvidenceInput.Data">
+            <summary>The file, base64.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsSkillSignResult.Refusal">
+            <summary>SignatureRequestRefusals name when refused (StepUpRequired: do the step-up, then try again).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Lms.LmsTaskBookData.Status">
+            <summary>LmsTaskBookStatuses name.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.CustomMapLayerResultData.MercatorTileUrl">
             <summary>
@@ -18931,6 +19971,90 @@
             User Defined Field values for this personnel record
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.ProtocolCases.GetProtocolCaseFlowsResult">
+            <summary>The department's published Dispatch protocols with a case flow (Protocols P4), for Omni's dispatch form.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolCases.GetProtocolCaseFlowsResult.AiAvailable">
+            <summary>True when Enhanced AI protocol suggestions are available to this department right now.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolCases.ProtocolCaseFlowData.Graph">
+            <summary>The decision graph as stored in the version's ContentJson ("nodes": key, root, kind, stage, text, questionType, answers…).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.ProtocolCases.EvaluateProtocolCaseInput">
+            <summary>A case flow walked with answers (nothing saved): where it stands, the path, the instructions passed and the outcome.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolCases.ProtocolCaseEvaluationData.Status">
+            <summary><see cref="T:Resgrid.Model.ProtocolCaseStatuses"/> name: InProgress, Complete or Invalid.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolCases.ProtocolCaseEvaluationData.Error">
+            <summary><see cref="T:Resgrid.Model.ProtocolCaseErrors"/> name when the walk could not continue.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolCases.OverrideProtocolDeterminantInput.Determinant">
+            <summary>The determinant in force from now; blank restores the computed one.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolCases.OverrideProtocolDeterminantInput.Reason">
+            <summary>Required when the determinant differs from the computed one.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolCases.SendProtocolCallerInstructionInput.NodeKey">
+            <summary>The instruction step (marked for the caller) or the outcome whose post-dispatch instructions are texted.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolCases.ProtocolCaseUpdateResultData.Outcome">
+            <summary><see cref="T:Resgrid.Model.Services.ProtocolCaseUpdateOutcomes"/> name: Done, NotFound, NoCase, OverrideReasonRequired, NoThread, OptedOut…</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolCases.ProtocolSuggestionData.Outcome">
+            <summary><see cref="T:Resgrid.Model.ProtocolAiSuggestionOutcomes"/> name; only Suggested carries a suggestion.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolCases.ProtocolSuggestionData.Answers">
+            <summary>Prefilled answers by step key; the dispatcher checks them, then sends them in ProtocolCases with AiSuggestionId set.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.ProtocolContent.GetProtocolOfflineManifestResult">
+            <summary>The offline manifest (P3): every readable protocol in force, its version hash and the SHA-256 of each file it needs.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.ProtocolContent.GetProtocolStalenessResult">
+            <summary>"You are viewing v3 — v4 is effective since …": whether the version a device shows is still in force.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.ProtocolContent.GetProtocolVersionContentResult">
+            <summary>A version as a reader is shown it (P3): the approved translation in the asked language, or the source.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolContent.ProtocolVersionContentData.ContentHash">
+            <summary>The source version's hash (what its approvals and acknowledgments are bound to).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolContent.ProtocolVersionContentData.Locale">
+            <summary>The language of what is shown, and whether it is a translation.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolContent.ProtocolVersionContentData.TranslationContentHash">
+            <summary>The translation's own hash when a translation is shown; null otherwise.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolContent.ProtocolVersionContentData.IsFallback">
+            <summary>True when the asked language has no approved translation and the source is shown.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolContent.ProtocolVersionContentData.ContentHtml">
+            <summary>The content sanitized for output (block anchors b-{key} kept).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolContent.ProtocolVersionContentData.ContentJson">
+            <summary>The block document (schema 2) or the P1 html document (schema 1).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolContent.ProtocolVersionContentData.DosingToolUrl">
+            <summary>The department's dosing-tool link for medication blocks (setting 139); null when none. Doses are never computed.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolContent.ProtocolStepResultData.State">
+            <summary><see cref="T:Resgrid.Model.ProtocolStepStates"/> on a call; 0 elsewhere.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.ProtocolContent.GetCallProtocolChecklistsResult">
+            <summary>A call's step-through checklists (and the incident SOP checklists running on it).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolContent.CallProtocolChecklistResult.Error">
+            <summary>Why the step was refused (<see cref="T:Resgrid.Model.ProtocolStepErrors"/> name), null on success.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.ProtocolContent.GetSopLibraryResult">
+            <summary>The Procedure protocols that can be started on a call as incident SOP checklists.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.ProtocolContent.RecordCallStepInput">
+            <summary>One step event; <see cref="P:Resgrid.Web.Services.Models.v4.ProtocolContent.RecordCallStepInput.DeviceTimestamp"/> is when the device recorded it (kept for an offline replay, never used to order).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ProtocolContent.RecordCallStepInput.ClientStepId">
+            <summary>Optional: the device's own id for this event. A replay with an id already recorded is ignored (offline queues, round 5F).</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Protocols.GetAllProtocolsResult">
             <summary>
             Result containing all the data required to populate the New Call form
@@ -19026,6 +20150,24 @@
             State type
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolResultData.Kind">
+            <summary>ProtocolKinds: 0 Dispatch, 1 SOP/SOG, 2 Clinical guideline, 3 Policy, 4 Procedure, 5 Reference.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolResultData.Status">
+            <summary>ProtocolStatuses: 0 Draft (never published), 1 Published, 2 Retired.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolResultData.CurrentVersionId">
+            <summary>The version in force; ProtocolText is its text.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolResultData.VersionLabel">
+            <summary>The version in force as "major.minor" (e.g. "2.1").</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolResultData.RequiresAcknowledgment">
+            <summary>The version in force requires a read-and-sign acknowledgment (P2).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolResultData.ExcludeFromAi">
+            <summary>Excluded from every AI index and answer.</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolTriggerResult.CallTypeId">
             <summary>The call type id the trigger matches (null with no CallType is "no type").</summary>
         </member>
@@ -19044,6 +20186,45 @@
             <summary>
             Response Data
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Protocols.ProtocolAcknowledgmentResultData">
+            <summary>One acknowledgment the member owes or gave (P2; Omni "My acknowledgments", offline-capable).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolAcknowledgmentResultData.ContentHash">
+            <summary>The hash Omni sends back with an offline acknowledgment (R-P11).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolAcknowledgmentResultData.Status">
+            <summary>open, awaiting_quiz, acknowledged.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolAcknowledgmentResultData.IsDocument">
+            <summary>The version is a document (read through GetVersionFile).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolAcknowledgmentResultData.BankQuizOwed">
+            <summary>Signed and waiting for the LMS question-bank quiz (GetBankQuiz / SubmitBankQuiz; round 5F).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Protocols.AcknowledgeProtocolInput">
+            <summary>An acknowledgment, online or replayed from the offline queue: the version and the content hash the member read.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.AcknowledgeProtocolInput.Offline">
+            <summary>True when the member read it offline and the app queued the acknowledgment (R-P11).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.AcknowledgeProtocolInput.SignedOnDevice">
+            <summary>When the member signed on the device (for the record only; the server stamps its own time).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.AcknowledgeProtocolResultData.Outcome">
+            <summary>Acknowledged, AwaitingQuiz, AlreadyAcknowledged, ReadNewerVersion, ContentChanged, NotAssigned, NotOpened, StepUpRequired, InvalidRequest.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.AcknowledgeProtocolResultData.CurrentVersionId">
+            <summary>The version in force when the member must read a newer one.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Protocols.GetBankQuizResult">
+            <summary>
+            A version's question-bank acknowledgment quiz (LMS, round 5F): questions and options only, never a key. Error is None, NotAssigned,
+            NoQuestions or AlreadySubmitted (already passed). Online only: an acknowledgment quiz gates completion, so it is never scored offline.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Protocols.GetWeeklyQuestionsResult">
+            <summary>The member's weekly micro-learning questions (LMS): the key and explanation only once answered.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Protocols.ProtocolInput">
             <summary>
@@ -19117,6 +20298,66 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolCallMatchData.MatchedTriggerType">
             <summary>That trigger's type (0 priority, 1 type, 2 priority and type).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Protocols.ProtocolVersionResultData">
+            <summary>One protocol version (P1). Content is included only for a single-version read.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolVersionResultData.Label">
+            <summary>"major.minor"; null while the version is a draft or in review.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolVersionResultData.Status">
+            <summary>ProtocolVersionStatuses: 0 Draft, 1 InReview, 2 Approved, 3 Published, 4 Superseded, 5 Retired, 6 Legacy.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolVersionResultData.ContentHash">
+            <summary>SHA-256 (hex) of the sanitized content, the hash approvals and call snapshots carry.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolVersionResultData.ContentHtml">
+            <summary>The sanitized HTML (single-version reads only).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolVersionResultData.ContentJson">
+            <summary>The block document (schema 1: html blocks and heading anchors), single-version reads only.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolVersionResultData.RowVersion">
+            <summary>The draft's row version: send it back with SaveDraft so a save over someone else's is refused.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolApprovalResultData.Decision">
+            <summary>ProtocolApprovalDecisions: 0 Pending, 1 Approved, 2 Rejected, 3 Withdrawn.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolApprovalResultData.SignatureRecordId">
+            <summary>The L2 signature (SignatureRecords) the approval carries.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Protocols.SaveProtocolDraftInput">
+            <summary>A draft save (P1). <see cref="P:Resgrid.Web.Services.Models.v4.Protocols.SaveProtocolDraftInput.ExpectedRowVersion"/> is the draft's RowVersion as read.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.SaveProtocolDraftInput.ContentJson">
+            <summary>P3 (optional): a block document (schema 2) for the draft; when set, <see cref="P:Resgrid.Web.Services.Models.v4.Protocols.SaveProtocolDraftInput.ContentHtml"/> is ignored.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolVersionActionInput.Comment">
+            <summary>Submit: the change summary. Approve and reject: the comment (required to reject).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.PublishProtocolVersionInput.Major">
+            <summary>True for a new major version (2.0), false for a minor one (1.3).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.PublishProtocolVersionInput.EffectiveOnUtc">
+            <summary>UTC; null or now publishes at once, a later time schedules it (worker 84 activates it).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Protocols.ProtocolLifecycleActionResult">
+            <summary>The outcome of a lifecycle action: the version, or why it was refused (with who changed it, for a stale save).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolLifecycleActionResult.Error">
+            <summary>The refusal (ProtocolLifecycleErrors name, e.g. "StaleCopy", "SignatureRequired"), or null.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolSignatureResultData.Intent">
+            <summary>SignatureIntents: 0 Attest, 1 Approve, 2 Review, 3 Witness, 4 Verify.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolSignatureResultData.Level">
+            <summary>1 attest (session), 2 step-up.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolSignatureResultData.Method">
+            <summary>SignatureMethods: 0 Session, 1 StepUp, 2 Passkey.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolSignatureResultData.Verification">
+            <summary>SignatureVerificationStates: 0 Valid, 1 ArtifactChanged, 2 Voided, 3 SubjectMissing.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Records.FieldRecordCatalogInput.OriginClient">
             <summary><see cref="T:Resgrid.Model.RmsOriginClient"/>: 2 Responder, 3 Unit, 4 IncidentCommand, 5 Dispatch.</summary>
@@ -21879,6 +23120,71 @@
         <member name="T:Resgrid.Web.Services.Models.v4.Trainings.TrainingReportRowData">
             <summary>One assignee row of the officer's report. Per-question answers are not included (R-T12).</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Trainings.LearningRecordData">
+            <summary>One learning record on a transcript.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.LearningRecordData.CategoryName">
+            <summary>The category's name; null when uncategorized or the category is unknown.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.LearningRecordData.SourceKind">
+            <summary>LearningRecordSourceKinds value (0 course completion, 2 training record, 3 external submission, 9 import, 10 calendar attendance...).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.LearningRecordData.SourceKindName">
+            <summary>LearningRecordSourceKinds name.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.LearningRecordData.Status">
+            <summary>LearningRecordStatuses value: 0 pending, 1 verified, 2 rejected, 3 voided. Only verified records count toward hours.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.LearningRecordData.StatusName">
+            <summary>LearningRecordStatuses name.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.LearningRecordData.IsBackfill">
+            <summary>Written by the history backfill from completions that predate the transcript.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.LearningRecordData.PossibleDuplicate">
+            <summary>The record may duplicate another one of the member's records and an officer has not resolved it yet.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Trainings.TrainingCategoryData">
+            <summary>One of the department's training categories (removed categories are not listed).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.TrainingCategoryData.Kind">
+            <summary>TrainingCategoryKinds value: 0 custom, 1 ISO FSRS, 2 NCCP, 3 OSHA, 4 state.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.TrainingCategoryData.TargetPeriod">
+            <summary>TrainingTargetPeriods value: 0 none, 1 per year, 2 per month, 3 per certification cycle, 4 once, 5 first year.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Trainings.SubmitExternalTrainingInput">
+            <summary>
+            A course the member completed outside the department. It is Pending until an officer verifies it. The optional evidence
+            file is base64 in <see cref="P:Resgrid.Web.Services.Models.v4.Trainings.SubmitExternalTrainingInput.Data"/>: PDF, JPG, JPEG, PNG, GIF, DOC or DOCX by the extension of <see cref="P:Resgrid.Web.Services.Models.v4.Trainings.SubmitExternalTrainingInput.FileName"/>, at
+            most 10 MB decoded.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.SubmitExternalTrainingInput.CompletedOn">
+            <summary>When the course was completed (UTC); at most one day ahead of now.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.SubmitExternalTrainingInput.Hours">
+            <summary>Hours, more than 0 and at most 9999.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.SubmitExternalTrainingInput.Method">
+            <summary>MethodsOfTraining value: 0 classroom, 1 online, 2 drill/field, 3 virtual, 4 self study, 5 on the job.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.SubmitExternalTrainingInput.ContentType">
+            <summary>Informational; the stored type follows the file name's extension.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.SubmitExternalTrainingInput.Data">
+            <summary>The evidence file, base64.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.ExternalTrainingSubmissionResult.Data">
+            <summary>The Pending record; null when the submission was refused.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.ExternalTrainingSubmissionResult.Error">
+            <summary>
+            Why the submission was refused: submissions_disabled, title_required, title_too_long, date_invalid, hours_invalid,
+            ce_hours_invalid, category_invalid, method_invalid, text_too_long, file_name_required, file_type_not_allowed, file_too_large,
+            file_invalid, or a learning_record_* code of the service. Null on success.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationInput">
             <summary>
             A GPS location for a point in time of a specificed unit
@@ -22939,6 +24245,90 @@
         <member name="P:Resgrid.Web.Services.Models.v4.WeatherAlerts.WeatherAlertResultData.SentOnUtc">
             <summary>Actual UTC instant the alert was sent, serialised with an explicit "Z".</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Wellness.DutyStatusData">
+            <summary>A member's operational duty and clearance status (what supervisors and staffing see; never why).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Wellness.DutyStatusData.DutyStatus">
+            <summary>MemberDutyStatuses value: 0 FullDuty, 1 RestrictedDuty, 2 OffDuty.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Wellness.DutyStatusData.ClearanceStatus">
+            <summary>MedicalClearanceStatuses value: 1 Cleared, 2 ClearedWithRestrictions, 3 NotCleared; null when none is on record.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Wellness.InjuryData">
+            <summary>One of the member's own injuries.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Wellness.InjuryData.CaseNumber">
+            <summary>The OSHA case number ("2026-003").</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Wellness.InjuryData.State">
+            <summary>MemberInjuryStates value: 0 Open, 1 Cleared, 2 Voided.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Wellness.ExposureCaseData">
+            <summary>One of the member's own BBP / infectious-disease exposure cases (operational facts; the notes stay on the web).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Wellness.ExposureCaseData.Route">
+            <summary>ExposureIncidentRoutes value: 1 Percutaneous, 2 MucousMembrane, 3 NonIntactSkin, 4 Airborne, 5 Other.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Wellness.ExposureCaseData.Stage">
+            <summary>ExposureIncidentStages value: 0 Reported, 1 SourceFollowUpRequested, 2 NotificationRequested, 3 NotificationReceived, 4 FollowUp, 5 Closed, 6 Withdrawn.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Wellness.ReportExposureInput">
+            <summary>Reports a bloodborne-pathogen or infectious-disease exposure for the signed-in member (never patient identity).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Wellness.ReportExposureInput.ExposureId">
+            <summary>Optional: one of the member's confirmed exposure entries to follow up; otherwise a new entry is logged.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Wellness.ExposureCaseResult.Error">
+            <summary>On failure: the rule code (route_required, entry_not_bloodborne, case_exists, date_invalid, ...).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Wellness.ReportInjuryInput">
+            <summary>Reports an injury for the signed-in member; the OSHA classification is left to the department's health officers.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Wellness.ExposureEntryData">
+            <summary>One exposure entry (or a suggestion awaiting the member's review).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Wellness.ExposureEntryData.Category">
+            <summary>ResponderExposureCategories value: 1 Carcinogen, 2 BloodbornePathogen, 3 HazardousSubstance, 4 CriticalIncident, 5 Other.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Wellness.ExposureEntryData.Status">
+            <summary>ResponderExposureStatuses value: 0 Suggested, 1 Confirmed, 2 Dismissed, 3 Voided.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Wellness.ExposureEntryData.Source">
+            <summary>ResponderExposureSources value: 0 Manual, 1 PostCallSuggestion.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Wellness.ExposureEntryData.SuggestionBasis">
+            <summary>The dispatch facts a suggestion was built from: status, unit_crew, check_in, unit_response.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Wellness.ExposureEntryData.Withheld">
+            <summary>True when a protected value was withheld (Advanced Data Protection without a grant).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Wellness.ExposureFollowUpData">
+            <summary>A screening follow-up addressed to the member (or kept for them by a wellness officer).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Wellness.ExposureFollowUpData.Kind">
+            <summary>ResponderFollowUpTaskKinds code.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Wellness.ExposureFollowUpData.State">
+            <summary>RmsWorkAssignmentState value: 1 Open, 2 Acknowledged, 3 Completed, 4 Cancelled.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Wellness.MyExposuresData.ConfirmedByCategory">
+            <summary>Confirmed entries per category value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Wellness.MyExposuresData.PeerTeamConfigured">
+            <summary>True when the department has a peer support team the member may share anniversary reminders with.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Wellness.CreateExposureInput">
+            <summary>A new entry for the signed-in member (always for themselves; confirmed by the act of logging it).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Wellness.ConfirmExposureSuggestionInput">
+            <summary>Confirms one of the member's suggestions, optionally with the details the member adds.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Wellness.ConfirmExposureSuggestionInput.Details">
+            <summary>Optional: when sent, replaces the suggestion's category, date, duration and details before confirming.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Wellness.ExposureEntryResult.Error">
+            <summary>On failure: the rule code (category_required, date_invalid, not_a_suggestion, ...).</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Workflows.ProtectedReleaseData.AuthMethod">
             <summary>Pinned OAuth2 client authentication (client_secret / private_key_jwt) when the credential is OAuth2.</summary>
         </member>
@@ -23079,6 +24469,12 @@
             Returns the TTS audio URL for the given text, generating it if necessary.
             Respects the provided cancellation token for timeout control.
             </summary>
+        </member>
+        <member name="M:Resgrid.Web.ServicesCore.Helpers.ClaimsAuthorizationHelper.CanAuthorProtocols">
+            <summary>Holds Author Protocols (128): create protocols and write drafts.</summary>
+        </member>
+        <member name="M:Resgrid.Web.ServicesCore.Helpers.ClaimsAuthorizationHelper.CanApproveProtocols">
+            <summary>Holds Approve Protocols (129): approve, publish, schedule and retire versions.</summary>
         </member>
         <member name="M:Resgrid.Web.ServicesCore.Helpers.ClaimsAuthorizationHelper.CanAssignTraining">
             <summary>Holds the Assign Training right somewhere (assign and report; scoped per training).</summary>

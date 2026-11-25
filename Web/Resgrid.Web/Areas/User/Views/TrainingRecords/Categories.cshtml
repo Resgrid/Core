@@ -1,0 +1,223 @@
+@using System.Globalization
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingCategoriesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    Training categories (T1 item 1): the department's own, or applied from a vertical template (ISO FSRS, NREMT NCCP, OSHA) with
+    target hours. Targets only, never ISO point values. Removing a category keeps it on the records that carry it.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Rec.CategoriesTitle"];
+    ViewData["Section"] = "Records";
+    ViewData["Title"] = localizer["Rec.CategoriesTitle"].Value;
+    ViewData["Subtitle"] = localizer["Rec.CategoriesIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["SubTabs"] = Model.OfficerTabs;
+    var input = Model.Input;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-tags" aria-hidden="true"></i> @localizer["Rec.CategoriesHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.LiveCategories.Count == 0)
+            {
+                <p class="text-muted">@localizer["Rec.NoCategories"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["NameColumn"]</th>
+                                <th>@localizer["Doc.Code"]</th>
+                                <th>@localizer["Rec.KindLabel"]</th>
+                                <th>@localizer["Doc.Target"]</th>
+                                <th>@localizer["Rec.RetentionLabel"]</th>
+                                <th class="rgw-row-actions">@localizer["ActionColumn"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var category in Model.LiveCategories)
+                            {
+                                <tr>
+                                    <td>
+                                        @category.Name
+                                        @if (!string.IsNullOrWhiteSpace(category.Description))
+                                        {
+                                            <small class="rgw-sub text-muted">@category.Description</small>
+                                        }
+                                    </td>
+                                    <td>
+                                        @category.Code
+                                        @if (!string.IsNullOrWhiteSpace(category.ExternalCode))
+                                        {
+                                            <small class="rgw-sub text-muted">@localizer["Rec.ExternalCodeLabel"]: @category.ExternalCode</small>
+                                        }
+                                    </td>
+                                    <td>@localizer[LearningRecordPresentation.CategoryKindKey(category.Kind)]</td>
+                                    <td>
+                                        @if (category.TargetHours.HasValue)
+                                        {
+                                            @string.Format(localizer["Rec.TargetValue"].Value, LearningRecordPresentation.Hours(category.TargetHours), localizer[LearningRecordPresentation.TargetPeriodKey(category.TargetPeriod)].Value)
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">@localizer["TargetPeriod.None"]</span>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(category.TargetAppliesTo))
+                                        {
+                                            <small class="rgw-sub text-muted">@category.TargetAppliesTo</small>
+                                        }
+                                    </td>
+                                    <td>@(category.RetentionYears.HasValue ? string.Format(localizer["Rec.YearsValue"].Value, category.RetentionYears.Value) : localizer["Rec.DepartmentDefault"].Value)</td>
+                                    <td class="rgw-row-actions">
+                                        <a class="btn btn-xs btn-default" asp-controller="TrainingRecords" asp-action="Categories" asp-route-area="User" asp-route-id="@category.TrainingCategoryId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["EditButton"]</a>
+                                        <form method="post" asp-controller="TrainingRecords" asp-action="DeleteCategory" asp-route-area="User" asp-route-id="@category.TrainingCategoryId">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["Rec.DeleteCategoryConfirm"]"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["DeleteButton"]</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="ibox float-e-margins" id="category-form">
+        <div class="ibox-title"><h5><i class="fa @(input.IsNew ? "fa-plus" : "fa-pencil")" aria-hidden="true"></i> @localizer[input.IsNew ? "Rec.AddCategoryHeader" : "Rec.EditCategoryHeader"]</h5></div>
+        <div class="ibox-content">
+            <form method="post" asp-controller="TrainingRecords" asp-action="SaveCategory" asp-route-area="User">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="TrainingCategoryId" value="@input.TrainingCategoryId" />
+                <input type="hidden" name="__Invariant" value="TargetHours" />
+                <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="Name" class="required">@localizer["NameColumn"]</label>
+                        <input id="Name" name="Name" class="form-control" maxlength="200" value="@input.Name" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="Code">@localizer["Doc.Code"]</label>
+                        <input id="Code" name="Code" class="form-control" maxlength="50" value="@input.Code" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Kind">@localizer["Rec.KindLabel"]</label>
+                        <select id="Kind" name="Kind" class="form-control">
+                            @foreach (var kind in Enum.GetValues<TrainingCategoryKinds>())
+                            {
+                                <option value="@((int)kind)" selected="@(input.Kind == (int)kind)">@localizer["CategoryKind." + kind]</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="TargetHours">@localizer["Rec.TargetHoursLabel"]</label>
+                        <input id="TargetHours" name="TargetHours" type="number" min="0" max="9999" step="0.25" class="form-control" value="@LearningRecordPresentation.Invariant(input.TargetHours)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="TargetPeriod">@localizer["Rec.TargetPeriodLabel"]</label>
+                        <select id="TargetPeriod" name="TargetPeriod" class="form-control">
+                            @foreach (var period in Enum.GetValues<TrainingTargetPeriods>())
+                            {
+                                <option value="@((int)period)" selected="@(input.TargetPeriod == (int)period)">@localizer["TargetPeriod." + period]</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="TargetAppliesTo">@localizer["Rec.AppliesToLabel"]</label>
+                        <input id="TargetAppliesTo" name="TargetAppliesTo" class="form-control" maxlength="200" value="@input.TargetAppliesTo" placeholder="@localizer["Rec.AppliesToPlaceholder"]" />
+                    </div>
+                    <div class="form-group">
+                        <label for="ExternalCode">@localizer["Rec.ExternalCodeLabel"]</label>
+                        <input id="ExternalCode" name="ExternalCode" class="form-control" maxlength="64" value="@input.ExternalCode" aria-describedby="ExternalCode-help" />
+                        <span class="help-block" id="ExternalCode-help">@localizer["Rec.ExternalCodeHelp"]</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="RetentionYears">@localizer["Rec.RetentionLabel"]</label>
+                        <input id="RetentionYears" name="RetentionYears" type="number" min="0" max="75" step="1" class="form-control" value="@input.RetentionYears" aria-describedby="RetentionYears-help" />
+                        <span class="help-block" id="RetentionYears-help">@localizer["Rec.RetentionHelp"]</span>
+                    </div>
+                    <div class="form-group rgw-wide">
+                        <label for="Description">@localizer["DescriptionLabel"]</label>
+                        <textarea id="Description" name="Description" class="form-control" rows="2" maxlength="1000">@input.Description</textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Rec.SaveCategoryButton"]</button>
+                @if (!input.IsNew)
+                {
+                    <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="Categories" asp-route-area="User"><i class="fa fa-times" aria-hidden="true"></i> @localizer["CancelButton"]</a>
+                }
+            </form>
+        </div>
+    </div>
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-th-large" aria-hidden="true"></i> @localizer["Rec.TemplatesHeader"]</h5></div>
+        <div class="ibox-content">
+            <p class="text-muted">@localizer["Rec.TemplatesHelp"]</p>
+            <div class="rgw-card-grid">
+                @foreach (var template in Model.Templates)
+                {
+                    var applied = template.Items.Count(i => Model.Codes.Contains(i.Code));
+                    <div class="rgw-card">
+                        <h4>@template.Name</h4>
+                        <div class="rgw-card-meta">@localizer["CategoryKind." + template.Kind] · @template.Source</div>
+                        <p class="m-b-none">@template.Description</p>
+                        <ul class="rgw-journey">
+                            @foreach (var item in template.Items)
+                            {
+                                <li>
+                                    <span>
+                                        @item.Name
+                                        <small class="rgw-sub text-muted">@item.Code@(string.IsNullOrWhiteSpace(item.TargetAppliesTo) ? null : " · " + item.TargetAppliesTo)</small>
+                                    </span>
+                                    <span class="text-nowrap">
+                                        @if (item.TargetHours.HasValue)
+                                        {
+                                            @string.Format(localizer["Rec.TargetValue"].Value, LearningRecordPresentation.Hours(item.TargetHours), localizer["TargetPeriod." + item.TargetPeriod].Value)
+                                        }
+                                        else
+                                        {
+                                            @localizer["TargetPeriod." + item.TargetPeriod]
+                                        }
+                                    </span>
+                                </li>
+                            }
+                        </ul>
+                        <p class="small text-muted m-b-none"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["Rec.TargetsNotPoints"]</p>
+                        <div class="rgw-card-action">
+                            @if (applied == template.Items.Count)
+                            {
+                                <span class="label label-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Rec.TemplateAppliedLabel"]</span>
+                            }
+                            else
+                            {
+                                <form method="post" asp-controller="TrainingRecords" asp-action="ApplyTemplate" asp-route-area="User">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="key" value="@template.Key" />
+                                    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> @(applied > 0 ? localizer["Rec.ApplyTemplateMissingButton"].Value : localizer["Rec.ApplyTemplateButton"].Value)</button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <style>
+        .rgw-row-actions form { display: inline-block; }
+    </style>
+}

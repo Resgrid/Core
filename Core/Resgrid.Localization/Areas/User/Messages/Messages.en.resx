@@ -237,4 +237,58 @@
   <data name="NotAttending" xml:space="preserve">
     <value>Not attending</value>
   </data>
+  <data name="CredentialAudienceLabel" xml:space="preserve">
+    <value>By certification</value>
+  </data>
+  <data name="CredentialAudienceNone" xml:space="preserve">
+    <value>Nobody by certification</value>
+  </data>
+  <data name="CredentialAudienceStatus" xml:space="preserve">
+    <value>Certification status</value>
+  </data>
+  <data name="CredentialAudienceExpired" xml:space="preserve">
+    <value>has expired</value>
+  </data>
+  <data name="CredentialAudienceExpiring" xml:space="preserve">
+    <value>expires within the days</value>
+  </data>
+  <data name="CredentialAudienceMissing" xml:space="preserve">
+    <value>never held</value>
+  </data>
+  <data name="CredentialAudienceDays" xml:space="preserve">
+    <value>Days</value>
+  </data>
+  <data name="CredentialAudienceHelp" xml:space="preserve">
+    <value>Adds the active members whose certification matches, together with the recipients chosen above.</value>
+  </data>
+  <data name="CredentialAudienceNoMatch" xml:space="preserve">
+    <value>No member matches the certification status you chose.</value>
+  </data>
+  <data name="RosterAudienceLabel" xml:space="preserve">
+    <value>Class roster</value>
+  </data>
+  <data name="RosterAudienceNone" xml:space="preserve">
+    <value>No class</value>
+  </data>
+  <data name="RosterAudienceStatus" xml:space="preserve">
+    <value>Roster status</value>
+  </data>
+  <data name="RosterAudienceEnrolled" xml:space="preserve">
+    <value>Enrolled</value>
+  </data>
+  <data name="RosterAudienceAttended" xml:space="preserve">
+    <value>Attended</value>
+  </data>
+  <data name="RosterAudienceAbsent" xml:space="preserve">
+    <value>Absent</value>
+  </data>
+  <data name="RosterAudienceWaitlisted" xml:space="preserve">
+    <value>Waitlisted</value>
+  </data>
+  <data name="RosterAudienceHelp" xml:space="preserve">
+    <value>Adds the active members of the class in that roster status to the recipients above.</value>
+  </data>
+  <data name="RosterAudienceNoMatch" xml:space="preserve">
+    <value>Nobody on that class roster has that status.</value>
+  </data>
 </root>

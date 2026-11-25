@@ -4714,4 +4714,7 @@
   <data name="Error.IMP-CONFIG-UNAVAILABLE" xml:space="preserve">
     <value>Records isn't turned on for your department, so record numbering can't be changed here. Undo this change.</value>
   </data>
+  <data name="TabProtocols" xml:space="preserve">
+    <value>Protocols</value>
+  </data>
 </root>

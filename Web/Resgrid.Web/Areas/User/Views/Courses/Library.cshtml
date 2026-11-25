@@ -1,0 +1,127 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Courses
+@model CourseLibraryModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* The officer course list (T2 item 8): the department's courses the person may edit, assign or report on, the approval queue and the tools. *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["LibraryTitle"];
+    ViewData["Section"] = "CourseLibrary";
+    ViewData["Title"] = localizer["LibraryTitle"].Value;
+    ViewData["Subtitle"] = localizer["LibraryIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!Model.CanAuthor)
+    {
+        <div class="alert alert-info"><i class="fa fa-info-circle" aria-hidden="true"></i> @(Model.IsLapsed ? localizer["LapsedNotice"] : localizer["AddonNotice"])</div>
+    }
+
+    <div class="rgw-toolbar m-b-sm">
+        <a class="btn btn-white" asp-controller="Courses" asp-action="Banks" asp-route-area="User"><i class="fa fa-database" aria-hidden="true"></i> @localizer["BanksTitle"]</a>
+        @if (Model.Actor?.MayGrade == true)
+        {
+            <a class="btn btn-white" asp-controller="Courses" asp-action="Grading" asp-route-area="User"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> @localizer["GradingTitle"] <span class="badge">@Model.PendingGrades</span></a>
+        }
+        @if (Model.Actor?.MayManage == true)
+        {
+            <a class="btn btn-white" asp-controller="Courses" asp-action="Storage" asp-route-area="User"><i class="fa fa-hdd-o" aria-hidden="true"></i> @localizer["StorageTitle"]</a>
+        }
+    </div>
+
+    @if (Model.CanAuthor)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-plus" aria-hidden="true"></i> @localizer["NewCourseHeader"]</h5></div>
+            <div class="ibox-content">
+                <form method="post" asp-controller="Courses" asp-action="Create" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label for="new-title">@localizer["TitleLabel"]</label>
+                            <input id="new-title" name="title" class="form-control" maxlength="250" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="new-code">@localizer["CodeLabel"]</label>
+                            <input id="new-code" name="code" class="form-control" maxlength="50" />
+                        </div>
+                        <div class="form-group">
+                            <label for="new-summary">@localizer["SummaryLabel"]</label>
+                            <input id="new-summary" name="summary" class="form-control" maxlength="2000" />
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["CreateCourseButton"]</button>
+                </form>
+            </div>
+        </div>
+    }
+
+    @if (Model.Reviews.Count > 0)
+    {
+        <h3>@localizer["ReviewQueueHeader"]</h3>
+        <ul class="rgw-journey m-b-md">
+            @foreach (var review in Model.Reviews)
+            {
+                <li>
+                    <span>@review.Version.Title <span class="rgw-sub">@localizer[CourseLabels.VersionStatus(review.Version.Status)]</span></span>
+                    <a class="btn btn-white btn-xs" asp-controller="Courses" asp-action="Builder" asp-route-area="User" asp-route-id="@review.Version.LmsCourseVersionId"><i class="fa fa-gavel" aria-hidden="true"></i> @localizer["ReviewButton"]</a>
+                </li>
+            }
+        </ul>
+    }
+
+    <h3>@localizer["CoursesHeader"]</h3>
+    @if (Model.Rows.Count == 0)
+    {
+        <p class="text-muted">@localizer["NoCourses"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped rgw-table">
+                <thead>
+                    <tr>
+                        <th>@localizer["CourseColumn"]</th>
+                        <th>@localizer["VersionColumn"]</th>
+                        <th>@localizer["EnrolledColumn"]</th>
+                        <th>@localizer["CompletedColumn"]</th>
+                        <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.Rows)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-controller="Courses" asp-action="Course" asp-route-area="User" asp-route-id="@row.Course.LmsCourseId">@row.Course.Title</a>
+                                @if (!string.IsNullOrWhiteSpace(row.Course.Code)) {<span class="rgw-sub">@row.Course.Code</span>}
+                            </td>
+                            <td>
+                                @(row.Current?.Label ?? "—")
+                                @if (row.OpenDraft != null) {<span class="rgw-sub">@localizer[CourseLabels.VersionStatus(row.OpenDraft.Status)]</span>}
+                                @if (row.Course.Status == (int)ProtocolStatuses.Retired) {<span class="rgw-sub">@localizer["RetiredBadge"]</span>}
+                            </td>
+                            <td>@row.Enrolled</td>
+                            <td>@row.Completed</td>
+                            <td class="rgw-row-actions">
+                                <a class="btn btn-white btn-xs" asp-controller="Courses" asp-action="Course" asp-route-area="User" asp-route-id="@row.Course.LmsCourseId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["OpenButton"]</a>
+                                @if (row.OpenDraft != null && row.Rights.Edit)
+                                {
+                                    <a class="btn btn-white btn-xs" asp-controller="Courses" asp-action="Builder" asp-route-area="User" asp-route-id="@row.OpenDraft.LmsCourseVersionId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["EditDraftButton"]</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

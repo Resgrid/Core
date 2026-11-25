@@ -1,0 +1,227 @@
+{
+  "schema": 1,
+  "id": "14-records",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Records",
+  "minutes": 9.4,
+  "walkthrough": false,
+  "audience": [
+    "records"
+  ],
+  "visibility": [
+    "module:Records",
+    "flag:Records.System"
+  ],
+  "pages": [
+    "Records",
+    "RecordsAnalytics",
+    "RecordsQuality",
+    "RecordDefinitions",
+    "RecordInspections",
+    "RecordInvestigations",
+    "RecordOccupancies",
+    "RecordPermits",
+    "RecordHydrants",
+    "IncidentReports",
+    "IncidentAnalysis",
+    "Logs",
+    "Disclosures"
+  ],
+  "adminAssist": {
+    "areas": [
+      "records"
+    ],
+    "capabilities": [
+      "logs",
+      "records",
+      "incident-reports",
+      "record-definitions",
+      "reports",
+      "new-log",
+      "records-dashboard",
+      "record-inspections",
+      "record-occupancies",
+      "record-hydrants",
+      "record-permits",
+      "record-investigations"
+    ]
+  },
+  "media": {
+    "video": "media/14-records.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/14-records.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Keep incident and prevention records reviewable",
+    "ar": "اجعل سجلات الحوادث والوقاية قابلة للمراجعة",
+    "de": "Einsatz- und Präventionsberichte prüfbar halten",
+    "el": "Διατηρήστε ελέγξιμες τις αναφορές συμβάντων και πρόληψης",
+    "es": "Mantener revisables los registros de incidentes y prevención",
+    "fr": "Garder les rapports d’intervention et de prévention vérifiables",
+    "it": "Mantenere verificabili i rapporti di intervento e prevenzione",
+    "pl": "Utrzymuj raporty ze zdarzeń i prewencji w stanie do przeglądu",
+    "sv": "Håll händelse- och förebyggandeberättelser granskningsbara",
+    "uk": "Тримайте звіти про події та профілактику придатними для перевірки"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "What is the purpose of an incident report?",
+        "ar": "ما الغرض من تقرير الحادث؟",
+        "de": "Wozu dient ein Einsatzbericht?",
+        "el": "Ποιος είναι ο σκοπός μιας αναφοράς συμβάντος;",
+        "es": "¿Para qué sirve un informe de incidente?",
+        "fr": "À quoi sert un rapport d’intervention ?",
+        "it": "A che cosa serve un rapporto di intervento?",
+        "pl": "Do czego służy raport ze zdarzenia?",
+        "sv": "Vad är syftet med en insatsrapport?",
+        "uk": "Для чого потрібен звіт про подію?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "To send a chat message",
+            "ar": "إرسال رسالة دردشة",
+            "de": "Um eine Chatnachricht zu senden",
+            "el": "Αποστολή μηνύματος συνομιλίας",
+            "es": "Enviar un mensaje de chat",
+            "fr": "Envoyer un message de discussion",
+            "it": "Inviare un messaggio in chat",
+            "pl": "Wysłać wiadomość na czacie",
+            "sv": "Skicka ett chattmeddelande",
+            "uk": "Надіслати повідомлення в чат"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "To schedule a shift",
+            "ar": "جدولة مناوبة",
+            "de": "Um eine Schicht zu planen",
+            "el": "Προγραμματισμός βάρδιας",
+            "es": "Programar un turno",
+            "fr": "Planifier une garde",
+            "it": "Programmare un turno",
+            "pl": "Zaplanować zmianę",
+            "sv": "Schemalägga ett pass",
+            "uk": "Запланувати зміну"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "To record what happened on a call for review and reporting",
+            "ar": "تسجيل ما حدث في البلاغ للمراجعة وإعداد التقارير",
+            "de": "Um festzuhalten, was bei einem Einsatz geschah, für Prüfung und Berichtswesen",
+            "el": "Καταγραφή του τι συνέβη σε μια κλήση για έλεγχο και αναφορές",
+            "es": "Registrar lo ocurrido en una llamada para su revisión e informes",
+            "fr": "Consigner le déroulement d’une intervention pour la relecture et les rapports",
+            "it": "Registrare ciò che è accaduto in una chiamata per revisione e report",
+            "pl": "Zapisać przebieg zdarzenia do przeglądu i sprawozdań",
+            "sv": "Registrera vad som hände vid ett larm för granskning och rapportering",
+            "uk": "Зафіксувати, що сталося на виклику, для перевірки та звітності"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "Why are reports reviewed before they are final?",
+        "ar": "لماذا تُراجع التقارير قبل اعتمادها النهائي؟",
+        "de": "Warum werden Berichte vor ihrer Fertigstellung geprüft?",
+        "el": "Γιατί οι αναφορές ελέγχονται πριν οριστικοποιηθούν;",
+        "es": "¿Por qué se revisan los informes antes de ser definitivos?",
+        "fr": "Pourquoi les rapports sont-ils relus avant d’être définitifs ?",
+        "it": "Perché i rapporti vengono verificati prima di essere definitivi?",
+        "pl": "Dlaczego raporty są przeglądane przed zatwierdzeniem?",
+        "sv": "Varför granskas rapporter innan de blir slutgiltiga?",
+        "uk": "Чому звіти перевіряють, перш ніж вони стануть остаточними?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "To catch errors before they are submitted",
+            "ar": "لاكتشاف الأخطاء قبل إرسالها",
+            "de": "Um Fehler vor der Übermittlung zu finden",
+            "el": "Για να εντοπιστούν λάθη πριν την υποβολή",
+            "es": "Para detectar errores antes de enviarlos",
+            "fr": "Pour repérer les erreurs avant leur transmission",
+            "it": "Per trovare gli errori prima dell’invio",
+            "pl": "Aby wychwycić błędy przed wysłaniem",
+            "sv": "För att hitta fel innan de skickas in",
+            "uk": "Щоб виявити помилки до подання"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "To delay payroll",
+            "ar": "لتأخير الرواتب",
+            "de": "Um die Lohnabrechnung zu verzögern",
+            "el": "Για καθυστέρηση μισθοδοσίας",
+            "es": "Para retrasar las nóminas",
+            "fr": "Pour retarder la paie",
+            "it": "Per ritardare le buste paga",
+            "pl": "Aby opóźnić wypłaty",
+            "sv": "För att försena lönen",
+            "uk": "Щоб затримати зарплату"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "To delete them",
+            "ar": "لحذفها",
+            "de": "Um sie zu löschen",
+            "el": "Για να διαγραφούν",
+            "es": "Para borrarlos",
+            "fr": "Pour les supprimer",
+            "it": "Per eliminarli",
+            "pl": "Aby je usunąć",
+            "sv": "För att radera dem",
+            "uk": "Щоб їх видалити"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "t",
+      "text": {
+        "en": "A report can be returned to its author for correction.",
+        "ar": "يمكن إعادة التقرير إلى كاتبه لتصحيحه.",
+        "de": "Ein Bericht kann zur Korrektur an seinen Verfasser zurückgegeben werden.",
+        "el": "Μια αναφορά μπορεί να επιστραφεί στον συντάκτη της για διόρθωση.",
+        "es": "Un informe se puede devolver a su autor para corregirlo.",
+        "fr": "Un rapport peut être renvoyé à son auteur pour correction.",
+        "it": "Un rapporto può essere restituito all’autore per la correzione.",
+        "pl": "Raport można zwrócić autorowi do poprawy.",
+        "sv": "En rapport kan skickas tillbaka till författaren för rättelse.",
+        "uk": "Звіт можна повернути авторові для виправлення."
+      }
+    }
+  ]
+}

@@ -1,0 +1,1405 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Academy.CategoryDescription" xml:space="preserve">
+    <value>Lektionen der Resgrid Akademie (keine Fortbildungspunkte).</value>
+  </data>
+  <data name="Academy.CategoryName" xml:space="preserve">
+    <value>Systemschulung</value>
+  </data>
+  <data name="AcademyBadge" xml:space="preserve">
+    <value>Akademie</value>
+  </data>
+  <data name="AcademyCompletedTile" xml:space="preserve">
+    <value>Von Ihnen abgeschlossen</value>
+  </data>
+  <data name="AcademyIntro" xml:space="preserve">
+    <value>Kurze Lektionen zu allen Bereichen von Resgrid, kostenlos für jede Organisation. Jede hat eine kurze Wissensprüfung und zählt für Ihren Nachweis.</value>
+  </data>
+  <data name="AcademyLessonsHeader" xml:space="preserve">
+    <value>Lektionen und Rundgänge</value>
+  </data>
+  <data name="AcademyLessonsTile" xml:space="preserve">
+    <value>Verfügbare Lektionen</value>
+  </data>
+  <data name="AcademySiteLink" xml:space="preserve">
+    <value>academy.resgrid.com öffnen</value>
+  </data>
+  <data name="AcademyTitle" xml:space="preserve">
+    <value>Resgrid Akademie</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Aktionen</value>
+  </data>
+  <data name="AddLessonLabel" xml:space="preserve">
+    <value>Lektion hinzufügen:</value>
+  </data>
+  <data name="AddModuleButton" xml:space="preserve">
+    <value>Modul hinzufügen</value>
+  </data>
+  <data name="AddonNotice" xml:space="preserve">
+    <value>Das Erstellen und Zuweisen von Kursen erfordert das LMS-Zusatzpaket. Die Resgrid Akademie ist für alle kostenlos.</value>
+  </data>
+  <data name="AddOwnerButton" xml:space="preserve">
+    <value>Verantwortliche hinzufügen</value>
+  </data>
+  <data name="AiCaptionsNote" xml:space="preserve">
+    <value>Automatische Untertitel kommen mit Enhanced AI; laden Sie bis dahin eine WebVTT-Datei hoch.</value>
+  </data>
+  <data name="AnswerKeyCopy" xml:space="preserve">
+    <value>Exemplar mit Lösungen</value>
+  </data>
+  <data name="AnswersHiddenNote" xml:space="preserve">
+    <value>Die Antworten dieser Prüfung werden nach einem Versuch nicht angezeigt.</value>
+  </data>
+  <data name="ApprovalHeader" xml:space="preserve">
+    <value>Diese Fassung genehmigen</value>
+  </data>
+  <data name="ApprovalRoundFormat" xml:space="preserve">
+    <value>Runde {0}</value>
+  </data>
+  <data name="ApprovalsHeader" xml:space="preserve">
+    <value>Genehmigungen und Unterschriften</value>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>Genehmigt und unterschrieben.</value>
+  </data>
+  <data name="ApproveSignButton" xml:space="preserve">
+    <value>Genehmigen und unterschreiben</value>
+  </data>
+  <data name="ApproveStepUpHelp" xml:space="preserve">
+    <value>Sie bestätigen vor der Unterschrift erneut Ihre Identität (Step-up); die Unterschrift gilt genau für diese Fassung.</value>
+  </data>
+  <data name="AssessmentHelp" xml:space="preserve">
+    <value>Fragen werden auf dem Server gezogen und bewertet; der Lösungsschlüssel erreicht nie den Browser oder die Apps.</value>
+  </data>
+  <data name="AssessmentPassed" xml:space="preserve">
+    <value>Sie haben diese Prüfung bestanden.</value>
+  </data>
+  <data name="AssessmentTitle" xml:space="preserve">
+    <value>Prüfung</value>
+  </data>
+  <data name="AssignButton" xml:space="preserve">
+    <value>Zuweisen</value>
+  </data>
+  <data name="AssignedMessage" xml:space="preserve">
+    <value>{0} Mitgliedern zugewiesen ({1} hatten ihn schon, {2} konnten nicht zugewiesen werden).</value>
+  </data>
+  <data name="AssignHeader" xml:space="preserve">
+    <value>Diesen Kurs zuweisen</value>
+  </data>
+  <data name="AssignLessonHeader" xml:space="preserve">
+    <value>Lektion „{0}“ zuweisen</value>
+  </data>
+  <data name="AssignPathButton" xml:space="preserve">
+    <value>Pfad zuweisen</value>
+  </data>
+  <data name="AssignPathHeader" xml:space="preserve">
+    <value>Rollenpfad „{0}“ zuweisen</value>
+  </data>
+  <data name="AssignToLabel" xml:space="preserve">
+    <value>Zuweisen an</value>
+  </data>
+  <data name="AttemptLimitLabel" xml:space="preserve">
+    <value>Erlaubte Versuche (0 = unbegrenzt)</value>
+  </data>
+  <data name="AttemptsAllowedFormat" xml:space="preserve">
+    <value>{0} Versuche erlaubt</value>
+  </data>
+  <data name="AttemptsTile" xml:space="preserve">
+    <value>Abgeschlossene Versuche</value>
+  </data>
+  <data name="AttemptsUnlimited" xml:space="preserve">
+    <value>Unbegrenzte Versuche</value>
+  </data>
+  <data name="AttestationLabel" xml:space="preserve">
+    <value>Lernende bestätigen lassen, dass sie selbst teilnehmen</value>
+  </data>
+  <data name="AttestationText" xml:space="preserve">
+    <value>Ich bearbeite diese Prüfung selbst.</value>
+  </data>
+  <data name="AudienceCurrentFormat" xml:space="preserve">
+    <value>{0} Zielgruppenregeln sind gespeichert.</value>
+  </data>
+  <data name="AudienceHeader" xml:space="preserve">
+    <value>Wer ihn im Katalog sieht</value>
+  </data>
+  <data name="AudienceHelp" xml:space="preserve">
+    <value>Wählen Sie niemanden aus, wenn die ganze Organisation ihn sehen soll.</value>
+  </data>
+  <data name="AvailableOfflineLabel" xml:space="preserve">
+    <value>Offline verfügbar (Omni darf eine Kopie pro Gerät speichern)</value>
+  </data>
+  <data name="AverageRatingFormat" xml:space="preserve">
+    <value>Durchschnittliche Bewertung: {0} von 5</value>
+  </data>
+  <data name="AwaitingGradeBadge" xml:space="preserve">
+    <value>Wartet auf Bewertung</value>
+  </data>
+  <data name="BackToAcademy" xml:space="preserve">
+    <value>Zurück zur Akademie</value>
+  </data>
+  <data name="BackToCourse" xml:space="preserve">
+    <value>Zurück zum Kurs</value>
+  </data>
+  <data name="BackToCourseDetail" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="BankLabel" xml:space="preserve">
+    <value>Fragenpool</value>
+  </data>
+  <data name="BanksIntro" xml:space="preserve">
+    <value>Fragenpools, aus denen für jeden Versuch zufällig gezogen wird. Gemeinsame Pools stehen allen Kursautoren offen, private nur ihren Eigentümern.</value>
+  </data>
+  <data name="BanksTitle" xml:space="preserve">
+    <value>Fragenpools</value>
+  </data>
+  <data name="BrowseAcademyLink" xml:space="preserve">
+    <value>Resgrid Academy durchsuchen</value>
+  </data>
+  <data name="BuilderTitle" xml:space="preserve">
+    <value>Kurseditor</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="CaptionsFileLabel" xml:space="preserve">
+    <value>WebVTT-Datei</value>
+  </data>
+  <data name="CaptionsLabelLabel" xml:space="preserve">
+    <value>Bezeichnung der Untertitel</value>
+  </data>
+  <data name="CaptionsLocaleLabel" xml:space="preserve">
+    <value>Untertitelsprache</value>
+  </data>
+  <data name="CatalogFieldsHeader" xml:space="preserve">
+    <value>Kursangaben</value>
+  </data>
+  <data name="CatalogHeader" xml:space="preserve">
+    <value>Kurse, denen Sie beitreten können</value>
+  </data>
+  <data name="CategoryLabel" xml:space="preserve">
+    <value>Schulungskategorie</value>
+  </data>
+  <data name="CeDisclaimer" xml:space="preserve">
+    <value>Resgrid ist keine Akkreditierungsstelle für Fortbildungen: Anbieter und Nummer werden so gespeichert, wie Sie sie eingeben.</value>
+  </data>
+  <data name="CeNumberLabel" xml:space="preserve">
+    <value>Fortbildungsnummer</value>
+  </data>
+  <data name="CeProviderLabel" xml:space="preserve">
+    <value>Fortbildungsanbieter</value>
+  </data>
+  <data name="CertificateTemplateLabel" xml:space="preserve">
+    <value>Zertifikatsvorlage</value>
+  </data>
+  <data name="ChangeSummaryLabel" xml:space="preserve">
+    <value>Was sich geändert hat</value>
+  </data>
+  <data name="ChooseAllHelp" xml:space="preserve">
+    <value>Wählen Sie alle zutreffenden aus.</value>
+  </data>
+  <data name="ChooseMember" xml:space="preserve">
+    <value>Mitglied auswählen…</value>
+  </data>
+  <data name="ChooseOption" xml:space="preserve">
+    <value>Auswählen…</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Kurscode</value>
+  </data>
+  <data name="CommentLabel" xml:space="preserve">
+    <value>Kommentar</value>
+  </data>
+  <data name="CompletedBadge" xml:space="preserve">
+    <value>Erledigt</value>
+  </data>
+  <data name="CompletedColumn" xml:space="preserve">
+    <value>Abgeschlossen</value>
+  </data>
+  <data name="CompletedHeader" xml:space="preserve">
+    <value>Abgeschlossen</value>
+  </data>
+  <data name="CompletedOfFormat" xml:space="preserve">
+    <value>{0} von {1}</value>
+  </data>
+  <data name="ContentHelp" xml:space="preserve">
+    <value>Formatierter Text (HTML). Er wird beim Speichern bereinigt; Einbettungen von YouTube, Vimeo und Google Docs sind erlaubt.</value>
+  </data>
+  <data name="ContentLabel" xml:space="preserve">
+    <value>Inhalt der Lektion</value>
+  </data>
+  <data name="CooldownFormat" xml:space="preserve">
+    <value>{0} Std. Wartezeit zwischen Versuchen</value>
+  </data>
+  <data name="CooldownLabel" xml:space="preserve">
+    <value>Stunden zwischen Versuchen</value>
+  </data>
+  <data name="CorrectAnswerLabel" xml:space="preserve">
+    <value>richtige Antwort</value>
+  </data>
+  <data name="CorrectLabel" xml:space="preserve">
+    <value>Richtig</value>
+  </data>
+  <data name="CorrectOrderLabel" xml:space="preserve">
+    <value>Richtige Reihenfolge:</value>
+  </data>
+  <data name="CourseColumn" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="CourseCompletedMessage" xml:space="preserve">
+    <value>Kurs abgeschlossen. Er steht in Ihrem Nachweis.</value>
+  </data>
+  <data name="CoursesHeader" xml:space="preserve">
+    <value>Kurse</value>
+  </data>
+  <data name="CreateBankButton" xml:space="preserve">
+    <value>Pool erstellen</value>
+  </data>
+  <data name="CreateCourseButton" xml:space="preserve">
+    <value>Kurs erstellen</value>
+  </data>
+  <data name="CrewEndedMessage" xml:space="preserve">
+    <value>Diese Crew-Vorführung ist beendet.</value>
+  </data>
+  <data name="CrewQrAlt" xml:space="preserve">
+    <value>Code der Crew-Vorführung</value>
+  </data>
+  <data name="CrewQrRotates" xml:space="preserve">
+    <value>Der Code ändert sich alle 30 Sekunden, ein Foto davon funktioniert also nicht lange.</value>
+  </data>
+  <data name="CrewScanConfirm" xml:space="preserve">
+    <value>Sich für diese Crew-Vorführung als anwesend melden? Die gezeigte Lektion gilt als angesehen; ein Quiz machen Sie danach auf Ihrem eigenen Telefon.</value>
+  </data>
+  <data name="CrewScanInstruction" xml:space="preserve">
+    <value>Scannen Sie diesen Code mit Ihrem eigenen Telefon, um als anwesend erfasst zu werden.</value>
+  </data>
+  <data name="CrewViewingTitle" xml:space="preserve">
+    <value>Crew-Vorführung</value>
+  </data>
+  <data name="DateLine" xml:space="preserve">
+    <value>Datum:</value>
+  </data>
+  <data name="Decision.Approved" xml:space="preserve">
+    <value>genehmigt</value>
+  </data>
+  <data name="Decision.Pending" xml:space="preserve">
+    <value>ausstehend</value>
+  </data>
+  <data name="Decision.Rejected" xml:space="preserve">
+    <value>zurückgegeben</value>
+  </data>
+  <data name="Decision.Withdrawn" xml:space="preserve">
+    <value>zurückgezogen</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="DeletedMessage" xml:space="preserve">
+    <value>Gelöscht.</value>
+  </data>
+  <data name="DeleteLessonConfirm" xml:space="preserve">
+    <value>Diese Lektion löschen?</value>
+  </data>
+  <data name="DeleteModuleConfirm" xml:space="preserve">
+    <value>Dieses Modul und seine Lektionen löschen?</value>
+  </data>
+  <data name="DifficultyColumn" xml:space="preserve">
+    <value>Schwierigkeit (p)</value>
+  </data>
+  <data name="DifficultyHelp" xml:space="preserve">
+    <value>Anteil richtiger Antworten: höher heißt leichter.</value>
+  </data>
+  <data name="DiscardButton" xml:space="preserve">
+    <value>Entwurf verwerfen</value>
+  </data>
+  <data name="DiscardConfirm" xml:space="preserve">
+    <value>Diesen Entwurf verwerfen? Er wurde nie eingereicht, es bleibt also nichts erhalten.</value>
+  </data>
+  <data name="DiscardedMessage" xml:space="preserve">
+    <value>Der Entwurf wurde verworfen.</value>
+  </data>
+  <data name="DiscriminationColumn" xml:space="preserve">
+    <value>Trennschärfe (D)</value>
+  </data>
+  <data name="DiscriminationHelp" xml:space="preserve">
+    <value>Richtiger Anteil in den besten 27 % der Versuche minus den schwächsten 27 %: unter 0,2 lohnt einen Blick.</value>
+  </data>
+  <data name="DocumentNameLabel" xml:space="preserve">
+    <value>Dokumentname</value>
+  </data>
+  <data name="DocumentUrlLabel" xml:space="preserve">
+    <value>Dokumentlink (https)</value>
+  </data>
+  <data name="DrawCountLabel" xml:space="preserve">
+    <value>Fragen pro Versuch (0 = alle)</value>
+  </data>
+  <data name="DrawTagsLabel" xml:space="preserve">
+    <value>Nur Fragen mit Schlagwort</value>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Fällig</value>
+  </data>
+  <data name="DueDateHelp" xml:space="preserve">
+    <value>Optional. Das Ende dieses Tages in der Zeitzone der Organisation.</value>
+  </data>
+  <data name="DueDateLabel" xml:space="preserve">
+    <value>Fälligkeitsdatum</value>
+  </data>
+  <data name="DueFormat" xml:space="preserve">
+    <value>Fällig am {0}</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
+  <data name="EditDraftButton" xml:space="preserve">
+    <value>Entwurf bearbeiten</value>
+  </data>
+  <data name="EditQuestionHeader" xml:space="preserve">
+    <value>Frage bearbeiten</value>
+  </data>
+  <data name="EndCrewViewingButton" xml:space="preserve">
+    <value>Vorführung beenden</value>
+  </data>
+  <data name="EnrollButton" xml:space="preserve">
+    <value>Einschreiben</value>
+  </data>
+  <data name="EnrolledColumn" xml:space="preserve">
+    <value>Eingeschrieben</value>
+  </data>
+  <data name="EnrolledMessage" xml:space="preserve">
+    <value>Sie sind eingeschrieben.</value>
+  </data>
+  <data name="EnrollmentsHeader" xml:space="preserve">
+    <value>Einschreibungen</value>
+  </data>
+  <data name="EnrollmentStatus.Completed" xml:space="preserve">
+    <value>Abgeschlossen</value>
+  </data>
+  <data name="EnrollmentStatus.InProgress" xml:space="preserve">
+    <value>In Bearbeitung</value>
+  </data>
+  <data name="EnrollmentStatus.NotStarted" xml:space="preserve">
+    <value>Nicht begonnen</value>
+  </data>
+  <data name="EnrollmentStatus.Withdrawn" xml:space="preserve">
+    <value>Ausgetragen</value>
+  </data>
+  <data name="Error.AddonRequired" xml:space="preserve">
+    <value>Dafür ist das LMS-Zusatzpaket nötig.</value>
+  </data>
+  <data name="Error.AlreadySubmitted" xml:space="preserve">
+    <value>Dies wurde bereits abgegeben.</value>
+  </data>
+  <data name="Error.AttemptLimitReached" xml:space="preserve">
+    <value>Sie haben alle erlaubten Versuche verbraucht.</value>
+  </data>
+  <data name="Error.CodeExpired" xml:space="preserve">
+    <value>Dieser Code hat sich geändert. Scannen Sie den Code auf dem Bildschirm erneut.</value>
+  </data>
+  <data name="Error.CooldownActive" xml:space="preserve">
+    <value>Bitte warten Sie vor dem nächsten Versuch.</value>
+  </data>
+  <data name="Error.FileTooLarge" xml:space="preserve">
+    <value>Die Datei ist zu groß.</value>
+  </data>
+  <data name="Error.InvalidInput" xml:space="preserve">
+    <value>Einige Angaben fehlen oder sind ungültig.</value>
+  </data>
+  <data name="Error.LapseWindowEnded" xml:space="preserve">
+    <value>Das LMS-Zusatzpaket ist beendet und die Frist zum Abschluss dieses Kurses ist abgelaufen.</value>
+  </data>
+  <data name="Error.LessonLocked" xml:space="preserve">
+    <value>Schließen Sie zuerst die vorherigen Lektionen ab.</value>
+  </data>
+  <data name="Error.MediaUnavailable" xml:space="preserve">
+    <value>Der Videospeicher ist derzeit nicht verfügbar.</value>
+  </data>
+  <data name="Error.None" xml:space="preserve">
+    <value>Erledigt.</value>
+  </data>
+  <data name="Error.NotAuthorized" xml:space="preserve">
+    <value>Dazu sind Sie nicht berechtigt.</value>
+  </data>
+  <data name="Error.NotDraft" xml:space="preserve">
+    <value>Nur ein Entwurf kann geändert werden.</value>
+  </data>
+  <data name="Error.NotEntitled" xml:space="preserve">
+    <value>Diese Lektion gehört zu einem Modul oder Zusatzpaket, das Ihre Organisation nicht hat.</value>
+  </data>
+  <data name="Error.NotFound" xml:space="preserve">
+    <value>Der Eintrag wurde nicht gefunden.</value>
+  </data>
+  <data name="Error.RequirementNotMet" xml:space="preserve">
+    <value>Dieser Schritt ist noch nicht abgeschlossen.</value>
+  </data>
+  <data name="Error.ResponseRequired" xml:space="preserve">
+    <value>Bearbeiten Sie die Aufgabe (oder hängen Sie die angeforderte Datei an), um diese Lektion abzuschließen.</value>
+  </data>
+  <data name="Error.SeatTimeNotMet" xml:space="preserve">
+    <value>Verbringen Sie noch etwas Zeit mit dieser Lektion, bevor Sie sie abschließen.</value>
+  </data>
+  <data name="Error.StaleCopy" xml:space="preserve">
+    <value>Jemand anderes hat dies geändert, seit Sie es geöffnet haben. Neu laden und erneut versuchen.</value>
+  </data>
+  <data name="Error.TimeExpired" xml:space="preserve">
+    <value>Die Zeit für diesen Versuch ist abgelaufen.</value>
+  </data>
+  <data name="Error.UnsupportedFile" xml:space="preserve">
+    <value>Dieser Dateityp wird nicht akzeptiert.</value>
+  </data>
+  <data name="EveryoneOption" xml:space="preserve">
+    <value>Alle in der Organisation</value>
+  </data>
+  <data name="ExpiredBadge" xml:space="preserve">
+    <value>Zeit abgelaufen</value>
+  </data>
+  <data name="ExplanationLabel" xml:space="preserve">
+    <value>Erklärung (nach dem Versuch angezeigt; bei Kurzantworten die Musterantwort)</value>
+  </data>
+  <data name="FailedBadge" xml:space="preserve">
+    <value>Nicht bestanden</value>
+  </data>
+  <data name="FileColumn" xml:space="preserve">
+    <value>Datei</value>
+  </data>
+  <data name="FileRequestHelp" xml:space="preserve">
+    <value>PDF, Bild, Text, Word oder Excel, bis 10 MB.</value>
+  </data>
+  <data name="FileRequestLabel" xml:space="preserve">
+    <value>Dateianforderung (optional)</value>
+  </data>
+  <data name="FingerprintFormat" xml:space="preserve">
+    <value>Fingerabdruck {0}</value>
+  </data>
+  <data name="FreeResponseLabel" xml:space="preserve">
+    <value>Freitextaufgabe (optional)</value>
+  </data>
+  <data name="GradedMessage" xml:space="preserve">
+    <value>Die Bewertung wurde gespeichert.</value>
+  </data>
+  <data name="GraderNotesLabel" xml:space="preserve">
+    <value>Notizen der bewertenden Person</value>
+  </data>
+  <data name="GradingEmpty" xml:space="preserve">
+    <value>Nichts wartet auf eine Bewertung.</value>
+  </data>
+  <data name="GradingIntro" xml:space="preserve">
+    <value>Kurzantworten, die auf eine Bewertung warten. Niemand bewertet den eigenen Versuch.</value>
+  </data>
+  <data name="GradingTitle" xml:space="preserve">
+    <value>Bewertungswarteschlange</value>
+  </data>
+  <data name="GroupsLabel" xml:space="preserve">
+    <value>Gruppen</value>
+  </data>
+  <data name="HostedVideoLabel" xml:space="preserve">
+    <value>Hochgeladenes Video</value>
+  </data>
+  <data name="HoursColumn" xml:space="preserve">
+    <value>Stunden</value>
+  </data>
+  <data name="HoursFormat" xml:space="preserve">
+    <value>{0} Stunden</value>
+  </data>
+  <data name="HoursLabel" xml:space="preserve">
+    <value>Angerechnete Stunden</value>
+  </data>
+  <data name="ImageUrlLabel" xml:space="preserve">
+    <value>Bildlink (https, optional)</value>
+  </data>
+  <data name="IncludedTile" xml:space="preserve">
+    <value>Inklusive</value>
+  </data>
+  <data name="IncorrectLabel" xml:space="preserve">
+    <value>Falsch</value>
+  </data>
+  <data name="InForceFormat" xml:space="preserve">
+    <value>Fassung {0} in Kraft</value>
+  </data>
+  <data name="InProgressBadge" xml:space="preserve">
+    <value>In Bearbeitung</value>
+  </data>
+  <data name="InProgressHeader" xml:space="preserve">
+    <value>Zugewiesen und in Bearbeitung</value>
+  </data>
+  <data name="IssuesCertificationLabel" xml:space="preserve">
+    <value>Abschluss stellt aus oder verlängert</value>
+  </data>
+  <data name="ItemAnalysisFootnote" xml:space="preserve">
+    <value>Die Trennschärfe braucht mindestens 10 abgeschlossene Versuche. Versuche, die auf eine Bewertung warten, werden nicht gezählt.</value>
+  </data>
+  <data name="ItemAnalysisIntro" xml:space="preserve">
+    <value>Wie jede Frage über alle abgeschlossenen Versuche abgeschnitten hat.</value>
+  </data>
+  <data name="ItemAnalysisTitle" xml:space="preserve">
+    <value>Aufgabenanalyse</value>
+  </data>
+  <data name="Kind.Assessment" xml:space="preserve">
+    <value>Prüfung</value>
+  </data>
+  <data name="Kind.Blocks" xml:space="preserve">
+    <value>Lektüre</value>
+  </data>
+  <data name="Kind.Cmi5" xml:space="preserve">
+    <value>cmi5-Paket</value>
+  </data>
+  <data name="Kind.Document" xml:space="preserve">
+    <value>Dokument</value>
+  </data>
+  <data name="Kind.LiveSession" xml:space="preserve">
+    <value>Live-Sitzung</value>
+  </data>
+  <data name="Kind.ProtocolVersion" xml:space="preserve">
+    <value>Protokoll</value>
+  </data>
+  <data name="Kind.Scorm" xml:space="preserve">
+    <value>SCORM-Paket</value>
+  </data>
+  <data name="Kind.Survey" xml:space="preserve">
+    <value>Kursbewertung</value>
+  </data>
+  <data name="Kind.Video" xml:space="preserve">
+    <value>Videolektion</value>
+  </data>
+  <data name="LapsedNotice" xml:space="preserve">
+    <value>Das LMS-Zusatzpaket ist abgelaufen: Kurse und Nachweise bleiben lesbar, zugewiesene Kurse bleiben bis zur Fälligkeit (oder 30 Tage) offen, gehostete Videos sind 90 Tage schreibgeschützt, und neue Kurse oder Zuweisungen erfordern das Zusatzpaket erneut.</value>
+  </data>
+  <data name="LengthColumn" xml:space="preserve">
+    <value>Dauer</value>
+  </data>
+  <data name="LessonBadge" xml:space="preserve">
+    <value>Lektion</value>
+  </data>
+  <data name="LessonColumn" xml:space="preserve">
+    <value>Lektion</value>
+  </data>
+  <data name="LessonCompletedMessage" xml:space="preserve">
+    <value>Lektion abgeschlossen.</value>
+  </data>
+  <data name="LessonDoneLabel" xml:space="preserve">
+    <value>Sie haben diese Lektion abgeschlossen.</value>
+  </data>
+  <data name="LibraryIntro" xml:space="preserve">
+    <value>Die Kurse Ihrer Organisation: erstellen, genehmigen, veröffentlichen, zuweisen und auswerten.</value>
+  </data>
+  <data name="LibraryTitle" xml:space="preserve">
+    <value>Kursbibliothek</value>
+  </data>
+  <data name="Lifecycle.AlreadyDecided" xml:space="preserve">
+    <value>Dieser Schritt wurde bereits entschieden oder Sie haben diese Runde schon genehmigt.</value>
+  </data>
+  <data name="Lifecycle.ArtifactChanged" xml:space="preserve">
+    <value>Die Fassung hat sich nach dem Einreichen oder Unterschreiben geändert; reichen Sie sie erneut ein.</value>
+  </data>
+  <data name="Lifecycle.ChangeSummaryRequired" xml:space="preserve">
+    <value>Beschreiben Sie vor der Veröffentlichung, was sich geändert hat.</value>
+  </data>
+  <data name="Lifecycle.DraftExists" xml:space="preserve">
+    <value>Für diesen Kurs ist bereits ein Entwurf offen.</value>
+  </data>
+  <data name="Lifecycle.EffectiveDateInPast" xml:space="preserve">
+    <value>Das Wirksamkeitsdatum liegt in der Vergangenheit.</value>
+  </data>
+  <data name="Lifecycle.EmptyContent" xml:space="preserve">
+    <value>Fügen Sie vor dem Einreichen mindestens eine Lektion hinzu.</value>
+  </data>
+  <data name="Lifecycle.InvalidInput" xml:space="preserve">
+    <value>Einige Angaben fehlen oder sind ungültig.</value>
+  </data>
+  <data name="Lifecycle.None" xml:space="preserve">
+    <value>Erledigt.</value>
+  </data>
+  <data name="Lifecycle.NotApproved" xml:space="preserve">
+    <value>Nur eine genehmigte Fassung kann veröffentlicht werden.</value>
+  </data>
+  <data name="Lifecycle.NotAuthorized" xml:space="preserve">
+    <value>Dazu sind Sie nicht berechtigt.</value>
+  </data>
+  <data name="Lifecycle.NotDraft" xml:space="preserve">
+    <value>Nur ein Entwurf kann eingereicht werden.</value>
+  </data>
+  <data name="Lifecycle.NotFound" xml:space="preserve">
+    <value>Die Fassung wurde nicht gefunden.</value>
+  </data>
+  <data name="Lifecycle.NotInReview" xml:space="preserve">
+    <value>Diese Fassung wartet nicht auf Genehmigung.</value>
+  </data>
+  <data name="Lifecycle.NotPublished" xml:space="preserve">
+    <value>Noch ist nichts veröffentlicht.</value>
+  </data>
+  <data name="Lifecycle.OpenComments" xml:space="preserve">
+    <value>Klären Sie zuerst die offenen Prüfkommentare.</value>
+  </data>
+  <data name="Lifecycle.PasskeyRequired" xml:space="preserve">
+    <value>Ihre Organisation verlangt für diese Unterschrift einen Passkey.</value>
+  </data>
+  <data name="Lifecycle.RetentionProtected" xml:space="preserve">
+    <value>Eine eingereichte Fassung wird aufbewahrt und kann nicht verworfen werden.</value>
+  </data>
+  <data name="Lifecycle.SignatureRequired" xml:space="preserve">
+    <value>Bestätigen Sie Ihre Identität (Step-up), um die Genehmigung zu unterschreiben.</value>
+  </data>
+  <data name="Lifecycle.StaleCopy" xml:space="preserve">
+    <value>Jemand anderes hat dies geändert, seit Sie es geöffnet haben. Neu laden und erneut versuchen.</value>
+  </data>
+  <data name="LockedBadge" xml:space="preserve">
+    <value>gesperrt, bis die vorherigen Lektionen abgeschlossen sind</value>
+  </data>
+  <data name="MajorPolicyLabel" xml:space="preserve">
+    <value>Bei einer großen Fassung</value>
+  </data>
+  <data name="MajorVersionOption" xml:space="preserve">
+    <value>Große Fassung: wählen, was mit Personen passiert, die ihn abgeschlossen haben</value>
+  </data>
+  <data name="MarkCompleteButton" xml:space="preserve">
+    <value>Als erledigt markieren</value>
+  </data>
+  <data name="MarkPresentButton" xml:space="preserve">
+    <value>Ich bin da</value>
+  </data>
+  <data name="MediaNotConfigured" xml:space="preserve">
+    <value>Auf dieser Installation ist kein Videospeicher eingerichtet, daher können keine Videos hochgeladen werden. YouTube- und Vimeo-Links funktionieren weiterhin.</value>
+  </data>
+  <data name="MediaStatus.Archived" xml:space="preserve">
+    <value>Archiviert (Zusatzpaket beendet)</value>
+  </data>
+  <data name="MediaStatus.Failed" xml:space="preserve">
+    <value>Konnte nicht verarbeitet werden</value>
+  </data>
+  <data name="MediaStatus.Queued" xml:space="preserve">
+    <value>Wartet auf Verarbeitung</value>
+  </data>
+  <data name="MediaStatus.Ready" xml:space="preserve">
+    <value>Bereit</value>
+  </data>
+  <data name="MediaStatus.Transcoding" xml:space="preserve">
+    <value>Wird verarbeitet</value>
+  </data>
+  <data name="MediaStatus.Uploading" xml:space="preserve">
+    <value>Wird hochgeladen</value>
+  </data>
+  <data name="MemberColumn" xml:space="preserve">
+    <value>Mitglied</value>
+  </data>
+  <data name="MembersLabel" xml:space="preserve">
+    <value>Mitglieder</value>
+  </data>
+  <data name="MinimumSeatLabel" xml:space="preserve">
+    <value>Mindestzeit in der Lektion (Sekunden)</value>
+  </data>
+  <data name="MinorVersionOption" xml:space="preserve">
+    <value>Kleine Fassung: Abschlüsse bleiben gültig</value>
+  </data>
+  <data name="MinutesFormat" xml:space="preserve">
+    <value>{0} Min.</value>
+  </data>
+  <data name="ModelAnswerLabel" xml:space="preserve">
+    <value>Musterantwort:</value>
+  </data>
+  <data name="ModuleLabel" xml:space="preserve">
+    <value>Modul</value>
+  </data>
+  <data name="ModuleNumberFormat" xml:space="preserve">
+    <value>Modul {0}</value>
+  </data>
+  <data name="ModuleTitleLabel" xml:space="preserve">
+    <value>Modultitel</value>
+  </data>
+  <data name="MoveUpButton" xml:space="preserve">
+    <value>Nach oben</value>
+  </data>
+  <data name="MyCoursesIntro" xml:space="preserve">
+    <value>Ihnen zugewiesene Kurse, die Resgrid Academy und Kurse, denen Sie beitreten können.</value>
+  </data>
+  <data name="MyCoursesTitle" xml:space="preserve">
+    <value>Meine Kurse</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Bezeichnung</value>
+  </data>
+  <data name="NameLine" xml:space="preserve">
+    <value>Name:</value>
+  </data>
+  <data name="NewBankHeader" xml:space="preserve">
+    <value>Neuer Fragenpool</value>
+  </data>
+  <data name="NewCourseHeader" xml:space="preserve">
+    <value>Neuer Kurs</value>
+  </data>
+  <data name="NewLessonFormat" xml:space="preserve">
+    <value>Neue Lektion: {0}</value>
+  </data>
+  <data name="NewQuestionHeader" xml:space="preserve">
+    <value>Neue Frage</value>
+  </data>
+  <data name="NewVersionButton" xml:space="preserve">
+    <value>Neue Fassung beginnen</value>
+  </data>
+  <data name="NextAttemptFormat" xml:space="preserve">
+    <value>Nächster Versuch ab {0}.</value>
+  </data>
+  <data name="NextButton" xml:space="preserve">
+    <value>Weiter</value>
+  </data>
+  <data name="NextUpLabel" xml:space="preserve">
+    <value>Als Nächstes</value>
+  </data>
+  <data name="NoBanks" xml:space="preserve">
+    <value>Noch keine Fragenpools.</value>
+  </data>
+  <data name="NoCourses" xml:space="preserve">
+    <value>Noch keine Kurse.</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="NoOpenCourses" xml:space="preserve">
+    <value>Sie haben keine offenen Kurse.</value>
+  </data>
+  <data name="NothingToPlay" xml:space="preserve">
+    <value>Dieser Kurs hat keine Lektionen zum Anzeigen.</value>
+  </data>
+  <data name="Notify.CourseAssigned" xml:space="preserve">
+    <value>Ihnen wurde der Kurs "{0}" zugewiesen. Öffnen: {1}</value>
+  </data>
+  <data name="Notify.CourseAssigned.Title" xml:space="preserve">
+    <value>Neuer Kurs zugewiesen</value>
+  </data>
+  <data name="Notify.CourseNewVersion" xml:space="preserve">
+    <value>Eine neue große Fassung ({1}) des von Ihnen abgeschlossenen Kurses "{0}" wurde veröffentlicht.</value>
+  </data>
+  <data name="Notify.CourseNewVersion.Title" xml:space="preserve">
+    <value>Kurs aktualisiert</value>
+  </data>
+  <data name="Notify.CourseReassigned" xml:space="preserve">
+    <value>Der Kurs "{0}" hat eine neue große Fassung ({1}) und wurde Ihnen erneut zugewiesen.</value>
+  </data>
+  <data name="Notify.CourseReassigned.Title" xml:space="preserve">
+    <value>Kurs erneut zugewiesen</value>
+  </data>
+  <data name="Notify.InProgressReminder" xml:space="preserve">
+    <value>Sie haben den Kurs "{0}" noch nicht abgeschlossen. Machen Sie dort weiter, wo Sie aufgehört haben: {1}</value>
+  </data>
+  <data name="Notify.InProgressReminder.Title" xml:space="preserve">
+    <value>Kurserinnerung</value>
+  </data>
+  <data name="NotStartedBadge" xml:space="preserve">
+    <value>Nicht begonnen</value>
+  </data>
+  <data name="OfflineCapLabel" xml:space="preserve">
+    <value>Größenlimit offline (MB)</value>
+  </data>
+  <data name="OfflineExpiryLabel" xml:space="preserve">
+    <value>Offline-Kopie aufbewahrt für (Tage)</value>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Öffnen</value>
+  </data>
+  <data name="OpenDocumentButton" xml:space="preserve">
+    <value>Dokument öffnen</value>
+  </data>
+  <data name="OptionalBadge" xml:space="preserve">
+    <value>freiwillig</value>
+  </data>
+  <data name="OptionCountsColumn" xml:space="preserve">
+    <value>Gewählte Optionen</value>
+  </data>
+  <data name="OptionNumberFormat" xml:space="preserve">
+    <value>Option {0}</value>
+  </data>
+  <data name="OptionsHelp" xml:space="preserve">
+    <value>Kreuzen Sie die richtige(n) Option(en) an. Bei Reihenfolgen in der richtigen Reihenfolge eintragen. Richtig/Falsch nutzt die ersten beiden. Kurzantworten brauchen keine Optionen.</value>
+  </data>
+  <data name="OptionsLabel" xml:space="preserve">
+    <value>Antwortoptionen</value>
+  </data>
+  <data name="OrderHelp" xml:space="preserve">
+    <value>Bringen Sie die Einträge in die richtige Reihenfolge: zuerst den ersten, dann den zweiten usw.</value>
+  </data>
+  <data name="OutlineLabel" xml:space="preserve">
+    <value>Kursübersicht</value>
+  </data>
+  <data name="OverdueBadge" xml:space="preserve">
+    <value>überfällig</value>
+  </data>
+  <data name="OverIncludedNote" xml:space="preserve">
+    <value>Der Speicher liegt über der enthaltenen Menge. Dafür wird derzeit nichts berechnet; erwägen Sie, alte Videos zu entfernen.</value>
+  </data>
+  <data name="OverviewLabel" xml:space="preserve">
+    <value>Überblick</value>
+  </data>
+  <data name="OwnersHeader" xml:space="preserve">
+    <value>Kursverantwortliche</value>
+  </data>
+  <data name="PassedBadge" xml:space="preserve">
+    <value>Bestanden</value>
+  </data>
+  <data name="PassMarkFormat" xml:space="preserve">
+    <value>Bestehensgrenze {0} %</value>
+  </data>
+  <data name="PassMarkLabel" xml:space="preserve">
+    <value>Bestehensgrenze</value>
+  </data>
+  <data name="PassRateTile" xml:space="preserve">
+    <value>Bestehensquote</value>
+  </data>
+  <data name="PathLessonsFormat" xml:space="preserve">
+    <value>{0} Lektionen · {1} von Ihnen abgeschlossen</value>
+  </data>
+  <data name="PathNobodyAssigned" xml:space="preserve">
+    <value>Dieser Pfad wurde noch niemandem zugewiesen.</value>
+  </data>
+  <data name="PathProgressButton" xml:space="preserve">
+    <value>Fortschritt ({0} zugewiesen)</value>
+  </data>
+  <data name="PathProgressIntro" xml:space="preserve">
+    <value>Der Fortschritt jedes zugewiesenen Mitglieds durch die Lektionen des Pfads.</value>
+  </data>
+  <data name="PlaybackSpeedLabel" xml:space="preserve">
+    <value>Wiedergabegeschwindigkeit</value>
+  </data>
+  <data name="PlayerTitle" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="PointsAwardedFormat" xml:space="preserve">
+    <value>Vergebene Punkte (von {0})</value>
+  </data>
+  <data name="PointsLabel" xml:space="preserve">
+    <value>Punkte</value>
+  </data>
+  <data name="PointsShort" xml:space="preserve">
+    <value>Pkt.</value>
+  </data>
+  <data name="Policy.Nothing" xml:space="preserve">
+    <value>Nichts: Abschlüsse bleiben gültig</value>
+  </data>
+  <data name="Policy.Notify" xml:space="preserve">
+    <value>Personen informieren, die ihn abgeschlossen haben</value>
+  </data>
+  <data name="Policy.Reassign" xml:space="preserve">
+    <value>Erneut zuweisen an Personen, die ihn abgeschlossen haben</value>
+  </data>
+  <data name="PresentHeader" xml:space="preserve">
+    <value>Anwesend</value>
+  </data>
+  <data name="PresentMessage" xml:space="preserve">
+    <value>Sie sind als anwesend erfasst. Machen Sie auf Ihrem Telefon mit der nächsten Lektion weiter.</value>
+  </data>
+  <data name="PreTestLabel" xml:space="preserve">
+    <value>Vortest (Bestehen schließt den Kurs ab)</value>
+  </data>
+  <data name="PreTestNote" xml:space="preserve">
+    <value>Vortest: Wer ihn besteht, schließt den ganzen Kurs ab.</value>
+  </data>
+  <data name="PreviousButton" xml:space="preserve">
+    <value>Zurück</value>
+  </data>
+  <data name="PrintHint" xml:space="preserve">
+    <value>Drucken Sie diesen Test mit der Druckfunktion Ihres Browsers.</value>
+  </data>
+  <data name="PrintKeyButton" xml:space="preserve">
+    <value>Mit Lösungen</value>
+  </data>
+  <data name="PrintTestButton" xml:space="preserve">
+    <value>Druckbarer Test</value>
+  </data>
+  <data name="PrivateBadge" xml:space="preserve">
+    <value>Privat</value>
+  </data>
+  <data name="ProgressColumn" xml:space="preserve">
+    <value>Fortschritt</value>
+  </data>
+  <data name="ProgressHonest" xml:space="preserve">
+    <value>{0} % der Pflichtlektionen sind abgeschlossen</value>
+  </data>
+  <data name="ProgressLabel" xml:space="preserve">
+    <value>Fortschritt</value>
+  </data>
+  <data name="ProtocolUnavailable" xml:space="preserve">
+    <value>Diese Protokollversion ist nicht mehr verfügbar.</value>
+  </data>
+  <data name="ProtocolVersionFormat" xml:space="preserve">
+    <value>Protokollversion {0}, wie veröffentlicht.</value>
+  </data>
+  <data name="ProtocolVersionHelp" xml:space="preserve">
+    <value>Die Lektion zeigt diese Fassung wie veröffentlicht, auch wenn sich das Protokoll später ändert.</value>
+  </data>
+  <data name="ProtocolVersionLabel" xml:space="preserve">
+    <value>Protokollversion</value>
+  </data>
+  <data name="PublishBeforeAssign" xml:space="preserve">
+    <value>Veröffentlichen Sie eine Fassung, bevor Sie den Kurs zuweisen.</value>
+  </data>
+  <data name="PublishButton" xml:space="preserve">
+    <value>Veröffentlichen</value>
+  </data>
+  <data name="PublishedColumn" xml:space="preserve">
+    <value>Veröffentlicht</value>
+  </data>
+  <data name="PublishedMessage" xml:space="preserve">
+    <value>Die Fassung ist veröffentlicht.</value>
+  </data>
+  <data name="PublishHeader" xml:space="preserve">
+    <value>Diese Fassung veröffentlichen</value>
+  </data>
+  <data name="PublishHelp" xml:space="preserve">
+    <value>Wer mitten im Kurs ist, behält die begonnene Fassung; wer noch nicht begonnen hat, wechselt zu dieser.</value>
+  </data>
+  <data name="QuestionColumn" xml:space="preserve">
+    <value>Frage</value>
+  </data>
+  <data name="QuestionKind.MultiChoice" xml:space="preserve">
+    <value>Mehrfachauswahl</value>
+  </data>
+  <data name="QuestionKind.Ordering" xml:space="preserve">
+    <value>Reihenfolge</value>
+  </data>
+  <data name="QuestionKind.ShortAnswer" xml:space="preserve">
+    <value>Kurzantwort (manuell bewertet)</value>
+  </data>
+  <data name="QuestionKind.SingleChoice" xml:space="preserve">
+    <value>Einfachauswahl</value>
+  </data>
+  <data name="QuestionKind.TrueFalse" xml:space="preserve">
+    <value>Richtig oder falsch</value>
+  </data>
+  <data name="QuestionKindLabel" xml:space="preserve">
+    <value>Fragetyp</value>
+  </data>
+  <data name="QuestionNumberFormat" xml:space="preserve">
+    <value>Frage {0} von {1}</value>
+  </data>
+  <data name="QuestionsCountFormat" xml:space="preserve">
+    <value>{0} Fragen</value>
+  </data>
+  <data name="QuestionTextLabel" xml:space="preserve">
+    <value>Frage</value>
+  </data>
+  <data name="RandomizeLabel" xml:space="preserve">
+    <value>Antwortreihenfolge mischen</value>
+  </data>
+  <data name="RatingHelp" xml:space="preserve">
+    <value>1 ist schlecht, 5 ist ausgezeichnet.</value>
+  </data>
+  <data name="ReassignDaysLabel" xml:space="preserve">
+    <value>Tage bis zum Abschluss bei Neuzuweisung</value>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>An den Entwurf zurückgeben</value>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>Die Fassung wurde an den Entwurf zurückgegeben.</value>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>Grund für die Rückgabe</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
+  <data name="RenameButton" xml:space="preserve">
+    <value>Umbenennen</value>
+  </data>
+  <data name="RequiredLabel" xml:space="preserve">
+    <value>Für den Kursabschluss erforderlich</value>
+  </data>
+  <data name="RequiredWatchLabel" xml:space="preserve">
+    <value>Mindestens ansehen (%)</value>
+  </data>
+  <data name="ResponsesColumn" xml:space="preserve">
+    <value>Antworten</value>
+  </data>
+  <data name="ResponsesFormat" xml:space="preserve">
+    <value>{0} anonyme Antworten</value>
+  </data>
+  <data name="ResultColumn" xml:space="preserve">
+    <value>Ergebnis</value>
+  </data>
+  <data name="ResultTitle" xml:space="preserve">
+    <value>Ergebnis</value>
+  </data>
+  <data name="ResumeAttemptButton" xml:space="preserve">
+    <value>Versuch fortsetzen</value>
+  </data>
+  <data name="ResumeButton" xml:space="preserve">
+    <value>Fortsetzen</value>
+  </data>
+  <data name="RetakeButton" xml:space="preserve">
+    <value>Erneut versuchen</value>
+  </data>
+  <data name="RetireButton" xml:space="preserve">
+    <value>Außer Kraft setzen</value>
+  </data>
+  <data name="RetireConfirm" xml:space="preserve">
+    <value>Diesen Kurs außer Kraft setzen? Er verschwindet aus dem Katalog; bereits eingeschriebene Mitglieder können ihn noch abschließen.</value>
+  </data>
+  <data name="RetiredBadge" xml:space="preserve">
+    <value>außer Kraft</value>
+  </data>
+  <data name="RetiredMessage" xml:space="preserve">
+    <value>Der Kurs wurde außer Kraft gesetzt.</value>
+  </data>
+  <data name="RetiredQuestionMessage" xml:space="preserve">
+    <value>Die Frage wurde stillgelegt.</value>
+  </data>
+  <data name="RetireQuestionConfirm" xml:space="preserve">
+    <value>Diese Frage stilllegen? Versuche, die sie enthielten, behalten ihre Kopie.</value>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Ansehen</value>
+  </data>
+  <data name="ReviewQueueHeader" xml:space="preserve">
+    <value>Wartet auf Genehmigung</value>
+  </data>
+  <data name="RightAssign" xml:space="preserve">
+    <value>zuweisen</value>
+  </data>
+  <data name="RightEdit" xml:space="preserve">
+    <value>bearbeiten</value>
+  </data>
+  <data name="RightReport" xml:space="preserve">
+    <value>Berichte</value>
+  </data>
+  <data name="RightsColumn" xml:space="preserve">
+    <value>Rechte</value>
+  </data>
+  <data name="RolePathsHeader" xml:space="preserve">
+    <value>Rollenpfade</value>
+  </data>
+  <data name="RolePathsIntro" xml:space="preserve">
+    <value>Geordnete Listen von Akademie-Lektionen für eine Rolle. Wer einen Pfad zuweist, weist jede darin enthaltene Lektion zu, die Ihre Organisation nutzt.</value>
+  </data>
+  <data name="RolesLabel" xml:space="preserve">
+    <value>Rollen</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="SavedMessage" xml:space="preserve">
+    <value>Gespeichert.</value>
+  </data>
+  <data name="SaveGradeButton" xml:space="preserve">
+    <value>Bewertung speichern</value>
+  </data>
+  <data name="SaveLessonButton" xml:space="preserve">
+    <value>Lektion speichern</value>
+  </data>
+  <data name="ScoreColumn" xml:space="preserve">
+    <value>Punktzahl</value>
+  </data>
+  <data name="SeatTimeRequirement" xml:space="preserve">
+    <value>Diese Lektion erfordert mindestens {0} Min. (bisher {1} Min.).</value>
+  </data>
+  <data name="SelfEnrollLabel" xml:space="preserve">
+    <value>Mitglieder dürfen sich selbst im Katalog einschreiben</value>
+  </data>
+  <data name="SharedBadge" xml:space="preserve">
+    <value>Geteilt</value>
+  </data>
+  <data name="SharedBankLabel" xml:space="preserve">
+    <value>Mit allen Kursautoren geteilt</value>
+  </data>
+  <data name="SharingColumn" xml:space="preserve">
+    <value>Freigabe</value>
+  </data>
+  <data name="ShowAnswers.AfterPassing" xml:space="preserve">
+    <value>Lösungen nach dem Bestehen</value>
+  </data>
+  <data name="ShowAnswers.Always" xml:space="preserve">
+    <value>Lösungen nach jedem Versuch</value>
+  </data>
+  <data name="ShowAnswers.CorrectnessOnly" xml:space="preserve">
+    <value>Welche Antworten richtig waren, ohne Lösungen</value>
+  </data>
+  <data name="ShowAnswers.Never" xml:space="preserve">
+    <value>Nur Punktzahl</value>
+  </data>
+  <data name="ShowAnswersLabel" xml:space="preserve">
+    <value>Antworten anzeigen</value>
+  </data>
+  <data name="Signature.ArtifactChanged" xml:space="preserve">
+    <value>die Fassung wurde nach der Unterschrift geändert</value>
+  </data>
+  <data name="Signature.SubjectMissing" xml:space="preserve">
+    <value>die Fassung existiert nicht mehr</value>
+  </data>
+  <data name="Signature.Valid" xml:space="preserve">
+    <value>passt zu dieser Fassung</value>
+  </data>
+  <data name="Signature.Voided" xml:space="preserve">
+    <value>ungültig gemacht</value>
+  </data>
+  <data name="SizeColumn" xml:space="preserve">
+    <value>Größe</value>
+  </data>
+  <data name="StandardOption" xml:space="preserve">
+    <value>Standardvorlage</value>
+  </data>
+  <data name="StartAssessmentButton" xml:space="preserve">
+    <value>Prüfung starten</value>
+  </data>
+  <data name="StartButton" xml:space="preserve">
+    <value>Starten</value>
+  </data>
+  <data name="StartCrewViewingButton" xml:space="preserve">
+    <value>Gemeinsam ansehen (Crew-Vorführung)</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Zustand</value>
+  </data>
+  <data name="StorageIntro" xml:space="preserve">
+    <value>Für Ihre Organisation gespeicherte Videos im Vergleich zu den 100 GB, die das LMS-Zusatzpaket enthält.</value>
+  </data>
+  <data name="StorageTitle" xml:space="preserve">
+    <value>Videospeicher</value>
+  </data>
+  <data name="SubmitAttemptButton" xml:space="preserve">
+    <value>Antworten abgeben</value>
+  </data>
+  <data name="SubmitConfirm" xml:space="preserve">
+    <value>Antworten abgeben? Sie können sie danach nicht mehr ändern.</value>
+  </data>
+  <data name="SubmitForApprovalButton" xml:space="preserve">
+    <value>Zur Genehmigung einreichen</value>
+  </data>
+  <data name="SubmitSurveyButton" xml:space="preserve">
+    <value>Antworten senden</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Abgegeben</value>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>Die Fassung wurde zur Genehmigung eingereicht.</value>
+  </data>
+  <data name="SummaryLabel" xml:space="preserve">
+    <value>Zusammenfassung</value>
+  </data>
+  <data name="SurveyAnonymous" xml:space="preserve">
+    <value>Ihre Antworten sind anonym: Führungskräfte sehen nur Summen, ab drei Antworten.</value>
+  </data>
+  <data name="SurveyFormatHelp" xml:space="preserve">
+    <value>Eine pro Zeile: "rating: Text", "text: Text" oder "choice: Text | Option | Option".</value>
+  </data>
+  <data name="SurveyQuestionsLabel" xml:space="preserve">
+    <value>Umfragefragen</value>
+  </data>
+  <data name="SurveyResultsTitle" xml:space="preserve">
+    <value>Kursbewertung</value>
+  </data>
+  <data name="SurveyThanksMessage" xml:space="preserve">
+    <value>Danke, Ihre Antworten wurden anonym gespeichert.</value>
+  </data>
+  <data name="SurveyTooFew" xml:space="preserve">
+    <value>Ergebnisse werden ab {0} Antworten angezeigt, damit keine Antwort einem Mitglied zugeordnet werden kann.</value>
+  </data>
+  <data name="TagsLabel" xml:space="preserve">
+    <value>Schlagwörter</value>
+  </data>
+  <data name="TestedOutBadge" xml:space="preserve">
+    <value>Per Vortest bestanden</value>
+  </data>
+  <data name="TimeLimitFormat" xml:space="preserve">
+    <value>Zeitlimit {0} Min.</value>
+  </data>
+  <data name="TimeLimitLabel" xml:space="preserve">
+    <value>Zeitlimit (Minuten, 0 = keins)</value>
+  </data>
+  <data name="TimeRemainingFormat" xml:space="preserve">
+    <value>Noch {0} Min.</value>
+  </data>
+  <data name="TitleLabel" xml:space="preserve">
+    <value>Titel</value>
+  </data>
+  <data name="TooFewAttempts" xml:space="preserve">
+    <value>zu wenige Versuche</value>
+  </data>
+  <data name="TranscriptHeader" xml:space="preserve">
+    <value>Transkript</value>
+  </data>
+  <data name="TranscriptLink" xml:space="preserve">
+    <value>Nachweis</value>
+  </data>
+  <data name="UploadButton" xml:space="preserve">
+    <value>Hochladen</value>
+  </data>
+  <data name="UploadCaptionsButton" xml:space="preserve">
+    <value>Untertitel hochladen</value>
+  </data>
+  <data name="UploadedColumn" xml:space="preserve">
+    <value>Hochgeladen</value>
+  </data>
+  <data name="UploadedMessage" xml:space="preserve">
+    <value>Hochgeladen. Videos werden im Hintergrund verarbeitet und laufen, sobald sie bereit sind.</value>
+  </data>
+  <data name="UploadVideoLabel" xml:space="preserve">
+    <value>Video hochladen</value>
+  </data>
+  <data name="UsedTile" xml:space="preserve">
+    <value>Belegt</value>
+  </data>
+  <data name="VersionColumn" xml:space="preserve">
+    <value>Fassung</value>
+  </data>
+  <data name="VersionLabelFormat" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+  <data name="VersionSettingsHeader" xml:space="preserve">
+    <value>Einstellungen der Fassung</value>
+  </data>
+  <data name="VersionsHeader" xml:space="preserve">
+    <value>Fassungen</value>
+  </data>
+  <data name="VersionStatus.Approved" xml:space="preserve">
+    <value>Genehmigt</value>
+  </data>
+  <data name="VersionStatus.Draft" xml:space="preserve">
+    <value>Entwurf</value>
+  </data>
+  <data name="VersionStatus.InReview" xml:space="preserve">
+    <value>In Prüfung</value>
+  </data>
+  <data name="VersionStatus.Legacy" xml:space="preserve">
+    <value>Altbestand</value>
+  </data>
+  <data name="VersionStatus.Published" xml:space="preserve">
+    <value>Veröffentlicht</value>
+  </data>
+  <data name="VersionStatus.Retired" xml:space="preserve">
+    <value>Außer Kraft</value>
+  </data>
+  <data name="VersionStatus.Superseded" xml:space="preserve">
+    <value>Ersetzt</value>
+  </data>
+  <data name="VideoHelp" xml:space="preserve">
+    <value>YouTube- und Vimeo-Links funktionieren überall. Hochgeladene Videos gehören zum LMS-Zusatzpaket: Sie werden nach HLS umgewandelt und über signierte Links gestreamt.</value>
+  </data>
+  <data name="VideoSource.Embed" xml:space="preserve">
+    <value>YouTube oder Vimeo</value>
+  </data>
+  <data name="VideoSource.Hosted" xml:space="preserve">
+    <value>Hochgeladen (LMS)</value>
+  </data>
+  <data name="VideoSourceLabel" xml:space="preserve">
+    <value>Videoquelle</value>
+  </data>
+  <data name="VideosTile" xml:space="preserve">
+    <value>Videos</value>
+  </data>
+  <data name="VideoUnavailable" xml:space="preserve">
+    <value>Dieses Video ist derzeit nicht verfügbar.</value>
+  </data>
+  <data name="VideoUrlLabel" xml:space="preserve">
+    <value>YouTube- oder Vimeo-Link</value>
+  </data>
+  <data name="WalkthroughBadge" xml:space="preserve">
+    <value>Rundgang</value>
+  </data>
+  <data name="WatchAgainButton" xml:space="preserve">
+    <value>Erneut ansehen</value>
+  </data>
+  <data name="WatchRequirement" xml:space="preserve">
+    <value>Mindestens {0} % ansehen (bisher {1} %).</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Austragen</value>
+  </data>
+  <data name="WithdrawConfirm" xml:space="preserve">
+    <value>Dieses Mitglied aus dem Kurs austragen? Sein Fortschritt bleibt erhalten.</value>
+  </data>
+  <data name="WithdrawDraftButton" xml:space="preserve">
+    <value>Zurück zum Entwurf</value>
+  </data>
+  <data name="WithdrawnDraftMessage" xml:space="preserve">
+    <value>Die Fassung ist wieder ein Entwurf.</value>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>Das Mitglied wurde aus dem Kurs ausgetragen.</value>
+  </data>
+  <data name="YourAnswerLabel" xml:space="preserve">
+    <value>Ihre Antwort</value>
+  </data>
+  <data name="YourAttemptsHeader" xml:space="preserve">
+    <value>Ihre Versuche</value>
+  </data>
+  <data name="AidNothingAccepted" xml:space="preserve">
+    <value>Es wurde nichts übernommen.</value>
+  </data>
+  <data name="AidBankNameFormat" xml:space="preserve">
+    <value>Entworfene Fragen: {0}</value>
+  </data>
+  <data name="AidBankDescription" xml:space="preserve">
+    <value>Aus Entwurfshilfen übernommene Fragen. Prüfen Sie sie, bevor Sie sie in einer Prüfung verwenden.</value>
+  </data>
+  <data name="AidQuestionsSaved" xml:space="preserve">
+    <value>{0} Frage(n) zur Fragensammlung "{1}" hinzugefügt.</value>
+  </data>
+  <data name="AidOpenBank" xml:space="preserve">
+    <value>Fragensammlung öffnen</value>
+  </data>
+  <data name="AidOutlineSaved" xml:space="preserve">
+    <value>{0} Modul(e) zu diesem Entwurf hinzugefügt.</value>
+  </data>
+  <data name="Notify.MicroLearning" xml:space="preserve">
+    <value>Die Protokollfrage dieser Woche ({0}) ist bereit. Beantworten Sie sie unter Protokolle, Meine Bestätigungen, Wöchentliche Fragen.</value>
+  </data>
+  <data name="Notify.MicroLearning.Title" xml:space="preserve">
+    <value>Wöchentliche Protokollfrage</value>
+  </data>
+</root>

@@ -69,7 +69,7 @@ namespace Resgrid.Tests.Web.Services
 			ClaimsAuthorizationHelper._httpContextAccessor = new HttpContextAccessor { HttpContext = httpContext };
 			_activity = new Activity("TrainingsApiTests").Start();
 
-			_controller = new ApiTrainingsController(_trainings.Object, _assignments.Object, _myTraining.Object, _authorization.Object, _settings.Object)
+			_controller = new ApiTrainingsController(_trainings.Object, _assignments.Object, _myTraining.Object, _authorization.Object, _settings.Object, new Mock<ILearningRecordService>().Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};

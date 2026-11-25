@@ -283,5 +283,54 @@
 		/// of each value, for the <see cref="CallEmailTypes.LabeledFields"/> email format. Missing = no labels.
 		/// </summary>
 		EmailLabeledFields = 131,
+
+		/// <summary>
+		/// ProtoBuf <see cref="ProtocolLibrarySettings"/>, Protocols → Settings (P1): signature levels raised above the floors (passkey for
+		/// approvals, step-up for read-and-sign), the default review interval, and per-kind retention and a department-wide legal hold for
+		/// superseded and retired versions. Missing = the floors, no default interval, keep every version.
+		/// </summary>
+		ProtocolLibrarySettings = 134,
+
+		/// <summary>
+		/// ProtoBuf <see cref="TrainingRecordSettings"/>, Trainings → Records settings (Training T1): rounding of calendar
+		/// check-in/out hours, whether members may submit outside certificates, and the default record retention. Missing = no
+		/// rounding, submissions on, no minimum retention. Read through <c>IDepartmentSettingsService.GetTrainingRecordSettingsAsync</c>.
+		/// </summary>
+		TrainingRecordSettings = 135,
+
+		/// <summary>
+		/// ProtoBuf <see cref="KnowledgeSettings"/>, Knowledge → Settings (K1): whether the Documents module joins the department's knowledge
+		/// corpus (opt-in) and the department's dosing tool link for answers that quote a dose. Missing = Documents not indexed, no dosing link.
+		/// Read through <c>IAiKnowledgeService.GetSettingsAsync</c>.
+		/// </summary>
+		KnowledgeSettings = 139,
+
+		/// <summary>
+		/// ProtoBuf <see cref="WellnessSettings"/>, Personnel → Wellness settings (§13b WL0): the wellness officer role, the peer
+		/// support team's certification type and the exposure retention in years (never below 30). Missing = no officer, no team,
+		/// 30 years. Read through <c>IDepartmentSettingsService.GetWellnessSettingsAsync</c>.
+		/// </summary>
+		WellnessSettings = 141,
+
+		/// <summary>
+		/// ProtoBuf <see cref="LearningRequirementSettings"/>, Trainings → Programs → Settings (T3, LMS): training-backed enforcement on or
+		/// off (off by default; each requirement still opts in), the blast-radius share a sweep may remove of a role's holders (R-L11,
+		/// default 20%) and the default at-risk window. Missing = off, 20%, 14 days. Read through <c>ILmsRequirementService.GetSettingsAsync</c>.
+		/// </summary>
+		LearningRequirementSettings = 143,
+
+		/// <summary>
+		/// ProtoBuf <see cref="Resgrid.Model.Lms.LmsProgramSettings"/>, Trainings → Programs → Settings (LMS, T3 round 4C): training request approval
+		/// steps and currency, and building-familiarization credit from Records. Missing = supervisor and training officer approve, USD, no
+		/// familiarization credit. Read through <c>ILmsProgramSettingsService.GetAsync</c>.
+		/// </summary>
+		LmsProgramSettings = 144,
+
+		/// <summary>
+		/// ProtoBuf <see cref="Resgrid.Model.Lms.LmsSkillSettings"/>, Trainings → Skills → Settings (LMS, T4 round 5C): how skill evaluation and
+		/// task book notices are delivered (immediately, or as a daily or weekly digest at a department-local hour) and who receives them.
+		/// Missing = immediate notices to the evaluated members and the department admins. Read through <c>ILmsSkillSettingsService.GetAsync</c>.
+		/// </summary>
+		LmsSkillSettings = 146,
 	}
 }

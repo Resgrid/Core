@@ -1040,16 +1040,36 @@ namespace Resgrid.Providers.Claims
 			}
 		}
 
-		public static void AddProtocolClaims(ClaimsIdentity identity, bool isAdmin)
+		/// <summary>Admins only (the pre-P1 behaviour): kept for callers without the department's permission rows.</summary>
+		public static void AddProtocolClaims(ClaimsIdentity identity, bool isAdmin) => AddProtocolClaims(identity, isAdmin, null, false, null);
+
+		/// <summary>
+		/// Protocol claims from the P1 permissions (configurable by role or group like the others; department admins keep all):
+		/// every member reads (Protocols:View; which protocols is the library's audience rule); Author Protocols (128) gives
+		/// Protocols:Create and Protocols:Update; Approve Protocols (129) gives Protocols:Approve and Protocols:Delete (retire,
+		/// delete); Manage Protocol Acknowledgments (130) gives Protocols:Assign (P2). No row: department admins only.
+		/// </summary>
+		public static void AddProtocolClaims(ClaimsIdentity identity, bool isAdmin, List<Permission> permissions, bool isGroupAdmin, List<PersonnelRole> roles)
 		{
 			identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.View));
 
-			if (isAdmin)
+			var roleIds = (roles ?? new List<PersonnelRole>()).Where(r => r != null).Select(r => r.PersonnelRoleId).ToList();
+			Permission Row(PermissionTypes type) => permissions?.FirstOrDefault(x => x != null && x.PermissionType == (int)type);
+
+			if (PermissionRights.Holds(Row(PermissionTypes.AuthorProtocols), isAdmin, isGroupAdmin, roleIds))
 			{
 				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Update));
 				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Create));
+			}
+
+			if (PermissionRights.Holds(Row(PermissionTypes.ApproveProtocols), isAdmin, isGroupAdmin, roleIds))
+			{
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Approve));
 				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Delete));
 			}
+
+			if (PermissionRights.Holds(Row(PermissionTypes.ManageProtocolAcknowledgments), isAdmin, isGroupAdmin, roleIds))
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Assign));
 		}
 
 		public static void AddFormsClaims(ClaimsIdentity identity, bool isAdmin)

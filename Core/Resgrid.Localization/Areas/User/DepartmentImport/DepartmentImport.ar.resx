@@ -4714,4 +4714,7 @@
   <data name="Error.IMP-CONFIG-UNAVAILABLE" xml:space="preserve">
     <value>السجلات غير مفعّلة لقسمك، لذا لا يمكن تغيير ترقيم السجلات هنا. تراجع عن هذا التغيير.</value>
   </data>
+  <data name="TabProtocols" xml:space="preserve">
+    <value>البروتوكولات</value>
+  </data>
 </root>

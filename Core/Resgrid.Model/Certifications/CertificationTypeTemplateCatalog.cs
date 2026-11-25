@@ -112,6 +112,9 @@ namespace Resgrid.Model.Certifications
 				P("PALS", "PALS Provider", Med, "American Heart Association", 24, "Pediatric Advanced Life Support card.", "aha", "pediatric"),
 				P("PHTLS", "PHTLS Provider", Med, "NAEMT", 48, "Prehospital Trauma Life Support card (4-year cycle).", "naemt", "trauma"),
 				P("MD-SKILLS", "Medical Director Skills Verification", EMS, "Agency medical director", 12, "Annual medical-director skill verification sign-off.", "medical director", "skills").Verified(),
+				// Member wellness WL1: name this type in the wellness settings and each evaluation carries its restriction status there
+				// (Cleared / Cleared with restrictions / Not cleared); the restriction detail stays protected in Wellness.
+				P("NFPA-1582", "Medical Clearance (NFPA 1582)", Med, "Department physician (NFPA 1582)", 12, "Annual occupational medical evaluation. The restriction status is kept in Wellness; officers see the status only.", "nfpa", "medical", "physical", "clearance", "fitness for duty"),
 
 				// ---- SAR --------------------------------------------------------------------------------------
 				P("SARTECH3", "SARTECH III", SAR, "NASAR", null, "NASAR SARTECH III.", "nasar", "search"),

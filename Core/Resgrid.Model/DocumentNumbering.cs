@@ -101,6 +101,8 @@ namespace Resgrid.Model
 		public const string Permit = "permit";
 		public const string Investigation = "investigation";
 		public const string Evidence = "evidence";
+		/// <summary>Protocols P1: a new protocol's Number when the department sets a pattern (none = typed by the author).</summary>
+		public const string Protocol = "protocol";
 
 		public static readonly IReadOnlyList<DocumentNumberKind> All = new[]
 		{
@@ -113,7 +115,8 @@ namespace Resgrid.Model
 			new DocumentNumberKind(Inspection, "INSP-{YYYY}-{SEQ}", 4, 32, true),
 			new DocumentNumberKind(Permit, "PRM-{YYYY}-{SEQ}", 4, 32, true),
 			new DocumentNumberKind(Investigation, "INV-{YYYY}-{SEQ}", 4, 32, true),
-			new DocumentNumberKind(Evidence, "EV-{YYYY}-{SEQ}", 4, 32, true)
+			new DocumentNumberKind(Evidence, "EV-{YYYY}-{SEQ}", 4, 32, true),
+			new DocumentNumberKind(Protocol, "{SEQ}", 1, DispatchProtocol.NumberMaxLength, false)
 		};
 
 		public static DocumentNumberKind Find(string key)

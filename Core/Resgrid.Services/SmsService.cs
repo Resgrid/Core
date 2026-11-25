@@ -218,17 +218,10 @@ namespace Resgrid.Services
 
 					if (call.Protocols != null && call.Protocols.Any())
 					{
-						string protocols = String.Empty;
-						foreach (var protocol in call.Protocols.Where(x => !x.IsRemoved))
-						{
-							if (!String.IsNullOrWhiteSpace(protocol.Data))
-							{
-								if (String.IsNullOrWhiteSpace(protocols))
-									protocols = protocol.Data;
-								else
-									protocols = protocols + "," + protocol.Data;
-							}
-						}
+						// The codes as before; Protocols P4 adds the lead determinant and protocol name when the department turned it on.
+						var showDeterminant = call.Protocols.Any(p => p != null && !p.IsRemoved && !string.IsNullOrWhiteSpace(p.Determinant))
+							&& (await _departmentSettingsService.GetProtocolLibrarySettingsAsync(departmentId))?.ShowDeterminantInDispatch == true;
+						string protocols = ProtocolDispatchText.SmsProtocols(call.Protocols, showDeterminant);
 
 						if (!String.IsNullOrWhiteSpace(protocols))
 							text = text + " (" + protocols + ")";

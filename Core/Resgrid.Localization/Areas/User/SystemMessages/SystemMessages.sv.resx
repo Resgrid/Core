@@ -175,4 +175,35 @@ Resgrid-teamet</value>
   <data name="SecurityNoticeWhere" xml:space="preserve"><value>Var: {0}</value></data>
   <data name="SecurityNoticeNotYou" xml:space="preserve"><value>Om det inte var du, återställ ditt lösenord nu på {0}, logga sedan in och granska dina inloggningsmetoder. Resgrid ber aldrig om en kod eller ett lösenord via e-post.</value></data>
   <data name="SecurityNoticeFooter" xml:space="preserve"><value>Detta är ett automatiskt säkerhetsmeddelande om ditt Resgrid-konto.</value></data>
+  <data name="SigningLinkEmailSubject" xml:space="preserve">
+    <value>{0}: ett dokument att signera</value>
+  </data>
+  <data name="SigningLinkEmailBody" xml:space="preserve">
+    <value>Hej {0},
+
+{1} ber dig granska och signera "{2}".
+
+Öppna länken för att signera:
+{3}
+
+Länken kan användas en gång och går ut {4}. Innan du signerar bekräftar du en engångskod.
+
+Om du inte väntade dig meddelandet kan du bortse från det.</value>
+  </data>
+  <data name="SigningLinkSmsBody" xml:space="preserve">
+    <value>{0} ber dig signera "{1}": {2}</value>
+  </data>
+  <data name="SigningCodeEmailSubject" xml:space="preserve">
+    <value>{0}: din signeringskod</value>
+  </data>
+  <data name="SigningCodeEmailBody" xml:space="preserve">
+    <value>Hej {0},
+
+Din kod för att signera dokumentet från {3} är {1}. Den går ut om {2} minuter.
+
+Om du inte har begärt koden kan du bortse från meddelandet.</value>
+  </data>
+  <data name="SigningCodeSmsBody" xml:space="preserve">
+    <value>Din signeringskod för {2} är {0}. Den går ut om {1} minuter.</value>
+  </data>
 </root>

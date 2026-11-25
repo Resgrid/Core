@@ -230,4 +230,9 @@
   <data name="SelectMember" xml:space="preserve"><value>Επιλέξτε μέλος</value></data>
   <data name="SelectType" xml:space="preserve"><value>Επιλέξτε τύπο πιστοποίησης</value></data>
   <data name="CertificationNameRequired" xml:space="preserve"><value>Εισαγάγετε όνομα πιστοποίησης.</value></data>
+  <data name="RenewalHoursLabel" xml:space="preserve"><value>Ώρες για την ανανέωση</value></data>
+  <data name="RenewalHoursValue" xml:space="preserve"><value>{0} ώρ. πιστωμένες ({1} ώρ. από το μητρώο εκπαίδευσης)</value></data>
+  <data name="UncreditedLedgerHours" xml:space="preserve"><value>{0} ώρ. σε αντιστοιχισμένες κατηγορίες δεν έχουν πιστωθεί ακόμη</value></data>
+  <data name="ApplyHistoryLink" xml:space="preserve"><value>Εφαρμογή ιστορικού σε πιστώσεις</value></data>
+  <data name="FromTranscript" xml:space="preserve"><value>Από το μητρώο</value></data>
 </root>

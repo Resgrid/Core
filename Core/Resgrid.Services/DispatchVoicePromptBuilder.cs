@@ -10,6 +10,7 @@ using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
+using Resgrid.Model.Services;
 
 namespace Resgrid.Services
 {
@@ -80,6 +81,69 @@ namespace Resgrid.Services
 				: TtsConfig.DefaultSpeed;
 
 		private static readonly Regex PostalCodeRegex =new(@"^(\d{5}(-\d{4})?|[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+		/// <summary>
+		/// The dispatch prompt with the Protocols P4 sentence ("Determinant, 10-D-1. Protocol, Chest pain.") after the priority when one is
+		/// given. Both the broadcast pre-warm and the voice webhook pass the sentence from <see cref="ResolveProtocolSentenceAsync"/>, so the
+		/// text (the TTS cache key) stays byte-identical; a null sentence gives exactly <see cref="BuildDispatchPrompt(Call, string)"/>.
+		/// </summary>
+		public static string BuildDispatchPrompt(Call call, string address, string protocolSentence)
+		{
+			var prompt = BuildDispatchPrompt(call, address);
+			return string.IsNullOrWhiteSpace(protocolSentence) ? prompt : $"{prompt} {protocolSentence.Trim()}";
+		}
+
+		/// <summary>
+		/// The spoken determinant sentence for a call, or null when setting 134's ShowDeterminantInDispatch is off (the default), the call has no
+		/// determinant, or the setting cannot be read. Loads the call's protocols when they are not on it, the same way on both sides.
+		/// </summary>
+		public static async Task<string> ResolveProtocolSentenceAsync(Call call, IDepartmentSettingsService settingsService, ICallsService callsService)
+		{
+			if (call == null || settingsService == null)
+				return null;
+
+			try
+			{
+				var settings = await settingsService.GetProtocolLibrarySettingsAsync(call.DepartmentId);
+				if (settings?.ShowDeterminantInDispatch != true)
+					return null;
+
+				var protocols = call.Protocols;
+				if (protocols == null && callsService != null && call.CallId > 0)
+					protocols = await callsService.GetCallProtocolsByCallIdAsync(call.CallId);
+
+				return StripForSpeech(ProtocolDispatchText.Spoken(protocols, true));
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// A case flow instruction (P4 "play" for the dispatcher) as spoken text: markup stripped, whitespace folded, a full stop at the end so
+		/// Piper pauses. Null when there is nothing to say.
+		/// </summary>
+		public static string BuildInstructionPrompt(string text)
+		{
+			var spoken = StripForSpeech(text);
+			if (string.IsNullOrWhiteSpace(spoken))
+				return null;
+
+			return spoken.EndsWith(".", StringComparison.Ordinal) || spoken.EndsWith("!", StringComparison.Ordinal) || spoken.EndsWith("?", StringComparison.Ordinal)
+				? spoken
+				: $"{spoken}.";
+		}
+
+		private static string StripForSpeech(string text)
+		{
+			if (string.IsNullOrWhiteSpace(text))
+				return null;
+
+			var plain = StringHelpers.StripHtmlTagsCharArray(text);
+			return System.Text.RegularExpressions.Regex.Replace(plain ?? string.Empty, @"\s+", " ").Trim();
+		}
 
 		public static string BuildDispatchPrompt(Call call, string address)
 		{

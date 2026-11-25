@@ -42,11 +42,15 @@
                     }
                     <div class="lead">@Html.SanitizedHtmlWithEmbeds(training.Description)</div>
                     <hr />
-                    <div class="training-content">@Html.SanitizedHtmlWithEmbeds(training.TrainingText)</div>
+                    <div class="training-content">@Html.TrainingContent(training.TrainingText)</div>
                 </div>
             </div>
         </div>
         <div class="col-lg-3 col-md-4">
+            @if (!training.IsArchived && training.HasStarted(DateTime.UtcNow))
+            {
+                @await Html.PartialAsync("_KnowledgeAsk", new Resgrid.Web.Areas.User.Models.Knowledge.KnowledgeAskPanelModel { Surface = (int)KnowledgeAskSurfaces.Training, ScopeKind = (int)KnowledgeSourceKinds.Training, ScopeItemId = training.TrainingId.ToString(System.Globalization.CultureInfo.InvariantCulture), PanelId = "kask-training" })
+            }
             <div class="ibox">
                 <div class="ibox-title"><h5><i class="fa fa-tasks" aria-hidden="true"></i> @localizer["ProgressHeader"]</h5></div>
                 <div class="ibox-content">

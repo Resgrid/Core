@@ -1,0 +1,68 @@
+@using Resgrid.Web.Areas.User.Models.Courses
+@model StorageModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* Hosted video storage against the 100 GB the add-on includes (decision 7; report only, no overage billing), and uploads. *@
+@{
+    var report = Model.Report;
+    ViewBag.Title = "Resgrid | " + localizer["StorageTitle"];
+    ViewData["Section"] = "CourseLibrary";
+    ViewData["Title"] = localizer["StorageTitle"].Value;
+    ViewData["Subtitle"] = localizer["StorageIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    string Gb(long bytes) => (bytes / 1073741824.0).ToString("0.##");
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!Model.MediaConfigured)
+    {
+        <div class="alert alert-info">@localizer["MediaNotConfigured"]</div>
+    }
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@localizer["UsedTile"]</div><div class="rgw-stat-value">@Gb(report.UsedBytes) GB</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@localizer["IncludedTile"]</div><div class="rgw-stat-value">@Gb(report.IncludedBytes) GB</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@localizer["VideosTile"]</div><div class="rgw-stat-value">@report.Assets</div></div>
+    </div>
+    <div class="progress" role="progressbar" aria-valuenow="@report.PercentUsed" aria-valuemin="0" aria-valuemax="100" aria-label="@localizer["UsedTile"]">
+        <div class="progress-bar @(report.OverIncluded ? "progress-bar-danger" : "")" style="width: @(Math.Min(100m, report.PercentUsed).ToString(System.Globalization.CultureInfo.InvariantCulture))%"></div>
+    </div>
+    @if (report.OverIncluded)
+    {
+        <p class="text-danger">@localizer["OverIncludedNote"]</p>
+    }
+
+    @if (Model.CanUpload)
+    {
+        <form method="post" asp-controller="Courses" asp-action="UploadVideo" asp-route-area="User" enctype="multipart/form-data" class="form-inline m-b-md">
+            @Html.AntiForgeryToken()
+            <label for="storage-upload">@localizer["UploadVideoLabel"]</label>
+            <input id="storage-upload" name="file" type="file" accept="video/*" class="form-control" required />
+            <button type="submit" class="btn btn-primary"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["UploadButton"]</button>
+        </form>
+    }
+
+    <div class="table-responsive">
+        <table class="table table-striped rgw-table">
+            <thead><tr><th>@localizer["FileColumn"]</th><th>@localizer["StatusColumn"]</th><th>@localizer["SizeColumn"]</th><th>@localizer["LengthColumn"]</th><th>@localizer["UploadedColumn"]</th></tr></thead>
+            <tbody>
+                @foreach (var asset in Model.Assets)
+                {
+                    <tr>
+                        <td>@asset.FileName</td>
+                        <td>@localizer[CourseLabels.MediaStatus(asset.Status)]@if (!string.IsNullOrWhiteSpace(asset.LastError)) {<span class="rgw-sub">@asset.LastError</span>}</td>
+                        <td>@((asset.StoredBytes / 1048576.0).ToString("0.#")) MB</td>
+                        <td>@(asset.DurationSeconds > 0 ? TimeSpan.FromSeconds(asset.DurationSeconds).ToString(@"h\:mm\:ss") : "")</td>
+                        <td>@Model.Date(asset.CreatedOn)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

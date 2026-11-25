@@ -115,4 +115,64 @@
   <data name="MessageAffiliateApplied" xml:space="preserve"><value>Il codice partner/account è stato salvato per il tuo dipartimento.</value></data>
   <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Questo codice partner/account non è valido o non è più attivo.</value></data>
   <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Il tuo dipartimento ha già un codice partner/account. Contattaci se deve essere modificato.</value></data>
+  <data name="LmsTitle" xml:space="preserve"><value>LMS</value></data>
+  <data name="LmsTagline" xml:space="preserve"><value>Corsi, report formativi ufficiali e certificati verificabili</value></data>
+  <data name="LmsFeature1" xml:space="preserve"><value>Corsi con lezioni, banche di domande e quiz</value></data>
+  <data name="LmsFeature2" xml:space="preserve"><value>Videolezioni ospitate, 100 GB inclusi per dipartimento</value></data>
+  <data name="LmsFeature3" xml:space="preserve"><value>Report formativi ufficiali ISO FSRS e NREMT NCCP</value></data>
+  <data name="LmsFeature4" xml:space="preserve"><value>Certificati con codice di verifica, QR e pagina di verifica pubblica, sul vostro modello</value></data>
+  <data name="LmsFeature5" xml:space="preserve"><value>Posti solo per i membri che abilitate; tutti mantengono la formazione gratuita</value></data>
+  <data name="LmsNote" xml:space="preserve"><value>Prezzo per pacchetto da 25 membri, a scaglioni: i primi 4 pacchetti a prezzo pieno, poi meno. Fatturato mensilmente per dipartimento; nessuna prova. Richiede un piano Resgrid a pagamento.</value></data>
+  <data name="PerMemberPack" xml:space="preserve"><value>per pacchetto da {0} membri</value></data>
+  <data name="PackTierLine" xml:space="preserve"><value>Pacchetti {0}–{1}: {2} per pacchetto</value></data>
+  <data name="PackTierLineOpen" xml:space="preserve"><value>Pacchetti da {0} in su: {1} per pacchetto</value></data>
+  <data name="LmsRequiresPaidPlan" xml:space="preserve"><value>L'LMS è venduto con un piano Resgrid a pagamento. Scegliete prima un piano nella pagina dell'abbonamento.</value></data>
+  <data name="LmsBillingPacksNote" xml:space="preserve"><value>Ogni pacchetto copre 25 membri. I pacchetti hanno prezzi a scaglioni: ogni pacchetto è fatturato al prezzo del proprio scaglione, quindi aggiungere pacchetti non rende mai più economici o più cari quelli precedenti. Fatturazione mensile; nessuna prova e nessun contratto annuale.</value></data>
+  <data name="LmsBillingSeatsNote" xml:space="preserve"><value>I pacchetti aggiunti sono addebitati subito, in proporzione fino alla data di fatturazione. I pacchetti rimossi valgono dalla prossima data di fatturazione, e solo fino al numero di membri abilitati all'LMS.</value></data>
+  <data name="LmsBillingFreeNote" xml:space="preserve"><value>I membri non abilitati all'LMS mantengono il modulo Formazione gratuito, il loro libretto formativo e l'Academy. Istruttori, valutatori e ufficiali non hanno bisogno di un posto.</value></data>
+  <data name="LmsManageSeats" xml:space="preserve"><value>Gestisci i posti LMS nella pagina del personale</value></data>
+  <data name="BillingPacksAdded" xml:space="preserve"><value>Pacchetti aggiunti. L'importo proporzionale per il resto di questo periodo di fatturazione è stato fatturato.</value></data>
+  <data name="BillingPacksScheduled" xml:space="preserve"><value>La riduzione dei pacchetti è programmata per la prossima data di fatturazione. I vostri posti restano fino ad allora.</value></data>
+  <data name="BillingPacksBelowSeats" xml:space="preserve"><value>Resterebbero meno posti dei membri abilitati all'LMS. Disabilitate prima alcuni membri nella pagina del personale.</value></data>
+  <data name="BillingPacksFailed" xml:space="preserve"><value>Non è stato possibile modificare il numero di pacchetti e non è stato addebitato nulla. Riprovate o contattateci.</value></data>
+  <data name="PacksHeading" xml:space="preserve"><value>Pacchetti e posti</value></data>
+  <data name="PacksInForce" xml:space="preserve"><value>{0} pacchetti: {1} posti, {2} in uso</value></data>
+  <data name="PacksNextMonth" xml:space="preserve"><value>Prezzo del mese prossimo: {0}</value></data>
+  <data name="PacksNextMonthLabel" xml:space="preserve"><value>Mese prossimo</value></data>
+  <data name="PacksScheduledNote" xml:space="preserve"><value>Dal {0}: {1} pacchetti.</value></data>
+  <data name="PacksLabel" xml:space="preserve"><value>Pacchetti</value></data>
+  <data name="PacksUpdate" xml:space="preserve"><value>Aggiorna pacchetti</value></data>
+  <data name="PackPreviewFirst" xml:space="preserve"><value>{0} pacchetti ({1} posti): {2} al mese.</value></data>
+  <data name="PackPreviewIncrease" xml:space="preserve"><value>{0} pacchetti ({1} posti): {2} al mese da ora. Circa {3} viene addebitato ora per il resto di questo periodo di fatturazione.</value></data>
+  <data name="PackPreviewDecrease" xml:space="preserve"><value>{0} pacchetti ({1} posti): {2} al mese dal {3}. Non viene rimborsato nulla e i vostri posti restano fino ad allora.</value></data>
+  <data name="PackPreviewSame" xml:space="preserve"><value>È il numero di pacchetti che avete ora.</value></data>
+  <data name="PackRefusedBelowSeats" xml:space="preserve"><value>Servono almeno {0} pacchetti per i membri abilitati all'LMS. Disabilitatene prima alcuni nella pagina del personale.</value></data>
+  <data name="PackRefusedRange" xml:space="preserve"><value>Scegliete tra {0} e {1} pacchetti.</value></data>
+  <data name="PackPreviewFailed" xml:space="preserve"><value>Non è stato possibile mostrare il prezzo. Riprovate.</value></data>
+  <data name="LmsSeatHeading" xml:space="preserve"><value>Posto LMS</value></data>
+  <data name="LmsSeatEnabledLabel" xml:space="preserve"><value>Abilitato all'LMS</value></data>
+  <data name="LmsSeatEnabledHelp" xml:space="preserve"><value>Questo membro può essere formato tramite i corsi e i requisiti dell'LMS.</value></data>
+  <data name="LmsSeatDisabledLabel" xml:space="preserve"><value>Non abilitato all'LMS</value></data>
+  <data name="LmsSeatDisabledHelp" xml:space="preserve"><value>Questo membro mantiene il modulo Formazione gratuito, il suo libretto formativo e l'Academy.</value></data>
+  <data name="LmsSeatNotLicensed" xml:space="preserve"><value>Senza licenza</value></data>
+  <data name="LmsSeatCounter" xml:space="preserve"><value>{0} di {1} posti in uso</value></data>
+  <data name="LmsSeatEnable" xml:space="preserve"><value>Abilita LMS</value></data>
+  <data name="LmsSeatDisable" xml:space="preserve"><value>Disabilita LMS</value></data>
+  <data name="LmsSeatsFull" xml:space="preserve"><value>Tutti i {0} posti sono in uso. Pacchetti da aggiungere: {1}.</value></data>
+  <data name="LmsSeatNotActive" xml:space="preserve"><value>Solo i membri attivi possono avere un posto LMS; i membri eliminati, disattivati o nascosti no.</value></data>
+  <data name="LmsSeatAddonInactive" xml:space="preserve"><value>Il vostro dipartimento non ha un componente aggiuntivo LMS attivo, quindi nessun membro può essere abilitato.</value></data>
+  <data name="LmsSeatFailed" xml:space="preserve"><value>Non è stato possibile modificare il posto LMS. Riprovate.</value></data>
+  <data name="LmsSeatSaved" xml:space="preserve"><value>Posto LMS aggiornato.</value></data>
+  <data name="LmsAddPack" xml:space="preserve"><value>Aggiungi un pacchetto</value></data>
+  <data name="LmsSeatBulkHeading" xml:space="preserve"><value>Posti LMS</value></data>
+  <data name="LmsSeatBulkGroup" xml:space="preserve"><value>Gruppo</value></data>
+  <data name="LmsSeatBulkEnable" xml:space="preserve"><value>Abilita gruppo</value></data>
+  <data name="LmsSeatBulkDisable" xml:space="preserve"><value>Disabilita gruppo</value></data>
+  <data name="LmsSeatBulkResult" xml:space="preserve"><value>{0} modificati, {1} già impostati, {2} saltati perché non attivi, {3} rifiutati per mancanza di posti.</value></data>
+  <data name="LmsSeatDormant" xml:space="preserve"><value>{0} posti appartengono a membri non più attivi e non sono conteggiati.</value></data>
+  <data name="LmsManagePacks" xml:space="preserve"><value>Gestisci pacchetti</value></data>
+  <data name="LmsSettingsHeading" xml:space="preserve"><value>Pacchetti e posti LMS</value></data>
+  <data name="LmsSettingsNotPurchased" xml:space="preserve"><value>Il vostro dipartimento non ha acquistato il componente aggiuntivo LMS.</value></data>
+  <data name="LmsSettingsLapsed" xml:space="preserve"><value>Il componente aggiuntivo LMS è terminato. Registri, certificati e libretti formativi restano disponibili ed esportabili.</value></data>
+  <data name="LmsSettingsGrace" xml:space="preserve"><value>Un pagamento non è andato a buon fine. L'LMS continua a funzionare fino al {0} mentre il pagamento viene ritentato.</value></data>
 </root>

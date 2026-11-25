@@ -14,5 +14,17 @@ namespace Resgrid.Web.Areas.User.Models
 		public MessageTypes MessageType { get; set; }
 		public SelectList Types { get; set; }
 		public SelectList Shifts { get; set; }
+
+		/// <summary>The LMS credential-status audience is available (Training T3, LMS add-on): the picker shows.</summary>
+		public bool CredentialAudienceAvailable { get; set; }
+
+		/// <summary>Person-scoped certification types for the credential-status audience picker.</summary>
+		public SelectList CertificationTypes { get; set; }
+
+		/// <summary>The LMS event-roster audience is available (Training T4, LMS add-on): the class picker shows.</summary>
+		public bool RosterAudienceAvailable { get; set; }
+
+		/// <summary>Recent and upcoming class sessions for the event-roster audience picker.</summary>
+		public System.Collections.Generic.List<EventRosterAudienceSession> RosterSessions { get; set; } = new System.Collections.Generic.List<EventRosterAudienceSession>();
 	}
 }

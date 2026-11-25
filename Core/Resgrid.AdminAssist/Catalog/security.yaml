@@ -1306,6 +1306,171 @@
       "Availability": "available"
     },
     {
+      "Id": "permission.AuthorProtocols",
+      "AreaId": "security",
+      "LabelKey": "Permission.AuthorProtocols",
+      "HelpKey": "PermissionHelp.AuthorProtocols",
+      "Binding": "PermissionTypes.AuthorProtocols",
+      "ValueType": "permission",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Security",
+        "Action": "Index",
+        "Field": "AuthorProtocols"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.PermissionTiming",
+        "ReversibilityKey": "Impact.PermissionReversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "permission.AuthorProtocols",
+      "DefaultValue": "No permission row: department admins only",
+      "AllowedValues": "Actions 0, 1, 2 and selected department role IDs for action 2; no group lock. Action 1 gives every group admin the right across the whole library",
+      "EvidenceSource": "ClaimsLogic.AddProtocolClaims (Protocols:Create and Protocols:Update) on the MVC ProtocolsController New, Copy, Import, Edit, SaveDraft, StartDraft, DiscardDraft, Submit, SetDisabled, Export and Categories; ProtocolAccessService reads the same row (ProtocolReader.MayAuthor) for the library, v4, search and workers, so authors also see drafts, the review queue and every audience",
+      "Availability": "available"
+    },
+    {
+      "Id": "permission.ApproveProtocols",
+      "AreaId": "security",
+      "LabelKey": "Permission.ApproveProtocols",
+      "HelpKey": "PermissionHelp.ApproveProtocols",
+      "Binding": "PermissionTypes.ApproveProtocols",
+      "ValueType": "permission",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Security",
+        "Action": "Index",
+        "Field": "ApproveProtocols"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.PermissionTiming",
+        "ReversibilityKey": "Impact.PermissionReversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "permission.ApproveProtocols",
+      "DefaultValue": "No permission row: department admins only",
+      "AllowedValues": "Actions 0, 1, 2 and selected department role IDs for action 2; no group lock. Action 1 gives every group admin the right across the whole library. A category's approval steps can also name the member or role who decides each step",
+      "EvidenceSource": "ClaimsLogic.AddProtocolClaims (Protocols:Approve and Protocols:Delete) on the MVC ProtocolsController Approve, ApproveWithPasskey, Reject, Publish, Retire, Delete, SaveCategory and DeleteCategory; ProtocolAccessService (ProtocolReader.MayApprove) for approval steps, \"reviewed, no change\" stamps (RecordReview, also open to the protocol's owner) and a protocol's legal hold. Approvals and stamps are L2 signatures through ISignatureService bound to the version's content hash; setting 134 can require a passkey",
+      "Availability": "available"
+    },
+    {
+      "Id": "permission.ManageProtocolAcknowledgments",
+      "AreaId": "security",
+      "LabelKey": "Permission.ManageProtocolAcknowledgments",
+      "HelpKey": "PermissionHelp.ManageProtocolAcknowledgments",
+      "Binding": "PermissionTypes.ManageProtocolAcknowledgments",
+      "ValueType": "permission",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Security",
+        "Action": "Index",
+        "Field": "ManageProtocolAcknowledgments"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.PermissionTiming",
+        "ReversibilityKey": "Impact.PermissionReversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "permission.ManageProtocolAcknowledgments",
+      "DefaultValue": "No permission row: department admins only",
+      "AllowedValues": "Actions 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "ClaimsLogic.AddProtocolClaims (Protocols:Assign) and ProtocolAccessService (ProtocolReader.CanManageAcknowledgments); no protocol screen or API reads it yet, read-and-sign assignment arrives with Protocols P2",
+      "Availability": "available"
+    },
+    {
+      "Id": "permission.ManageCourses",
+      "AreaId": "security",
+      "LabelKey": "Permission.ManageCourses",
+      "HelpKey": "PermissionHelp.ManageCourses",
+      "Binding": "PermissionTypes.ManageCourses",
+      "ValueType": "permission",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Security",
+        "Action": "Index",
+        "Field": "ManageCourses"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.PermissionTiming",
+        "ReversibilityKey": "Impact.PermissionReversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "permission.ManageCourses",
+      "DefaultValue": "No permission row: department admins only",
+      "AllowedValues": "Actions 0, 1, 2 and selected department role IDs for action 2; no group lock. A course's owner rows can also give one member edit, assign or report rights on that course",
+      "EvidenceSource": "LmsGateService.GetActorAsync (LmsActor.MayManage) on the MVC CoursesController library, builder, lifecycle, assignment, media, question bank, storage and report actions; course owner rows (LmsCourseOwners) for one course. Approvals are L2 step-up signatures through ISignatureService (SignatureUse.CourseApproval) bound to the course version's content hash. Also allows assigning Resgrid Academy lessons and role paths",
+      "Availability": "available"
+    },
+    {
+      "Id": "permission.GradeAssessments",
+      "AreaId": "security",
+      "LabelKey": "Permission.GradeAssessments",
+      "HelpKey": "PermissionHelp.GradeAssessments",
+      "Binding": "PermissionTypes.GradeAssessments",
+      "ValueType": "permission",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Security",
+        "Action": "Index",
+        "Field": "GradeAssessments"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.PermissionTiming",
+        "ReversibilityKey": "Impact.PermissionReversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "permission.GradeAssessments",
+      "DefaultValue": "No permission row: department admins only",
+      "AllowedValues": "Actions 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "LmsGateService.GetActorAsync (LmsActor.MayGrade) on the MVC CoursesController Grading, Grade and ItemAnalysis actions; LmsAssessmentService.GradeAsync refuses a grader's own attempt",
+      "Availability": "available"
+    },
+    {
       "Id": "permission.CreateDocument",
       "AreaId": "security",
       "LabelKey": "Permission.CreateDocument",
@@ -7061,9 +7226,11 @@
         "permission.AddPersonnel",
         "permission.AdjustInventory",
         "permission.AmendRecords",
+        "permission.ApproveProtocols",
         "permission.ApproveRecords",
         "permission.ApproveTimeReports",
         "permission.AssignTraining",
+        "permission.AuthorProtocols",
         "permission.BreakGlassProtectedData",
         "permission.CanSeePersonnelLocations",
         "permission.CanSeeUnitLocations",
@@ -7107,6 +7274,7 @@
         "permission.ManageDepartmentImport",
         "permission.ManageRecordImports",
         "permission.ManagePayDataReporting",
+        "permission.ManageProtocolAcknowledgments",
         "permission.ManageRecordDefinitions",
         "permission.ManageRecordDisclosures",
         "permission.ManageRecordLegalHold",
@@ -7324,6 +7492,82 @@
       "RuleIds": [],
       "Prominence": "Detail",
       "DocsPath": "/web-app/help-setup/"
+    },
+    {
+      "Id": "document-sealing",
+      "AreaId": "security",
+      "LabelKey": "Feature.document-sealing",
+      "PurposeKey": "FeaturePurpose.document-sealing",
+      "ValueKey": "FeatureValue.document-sealing",
+      "ExampleKey": "FeatureExample.document-sealing",
+      "AdoptionKey": "FeatureSetup.document-sealing",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "SealedDocuments",
+        "Action": "Verify"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/signatures/verify/"
+    },
+    {
+      "Id": "external-signatures",
+      "AreaId": "security",
+      "LabelKey": "Feature.external-signatures",
+      "PurposeKey": "FeaturePurpose.external-signatures",
+      "ValueKey": "FeatureValue.external-signatures",
+      "ExampleKey": "FeatureExample.external-signatures",
+      "AdoptionKey": "FeatureSetup.external-signatures",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Signatures",
+        "Action": "ESign"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/signatures/external/"
+    },
+    {
+      "Id": "multi-signer-signatures",
+      "AreaId": "security",
+      "LabelKey": "Feature.multi-signer-signatures",
+      "PurposeKey": "FeaturePurpose.multi-signer-signatures",
+      "ValueKey": "FeatureValue.multi-signer-signatures",
+      "ExampleKey": "FeatureExample.multi-signer-signatures",
+      "AdoptionKey": "FeatureSetup.multi-signer-signatures",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Signatures",
+        "Action": "Mine"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/signatures/multi-signer/"
+    },
+    {
+      "Id": "approval-chains",
+      "AreaId": "security",
+      "LabelKey": "Feature.approval-chains",
+      "PurposeKey": "FeaturePurpose.approval-chains",
+      "ValueKey": "FeatureValue.approval-chains",
+      "ExampleKey": "FeatureExample.approval-chains",
+      "AdoptionKey": "FeatureSetup.approval-chains",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Approvals",
+        "Action": "Chains"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/signatures/approval-chains/"
     }
   ],
   "Rules": [
@@ -7827,6 +8071,61 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "permission.AuthorProtocols",
+      "Locale": "en",
+      "TitleKey": "Permission.AuthorProtocols",
+      "Body": "Author Protocols. Allows creating, copying and importing protocols, editing their library fields, triggers, questions and audience, writing drafts and submitting them for approval, disabling protocols and exporting the library. Authors also see drafts, the review queue and every protocol whatever its audience. Approving and publishing need Approve Protocols. With no saved rule only department administrators may.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "permission-authorprotocols",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "permission.ApproveProtocols",
+      "Locale": "en",
+      "TitleKey": "Permission.ApproveProtocols",
+      "Body": "Approve Protocols. Allows approving or rejecting submitted protocol versions, publishing them now or on a set date, recording \"reviewed, no change\", retiring and deleting protocols, placing a protocol's legal hold, and managing categories and their approval steps. Each approval is signed with a fresh step-up or a passkey. With no saved rule only department administrators may.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "permission-approveprotocols",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "permission.ManageProtocolAcknowledgments",
+      "Locale": "en",
+      "TitleKey": "Permission.ManageProtocolAcknowledgments",
+      "Body": "Manage Protocol Acknowledgments. Reserved for read-and-sign acknowledgments: who will assign protocols for members to read and sign, exempt members and read the acknowledgment report. Read-and-sign is not available yet, so saving this rule changes nothing today. With no saved rule only department administrators may.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "permission-manageprotocolacknowledgments",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "permission.ManageCourses",
+      "Locale": "en",
+      "TitleKey": "Permission.ManageCourses",
+      "Body": "Manage Courses. Allows building courses and question banks, uploading course video, submitting, approving and publishing course versions, assigning courses and reading course results. Each approval is signed with a fresh step-up. Courses are part of the LMS add-on, which is not available yet; Resgrid Academy lessons can be assigned with this permission or Assign Training. With no saved rule only department administrators may.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "permission-managecourses",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "permission.GradeAssessments",
+      "Locale": "en",
+      "TitleKey": "Permission.GradeAssessments",
+      "Body": "Grade Assessments. Allows grading free-text answers waiting in the grading queue and reading assessment item analysis. Nobody grades their own attempt. Part of the LMS add-on, which is not available yet. With no saved rule only department administrators may.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "permission-gradeassessments",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
     },
     {
       "Id": "permission.CreateDocument",
@@ -9807,6 +10106,50 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-10-22T00:00:00Z"
+    },
+    {
+      "Id": "document-sealing",
+      "Locale": "en",
+      "TitleKey": "Feature.document-sealing",
+      "Body": "Sealed documents and Verify a document Certificates, transcripts, protocol PDFs and signed documents are sealed with a timestamp so anyone can check they have not changed; officers can check any PDF under Verify a document. Hand out documents that outside agencies and courts can trust, and spot altered copies. An inspector checks that a certificate a member brought from another department was issued by Resgrid and has not been edited. Open Verify a document and upload a PDF. Sealing itself is set up by the operator of the installation; until then documents are marked sealing pending.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "document-sealing",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "external-signatures",
+      "Locale": "en",
+      "TitleKey": "Feature.external-signatures",
+      "Body": "External signatures Customers, occupants and outside parties sign time reports, bids, contracts, inspections and custody transfers in person on a member's device, or by a Resgrid link with a one-time code. Replace typed names with signatures the other party can verify, sealed with an audit page. A crew boss hands the tablet to the customer's representative to sign the daily shift ticket before leaving the incident. Open the document and use Hand device to signer, or request a signature by link. For links, an admin adds the department's Documenso team token under E-sign settings; links come with the add-on that owns the document.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "external-signatures",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "multi-signer-signatures",
+      "Locale": "en",
+      "TitleKey": "Feature.multi-signer-signatures",
+      "Body": "Multi-signer signatures Several people sign one document in order: members at level 1 or 2, witnesses, certifying officials, evaluators and outside parties, with reminders until everyone has signed. Sign-offs that need more than one person are recorded in the right order, bound to the exact content, and sealed with an audit page when complete. A training officer evaluates a skill at level 2, then the certifying official signs; each is reminded when it is their turn. Members find what is waiting for them under My signatures and on their home page; requests start from the document that needs signing.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "multi-signer-signatures",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "approval-chains",
+      "Locale": "en",
+      "TitleKey": "Feature.approval-chains",
+      "Body": "Approval chains Purchases, Incident Action Plans, invoices, Cal OES MARS packages and mutual-aid agreements are approved by a chain of people in order, with amount thresholds, parallel steps, delegates while someone is on leave and escalation when a step stalls. Every approval is a level 2 signature bound to the exact content: a change voids it, a rejection needs a reason, and the completed chain seals the document. Purchases over 5,000 need the finance chief after the logistics section chief; if the finance chief does not act within 24 hours, the department admins are asked. A department admin defines a chain per kind under Approvals, Chains; members submit from the item's page or Approvals, and approvers find requests under My approvals and on their home page.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "approval-chains",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
     }
   ]
 }

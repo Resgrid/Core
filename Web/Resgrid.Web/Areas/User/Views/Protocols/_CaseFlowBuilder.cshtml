@@ -1,0 +1,82 @@
+@using Resgrid.Model
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolEditorModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    Protocols P4: the case flow (decision graph) of a Dispatch protocol, a section of the protocol editor. Steps are questions (yes/no,
+    single choice, number, free text), instructions (read-aloud, optionally played with TTS or texted to the caller) and outcomes
+    (determinant, suggested priority, response hint, post-dispatch instructions). The graph is part of the draft's content: it is
+    rendered into the version's text, hashed and approved with it, and cannot change without a new version. The builder keeps the
+    graph in the DecisionGraphJson field; the server validates it on submit (one first step, every path to an outcome, no loops).
+*@
+@{
+    var priorities = (Model.CallPriorities ?? new List<DepartmentCallPriority>()).Where(p => !p.IsDeleted).Select(p => new { id = p.DepartmentCallPriorityId, name = p.Name }).ToList();
+}
+<div class="ibox" id="caseFlowSection">
+    <div class="ibox-title"><h5><i class="fa fa-sitemap" aria-hidden="true"></i> @localizer["CaseFlowHeader"]</h5></div>
+    <div class="ibox-content">
+        @if (Model.ContentLocked)
+        {
+            <p class="text-muted"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["CaseFlowLockedNotice"]</p>
+        }
+        else
+        {
+            <p class="text-muted">@localizer["CaseFlowHelp"]</p>
+            <p class="text-muted small"><i class="fa fa-balance-scale" aria-hidden="true"></i> @localizer["CaseFlowLicensingNotice"]</p>
+            <input type="hidden" id="DecisionGraphJson" name="DecisionGraphJson" value="@Model.DecisionGraphJson" />
+            <div class="rgw-toolbar" role="toolbar" aria-label="@localizer["CaseFlowHeader"]">
+                <button type="button" class="btn btn-sm btn-default" data-caseflow-add="1"><i class="fa fa-question-circle" aria-hidden="true"></i> @localizer["CaseFlowAddQuestion"]</button>
+                <button type="button" class="btn btn-sm btn-default" data-caseflow-add="2"><i class="fa fa-bullhorn" aria-hidden="true"></i> @localizer["CaseFlowAddInstruction"]</button>
+                <button type="button" class="btn btn-sm btn-default" data-caseflow-add="3"><i class="fa fa-flag-checkered" aria-hidden="true"></i> @localizer["CaseFlowAddOutcome"]</button>
+            </div>
+            <div id="caseFlowProblems" class="alert alert-warning m-t-sm" role="status" hidden></div>
+            <div id="caseFlowSteps" class="rgw-builder-list m-t-sm" aria-live="polite"></div>
+            <p id="caseFlowEmpty" class="text-muted">@localizer["CaseFlowEmpty"]</p>
+            <script type="application/json" id="caseFlowData">@Html.ScriptJson(new
+            {
+                priorities,
+                text = new
+                {
+                    question = localizer["GraphLabelKeyQuestion"].Value,
+                    entryQuestion = localizer["GraphLabelEntryQuestion"].Value,
+                    instruction = localizer["GraphLabelInstruction"].Value,
+                    outcome = localizer["GraphLabelOutcome"].Value,
+                    first = localizer["CaseFlowFirstStep"].Value,
+                    makeFirst = localizer["CaseFlowMakeFirst"].Value,
+                    remove = localizer["RemoveButton"].Value,
+                    label = localizer["CaseFlowStepLabel"].Value,
+                    text = localizer["CaseFlowStepText"].Value,
+                    instructionText = localizer["CaseFlowInstructionText"].Value,
+                    stage = localizer["CaseFlowStage"].Value,
+                    stageEntry = localizer["GraphLabelEntryQuestion"].Value,
+                    stageKey = localizer["GraphLabelKeyQuestion"].Value,
+                    answerType = localizer["CaseFlowAnswerType"].Value,
+                    yesNo = localizer["CaseFlowTypeYesNo"].Value,
+                    choice = localizer["CaseFlowTypeChoice"].Value,
+                    number = localizer["CaseFlowTypeNumber"].Value,
+                    freeText = localizer["CaseFlowTypeFreeText"].Value,
+                    yes = localizer["GraphLabelYes"].Value,
+                    no = localizer["GraphLabelNo"].Value,
+                    answer = localizer["AnswerColumn"].Value,
+                    min = localizer["CaseFlowMin"].Value,
+                    max = localizer["CaseFlowMax"].Value,
+                    addAnswer = localizer["AddAnswerButton"].Value,
+                    next = localizer["CaseFlowNext"].Value,
+                    choose = localizer["CaseFlowChooseStep"].Value,
+                    speak = localizer["CaseFlowSpeak"].Value,
+                    caller = localizer["CaseFlowSendToCaller"].Value,
+                    determinant = localizer["GraphLabelDeterminant"].Value,
+                    priority = localizer["GraphLabelPriority"].Value,
+                    noPriority = localizer["CaseFlowNoPriority"].Value,
+                    response = localizer["GraphLabelResponse"].Value,
+                    postDispatch = localizer["GraphLabelPostDispatch"].Value,
+                    problems = localizer["CaseFlowProblems"].Value,
+                    noRoot = localizer["CaseFlowProblemRoot"].Value,
+                    noNext = localizer["CaseFlowProblemNext"].Value,
+                    noDeterminant = localizer["CaseFlowProblemDeterminant"].Value,
+                    loop = localizer["CaseFlowProblemLoop"].Value,
+                    unreachable = localizer["CaseFlowProblemUnreachable"].Value
+                }
+            })</script>
+        }
+    </div>
+</div>

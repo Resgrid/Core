@@ -44,7 +44,8 @@ namespace Resgrid.Tests.Services
 				_questionRepository,
 				_communicationServiceMock.Object,
 				_departmentServiceMock.Object,
-				_departmentSettingsServiceMock.Object
+				_departmentSettingsServiceMock.Object,
+				Mock.Of<IKnowledgeIndexQueue>()
 			);
 		}
 

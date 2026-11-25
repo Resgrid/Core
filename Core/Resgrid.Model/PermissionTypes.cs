@@ -322,7 +322,37 @@ ViewChecklistResults = 113,
 		AssignTraining = 126,
 
 		/// <summary>Training T0 (registry 127): archive, restore and delete trainings. No-row default: the Create Training row.</summary>
-		DeleteTraining = 127
+		DeleteTraining = 127,
+
+		/// <summary>
+		/// Protocols P1 (registry 128): author protocols: create them, edit their library fields, triggers and questions, and write
+		/// and submit drafts. No-row default: department admins only (who keep every protocol right).
+		/// </summary>
+		AuthorProtocols = 128,
+
+		/// <summary>
+		/// Protocols P1 (registry 129): approve and publish protocol versions (an L2 signature per approval), schedule them,
+		/// record "reviewed, no change", retire and delete protocols. No-row default: department admins only.
+		/// </summary>
+		ApproveProtocols = 129,
+
+		/// <summary>
+		/// Protocols P2 (registry 130, added with P1): manage read-and-sign acknowledgments (assign, exempt, report). No-row
+		/// default: department admins only.
+		/// </summary>
+		ManageProtocolAcknowledgments = 130,
+
+		/// <summary>
+		/// Training T2 (registry 132): author, publish and retire LMS courses and question banks, assign them and read their
+		/// reports. Needs the LMS add-on to act (§17.3). No-row default: department admins only.
+		/// </summary>
+		ManageCourses = 132,
+
+		/// <summary>
+		/// Training T2 (registry 133): the manual grading queue for short answers, per-question answers of attempts and item
+		/// analysis (R-T12: the training-supervisor right). No-row default: department admins only.
+		/// </summary>
+		GradeAssessments = 133
 	}
 
 }

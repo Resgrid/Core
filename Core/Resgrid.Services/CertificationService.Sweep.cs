@@ -57,6 +57,13 @@ namespace Resgrid.Services
 			// ---- Pass 1 + 2: personnel records ---------------------------------------------------------------------
 			var records = (await _personnelCertificationRepository.GetExpiringAsync(departmentId, horizon.AddDays(1)))?
 				.Where(r => r.IsTyped && types.ContainsKey(r.DepartmentCertificationTypeId.Value) && r.UserId != null && activeMembers.Contains(r.UserId)).ToList() ?? new List<PersonnelCertification>();
+			// A member renewed into a later cycle (a newer record of the same type, T1/T3) gets no expiring or expired news about the
+			// earlier one: its status still flips to Expired, quietly.
+			var holders = records.Select(r => r.UserId).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+			var cycles = records.Count == 0 ? new Dictionary<string, List<PersonnelCertification>>(StringComparer.OrdinalIgnoreCase)
+				// A long holder list would exceed the parameter limit of an IN list: read the department's records instead.
+				: (await GetCertificationsForDepartmentAsync(departmentId, holders.Count <= 500 ? holders : null) ?? new List<PersonnelCertification>())
+					.Where(r => r?.UserId != null).GroupBy(r => r.UserId, StringComparer.OrdinalIgnoreCase).ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
 			foreach (var record in records)
 			{
 				cancellationToken.ThrowIfCancellationRequested();
@@ -65,8 +72,24 @@ namespace Resgrid.Services
 				var live = record.Status is (int)PersonnelCertificationStatuses.Active or (int)PersonnelCertificationStatuses.Trainee or (int)PersonnelCertificationStatuses.PendingVerification;
 				if (!live) continue;
 				var days = (int)(record.ExpiresOn.Value.Date - today).TotalDays;
+				var superseded = CertificationCycleRules.IsSupersededByLaterCycle(record, cycles.TryGetValue(record.UserId, out var memberCycles) ? memberCycles : null);
 
-				if (days < 0)
+				if (days < 0 && superseded)
+				{
+					var before = Snapshot(record);
+					record.Status = (int)PersonnelCertificationStatuses.Expired;
+					record.StatusChangedOn = DateTime.UtcNow;
+					record.StatusChangedByUserId = SystemUserId;
+					record.StatusReason = "expired";
+					await ProtectRecordBeforeSaveAsync(record, departmentId, cancellationToken);
+					await _personnelCertificationRepository.SaveOrUpdateAsync(record, cancellationToken);
+					Audit(departmentId, SystemUserId, AuditLogTypes.CertificationStatusChanged, before, Snapshot(record));
+				}
+				else if (superseded)
+				{
+					continue;
+				}
+				else if (days < 0)
 				{
 					var before = Snapshot(record);
 					record.Status = (int)PersonnelCertificationStatuses.Expired;

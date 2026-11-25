@@ -39,9 +39,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> _localizer;
 
+		private readonly IDocumentSealingService _sealing;
+
 		public DisclosuresController(IRecordsDisclosureService disclosures, IRecordsCutoverService cutoverService, IDepartmentsService departmentsService,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer, IRecordsAuthorizationService authorization)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer, IRecordsAuthorizationService authorization, IDocumentSealingService sealing)
 		{
+			_sealing = sealing;
 			_disclosures = disclosures;
 			_authorization = authorization;
 			_cutoverService = cutoverService;
@@ -267,7 +270,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 		/// <summary>The produced artifact as it was released, so a department can hand over exactly what it recorded handing over.</summary>
 		[HttpGet]
-		public async Task<IActionResult> Download(string id, string productionId, string format = "zip")
+		public async Task<IActionResult> Download(string id, string productionId, string format = "zip", bool sealedCopy = false)
 		{
 			var production = await LoadProductionAsync(id, productionId);
 			if (production == null || string.IsNullOrWhiteSpace(production.ArtifactJson))
@@ -277,6 +280,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var packet = await _disclosures.DownloadAsync(DepartmentId, UserId, productionId, format);
 				Response.Headers["Cache-Control"] = "no-store"; Response.Headers["X-Content-Type-Options"] = "nosniff";
+				// e-Signature S1: the optional sealed release copy (the PDF as released, sealed as given; Records code unchanged).
+				if (sealedCopy && string.Equals(format, "pdf", StringComparison.OrdinalIgnoreCase) && SealingPolicy.LooksLikePdf(packet.Data))
+				{
+					var outcome = await _sealing.SealPdfAsync(new SealPdfRequest
+					{
+						DepartmentId = DepartmentId,
+						SubjectKind = SignatureSubjectKinds.RecordsDisclosure,
+						SubjectId = productionId,
+						RevisionId = id,
+						Title = packet.FileName,
+						FileName = packet.FileName,
+						Pdf = packet.Data,
+						LongTermSubject = true,
+						RequestedByUserId = UserId
+					});
+					Response.Headers["X-Resgrid-Seal"] = outcome.Sealed ? "sealed" : "pending";
+					return File(outcome.Bytes, packet.ContentType, packet.FileName);
+				}
 				return File(packet.Data, packet.ContentType, packet.FileName);
 			}
 			catch (UnauthorizedAccessException) { return Forbid(); }

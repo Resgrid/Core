@@ -1,0 +1,68 @@
+@model Resgrid.Web.Areas.User.Models.Signatures.ESignSettingsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureText
+@*
+    The department's e-sign platform account (e-Signature S2): its Documenso team id and team-scoped API token (stored encrypted
+    with the department key, shown only by its last four characters), and the cluster's sealing configuration (read only).
+    Department admins; saving needs a recent step-up.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + signatureText["ESignTitle"];
+    ViewData["Section"] = "ESign";
+    ViewData["Title"] = signatureText["ESignTitle"].Value;
+    ViewData["Subtitle"] = signatureText["ESignIntro"].Value;
+    ViewData["Message"] = Model.Saved ? signatureText["ESignSaved"].Value : Model.Message;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Signatures/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-server" aria-hidden="true"></i> @signatureText["ESignClusterHeading"]</h5></div>
+        <div class="ibox-content">
+            <ul class="list-unstyled">
+                <li><i class="fa @(Model.PlatformConfigured ? "fa-check text-navy" : "fa-times text-muted")" aria-hidden="true"></i> @signatureText["ESignPlatformConfigured"] · @(Model.PlatformConfigured ? signatureText["Yes"] : signatureText["No"])</li>
+                <li><i class="fa @(Model.Sealing.SidecarConfigured ? "fa-check text-navy" : "fa-times text-muted")" aria-hidden="true"></i> @signatureText["SealingSidecar"] · @(Model.Sealing.SidecarConfigured ? signatureText["Yes"] : signatureText["No"])</li>
+                <li><i class="fa @(Model.Sealing.TimestampAuthorityConfigured ? "fa-check text-navy" : "fa-times text-muted")" aria-hidden="true"></i> @signatureText["SealingTsa"] · @(Model.Sealing.TimestampAuthorityConfigured ? signatureText["Yes"] : signatureText["No"])</li>
+                <li><i class="fa @(Model.Sealing.SigningKeyConfigured ? "fa-check text-navy" : "fa-times text-muted")" aria-hidden="true"></i> @signatureText["SealingKey"] · @(Model.Sealing.SigningKeyConfigured ? signatureText["Yes"] : signatureText["No"])</li>
+                <li><i class="fa @(Model.Sealing.StoreConfigured ? "fa-check text-navy" : "fa-times text-muted")" aria-hidden="true"></i> @signatureText["SealingStore"] · @(Model.Sealing.StoreConfigured ? signatureText["Yes"] : signatureText["No"])</li>
+            </ul>
+            <p class="text-muted small">@signatureText["ESignClusterHelp"]</p>
+        </div>
+    </div>
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-key" aria-hidden="true"></i> @signatureText["ESignAccountHeading"]</h5></div>
+        <div class="ibox-content">
+            <form method="post" asp-area="User" asp-controller="Signatures" asp-action="ESign">
+                @Html.AntiForgeryToken()
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label class="control-label" for="TeamId">@signatureText["ESignTeamIdLabel"]</label>
+                        <input class="form-control" id="TeamId" name="teamId" maxlength="128" value="@Model.TeamId" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="ApiToken">@signatureText["ESignTokenLabel"]</label>
+                        <input class="form-control" id="ApiToken" name="apiToken" type="password" maxlength="512" autocomplete="new-password"
+                               placeholder="@(Model.HasToken ? "••••" + Model.TokenHint : string.Empty)" />
+                        <span class="help-block small">@signatureText["ESignTokenHelp"]</span>
+                    </div>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" name="isActive" value="true" @(Model.IsActive ? "checked" : null) /> @signatureText["ESignActiveLabel"]</label>
+                </div>
+                <div class="rgw-wizard-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @signatureText["SaveButton"]</button>
+                    @if (Model.HasToken)
+                    {
+                        <button type="submit" name="remove" value="true" class="btn btn-default"><i class="fa fa-trash" aria-hidden="true"></i> @signatureText["ESignRemoveButton"]</button>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

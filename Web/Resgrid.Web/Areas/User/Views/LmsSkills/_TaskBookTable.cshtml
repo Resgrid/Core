@@ -1,0 +1,34 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsSkills
+@model List<LmsTaskBook>
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsSkills.LmsSkills> localizer
+@* A list of task books (position, trainee, dates, status pill with icon and text). ViewData["Page"] is the page view (names, dates). *@
+@{
+    var page = ViewData["Page"] as LmsSkillPageView;
+}
+<div class="table-responsive">
+    <table class="table rgw-table">
+        <thead><tr><th>@localizer["Skl.Position"]</th><th>@localizer["Skl.Trainee"]</th><th>@localizer["Skl.InitiatedOn"]</th><th>@localizer["Skl.ValidUntil"]</th><th>@localizer["Skl.Col.Status"]</th><th class="rgw-row-actions">@localizer["Skl.Actions"]</th></tr></thead>
+        <tbody>
+            @foreach (var book in Model)
+            {
+                var (css, icon) = book.Status switch
+                {
+                    (int)LmsTaskBookStatuses.Certified => ("label-primary", "fa-certificate"),
+                    (int)LmsTaskBookStatuses.AwaitingCertification => ("label-info", "fa-pencil-square-o"),
+                    (int)LmsTaskBookStatuses.Expired => ("label-danger", "fa-clock-o"),
+                    (int)LmsTaskBookStatuses.Cancelled => ("label-default", "fa-ban"),
+                    _ => ("label-warning", "fa-book")
+                };
+                <tr>
+                    <td>@book.PositionCode<span class="rgw-sub">@book.Name</span></td>
+                    <td>@(page?.NameOf(book.UserId) ?? book.UserId)</td>
+                    <td>@(page?.Date(book.InitiatedOn))</td>
+                    <td>@(page?.Date(book.ExpiresOn))</td>
+                    <td><span class="label @css"><i class="fa @icon" aria-hidden="true"></i> @localizer["Skl.TaskBookStatus." + (LmsTaskBookStatuses)book.Status]</span></td>
+                    <td class="rgw-row-actions"><a class="btn btn-white btn-xs" asp-controller="LmsSkills" asp-action="TaskBook" asp-route-area="User" asp-route-id="@book.LmsTaskBookId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["Skl.Open"]</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

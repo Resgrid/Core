@@ -1,0 +1,17 @@
+@model string
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@* A protocol's status pill (P1): the key from ProtocolsController.StatusKey, icon paired with text. *@
+@{
+    var (css, icon, text) = Model switch
+    {
+        "published" => ("label-primary", "fa-check", localizer["StatusPublished"].Value),
+        "review" => ("label-warning", "fa-hourglass-half", localizer["StatusInReview"].Value),
+        "approved" => ("label-info", "fa-thumbs-up", localizer["StatusApproved"].Value),
+        "scheduled" => ("label-info", "fa-calendar", localizer["StatusScheduled"].Value),
+        "retired" => ("label-default", "fa-archive", localizer["StatusRetired"].Value),
+        "disabled" => ("label-default", "fa-pause", localizer["DisabledLabel"].Value),
+        "deleted" => ("label-danger", "fa-trash", localizer["DeletedLabel"].Value),
+        _ => ("label-default", "fa-pencil", localizer["StatusDraft"].Value)
+    };
+}
+<span class="label @css"><i class="fa @icon" aria-hidden="true"></i> @text</span>

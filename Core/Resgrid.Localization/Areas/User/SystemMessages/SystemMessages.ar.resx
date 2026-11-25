@@ -175,4 +175,35 @@
   <data name="SecurityNoticeWhere" xml:space="preserve"><value>المكان: {0}</value></data>
   <data name="SecurityNoticeNotYou" xml:space="preserve"><value>إذا لم تكن أنت، فأعد تعيين كلمة المرور الآن على {0}، ثم سجّل الدخول وراجع طرق تسجيل الدخول الخاصة بك. لا يطلب Resgrid أبدًا رمزًا أو كلمة مرور عبر البريد الإلكتروني.</value></data>
   <data name="SecurityNoticeFooter" xml:space="preserve"><value>هذا إشعار أمني تلقائي بشأن حسابك على Resgrid.</value></data>
+  <data name="SigningLinkEmailSubject" xml:space="preserve">
+    <value>{0}: مستند بانتظار توقيعك</value>
+  </data>
+  <data name="SigningLinkEmailBody" xml:space="preserve">
+    <value>مرحبًا {0}،
+
+تطلب منك {1} مراجعة "{2}" وتوقيعه.
+
+افتح هذا الرابط للتوقيع:
+{3}
+
+يمكن استخدام الرابط مرة واحدة وتنتهي صلاحيته في {4}. قبل التوقيع ستؤكد رمزًا لمرة واحدة.
+
+إذا لم تكن تتوقع هذه الرسالة فيمكنك تجاهلها.</value>
+  </data>
+  <data name="SigningLinkSmsBody" xml:space="preserve">
+    <value>تطلب منك {0} توقيع "{1}": {2}</value>
+  </data>
+  <data name="SigningCodeEmailSubject" xml:space="preserve">
+    <value>{0}: رمز التوقيع الخاص بك</value>
+  </data>
+  <data name="SigningCodeEmailBody" xml:space="preserve">
+    <value>مرحبًا {0}،
+
+رمزك لتوقيع المستند من {3} هو {1}. تنتهي صلاحيته خلال {2} دقيقة.
+
+إذا لم تطلب هذا الرمز فيمكنك تجاهل هذه الرسالة.</value>
+  </data>
+  <data name="SigningCodeSmsBody" xml:space="preserve">
+    <value>رمز التوقيع الخاص بك لدى {2} هو {0}. تنتهي صلاحيته خلال {1} دقيقة.</value>
+  </data>
 </root>

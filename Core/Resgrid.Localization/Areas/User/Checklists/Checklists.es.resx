@@ -716,4 +716,13 @@
   <data name="HelpFieldScheduleName" xml:space="preserve"><value>Aparece en la lista de pendientes, así que hágalo reconocible de un vistazo.</value></data>
   <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>Cuánto tiempo tiene el personal para terminar la comprobación desde que se abre. Después cuenta como perdida.</value></data>
   <data name="HelpFieldAssignment" xml:space="preserve"><value>El enrutamiento automático envía la comprobación a quien tenga el objetivo. Elija persona, rol, grupo o unidad para anularlo.</value></data>
+  <data name="The witness signs at L2 (a fresh step-up or a passkey), bound to the content of the completion" xml:space="preserve">
+    <value>El testigo firma en L2 (una nueva verificación de identidad o una llave de acceso), con la firma vinculada al contenido de la ejecución completada</value>
+  </data>
+  <data name="WitnessSignatureRequired" xml:space="preserve">
+    <value>Esta lista de verificación debe atestiguarse con una firma. Abra la ejecución y firme como testigo.</value>
+  </data>
+  <data name="WitnessSignatureRefused" xml:space="preserve">
+    <value>No se registró la firma del testigo, por lo que la lista de verificación sigue pendiente de testigo.</value>
+  </data>
 </root>

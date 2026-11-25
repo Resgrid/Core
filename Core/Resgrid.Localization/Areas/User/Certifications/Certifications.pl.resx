@@ -230,4 +230,9 @@
   <data name="SelectMember" xml:space="preserve"><value>Wybierz członka</value></data>
   <data name="SelectType" xml:space="preserve"><value>Wybierz typ certyfikatu</value></data>
   <data name="CertificationNameRequired" xml:space="preserve"><value>Wprowadź nazwę certyfikatu.</value></data>
+  <data name="RenewalHoursLabel" xml:space="preserve"><value>Godziny do odnowienia</value></data>
+  <data name="RenewalHoursValue" xml:space="preserve"><value>Zaliczono {0} godz. ({1} godz. z karty szkoleń)</value></data>
+  <data name="UncreditedLedgerHours" xml:space="preserve"><value>{0} godz. w powiązanych kategoriach jeszcze niezaliczonych</value></data>
+  <data name="ApplyHistoryLink" xml:space="preserve"><value>Zalicz historię do certyfikacji</value></data>
+  <data name="FromTranscript" xml:space="preserve"><value>Z karty szkoleń</value></data>
 </root>

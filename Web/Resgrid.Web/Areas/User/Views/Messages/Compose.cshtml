@@ -67,6 +67,70 @@
 								</div>
 							</div>
 						</div>
+						@if (Model.CredentialAudienceAvailable && Model.CertificationTypes != null)
+						{
+							@* Training T3 (LMS): members by the status of one certification; added to the recipients chosen above. *@
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="credentialTypeId">@localizer["CredentialAudienceLabel"]:</label>
+								<div class="col-sm-10">
+									<div class="row">
+										<div class="col-xs-5">
+											<select id="credentialTypeId" name="credentialTypeId" class="form-control">
+												<option value="">@localizer["CredentialAudienceNone"]</option>
+												@foreach (var type in Model.CertificationTypes)
+												{
+													<option value="@type.Value">@type.Text</option>
+												}
+											</select>
+										</div>
+										<div class="col-xs-4">
+											<label class="sr-only" for="credentialStatus">@localizer["CredentialAudienceStatus"]</label>
+											<select id="credentialStatus" name="credentialStatus" class="form-control">
+												<option value="@((int)Resgrid.Model.CredentialAudienceStatuses.Expired)">@localizer["CredentialAudienceExpired"]</option>
+												<option value="@((int)Resgrid.Model.CredentialAudienceStatuses.ExpiringWithin)">@localizer["CredentialAudienceExpiring"]</option>
+												<option value="@((int)Resgrid.Model.CredentialAudienceStatuses.Missing)">@localizer["CredentialAudienceMissing"]</option>
+											</select>
+										</div>
+										<div class="col-xs-3">
+											<label class="sr-only" for="credentialDays">@localizer["CredentialAudienceDays"]</label>
+											<input id="credentialDays" name="credentialDays" type="number" min="1" max="365" value="30" class="form-control" title="@localizer["CredentialAudienceDays"]" />
+										</div>
+									</div>
+									<span class="help-block">@localizer["CredentialAudienceHelp"]</span>
+								</div>
+							</div>
+						}
+						@if (Model.RosterAudienceAvailable && Model.RosterSessions.Count > 0)
+						{
+							@* Training T4 (LMS): members of one class session by roster status; added to the recipients chosen above. *@
+							var askedSession = int.TryParse(Context.Request.Query["rosterSessionId"].ToString(), out var askedSessionId) ? askedSessionId : 0;
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="rosterSessionId">@localizer["RosterAudienceLabel"]:</label>
+								<div class="col-sm-10">
+									<div class="row">
+										<div class="col-xs-7">
+											<select id="rosterSessionId" name="rosterSessionId" class="form-control">
+												<option value="">@localizer["RosterAudienceNone"]</option>
+												@foreach (var rosterSession in Model.RosterSessions)
+												{
+													<option value="@rosterSession.SessionId" selected="@(rosterSession.SessionId == askedSession)">@rosterSession.Title (@rosterSession.StartsOn.TimeConverter(Model.Department).ToString("d"))</option>
+												}
+											</select>
+										</div>
+										<div class="col-xs-5">
+											<label class="sr-only" for="rosterStatus">@localizer["RosterAudienceStatus"]</label>
+											<select id="rosterStatus" name="rosterStatus" class="form-control">
+												<option value="@((int)Resgrid.Model.EventRosterAudienceStatuses.Enrolled)">@localizer["RosterAudienceEnrolled"]</option>
+												<option value="@((int)Resgrid.Model.EventRosterAudienceStatuses.Attended)">@localizer["RosterAudienceAttended"]</option>
+												<option value="@((int)Resgrid.Model.EventRosterAudienceStatuses.Absent)">@localizer["RosterAudienceAbsent"]</option>
+												<option value="@((int)Resgrid.Model.EventRosterAudienceStatuses.Waitlisted)">@localizer["RosterAudienceWaitlisted"]</option>
+											</select>
+										</div>
+									</div>
+									<span class="help-block">@localizer["RosterAudienceHelp"]</span>
+								</div>
+							</div>
+						}
 						<br />
 						<div class="form-group">
 							<label class="col-sm-2 control-label">@localizer["SubjectLabel"]:</label>

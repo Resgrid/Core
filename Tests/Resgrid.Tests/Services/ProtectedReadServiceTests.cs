@@ -403,7 +403,13 @@ namespace Resgrid.Tests.Services
 				// AdminAssistWorklistService, dispatch traces (v30) by AdminAssistDiagnosticSource, shared AI generations (v31) by
 				// AdminAssistConversationProtection, diagnostic runs (v32) by AdminAssistDiagnosticProtection and change plans (v33)
 				// by AdminAssistPlanProtection.
-				"AdminAssistFindings", "AdminAssistDispatchTraces", "AiGenerations", "AdminAssistDiagnosticRuns", "AdminAssistPlans"
+				"AdminAssistFindings", "AdminAssistDispatchTraces", "AiGenerations", "AdminAssistDiagnosticRuns", "AdminAssistPlans",
+				// Member wellness WL0, catalog v37: read through the generic Records resolver with WellnessProtectedFields accessors
+				// (MemberWellnessService.RevealAsync); a sealed value the caller cannot reveal shows as REDACTED.
+				"RmsResponderExposures", "RmsResponderScreeningFlags",
+				// Member wellness WL1, catalog v38: read through the generic Records resolver with MemberHealthProtectedFields accessors
+				// (MemberHealthService.RevealAsync); a sealed value the caller cannot reveal shows as REDACTED.
+				"RmsExposureIncidents", "RmsMemberInjuries", "RmsMedicalClearances"
 			};
 			// Incident Back Office, catalogs v34-v36: read through IncidentProtectionSeam with the generated
 			// IncidentBackOfficeProtectedFields accessor map of each table (IIncidentLedgerService<T>.GetAsync with reveal).

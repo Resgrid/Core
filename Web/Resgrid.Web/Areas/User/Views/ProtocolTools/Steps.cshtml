@@ -1,0 +1,169 @@
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolStepRunModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    Step-through (P3): one protocol on a call run like a checklist (the Checklists run pattern). Each step is marked done, skipped or
+    not applicable, timestamped by the server and logged with who did it; "contact medical control" gates are steps of their own.
+    Works without script (each button is a form post); with script the buttons post in place and the page stays where it is.
+*@
+@{
+    var departmentTime = DepartmentTime.From(ViewData);
+    var checklist = Model.Checklist;
+    var protocol = checklist.Protocol;
+    var title = localizer["StepThroughHeader"].Value;
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Title"] = (string.IsNullOrWhiteSpace(protocol.Code) ? "" : protocol.Code + " ") + protocol.Name;
+    ViewData["Subtitle"] = string.Format(localizer["StepThroughSubtitle"].Value, Model.Call.Number, Model.Call.Name);
+    ViewData["Section"] = "Library";
+    var log = checklist.Log;
+    var completed = log != null && log.IsComplete;
+    var canWrite = Model.CanEdit && !completed;
+    string Who(string userId) => string.IsNullOrWhiteSpace(userId) ? "" : (Model.Names.TryGetValue(userId, out var n) && !string.IsNullOrWhiteSpace(n) ? n : userId);
+    string StateText(ProtocolStepStates state) => state switch
+    {
+        ProtocolStepStates.Done => localizer["StepStateDone"].Value,
+        ProtocolStepStates.Skipped => localizer["StepStateSkipped"].Value,
+        ProtocolStepStates.NotApplicable => localizer["StepStateNotApplicable"].Value,
+        _ => localizer["StepStatePending"].Value
+    };
+}
+
+@await Html.PartialAsync("../Protocols/_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+    <div id="stepError" class="alert alert-danger" role="alert" hidden></div>
+
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem">
+            <span class="rgw-stat-label">@localizer["StepProgressLabel"]</span>
+            <span class="rgw-stat-value" id="stepProgress">@string.Format(localizer["StepProgressFormat"].Value, checklist.DoneCount, checklist.Steps.Count)</span>
+        </div>
+        <div class="rgw-stat-tile" role="listitem">
+            <span class="rgw-stat-label">@localizer["StepStartedLabel"]</span>
+            <span class="rgw-stat-value">@(log == null ? localizer["StepNotStarted"].Value : departmentTime.Format(log.StartedOn))</span>
+        </div>
+        <div class="rgw-stat-tile" role="listitem">
+            <span class="rgw-stat-label">@localizer["CitedVersionColumn"]</span>
+            <span class="rgw-stat-value">@(checklist.Version?.Label == null ? "-" : "v" + checklist.Version.Label)</span>
+        </div>
+    </div>
+
+    @if (completed)
+    {
+        <div class="rgw-next-action" role="status"><i class="fa fa-flag-checkered" aria-hidden="true"></i> @string.Format(localizer["StepsCompletedBy"].Value, Who(log.CompletedByUserId), departmentTime.Format(log.CompletedOn))</div>
+    }
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-check-square-o" aria-hidden="true"></i> @localizer["StepsHeader"]</h5></div>
+                <div class="ibox-content">
+                    @foreach (var view in checklist.Steps)
+                    {
+                        var step = view.Step;
+                        var isGate = step.Kind == ProtocolSteps.GateKind;
+                        <div class="rgp-run-step rgp-state-@((int)view.State) @(isGate ? "rgp-run-gate" : "")" id="step-@step.Id" data-step="@step.Id">
+                            <div class="rgp-run-text">
+                                @if (!string.IsNullOrEmpty(step.Group))
+                                {
+                                    <div class="rgp-run-meta">@step.Group</div>
+                                }
+                                <strong>@step.Order.</strong>
+                                @if (isGate)
+                                {
+                                    <span class="label label-info"><i class="fa fa-phone" aria-hidden="true"></i> @localizer["BlockLabelContactMedicalControl"]</span>
+                                }
+                                @step.Text
+                                <div class="rgp-run-meta" data-step-meta="true">
+                                    <span data-step-state="true">@StateText(view.State)</span>
+                                    @if (view.Last != null)
+                                    {
+                                        <span> · @departmentTime.Format(view.Last.At) · @Who(view.Last.UserId)</span>
+                                        @if (!string.IsNullOrEmpty(view.Last.Note))
+                                        {
+                                            <span> · @view.Last.Note</span>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            @if (canWrite)
+                            {
+                                <div class="rgp-run-actions">
+                                    @foreach (var (state, icon, css, key) in new[] { (ProtocolStepStates.Done, "fa-check", "btn-primary", "StepMarkDone"), (ProtocolStepStates.Skipped, "fa-forward", "btn-default", "StepMarkSkipped"), (ProtocolStepStates.NotApplicable, "fa-ban", "btn-default", "StepMarkNotApplicable"), (ProtocolStepStates.Pending, "fa-undo", "btn-white", "StepMarkPending") })
+                                    {
+                                        <form method="post" asp-controller="ProtocolTools" asp-action="RecordStep" asp-route-area="User" class="rgp-step-form">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="callId" value="@Model.Call.CallId" />
+                                            <input type="hidden" name="callProtocolId" value="@checklist.Row.CallProtocolId" />
+                                            <input type="hidden" name="stepId" value="@step.Id" />
+                                            <input type="hidden" name="state" value="@((int)state)" />
+                                            <button type="submit" class="btn btn-sm @css" aria-pressed="@(view.State == state ? "true" : "false")"><i class="fa @icon" aria-hidden="true"></i> @localizer[key]<span class="sr-only"> @step.Order</span></button>
+                                        </form>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <div class="rgw-wizard-actions">
+                        <a class="btn btn-default" asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["BackToCallButton"]</a>
+                        <span class="rgw-wizard-spacer"></span>
+                        @if (canWrite)
+                        {
+                            <form method="post" asp-controller="ProtocolTools" asp-action="CompleteSteps" asp-route-area="User">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="callId" value="@Model.Call.CallId" />
+                                <input type="hidden" name="callProtocolId" value="@checklist.Row.CallProtocolId" />
+                                <button type="submit" class="btn btn-success" data-confirm="@localizer["CompleteStepsConfirm"]"><i class="fa fa-flag-checkered" aria-hidden="true"></i> @localizer["CompleteStepsButton"]</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-file-text-o" aria-hidden="true"></i> @localizer["ProtocolTextDtLabel"]</h5></div>
+                <div class="ibox-content">
+                    @if (string.IsNullOrWhiteSpace(Model.ContentHtml))
+                    {
+                        <p class="text-muted">@localizer["NoProtocolText"]</p>
+                    }
+                    else
+                    {
+                        <div class="protocol-content rgp-reader">@Html.ProtocolContent(Model.ContentHtml, Model.DosingToolUrl, localizer["DosingToolLinkText"].Value)</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/json" id="protocolStepText">@Html.ScriptJson(new
+{
+    done = localizer["StepStateDone"].Value,
+    skipped = localizer["StepStateSkipped"].Value,
+    notApplicable = localizer["StepStateNotApplicable"].Value,
+    pending = localizer["StepStatePending"].Value,
+    progress = localizer["StepProgressFormat"].Value,
+    failed = localizer["StepSaveFailed"].Value
+})</script>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/protocol-content.css" asp-append-version="true" />
+}
+
+@section Scripts
+{
+    <script src="~/js/app/internal/protocols/resgrid.protocols.steps.js" asp-append-version="true"></script>
+}

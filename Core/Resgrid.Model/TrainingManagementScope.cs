@@ -117,6 +117,27 @@ namespace Resgrid.Model
 		/// <summary>The member holds at least one training right (the officer pages and KPI tiles).</summary>
 		public bool IsManager => Author.HoldsAny || AssignRight.HoldsAny || DeleteRight.HoldsAny;
 
+		/// <summary>
+		/// Training T1: manages the department's training records - the external submission queue, categories, bulk
+		/// categorize, backfill, history import, settings and the department-wide reports. The assign-and-report right (Assign
+		/// Training, 126) held department-wide; no separate permission (131 stays unallocated).
+		/// </summary>
+		public bool CanManageRecords => AssignRight.ManagesAll;
+
+		/// <summary>
+		/// Training T1: may read this member's transcript and verify their records - department-wide record managers, and a
+		/// group admin (training supervisor scope) for the members of the group they administer. Every member reads their own
+		/// transcript; nobody verifies their own record (ILearningRecordService.VerifyAsync refuses it).
+		/// </summary>
+		public bool CanReviewRecordsOf(string memberUserId)
+		{
+			if (string.IsNullOrWhiteSpace(memberUserId))
+				return false;
+			if (AssignRight.ManagesAll)
+				return true;
+			return AssignRight.AdministeredMemberUserIds != null && AssignRight.AdministeredMemberUserIds.Contains(memberUserId);
+		}
+
 		/// <summary>True when the training is assigned to the member (removed assignees are not).</summary>
 		public bool IsAssigned(Training training)
 		{

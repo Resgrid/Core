@@ -622,4 +622,2470 @@
   <data name="PanelChoose" xml:space="preserve">
     <value>Виберіть протокол…</value>
   </data>
+  <data name="AcknowledgmentLabel" xml:space="preserve">
+    <value>Ознайомлення</value>
+  </data>
+  <data name="AddCategoryHeader" xml:space="preserve">
+    <value>Додати категорію</value>
+  </data>
+  <data name="AddCommentButton" xml:space="preserve">
+    <value>Додати коментар</value>
+  </data>
+  <data name="AiLabel" xml:space="preserve">
+    <value>ШІ</value>
+  </data>
+  <data name="AllKinds" xml:space="preserve">
+    <value>Усі види</value>
+  </data>
+  <data name="AllProtocols" xml:space="preserve">
+    <value>Усі протоколи</value>
+  </data>
+  <data name="AnyApproverLabel" xml:space="preserve">
+    <value>Будь-який затверджувач</value>
+  </data>
+  <data name="AnyAudience" xml:space="preserve">
+    <value>Будь-яка аудиторія</value>
+  </data>
+  <data name="AnyKindLabel" xml:space="preserve">
+    <value>Будь-який вид</value>
+  </data>
+  <data name="AnyOwner" xml:space="preserve">
+    <value>Будь-який власник</value>
+  </data>
+  <data name="ApprovalStepsHeader" xml:space="preserve">
+    <value>Етапи затвердження</value>
+  </data>
+  <data name="ApprovalStepsHelp" xml:space="preserve">
+    <value>Виберіть ролі або учасників, які затверджують, у потрібному порядку. Залиште порожнім, щоб був один етап, рішення на якому може ухвалити будь-який учасник із дозволом «Затвердження й публікація протоколів».</value>
+  </data>
+  <data name="ApproveHeader" xml:space="preserve">
+    <value>Затвердити цю версію</value>
+  </data>
+  <data name="ApprovedLabel" xml:space="preserve">
+    <value>Затверджено</value>
+  </data>
+  <data name="AudienceCertificationLabel" xml:space="preserve">
+    <value>Сертифікація</value>
+  </data>
+  <data name="AudienceEveryoneLabel" xml:space="preserve">
+    <value>Усі</value>
+  </data>
+  <data name="AudienceEveryoneOption" xml:space="preserve">
+    <value>Усі в підрозділі</value>
+  </data>
+  <data name="AudienceGroupLabel" xml:space="preserve">
+    <value>Група</value>
+  </data>
+  <data name="AudienceHelp" xml:space="preserve">
+    <value>Читати протокол можуть лише ті учасники, для яких він призначений, — у бібліотеці, застосунках і пошуку. Диспетчери завжди читають протоколи диспетчеризації, а автори й затверджувачі читають усі протоколи.</value>
+  </data>
+  <data name="AudienceLabel" xml:space="preserve">
+    <value>Аудиторія</value>
+  </data>
+  <data name="AudienceRestrictedLabel" xml:space="preserve">
+    <value>Обмежена аудиторія</value>
+  </data>
+  <data name="AudienceRestrictedOption" xml:space="preserve">
+    <value>Лише учасники цих груп, ролей, змін, типів одиниць або сертифікацій</value>
+  </data>
+  <data name="AudienceRoleLabel" xml:space="preserve">
+    <value>Роль</value>
+  </data>
+  <data name="AudienceShiftLabel" xml:space="preserve">
+    <value>Зміна</value>
+  </data>
+  <data name="AudienceUnitTypeLabel" xml:space="preserve">
+    <value>Тип одиниці</value>
+  </data>
+  <data name="AutosaveFailed" xml:space="preserve">
+    <value>Не вдалося автоматично зберегти чернетку. Збережіть сторінку, щоб не втратити зміни.</value>
+  </data>
+  <data name="AutosaveSaved" xml:space="preserve">
+    <value>Чернетку збережено</value>
+  </data>
+  <data name="AutosaveSaving" xml:space="preserve">
+    <value>Збереження чернетки...</value>
+  </data>
+  <data name="BackButton" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="BackToProtocolButton" xml:space="preserve">
+    <value>Назад до протоколу</value>
+  </data>
+  <data name="CallColumn" xml:space="preserve">
+    <value>Виклик</value>
+  </data>
+  <data name="CallsColumn" xml:space="preserve">
+    <value>Виклики</value>
+  </data>
+  <data name="CategoriesHeader" xml:space="preserve">
+    <value>Категорії</value>
+  </data>
+  <data name="CategoriesIntro" xml:space="preserve">
+    <value>Упорядкуйте бібліотеку у вкладені категорії та вкажіть, хто затверджує версії в кожній із них.</value>
+  </data>
+  <data name="CategoriesTab" xml:space="preserve">
+    <value>Категорії</value>
+  </data>
+  <data name="CategoryLabel" xml:space="preserve">
+    <value>Категорія</value>
+  </data>
+  <data name="ChangeSummaryHelp" xml:space="preserve">
+    <value>Що змінилося і чому. Обов'язково для публікації; зберігається разом із версією.</value>
+  </data>
+  <data name="ChangeSummaryLabel" xml:space="preserve">
+    <value>Опис змін</value>
+  </data>
+  <data name="ChangesSinceHeader" xml:space="preserve">
+    <value>Зміни після {0}</value>
+  </data>
+  <data name="CitedVersionLabel" xml:space="preserve">
+    <value>Текст на момент диспетчеризації ({0})</value>
+  </data>
+  <data name="CommentRefused" xml:space="preserve">
+    <value>Не вдалося зберегти коментар.</value>
+  </data>
+  <data name="CompareButton" xml:space="preserve">
+    <value>Порівняти</value>
+  </data>
+  <data name="CompareFromLabel" xml:space="preserve">
+    <value>Від</value>
+  </data>
+  <data name="CompareHeader" xml:space="preserve">
+    <value>Порівняння версій</value>
+  </data>
+  <data name="CompareToLabel" xml:space="preserve">
+    <value>До</value>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>Код вмісту</value>
+  </data>
+  <data name="ContentLockedNotice" xml:space="preserve">
+    <value>Ця версія на перевірці або вже затверджена, тому її текст заблоковано. Відкличте її, щоб знову редагувати текст.</value>
+  </data>
+  <data name="CopyButton" xml:space="preserve">
+    <value>Копіювати як новий</value>
+  </data>
+  <data name="CreateDraftButton" xml:space="preserve">
+    <value>Створити чернетку</value>
+  </data>
+  <data name="DefaultApprovalStep" xml:space="preserve">
+    <value>Один етап, будь-який затверджувач</value>
+  </data>
+  <data name="DefaultReviewIntervalHelp" xml:space="preserve">
+    <value>Нові протоколи отримують цей інтервал перевірки в днях. 0 означає, що циклу перевірки немає.</value>
+  </data>
+  <data name="DefaultReviewIntervalLabel" xml:space="preserve">
+    <value>Типовий інтервал перевірки (днів)</value>
+  </data>
+  <data name="DeleteCategoryConfirm" xml:space="preserve">
+    <value>Видалити категорію</value>
+  </data>
+  <data name="DeletedTextLabel" xml:space="preserve">
+    <value>Вилучений текст</value>
+  </data>
+  <data name="DepartmentLegalHoldCheckbox" xml:space="preserve">
+    <value>Юридичне утримання для всієї бібліотеки</value>
+  </data>
+  <data name="DepartmentLegalHoldHelp" xml:space="preserve">
+    <value>Поки його ввімкнено, жодну версію не буде остаточно видалено, хоч би що передбачали строки зберігання.</value>
+  </data>
+  <data name="DiscardDraftButton" xml:space="preserve">
+    <value>Скасувати чернетку</value>
+  </data>
+  <data name="DiscardDraftConfirm" xml:space="preserve">
+    <value>Скасувати цю чернетку? Її текст буде видалено.</value>
+  </data>
+  <data name="DraftDiscardedMessage" xml:space="preserve">
+    <value>Чернетку скасовано.</value>
+  </data>
+  <data name="EditDraftButton" xml:space="preserve">
+    <value>Редагувати чернетку</value>
+  </data>
+  <data name="EditingDraftCallout" xml:space="preserve">
+    <value>Ви редагуєте чернетку ({0}); останнє збереження: {1}, {2}. Чинний текст не зміниться, доки цю версію не буде затверджено й опубліковано.</value>
+  </data>
+  <data name="EditingNoDraftCallout" xml:space="preserve">
+    <value>Чинна версія {0}. Якщо змінити текст і зберегти, буде створено нову версію-чернетку.</value>
+  </data>
+  <data name="EffectiveColumn" xml:space="preserve">
+    <value>Чинна з</value>
+  </data>
+  <data name="EffectiveOnHelp" xml:space="preserve">
+    <value>Залиште порожнім, щоб опублікувати зараз. Якщо вказати пізніші дату й час ({0}), версію буде заплановано: вона набуде чинності автоматично.</value>
+  </data>
+  <data name="EffectiveOnLabel" xml:space="preserve">
+    <value>Набуває чинності</value>
+  </data>
+  <data name="ErrorCategoryName" xml:space="preserve">
+    <value>Введіть назву категорії.</value>
+  </data>
+  <data name="ErrorKind" xml:space="preserve">
+    <value>Виберіть вид протоколу.</value>
+  </data>
+  <data name="ExcludeFromAiCheckbox" xml:space="preserve">
+    <value>Виключити зі ШІ</value>
+  </data>
+  <data name="ExcludeFromAiHelp" xml:space="preserve">
+    <value>Не включати цей протокол до жодного індексу й жодної відповіді ШІ (для ліцензованого чи конфіденційного вмісту).</value>
+  </data>
+  <data name="ExcludedFromAi" xml:space="preserve">
+    <value>Виключено зі ШІ</value>
+  </data>
+  <data name="ExpiresLabel" xml:space="preserve">
+    <value>Термін дії</value>
+  </data>
+  <data name="ExpiresOnLabel" xml:space="preserve">
+    <value>Діє до</value>
+  </data>
+  <data name="ExportButton" xml:space="preserve">
+    <value>Експорт</value>
+  </data>
+  <data name="FavoriteButton" xml:space="preserve">
+    <value>Додати до вибраного</value>
+  </data>
+  <data name="FavoriteLabel" xml:space="preserve">
+    <value>Вибране</value>
+  </data>
+  <data name="FavoritesHeader" xml:space="preserve">
+    <value>Вибране</value>
+  </data>
+  <data name="FirstVersionHeader" xml:space="preserve">
+    <value>Перша версія</value>
+  </data>
+  <data name="FormerMemberOption" xml:space="preserve">
+    <value>Колишній учасник</value>
+  </data>
+  <data name="FullTextToggle" xml:space="preserve">
+    <value>Показати повний текст</value>
+  </data>
+  <data name="ImportButton" xml:space="preserve">
+    <value>Імпорт</value>
+  </data>
+  <data name="ImportErrorFile" xml:space="preserve">
+    <value>Виберіть файл JSON розміром не більше 10 МБ.</value>
+  </data>
+  <data name="ImportErrorFormat" xml:space="preserve">
+    <value>Файл не є експортом протоколів Resgrid (формат resgrid-protocols, версія 1).</value>
+  </data>
+  <data name="ImportErrorNotAuthorized" xml:space="preserve">
+    <value>У вас немає дозволу створювати протоколи.</value>
+  </data>
+  <data name="ImportErrorTooMany" xml:space="preserve">
+    <value>У файлі забагато протоколів. Імпортуйте не більше 500 за раз.</value>
+  </data>
+  <data name="ImportFileLabel" xml:space="preserve">
+    <value>Файл експорту протоколів (JSON)</value>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>Імпортуйте протоколи, експортовані з Resgrid або записані в тому самому відкритому форматі. Кожен протокол створюється як чернетка для перевірки й публікації; імпорт нічого не публікує. Пріоритети, типи викликів, категорії, групи, ролі та зміни зіставляються з наявними в цьому підрозділі за назвою.</value>
+  </data>
+  <data name="ImportIntro" xml:space="preserve">
+    <value>Перенесіть протоколи з експорту JSON.</value>
+  </data>
+  <data name="ImportSkippedHeader" xml:space="preserve">
+    <value>Не імпортовано</value>
+  </data>
+  <data name="ImportTab" xml:space="preserve">
+    <value>Імпорт</value>
+  </data>
+  <data name="ImportWarningsHeader" xml:space="preserve">
+    <value>Імпортовано зі змінами</value>
+  </data>
+  <data name="ImportedMessage" xml:space="preserve">
+    <value>Імпортовано протоколів як чернеток: {0}.</value>
+  </data>
+  <data name="InForceLabel" xml:space="preserve">
+    <value>Чинна</value>
+  </data>
+  <data name="InsertedLabel" xml:space="preserve">
+    <value>Доданий текст</value>
+  </data>
+  <data name="KindClinicalGuideline" xml:space="preserve">
+    <value>Клінічна настанова</value>
+  </data>
+  <data name="KindDispatch" xml:space="preserve">
+    <value>Протокол диспетчеризації</value>
+  </data>
+  <data name="KindHelp" xml:space="preserve">
+    <value>Протоколи диспетчеризації та процедури можуть пропонуватися у викликах за їхніми тригерами. Політики та SOG за замовчуванням вимагають від учасників підтвердити ознайомлення.</value>
+  </data>
+  <data name="KindHelpClinicalGuideline" xml:space="preserve">
+    <value>Клінічні вказівки щодо надання допомоги пацієнтам.</value>
+  </data>
+  <data name="KindHelpDispatch" xml:space="preserve">
+    <value>Зіставляється з викликами за типом, пріоритетом і часом, має ключові запитання.</value>
+  </data>
+  <data name="KindHelpPolicy" xml:space="preserve">
+    <value>Політика підрозділу, ознайомлення з якою учасники мають підтвердити.</value>
+  </data>
+  <data name="KindHelpProcedure" xml:space="preserve">
+    <value>Покрокова процедура або контрольний список; може пропонуватися у викликах.</value>
+  </data>
+  <data name="KindHelpReference" xml:space="preserve">
+    <value>Довідкові матеріали: карти, контакти, таблиці.</value>
+  </data>
+  <data name="KindHelpSog" xml:space="preserve">
+    <value>Стандартна операційна процедура або настанова.</value>
+  </data>
+  <data name="KindLabel" xml:space="preserve">
+    <value>Вид</value>
+  </data>
+  <data name="KindPolicy" xml:space="preserve">
+    <value>Політика</value>
+  </data>
+  <data name="KindProcedure" xml:space="preserve">
+    <value>Процедура або контрольний список</value>
+  </data>
+  <data name="KindReference" xml:space="preserve">
+    <value>Довідка</value>
+  </data>
+  <data name="KindSog" xml:space="preserve">
+    <value>SOP / SOG</value>
+  </data>
+  <data name="KpiDueForReview" xml:space="preserve">
+    <value>Підлягають перевірці (30 днів)</value>
+  </data>
+  <data name="KpiInReview" xml:space="preserve">
+    <value>На перевірці</value>
+  </data>
+  <data name="KpiPublished" xml:space="preserve">
+    <value>Опубліковано</value>
+  </data>
+  <data name="LastReviewedLabel" xml:space="preserve">
+    <value>Остання перевірка</value>
+  </data>
+  <data name="LegalHoldCheckbox" xml:space="preserve">
+    <value>Юридичне утримання</value>
+  </data>
+  <data name="LegalHoldHelp" xml:space="preserve">
+    <value>Поки діє утримання, жодну з версій цього протоколу не буде остаточно видалено.</value>
+  </data>
+  <data name="LegalHoldLabel" xml:space="preserve">
+    <value>Юридичне утримання</value>
+  </data>
+  <data name="LicenseLabel" xml:space="preserve">
+    <value>Ліцензія</value>
+  </data>
+  <data name="LicensedContentCheckbox" xml:space="preserve">
+    <value>Ліцензований вміст</value>
+  </data>
+  <data name="LicensedContentHelp" xml:space="preserve">
+    <value>Вміст третіх сторін за ліцензією: його ніколи не надають за межі підрозділу й не оприлюднюють.</value>
+  </data>
+  <data name="LicensedContentLabel" xml:space="preserve">
+    <value>Ліцензований вміст</value>
+  </data>
+  <data name="LifecycleErrorAlreadyDecided" xml:space="preserve">
+    <value>Рішення на цьому етапі вже ухвалено, або ви затвердили попередній етап цієї перевірки.</value>
+  </data>
+  <data name="LifecycleErrorArtifactChanged" xml:space="preserve">
+    <value>Текст більше не збігається з підписаним. Версію потрібно перевірити знову.</value>
+  </data>
+  <data name="LifecycleErrorChangeSummaryRequired" xml:space="preserve">
+    <value>Щоб опублікувати, введіть опис змін.</value>
+  </data>
+  <data name="LifecycleErrorDraftExists" xml:space="preserve">
+    <value>Цей протокол уже має відкриту чернетку.</value>
+  </data>
+  <data name="LifecycleErrorEffectiveDateInPast" xml:space="preserve">
+    <value>Дата набуття чинності вже минула.</value>
+  </data>
+  <data name="LifecycleErrorEmptyContent" xml:space="preserve">
+    <value>Чернетка не містить тексту. Напишіть протокол, перш ніж подавати його.</value>
+  </data>
+  <data name="LifecycleErrorInvalidInput" xml:space="preserve">
+    <value>Деякі значення недійсні.</value>
+  </data>
+  <data name="LifecycleErrorNotApproved" xml:space="preserve">
+    <value>Опублікувати можна лише затверджену версію.</value>
+  </data>
+  <data name="LifecycleErrorNotAuthorized" xml:space="preserve">
+    <value>У вас немає дозволу на цю дію.</value>
+  </data>
+  <data name="LifecycleErrorNotDraft" xml:space="preserve">
+    <value>Змінити або подати можна лише чернетку.</value>
+  </data>
+  <data name="LifecycleErrorNotFound" xml:space="preserve">
+    <value>Протокол або версію не знайдено.</value>
+  </data>
+  <data name="LifecycleErrorNotInReview" xml:space="preserve">
+    <value>Ця версія не очікує перевірки.</value>
+  </data>
+  <data name="LifecycleErrorNotPublished" xml:space="preserve">
+    <value>Цей протокол не має чинної версії.</value>
+  </data>
+  <data name="LifecycleErrorOpenComments" xml:space="preserve">
+    <value>Перш ніж затверджувати, позначте відкриті коментарі перевірки як вирішені.</value>
+  </data>
+  <data name="LifecycleErrorPasskeyRequired" xml:space="preserve">
+    <value>Ваш підрозділ вимагає ключ доступу для цього підпису. Скористайтеся кнопкою «Підписати ключем доступу».</value>
+  </data>
+  <data name="LifecycleErrorRetentionProtected" xml:space="preserve">
+    <value>Подані й опубліковані версії зберігаються, і їх не можна видалити.</value>
+  </data>
+  <data name="LifecycleErrorSignatureRequired" xml:space="preserve">
+    <value>Цей підпис потребує нової перевірки особи. Підтвердьте її другим фактором або ключем доступу та підпишіть знову.</value>
+  </data>
+  <data name="LifecycleErrorStaleCopy" xml:space="preserve">
+    <value>Хтось інший змінив цей протокол після того, як ви його відкрили.</value>
+  </data>
+  <data name="LifecycleLabel" xml:space="preserve">
+    <value>Життєвий цикл</value>
+  </data>
+  <data name="LoggedColumn" xml:space="preserve">
+    <value>Зареєстровано</value>
+  </data>
+  <data name="MajorVersionOption" xml:space="preserve">
+    <value>Основна (наступне ціле число)</value>
+  </data>
+  <data name="MembersLabel" xml:space="preserve">
+    <value>Учасники</value>
+  </data>
+  <data name="MessageLabel" xml:space="preserve">
+    <value>Повідомлення</value>
+  </data>
+  <data name="MinorVersionOption" xml:space="preserve">
+    <value>Незначна (наступний десятковий розряд)</value>
+  </data>
+  <data name="NewVersionButton" xml:space="preserve">
+    <value>Нова версія</value>
+  </data>
+  <data name="NextButton" xml:space="preserve">
+    <value>Далі</value>
+  </data>
+  <data name="NoCallsYet" xml:space="preserve">
+    <value>Ще жоден виклик не посилався на цей протокол.</value>
+  </data>
+  <data name="NoCategoriesYet" xml:space="preserve">
+    <value>Категорій ще немає.</value>
+  </data>
+  <data name="NoCategoryOption" xml:space="preserve">
+    <value>Без категорії</value>
+  </data>
+  <data name="NoOutline" xml:space="preserve">
+    <value>Заголовки в тексті утворюють тут структуру документа.</value>
+  </data>
+  <data name="NoReviewCycle" xml:space="preserve">
+    <value>Без циклу перевірки</value>
+  </data>
+  <data name="NoTextChanges" xml:space="preserve">
+    <value>Текст не змінився.</value>
+  </data>
+  <data name="NotCurrentVersionNotice" xml:space="preserve">
+    <value>Ви читаєте {0}. Чинна версія — {1}.</value>
+  </data>
+  <data name="NotPublishedYet" xml:space="preserve">
+    <value>Не опубліковано</value>
+  </data>
+  <data name="NotRequiredLabel" xml:space="preserve">
+    <value>Не обов'язково</value>
+  </data>
+  <data name="NotSubmittedYet" xml:space="preserve">
+    <value>Ще не подано.</value>
+  </data>
+  <data name="NumberHelp" xml:space="preserve">
+    <value>Ваш власний номер, наприклад SOG-204. Якщо залишити порожнім, номер призначить шаблон нумерації протоколів підрозділу (Підрозділ, Нумерація документів).</value>
+  </data>
+  <data name="NumberLabel" xml:space="preserve">
+    <value>Номер</value>
+  </data>
+  <data name="OnHoldLabel" xml:space="preserve">
+    <value>Утримується</value>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Відкрити</value>
+  </data>
+  <data name="OpenDraftNote" xml:space="preserve">
+    <value>Наступна версія: {0}</value>
+  </data>
+  <data name="OpenLabel" xml:space="preserve">
+    <value>відкрито</value>
+  </data>
+  <data name="OpenReviewButton" xml:space="preserve">
+    <value>Відкрити перевірку</value>
+  </data>
+  <data name="OpenVersionCallout" xml:space="preserve">
+    <value>Готується нова версія: {0}.</value>
+  </data>
+  <data name="OutlineHeader" xml:space="preserve">
+    <value>Структура</value>
+  </data>
+  <data name="OwnerHelp" xml:space="preserve">
+    <value>Власник підтримує протокол в актуальному стані: йому надходять нагадування про перевірку та пропозиції учасників.</value>
+  </data>
+  <data name="OwnerLabel" xml:space="preserve">
+    <value>Власник</value>
+  </data>
+  <data name="ParentCategoryLabel" xml:space="preserve">
+    <value>Батьківська категорія</value>
+  </data>
+  <data name="PendingLabel" xml:space="preserve">
+    <value>Очікує</value>
+  </data>
+  <data name="PreviewAsMemberButton" xml:space="preserve">
+    <value>Переглянути як учасник</value>
+  </data>
+  <data name="PreviewAsMemberNotice" xml:space="preserve">
+    <value>Так учасники бачитимуть цю версію після її публікації.</value>
+  </data>
+  <data name="PrintButton" xml:space="preserve">
+    <value>Друк</value>
+  </data>
+  <data name="ProtocolCopiedMessage" xml:space="preserve">
+    <value>Копію створено як новий протокол-чернетку.</value>
+  </data>
+  <data name="ProtocolCreatedMessage" xml:space="preserve">
+    <value>Протокол створено як чернетку. Завершіть його тут, а потім подайте на перевірку.</value>
+  </data>
+  <data name="ProtocolTextHeadingsHelp" xml:space="preserve">
+    <value>Використовуйте заголовки, щоб структурувати текст: з них формуються структура документа та якорі, на які посилаються коментарі перевірки.</value>
+  </data>
+  <data name="PublishButton" xml:space="preserve">
+    <value>Опублікувати</value>
+  </data>
+  <data name="PublishHeader" xml:space="preserve">
+    <value>Публікація</value>
+  </data>
+  <data name="QuestionOption" xml:space="preserve">
+    <value>Запитання</value>
+  </data>
+  <data name="ReadAndSignStepUpCheckbox" xml:space="preserve">
+    <value>Ознайомлення під підпис потребує нової перевірки особи (L2) замість сеансу входу (L1)</value>
+  </data>
+  <data name="RecentHeader" xml:space="preserve">
+    <value>Нещодавно відкриті</value>
+  </data>
+  <data name="RecordReviewHeader" xml:space="preserve">
+    <value>Перевірено, без змін</value>
+  </data>
+  <data name="RecordReviewHelp" xml:space="preserve">
+    <value>Зафіксуйте, що чинну версію перевірено і вона досі правильна. Дата наступної перевірки зсувається; нова версія не створюється, і повторно ознайомлюватися з нею нікому не потрібно.</value>
+  </data>
+  <data name="RecordedBeforeVersions" xml:space="preserve">
+    <value>Записано до запровадження версій</value>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Відхилити</value>
+  </data>
+  <data name="RejectHeader" xml:space="preserve">
+    <value>Відхилення</value>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>Причина</value>
+  </data>
+  <data name="RejectedLabel" xml:space="preserve">
+    <value>Відхилено</value>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>Версію повернуто авторам як чернетку.</value>
+  </data>
+  <data name="ReplyButton" xml:space="preserve">
+    <value>Відповісти</value>
+  </data>
+  <data name="ReplyLabel" xml:space="preserve">
+    <value>Відповідь</value>
+  </data>
+  <data name="RequirePasskeyForApprovalCheckbox" xml:space="preserve">
+    <value>Затвердження та позначки перевірки потрібно підписувати ключем доступу</value>
+  </data>
+  <data name="RequiredLabel" xml:space="preserve">
+    <value>Обов'язково</value>
+  </data>
+  <data name="RequiresAcknowledgmentCheckbox" xml:space="preserve">
+    <value>Учасники мають підтвердити ознайомлення з цією версією</value>
+  </data>
+  <data name="RequiresAcknowledgmentHelp" xml:space="preserve">
+    <value>Увімкнено за замовчуванням для політик і SOG. Призначення ознайомлення під підпис з'являться в одному з наступних оновлень.</value>
+  </data>
+  <data name="ResolveButton" xml:space="preserve">
+    <value>Позначити як вирішене</value>
+  </data>
+  <data name="ResolvedLabel" xml:space="preserve">
+    <value>Вирішено</value>
+  </data>
+  <data name="RetentionHeader" xml:space="preserve">
+    <value>Зберігання</value>
+  </data>
+  <data name="RetentionHelp" xml:space="preserve">
+    <value>Замінені та виведені з дії версії за замовчуванням зберігаються. Введіть, скільки днів кожен вид зберігає їх, перш ніж їх можна буде остаточно видалити; 0 означає зберігати. Версію, на яку посилається виклик, і все, що перебуває під юридичним утриманням, ніколи не видаляють.</value>
+  </data>
+  <data name="RetireButton" xml:space="preserve">
+    <value>Вивести з дії</value>
+  </data>
+  <data name="RetireConfirm" xml:space="preserve">
+    <value>Вивести протокол з дії</value>
+  </data>
+  <data name="RetiredMessage" xml:space="preserve">
+    <value>Протокол виведено з дії. Його версії залишаються для викликів та історії, що на них посилаються.</value>
+  </data>
+  <data name="ReviewAny" xml:space="preserve">
+    <value>Будь-яка дата перевірки</value>
+  </data>
+  <data name="ReviewCommentLabel" xml:space="preserve">
+    <value>Коментар</value>
+  </data>
+  <data name="ReviewCommentsHeader" xml:space="preserve">
+    <value>Коментарі перевірки</value>
+  </data>
+  <data name="ReviewDue30" xml:space="preserve">
+    <value>Перевірка протягом 30 днів</value>
+  </data>
+  <data name="ReviewDueCallout" xml:space="preserve">
+    <value>Цей протокол потрібно перевірити до {0}.</value>
+  </data>
+  <data name="ReviewDueLabel" xml:space="preserve">
+    <value>Термін перевірки</value>
+  </data>
+  <data name="ReviewHeader" xml:space="preserve">
+    <value>Перевірка</value>
+  </data>
+  <data name="ReviewIntervalHelp" xml:space="preserve">
+    <value>Кількість днів між перевірками. Власник отримує нагадування за 30 і 7 днів, а також коли перевірку прострочено. Порожнє значення означає, що циклу перевірки немає.</value>
+  </data>
+  <data name="ReviewIntervalLabel" xml:space="preserve">
+    <value>Інтервал перевірки (днів)</value>
+  </data>
+  <data name="ReviewNowButton" xml:space="preserve">
+    <value>Перевірити</value>
+  </data>
+  <data name="ReviewOverdue" xml:space="preserve">
+    <value>Прострочено</value>
+  </data>
+  <data name="ReviewOverdueCallout" xml:space="preserve">
+    <value>Перевірку цього протоколу потрібно було виконати до {0}.</value>
+  </data>
+  <data name="ReviewQueueCallout" xml:space="preserve">
+    <value>Версій, що очікують вашого затвердження: {0}.</value>
+  </data>
+  <data name="ReviewQueueEmpty" xml:space="preserve">
+    <value>Нічого не очікує перевірки.</value>
+  </data>
+  <data name="ReviewQueueIntro" xml:space="preserve">
+    <value>Версії, подані на перевірку, з етапами, щодо яких ви можете ухвалити рішення.</value>
+  </data>
+  <data name="ReviewQueueTab" xml:space="preserve">
+    <value>Черга перевірки</value>
+  </data>
+  <data name="ReviewRecordedMessage" xml:space="preserve">
+    <value>Перевірку зафіксовано й підписано. Дату наступної перевірки зсунуто.</value>
+  </data>
+  <data name="ReviewSettingsHeader" xml:space="preserve">
+    <value>Цикл перевірки</value>
+  </data>
+  <data name="SaveAndSubmitButton" xml:space="preserve">
+    <value>Зберегти й подати на перевірку</value>
+  </data>
+  <data name="SaveCategoryButton" xml:space="preserve">
+    <value>Зберегти категорію</value>
+  </data>
+  <data name="SaveSettingsButton" xml:space="preserve">
+    <value>Зберегти налаштування</value>
+  </data>
+  <data name="ScheduledNotice" xml:space="preserve">
+    <value>Версію {0} заплановано ввести в дію {1}.</value>
+  </data>
+  <data name="SectionLabel" xml:space="preserve">
+    <value>Розділ</value>
+  </data>
+  <data name="SendSuggestionButton" xml:space="preserve">
+    <value>Надіслати</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Рівні підпису, цикли перевірки та зберігання для бібліотеки протоколів.</value>
+  </data>
+  <data name="SettingsSavedMessage" xml:space="preserve">
+    <value>Налаштування протоколів збережено.</value>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>Налаштування</value>
+  </data>
+  <data name="ShowButton" xml:space="preserve">
+    <value>Показати</value>
+  </data>
+  <data name="SignatureFloorsHelp" xml:space="preserve">
+    <value>Затвердження та позначки перевірки завжди потребують нової перевірки особи (L2); ознайомлення під підпис — щонайменше сеансу входу (L1). Можна вимагати більше, але не менше.</value>
+  </data>
+  <data name="SignatureSettingsHeader" xml:space="preserve">
+    <value>Підписи</value>
+  </data>
+  <data name="SignaturesTab" xml:space="preserve">
+    <value>Підписи</value>
+  </data>
+  <data name="SortOrderLabel" xml:space="preserve">
+    <value>Порядок сортування</value>
+  </data>
+  <data name="StaleProtocolMessage" xml:space="preserve">
+    <value>Користувач {0} змінив цей протокол {1}, після того як ви його відкрили. Перезавантажте сторінку, щоб побачити ці зміни, а потім внесіть свої знову.</value>
+  </data>
+  <data name="StatusApproved" xml:space="preserve">
+    <value>Затверджено</value>
+  </data>
+  <data name="StatusDraft" xml:space="preserve">
+    <value>Чернетка</value>
+  </data>
+  <data name="StatusInReview" xml:space="preserve">
+    <value>На перевірці</value>
+  </data>
+  <data name="StatusPublished" xml:space="preserve">
+    <value>Опубліковано</value>
+  </data>
+  <data name="StatusRetired" xml:space="preserve">
+    <value>Виведено з дії</value>
+  </data>
+  <data name="StatusScheduled" xml:space="preserve">
+    <value>Заплановано</value>
+  </data>
+  <data name="StepColumn" xml:space="preserve">
+    <value>Етап</value>
+  </data>
+  <data name="SubmitHeader" xml:space="preserve">
+    <value>Подання на перевірку</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Подано</value>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>Версію подано на перевірку.</value>
+  </data>
+  <data name="SuggestHeader" xml:space="preserve">
+    <value>Запропонуйте зміну або поставте запитання</value>
+  </data>
+  <data name="SuggestHelp" xml:space="preserve">
+    <value>Ваше повідомлення надійде власникові протоколу та зберігатиметься з наступною чернеткою.</value>
+  </data>
+  <data name="SuggestKindLabel" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="SuggestionOption" xml:space="preserve">
+    <value>Пропозиція</value>
+  </data>
+  <data name="TagsHelp" xml:space="preserve">
+    <value>Розділяйте теги комами.</value>
+  </data>
+  <data name="TagsLabel" xml:space="preserve">
+    <value>Теги</value>
+  </data>
+  <data name="ThreadsHeader" xml:space="preserve">
+    <value>Пропозиції та запитання</value>
+  </data>
+  <data name="TriggersKindHelp" xml:space="preserve">
+    <value>У викликах пропонуються лише протоколи диспетчеризації та процедури, тому цей вид не має тригерів і ключових запитань.</value>
+  </data>
+  <data name="UnfavoriteButton" xml:space="preserve">
+    <value>Вилучити з вибраного</value>
+  </data>
+  <data name="UsageHelp" xml:space="preserve">
+    <value>Кількість викликів за останні 30 днів, де його використано: {0}. Останні виклики, що посилаються на нього:</value>
+  </data>
+  <data name="UsageTab" xml:space="preserve">
+    <value>Використання</value>
+  </data>
+  <data name="VersionColumn" xml:space="preserve">
+    <value>Версія</value>
+  </data>
+  <data name="VersionKindLabel" xml:space="preserve">
+    <value>Номер версії</value>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>Версія</value>
+  </data>
+  <data name="VersionStatusApproved" xml:space="preserve">
+    <value>Затверджено</value>
+  </data>
+  <data name="VersionStatusDraft" xml:space="preserve">
+    <value>Чернетка</value>
+  </data>
+  <data name="VersionStatusInReview" xml:space="preserve">
+    <value>На перевірці</value>
+  </data>
+  <data name="VersionStatusLegacy" xml:space="preserve">
+    <value>Успадкований текст</value>
+  </data>
+  <data name="VersionStatusPublished" xml:space="preserve">
+    <value>Опубліковано</value>
+  </data>
+  <data name="VersionStatusRetired" xml:space="preserve">
+    <value>Виведено з дії</value>
+  </data>
+  <data name="VersionStatusSuperseded" xml:space="preserve">
+    <value>Замінено</value>
+  </data>
+  <data name="VersionsTab" xml:space="preserve">
+    <value>Версії</value>
+  </data>
+  <data name="WholeProtocolOption" xml:space="preserve">
+    <value>Увесь протокол</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Відкликати в чернетку</value>
+  </data>
+  <data name="WithdrawnLabel" xml:space="preserve">
+    <value>Відкликано</value>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>Версію відкликано, і вона знову є чернеткою.</value>
+  </data>
+  <data name="WizardAudienceStep" xml:space="preserve">
+    <value>Аудиторія</value>
+  </data>
+  <data name="WizardBasicsStep" xml:space="preserve">
+    <value>Основне</value>
+  </data>
+  <data name="WizardContentStep" xml:space="preserve">
+    <value>Зміст</value>
+  </data>
+  <data name="WizardKindHelp" xml:space="preserve">
+    <value>Який це вид протоколу? Від виду залежить, чи можна пропонувати його у викликах і чи мають учасники за замовчуванням підтверджувати ознайомлення з ним.</value>
+  </data>
+  <data name="WizardKindStep" xml:space="preserve">
+    <value>Вид</value>
+  </data>
+  <data name="WizardReviewHelp" xml:space="preserve">
+    <value>Перевірте введені дані. Протокол буде створено як чернетку; ви зможете й далі редагувати його, перш ніж подати на перевірку.</value>
+  </data>
+  <data name="WizardReviewStep" xml:space="preserve">
+    <value>Огляд</value>
+  </data>
+  <data name="WizardTriggersStep" xml:space="preserve">
+    <value>Тригери</value>
+  </data>
+  <data name="WordsAdded" xml:space="preserve">
+    <value>Додано слів: {0}</value>
+  </data>
+  <data name="WordsRemoved" xml:space="preserve">
+    <value>Вилучено слів: {0}</value>
+  </data>
+  <data name="AckAwaitingQuizLabel" xml:space="preserve">
+    <value>Підписано; очікує на тест у {0}</value>
+  </data>
+  <data name="AckBundleOrderHelp" xml:space="preserve">
+    <value>Місце цього протоколу в пакеті адаптації нового члена: менші числа йдуть першими.</value>
+  </data>
+  <data name="AckBundleOrderLabel" xml:space="preserve">
+    <value>Порядок адаптації</value>
+  </data>
+  <data name="AckCannotSignNotice" xml:space="preserve">
+    <value>Цю версію зараз не можна підтвердити. Прочитайте чинну версію.</value>
+  </data>
+  <data name="AckCarriedForwardLabel" xml:space="preserve">
+    <value>Перенесено з попередньої дрібної версії</value>
+  </data>
+  <data name="AckCompletedHeader" xml:space="preserve">
+    <value>Підтверджені</value>
+  </data>
+  <data name="AckDueDaysHelp" xml:space="preserve">
+    <value>Кількість днів на підтвердження з дня призначення або входу до аудиторії. Порожньо — {0} днів.</value>
+  </data>
+  <data name="AckDueDaysLabel" xml:space="preserve">
+    <value>Днів на підтвердження</value>
+  </data>
+  <data name="AckDueLabel" xml:space="preserve">
+    <value>Термін {0}</value>
+  </data>
+  <data name="AckDueWasLabel" xml:space="preserve">
+    <value>Термін минув {0}</value>
+  </data>
+  <data name="AckFutureVersionNotice" xml:space="preserve">
+    <value>Ця версія набуває чинності {0}. Ви можете підтвердити її вже зараз.</value>
+  </data>
+  <data name="AckNoQuizOption" xml:space="preserve">
+    <value>Без тесту</value>
+  </data>
+  <data name="AckNotAssignedNotice" xml:space="preserve">
+    <value>Вам не потрібно підтверджувати цю версію.</value>
+  </data>
+  <data name="AckOfflineLabel" xml:space="preserve">
+    <value>Підписано офлайн</value>
+  </data>
+  <data name="AckOutstandingLabel" xml:space="preserve">
+    <value>До підтвердження</value>
+  </data>
+  <data name="AckPromptAwaitingQuiz" xml:space="preserve">
+    <value>Ви підписали цей протокол. Його буде завершено, щойно ви складете тест у {0}.</value>
+  </data>
+  <data name="AckPromptDue" xml:space="preserve">
+    <value>Вас просять прочитати й підписати {0} до {1}.</value>
+  </data>
+  <data name="AckPromptOverdue" xml:space="preserve">
+    <value>Ваше підтвердження {0} мало бути до {1}.</value>
+  </data>
+  <data name="AckQuizRequiredNotice" xml:space="preserve">
+    <value>Після підпису складіть тест у {0}, щоб завершити підтвердження.</value>
+  </data>
+  <data name="AckQuizTrainingHelp" xml:space="preserve">
+    <value>Навчання з тестом. Його призначають разом із протоколом, а підтвердження завершується лише після складання тесту.</value>
+  </data>
+  <data name="AckQuizTrainingLabel" xml:space="preserve">
+    <value>Навчання з тестом</value>
+  </data>
+  <data name="AckSettingsButton" xml:space="preserve">
+    <value>Налаштування підтверджень</value>
+  </data>
+  <data name="AckSettingsHeader" xml:space="preserve">
+    <value>Параметри підтвердження</value>
+  </data>
+  <data name="AckSettingsInvalidTraining" xml:space="preserve">
+    <value>Виберіть навчання цього підрозділу з тестом.</value>
+  </data>
+  <data name="AckSettingsSavedMessage" xml:space="preserve">
+    <value>Налаштування підтверджень збережено.</value>
+  </data>
+  <data name="AckSignedNotice" xml:space="preserve">
+    <value>Ви підписали цю версію {0}.</value>
+  </data>
+  <data name="AckSourceAudienceEntry" xml:space="preserve">
+    <value>Призначено під час входу до аудиторії</value>
+  </data>
+  <data name="AckState_acknowledged" xml:space="preserve">
+    <value>Підтверджено</value>
+  </data>
+  <data name="AckState_awaiting_quiz" xml:space="preserve">
+    <value>Очікує на тест</value>
+  </data>
+  <data name="AckState_open" xml:space="preserve">
+    <value>Ще не підписано</value>
+  </data>
+  <data name="AckState_overdue" xml:space="preserve">
+    <value>Прострочено</value>
+  </data>
+  <data name="AckState_withdrawn" xml:space="preserve">
+    <value>Відкликано</value>
+  </data>
+  <data name="AckState_superseded" xml:space="preserve">
+    <value>Замінено новішою версією</value>
+  </data>
+  <data name="AcknowledgedLabel" xml:space="preserve">
+    <value>Підтверджено</value>
+  </data>
+  <data name="AcknowledgedMessage" xml:space="preserve">
+    <value>Дякуємо. Ваше підтвердження записано.</value>
+  </data>
+  <data name="AcknowledgedAwaitingQuizMessage" xml:space="preserve">
+    <value>Ваш підпис записано. Складіть тест, щоб завершити підтвердження.</value>
+  </data>
+  <data name="AcknowledgeOutcomeAcknowledged" xml:space="preserve">
+    <value>Підтверджено.</value>
+  </data>
+  <data name="AcknowledgeOutcomeAwaitingQuiz" xml:space="preserve">
+    <value>Підписано. Складіть тест, щоб завершити.</value>
+  </data>
+  <data name="AcknowledgeOutcomeNotAssigned" xml:space="preserve">
+    <value>Від вас не вимагається підтвердження цієї версії.</value>
+  </data>
+  <data name="AcknowledgeOutcomeNotOpened" xml:space="preserve">
+    <value>Відкрийте й прочитайте версію перед підписом.</value>
+  </data>
+  <data name="AcknowledgeOutcomeReadNewerVersion" xml:space="preserve">
+    <value>Чинна новіша версія. Прочитайте й підпишіть її.</value>
+  </data>
+  <data name="AcknowledgeOutcomeContentChanged" xml:space="preserve">
+    <value>Вміст змінився відтоді, як ви його відкрили. Прочитайте ще раз перед підписом.</value>
+  </data>
+  <data name="AcknowledgeOutcomeStepUpRequired" xml:space="preserve">
+    <value>Ваш підрозділ вимагає другого кроку перевірки для підпису. Спробуйте ще раз і завершіть його.</value>
+  </data>
+  <data name="AcknowledgeOutcomeAlreadyAcknowledged" xml:space="preserve">
+    <value>Ви вже підтвердили цю версію.</value>
+  </data>
+  <data name="AcknowledgeOutcomeInvalidRequest" xml:space="preserve">
+    <value>Не вдалося записати підтвердження.</value>
+  </data>
+  <data name="ActionsLabel" xml:space="preserve">
+    <value>Дії</value>
+  </data>
+  <data name="AllGroupsOption" xml:space="preserve">
+    <value>Усі групи</value>
+  </data>
+  <data name="AllProtocolsOption" xml:space="preserve">
+    <value>Усі протоколи (огляд)</value>
+  </data>
+  <data name="AssignedLabel" xml:space="preserve">
+    <value>Призначено</value>
+  </data>
+  <data name="AvailableLabel" xml:space="preserve">
+    <value>Доступно</value>
+  </data>
+  <data name="BankQuizzesLabel" xml:space="preserve">
+    <value>Тести підтвердження з банків питань</value>
+  </data>
+  <data name="BulkUploadButton" xml:space="preserve">
+    <value>Завантажити як чернетки</value>
+  </data>
+  <data name="BulkUploadCreatedDraft" xml:space="preserve">
+    <value>Чернетку створено</value>
+  </data>
+  <data name="BulkUploadDuplicate" xml:space="preserve">
+    <value>Той самий файл завантажено двічі</value>
+  </data>
+  <data name="BulkUploadFilesHelp" xml:space="preserve">
+    <value>Файли PDF і Word (DOCX) або zip-архів із ними, до {0} файлів. Назва на кшталт "SOG-204 Mayday.pdf" задає номер і заголовок.</value>
+  </data>
+  <data name="BulkUploadFilesLabel" xml:space="preserve">
+    <value>Файли</value>
+  </data>
+  <data name="BulkUploadIntro" xml:space="preserve">
+    <value>Завантажте одразу всю теку інструкцій і політик. Кожен файл стає чернеткою для одного проходу перевірки й публікації.</value>
+  </data>
+  <data name="BulkUploadNoFiles" xml:space="preserve">
+    <value>Виберіть принаймні один файл PDF, DOCX або zip.</value>
+  </data>
+  <data name="BulkUploadResultSummary" xml:space="preserve">
+    <value>{0} з {1} файлів стали чернетками протоколів.</value>
+  </data>
+  <data name="BulkUploadTab" xml:space="preserve">
+    <value>Масове завантаження</value>
+  </data>
+  <data name="BulletinApprovalLabel" xml:space="preserve">
+    <value>Затвердження</value>
+  </data>
+  <data name="BulletinAudienceHelp" xml:space="preserve">
+    <value>Якщо не вибрано групу чи роль, бюлетень отримує весь підрозділ.</value>
+  </data>
+  <data name="BulletinAwaitingApproval" xml:space="preserve">
+    <value>Очікує на контрпідпис</value>
+  </data>
+  <data name="BulletinContentHelp" xml:space="preserve">
+    <value>Коротко: до {0} символів. Довша вказівка має бути протоколом.</value>
+  </data>
+  <data name="BulletinContentLabel" xml:space="preserve">
+    <value>Текст бюлетеня</value>
+  </data>
+  <data name="BulletinCountersignedBy" xml:space="preserve">
+    <value>Контрпідписано: {0}</value>
+  </data>
+  <data name="BulletinCountersignedMessage" xml:space="preserve">
+    <value>Бюлетень контрпідписано.</value>
+  </data>
+  <data name="BulletinExpiredLabel" xml:space="preserve">
+    <value>Строк минув</value>
+  </data>
+  <data name="BulletinExpiresHelp" xml:space="preserve">
+    <value>У цей час він сам залишає бібліотеку; щонайбільше на {0} днів уперед.</value>
+  </data>
+  <data name="BulletinExpiresLabel" xml:space="preserve">
+    <value>Діє до</value>
+  </data>
+  <data name="BulletinInvalidMessage" xml:space="preserve">
+    <value>Перевірте заголовок, текст і строк дії (у майбутньому, у межах дозволених днів).</value>
+  </data>
+  <data name="BulletinIssuedBy" xml:space="preserve">
+    <value>Видав {0} {1}</value>
+  </data>
+  <data name="BulletinIssuedMessage" xml:space="preserve">
+    <value>Бюлетень чинний і надісланий.</value>
+  </data>
+  <data name="BulletinMustReadLabel" xml:space="preserve">
+    <value>Обов'язково до прочитання: кожен член аудиторії має підтвердити</value>
+  </data>
+  <data name="BulletinTitleLabel" xml:space="preserve">
+    <value>Заголовок</value>
+  </data>
+  <data name="BulletinWithdrawReasonLabel" xml:space="preserve">
+    <value>Причина</value>
+  </data>
+  <data name="BulletinWithdrawnLabel" xml:space="preserve">
+    <value>Відкликано</value>
+  </data>
+  <data name="BulletinWithdrawnMessage" xml:space="preserve">
+    <value>Бюлетень відкликано.</value>
+  </data>
+  <data name="BulletinsIntro" xml:space="preserve">
+    <value>Безпекові повідомлення й тимчасові вказівки, що не можуть чекати на перевірку. Вони діють одразу й затверджуються згодом.</value>
+  </data>
+  <data name="BulletinsListHeader" xml:space="preserve">
+    <value>Бюлетені</value>
+  </data>
+  <data name="BulletinsTab" xml:space="preserve">
+    <value>Бюлетені</value>
+  </data>
+  <data name="ComingWithCoursesLabel" xml:space="preserve">
+    <value>З'явиться з курсами LMS</value>
+  </data>
+  <data name="ComplianceHeader" xml:space="preserve">
+    <value>Виконання підтверджень протоколів</value>
+  </data>
+  <data name="ComplianceIntro" xml:space="preserve">
+    <value>Хто прочитав і підписав кожну версію протоколу, за групами.</value>
+  </data>
+  <data name="ComplianceTab" xml:space="preserve">
+    <value>Виконання</value>
+  </data>
+  <data name="CountersignButton" xml:space="preserve">
+    <value>Контрпідписати</value>
+  </data>
+  <data name="CurrentDocumentLabel" xml:space="preserve">
+    <value>Чинний: {0} (версія {1})</value>
+  </data>
+  <data name="DocumentFileHelp" xml:space="preserve">
+    <value>PDF або Word (DOCX), до 30 МБ.</value>
+  </data>
+  <data name="DocumentFileLabel" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="DocumentMissingNotice" xml:space="preserve">
+    <value>Ця версія не має файлу.</value>
+  </data>
+  <data name="DocumentProtocolCreatedMessage" xml:space="preserve">
+    <value>Протокол створено як чернетку з файлу.</value>
+  </data>
+  <data name="DocumentTitleHelp" xml:space="preserve">
+    <value>Порожньо — заголовок береться з назви файлу.</value>
+  </data>
+  <data name="DocumentTitleLabel" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="DocumentVersionUploadedMessage" xml:space="preserve">
+    <value>Файл є вмістом нової версії-чернетки.</value>
+  </data>
+  <data name="DocxNoViewerNotice" xml:space="preserve">
+    <value>Файли Word відкриваються у Word. Завантажте його або прочитайте текст нижче.</value>
+  </data>
+  <data name="DownloadDocumentButton" xml:space="preserve">
+    <value>Завантажити</value>
+  </data>
+  <data name="DueLabel" xml:space="preserve">
+    <value>Термін</value>
+  </data>
+  <data name="ExportCsvButton" xml:space="preserve">
+    <value>Експорт CSV</value>
+  </data>
+  <data name="ExportPdfButton" xml:space="preserve">
+    <value>Експорт PDF</value>
+  </data>
+  <data name="ExtractedTextHeader" xml:space="preserve">
+    <value>Текст документа</value>
+  </data>
+  <data name="ExtractedTextNone_encrypted" xml:space="preserve">
+    <value>Документ захищено, тому його текст не вдалося прочитати.</value>
+  </data>
+  <data name="ExtractedTextNone_scanned" xml:space="preserve">
+    <value>Документ не має текстового шару (схоже, він сканований).</value>
+  </data>
+  <data name="ExtractedTextNone_too_large" xml:space="preserve">
+    <value>Документ завеликий, щоб прочитати його текст.</value>
+  </data>
+  <data name="ExtractedTextNone_unsupported" xml:space="preserve">
+    <value>З такого типу файлу текст прочитати неможливо.</value>
+  </data>
+  <data name="ExtractedTextNone_unreadable" xml:space="preserve">
+    <value>Не вдалося прочитати текст документа.</value>
+  </data>
+  <data name="ExtractedTextNone_timeout" xml:space="preserve">
+    <value>Читання тексту тривало задовго й було зупинене.</value>
+  </data>
+  <data name="ExtractedTextPending" xml:space="preserve">
+    <value>Текст зчитується й незабаром з'явиться тут.</value>
+  </data>
+  <data name="FoldersAsCategoriesLabel" xml:space="preserve">
+    <value>Теки в zip стають категоріями</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Група</value>
+  </data>
+  <data name="HideCompletedButton" xml:space="preserve">
+    <value>Сховати підтверджені</value>
+  </data>
+  <data name="ImportCreatedListHeader" xml:space="preserve">
+    <value>Створено як чернетки</value>
+  </data>
+  <data name="ImportPreviewButton" xml:space="preserve">
+    <value>Попередній перегляд</value>
+  </data>
+  <data name="ImportPreviewListHeader" xml:space="preserve">
+    <value>Буде створено як чернетки</value>
+  </data>
+  <data name="ImportPreviewMessage" xml:space="preserve">
+    <value>Попередній перегляд {1}: буде створено {0} протоколів як чернетки. Нічого не записано.</value>
+  </data>
+  <data name="IssueBulletinButton" xml:space="preserve">
+    <value>Видати бюлетень</value>
+  </data>
+  <data name="IssueBulletinConfirm" xml:space="preserve">
+    <value>Видати цей бюлетень зараз і надіслати аудиторії?</value>
+  </data>
+  <data name="IssueBulletinHeader" xml:space="preserve">
+    <value>Новий пріоритетний бюлетень</value>
+  </data>
+  <data name="IssueBulletinHelp" xml:space="preserve">
+    <value>Бюлетень діє одразу й надсилається push-сповіщенням. Далі затверджувач його контрпідписує або відкликає.</value>
+  </data>
+  <data name="KindBulletin" xml:space="preserve">
+    <value>Пріоритетний бюлетень</value>
+  </data>
+  <data name="LifecycleErrorFileRequired" xml:space="preserve">
+    <value>Спершу завантажте документ.</value>
+  </data>
+  <data name="LifecycleErrorFileTypeNotAllowed" xml:space="preserve">
+    <value>Вмістом протоколу можуть бути лише файли PDF і Word (DOCX).</value>
+  </data>
+  <data name="LifecycleErrorFileTooLarge" xml:space="preserve">
+    <value>Файл більший за 30 МБ.</value>
+  </data>
+  <data name="LmsAcknowledgmentExtrasHeader" xml:space="preserve">
+    <value>З доповненням LMS</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Член</value>
+  </data>
+  <data name="MicroLearningLabel" xml:space="preserve">
+    <value>Щотижневі сценарні питання з вибраних протоколів</value>
+  </data>
+  <data name="MoveCategoryToProtocolsLabel" xml:space="preserve">
+    <value>Перемістити цю категорію до протоколів як</value>
+  </data>
+  <data name="MoveDocumentFailedError" xml:space="preserve">
+    <value>Не вдалося перемістити документ до протоколів. Можна лише файли PDF і Word (DOCX) до 30 МБ.</value>
+  </data>
+  <data name="MoveProtectedDocumentError" xml:space="preserve">
+    <value>Захищений документ залишається в документах.</value>
+  </data>
+  <data name="MoveToProtocolsButton" xml:space="preserve">
+    <value>Перемістити до протоколів</value>
+  </data>
+  <data name="MoveToProtocolsConfirm" xml:space="preserve">
+    <value>Перемістити до протоколів? Він стане чернеткою протоколу для перевірки, а старе посилання відкриє протокол.</value>
+  </data>
+  <data name="MovedCategoryMessage" xml:space="preserve">
+    <value>Переміщено до протоколів: {0}.</value>
+  </data>
+  <data name="MustReadHeader" xml:space="preserve">
+    <value>Обов'язково прочитати</value>
+  </data>
+  <data name="MyAcknowledgmentsIntro" xml:space="preserve">
+    <value>Протоколи та бюлетені, які вас просять прочитати й підписати.</value>
+  </data>
+  <data name="MyAcknowledgmentsTab" xml:space="preserve">
+    <value>Мої підтвердження</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="NewDocumentProtocolHeader" xml:space="preserve">
+    <value>Новий протокол із документа</value>
+  </data>
+  <data name="NewDocumentProtocolIntro" xml:space="preserve">
+    <value>Завантажте файл PDF або Word. Він стане вмістом протоколу з тією самою перевіркою, публікацією й підтвердженням.</value>
+  </data>
+  <data name="NoAcknowledgmentVersion" xml:space="preserve">
+    <value>Жодна опублікована версія цього протоколу не потребує підтвердження.</value>
+  </data>
+  <data name="NoAcknowledgmentsYet" xml:space="preserve">
+    <value>Підтверджень ще немає.</value>
+  </data>
+  <data name="NoBulletins" xml:space="preserve">
+    <value>Бюлетенів ще немає.</value>
+  </data>
+  <data name="NoCompletedAcknowledgments" xml:space="preserve">
+    <value>Ще нічого не підтверджено.</value>
+  </data>
+  <data name="NothingToAcknowledge" xml:space="preserve">
+    <value>Вам нічого не потрібно підтверджувати.</value>
+  </data>
+  <data name="OpenDocumentButton" xml:space="preserve">
+    <value>Відкрити в новій вкладці</value>
+  </data>
+  <data name="OverdueLabel" xml:space="preserve">
+    <value>Прострочені</value>
+  </data>
+  <data name="PageNumberLabel" xml:space="preserve">
+    <value>Сторінка {0}</value>
+  </data>
+  <data name="ReadAndSignButton" xml:space="preserve">
+    <value>Прочитати й підписати</value>
+  </data>
+  <data name="ReadAndSignHeader" xml:space="preserve">
+    <value>Підтвердити</value>
+  </data>
+  <data name="ReadAndSignHelp" xml:space="preserve">
+    <value>Підпис фіксує ваше ім'я, час і саме цю версію.</value>
+  </data>
+  <data name="ReadAndSignStatement" xml:space="preserve">
+    <value>Я прочитав(-ла) протокол {0} "{1}" версії {2} (вміст {3}), розумію його й виконуватиму.</value>
+  </data>
+  <data name="ReadBulletinButton" xml:space="preserve">
+    <value>Читати</value>
+  </data>
+  <data name="RequiresAcknowledgmentLabel" xml:space="preserve">
+    <value>Члени мають прочитати й підписати його</value>
+  </data>
+  <data name="ResultLabel" xml:space="preserve">
+    <value>Результат</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="ShowCompletedButton" xml:space="preserve">
+    <value>Показати підтверджені</value>
+  </data>
+  <data name="SignAcknowledgmentButton" xml:space="preserve">
+    <value>Підписати</value>
+  </data>
+  <data name="SignedLabel" xml:space="preserve">
+    <value>Підписано</value>
+  </data>
+  <data name="StandardsReportButton" xml:space="preserve">
+    <value>Доказ відповідності</value>
+  </data>
+  <data name="StandardsReportEmpty" xml:space="preserve">
+    <value>Жоден протокол ще не позначено стандартом. Додайте стандарти в налаштуваннях підтверджень протоколу.</value>
+  </data>
+  <data name="StandardsReportIntro" xml:space="preserve">
+    <value>Протоколи за стандартом (CFAI, CAAS, CALEA, NFPA, ISO 45001 і власні) з доказами підтверджень і затверджень.</value>
+  </data>
+  <data name="StandardsReportLmsOnly" xml:space="preserve">
+    <value>Звіт про доказ відповідності входить до доповнення LMS.</value>
+  </data>
+  <data name="StandardsTagsHelp" xml:space="preserve">
+    <value>Через кому, наприклад CFAI, CALEA.</value>
+  </data>
+  <data name="StandardsTagsLabel" xml:space="preserve">
+    <value>Стандарти</value>
+  </data>
+  <data name="StandardsTagsLmsOnly" xml:space="preserve">
+    <value>Зіставлення зі стандартами входить до доповнення LMS.</value>
+  </data>
+  <data name="StateLabel" xml:space="preserve">
+    <value>Стан</value>
+  </data>
+  <data name="TakeQuizButton" xml:space="preserve">
+    <value>Пройти тест</value>
+  </data>
+  <data name="UploadBlockedByReview" xml:space="preserve">
+    <value>Версія цього протоколу на перевірці. Відкличте її або завершіть перевірку, перш ніж завантажувати новий файл.</value>
+  </data>
+  <data name="UploadDocumentButton" xml:space="preserve">
+    <value>Завантажити файл</value>
+  </data>
+  <data name="UploadNewVersionButton" xml:space="preserve">
+    <value>Завантажити нову версію</value>
+  </data>
+  <data name="UploadNewVersionHelp" xml:space="preserve">
+    <value>Файл стане вмістом наступної версії — чернетки для перевірки й публікації. До того часу діє чинна версія.</value>
+  </data>
+  <data name="VerifiedApprovalsLabel" xml:space="preserve">
+    <value>Перевірених затверджень: {0}</value>
+  </data>
+  <data name="WithdrawBulletinButton" xml:space="preserve">
+    <value>Відкликати</value>
+  </data>
+  <data name="WithdrawBulletinConfirm" xml:space="preserve">
+    <value>Відкликати цей бюлетень? Він одразу втратить чинність.</value>
+  </data>
+  <data name="WizardProtocolsFileHelp" xml:space="preserve">
+    <value>Файл, експортований із бібліотеки протоколів Resgrid (формат resgrid-protocols, версія 1), до 10 МБ і 500 протоколів.</value>
+  </data>
+  <data name="WizardProtocolsHelp" xml:space="preserve">
+    <value>Перенесіть протоколи у відкритому форматі обміну. Спершу попередній перегляд; імпорт створює чернетки для одного проходу перевірки й публікації. Нічого не публікується.</value>
+  </data>
+  <data name="BlockLabelCaution" xml:space="preserve">
+    <value>Обережно</value>
+  </data>
+  <data name="BlockLabelWarning" xml:space="preserve">
+    <value>Попередження</value>
+  </data>
+  <data name="BlockLabelContactMedicalControl" xml:space="preserve">
+    <value>Зв'яжіться з медичним контролем</value>
+  </data>
+  <data name="BlockLabelContact" xml:space="preserve">
+    <value>Контакт</value>
+  </data>
+  <data name="BlockLabelScopeOfPractice" xml:space="preserve">
+    <value>Обсяг повноважень</value>
+  </data>
+  <data name="BlockLabelMedication" xml:space="preserve">
+    <value>Препарат</value>
+  </data>
+  <data name="BlockLabelIndication" xml:space="preserve">
+    <value>Показання</value>
+  </data>
+  <data name="BlockLabelConcentration" xml:space="preserve">
+    <value>Концентрація</value>
+  </data>
+  <data name="BlockLabelDosePerKg" xml:space="preserve">
+    <value>Доза на кг</value>
+  </data>
+  <data name="BlockLabelMaxSingleDose" xml:space="preserve">
+    <value>Максимальна разова доза</value>
+  </data>
+  <data name="BlockLabelMaxTotalDose" xml:space="preserve">
+    <value>Максимальна загальна доза</value>
+  </data>
+  <data name="BlockLabelRoute" xml:space="preserve">
+    <value>Шлях введення</value>
+  </data>
+  <data name="BlockLabelRepeatInterval" xml:space="preserve">
+    <value>Інтервал повторення</value>
+  </data>
+  <data name="BlockLabelInventoryItem" xml:space="preserve">
+    <value>Позиція складу</value>
+  </data>
+  <data name="BlockLabelDoseAsAuthored" xml:space="preserve">
+    <value>Дози показано так, як їх записано. Нічого не обчислюється.</value>
+  </data>
+  <data name="BlockLabelVideo" xml:space="preserve">
+    <value>Посилання на відео</value>
+  </data>
+  <data name="BlockLabelAttachment" xml:space="preserve">
+    <value>Вкладений файл</value>
+  </data>
+  <data name="BlockLabelLinkProtocol" xml:space="preserve">
+    <value>Пов'язаний протокол</value>
+  </data>
+  <data name="BlockLabelLinkPoi" xml:space="preserve">
+    <value>Цікаве місце</value>
+  </data>
+  <data name="BlockLabelLinkInventory" xml:space="preserve">
+    <value>Пов'язана позиція складу</value>
+  </data>
+  <data name="BlockLabelLinkChecklist" xml:space="preserve">
+    <value>Пов'язаний контрольний список</value>
+  </data>
+  <data name="BlockLabelLinkTraining" xml:space="preserve">
+    <value>Пов'язане навчання</value>
+  </data>
+  <data name="BlockLabelLinkUrl" xml:space="preserve">
+    <value>Вебсторінка</value>
+  </data>
+  <data name="BlockTypeHeading" xml:space="preserve">
+    <value>Заголовок</value>
+  </data>
+  <data name="BlockTypeParagraph" xml:space="preserve">
+    <value>Абзац</value>
+  </data>
+  <data name="BlockTypeSteps" xml:space="preserve">
+    <value>Послідовні кроки</value>
+  </data>
+  <data name="BlockTypeCaution" xml:space="preserve">
+    <value>Обережно</value>
+  </data>
+  <data name="BlockTypeWarning" xml:space="preserve">
+    <value>Попередження</value>
+  </data>
+  <data name="BlockTypeGate" xml:space="preserve">
+    <value>Зв'яжіться з медичним контролем</value>
+  </data>
+  <data name="BlockTypeTable" xml:space="preserve">
+    <value>Таблиця</value>
+  </data>
+  <data name="BlockTypeImage" xml:space="preserve">
+    <value>Зображення</value>
+  </data>
+  <data name="BlockTypeVideo" xml:space="preserve">
+    <value>Посилання на відео</value>
+  </data>
+  <data name="BlockTypeAttachment" xml:space="preserve">
+    <value>Вкладення</value>
+  </data>
+  <data name="BlockTypeLink" xml:space="preserve">
+    <value>Посилання</value>
+  </data>
+  <data name="BlockTypeMedication" xml:space="preserve">
+    <value>Препарат</value>
+  </data>
+  <data name="BlockTypeVariants" xml:space="preserve">
+    <value>Варіанти для дорослих / дітей</value>
+  </data>
+  <data name="BlockTypeHtml" xml:space="preserve">
+    <value>Форматований текст</value>
+  </data>
+  <data name="BlockMoveUp" xml:space="preserve">
+    <value>Перемістити вгору</value>
+  </data>
+  <data name="BlockMoveDown" xml:space="preserve">
+    <value>Перемістити вниз</value>
+  </data>
+  <data name="BlockRemove" xml:space="preserve">
+    <value>Видалити блок</value>
+  </data>
+  <data name="BlockAddStep" xml:space="preserve">
+    <value>Додати крок</value>
+  </data>
+  <data name="BlockRemoveStep" xml:space="preserve">
+    <value>Видалити крок</value>
+  </data>
+  <data name="BlockAddRow" xml:space="preserve">
+    <value>Додати рядок</value>
+  </data>
+  <data name="BlockAddColumn" xml:space="preserve">
+    <value>Додати стовпець</value>
+  </data>
+  <data name="BlockRemoveRow" xml:space="preserve">
+    <value>Видалити останній рядок</value>
+  </data>
+  <data name="BlockRemoveColumn" xml:space="preserve">
+    <value>Видалити останній стовпець</value>
+  </data>
+  <data name="BlockAddVariant" xml:space="preserve">
+    <value>Додати варіант</value>
+  </data>
+  <data name="BlockRemoveVariant" xml:space="preserve">
+    <value>Видалити варіант</value>
+  </data>
+  <data name="BlockAddBlock" xml:space="preserve">
+    <value>Додати блок</value>
+  </data>
+  <data name="BlockEditorEmpty" xml:space="preserve">
+    <value>Блоків ще немає. Додайте нижче заголовок, кроки або препарат.</value>
+  </data>
+  <data name="BlockSelectNone" xml:space="preserve">
+    <value>Нічого не вибрано</value>
+  </data>
+  <data name="BlockPreviewFailed" xml:space="preserve">
+    <value>Не вдалося завантажити попередній перегляд.</value>
+  </data>
+  <data name="BlockFieldText" xml:space="preserve">
+    <value>Текст заголовка</value>
+  </data>
+  <data name="BlockFieldLevel" xml:space="preserve">
+    <value>Рівень заголовка</value>
+  </data>
+  <data name="BlockFieldTitle" xml:space="preserve">
+    <value>Назва (необов'язково)</value>
+  </data>
+  <data name="BlockFieldBody" xml:space="preserve">
+    <value>Текст</value>
+  </data>
+  <data name="BlockFieldStep" xml:space="preserve">
+    <value>Крок</value>
+  </data>
+  <data name="BlockFieldContact" xml:space="preserve">
+    <value>З ким і як зв'язатися</value>
+  </data>
+  <data name="BlockFieldCaption" xml:space="preserve">
+    <value>Підпис</value>
+  </data>
+  <data name="BlockFieldHeaderRow" xml:space="preserve">
+    <value>Перший рядок є заголовком</value>
+  </data>
+  <data name="BlockFieldCell" xml:space="preserve">
+    <value>Клітинка</value>
+  </data>
+  <data name="BlockFieldUrl" xml:space="preserve">
+    <value>Вебадреса (https)</value>
+  </data>
+  <data name="BlockFieldAttachment" xml:space="preserve">
+    <value>Вкладення протоколу</value>
+  </data>
+  <data name="BlockFieldAlt" xml:space="preserve">
+    <value>Опис для зчитувачів екрана</value>
+  </data>
+  <data name="BlockFieldLabel" xml:space="preserve">
+    <value>Текст посилання</value>
+  </data>
+  <data name="BlockFieldLinkKind" xml:space="preserve">
+    <value>Посилання на</value>
+  </data>
+  <data name="BlockFieldLinkTarget" xml:space="preserve">
+    <value>Пов'язаний елемент</value>
+  </data>
+  <data name="BlockFieldLinkId" xml:space="preserve">
+    <value>Номер або ідентифікатор елемента</value>
+  </data>
+  <data name="BlockFieldScopes" xml:space="preserve">
+    <value>Обсяг повноважень (типи сертифікацій)</value>
+  </data>
+  <data name="BlockFieldVariantLabel" xml:space="preserve">
+    <value>Назва варіанта</value>
+  </data>
+  <data name="BlockFieldDrug" xml:space="preserve">
+    <value>Ліки</value>
+  </data>
+  <data name="BlockFieldInventoryItemId" xml:space="preserve">
+    <value>Ідентифікатор позиції складу</value>
+  </data>
+  <data name="BlockFieldInventoryItemName" xml:space="preserve">
+    <value>Назва позиції складу</value>
+  </data>
+  <data name="BlockFieldNotes" xml:space="preserve">
+    <value>Примітки</value>
+  </data>
+  <data name="BlockLevel2" xml:space="preserve">
+    <value>Розділ</value>
+  </data>
+  <data name="BlockLevel3" xml:space="preserve">
+    <value>Підрозділ</value>
+  </data>
+  <data name="BlockLevel4" xml:space="preserve">
+    <value>Малий заголовок</value>
+  </data>
+  <data name="BlockAdultLabel" xml:space="preserve">
+    <value>Дорослі</value>
+  </data>
+  <data name="BlockPediatricLabel" xml:space="preserve">
+    <value>Діти</value>
+  </data>
+  <data name="BlockDoseNoticeEditor" xml:space="preserve">
+    <value>Дози показано точно так, як їх записано тут. Resgrid ніколи не обчислює дозу; посилання на інструмент дозування підрозділу показано біля кожного препарату.</value>
+  </data>
+  <data name="RichBold" xml:space="preserve">
+    <value>Жирний</value>
+  </data>
+  <data name="RichItalic" xml:space="preserve">
+    <value>Курсив</value>
+  </data>
+  <data name="RichBullets" xml:space="preserve">
+    <value>Маркований список</value>
+  </data>
+  <data name="RichNumbers" xml:space="preserve">
+    <value>Нумерований список</value>
+  </data>
+  <data name="BlockEditorHelp" xml:space="preserve">
+    <value>Створюйте протокол із блоків: заголовки утворюють структуру, послідовні кроки та пункти звʼязку з медичним контролем можна виконувати покроково під час виклику, а кожен блок має сталий якір для коментарів рецензії та цитат ШІ.</value>
+  </data>
+  <data name="BlockEditorNeedsScript" xml:space="preserve">
+    <value>Редактор блоків потребує JavaScript. Увімкніть його, щоб редагувати чернетку.</value>
+  </data>
+  <data name="BlockPreviewButton" xml:space="preserve">
+    <value>Оновити попередній перегляд</value>
+  </data>
+  <data name="BlockPreviewHeader" xml:space="preserve">
+    <value>Попередній перегляд так, як прочитають учасники</value>
+  </data>
+  <data name="BlockPreviewHelp" xml:space="preserve">
+    <value>Виберіть «Оновити попередній перегляд», щоб побачити блоки точно так, як їх прочитають учасники.</value>
+  </data>
+  <data name="ConvertToBlocksCallout" xml:space="preserve">
+    <value>Ця чернетка є форматованим текстом. Перетворіть її на блоки, щоб додати кроки, застереження, препарати та інший структурований вміст; опубліковані версії не змінюються.</value>
+  </data>
+  <data name="ConvertToBlocksButton" xml:space="preserve">
+    <value>Перетворити на блоки</value>
+  </data>
+  <data name="ConvertToBlocksConfirm" xml:space="preserve">
+    <value>Перетворити текст цієї чернетки на блоки? Опубліковані версії не зміняться.</value>
+  </data>
+  <data name="ConvertedToBlocksMessage" xml:space="preserve">
+    <value>Чернетку перетворено на блоки.</value>
+  </data>
+  <data name="DosingToolLinkText" xml:space="preserve">
+    <value>Відкрити інструмент дозування підрозділу</value>
+  </data>
+  <data name="StepThroughHeader" xml:space="preserve">
+    <value>Покроково</value>
+  </data>
+  <data name="StepThroughSubtitle" xml:space="preserve">
+    <value>Виклик {0} · {1}</value>
+  </data>
+  <data name="StepProgressLabel" xml:space="preserve">
+    <value>Виконані кроки</value>
+  </data>
+  <data name="StepProgressFormat" xml:space="preserve">
+    <value>{0} з {1}</value>
+  </data>
+  <data name="StepStartedLabel" xml:space="preserve">
+    <value>Розпочато</value>
+  </data>
+  <data name="StepNotStarted" xml:space="preserve">
+    <value>Не розпочато</value>
+  </data>
+  <data name="CitedVersionColumn" xml:space="preserve">
+    <value>Використана версія</value>
+  </data>
+  <data name="StepsCompletedBy" xml:space="preserve">
+    <value>Завершив(-ла) {0} о {1}.</value>
+  </data>
+  <data name="StepsHeader" xml:space="preserve">
+    <value>Кроки</value>
+  </data>
+  <data name="StepStateDone" xml:space="preserve">
+    <value>Виконано</value>
+  </data>
+  <data name="StepStateSkipped" xml:space="preserve">
+    <value>Пропущено</value>
+  </data>
+  <data name="StepStateNotApplicable" xml:space="preserve">
+    <value>Не застосовується</value>
+  </data>
+  <data name="StepStatePending" xml:space="preserve">
+    <value>Ще не виконано</value>
+  </data>
+  <data name="StepMarkDone" xml:space="preserve">
+    <value>Виконано</value>
+  </data>
+  <data name="StepMarkSkipped" xml:space="preserve">
+    <value>Пропустити</value>
+  </data>
+  <data name="StepMarkNotApplicable" xml:space="preserve">
+    <value>Не застосовується</value>
+  </data>
+  <data name="StepMarkPending" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="BackToCallButton" xml:space="preserve">
+    <value>Назад до виклику</value>
+  </data>
+  <data name="CompleteStepsButton" xml:space="preserve">
+    <value>Завершити контрольний список</value>
+  </data>
+  <data name="CompleteStepsConfirm" xml:space="preserve">
+    <value>Завершити цей список? Невиконані кроки залишаться записаними як невиконані.</value>
+  </data>
+  <data name="StepSaveFailed" xml:space="preserve">
+    <value>Не вдалося зберегти крок. Спробуйте ще раз.</value>
+  </data>
+  <data name="StepsCompletedMessage" xml:space="preserve">
+    <value>Контрольний список завершено.</value>
+  </data>
+  <data name="StepsCompletedLabel" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="SopChecklistsHeader" xml:space="preserve">
+    <value>Покроково та контрольні списки СОП</value>
+  </data>
+  <data name="IncidentSopLabel" xml:space="preserve">
+    <value>СОП інциденту</value>
+  </data>
+  <data name="StartSopLabel" xml:space="preserve">
+    <value>Почати контрольний список СОП</value>
+  </data>
+  <data name="StartSopButton" xml:space="preserve">
+    <value>Почати список</value>
+  </data>
+  <data name="StepErrorNotFound" xml:space="preserve">
+    <value>Цього протоколу немає у виклику.</value>
+  </data>
+  <data name="StepErrorNotAuthorized" xml:space="preserve">
+    <value>Ви не можете змінити цей список.</value>
+  </data>
+  <data name="StepErrorNoSteps" xml:space="preserve">
+    <value>Цей протокол не має кроків.</value>
+  </data>
+  <data name="StepErrorUnknownStep" xml:space="preserve">
+    <value>Цього кроку немає у версії, яку використовує виклик.</value>
+  </data>
+  <data name="StepErrorCompleted" xml:space="preserve">
+    <value>Цей список завершено.</value>
+  </data>
+  <data name="StepErrorConflict" xml:space="preserve">
+    <value>Хтось інший зберігав у той самий момент. Спробуйте ще раз.</value>
+  </data>
+  <data name="StepErrorNotAttachable" xml:space="preserve">
+    <value>Цей протокол не можна додати до виклику (вимкнений, видалений або знятий із виклику).</value>
+  </data>
+  <data name="QrCodeHeader" xml:space="preserve">
+    <value>Плакат із QR-кодом</value>
+  </data>
+  <data name="QrCodeButton" xml:space="preserve">
+    <value>QR-код</value>
+  </data>
+  <data name="QrCodeAlt" xml:space="preserve">
+    <value>QR-код для {0}</value>
+  </data>
+  <data name="QrCodeUnavailable" xml:space="preserve">
+    <value>Не вдалося створити QR-код.</value>
+  </data>
+  <data name="QrCodeHelp" xml:space="preserve">
+    <value>Надрукуйте цей плакат для машини або стіни станції. Сканування відкриває чинну версію для учасників, які можуть читати протокол.</value>
+  </data>
+  <data name="DeepLinkLabel" xml:space="preserve">
+    <value>Пряме посилання</value>
+  </data>
+  <data name="PrintViewButton" xml:space="preserve">
+    <value>Вигляд для друку</value>
+  </data>
+  <data name="BookTab" xml:space="preserve">
+    <value>PDF-книга</value>
+  </data>
+  <data name="BookHeader" xml:space="preserve">
+    <value>PDF-книга протоколів</value>
+  </data>
+  <data name="BookHelp" xml:space="preserve">
+    <value>Завантажте всю бібліотеку або одну категорію (з підкатегоріями) як один PDF: зміст, а потім кожен чинний протокол із версією, датою набрання чинності та затверджувачем. Включено лише протоколи, які ви можете читати.</value>
+  </data>
+  <data name="BookReadableCount" xml:space="preserve">
+    <value>Протоколи, які ви можете читати</value>
+  </data>
+  <data name="BookSealingLabel" xml:space="preserve">
+    <value>Електронна печатка</value>
+  </data>
+  <data name="BookSealingReady" xml:space="preserve">
+    <value>Опечатано (L3)</value>
+  </data>
+  <data name="BookSealingPending" xml:space="preserve">
+    <value>Без печатки, опечатування очікує</value>
+  </data>
+  <data name="BookUnsealedNotice" xml:space="preserve">
+    <value>Опечатування не налаштовано, тому PDF не опечатано. Експорт записано як такий, що очікує печатки, і його буде опечатано після налаштування.</value>
+  </data>
+  <data name="BookWholeLibrary" xml:space="preserve">
+    <value>Уся бібліотека</value>
+  </data>
+  <data name="BookDownloadButton" xml:space="preserve">
+    <value>Завантажити PDF</value>
+  </data>
+  <data name="BookLibraryTitle" xml:space="preserve">
+    <value>Бібліотека протоколів</value>
+  </data>
+  <data name="BookContents" xml:space="preserve">
+    <value>Зміст</value>
+  </data>
+  <data name="BookVersion" xml:space="preserve">
+    <value>Версія</value>
+  </data>
+  <data name="BookEffective" xml:space="preserve">
+    <value>Чинна з</value>
+  </data>
+  <data name="BookApprovedBy" xml:space="preserve">
+    <value>Затвердив(-ла)</value>
+  </data>
+  <data name="BookContent" xml:space="preserve">
+    <value>Вміст</value>
+  </data>
+  <data name="BookGenerated" xml:space="preserve">
+    <value>Створено</value>
+  </data>
+  <data name="BookDocumentBacked" xml:space="preserve">
+    <value>Цей протокол є документом; відкрийте його в Resgrid, щоб прочитати файл.</value>
+  </data>
+  <data name="BookEmpty" xml:space="preserve">
+    <value>Немає опублікованих протоколів.</value>
+  </data>
+  <data name="BookUncategorized" xml:space="preserve">
+    <value>Без категорії</value>
+  </data>
+  <data name="BookFailed" xml:space="preserve">
+    <value>Не вдалося створити PDF-книгу.</value>
+  </data>
+  <data name="TranslationsButton" xml:space="preserve">
+    <value>Переклади</value>
+  </data>
+  <data name="TranslationsHeader" xml:space="preserve">
+    <value>Переклади вмісту</value>
+  </data>
+  <data name="TranslationHeader" xml:space="preserve">
+    <value>Переклад: {0}</value>
+  </data>
+  <data name="TranslationsSourceCallout" xml:space="preserve">
+    <value>Цю версію написано мовою: {0}. Кожен переклад затверджується окремо; версія, її хеш і підписи ніколи не змінюються.</value>
+  </data>
+  <data name="NoTranslations" xml:space="preserve">
+    <value>Перекладів ще немає.</value>
+  </data>
+  <data name="TranslationLanguageColumn" xml:space="preserve">
+    <value>Мова</value>
+  </data>
+  <data name="TranslationUpdatedColumn" xml:space="preserve">
+    <value>Остання зміна</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Дії</value>
+  </data>
+  <data name="TranslationStatusDraft" xml:space="preserve">
+    <value>Чернетка перекладу</value>
+  </data>
+  <data name="TranslationStatusApproved" xml:space="preserve">
+    <value>Затверджений переклад</value>
+  </data>
+  <data name="TranslationStatusWithdrawn" xml:space="preserve">
+    <value>Відкликаний переклад</value>
+  </data>
+  <data name="TranslationSourceChanged" xml:space="preserve">
+    <value>Джерело змінилося</value>
+  </data>
+  <data name="TranslationSourceChangedNotice" xml:space="preserve">
+    <value>Вихідний вміст змінився після цього перекладу. Його не можна затвердити, і учасники його не бачать; почніть новий переклад поточної версії.</value>
+  </data>
+  <data name="WithdrawTranslationButton" xml:space="preserve">
+    <value>Відкликати переклад</value>
+  </data>
+  <data name="WithdrawTranslationConfirm" xml:space="preserve">
+    <value>Відкликати цей переклад? Учасники, які читають цією мовою, бачитимуть оригінал.</value>
+  </data>
+  <data name="StartTranslationButton" xml:space="preserve">
+    <value>Почати переклад</value>
+  </data>
+  <data name="TranslationRulesCallout" xml:space="preserve">
+    <value>Перекладається лише текст. Дози, посилання, вкладення та структура залишаються точно як в оригіналі.</value>
+  </data>
+  <data name="TranslationWordingHeader" xml:space="preserve">
+    <value>Перекладений текст</value>
+  </data>
+  <data name="TranslationSourceColumn" xml:space="preserve">
+    <value>Оригінал</value>
+  </data>
+  <data name="TranslationTranslatedColumn" xml:space="preserve">
+    <value>Переклад</value>
+  </data>
+  <data name="TranslationDosesLocked" xml:space="preserve">
+    <value>Дози не перекладаються</value>
+  </data>
+  <data name="SaveTranslationButton" xml:space="preserve">
+    <value>Зберегти переклад</value>
+  </data>
+  <data name="TranslationPreviewHeader" xml:space="preserve">
+    <value>Переклад так, як його прочитають учасники</value>
+  </data>
+  <data name="ApproveTranslationHeader" xml:space="preserve">
+    <value>Затвердити переклад</value>
+  </data>
+  <data name="ApproveTranslationHelp" xml:space="preserve">
+    <value>Затвердження підписує цей переклад на рівні L2 (додаткова перевірка), привʼязаний до вмісту самого перекладу. Вихідна версія не змінюється.</value>
+  </data>
+  <data name="ApproveTranslationButton" xml:space="preserve">
+    <value>Затвердити з додатковою перевіркою</value>
+  </data>
+  <data name="TranslationApprovalStatement" xml:space="preserve">
+    <value>Я затверджую переклад ({3}) протоколу {0} «{1}» версії {2} (вміст перекладу {4}) для учасників, які читають цією мовою.</value>
+  </data>
+  <data name="TranslationSavedMessage" xml:space="preserve">
+    <value>Переклад збережено.</value>
+  </data>
+  <data name="TranslationApprovedMessage" xml:space="preserve">
+    <value>Переклад затверджено; тепер його бачать учасники, які читають цією мовою.</value>
+  </data>
+  <data name="TranslationWithdrawnMessage" xml:space="preserve">
+    <value>Переклад відкликано.</value>
+  </data>
+  <data name="TranslationShownNotice" xml:space="preserve">
+    <value>Показано мовою: {0} (затверджений переклад).</value>
+  </data>
+  <data name="TranslationFallbackNotice" xml:space="preserve">
+    <value>Немає затвердженого перекладу вашою мовою, тому показано мовою підрозділу.</value>
+  </data>
+  <data name="ContentLanguageLabel" xml:space="preserve">
+    <value>Мова вмісту</value>
+  </data>
+  <data name="TranslationErrorNotFound" xml:space="preserve">
+    <value>Цей переклад або версію не знайдено.</value>
+  </data>
+  <data name="TranslationErrorNotAuthorized" xml:space="preserve">
+    <value>Ви не можете зробити це з перекладами.</value>
+  </data>
+  <data name="TranslationErrorSourceNotLocked" xml:space="preserve">
+    <value>Перекласти можна лише подану, затверджену або опубліковану версію.</value>
+  </data>
+  <data name="TranslationErrorInvalidLocale" xml:space="preserve">
+    <value>Виберіть мову, відмінну від мови версії.</value>
+  </data>
+  <data name="TranslationErrorAlreadyExists" xml:space="preserve">
+    <value>Ця версія вже має переклад цією мовою.</value>
+  </data>
+  <data name="TranslationErrorStaleCopy" xml:space="preserve">
+    <value>Хтось інший зберіг цей переклад, відколи ви його відкрили. Перезавантажте, щоб побачити зміни.</value>
+  </data>
+  <data name="TranslationErrorNotDraft" xml:space="preserve">
+    <value>Змінити або затвердити можна лише чернетку перекладу.</value>
+  </data>
+  <data name="TranslationErrorEmptyContent" xml:space="preserve">
+    <value>Переклад порожній.</value>
+  </data>
+  <data name="TranslationErrorSignatureRequired" xml:space="preserve">
+    <value>Для затвердження потрібна свіжа додаткова перевірка.</value>
+  </data>
+  <data name="TranslationErrorPasskeyRequired" xml:space="preserve">
+    <value>Ваш підрозділ вимагає ключ доступу для затверджень.</value>
+  </data>
+  <data name="TranslationErrorSourceChanged" xml:space="preserve">
+    <value>Вихідний вміст змінився після цього перекладу.</value>
+  </data>
+  <data name="StaleVersionMessage" xml:space="preserve">
+    <value>Ви переглядаєте {0}. {1} чинна з {2}.</value>
+  </data>
+  <data name="StaleRetiredMessage" xml:space="preserve">
+    <value>Ви переглядаєте {0}. Цей протокол більше не чинний.</value>
+  </data>
+  <data name="DefaultContentLocaleLabel" xml:space="preserve">
+    <value>Мова, якою написано протоколи</value>
+  </data>
+  <data name="DefaultContentLocaleBlank" xml:space="preserve">
+    <value>Англійська (за замовчуванням)</value>
+  </data>
+  <data name="DefaultContentLocaleHelp" xml:space="preserve">
+    <value>Учасники, для мови яких немає затвердженого перекладу версії, читають її цією мовою, і нею пишуться мітки блоків, як-от «Обережно».</value>
+  </data>
+  <data name="BankQuizHeader" xml:space="preserve">
+    <value>Тест до протоколу</value>
+  </data>
+  <data name="AckAwaitingBankQuizLabel" xml:space="preserve">
+    <value>Підписано; очікує на тест до протоколу</value>
+  </data>
+  <data name="TakeBankQuizButton" xml:space="preserve">
+    <value>Пройти тест</value>
+  </data>
+  <data name="ResumeBankQuizButton" xml:space="preserve">
+    <value>Продовжити тест</value>
+  </data>
+  <data name="BankQuizRequiredNotice" xml:space="preserve">
+    <value>Ваше підтвердження завершиться, коли ви складете тест із {0} питань (прохідний бал {1}%).</value>
+  </data>
+  <data name="BankQuizPassedNotice" xml:space="preserve">
+    <value>Тест складено ({0}%).</value>
+  </data>
+  <data name="QuizIntro" xml:space="preserve">
+    <value>{0} питань, прохідний бал {1}%. Ваші відповіді оцінюються на сервері; правильні відповіді не показуються.</value>
+  </data>
+  <data name="QuizChooseAll" xml:space="preserve">
+    <value>Оберіть усі правильні відповіді.</value>
+  </data>
+  <data name="SubmitQuizButton" xml:space="preserve">
+    <value>Надіслати відповіді</value>
+  </data>
+  <data name="QuizResultPassed" xml:space="preserve">
+    <value>Складено: {0}% ({1} з {2} правильних, прохідний бал {3}%).</value>
+  </data>
+  <data name="QuizResultFailed" xml:space="preserve">
+    <value>Не складено: {0}% ({1} з {2} правильних, прохідний бал {3}%). Ви можете пройти новий тест.</value>
+  </data>
+  <data name="QuizAckCompletedMessage" xml:space="preserve">
+    <value>Ваше підтвердження завершено.</value>
+  </data>
+  <data name="QuizError_NotAssigned" xml:space="preserve">
+    <value>Ви не маєте підтверджувати цю версію, або вона не вимагає тесту.</value>
+  </data>
+  <data name="QuizError_NoQuestions" xml:space="preserve">
+    <value>У банку питань ще немає питань для вибору. Повідомте відповідального за навчання.</value>
+  </data>
+  <data name="QuizError_AlreadySubmitted" xml:space="preserve">
+    <value>Цей тест уже пройдено.</value>
+  </data>
+  <data name="QuizError_NotAuthorized" xml:space="preserve">
+    <value>Ви не можете пройти цей тест.</value>
+  </data>
+  <data name="QuizError_NotFound" xml:space="preserve">
+    <value>Тест не знайдено.</value>
+  </data>
+  <data name="LearningSettingsHeader" xml:space="preserve">
+    <value>Тест із банку питань і мікронавчання</value>
+  </data>
+  <data name="LearningBankLabel" xml:space="preserve">
+    <value>Банк питань</value>
+  </data>
+  <data name="LearningNoBankOption" xml:space="preserve">
+    <value>Без банку питань</value>
+  </data>
+  <data name="LearningBankHelp" xml:space="preserve">
+    <value>Спільний банк питань підрозділу, пов'язаний із цим протоколом (у дужках — кількість питань для вибору). Тести й щотижневе мікронавчання беруть із нього питання з однією відповіддю, з кількома відповідями та «правда/неправда».</value>
+  </data>
+  <data name="LearningQuizRequiredLabel" xml:space="preserve">
+    <value>Підтвердження вимагає складеного тесту з банку</value>
+  </data>
+  <data name="LearningQuestionCountLabel" xml:space="preserve">
+    <value>Питань у тесті</value>
+  </data>
+  <data name="LearningPassMarkLabel" xml:space="preserve">
+    <value>Прохідний бал (%)</value>
+  </data>
+  <data name="LearningTagsLabel" xml:space="preserve">
+    <value>Лише питання з тегами</value>
+  </data>
+  <data name="LearningTagsHelp" xml:space="preserve">
+    <value>Необов'язково, через кому. Залиште порожнім, щоб брати з усього банку.</value>
+  </data>
+  <data name="LearningMicroLabel" xml:space="preserve">
+    <value>Включити до щотижневого мікронавчання</value>
+  </data>
+  <data name="LearningLmsOnly" xml:space="preserve">
+    <value>Входить до доповнення LMS.</value>
+  </data>
+  <data name="LearningSettingsError_InvalidInput" xml:space="preserve">
+    <value>Для обов'язкового тесту оберіть спільний банк питань підрозділу.</value>
+  </data>
+  <data name="LearningSettingsError_NoQuestions" xml:space="preserve">
+    <value>У банку питань немає питань з однією відповіддю, з кількома відповідями чи «правда/неправда» для вибору.</value>
+  </data>
+  <data name="LearningSettingsError_AddonRequired" xml:space="preserve">
+    <value>Тести з банків питань і мікронавчання потребують доповнення LMS.</value>
+  </data>
+  <data name="LearningSettingsError_NotAuthorized" xml:space="preserve">
+    <value>Ви не можете змінювати налаштування навчання цього протоколу.</value>
+  </data>
+  <data name="LearningSettingsError_NotFound" xml:space="preserve">
+    <value>Протокол не знайдено.</value>
+  </data>
+  <data name="MicroLearningSelectionHeader" xml:space="preserve">
+    <value>Щотижневе мікронавчання</value>
+  </data>
+  <data name="MicroLearningSelectionHelp" xml:space="preserve">
+    <value>Щопонеділка о 09:00 за часом підрозділу кожен активний учасник із місцем LMS в аудиторії вибраного протоколу отримує одне сценарне питання з пов'язаних із ним банків питань: прив'язаного банку або спільного банку з тегом коду чи номера протоколу.</value>
+  </data>
+  <data name="MicroLearningSaveButton" xml:space="preserve">
+    <value>Зберегти вибір</value>
+  </data>
+  <data name="MicroLearningSavedMessage" xml:space="preserve">
+    <value>Вибір мікронавчання збережено: протоколів — {0}.</value>
+  </data>
+  <data name="WeeklyQuestionsHeader" xml:space="preserve">
+    <value>Щотижневі питання</value>
+  </data>
+  <data name="WeeklyQuestionsIntro" xml:space="preserve">
+    <value>Одне сценарне питання на тиждень із протоколів вашого підрозділу. Дайте відповідь один раз, а потім подивіться правильну відповідь і пояснення.</value>
+  </data>
+  <data name="WeeklyNoQuestions" xml:space="preserve">
+    <value>Щотижневих питань ще немає.</value>
+  </data>
+  <data name="WeeklyAnswerButton" xml:space="preserve">
+    <value>Відповісти</value>
+  </data>
+  <data name="WeeklyCorrect" xml:space="preserve">
+    <value>Правильно</value>
+  </data>
+  <data name="WeeklyIncorrect" xml:space="preserve">
+    <value>Не зовсім</value>
+  </data>
+  <data name="WeeklyCorrectAnswerLabel" xml:space="preserve">
+    <value>(правильна відповідь)</value>
+  </data>
+  <data name="WeeklyExplanationLabel" xml:space="preserve">
+    <value>Чому:</value>
+  </data>
+  <data name="WeeklyWeekLabel" xml:space="preserve">
+    <value>Тиждень {0}</value>
+  </data>
+  <data name="WeeklyChooseAnswer" xml:space="preserve">
+    <value>Спершу оберіть відповідь.</value>
+  </data>
+  <data name="LifecycleErrorDecisionGraphInvalid" xml:space="preserve">
+    <value>Перебіг випадку має помилки: потрібен рівно один перший крок, кожен шлях має закінчуватися результатом із детермінантою, і без циклів. Виправте це перед переглядом.</value>
+  </data>
+  <data name="LifecycleErrorDecisionGraphNotAllowed" xml:space="preserve">
+    <value>Перебіг випадку належить до написаного протоколу диспетчеризації, а не до іншого типу чи завантаженого документа.</value>
+  </data>
+  <data name="GraphLabelCaseFlow" xml:space="preserve">
+    <value>Перебіг випадку</value>
+  </data>
+  <data name="GraphLabelEntryQuestion" xml:space="preserve">
+    <value>Вступне питання</value>
+  </data>
+  <data name="GraphLabelKeyQuestion" xml:space="preserve">
+    <value>Ключове питання</value>
+  </data>
+  <data name="GraphLabelInstruction" xml:space="preserve">
+    <value>Інструкція</value>
+  </data>
+  <data name="GraphLabelOutcome" xml:space="preserve">
+    <value>Результат</value>
+  </data>
+  <data name="GraphLabelDeterminant" xml:space="preserve">
+    <value>Детермінанта</value>
+  </data>
+  <data name="GraphLabelPriority" xml:space="preserve">
+    <value>Пріоритет</value>
+  </data>
+  <data name="GraphLabelResponse" xml:space="preserve">
+    <value>Реагування</value>
+  </data>
+  <data name="GraphLabelPostDispatch" xml:space="preserve">
+    <value>Після диспетчеризації</value>
+  </data>
+  <data name="GraphLabelGoTo" xml:space="preserve">
+    <value>перейти до кроку {0}</value>
+  </data>
+  <data name="GraphLabelAnyAnswer" xml:space="preserve">
+    <value>Будь-яка відповідь</value>
+  </data>
+  <data name="GraphLabelYes" xml:space="preserve">
+    <value>Так</value>
+  </data>
+  <data name="GraphLabelNo" xml:space="preserve">
+    <value>Ні</value>
+  </data>
+  <data name="GraphLabelStart" xml:space="preserve">
+    <value>Початок</value>
+  </data>
+  <data name="AiSuggestSuggested" xml:space="preserve">
+    <value>Запропоновано.</value>
+  </data>
+  <data name="AiSuggestNotEntitled" xml:space="preserve">
+    <value>Пропозиції протоколу від ШІ потребують доповнення Enhanced AI.</value>
+  </data>
+  <data name="AiSuggestProtectionUnsupported" xml:space="preserve">
+    <value>Пропозиції ШІ вимкнено, поки ввімкнено розширений захист даних.</value>
+  </data>
+  <data name="AiSuggestUnconfigured" xml:space="preserve">
+    <value>У цій інсталяції не налаштовано модель ШІ.</value>
+  </data>
+  <data name="AiSuggestNoCandidates" xml:space="preserve">
+    <value>Жоден опублікований протокол диспетчеризації з перебігом випадку не можна використати зі ШІ.</value>
+  </data>
+  <data name="AiSuggestNoInput" xml:space="preserve">
+    <value>Виклик ще не має тексту чи SMS-розмови для читання.</value>
+  </data>
+  <data name="AiSuggestNoMatch" xml:space="preserve">
+    <value>ШІ не знайшов відповідного протоколу. Виберіть його вручну.</value>
+  </data>
+  <data name="AiSuggestUnavailable" xml:space="preserve">
+    <value>ШІ зараз не відповідає. Спробуйте ще раз або виберіть протокол вручну.</value>
+  </data>
+  <data name="AiSuggestNotFound" xml:space="preserve">
+    <value>Виклик не знайдено.</value>
+  </data>
+  <data name="CaseDone" xml:space="preserve">
+    <value>Збережено.</value>
+  </data>
+  <data name="CaseNotFound" xml:space="preserve">
+    <value>Цього протоколу немає у виклику.</value>
+  </data>
+  <data name="CaseNoCase" xml:space="preserve">
+    <value>Для цього протоколу у виклику не записано випадку.</value>
+  </data>
+  <data name="CaseOverrideReasonRequired" xml:space="preserve">
+    <value>Інша детермінанта потребує причини.</value>
+  </data>
+  <data name="CaseDeterminantInvalid" xml:space="preserve">
+    <value>Детермінанта — це літери, цифри, пробіли та . _ / - (до 32).</value>
+  </data>
+  <data name="CaseNotAnInstruction" xml:space="preserve">
+    <value>Цей крок не є інструкцією, яку можна надіслати абонентові.</value>
+  </data>
+  <data name="CaseNoThread" xml:space="preserve">
+    <value>Виклик не має відкритої SMS-розмови з абонентом.</value>
+  </data>
+  <data name="CaseOptedOut" xml:space="preserve">
+    <value>Абонент відмовився від SMS (STOP); нічого не надіслано.</value>
+  </data>
+  <data name="CaseHeldByAnotherDispatcher" xml:space="preserve">
+    <value>Інший диспетчер під’єднаний до розмови абонента.</value>
+  </data>
+  <data name="CaseSendFailed" xml:space="preserve">
+    <value>Повідомлення не надіслано. Його записано у виклику.</value>
+  </data>
+  <data name="CaseCallerDone" xml:space="preserve">
+    <value>Надіслано абонентові й записано у виклику.</value>
+  </data>
+  <data name="CaseCallerNotFound" xml:space="preserve">
+    <value>Цього протоколу немає у виклику.</value>
+  </data>
+  <data name="CaseCallerNoCase" xml:space="preserve">
+    <value>Для цього протоколу у виклику не записано випадку.</value>
+  </data>
+  <data name="CaseCallerOverrideReasonRequired" xml:space="preserve">
+    <value>Інша детермінанта потребує причини.</value>
+  </data>
+  <data name="CaseCallerDeterminantInvalid" xml:space="preserve">
+    <value>Детермінанта — це літери, цифри, пробіли та . _ / - (до 32).</value>
+  </data>
+  <data name="CaseCallerNotAnInstruction" xml:space="preserve">
+    <value>Цей крок не є інструкцією, яку можна надіслати абонентові.</value>
+  </data>
+  <data name="CaseCallerNoThread" xml:space="preserve">
+    <value>Виклик не має відкритої SMS-розмови з абонентом.</value>
+  </data>
+  <data name="CaseCallerOptedOut" xml:space="preserve">
+    <value>Абонент відмовився від SMS (STOP); нічого не надіслано.</value>
+  </data>
+  <data name="CaseCallerHeldByAnotherDispatcher" xml:space="preserve">
+    <value>Інший диспетчер під’єднаний до розмови абонента.</value>
+  </data>
+  <data name="CaseCallerSendFailed" xml:space="preserve">
+    <value>Повідомлення не надіслано. Його записано у виклику.</value>
+  </data>
+  <data name="TriggerConditionsLabel" xml:space="preserve">
+    <value>Умови</value>
+  </data>
+  <data name="TriggerConditionsHelp" xml:space="preserve">
+    <value>Кожна задана умова також має виконуватися: виклик у зоні станції чи групи, у ці дні та години (час підрозділу), зі словом в описі чи нотатках, у точці інтересу цього типу або з цих джерел. Тригер для будь-якого виклику потребує хоча б однієї.</value>
+  </data>
+  <data name="TriggerKeywordsLabel" xml:space="preserve">
+    <value>Слова в описі чи нотатках</value>
+  </data>
+  <data name="TriggerKeywordsPlaceholder" xml:space="preserve">
+    <value>біль у грудях, не дихає</value>
+  </data>
+  <data name="TriggerZoneLabel" xml:space="preserve">
+    <value>У зоні</value>
+  </data>
+  <data name="TriggerAnyOption" xml:space="preserve">
+    <value>Будь-який</value>
+  </data>
+  <data name="TriggerPoiTypeLabel" xml:space="preserve">
+    <value>Тип точки інтересу на місці</value>
+  </data>
+  <data name="TriggerFromLabel" xml:space="preserve">
+    <value>З (час)</value>
+  </data>
+  <data name="TriggerToLabel" xml:space="preserve">
+    <value>До (час)</value>
+  </data>
+  <data name="TriggerDaysLabel" xml:space="preserve">
+    <value>Дні</value>
+  </data>
+  <data name="TriggerSourcesLabel" xml:space="preserve">
+    <value>Надійшов через</value>
+  </data>
+  <data name="CallSourceUser" xml:space="preserve">
+    <value>Диспетчер (форма виклику)</value>
+  </data>
+  <data name="CallSourceEmailImport" xml:space="preserve">
+    <value>Імпорт e-mail</value>
+  </data>
+  <data name="CallSourceAudioImport" xml:space="preserve">
+    <value>Імпорт аудіо</value>
+  </data>
+  <data name="CallSourceChatbot" xml:space="preserve">
+    <value>Чат-бот</value>
+  </data>
+  <data name="CallSourceIntake" xml:space="preserve">
+    <value>Канал надходження (SMS, e-mail, чат, webhook)</value>
+  </data>
+  <data name="CallSourceVoiceIntake" xml:space="preserve">
+    <value>Голосовий прийом (ШІ)</value>
+  </data>
+  <data name="ErrorTriggerConditions" xml:space="preserve">
+    <value>Умова тригера недійсна: перевірте зону, тип точки, часове вікно (обидва часи) і що тригер для будь-якого виклику має хоча б одну умову.</value>
+  </data>
+  <data name="ConditionsTrigger" xml:space="preserve">
+    <value>Будь-який виклик (лише умови)</value>
+  </data>
+  <data name="DispatchSettingsHeader" xml:space="preserve">
+    <value>Тексти диспетчеризації</value>
+  </data>
+  <data name="ShowDeterminantInDispatchCheckbox" xml:space="preserve">
+    <value>Додавати детермінанту й назву протоколу до push-, SMS- і голосових повідомлень диспетчеризації</value>
+  </data>
+  <data name="ShowDeterminantInDispatchHelp" xml:space="preserve">
+    <value>Типово вимкнено. Коли ввімкнено, рятувальники бачать детермінанту й протокол після назви виклику; старі застосунки показують їх у тексті.</value>
+  </data>
+  <data name="CaseFlowHeader" xml:space="preserve">
+    <value>Перебіг випадку (дерево рішень)</value>
+  </data>
+  <data name="CaseFlowLockedNotice" xml:space="preserve">
+    <value>Перебіг випадку є частиною версії на перегляді й не зміниться, доки її не відкличуть або не опублікують.</value>
+  </data>
+  <data name="CaseFlowHelp" xml:space="preserve">
+    <value>Диспетчери проходять ці кроки у формі виклику: вступні та ключові питання й інструкції ведуть до результату з детермінантою, запропонованим пріоритетом і тим, що сказати абонентові. Перебіг зберігається з чернеткою, показується в тексті й затверджується з версією.</value>
+  </data>
+  <data name="CaseFlowLicensingNotice" xml:space="preserve">
+    <value>Пишіть власні питання й коди. Ліцензований вміст протоколів (наприклад MPDS) можна тримати лише у вашому підрозділі з позначкою «Ліцензований вміст»; він ніколи не поширюється, не публікується й не використовується ШІ.</value>
+  </data>
+  <data name="CaseFlowAddQuestion" xml:space="preserve">
+    <value>Додати питання</value>
+  </data>
+  <data name="CaseFlowAddInstruction" xml:space="preserve">
+    <value>Додати інструкцію</value>
+  </data>
+  <data name="CaseFlowAddOutcome" xml:space="preserve">
+    <value>Додати результат</value>
+  </data>
+  <data name="CaseFlowEmpty" xml:space="preserve">
+    <value>Перебігу ще немає. Без нього протокол додається до викликів, як раніше.</value>
+  </data>
+  <data name="CaseFlowFirstStep" xml:space="preserve">
+    <value>Перший крок</value>
+  </data>
+  <data name="CaseFlowMakeFirst" xml:space="preserve">
+    <value>Зробити першим</value>
+  </data>
+  <data name="CaseFlowStepLabel" xml:space="preserve">
+    <value>Коротка назва</value>
+  </data>
+  <data name="CaseFlowStepText" xml:space="preserve">
+    <value>Питання, як його читають абонентові</value>
+  </data>
+  <data name="CaseFlowInstructionText" xml:space="preserve">
+    <value>Текст для читання вголос</value>
+  </data>
+  <data name="CaseFlowStage" xml:space="preserve">
+    <value>Етап</value>
+  </data>
+  <data name="CaseFlowAnswerType" xml:space="preserve">
+    <value>Відповідь</value>
+  </data>
+  <data name="CaseFlowTypeYesNo" xml:space="preserve">
+    <value>Так / ні</value>
+  </data>
+  <data name="CaseFlowTypeChoice" xml:space="preserve">
+    <value>Одна з кількох відповідей</value>
+  </data>
+  <data name="CaseFlowTypeNumber" xml:space="preserve">
+    <value>Число</value>
+  </data>
+  <data name="CaseFlowTypeFreeText" xml:space="preserve">
+    <value>Довільний текст</value>
+  </data>
+  <data name="CaseFlowMin" xml:space="preserve">
+    <value>Найменше значення</value>
+  </data>
+  <data name="CaseFlowMax" xml:space="preserve">
+    <value>Найбільше значення</value>
+  </data>
+  <data name="CaseFlowNext" xml:space="preserve">
+    <value>Далі</value>
+  </data>
+  <data name="CaseFlowChooseStep" xml:space="preserve">
+    <value>Виберіть крок…</value>
+  </data>
+  <data name="CaseFlowSpeak" xml:space="preserve">
+    <value>Пропонувати диспетчерові «Відтворити» (синтез мовлення)</value>
+  </data>
+  <data name="CaseFlowSendToCaller" xml:space="preserve">
+    <value>Можна надіслати абонентові SMS</value>
+  </data>
+  <data name="CaseFlowNoPriority" xml:space="preserve">
+    <value>Без пропозиції</value>
+  </data>
+  <data name="CaseFlowProblems" xml:space="preserve">
+    <value>Виправити перед переглядом:</value>
+  </data>
+  <data name="CaseFlowProblemRoot" xml:space="preserve">
+    <value>Рівно один крок має бути першим.</value>
+  </data>
+  <data name="CaseFlowProblemNext" xml:space="preserve">
+    <value>кожна відповідь потребує наступного кроку.</value>
+  </data>
+  <data name="CaseFlowProblemDeterminant" xml:space="preserve">
+    <value>результат потребує детермінанти.</value>
+  </data>
+  <data name="CaseFlowProblemLoop" xml:space="preserve">
+    <value>Перебіг випадку зациклюється.</value>
+  </data>
+  <data name="CaseFlowProblemUnreachable" xml:space="preserve">
+    <value>недосяжний з першого кроку.</value>
+  </data>
+  <data name="CaseAiSuggestButton" xml:space="preserve">
+    <value>Запропонувати зі ШІ</value>
+  </data>
+  <data name="CasePlayButton" xml:space="preserve">
+    <value>Відтворити</value>
+  </data>
+  <data name="CaseChangeAnswer" xml:space="preserve">
+    <value>Змінити</value>
+  </data>
+  <data name="CaseOverridden" xml:space="preserve">
+    <value>Змінено</value>
+  </data>
+  <data name="CasePriorityApplied" xml:space="preserve">
+    <value>застосовано до виклику</value>
+  </data>
+  <data name="CaseOverrideDeterminant" xml:space="preserve">
+    <value>Змінити детермінанту</value>
+  </data>
+  <data name="CaseOverrideReason" xml:space="preserve">
+    <value>Причина (обов’язково)</value>
+  </data>
+  <data name="CaseInvalid" xml:space="preserve">
+    <value>Цей перебіг не вдалося пройти. Додайте протокол без нього або повідомте власника.</value>
+  </data>
+  <data name="CaseAiPrefilled" xml:space="preserve">
+    <value>Запропоновано Enhanced AI. Перевірте кожну відповідь перед збереженням.</value>
+  </data>
+  <data name="CaseAiAsking" xml:space="preserve">
+    <value>Запит до Enhanced AI…</value>
+  </data>
+  <data name="CaseAiFailed" xml:space="preserve">
+    <value>Не вдалося зробити пропозицію.</value>
+  </data>
+  <data name="CaseSourceAi" xml:space="preserve">
+    <value>Пропозиція Enhanced AI, підтверджена диспетчером</value>
+  </data>
+  <data name="CaseOverrideFrom" xml:space="preserve">
+    <value>обчислена {0}; причина: {1}</value>
+  </data>
+  <data name="CaseNotComplete" xml:space="preserve">
+    <value>Випадок не дійшов до результату.</value>
+  </data>
+  <data name="CaseCallerTexts" xml:space="preserve">
+    <value>Надіслано абонентові</value>
+  </data>
+  <data name="CaseSendToCallerButton" xml:space="preserve">
+    <value>Надіслати абонентові: {0}</value>
+  </data>
+  <data name="CaseOverrideSave" xml:space="preserve">
+    <value>Зберегти детермінанту</value>
+  </data>
+  <data name="CaseOverrideHelp" xml:space="preserve">
+    <value>Залиште детермінанту порожньою, щоб повернутися до результату перебігу. Будь-яка інша потребує причини, що зберігається у виклику.</value>
+  </data>
+  <data name="CaseExportSection" xml:space="preserve">
+    <value>Випадки протоколів</value>
+  </data>
 </root>

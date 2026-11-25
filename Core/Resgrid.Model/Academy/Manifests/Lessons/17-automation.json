@@ -1,0 +1,205 @@
+{
+  "schema": 1,
+  "id": "17-automation",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Automation",
+  "minutes": 2.6,
+  "walkthrough": false,
+  "audience": [
+    "administrator"
+  ],
+  "visibility": [],
+  "pages": [
+    "Workflows"
+  ],
+  "adminAssist": {
+    "areas": [
+      "automation"
+    ],
+    "capabilities": [
+      "workflows",
+      "user-defined-fields",
+      "api-mcp",
+      "new-workflow",
+      "workflow-runs"
+    ]
+  },
+  "media": {
+    "video": "media/17-automation.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/17-automation.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Automate a repeatable task with visible outcomes",
+    "ar": "أتمت مهمة متكررة بنتائج مرئية",
+    "de": "Eine wiederkehrende Aufgabe mit sichtbaren Ergebnissen automatisieren",
+    "el": "Αυτοματοποιήστε μια επαναλαμβανόμενη εργασία με ορατά αποτελέσματα",
+    "es": "Automatizar una tarea repetible con resultados visibles",
+    "fr": "Automatiser une tâche répétitive aux résultats visibles",
+    "it": "Automatizzare un’attività ripetibile con risultati visibili",
+    "pl": "Automatyzuj powtarzalne zadanie z widocznymi wynikami",
+    "sv": "Automatisera en återkommande uppgift med synliga resultat",
+    "uk": "Автоматизуйте повторюване завдання з видимими результатами"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "Which task is a good fit for automation?",
+        "ar": "أي مهمة تناسب الأتمتة؟",
+        "de": "Welche Aufgabe eignet sich gut zur Automatisierung?",
+        "el": "Ποια εργασία ταιριάζει στον αυτοματισμό;",
+        "es": "¿Qué tarea encaja bien con la automatización?",
+        "fr": "Quelle tâche se prête bien à l’automatisation ?",
+        "it": "Quale attività si presta all’automazione?",
+        "pl": "Które zadanie dobrze nadaje się do automatyzacji?",
+        "sv": "Vilken uppgift passar bra att automatisera?",
+        "uk": "Яке завдання добре підходить для автоматизації?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "A one-time judgment call",
+            "ar": "قرار تقديري لمرة واحدة",
+            "de": "Eine einmalige Ermessensentscheidung",
+            "el": "Μια εφάπαξ απόφαση κρίσης",
+            "es": "Una decisión puntual de criterio",
+            "fr": "Une décision ponctuelle d’appréciation",
+            "it": "Una decisione discrezionale una tantum",
+            "pl": "Jednorazowa decyzja wymagająca oceny",
+            "sv": "Ett engångsbeslut som kräver omdöme",
+            "uk": "Одноразове рішення на власний розсуд"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Deciding a patient's care",
+            "ar": "تقرير رعاية المريض",
+            "de": "Über die Versorgung eines Patienten entscheiden",
+            "el": "Απόφαση για τη φροντίδα ασθενούς",
+            "es": "Decidir la atención de un paciente",
+            "fr": "Décider des soins d’un patient",
+            "it": "Decidere le cure di un paziente",
+            "pl": "Decydowanie o opiece nad pacjentem",
+            "sv": "Besluta om en patients vård",
+            "uk": "Вирішувати лікування пацієнта"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "A repeatable task such as notifying a group when a call is created",
+            "ar": "مهمة متكررة مثل تنبيه مجموعة عند إنشاء بلاغ",
+            "de": "Eine wiederkehrende Aufgabe wie das Benachrichtigen einer Gruppe bei einem neuen Einsatz",
+            "el": "Μια επαναλαμβανόμενη εργασία, όπως ειδοποίηση ομάδας όταν δημιουργείται κλήση",
+            "es": "Una tarea repetible, como avisar a un grupo al crearse una llamada",
+            "fr": "Une tâche répétitive, comme prévenir un groupe à la création d’une intervention",
+            "it": "Un’attività ripetibile, come avvisare un gruppo quando si crea una chiamata",
+            "pl": "Powtarzalne zadanie, np. powiadomienie grupy o nowym zgłoszeniu",
+            "sv": "En återkommande uppgift, som att meddela en grupp när ett larm skapas",
+            "uk": "Повторюване завдання, як-от сповіщення групи про новий виклик"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "Why should automation outcomes be visible?",
+        "ar": "لماذا يجب أن تكون نتائج الأتمتة مرئية؟",
+        "de": "Warum sollten die Ergebnisse einer Automatisierung sichtbar sein?",
+        "el": "Γιατί τα αποτελέσματα του αυτοματισμού πρέπει να είναι ορατά;",
+        "es": "¿Por qué deben verse los resultados de la automatización?",
+        "fr": "Pourquoi les résultats d’une automatisation doivent-ils être visibles ?",
+        "it": "Perché i risultati dell’automazione devono essere visibili?",
+        "pl": "Dlaczego wyniki automatyzacji powinny być widoczne?",
+        "sv": "Varför ska automatiseringens resultat vara synliga?",
+        "uk": "Чому результати автоматизації мають бути видимими?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "So someone can check it ran and did the right thing",
+            "ar": "ليتحقق أحد من أنها عملت وأدّت المطلوب",
+            "de": "Damit jemand prüfen kann, ob sie lief und das Richtige tat",
+            "el": "Ώστε κάποιος να ελέγξει ότι εκτελέστηκε σωστά",
+            "es": "Para comprobar que se ejecutó e hizo lo correcto",
+            "fr": "Pour vérifier qu’elle s’est exécutée et a fait ce qu’il fallait",
+            "it": "Per verificare che sia partita e abbia fatto la cosa giusta",
+            "pl": "Aby ktoś mógł sprawdzić, że zadziałała poprawnie",
+            "sv": "Så att någon kan kontrollera att den körde och gjorde rätt",
+            "uk": "Щоб хтось міг перевірити, що вона спрацювала правильно"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "To make it slower",
+            "ar": "لجعلها أبطأ",
+            "de": "Um sie langsamer zu machen",
+            "el": "Για να γίνει πιο αργός",
+            "es": "Para hacerla más lenta",
+            "fr": "Pour la ralentir",
+            "it": "Per renderla più lenta",
+            "pl": "Aby ją spowolnić",
+            "sv": "För att göra den långsammare",
+            "uk": "Щоб уповільнити її"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "They should be hidden",
+            "ar": "يجب إخفاؤها",
+            "de": "Sie sollten verborgen sein",
+            "el": "Πρέπει να είναι κρυφά",
+            "es": "Deberían ocultarse",
+            "fr": "Ils devraient être cachés",
+            "it": "Dovrebbero essere nascosti",
+            "pl": "Powinny być ukryte",
+            "sv": "De ska vara dolda",
+            "uk": "Їх слід приховувати"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "t",
+      "text": {
+        "en": "Workflows run when an event happens, such as a call being added.",
+        "ar": "تعمل سير العمل عند وقوع حدث مثل إضافة بلاغ.",
+        "de": "Workflows laufen, wenn ein Ereignis eintritt, etwa wenn ein Einsatz angelegt wird.",
+        "el": "Οι ροές εργασίας εκτελούνται όταν συμβεί ένα γεγονός, όπως προσθήκη κλήσης.",
+        "es": "Los flujos de trabajo se ejecutan cuando ocurre un evento, como añadir una llamada.",
+        "fr": "Les flux de travail s’exécutent lors d’un événement, comme l’ajout d’une intervention.",
+        "it": "I flussi di lavoro partono quando avviene un evento, come l’aggiunta di una chiamata.",
+        "pl": "Przepływy pracy uruchamiają się po zdarzeniu, np. dodaniu zgłoszenia.",
+        "sv": "Arbetsflöden körs när något händer, till exempel när ett larm läggs till.",
+        "uk": "Робочі процеси запускаються, коли стається подія, як-от додавання виклику."
+      }
+    }
+  ]
+}

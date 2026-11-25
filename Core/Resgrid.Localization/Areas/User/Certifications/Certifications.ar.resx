@@ -230,4 +230,9 @@
   <data name="SelectMember" xml:space="preserve"><value>اختر عضوًا</value></data>
   <data name="SelectType" xml:space="preserve"><value>اختر نوع الشهادة</value></data>
   <data name="CertificationNameRequired" xml:space="preserve"><value>أدخل اسم الشهادة.</value></data>
+  <data name="RenewalHoursLabel" xml:space="preserve"><value>الساعات المحتسبة للتجديد</value></data>
+  <data name="RenewalHoursValue" xml:space="preserve"><value>{0} ساعة محتسبة ({1} ساعة من سجل التدريب)</value></data>
+  <data name="UncreditedLedgerHours" xml:space="preserve"><value>{0} ساعة في الفئات المرتبطة لم تُحتسب بعد</value></data>
+  <data name="ApplyHistoryLink" xml:space="preserve"><value>تطبيق السجل السابق على الأرصدة</value></data>
+  <data name="FromTranscript" xml:space="preserve"><value>من سجل التدريب</value></data>
 </root>

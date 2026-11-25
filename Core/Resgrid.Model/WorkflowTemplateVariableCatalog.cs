@@ -1127,6 +1127,78 @@ namespace Resgrid.Model
 					});
 					break;
 
+				case WorkflowTriggerEventType.SignatureRequested:
+				case WorkflowTriggerEventType.SignatureCompleted:
+				case WorkflowTriggerEventType.SignatureDeclined:
+				case WorkflowTriggerEventType.SignatureExpired:
+					// Never the signer's name, e-mail or phone: the payload names the subject and the counts only.
+					list.AddRange(new[]
+					{
+						new TemplateVariableDescriptor("signature.request_id", "Signature request ID", "int", false),
+						new TemplateVariableDescriptor("signature.subject_kind", "What is signed (TimeReport, Bid, ServiceContract, RecordsInspection, CustodyTransfer)", "string", false),
+						new TemplateVariableDescriptor("signature.subject_id", "The signed item's ID", "string", false),
+						new TemplateVariableDescriptor("signature.title", "The signed document's title", "string", false),
+						new TemplateVariableDescriptor("signature.channel", "Remote (link and code) or InPerson", "string", false),
+						new TemplateVariableDescriptor("signature.status", "Sent, PartiallySigned, Completed, Declined or Expired", "string", false),
+						new TemplateVariableDescriptor("signature.signer_count", "Signers on the request", "int", false),
+						new TemplateVariableDescriptor("signature.signed_count", "Signers who have signed", "int", false),
+						new TemplateVariableDescriptor("signature.content_code", "The short content code the signatures bind to", "string", false),
+						new TemplateVariableDescriptor("signature.expires_on", "When the request expires (UTC)", "datetime", false),
+						new TemplateVariableDescriptor("signature.sealed_document_id", "The sealed evidence document (0 when none)", "int", false),
+					});
+					break;
+
+				case WorkflowTriggerEventType.TrainingAssigned:
+				case WorkflowTriggerEventType.TrainingCompleted:
+				case WorkflowTriggerEventType.TrainingFailed:
+				case WorkflowTriggerEventType.TrainingOverdue:
+				case WorkflowTriggerEventType.RequirementAtRisk:
+				case WorkflowTriggerEventType.RequirementEnforced:
+					// Ids, the training's names and dates only: never the member's name, e-mail or phone (the user.* block follows the
+					// workflow's own rules for the member in user_id).
+					list.AddRange(new[]
+					{
+						new TemplateVariableDescriptor("training_event.change", "Assigned, Completed, Failed, Overdue, AtRisk or Enforced", "string", false),
+						new TemplateVariableDescriptor("training_event.user_id", "The member's user ID", "string", false),
+						new TemplateVariableDescriptor("training_event.subject", "Requirement, Course, Path or Assessment", "string", false),
+						new TemplateVariableDescriptor("training_event.requirement_id", "Learning requirement ID (0 when none)", "int", false),
+						new TemplateVariableDescriptor("training_event.requirement_name", "Learning requirement name", "string", false),
+						new TemplateVariableDescriptor("training_event.requirement_kind", "Course, Training, CategoryHours, Path or Evaluations", "string", false),
+						new TemplateVariableDescriptor("training_event.course_id", "LMS course ID (0 when none)", "int", false),
+						new TemplateVariableDescriptor("training_event.path_id", "Learning path ID (0 when none)", "int", false),
+						new TemplateVariableDescriptor("training_event.training_name", "The course, training, category or path to finish", "string", false),
+						new TemplateVariableDescriptor("training_event.state", "Compliant, Pending, AtRisk, Overdue, Exempt, OnLeave or NotLicensed", "string", false),
+						new TemplateVariableDescriptor("training_event.due_on", "Due date (UTC)", "datetime", false),
+						new TemplateVariableDescriptor("training_event.completed_on", "Completion date (UTC)", "datetime", false),
+						new TemplateVariableDescriptor("training_event.days", "Days overdue, or days left when at risk", "int", false),
+						new TemplateVariableDescriptor("training_event.certification_type_id", "The certification type an enforcement expired (0 when none)", "int", false),
+						new TemplateVariableDescriptor("training_event.certification_type_name", "The certification type an enforcement expired", "string", false),
+						new TemplateVariableDescriptor("training_event.score", "A failed assessment's score (percent)", "decimal", false),
+					});
+					break;
+
+				case WorkflowTriggerEventType.ApprovalRequested:
+				case WorkflowTriggerEventType.ApprovalGranted:
+				case WorkflowTriggerEventType.ApprovalRejected:
+				case WorkflowTriggerEventType.ApprovalEscalated:
+					// Ids, the subject's title and amount only: never a member's or outside party's name, e-mail or phone.
+					list.AddRange(new[]
+					{
+						new TemplateVariableDescriptor("approval.change", "Requested, Granted, Rejected or Escalated", "string", false),
+						new TemplateVariableDescriptor("approval.id", "Approval request ID", "int", false),
+						new TemplateVariableDescriptor("approval.subject_kind", "PurchaseRequisitionApproval, IncidentPlanApproval, InvoiceApproval, CalOesMarsPackageApproval or MutualAidAgreementApproval", "string", false),
+						new TemplateVariableDescriptor("approval.subject_id", "The approved subject's ID", "string", false),
+						new TemplateVariableDescriptor("approval.title", "The subject's title", "string", false),
+						new TemplateVariableDescriptor("approval.amount", "The subject's amount (0 when none)", "decimal", false),
+						new TemplateVariableDescriptor("approval.currency", "The amount's currency", "string", false),
+						new TemplateVariableDescriptor("approval.submitted_by_user_id", "The submitting member's user ID", "string", false),
+						new TemplateVariableDescriptor("approval.user_id", "The member who acted (approver or rejecter)", "string", false),
+						new TemplateVariableDescriptor("approval.step_label", "The step that escalated", "string", false),
+						new TemplateVariableDescriptor("approval.reason", "The rejection reason", "string", false),
+						new TemplateVariableDescriptor("approval.content_code", "The short content code the approvals bind to", "string", false),
+					});
+					break;
+
 				case WorkflowTriggerEventType.StationCoverageGapDetected:
 					list.AddRange(new[]
 					{

@@ -1,0 +1,108 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Courses
+@model PlayerModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* An assessment lesson in the player: its rules, the learner's attempts and the start button (questions are drawn on the server). *@
+@{
+    var player = Model.Player;
+    var lesson = player.Lesson;
+    var passed = player.Attempts.Any(a => a.Passed == true);
+    var open = LmsAttemptRules.OpenAttempt(player.Attempts, DateTime.UtcNow);
+}
+<ul class="list-unstyled">
+    <li><i class="fa fa-flag-checkered" aria-hidden="true"></i> @string.Format(localizer["PassMarkFormat"].Value, lesson.PassMark)</li>
+    <li><i class="fa fa-repeat" aria-hidden="true"></i> @(lesson.AttemptLimit > 0 ? string.Format(localizer["AttemptsAllowedFormat"].Value, lesson.AttemptLimit) : localizer["AttemptsUnlimited"].Value)</li>
+    @if (lesson.TimeLimitMinutes > 0)
+    {
+        <li><i class="fa fa-clock-o" aria-hidden="true"></i> @string.Format(localizer["TimeLimitFormat"].Value, lesson.TimeLimitMinutes)</li>
+    }
+    @if (lesson.RetakeCooldownHours > 0)
+    {
+        <li><i class="fa fa-hourglass-half" aria-hidden="true"></i> @string.Format(localizer["CooldownFormat"].Value, lesson.RetakeCooldownHours)</li>
+    }
+    @if (lesson.IsPreTest)
+    {
+        <li><i class="fa fa-forward" aria-hidden="true"></i> @localizer["PreTestNote"]</li>
+    }
+</ul>
+
+@if (passed)
+{
+    <div class="alert alert-success"><i class="fa fa-check" aria-hidden="true"></i> @localizer["AssessmentPassed"]</div>
+}
+else if (open != null)
+{
+    <a class="btn btn-primary" asp-controller="Courses" asp-action="Attempt" asp-route-area="User" asp-route-id="@open.LmsAssessmentAttemptId"><i class="fa fa-play" aria-hidden="true"></i> @localizer["ResumeAttemptButton"]</a>
+}
+else if (player.AttemptBlockedBy == LmsErrors.None && player.Error == LmsErrors.None)
+{
+    <form method="post" asp-controller="Courses" asp-action="StartAttempt" asp-route-area="User">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@player.Enrollment.LmsEnrollmentId" />
+        <input type="hidden" name="lesson" value="@lesson.LmsLessonId" />
+        @if (lesson.RequireAttestation)
+        {
+            <div class="checkbox"><label><input type="checkbox" name="attested" value="true" required /> @localizer["AttestationText"]</label></div>
+        }
+        <button type="submit" class="btn btn-primary"><i class="fa fa-play" aria-hidden="true"></i> @(player.Attempts.Count == 0 ? localizer["StartAssessmentButton"] : localizer["RetakeButton"])</button>
+    </form>
+}
+else if (player.AttemptBlockedBy != LmsErrors.None)
+{
+    <p class="text-muted"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer[CourseLabels.Error(player.AttemptBlockedBy)]
+        @if (player.NextAttemptOn.HasValue)
+        {
+            <span>@string.Format(localizer["NextAttemptFormat"].Value, Model.Date(player.NextAttemptOn))</span>
+        }
+    </p>
+}
+
+@if (player.Attempts.Count > 0)
+{
+    <h4 class="m-t-md">@localizer["YourAttemptsHeader"]</h4>
+    <table class="table table-condensed rgw-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>@localizer["SubmittedColumn"]</th>
+                <th>@localizer["ScoreColumn"]</th>
+                <th>@localizer["ResultColumn"]</th>
+                <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var attempt in player.Attempts)
+            {
+                <tr>
+                    <td>@attempt.AttemptNumber</td>
+                    <td>@Model.Date(attempt.SubmittedOn)</td>
+                    <td>@(attempt.Status == (int)LmsAttemptStatuses.InProgress ? "" : attempt.Percent.ToString("0.#") + "%")</td>
+                    <td>
+                        @if (attempt.Status == (int)LmsAttemptStatuses.PendingGrading)
+                        {
+                            <span class="label label-warning">@localizer["AwaitingGradeBadge"]</span>
+                        }
+                        else if (attempt.Status == (int)LmsAttemptStatuses.Expired)
+                        {
+                            <span class="label label-default">@localizer["ExpiredBadge"]</span>
+                        }
+                        else if (attempt.Passed == true)
+                        {
+                            <span class="label label-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["PassedBadge"]</span>
+                        }
+                        else if (attempt.Passed == false)
+                        {
+                            <span class="label label-danger"><i class="fa fa-times" aria-hidden="true"></i> @localizer["FailedBadge"]</span>
+                        }
+                    </td>
+                    <td class="rgw-row-actions">
+                        @if (attempt.Status != (int)LmsAttemptStatuses.InProgress)
+                        {
+                            <a class="btn btn-white btn-xs" asp-controller="Courses" asp-action="Result" asp-route-area="User" asp-route-id="@attempt.LmsAssessmentAttemptId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["ReviewButton"]</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

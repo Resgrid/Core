@@ -1,0 +1,139 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsPrograms
+@model LmsFrameworksView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    Competency frameworks (R-C7): the department's frameworks, Resgrid's catalog (structure and public identifiers only, never a
+    standard's text), a CASE 1.1 import and a custom framework.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Prg.FrameworksTitle"];
+    ViewData["Title"] = localizer["Prg.FrameworksTitle"].Value;
+    ViewData["Subtitle"] = localizer["Prg.FrameworksIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var applied = new HashSet<string>(Model.Frameworks.Where(f => f.CatalogKey != null).Select(f => f.CatalogKey), StringComparer.OrdinalIgnoreCase);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    <div class="rgw-toolbar m-b-sm">
+        <a class="btn btn-white" asp-controller="LmsPrograms" asp-action="Gaps" asp-route-area="User"><i class="fa fa-list-ul" aria-hidden="true"></i> @localizer["Prg.GapReport"]</a>
+    </div>
+
+    <h3>@localizer["Prg.YourFrameworks"]</h3>
+    @if (Model.Frameworks.Count == 0)
+    {
+        <p class="text-muted">@localizer["Prg.NoFrameworks"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead>
+                    <tr>
+                        <th>@localizer["Prg.Name"]</th>
+                        <th>@localizer["Prg.Publisher"]</th>
+                        <th>@localizer["Prg.Source"]</th>
+                        <th class="rgw-row-actions">@localizer["Prg.Actions"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var framework in Model.Frameworks)
+                    {
+                        <tr>
+                            <td><a asp-controller="LmsPrograms" asp-action="Framework" asp-route-area="User" asp-route-id="@framework.LmsCompetencyFrameworkId">@framework.Name</a>
+                                @if (!string.IsNullOrWhiteSpace(framework.Edition)) {<span class="rgw-sub">@framework.Edition</span>}</td>
+                            <td>@framework.Publisher</td>
+                            <td>@localizer["Prg.FrameworkSource." + (LmsCompetencyFrameworkSources)framework.Source]</td>
+                            <td class="rgw-row-actions">
+                                <a class="btn btn-white btn-xs" asp-controller="LmsPrograms" asp-action="Framework" asp-route-area="User" asp-route-id="@framework.LmsCompetencyFrameworkId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["Prg.Open"]</a>
+                                <a class="btn btn-white btn-xs" asp-controller="LmsPrograms" asp-action="Gaps" asp-route-area="User" asp-route-frameworkId="@framework.LmsCompetencyFrameworkId"><i class="fa fa-list-ul" aria-hidden="true"></i> @localizer["Prg.GapReport"]</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (Model.IsOfficer && Model.CanAuthor)
+    {
+        <h3>@localizer["Prg.Catalog"]</h3>
+        <p class="text-muted">@localizer["Prg.CatalogHelp"]</p>
+        <div class="rgw-card-grid m-b-md">
+            @foreach (var source in Model.Catalog)
+            {
+                <div class="rgw-card">
+                    <h4>@source.Name</h4>
+                    <p class="rgw-card-meta">@source.Publisher · @source.Edition · @string.Format(localizer["Prg.ItemCount"].Value, source.Items.Count)</p>
+                    <p>@source.Description</p>
+                    @if (applied.Contains(source.Key))
+                    {
+                        <span class="label label-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Prg.Applied"]</span>
+                    }
+                    else
+                    {
+                        <form method="post" asp-controller="LmsPrograms" asp-action="ApplyCatalog" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="key" value="@source.Key" />
+                            <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["Prg.Apply"]</button>
+                        </form>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5><i class="fa fa-upload" aria-hidden="true"></i> @localizer["Prg.ImportCase"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="text-muted">@localizer["Prg.ImportCaseHelp"]</p>
+                        <form method="post" enctype="multipart/form-data" asp-controller="LmsPrograms" asp-action="ImportCase" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                <label for="case-file">@localizer["Prg.CaseFile"]</label>
+                                <input id="case-file" name="file" type="file" accept=".json,application/json" class="form-control" required />
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["Prg.Import"]</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5><i class="fa fa-plus" aria-hidden="true"></i> @localizer["Prg.NewFramework"]</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-controller="LmsPrograms" asp-action="SaveFramework" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="0" />
+                            <div class="form-group">
+                                <label for="fw-name">@localizer["Prg.Name"]</label>
+                                <input id="fw-name" name="name" class="form-control" maxlength="250" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="fw-publisher">@localizer["Prg.Publisher"]</label>
+                                <input id="fw-publisher" name="publisher" class="form-control" maxlength="250" />
+                            </div>
+                            <div class="form-group">
+                                <label for="fw-edition">@localizer["Prg.Edition"]</label>
+                                <input id="fw-edition" name="edition" class="form-control" maxlength="100" />
+                            </div>
+                            <input type="hidden" name="evidenceMaxAgeMonths" value="0" />
+                            <button type="submit" class="btn btn-white"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["Prg.Create"]</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

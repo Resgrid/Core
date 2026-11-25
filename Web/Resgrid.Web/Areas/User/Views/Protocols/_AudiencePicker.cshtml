@@ -1,0 +1,47 @@
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolEditorModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@* Who the protocol is for (P1, the shared audience kinds incl. Shift). Everyone, or members of any picked group, role, shift, unit type or certification. *@
+@{
+    var lib = Model.Library ?? new ProtocolLibraryEditorFields();
+
+    async Task Picker(string name, string label, Dictionary<int, string> options, List<int> selected)
+    {
+        if (options.Count == 0)
+            return;
+        <div class="form-group">
+            <label class="control-label" for="@name.Replace(".", "_")">@label</label>
+            <select class="form-control protocol-audience-list" id="@name.Replace(".", "_")" name="@name" multiple size="@Math.Min(6, Math.Max(3, options.Count))">
+                @foreach (var option in options.OrderBy(o => o.Value))
+                {
+                    <option value="@option.Key" selected="@((selected ?? new List<int>()).Contains(option.Key))">@option.Value</option>
+                }
+            </select>
+        </div>
+    }
+}
+<fieldset>
+    <legend class="sr-only">@localizer["AudienceLabel"]</legend>
+    <div class="radio">
+        <label>
+            <input type="radio" name="Library.AudienceEveryone" value="true" class="protocol-audience-mode" @(lib.AudienceEveryone ? "checked" : "") />
+            @localizer["AudienceEveryoneOption"]
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="Library.AudienceEveryone" value="false" class="protocol-audience-mode" @(!lib.AudienceEveryone ? "checked" : "") />
+            @localizer["AudienceRestrictedOption"]
+        </label>
+    </div>
+    <p class="help-block">@localizer["AudienceHelp"]</p>
+    <div class="rgw-grid protocol-audience-rules" hidden="@lib.AudienceEveryone">
+        @{
+            await Picker("Library.AudienceGroups", localizer["AudienceGroupLabel"].Value, Model.Lists.Groups, lib.AudienceGroups);
+            await Picker("Library.AudienceRoles", localizer["AudienceRoleLabel"].Value, Model.Lists.Roles, lib.AudienceRoles);
+            await Picker("Library.AudienceShifts", localizer["AudienceShiftLabel"].Value, Model.Lists.Shifts, lib.AudienceShifts);
+            await Picker("Library.AudienceUnitTypes", localizer["AudienceUnitTypeLabel"].Value, Model.Lists.UnitTypes, lib.AudienceUnitTypes);
+            await Picker("Library.AudienceCertificationTypes", localizer["AudienceCertificationLabel"].Value, Model.Lists.CertificationTypes, lib.AudienceCertificationTypes);
+        }
+    </div>
+</fieldset>

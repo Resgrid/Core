@@ -1,0 +1,1405 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Academy.CategoryDescription" xml:space="preserve">
+    <value>Уроки Академії Resgrid (без кредитів безперервної освіти).</value>
+  </data>
+  <data name="Academy.CategoryName" xml:space="preserve">
+    <value>Навчання роботі із системами</value>
+  </data>
+  <data name="AcademyBadge" xml:space="preserve">
+    <value>Академія</value>
+  </data>
+  <data name="AcademyCompletedTile" xml:space="preserve">
+    <value>Завершено вами</value>
+  </data>
+  <data name="AcademyIntro" xml:space="preserve">
+    <value>Короткі уроки про кожну частину Resgrid, безкоштовні для кожного підрозділу. Кожен має швидку перевірку й зараховується до вашої залікової книжки.</value>
+  </data>
+  <data name="AcademyLessonsHeader" xml:space="preserve">
+    <value>Уроки та покрокові огляди</value>
+  </data>
+  <data name="AcademyLessonsTile" xml:space="preserve">
+    <value>Доступні уроки</value>
+  </data>
+  <data name="AcademySiteLink" xml:space="preserve">
+    <value>Відкрити academy.resgrid.com</value>
+  </data>
+  <data name="AcademyTitle" xml:space="preserve">
+    <value>Академія Resgrid</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Дії</value>
+  </data>
+  <data name="AddLessonLabel" xml:space="preserve">
+    <value>Додати урок:</value>
+  </data>
+  <data name="AddModuleButton" xml:space="preserve">
+    <value>Додати модуль</value>
+  </data>
+  <data name="AddonNotice" xml:space="preserve">
+    <value>Створення та призначення курсів потребує доповнення LMS. Академія Resgrid безкоштовна для всіх.</value>
+  </data>
+  <data name="AddOwnerButton" xml:space="preserve">
+    <value>Додати відповідального</value>
+  </data>
+  <data name="AiCaptionsNote" xml:space="preserve">
+    <value>Автоматичні субтитри з’являться з Enhanced AI; поки що завантажте файл WebVTT.</value>
+  </data>
+  <data name="AnswerKeyCopy" xml:space="preserve">
+    <value>Примірник із відповідями</value>
+  </data>
+  <data name="AnswersHiddenNote" xml:space="preserve">
+    <value>Відповіді цього оцінювання не показуються після спроби.</value>
+  </data>
+  <data name="ApprovalHeader" xml:space="preserve">
+    <value>Затвердити цю версію</value>
+  </data>
+  <data name="ApprovalRoundFormat" xml:space="preserve">
+    <value>Раунд {0}</value>
+  </data>
+  <data name="ApprovalsHeader" xml:space="preserve">
+    <value>Затвердження та підписи</value>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>Затверджено та підписано.</value>
+  </data>
+  <data name="ApproveSignButton" xml:space="preserve">
+    <value>Затвердити й підписати</value>
+  </data>
+  <data name="ApproveStepUpHelp" xml:space="preserve">
+    <value>Перед підписанням ви знову підтверджуєте особу; підпис стосується саме цієї версії.</value>
+  </data>
+  <data name="AssessmentHelp" xml:space="preserve">
+    <value>Питання вибираються й оцінюються на сервері; ключ відповідей ніколи не потрапляє до браузера чи застосунків.</value>
+  </data>
+  <data name="AssessmentPassed" xml:space="preserve">
+    <value>Ви склали це оцінювання.</value>
+  </data>
+  <data name="AssessmentTitle" xml:space="preserve">
+    <value>Оцінювання</value>
+  </data>
+  <data name="AssignButton" xml:space="preserve">
+    <value>Призначити</value>
+  </data>
+  <data name="AssignedMessage" xml:space="preserve">
+    <value>Призначено {0} учасникам ({1} уже мали його, {2} не вдалося призначити).</value>
+  </data>
+  <data name="AssignHeader" xml:space="preserve">
+    <value>Призначити цей курс</value>
+  </data>
+  <data name="AssignLessonHeader" xml:space="preserve">
+    <value>Призначити урок «{0}»</value>
+  </data>
+  <data name="AssignPathButton" xml:space="preserve">
+    <value>Призначити шлях</value>
+  </data>
+  <data name="AssignPathHeader" xml:space="preserve">
+    <value>Призначити рольовий шлях «{0}»</value>
+  </data>
+  <data name="AssignToLabel" xml:space="preserve">
+    <value>Призначити</value>
+  </data>
+  <data name="AttemptLimitLabel" xml:space="preserve">
+    <value>Дозволені спроби (0 = без обмежень)</value>
+  </data>
+  <data name="AttemptsAllowedFormat" xml:space="preserve">
+    <value>Дозволено спроб: {0}</value>
+  </data>
+  <data name="AttemptsTile" xml:space="preserve">
+    <value>Завершені спроби</value>
+  </data>
+  <data name="AttemptsUnlimited" xml:space="preserve">
+    <value>Необмежена кількість спроб</value>
+  </data>
+  <data name="AttestationLabel" xml:space="preserve">
+    <value>Просити учня підтвердити, що він проходить самостійно</value>
+  </data>
+  <data name="AttestationText" xml:space="preserve">
+    <value>Я проходжу це оцінювання самостійно.</value>
+  </data>
+  <data name="AudienceCurrentFormat" xml:space="preserve">
+    <value>Збережено правил аудиторії: {0}.</value>
+  </data>
+  <data name="AudienceHeader" xml:space="preserve">
+    <value>Хто бачить його в каталозі</value>
+  </data>
+  <data name="AudienceHelp" xml:space="preserve">
+    <value>Нікого не вибирайте, щоб його бачив увесь підрозділ.</value>
+  </data>
+  <data name="AvailableOfflineLabel" xml:space="preserve">
+    <value>Доступно офлайн (Omni може зберігати одну копію на пристрій)</value>
+  </data>
+  <data name="AverageRatingFormat" xml:space="preserve">
+    <value>Середня оцінка: {0} з 5</value>
+  </data>
+  <data name="AwaitingGradeBadge" xml:space="preserve">
+    <value>Очікує оцінювання</value>
+  </data>
+  <data name="BackToAcademy" xml:space="preserve">
+    <value>Назад до академії</value>
+  </data>
+  <data name="BackToCourse" xml:space="preserve">
+    <value>Назад до курсу</value>
+  </data>
+  <data name="BackToCourseDetail" xml:space="preserve">
+    <value>Курс</value>
+  </data>
+  <data name="BankLabel" xml:space="preserve">
+    <value>Банк питань</value>
+  </data>
+  <data name="BanksIntro" xml:space="preserve">
+    <value>Набори питань, що випадково вибираються для кожної спроби. Спільні банки відкриті всім авторам курсів, приватні — лише власнику.</value>
+  </data>
+  <data name="BanksTitle" xml:space="preserve">
+    <value>Банки питань</value>
+  </data>
+  <data name="BrowseAcademyLink" xml:space="preserve">
+    <value>Переглянути Resgrid Academy</value>
+  </data>
+  <data name="BuilderTitle" xml:space="preserve">
+    <value>Конструктор курсу</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="CaptionsFileLabel" xml:space="preserve">
+    <value>Файл WebVTT</value>
+  </data>
+  <data name="CaptionsLabelLabel" xml:space="preserve">
+    <value>Підпис субтитрів</value>
+  </data>
+  <data name="CaptionsLocaleLabel" xml:space="preserve">
+    <value>Мова субтитрів</value>
+  </data>
+  <data name="CatalogFieldsHeader" xml:space="preserve">
+    <value>Відомості про курс</value>
+  </data>
+  <data name="CatalogHeader" xml:space="preserve">
+    <value>Курси, до яких можна приєднатися</value>
+  </data>
+  <data name="CategoryLabel" xml:space="preserve">
+    <value>Категорія навчання</value>
+  </data>
+  <data name="CeDisclaimer" xml:space="preserve">
+    <value>Resgrid не акредитує безперервну освіту: постачальник і номер зберігаються так, як ви їх ввели.</value>
+  </data>
+  <data name="CeNumberLabel" xml:space="preserve">
+    <value>Номер курсу безперервної освіти</value>
+  </data>
+  <data name="CeProviderLabel" xml:space="preserve">
+    <value>Постачальник безперервної освіти</value>
+  </data>
+  <data name="CertificateTemplateLabel" xml:space="preserve">
+    <value>Шаблон сертифіката</value>
+  </data>
+  <data name="ChangeSummaryLabel" xml:space="preserve">
+    <value>Що змінилося</value>
+  </data>
+  <data name="ChooseAllHelp" xml:space="preserve">
+    <value>Виберіть усі, що підходять.</value>
+  </data>
+  <data name="ChooseMember" xml:space="preserve">
+    <value>Виберіть учасника…</value>
+  </data>
+  <data name="ChooseOption" xml:space="preserve">
+    <value>Виберіть…</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Код курсу</value>
+  </data>
+  <data name="CommentLabel" xml:space="preserve">
+    <value>Коментар</value>
+  </data>
+  <data name="CompletedBadge" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="CompletedColumn" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="CompletedHeader" xml:space="preserve">
+    <value>Завершені</value>
+  </data>
+  <data name="CompletedOfFormat" xml:space="preserve">
+    <value>{0} з {1}</value>
+  </data>
+  <data name="ContentHelp" xml:space="preserve">
+    <value>Форматований текст (HTML). Під час збереження його очищують; вбудовування YouTube, Vimeo та Google Docs дозволені.</value>
+  </data>
+  <data name="ContentLabel" xml:space="preserve">
+    <value>Зміст уроку</value>
+  </data>
+  <data name="CooldownFormat" xml:space="preserve">
+    <value>Зачекайте {0} год між спробами</value>
+  </data>
+  <data name="CooldownLabel" xml:space="preserve">
+    <value>Годин між спробами</value>
+  </data>
+  <data name="CorrectAnswerLabel" xml:space="preserve">
+    <value>правильна відповідь</value>
+  </data>
+  <data name="CorrectLabel" xml:space="preserve">
+    <value>Правильно</value>
+  </data>
+  <data name="CorrectOrderLabel" xml:space="preserve">
+    <value>Правильний порядок:</value>
+  </data>
+  <data name="CourseColumn" xml:space="preserve">
+    <value>Курс</value>
+  </data>
+  <data name="CourseCompletedMessage" xml:space="preserve">
+    <value>Курс завершено. Він є у вашій заліковій книжці.</value>
+  </data>
+  <data name="CoursesHeader" xml:space="preserve">
+    <value>Курси</value>
+  </data>
+  <data name="CreateBankButton" xml:space="preserve">
+    <value>Створити банк</value>
+  </data>
+  <data name="CreateCourseButton" xml:space="preserve">
+    <value>Створити курс</value>
+  </data>
+  <data name="CrewEndedMessage" xml:space="preserve">
+    <value>Цей груповий перегляд завершено.</value>
+  </data>
+  <data name="CrewQrAlt" xml:space="preserve">
+    <value>Код групового перегляду</value>
+  </data>
+  <data name="CrewQrRotates" xml:space="preserve">
+    <value>Код змінюється кожні 30 секунд, тож його фото перестає працювати.</value>
+  </data>
+  <data name="CrewScanConfirm" xml:space="preserve">
+    <value>Позначити себе присутнім на цьому перегляді? Показаний урок зараховується як переглянутий; тест ви пройдете на власному телефоні.</value>
+  </data>
+  <data name="CrewScanInstruction" xml:space="preserve">
+    <value>Відскануйте цей код власним телефоном, щоб вас позначили присутнім.</value>
+  </data>
+  <data name="CrewViewingTitle" xml:space="preserve">
+    <value>Груповий перегляд</value>
+  </data>
+  <data name="DateLine" xml:space="preserve">
+    <value>Дата:</value>
+  </data>
+  <data name="Decision.Approved" xml:space="preserve">
+    <value>затверджено</value>
+  </data>
+  <data name="Decision.Pending" xml:space="preserve">
+    <value>очікує</value>
+  </data>
+  <data name="Decision.Rejected" xml:space="preserve">
+    <value>повернуто</value>
+  </data>
+  <data name="Decision.Withdrawn" xml:space="preserve">
+    <value>відкликано</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="DeletedMessage" xml:space="preserve">
+    <value>Видалено.</value>
+  </data>
+  <data name="DeleteLessonConfirm" xml:space="preserve">
+    <value>Видалити цей урок?</value>
+  </data>
+  <data name="DeleteModuleConfirm" xml:space="preserve">
+    <value>Видалити цей модуль і його уроки?</value>
+  </data>
+  <data name="DifficultyColumn" xml:space="preserve">
+    <value>Складність (p)</value>
+  </data>
+  <data name="DifficultyHelp" xml:space="preserve">
+    <value>Частка правильних відповідей: вища — легше.</value>
+  </data>
+  <data name="DiscardButton" xml:space="preserve">
+    <value>Відхилити чернетку</value>
+  </data>
+  <data name="DiscardConfirm" xml:space="preserve">
+    <value>Відхилити цю чернетку? Її не подавали, тож нічого не збережеться.</value>
+  </data>
+  <data name="DiscardedMessage" xml:space="preserve">
+    <value>Чернетку відхилено.</value>
+  </data>
+  <data name="DiscriminationColumn" xml:space="preserve">
+    <value>Дискримінативність (D)</value>
+  </data>
+  <data name="DiscriminationHelp" xml:space="preserve">
+    <value>Частка правильних у найкращих 27% спроб мінус у найгірших 27%: нижче 0,2 варто переглянути.</value>
+  </data>
+  <data name="DocumentNameLabel" xml:space="preserve">
+    <value>Назва документа</value>
+  </data>
+  <data name="DocumentUrlLabel" xml:space="preserve">
+    <value>Посилання на документ (https)</value>
+  </data>
+  <data name="DrawCountLabel" xml:space="preserve">
+    <value>Питань за спробу (0 = усі)</value>
+  </data>
+  <data name="DrawTagsLabel" xml:space="preserve">
+    <value>Лише питання з мітками</value>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Термін</value>
+  </data>
+  <data name="DueDateHelp" xml:space="preserve">
+    <value>Необов’язково. Кінець цього дня в часовому поясі підрозділу.</value>
+  </data>
+  <data name="DueDateLabel" xml:space="preserve">
+    <value>Кінцевий термін</value>
+  </data>
+  <data name="DueFormat" xml:space="preserve">
+    <value>Термін {0}</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Редагувати</value>
+  </data>
+  <data name="EditDraftButton" xml:space="preserve">
+    <value>Редагувати чернетку</value>
+  </data>
+  <data name="EditQuestionHeader" xml:space="preserve">
+    <value>Редагувати питання</value>
+  </data>
+  <data name="EndCrewViewingButton" xml:space="preserve">
+    <value>Завершити перегляд</value>
+  </data>
+  <data name="EnrollButton" xml:space="preserve">
+    <value>Записатися</value>
+  </data>
+  <data name="EnrolledColumn" xml:space="preserve">
+    <value>Записано</value>
+  </data>
+  <data name="EnrolledMessage" xml:space="preserve">
+    <value>Вас записано.</value>
+  </data>
+  <data name="EnrollmentsHeader" xml:space="preserve">
+    <value>Записи</value>
+  </data>
+  <data name="EnrollmentStatus.Completed" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="EnrollmentStatus.InProgress" xml:space="preserve">
+    <value>Триває</value>
+  </data>
+  <data name="EnrollmentStatus.NotStarted" xml:space="preserve">
+    <value>Не розпочато</value>
+  </data>
+  <data name="EnrollmentStatus.Withdrawn" xml:space="preserve">
+    <value>Відкликано</value>
+  </data>
+  <data name="Error.AddonRequired" xml:space="preserve">
+    <value>Для цього потрібне доповнення LMS.</value>
+  </data>
+  <data name="Error.AlreadySubmitted" xml:space="preserve">
+    <value>Це вже надіслано.</value>
+  </data>
+  <data name="Error.AttemptLimitReached" xml:space="preserve">
+    <value>Ви використали всі дозволені спроби.</value>
+  </data>
+  <data name="Error.CodeExpired" xml:space="preserve">
+    <value>Цей код змінився. Відскануйте код на екрані ще раз.</value>
+  </data>
+  <data name="Error.CooldownActive" xml:space="preserve">
+    <value>Зачекайте перед наступною спробою.</value>
+  </data>
+  <data name="Error.FileTooLarge" xml:space="preserve">
+    <value>Файл завеликий.</value>
+  </data>
+  <data name="Error.InvalidInput" xml:space="preserve">
+    <value>Деякі дані відсутні або недійсні.</value>
+  </data>
+  <data name="Error.LapseWindowEnded" xml:space="preserve">
+    <value>Доповнення LMS завершилося, і строк завершення цього курсу минув.</value>
+  </data>
+  <data name="Error.LessonLocked" xml:space="preserve">
+    <value>Спершу завершіть попередні уроки.</value>
+  </data>
+  <data name="Error.MediaUnavailable" xml:space="preserve">
+    <value>Сховище відео зараз недоступне.</value>
+  </data>
+  <data name="Error.None" xml:space="preserve">
+    <value>Готово.</value>
+  </data>
+  <data name="Error.NotAuthorized" xml:space="preserve">
+    <value>У вас немає на це права.</value>
+  </data>
+  <data name="Error.NotDraft" xml:space="preserve">
+    <value>Змінювати можна лише чернетку.</value>
+  </data>
+  <data name="Error.NotEntitled" xml:space="preserve">
+    <value>Цей урок стосується модуля чи доповнення, якого немає у вашого підрозділу.</value>
+  </data>
+  <data name="Error.NotFound" xml:space="preserve">
+    <value>Елемент не знайдено.</value>
+  </data>
+  <data name="Error.RequirementNotMet" xml:space="preserve">
+    <value>Цей крок ще не завершено.</value>
+  </data>
+  <data name="Error.ResponseRequired" xml:space="preserve">
+    <value>Виконайте завдання (або додайте потрібний файл), щоб завершити урок.</value>
+  </data>
+  <data name="Error.SeatTimeNotMet" xml:space="preserve">
+    <value>Приділіть цьому уроку трохи більше часу перед завершенням.</value>
+  </data>
+  <data name="Error.StaleCopy" xml:space="preserve">
+    <value>Хтось інший змінив це після відкриття. Оновіть і спробуйте знову.</value>
+  </data>
+  <data name="Error.TimeExpired" xml:space="preserve">
+    <value>Час на цю спробу вичерпано.</value>
+  </data>
+  <data name="Error.UnsupportedFile" xml:space="preserve">
+    <value>Такий тип файлу не приймається.</value>
+  </data>
+  <data name="EveryoneOption" xml:space="preserve">
+    <value>Усі в підрозділі</value>
+  </data>
+  <data name="ExpiredBadge" xml:space="preserve">
+    <value>Час вичерпано</value>
+  </data>
+  <data name="ExplanationLabel" xml:space="preserve">
+    <value>Пояснення (показується після спроби; зразкова відповідь для коротких відповідей)</value>
+  </data>
+  <data name="FailedBadge" xml:space="preserve">
+    <value>Не складено</value>
+  </data>
+  <data name="FileColumn" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="FileRequestHelp" xml:space="preserve">
+    <value>PDF, зображення, текст, Word або Excel, до 10 МБ.</value>
+  </data>
+  <data name="FileRequestLabel" xml:space="preserve">
+    <value>Запит файлу (необов’язково)</value>
+  </data>
+  <data name="FingerprintFormat" xml:space="preserve">
+    <value>відбиток {0}</value>
+  </data>
+  <data name="FreeResponseLabel" xml:space="preserve">
+    <value>Завдання з вільною відповіддю (необов’язково)</value>
+  </data>
+  <data name="GradedMessage" xml:space="preserve">
+    <value>Оцінку збережено.</value>
+  </data>
+  <data name="GraderNotesLabel" xml:space="preserve">
+    <value>Нотатки оцінювача</value>
+  </data>
+  <data name="GradingEmpty" xml:space="preserve">
+    <value>Нічого не очікує оцінювання.</value>
+  </data>
+  <data name="GradingIntro" xml:space="preserve">
+    <value>Короткі відповіді, що очікують оцінювання. Ніхто не оцінює власну спробу.</value>
+  </data>
+  <data name="GradingTitle" xml:space="preserve">
+    <value>Черга оцінювання</value>
+  </data>
+  <data name="GroupsLabel" xml:space="preserve">
+    <value>Групи</value>
+  </data>
+  <data name="HostedVideoLabel" xml:space="preserve">
+    <value>Завантажене відео</value>
+  </data>
+  <data name="HoursColumn" xml:space="preserve">
+    <value>Години</value>
+  </data>
+  <data name="HoursFormat" xml:space="preserve">
+    <value>{0} год</value>
+  </data>
+  <data name="HoursLabel" xml:space="preserve">
+    <value>Зараховані години</value>
+  </data>
+  <data name="ImageUrlLabel" xml:space="preserve">
+    <value>Посилання на зображення (https, необов’язково)</value>
+  </data>
+  <data name="IncludedTile" xml:space="preserve">
+    <value>Включено</value>
+  </data>
+  <data name="IncorrectLabel" xml:space="preserve">
+    <value>Неправильно</value>
+  </data>
+  <data name="InForceFormat" xml:space="preserve">
+    <value>Чинна версія {0}</value>
+  </data>
+  <data name="InProgressBadge" xml:space="preserve">
+    <value>Триває</value>
+  </data>
+  <data name="InProgressHeader" xml:space="preserve">
+    <value>Призначені та в процесі</value>
+  </data>
+  <data name="IssuesCertificationLabel" xml:space="preserve">
+    <value>Завершення видає або подовжує</value>
+  </data>
+  <data name="ItemAnalysisFootnote" xml:space="preserve">
+    <value>Для дискримінативності потрібно щонайменше 10 завершених спроб. Спроби, що чекають оцінювання, не враховуються.</value>
+  </data>
+  <data name="ItemAnalysisIntro" xml:space="preserve">
+    <value>Як кожне питання показало себе в завершених спробах.</value>
+  </data>
+  <data name="ItemAnalysisTitle" xml:space="preserve">
+    <value>Аналіз завдань</value>
+  </data>
+  <data name="Kind.Assessment" xml:space="preserve">
+    <value>Оцінювання</value>
+  </data>
+  <data name="Kind.Blocks" xml:space="preserve">
+    <value>Читання</value>
+  </data>
+  <data name="Kind.Cmi5" xml:space="preserve">
+    <value>Пакет cmi5</value>
+  </data>
+  <data name="Kind.Document" xml:space="preserve">
+    <value>Документ</value>
+  </data>
+  <data name="Kind.LiveSession" xml:space="preserve">
+    <value>Живе заняття</value>
+  </data>
+  <data name="Kind.ProtocolVersion" xml:space="preserve">
+    <value>Протокол</value>
+  </data>
+  <data name="Kind.Scorm" xml:space="preserve">
+    <value>Пакет SCORM</value>
+  </data>
+  <data name="Kind.Survey" xml:space="preserve">
+    <value>Оцінка курсу</value>
+  </data>
+  <data name="Kind.Video" xml:space="preserve">
+    <value>Відео</value>
+  </data>
+  <data name="LapsedNotice" xml:space="preserve">
+    <value>Доповнення LMS завершилося: курси та записи залишаються доступними для читання, призначені курси відкриті до терміну (або 30 днів), розміщене відео доступне лише для перегляду 90 днів, а нові курси чи призначення знову потребують доповнення.</value>
+  </data>
+  <data name="LengthColumn" xml:space="preserve">
+    <value>Тривалість</value>
+  </data>
+  <data name="LessonBadge" xml:space="preserve">
+    <value>Урок</value>
+  </data>
+  <data name="LessonColumn" xml:space="preserve">
+    <value>Урок</value>
+  </data>
+  <data name="LessonCompletedMessage" xml:space="preserve">
+    <value>Урок завершено.</value>
+  </data>
+  <data name="LessonDoneLabel" xml:space="preserve">
+    <value>Ви завершили цей урок.</value>
+  </data>
+  <data name="LibraryIntro" xml:space="preserve">
+    <value>Курси вашого підрозділу: створення, затвердження, публікація, призначення та звіти.</value>
+  </data>
+  <data name="LibraryTitle" xml:space="preserve">
+    <value>Бібліотека курсів</value>
+  </data>
+  <data name="Lifecycle.AlreadyDecided" xml:space="preserve">
+    <value>Цей крок уже вирішено або ви вже затвердили цей раунд.</value>
+  </data>
+  <data name="Lifecycle.ArtifactChanged" xml:space="preserve">
+    <value>Версія змінилася після подання чи підпису; подайте її знову.</value>
+  </data>
+  <data name="Lifecycle.ChangeSummaryRequired" xml:space="preserve">
+    <value>Перед публікацією опишіть, що змінилося.</value>
+  </data>
+  <data name="Lifecycle.DraftExists" xml:space="preserve">
+    <value>Для цього курсу вже відкрито чернетку.</value>
+  </data>
+  <data name="Lifecycle.EffectiveDateInPast" xml:space="preserve">
+    <value>Дата набрання чинності в минулому.</value>
+  </data>
+  <data name="Lifecycle.EmptyContent" xml:space="preserve">
+    <value>Додайте щонайменше один урок перед поданням.</value>
+  </data>
+  <data name="Lifecycle.InvalidInput" xml:space="preserve">
+    <value>Деякі дані відсутні або недійсні.</value>
+  </data>
+  <data name="Lifecycle.None" xml:space="preserve">
+    <value>Готово.</value>
+  </data>
+  <data name="Lifecycle.NotApproved" xml:space="preserve">
+    <value>Опублікувати можна лише затверджену версію.</value>
+  </data>
+  <data name="Lifecycle.NotAuthorized" xml:space="preserve">
+    <value>У вас немає на це права.</value>
+  </data>
+  <data name="Lifecycle.NotDraft" xml:space="preserve">
+    <value>Подати можна лише чернетку.</value>
+  </data>
+  <data name="Lifecycle.NotFound" xml:space="preserve">
+    <value>Версію не знайдено.</value>
+  </data>
+  <data name="Lifecycle.NotInReview" xml:space="preserve">
+    <value>Ця версія не очікує затвердження.</value>
+  </data>
+  <data name="Lifecycle.NotPublished" xml:space="preserve">
+    <value>Ще нічого не опубліковано.</value>
+  </data>
+  <data name="Lifecycle.OpenComments" xml:space="preserve">
+    <value>Спершу вирішіть відкриті коментарі рецензії.</value>
+  </data>
+  <data name="Lifecycle.PasskeyRequired" xml:space="preserve">
+    <value>Ваш підрозділ вимагає ключ доступу для цього підпису.</value>
+  </data>
+  <data name="Lifecycle.RetentionProtected" xml:space="preserve">
+    <value>Подану версію зберігають, і її не можна відхилити.</value>
+  </data>
+  <data name="Lifecycle.SignatureRequired" xml:space="preserve">
+    <value>Підтвердьте особу, щоб підписати затвердження.</value>
+  </data>
+  <data name="Lifecycle.StaleCopy" xml:space="preserve">
+    <value>Хтось інший змінив це після відкриття. Оновіть і спробуйте знову.</value>
+  </data>
+  <data name="LockedBadge" xml:space="preserve">
+    <value>заблоковано до завершення попередніх уроків</value>
+  </data>
+  <data name="MajorPolicyLabel" xml:space="preserve">
+    <value>Для основної версії</value>
+  </data>
+  <data name="MajorVersionOption" xml:space="preserve">
+    <value>Основна версія: виберіть, що буде з тими, хто її завершив</value>
+  </data>
+  <data name="MarkCompleteButton" xml:space="preserve">
+    <value>Позначити завершеним</value>
+  </data>
+  <data name="MarkPresentButton" xml:space="preserve">
+    <value>Я тут</value>
+  </data>
+  <data name="MediaNotConfigured" xml:space="preserve">
+    <value>На цій інсталяції не налаштовано сховище відео, тож завантажувати відео не можна. Посилання на YouTube і Vimeo працюють.</value>
+  </data>
+  <data name="MediaStatus.Archived" xml:space="preserve">
+    <value>Архівовано (доповнення завершилося)</value>
+  </data>
+  <data name="MediaStatus.Failed" xml:space="preserve">
+    <value>Не вдалося обробити</value>
+  </data>
+  <data name="MediaStatus.Queued" xml:space="preserve">
+    <value>Очікує обробки</value>
+  </data>
+  <data name="MediaStatus.Ready" xml:space="preserve">
+    <value>Готово</value>
+  </data>
+  <data name="MediaStatus.Transcoding" xml:space="preserve">
+    <value>Обробка</value>
+  </data>
+  <data name="MediaStatus.Uploading" xml:space="preserve">
+    <value>Завантаження</value>
+  </data>
+  <data name="MemberColumn" xml:space="preserve">
+    <value>Учасник</value>
+  </data>
+  <data name="MembersLabel" xml:space="preserve">
+    <value>Учасники</value>
+  </data>
+  <data name="MinimumSeatLabel" xml:space="preserve">
+    <value>Мінімальний час на уроці (секунди)</value>
+  </data>
+  <data name="MinorVersionOption" xml:space="preserve">
+    <value>Незначна версія: завершення залишаються чинними</value>
+  </data>
+  <data name="MinutesFormat" xml:space="preserve">
+    <value>{0} хв</value>
+  </data>
+  <data name="ModelAnswerLabel" xml:space="preserve">
+    <value>Зразкова відповідь:</value>
+  </data>
+  <data name="ModuleLabel" xml:space="preserve">
+    <value>Модуль</value>
+  </data>
+  <data name="ModuleNumberFormat" xml:space="preserve">
+    <value>Модуль {0}</value>
+  </data>
+  <data name="ModuleTitleLabel" xml:space="preserve">
+    <value>Назва модуля</value>
+  </data>
+  <data name="MoveUpButton" xml:space="preserve">
+    <value>Перемістити вгору</value>
+  </data>
+  <data name="MyCoursesIntro" xml:space="preserve">
+    <value>Призначені вам курси, Resgrid Academy та курси, до яких можна приєднатися.</value>
+  </data>
+  <data name="MyCoursesTitle" xml:space="preserve">
+    <value>Мої курси</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="NameLine" xml:space="preserve">
+    <value>Ім’я:</value>
+  </data>
+  <data name="NewBankHeader" xml:space="preserve">
+    <value>Новий банк питань</value>
+  </data>
+  <data name="NewCourseHeader" xml:space="preserve">
+    <value>Новий курс</value>
+  </data>
+  <data name="NewLessonFormat" xml:space="preserve">
+    <value>Новий урок: {0}</value>
+  </data>
+  <data name="NewQuestionHeader" xml:space="preserve">
+    <value>Нове питання</value>
+  </data>
+  <data name="NewVersionButton" xml:space="preserve">
+    <value>Почати нову версію</value>
+  </data>
+  <data name="NextAttemptFormat" xml:space="preserve">
+    <value>Наступна спроба з {0}.</value>
+  </data>
+  <data name="NextButton" xml:space="preserve">
+    <value>Далі</value>
+  </data>
+  <data name="NextUpLabel" xml:space="preserve">
+    <value>Далі</value>
+  </data>
+  <data name="NoBanks" xml:space="preserve">
+    <value>Банків питань ще немає.</value>
+  </data>
+  <data name="NoCourses" xml:space="preserve">
+    <value>Курсів ще немає.</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>Немає</value>
+  </data>
+  <data name="NoOpenCourses" xml:space="preserve">
+    <value>У вас немає відкритих курсів.</value>
+  </data>
+  <data name="NothingToPlay" xml:space="preserve">
+    <value>Цей курс не має уроків для показу.</value>
+  </data>
+  <data name="Notify.CourseAssigned" xml:space="preserve">
+    <value>Вам призначено курс "{0}". Відкрити: {1}</value>
+  </data>
+  <data name="Notify.CourseAssigned.Title" xml:space="preserve">
+    <value>Призначено новий курс</value>
+  </data>
+  <data name="Notify.CourseNewVersion" xml:space="preserve">
+    <value>Опубліковано нову основну версію ({1}) курсу "{0}", який ви завершили.</value>
+  </data>
+  <data name="Notify.CourseNewVersion.Title" xml:space="preserve">
+    <value>Курс оновлено</value>
+  </data>
+  <data name="Notify.CourseReassigned" xml:space="preserve">
+    <value>Курс "{0}" має нову основну версію ({1}) і його знову призначено вам.</value>
+  </data>
+  <data name="Notify.CourseReassigned.Title" xml:space="preserve">
+    <value>Курс призначено знову</value>
+  </data>
+  <data name="Notify.InProgressReminder" xml:space="preserve">
+    <value>Ви не завершили курс "{0}". Продовжте з місця, де зупинилися: {1}</value>
+  </data>
+  <data name="Notify.InProgressReminder.Title" xml:space="preserve">
+    <value>Нагадування про курс</value>
+  </data>
+  <data name="NotStartedBadge" xml:space="preserve">
+    <value>Не розпочато</value>
+  </data>
+  <data name="OfflineCapLabel" xml:space="preserve">
+    <value>Обмеження розміру офлайн (МБ)</value>
+  </data>
+  <data name="OfflineExpiryLabel" xml:space="preserve">
+    <value>Офлайн-копія зберігається (днів)</value>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Відкрити</value>
+  </data>
+  <data name="OpenDocumentButton" xml:space="preserve">
+    <value>Відкрити документ</value>
+  </data>
+  <data name="OptionalBadge" xml:space="preserve">
+    <value>необов’язковий</value>
+  </data>
+  <data name="OptionCountsColumn" xml:space="preserve">
+    <value>Вибрані варіанти</value>
+  </data>
+  <data name="OptionNumberFormat" xml:space="preserve">
+    <value>Варіант {0}</value>
+  </data>
+  <data name="OptionsHelp" xml:space="preserve">
+    <value>Позначте правильні варіанти. Для впорядкування вкажіть їх у правильному порядку. Правда/неправда використовує перші два. Короткі відповіді не потребують варіантів.</value>
+  </data>
+  <data name="OptionsLabel" xml:space="preserve">
+    <value>Варіанти</value>
+  </data>
+  <data name="OrderHelp" xml:space="preserve">
+    <value>Розставте елементи в правильному порядку: виберіть перший, потім другий і так далі.</value>
+  </data>
+  <data name="OutlineLabel" xml:space="preserve">
+    <value>Структура курсу</value>
+  </data>
+  <data name="OverdueBadge" xml:space="preserve">
+    <value>прострочено</value>
+  </data>
+  <data name="OverIncludedNote" xml:space="preserve">
+    <value>Сховище перевищує включений обсяг. Наразі за це не стягується плата; розгляньте видалення старих відео.</value>
+  </data>
+  <data name="OverviewLabel" xml:space="preserve">
+    <value>Огляд</value>
+  </data>
+  <data name="OwnersHeader" xml:space="preserve">
+    <value>Відповідальні за курс</value>
+  </data>
+  <data name="PassedBadge" xml:space="preserve">
+    <value>Складено</value>
+  </data>
+  <data name="PassMarkFormat" xml:space="preserve">
+    <value>Прохідний бал {0}%</value>
+  </data>
+  <data name="PassMarkLabel" xml:space="preserve">
+    <value>Прохідний бал</value>
+  </data>
+  <data name="PassRateTile" xml:space="preserve">
+    <value>Частка складених</value>
+  </data>
+  <data name="PathLessonsFormat" xml:space="preserve">
+    <value>Уроків: {0} · завершено вами: {1}</value>
+  </data>
+  <data name="PathNobodyAssigned" xml:space="preserve">
+    <value>Цей шлях ще нікому не призначено.</value>
+  </data>
+  <data name="PathProgressButton" xml:space="preserve">
+    <value>Прогрес (призначено: {0})</value>
+  </data>
+  <data name="PathProgressIntro" xml:space="preserve">
+    <value>Прогрес кожного призначеного учасника за уроками шляху.</value>
+  </data>
+  <data name="PlaybackSpeedLabel" xml:space="preserve">
+    <value>Швидкість відтворення</value>
+  </data>
+  <data name="PlayerTitle" xml:space="preserve">
+    <value>Курс</value>
+  </data>
+  <data name="PointsAwardedFormat" xml:space="preserve">
+    <value>Нараховані бали (з {0})</value>
+  </data>
+  <data name="PointsLabel" xml:space="preserve">
+    <value>Бали</value>
+  </data>
+  <data name="PointsShort" xml:space="preserve">
+    <value>бал.</value>
+  </data>
+  <data name="Policy.Nothing" xml:space="preserve">
+    <value>Нічого: завершення чинні</value>
+  </data>
+  <data name="Policy.Notify" xml:space="preserve">
+    <value>Повідомити тих, хто завершив</value>
+  </data>
+  <data name="Policy.Reassign" xml:space="preserve">
+    <value>Призначити знову тим, хто завершив</value>
+  </data>
+  <data name="PresentHeader" xml:space="preserve">
+    <value>Присутні</value>
+  </data>
+  <data name="PresentMessage" xml:space="preserve">
+    <value>Вас позначено присутнім. Продовжуйте наступний урок на телефоні.</value>
+  </data>
+  <data name="PreTestLabel" xml:space="preserve">
+    <value>Попередній тест (складання завершує курс)</value>
+  </data>
+  <data name="PreTestNote" xml:space="preserve">
+    <value>Попередній тест: його складання завершує весь курс.</value>
+  </data>
+  <data name="PreviousButton" xml:space="preserve">
+    <value>Попередній</value>
+  </data>
+  <data name="PrintHint" xml:space="preserve">
+    <value>Скористайтеся командою друку браузера, щоб надрукувати цей тест.</value>
+  </data>
+  <data name="PrintKeyButton" xml:space="preserve">
+    <value>З відповідями</value>
+  </data>
+  <data name="PrintTestButton" xml:space="preserve">
+    <value>Тест для друку</value>
+  </data>
+  <data name="PrivateBadge" xml:space="preserve">
+    <value>Приватний</value>
+  </data>
+  <data name="ProgressColumn" xml:space="preserve">
+    <value>Прогрес</value>
+  </data>
+  <data name="ProgressHonest" xml:space="preserve">
+    <value>Завершено {0}% обов’язкових уроків</value>
+  </data>
+  <data name="ProgressLabel" xml:space="preserve">
+    <value>Прогрес</value>
+  </data>
+  <data name="ProtocolUnavailable" xml:space="preserve">
+    <value>Ця версія протоколу більше недоступна.</value>
+  </data>
+  <data name="ProtocolVersionFormat" xml:space="preserve">
+    <value>Версія протоколу {0} у тому вигляді, як її опубліковано.</value>
+  </data>
+  <data name="ProtocolVersionHelp" xml:space="preserve">
+    <value>Урок показує цю версію в опублікованому вигляді, навіть якщо протокол зміниться.</value>
+  </data>
+  <data name="ProtocolVersionLabel" xml:space="preserve">
+    <value>Версія протоколу</value>
+  </data>
+  <data name="PublishBeforeAssign" xml:space="preserve">
+    <value>Опублікуйте версію, перш ніж призначати курс.</value>
+  </data>
+  <data name="PublishButton" xml:space="preserve">
+    <value>Опублікувати</value>
+  </data>
+  <data name="PublishedColumn" xml:space="preserve">
+    <value>Опубліковано</value>
+  </data>
+  <data name="PublishedMessage" xml:space="preserve">
+    <value>Версію опубліковано.</value>
+  </data>
+  <data name="PublishHeader" xml:space="preserve">
+    <value>Опублікувати цю версію</value>
+  </data>
+  <data name="PublishHelp" xml:space="preserve">
+    <value>Ті, хто проходить курс, зберігають розпочату версію; ті, хто не почав, переходять на цю.</value>
+  </data>
+  <data name="QuestionColumn" xml:space="preserve">
+    <value>Питання</value>
+  </data>
+  <data name="QuestionKind.MultiChoice" xml:space="preserve">
+    <value>Кілька варіантів</value>
+  </data>
+  <data name="QuestionKind.Ordering" xml:space="preserve">
+    <value>Упорядкувати</value>
+  </data>
+  <data name="QuestionKind.ShortAnswer" xml:space="preserve">
+    <value>Коротка відповідь (оцінюється вручну)</value>
+  </data>
+  <data name="QuestionKind.SingleChoice" xml:space="preserve">
+    <value>Один варіант</value>
+  </data>
+  <data name="QuestionKind.TrueFalse" xml:space="preserve">
+    <value>Правда чи неправда</value>
+  </data>
+  <data name="QuestionKindLabel" xml:space="preserve">
+    <value>Тип питання</value>
+  </data>
+  <data name="QuestionNumberFormat" xml:space="preserve">
+    <value>Питання {0} з {1}</value>
+  </data>
+  <data name="QuestionsCountFormat" xml:space="preserve">
+    <value>Питань: {0}</value>
+  </data>
+  <data name="QuestionTextLabel" xml:space="preserve">
+    <value>Питання</value>
+  </data>
+  <data name="RandomizeLabel" xml:space="preserve">
+    <value>Перемішувати порядок відповідей</value>
+  </data>
+  <data name="RatingHelp" xml:space="preserve">
+    <value>1 — погано, 5 — чудово.</value>
+  </data>
+  <data name="ReassignDaysLabel" xml:space="preserve">
+    <value>Днів на завершення при повторному призначенні</value>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Повернути на доопрацювання</value>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>Версію повернуто на доопрацювання.</value>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>Причина повернення</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Вилучити</value>
+  </data>
+  <data name="RenameButton" xml:space="preserve">
+    <value>Перейменувати</value>
+  </data>
+  <data name="RequiredLabel" xml:space="preserve">
+    <value>Обов’язковий для завершення курсу</value>
+  </data>
+  <data name="RequiredWatchLabel" xml:space="preserve">
+    <value>Переглянути щонайменше (%)</value>
+  </data>
+  <data name="ResponsesColumn" xml:space="preserve">
+    <value>Відповіді</value>
+  </data>
+  <data name="ResponsesFormat" xml:space="preserve">
+    <value>Анонімних відповідей: {0}</value>
+  </data>
+  <data name="ResultColumn" xml:space="preserve">
+    <value>Підсумок</value>
+  </data>
+  <data name="ResultTitle" xml:space="preserve">
+    <value>Підсумок</value>
+  </data>
+  <data name="ResumeAttemptButton" xml:space="preserve">
+    <value>Продовжити спробу</value>
+  </data>
+  <data name="ResumeButton" xml:space="preserve">
+    <value>Продовжити</value>
+  </data>
+  <data name="RetakeButton" xml:space="preserve">
+    <value>Спробувати знову</value>
+  </data>
+  <data name="RetireButton" xml:space="preserve">
+    <value>Зняти з обігу</value>
+  </data>
+  <data name="RetireConfirm" xml:space="preserve">
+    <value>Зняти цей курс з обігу? Він зникне з каталогу; уже записані учасники зможуть його завершити.</value>
+  </data>
+  <data name="RetiredBadge" xml:space="preserve">
+    <value>знято з обігу</value>
+  </data>
+  <data name="RetiredMessage" xml:space="preserve">
+    <value>Курс знято з обігу.</value>
+  </data>
+  <data name="RetiredQuestionMessage" xml:space="preserve">
+    <value>Питання вилучено.</value>
+  </data>
+  <data name="RetireQuestionConfirm" xml:space="preserve">
+    <value>Вилучити це питання? Спроби, де воно трапилося, зберігають свою копію.</value>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Переглянути</value>
+  </data>
+  <data name="ReviewQueueHeader" xml:space="preserve">
+    <value>Очікує затвердження</value>
+  </data>
+  <data name="RightAssign" xml:space="preserve">
+    <value>призначення</value>
+  </data>
+  <data name="RightEdit" xml:space="preserve">
+    <value>редагування</value>
+  </data>
+  <data name="RightReport" xml:space="preserve">
+    <value>звіти</value>
+  </data>
+  <data name="RightsColumn" xml:space="preserve">
+    <value>Права</value>
+  </data>
+  <data name="RolePathsHeader" xml:space="preserve">
+    <value>Рольові шляхи</value>
+  </data>
+  <data name="RolePathsIntro" xml:space="preserve">
+    <value>Упорядковані списки уроків академії для ролі. Призначення шляху призначає кожен урок у ньому, доступний вашому підрозділу.</value>
+  </data>
+  <data name="RolesLabel" xml:space="preserve">
+    <value>Ролі</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="SavedMessage" xml:space="preserve">
+    <value>Збережено.</value>
+  </data>
+  <data name="SaveGradeButton" xml:space="preserve">
+    <value>Зберегти оцінку</value>
+  </data>
+  <data name="SaveLessonButton" xml:space="preserve">
+    <value>Зберегти урок</value>
+  </data>
+  <data name="ScoreColumn" xml:space="preserve">
+    <value>Бал</value>
+  </data>
+  <data name="SeatTimeRequirement" xml:space="preserve">
+    <value>Цей урок потребує щонайменше {0} хв (у вас {1} хв).</value>
+  </data>
+  <data name="SelfEnrollLabel" xml:space="preserve">
+    <value>Учасники можуть записуватися самі з каталогу</value>
+  </data>
+  <data name="SharedBadge" xml:space="preserve">
+    <value>Спільний</value>
+  </data>
+  <data name="SharedBankLabel" xml:space="preserve">
+    <value>Спільний для всіх авторів курсів</value>
+  </data>
+  <data name="SharingColumn" xml:space="preserve">
+    <value>Доступ</value>
+  </data>
+  <data name="ShowAnswers.AfterPassing" xml:space="preserve">
+    <value>Ключ, після складання</value>
+  </data>
+  <data name="ShowAnswers.Always" xml:space="preserve">
+    <value>Ключ після кожної спроби</value>
+  </data>
+  <data name="ShowAnswers.CorrectnessOnly" xml:space="preserve">
+    <value>Які відповіді правильні, без ключа</value>
+  </data>
+  <data name="ShowAnswers.Never" xml:space="preserve">
+    <value>Лише бал</value>
+  </data>
+  <data name="ShowAnswersLabel" xml:space="preserve">
+    <value>Показувати відповіді</value>
+  </data>
+  <data name="Signature.ArtifactChanged" xml:space="preserve">
+    <value>версія змінилася після підпису</value>
+  </data>
+  <data name="Signature.SubjectMissing" xml:space="preserve">
+    <value>версії більше не існує</value>
+  </data>
+  <data name="Signature.Valid" xml:space="preserve">
+    <value>відповідає цій версії</value>
+  </data>
+  <data name="Signature.Voided" xml:space="preserve">
+    <value>анульовано</value>
+  </data>
+  <data name="SizeColumn" xml:space="preserve">
+    <value>Розмір</value>
+  </data>
+  <data name="StandardOption" xml:space="preserve">
+    <value>Стандартний</value>
+  </data>
+  <data name="StartAssessmentButton" xml:space="preserve">
+    <value>Почати оцінювання</value>
+  </data>
+  <data name="StartButton" xml:space="preserve">
+    <value>Почати</value>
+  </data>
+  <data name="StartCrewViewingButton" xml:space="preserve">
+    <value>Дивитися разом (груповий перегляд)</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Стан</value>
+  </data>
+  <data name="StorageIntro" xml:space="preserve">
+    <value>Відео, що зберігається для вашого підрозділу, порівняно зі 100 ГБ, включеними в доповнення LMS.</value>
+  </data>
+  <data name="StorageTitle" xml:space="preserve">
+    <value>Сховище відео</value>
+  </data>
+  <data name="SubmitAttemptButton" xml:space="preserve">
+    <value>Надіслати відповіді</value>
+  </data>
+  <data name="SubmitConfirm" xml:space="preserve">
+    <value>Надіслати відповіді? Змінити їх потім не вийде.</value>
+  </data>
+  <data name="SubmitForApprovalButton" xml:space="preserve">
+    <value>Подати на затвердження</value>
+  </data>
+  <data name="SubmitSurveyButton" xml:space="preserve">
+    <value>Надіслати відповіді</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Надіслано</value>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>Версію подано на затвердження.</value>
+  </data>
+  <data name="SummaryLabel" xml:space="preserve">
+    <value>Короткий опис</value>
+  </data>
+  <data name="SurveyAnonymous" xml:space="preserve">
+    <value>Ваші відповіді анонімні: керівники бачать лише підсумки, від трьох відповідей.</value>
+  </data>
+  <data name="SurveyFormatHelp" xml:space="preserve">
+    <value>Одне в рядку: "rating: текст", "text: текст" або "choice: текст | варіант | варіант".</value>
+  </data>
+  <data name="SurveyQuestionsLabel" xml:space="preserve">
+    <value>Питання опитування</value>
+  </data>
+  <data name="SurveyResultsTitle" xml:space="preserve">
+    <value>Оцінка курсу</value>
+  </data>
+  <data name="SurveyThanksMessage" xml:space="preserve">
+    <value>Дякуємо, ваші відповіді записано анонімно.</value>
+  </data>
+  <data name="SurveyTooFew" xml:space="preserve">
+    <value>Результати показуються від {0} відповідей, щоб жодну не можна було пов’язати з учасником.</value>
+  </data>
+  <data name="TagsLabel" xml:space="preserve">
+    <value>Мітки</value>
+  </data>
+  <data name="TestedOutBadge" xml:space="preserve">
+    <value>Зараховано за попереднім тестом</value>
+  </data>
+  <data name="TimeLimitFormat" xml:space="preserve">
+    <value>Обмеження часу {0} хв</value>
+  </data>
+  <data name="TimeLimitLabel" xml:space="preserve">
+    <value>Обмеження часу (хвилини, 0 = немає)</value>
+  </data>
+  <data name="TimeRemainingFormat" xml:space="preserve">
+    <value>Залишилося {0} хв</value>
+  </data>
+  <data name="TitleLabel" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="TooFewAttempts" xml:space="preserve">
+    <value>замало спроб</value>
+  </data>
+  <data name="TranscriptHeader" xml:space="preserve">
+    <value>Стенограма</value>
+  </data>
+  <data name="TranscriptLink" xml:space="preserve">
+    <value>Залікова книжка</value>
+  </data>
+  <data name="UploadButton" xml:space="preserve">
+    <value>Завантажити</value>
+  </data>
+  <data name="UploadCaptionsButton" xml:space="preserve">
+    <value>Завантажити субтитри</value>
+  </data>
+  <data name="UploadedColumn" xml:space="preserve">
+    <value>Завантажено</value>
+  </data>
+  <data name="UploadedMessage" xml:space="preserve">
+    <value>Завантажено. Відео обробляються у фоні й відтворюються, щойно будуть готові.</value>
+  </data>
+  <data name="UploadVideoLabel" xml:space="preserve">
+    <value>Завантажити відео</value>
+  </data>
+  <data name="UsedTile" xml:space="preserve">
+    <value>Використано</value>
+  </data>
+  <data name="VersionColumn" xml:space="preserve">
+    <value>Версія</value>
+  </data>
+  <data name="VersionLabelFormat" xml:space="preserve">
+    <value>Версія {0}</value>
+  </data>
+  <data name="VersionSettingsHeader" xml:space="preserve">
+    <value>Налаштування версії</value>
+  </data>
+  <data name="VersionsHeader" xml:space="preserve">
+    <value>Версії</value>
+  </data>
+  <data name="VersionStatus.Approved" xml:space="preserve">
+    <value>Затверджено</value>
+  </data>
+  <data name="VersionStatus.Draft" xml:space="preserve">
+    <value>Чернетка</value>
+  </data>
+  <data name="VersionStatus.InReview" xml:space="preserve">
+    <value>На розгляді</value>
+  </data>
+  <data name="VersionStatus.Legacy" xml:space="preserve">
+    <value>Застаріла</value>
+  </data>
+  <data name="VersionStatus.Published" xml:space="preserve">
+    <value>Опубліковано</value>
+  </data>
+  <data name="VersionStatus.Retired" xml:space="preserve">
+    <value>Знято з обігу</value>
+  </data>
+  <data name="VersionStatus.Superseded" xml:space="preserve">
+    <value>Замінено</value>
+  </data>
+  <data name="VideoHelp" xml:space="preserve">
+    <value>Посилання на YouTube і Vimeo працюють усюди. Завантажене відео — частина доповнення LMS: його перекодовують у HLS і транслюють через підписані посилання.</value>
+  </data>
+  <data name="VideoSource.Embed" xml:space="preserve">
+    <value>YouTube або Vimeo</value>
+  </data>
+  <data name="VideoSource.Hosted" xml:space="preserve">
+    <value>Завантажене (LMS)</value>
+  </data>
+  <data name="VideoSourceLabel" xml:space="preserve">
+    <value>Джерело відео</value>
+  </data>
+  <data name="VideosTile" xml:space="preserve">
+    <value>Відео</value>
+  </data>
+  <data name="VideoUnavailable" xml:space="preserve">
+    <value>Це відео зараз недоступне.</value>
+  </data>
+  <data name="VideoUrlLabel" xml:space="preserve">
+    <value>Посилання на YouTube або Vimeo</value>
+  </data>
+  <data name="WalkthroughBadge" xml:space="preserve">
+    <value>Покроковий огляд</value>
+  </data>
+  <data name="WatchAgainButton" xml:space="preserve">
+    <value>Переглянути знову</value>
+  </data>
+  <data name="WatchRequirement" xml:space="preserve">
+    <value>Перегляньте щонайменше {0}% (переглянуто {1}%).</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Відкликати</value>
+  </data>
+  <data name="WithdrawConfirm" xml:space="preserve">
+    <value>Відкликати цього учасника з курсу? Його прогрес збережеться.</value>
+  </data>
+  <data name="WithdrawDraftButton" xml:space="preserve">
+    <value>Повернути в чернетку</value>
+  </data>
+  <data name="WithdrawnDraftMessage" xml:space="preserve">
+    <value>Версія знову є чернеткою.</value>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>Учасника відкликано з курсу.</value>
+  </data>
+  <data name="YourAnswerLabel" xml:space="preserve">
+    <value>ваша відповідь</value>
+  </data>
+  <data name="YourAttemptsHeader" xml:space="preserve">
+    <value>Ваші спроби</value>
+  </data>
+  <data name="AidNothingAccepted" xml:space="preserve">
+    <value>Нічого не прийнято.</value>
+  </data>
+  <data name="AidBankNameFormat" xml:space="preserve">
+    <value>Чернетки запитань: {0}</value>
+  </data>
+  <data name="AidBankDescription" xml:space="preserve">
+    <value>Запитання, прийняті з помічників для чернеток. Перевірте їх перед використанням в оцінюванні.</value>
+  </data>
+  <data name="AidQuestionsSaved" xml:space="preserve">
+    <value>Додано {0} запит. до банку "{1}".</value>
+  </data>
+  <data name="AidOpenBank" xml:space="preserve">
+    <value>Відкрити банк</value>
+  </data>
+  <data name="AidOutlineSaved" xml:space="preserve">
+    <value>Додано {0} модул(ів) до цієї чернетки.</value>
+  </data>
+  <data name="Notify.MicroLearning" xml:space="preserve">
+    <value>Щотижневе питання до протоколу ({0}) готове. Дайте відповідь у розділі Протоколи, Мої підтвердження, Щотижневі питання.</value>
+  </data>
+  <data name="Notify.MicroLearning.Title" xml:space="preserve">
+    <value>Щотижневе питання до протоколу</value>
+  </data>
+</root>

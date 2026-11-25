@@ -31,7 +31,7 @@ namespace Resgrid.Repositories.DataRepository
 		public static readonly string[] CreditMeta =
 		{
 			"PersonnelCertificationCreditId", "PersonnelCertificationId", "DepartmentId", "CreditDate", "Hours", "Category", "Description",
-			"FileName", "FileType", "AddedByUserId", "AddedOn", "IsProtected", "ProtectedCatalogVersion"
+			"FileName", "FileType", "AddedByUserId", "AddedOn", "IsProtected", "ProtectedCatalogVersion", "LearningRecordId"
 		};
 	}
 
@@ -158,6 +158,17 @@ namespace Resgrid.Repositories.DataRepository
 
 		public Task<int> DeleteByCertificationIdAsync(int personnelCertificationId, CancellationToken cancellationToken = default) =>
 			ExecuteAsync($"DELETE FROM {Tbl("PersonnelCertificationCredits")} WHERE {Col("PersonnelCertificationId")} = {P}CertId", new { CertId = personnelCertificationId }, cancellationToken);
+
+		public async Task<IEnumerable<PersonnelCertificationCredit>> GetByLearningRecordIdsAsync(int departmentId, IEnumerable<int> learningRecordIds)
+		{
+			var ids = InListValue(learningRecordIds).Distinct().ToArray();
+			var result = new List<PersonnelCertificationCredit>();
+			foreach (var chunk in ids.Chunk(1000))
+				result.AddRange(await QueryAsync<PersonnelCertificationCredit>(
+					$"SELECT {Cols(CertificationColumns.CreditMeta)} FROM {Tbl("PersonnelCertificationCredits")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("LearningRecordId", "Ids")}",
+					new { DepartmentId = departmentId, Ids = chunk }));
+			return result;
+		}
 	}
 
 	/// <summary>Unit-scoped certification records (M0213).</summary>

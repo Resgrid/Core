@@ -623,6 +623,89 @@ namespace Resgrid.Services
 					}
 					break;
 				}
+				case WorkflowTriggerEventType.SignatureRequested:
+				case WorkflowTriggerEventType.SignatureCompleted:
+				case WorkflowTriggerEventType.SignatureDeclined:
+				case WorkflowTriggerEventType.SignatureExpired:
+				{
+					var evt = TryDeserialize<SignatureRequestEvent>(eventPayloadJson);
+					if (evt != null)
+					{
+						var sg = new ScriptObject();
+						sg["request_id"] = evt.SignatureRequestId;
+						sg["subject_kind"] = evt.SubjectKind;
+						sg["subject_id"] = evt.SubjectId;
+						sg["title"] = evt.Title;
+						sg["channel"] = evt.Channel;
+						sg["status"] = evt.Status;
+						sg["signer_count"] = evt.SignerCount;
+						sg["signed_count"] = evt.SignedCount;
+						sg["content_code"] = evt.ContentCode;
+						sg["expires_on"] = evt.ExpiresOn;
+						sg["sealed_document_id"] = evt.SealedDocumentId ?? 0;
+						scriptObject["signature"] = sg;
+						triggeringUserId = evt.UserId;
+					}
+					break;
+				}
+				case WorkflowTriggerEventType.TrainingAssigned:
+				case WorkflowTriggerEventType.TrainingCompleted:
+				case WorkflowTriggerEventType.TrainingFailed:
+				case WorkflowTriggerEventType.TrainingOverdue:
+				case WorkflowTriggerEventType.RequirementAtRisk:
+				case WorkflowTriggerEventType.RequirementEnforced:
+				{
+					var evt = TryDeserialize<TrainingWorkflowEvent>(eventPayloadJson);
+					if (evt != null)
+					{
+						var te = new ScriptObject();
+						te["change"] = evt.Change.ToString();
+						te["user_id"] = evt.UserId;
+						te["subject"] = evt.Subject;
+						te["requirement_id"] = evt.RequirementId ?? 0;
+						te["requirement_name"] = evt.RequirementName;
+						te["requirement_kind"] = evt.RequirementKind;
+						te["course_id"] = evt.CourseId ?? 0;
+						te["path_id"] = evt.PathId ?? 0;
+						te["training_name"] = evt.TrainingName;
+						te["state"] = evt.State;
+						te["due_on"] = evt.DueOn;
+						te["completed_on"] = evt.CompletedOn;
+						te["days"] = evt.Days ?? 0;
+						te["certification_type_id"] = evt.CertificationTypeId ?? 0;
+						te["certification_type_name"] = evt.CertificationTypeName;
+						te["score"] = evt.Score ?? 0m;
+						scriptObject["training_event"] = te;
+						triggeringUserId = evt.UserId;
+					}
+					break;
+				}
+				case WorkflowTriggerEventType.ApprovalRequested:
+				case WorkflowTriggerEventType.ApprovalGranted:
+				case WorkflowTriggerEventType.ApprovalRejected:
+				case WorkflowTriggerEventType.ApprovalEscalated:
+				{
+					var evt = TryDeserialize<ApprovalWorkflowEvent>(eventPayloadJson);
+					if (evt != null)
+					{
+						var ap = new ScriptObject();
+						ap["change"] = evt.Change.ToString();
+						ap["id"] = evt.ApprovalRequestId;
+						ap["subject_kind"] = evt.SubjectKind;
+						ap["subject_id"] = evt.SubjectId;
+						ap["title"] = evt.Title;
+						ap["amount"] = evt.Amount ?? 0m;
+						ap["currency"] = evt.Currency;
+						ap["submitted_by_user_id"] = evt.SubmittedByUserId;
+						ap["user_id"] = evt.UserId;
+						ap["step_label"] = evt.StepLabel;
+						ap["reason"] = evt.Reason;
+						ap["content_code"] = evt.ContentCode;
+						scriptObject["approval"] = ap;
+						triggeringUserId = evt.UserId ?? evt.SubmittedByUserId;
+					}
+					break;
+				}
 				case WorkflowTriggerEventType.StationCoverageGapDetected:
 				{
 					var evt = TryDeserialize<StationCoverageGapEvent>(eventPayloadJson);

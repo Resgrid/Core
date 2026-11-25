@@ -1,6 +1,7 @@
 @using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Calls.ViewCallView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> protocolsLocalizer
+@inject Resgrid.Model.Services.IAiKnowledgeService knowledgeService
 @*
     View Call's protocols: each protocol on the call with how it came there (trigger or picked by hand), the answers and
     score recorded when it was attached, the text as dispatched (and whether the protocol has changed since), its
@@ -8,6 +9,12 @@
 *@
 @{
     var rows = (Model.Call?.Protocols ?? new List<CallProtocol>()).OrderBy(x => x.RemovedOn.HasValue).ThenBy(x => x.CallProtocolId).ToList();
+    // P3: the department's dosing-tool link on medication blocks (K1 setting 139); doses are shown as authored, never calculated.
+    string dosingToolUrl = null;
+    if (rows.Count > 0)
+    {
+        try { dosingToolUrl = (await knowledgeService.GetSettingsAsync(ClaimsAuthorizationHelper.GetDepartmentId()))?.DosingToolUrl; } catch (Exception) { dosingToolUrl = null; }
+    }
 
     CallProtocolAnswers Answers(CallProtocol row)
     {
@@ -18,12 +25,21 @@
 }
 @if (!string.IsNullOrEmpty(Model.CallProtocolMessage))
 {
-    <div class="alert @(Model.CallProtocolMessage == "Removed" ? "alert-success" : "alert-warning") m-t-sm" role="status" data-protocol-message="true">
-        @(Model.CallProtocolMessage == "Removed" ? protocolsLocalizer["CallProtocolRemovedMessage"] : protocolsLocalizer["RemovalReasonRequired"])
+    // P4 case actions report "Case{Outcome}" / "CaseCaller{Outcome}"; Done is a success.
+    var caseMessage = Model.CallProtocolMessage.StartsWith("Case", StringComparison.Ordinal);
+    var good = Model.CallProtocolMessage == "Removed" || (caseMessage && Model.CallProtocolMessage.EndsWith("Done", StringComparison.Ordinal));
+    <div class="alert @(good ? "alert-success" : "alert-warning") m-t-sm" role="status" data-protocol-message="true">
+        @(caseMessage ? protocolsLocalizer[Model.CallProtocolMessage] : Model.CallProtocolMessage == "Removed" ? protocolsLocalizer["CallProtocolRemovedMessage"] : protocolsLocalizer["RemovalReasonRequired"])
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () { if (window.jQuery) { jQuery('a[href="#tab-8"]').tab('show'); } });
     </script>
+}
+@if (Model.Call != null)
+{
+    @* K3: "Ask about this call", grounded in every protocol version the call cites and its type, priority, determinant and location type
+       (never patient or caller details). Hidden unless the department has Ai.Knowledge. *@
+    @await Html.PartialAsync("_KnowledgeAsk", new Resgrid.Web.Areas.User.Models.Knowledge.KnowledgeAskPanelModel { Surface = (int)KnowledgeAskSurfaces.Call, CallId = Model.Call.CallId, PanelId = "kask-call" })
 }
 @if (rows.Count == 0)
 {
@@ -44,6 +60,13 @@
         Model.ProtocolSnapshots.TryGetValue(row.DispatchProtocolId + ":" + row.ContentHash, out snapshot);
     }
     var changedSince = !string.IsNullOrEmpty(row.ContentHash) && ProtocolContentHash.Compute(protocol.ProtocolText) != row.ContentHash;
+    // P1: the version the call cites, rendered as it was in force (a Legacy version for text from before versions).
+    ProtocolVersion cited = null;
+    if (row.ProtocolVersionId.HasValue)
+    {
+        Model.ProtocolVersions.TryGetValue(row.ProtocolVersionId.Value, out cited);
+    }
+    var citedLabel = cited == null ? null : cited.Label != null ? "v" + cited.Label : protocolsLocalizer["VersionStatus" + (ProtocolVersionStatuses)cited.Status].Value;
 
     <div class="panel @(row.RemovedOn.HasValue ? "panel-default" : "panel-info") m-t-sm">
         <div class="panel-heading rgw-builder-heading">
@@ -118,7 +141,27 @@
                 <p class="text-muted small">@string.Format(protocolsLocalizer["AttachedByOn"].Value, await UserHelper.GetFullNameForUser(row.AttachedByUserId), row.AttachedOn.Value.TimeConverterToString(Model.Department))</p>
             }
 
-            @if (snapshot != null)
+            @* Protocols P4: the case recorded with the call (path, determinant, override, caller texts). *@
+            @await Html.PartialAsync("_CallProtocolCase", new Resgrid.Web.Areas.User.Models.Calls.CallProtocolCaseView { CallId = Model.Call.CallId, Row = row, CanEdit = Model.CanRemoveProtocols })
+
+            @if (cited != null)
+            {
+                <details>
+                    <summary>
+                        <i class="fa fa-file-text-o" aria-hidden="true"></i> @string.Format(protocolsLocalizer["CitedVersionLabel"].Value, citedLabel)
+                        @if (protocol.CurrentVersionId != cited.ProtocolVersionId)
+                        {
+                            <span class="label label-warning"><i class="fa fa-pencil" aria-hidden="true"></i> @protocolsLocalizer["ChangedSinceDispatch"]</span>
+                        }
+                        @if (string.IsNullOrEmpty(row.ContentHash))
+                        {
+                            <span class="label label-default"><i class="fa fa-history" aria-hidden="true"></i> @protocolsLocalizer["RecordedBeforeVersions"]</span>
+                        }
+                    </summary>
+                    <div class="m-t-sm rgp-reader">@Html.ProtocolContent(cited.ContentHtml, dosingToolUrl, protocolsLocalizer["DosingToolLinkText"].Value)</div>
+                </details>
+            }
+            else if (snapshot != null)
             {
                 <details>
                     <summary>
@@ -149,6 +192,12 @@
                 </ul>
             }
 
+            @if (cited != null && !row.RemovedOn.HasValue)
+            {
+                @* K1: "Ask about this call's protocol", grounded in the version this call cites. Hidden unless the department has Ai.Knowledge. *@
+                @await Html.PartialAsync("_KnowledgeAsk", new Resgrid.Web.Areas.User.Models.Knowledge.KnowledgeAskPanelModel { Surface = (int)KnowledgeAskSurfaces.Call, CallId = Model.Call.CallId, CallProtocolId = row.CallProtocolId, PanelId = "kask-call-" + row.CallProtocolId })
+            }
+
             @if (Model.CanRemoveProtocols && !row.RemovedOn.HasValue)
             {
                 <details class="m-t-sm">
@@ -166,3 +215,6 @@
         </div>
     </div>
 }
+
+@* Protocols P3: step-through and the incident SOP checklists. *@
+@await Html.PartialAsync("_CallSopChecklists", Model)

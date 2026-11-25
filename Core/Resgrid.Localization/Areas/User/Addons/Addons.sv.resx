@@ -115,4 +115,64 @@
   <data name="MessageAffiliateApplied" xml:space="preserve"><value>Partner-/kontokoden har sparats för din avdelning.</value></data>
   <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Partner-/kontokoden är ogiltig eller inte längre aktiv.</value></data>
   <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Din avdelning har redan en partner-/kontokod. Kontakta oss om den behöver ändras.</value></data>
+  <data name="LmsTitle" xml:space="preserve"><value>LMS</value></data>
+  <data name="LmsTagline" xml:space="preserve"><value>Kurser, formella utbildningsrapporter och verifierbara intyg</value></data>
+  <data name="LmsFeature1" xml:space="preserve"><value>Kurser med lektioner, frågebanker och quiz</value></data>
+  <data name="LmsFeature2" xml:space="preserve"><value>Värdade videolektioner, 100 GB ingår per avdelning</value></data>
+  <data name="LmsFeature3" xml:space="preserve"><value>Formella utbildningsrapporter enligt ISO FSRS och NREMT NCCP</value></data>
+  <data name="LmsFeature4" xml:space="preserve"><value>Intyg med verifieringskod, QR-kod och offentlig verifieringssida, på er egen mall</value></data>
+  <data name="LmsFeature5" xml:space="preserve"><value>Platser bara för de medlemmar ni aktiverar; alla behåller den kostnadsfria utbildningen</value></data>
+  <data name="LmsNote" xml:space="preserve"><value>Pris per paket om 25 medlemmar, trappat: de första 4 paketen till fullt pris, därefter billigare. Faktureras månadsvis per avdelning; ingen provperiod. Kräver en betald Resgrid-plan.</value></data>
+  <data name="PerMemberPack" xml:space="preserve"><value>per paket om {0} medlemmar</value></data>
+  <data name="PackTierLine" xml:space="preserve"><value>Paket {0}–{1}: {2} per paket</value></data>
+  <data name="PackTierLineOpen" xml:space="preserve"><value>Paket {0} och uppåt: {1} per paket</value></data>
+  <data name="LmsRequiresPaidPlan" xml:space="preserve"><value>LMS säljs tillsammans med en betald Resgrid-plan. Välj först en plan på prenumerationssidan.</value></data>
+  <data name="LmsBillingPacksNote" xml:space="preserve"><value>Varje paket rymmer 25 medlemmar. Paketen prissätts i nivåer: varje paket faktureras till priset för sin egen nivå, så fler paket gör aldrig tidigare paket billigare eller dyrare. Faktureras månadsvis; ingen provperiod och inget årsavtal.</value></data>
+  <data name="LmsBillingSeatsNote" xml:space="preserve"><value>Tillagda paket debiteras direkt, proportionellt fram till faktureringsdatumet. Borttagna paket gäller från nästa faktureringsdatum och bara ned till antalet LMS-aktiverade medlemmar.</value></data>
+  <data name="LmsBillingFreeNote" xml:space="preserve"><value>Medlemmar som inte är LMS-aktiverade behåller den kostnadsfria utbildningsmodulen, sitt utbildningsregister och Academy. Instruktörer, bedömare och befäl behöver ingen plats.</value></data>
+  <data name="LmsManageSeats" xml:space="preserve"><value>Hantera LMS-platser på personalsidan</value></data>
+  <data name="BillingPacksAdded" xml:space="preserve"><value>Paket tillagda. Den proportionella avgiften för resten av denna faktureringsperiod har fakturerats.</value></data>
+  <data name="BillingPacksScheduled" xml:space="preserve"><value>Minskningen av paket är planerad till nästa faktureringsdatum. Era platser finns kvar till dess.</value></data>
+  <data name="BillingPacksBelowSeats" xml:space="preserve"><value>Det skulle ge färre platser än LMS-aktiverade medlemmar. Stäng först av medlemmar på personalsidan.</value></data>
+  <data name="BillingPacksFailed" xml:space="preserve"><value>Antalet paket kunde inte ändras och inget debiterades. Försök igen eller kontakta oss.</value></data>
+  <data name="PacksHeading" xml:space="preserve"><value>Paket och platser</value></data>
+  <data name="PacksInForce" xml:space="preserve"><value>{0} paket: {1} platser, {2} används</value></data>
+  <data name="PacksNextMonth" xml:space="preserve"><value>Nästa månads pris: {0}</value></data>
+  <data name="PacksNextMonthLabel" xml:space="preserve"><value>Nästa månad</value></data>
+  <data name="PacksScheduledNote" xml:space="preserve"><value>Från {0}: {1} paket.</value></data>
+  <data name="PacksLabel" xml:space="preserve"><value>Antal paket</value></data>
+  <data name="PacksUpdate" xml:space="preserve"><value>Uppdatera paket</value></data>
+  <data name="PackPreviewFirst" xml:space="preserve"><value>{0} paket ({1} platser): {2} per månad.</value></data>
+  <data name="PackPreviewIncrease" xml:space="preserve"><value>{0} paket ({1} platser): {2} per månad från och med nu. Cirka {3} debiteras nu för resten av denna faktureringsperiod.</value></data>
+  <data name="PackPreviewDecrease" xml:space="preserve"><value>{0} paket ({1} platser): {2} per månad från {3}. Inget återbetalas och era platser finns kvar till dess.</value></data>
+  <data name="PackPreviewSame" xml:space="preserve"><value>Det här är antalet paket ni har nu.</value></data>
+  <data name="PackRefusedBelowSeats" xml:space="preserve"><value>Minst {0} paket behövs för de LMS-aktiverade medlemmarna. Stäng först av några på personalsidan.</value></data>
+  <data name="PackRefusedRange" xml:space="preserve"><value>Välj mellan {0} och {1} paket.</value></data>
+  <data name="PackPreviewFailed" xml:space="preserve"><value>Priset kunde inte visas. Försök igen.</value></data>
+  <data name="LmsSeatHeading" xml:space="preserve"><value>LMS-plats</value></data>
+  <data name="LmsSeatEnabledLabel" xml:space="preserve"><value>LMS-aktiverad</value></data>
+  <data name="LmsSeatEnabledHelp" xml:space="preserve"><value>Den här medlemmen kan utbildas genom LMS-kurser och krav.</value></data>
+  <data name="LmsSeatDisabledLabel" xml:space="preserve"><value>Inte LMS-aktiverad</value></data>
+  <data name="LmsSeatDisabledHelp" xml:space="preserve"><value>Den här medlemmen behåller den kostnadsfria utbildningsmodulen, sitt utbildningsregister och Academy.</value></data>
+  <data name="LmsSeatNotLicensed" xml:space="preserve"><value>Ej licensierad</value></data>
+  <data name="LmsSeatCounter" xml:space="preserve"><value>{0} av {1} platser används</value></data>
+  <data name="LmsSeatEnable" xml:space="preserve"><value>Aktivera LMS</value></data>
+  <data name="LmsSeatDisable" xml:space="preserve"><value>Stäng av LMS</value></data>
+  <data name="LmsSeatsFull" xml:space="preserve"><value>Alla {0} platser används. Paket att lägga till: {1}.</value></data>
+  <data name="LmsSeatNotActive" xml:space="preserve"><value>Bara aktiva medlemmar kan ha en LMS-plats; borttagna, inaktiverade och dolda medlemmar kan inte det.</value></data>
+  <data name="LmsSeatAddonInactive" xml:space="preserve"><value>Er avdelning har inget aktivt LMS-tillägg, så ingen medlem kan LMS-aktiveras.</value></data>
+  <data name="LmsSeatFailed" xml:space="preserve"><value>LMS-platsen kunde inte ändras. Försök igen.</value></data>
+  <data name="LmsSeatSaved" xml:space="preserve"><value>LMS-platsen uppdaterades.</value></data>
+  <data name="LmsAddPack" xml:space="preserve"><value>Lägg till ett paket</value></data>
+  <data name="LmsSeatBulkHeading" xml:space="preserve"><value>LMS-platser</value></data>
+  <data name="LmsSeatBulkGroup" xml:space="preserve"><value>Grupp</value></data>
+  <data name="LmsSeatBulkEnable" xml:space="preserve"><value>Aktivera grupp</value></data>
+  <data name="LmsSeatBulkDisable" xml:space="preserve"><value>Stäng av grupp</value></data>
+  <data name="LmsSeatBulkResult" xml:space="preserve"><value>{0} ändrade, {1} redan inställda, {2} hoppades över eftersom de inte är aktiva, {3} nekades eftersom inga platser fanns kvar.</value></data>
+  <data name="LmsSeatDormant" xml:space="preserve"><value>{0} platser tillhör medlemmar som inte längre är aktiva och räknas inte.</value></data>
+  <data name="LmsManagePacks" xml:space="preserve"><value>Hantera paket</value></data>
+  <data name="LmsSettingsHeading" xml:space="preserve"><value>LMS-paket och platser</value></data>
+  <data name="LmsSettingsNotPurchased" xml:space="preserve"><value>Er avdelning har inte köpt LMS-tillägget.</value></data>
+  <data name="LmsSettingsLapsed" xml:space="preserve"><value>LMS-tillägget har upphört. Poster, intyg och utbildningsregister finns kvar och kan exporteras.</value></data>
+  <data name="LmsSettingsGrace" xml:space="preserve"><value>En betalning misslyckades. LMS fortsätter att fungera till {0} medan betalningen görs om.</value></data>
 </root>

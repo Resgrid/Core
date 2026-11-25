@@ -179,4 +179,58 @@
   <data name="NotAttending" xml:space="preserve">
     <value>Не відвідаю</value>
   </data>
+  <data name="CredentialAudienceLabel" xml:space="preserve">
+    <value>За сертифікатом</value>
+  </data>
+  <data name="CredentialAudienceNone" xml:space="preserve">
+    <value>Нікого за сертифікатом</value>
+  </data>
+  <data name="CredentialAudienceStatus" xml:space="preserve">
+    <value>Стан сертифіката</value>
+  </data>
+  <data name="CredentialAudienceExpired" xml:space="preserve">
+    <value>прострочений</value>
+  </data>
+  <data name="CredentialAudienceExpiring" xml:space="preserve">
+    <value>спливає протягом указаної кількості днів</value>
+  </data>
+  <data name="CredentialAudienceMissing" xml:space="preserve">
+    <value>ніколи не отримували</value>
+  </data>
+  <data name="CredentialAudienceDays" xml:space="preserve">
+    <value>Дні</value>
+  </data>
+  <data name="CredentialAudienceHelp" xml:space="preserve">
+    <value>Додає активних учасників, сертифікат яких відповідає умові, разом з одержувачами, вибраними вище.</value>
+  </data>
+  <data name="CredentialAudienceNoMatch" xml:space="preserve">
+    <value>Жоден учасник не відповідає вибраному стану сертифіката.</value>
+  </data>
+  <data name="RosterAudienceLabel" xml:space="preserve">
+    <value>Учасники заняття</value>
+  </data>
+  <data name="RosterAudienceNone" xml:space="preserve">
+    <value>Без заняття</value>
+  </data>
+  <data name="RosterAudienceStatus" xml:space="preserve">
+    <value>Статус у списку</value>
+  </data>
+  <data name="RosterAudienceEnrolled" xml:space="preserve">
+    <value>Записані</value>
+  </data>
+  <data name="RosterAudienceAttended" xml:space="preserve">
+    <value>Присутні</value>
+  </data>
+  <data name="RosterAudienceAbsent" xml:space="preserve">
+    <value>Відсутні</value>
+  </data>
+  <data name="RosterAudienceWaitlisted" xml:space="preserve">
+    <value>У листі очікування</value>
+  </data>
+  <data name="RosterAudienceHelp" xml:space="preserve">
+    <value>Додає до одержувачів активних учасників заняття з цим статусом.</value>
+  </data>
+  <data name="RosterAudienceNoMatch" xml:space="preserve">
+    <value>У списку цього заняття немає нікого з таким статусом.</value>
+  </data>
 </root>

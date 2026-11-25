@@ -1,0 +1,119 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.MyAcknowledgmentsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@* My acknowledgments (P2): what the member owes, bulletins first, then the onboarding bundle's order; each with read-and-sign. *@
+@{
+    var departmentTime = DepartmentTime.From(ViewData);
+    ViewBag.Title = "Resgrid | " + localizer["MyAcknowledgmentsTab"];
+    ViewData["Title"] = localizer["MyAcknowledgmentsTab"].Value;
+    ViewData["Subtitle"] = localizer["MyAcknowledgmentsIntro"].Value;
+    var overdue = Model.Outstanding.Count(i => i.IsOverdue);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@localizer["AckOutstandingLabel"]</div><div class="rgw-stat-value">@Model.Outstanding.Count</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@localizer["OverdueLabel"]</div><div class="rgw-stat-value @(overdue > 0 ? "text-danger" : "")">@overdue</div></div>
+    </div>
+    <div class="rgw-toolbar">
+        <a class="btn btn-default btn-sm" asp-controller="ProtocolAcknowledgments" asp-action="Weekly" asp-route-area="User"><i class="fa fa-lightbulb-o" aria-hidden="true"></i> @localizer["WeeklyQuestionsHeader"]</a>
+    </div>
+
+    @if (Model.Outstanding.Count == 0)
+    {
+        <div class="rgw-next-action" role="status"><i class="fa fa-check-circle text-success" aria-hidden="true"></i> @localizer["NothingToAcknowledge"]</div>
+    }
+    else
+    {
+        @foreach (var item in Model.Outstanding)
+        {
+            var awaitingQuiz = item.Acknowledgment.Status == (int)ProtocolAcknowledgmentStatuses.AwaitingQuiz;
+            <div class="rgw-next-action" role="group" aria-label="@item.Name">
+                <i class="fa @(item.IsBulletin ? "fa-bullhorn text-danger" : item.IsOverdue ? "fa-exclamation-triangle text-danger" : "fa-pencil-square-o")" aria-hidden="true"></i>
+                <strong>@(item.IsBulletin ? item.Name : item.Code + " " + item.Name)</strong>
+                <span class="text-muted small">
+                    @if (!string.IsNullOrEmpty(item.VersionLabel)) { <text>v@(item.VersionLabel) · </text> }
+                    @if (item.IsBulletin) { <text>@localizer["KindBulletin"] · </text> }
+                    @(item.Acknowledgment.DueOn.HasValue ? string.Format(localizer[item.IsOverdue ? "AckDueWasLabel" : "AckDueLabel"].Value, departmentTime.Date(item.Acknowledgment.DueOn)) : "")
+                </span>
+                @if (awaitingQuiz && item.BankQuizOwed)
+                {
+                    <span class="label label-info"><i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer["AckAwaitingBankQuizLabel"]</span>
+                    <a class="btn btn-xs btn-primary" asp-controller="ProtocolAcknowledgments" asp-action="Quiz" asp-route-area="User" asp-route-versionId="@item.Acknowledgment.ProtocolVersionId"><i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer["TakeBankQuizButton"]</a>
+                }
+                else if (awaitingQuiz)
+                {
+                    <span class="label label-info"><i class="fa fa-graduation-cap" aria-hidden="true"></i> @string.Format(localizer["AckAwaitingQuizLabel"].Value, item.QuizTrainingName ?? "")</span>
+                    @if (item.QuizTrainingId.HasValue)
+                    {
+                        <a class="btn btn-xs btn-default" asp-controller="Trainings" asp-action="View" asp-route-area="User" asp-route-trainingId="@item.QuizTrainingId"><i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer["TakeQuizButton"]</a>
+                    }
+                }
+                else
+                {
+                    <a class="btn btn-xs btn-primary" asp-controller="ProtocolAcknowledgments" asp-action="Read" asp-route-area="User" asp-route-versionId="@item.Acknowledgment.ProtocolVersionId"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> @localizer["ReadAndSignButton"]</a>
+                }
+            </div>
+        }
+    }
+
+    <div class="ibox m-t-md">
+        <div class="ibox-title">
+            <h5><i class="fa fa-history" aria-hidden="true"></i> @localizer["AckCompletedHeader"]</h5>
+            <div class="ibox-tools">
+                @if (Model.ShowCompleted)
+                {
+                    <a class="btn btn-xs btn-default" asp-action="Mine" asp-route-area="User"><i class="fa fa-eye-slash" aria-hidden="true"></i> @localizer["HideCompletedButton"]</a>
+                }
+                else
+                {
+                    <a class="btn btn-xs btn-default" asp-action="Mine" asp-route-area="User" asp-route-all="true"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["ShowCompletedButton"]</a>
+                }
+            </div>
+        </div>
+        @if (Model.ShowCompleted)
+        {
+            <div class="ibox-content">
+                @if (Model.Completed.Count == 0)
+                {
+                    <p class="text-muted">@localizer["NoCompletedAcknowledgments"]</p>
+                }
+                else
+                {
+                    <table class="table rgw-table">
+                        <thead><tr><th scope="col">@localizer["ProtocolsLabel"]</th><th scope="col">@localizer["VersionLabel"]</th><th scope="col">@localizer["SignedLabel"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var item in Model.Completed)
+                            {
+                                <tr>
+                                    <td><a asp-controller="Protocols" asp-action="View" asp-route-area="User" asp-route-id="@item.ProtocolId">@item.Code @item.Name</a>
+                                        @if (item.Acknowledgment.Source == (int)ProtocolAcknowledgmentSources.CarriedForward) { <div class="rgw-sub">@localizer["AckCarriedForwardLabel"]</div> }
+                                    </td>
+                                    <td>v@(item.VersionLabel)</td>
+                                    <td>@departmentTime.Format(item.Acknowledgment.SignedOn)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

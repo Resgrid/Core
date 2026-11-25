@@ -128,9 +128,20 @@ INSERT INTO {T("CallProtocols")} ({T("CallId")}, {T("DispatchProtocolId")}, {T("
 			}
 
 			var source = new Mock<IMigrationSource>();
+			// P1's library tables (M0342-M0344) too: the department cleanup now clears versions, approvals, audiences and comments.
 			source.Setup(s => s.GetMigrations()).Returns(IsPostgres
-				? new IMigration[] { new Resgrid.Providers.MigrationsPg.Migrations.M0336_ProtocolFoundationPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0337_ProtocolSnapshotsAndUniqueCallProtocolsPg() }
-				: new IMigration[] { new Resgrid.Providers.Migrations.Migrations.M0336_ProtocolFoundation(), new Resgrid.Providers.Migrations.Migrations.M0337_ProtocolSnapshotsAndUniqueCallProtocols() });
+				? new IMigration[]
+				{
+					new Resgrid.Providers.MigrationsPg.Migrations.M0336_ProtocolFoundationPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0337_ProtocolSnapshotsAndUniqueCallProtocolsPg(),
+					new Resgrid.Providers.MigrationsPg.Migrations.M0342_AddSignatureRecordsPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0343_AddProtocolLibraryAndVersionsPg(),
+					new Resgrid.Providers.MigrationsPg.Migrations.M0344_BackfillProtocolVersionsPg()
+				}
+				: new IMigration[]
+				{
+					new Resgrid.Providers.Migrations.Migrations.M0336_ProtocolFoundation(), new Resgrid.Providers.Migrations.Migrations.M0337_ProtocolSnapshotsAndUniqueCallProtocols(),
+					new Resgrid.Providers.Migrations.Migrations.M0342_AddSignatureRecords(), new Resgrid.Providers.Migrations.Migrations.M0343_AddProtocolLibraryAndVersions(),
+					new Resgrid.Providers.Migrations.Migrations.M0344_BackfillProtocolVersions()
+				});
 			_runner = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r =>
 			{
 				if (IsPostgres) r.AddPostgres(); else r.AddSqlServer();

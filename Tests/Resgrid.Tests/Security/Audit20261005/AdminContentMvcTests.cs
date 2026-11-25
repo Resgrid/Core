@@ -87,6 +87,11 @@ namespace Resgrid.Tests.Security.Audit20261005
 			var constructor = typeof(T).GetConstructors().OrderByDescending(c => c.GetParameters().Length).First();
 			var arguments = constructor.GetParameters().Select(p =>
 			{
+				// An optional concrete-class dependency (UserManager on the protocol editor's passkey signing) cannot be proxied
+				// without its own constructor arguments; these tests never reach it, so it keeps its default.
+				if (!p.ParameterType.IsInterface && p.HasDefaultValue && !_mocks.ContainsKey(p.ParameterType))
+					return p.DefaultValue;
+
 				if (!_mocks.TryGetValue(p.ParameterType, out var mock))
 				{
 					mock = (Mock)Activator.CreateInstance(typeof(Mock<>).MakeGenericType(p.ParameterType));
@@ -218,9 +223,14 @@ namespace Resgrid.Tests.Security.Audit20261005
 		[Test]
 		public async Task Protocols_New_saves_a_new_row_and_drops_posted_child_rows()
 		{
+			// P1: a new protocol is created through the library as a draft (with its first draft version).
 			DispatchProtocol saved = null;
-			M<IProtocolsService>().Setup(x => x.SaveProtocolAsync(It.IsAny<DispatchProtocol>(), It.IsAny<CancellationToken>()))
-				.Callback((DispatchProtocol p, CancellationToken _) => saved = p).ReturnsAsync((DispatchProtocol p, CancellationToken _) => p);
+			M<IProtocolLibraryService>().Setup(x => x.CreateAsync(It.IsAny<ProtocolCreateRequest>(), It.IsAny<CancellationToken>()))
+				.Callback((ProtocolCreateRequest r, CancellationToken _) => saved = r.Protocol)
+				.ReturnsAsync((ProtocolCreateRequest r, CancellationToken _) => new ProtocolLifecycleResult
+				{
+					Protocol = r.Protocol, Version = new ProtocolVersion { ProtocolVersionId = 1, ContentHtml = r.ContentHtml, RowVersion = 1 }
+				});
 
 			// The editor has no field for the protocol's id; a row id posted for a trigger or question of another protocol must not
 			// make the save update that row by key.

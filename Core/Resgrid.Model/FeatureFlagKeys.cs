@@ -219,5 +219,12 @@ namespace Resgrid.Model
 
 		/// <summary>Offline map packs for the apps (plan §19). Seeded off by M0308.</summary>
 		public const string MapsOffline = "Maps.Offline";
+
+		/// <summary>
+		/// LMS add-on operator rollout and kill switch (protocols-training-knowledge-plan §17.3). The LMS features built in wave 2
+		/// (formal ISO FSRS and NREMT NCCP reports, certificate verification code, QR and public verify page, custom certificate
+		/// templates) stay invisible and their routes 404 while it is off. The purchase is PlanAddonTypes.Lms. Seeded off by M0350.
+		/// </summary>
+		public const string TrainingLms = "Training.Lms";
 	}
 }

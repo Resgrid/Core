@@ -49,6 +49,13 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task<RunCard> GetMatchingRunCardAsync(int departmentId, int priority, string callTypeName, int? linkedCallTypeId);
 
+		/// <summary>
+		/// The best-matching enabled card for a call through the shared trigger engine (Protocols P4): priority, type (the name wins when it
+		/// matches a type, else the facts' type id), the call's logged time, and the P4 facts (zone, local schedule, keywords, POI type,
+		/// intake source). Facts left null never satisfy a condition that needs them.
+		/// </summary>
+		Task<RunCard> GetMatchingRunCardAsync(int departmentId, DispatchTriggerFacts call);
+
 		Task<List<StationCoverageRequirement>> GetStationCoverageRequirementsForDepartmentAsync(int departmentId);
 
 		Task<StationCoverageRequirement> SaveStationCoverageRequirementAsync(StationCoverageRequirement requirement, CancellationToken cancellationToken = default(CancellationToken));

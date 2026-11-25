@@ -59,6 +59,32 @@ namespace Resgrid.Services.Records
 		private readonly IPersonnelRolesService _roles;
 		private readonly IDepartmentsService _departments;
 
+		private readonly Lazy<ILearningRecordWriter> _learningRecords;
+
+		/// <summary>
+		/// Training T1: a Records training record's participants go on their transcripts when it is finalized or amended, and
+		/// its records are voided when it is voided, after the commit. Records training analytics read the same ledger. Never
+		/// fails the record action.
+		/// </summary>
+		private async Task SyncTranscriptAsync(int departmentId, string userId, string recordId, CancellationToken cancellationToken)
+		{
+			if (_learningRecords == null || string.IsNullOrWhiteSpace(recordId))
+				return;
+
+			try
+			{
+				await _learningRecords.Value.WriteRecordsTrainingAsync(departmentId, recordId, userId, false, cancellationToken);
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Transcript records for Records record {recordId} were not written");
+			}
+		}
+
 		public RecordsService(IRmsOperationalRecordsRepository records, IRmsRecordValueService details,
 			IRmsRecordParticipantsRepository participants, IRmsRecordUnitResponsesRepository units, IRmsRecordAttachmentsRepository attachments,
 			IRmsRevisionsRepository revisions, IRecordsEvidenceService evidence, IRmsRecordGroupScopesRepository scopes, IRmsRecordSharesRepository shares,
@@ -67,8 +93,9 @@ namespace Resgrid.Services.Records
 			IUnitsService unitsService, ICallsService calls, IDepartmentDataProtectionService dataProtection, IUnitOfWork unitOfWork,
 			IOutboundQueueProvider outboundQueue, IRecordAttachmentScanner attachmentScanner, IRecordsAuthorizationService authorization, IRecordsUdfService udf,
 			IRecordsProtectionService protection, IRecordDefinitionsService definitions, IRecordTypedValuesService typedValues, IPersonnelRolesService roles,
-			IDepartmentsService departments)
+			IDepartmentsService departments, Lazy<ILearningRecordWriter> learningRecords = null)
 		{
+			_learningRecords = learningRecords;
 			_departments = departments;
 			_protection = protection;
 			_definitions = definitions;
@@ -553,6 +580,8 @@ namespace Resgrid.Services.Records
 			});
 
 			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
+			if (string.Equals(record.DefinitionKey, RmsDefinitionKeys.Training, StringComparison.OrdinalIgnoreCase))
+				await SyncTranscriptAsync(departmentId, userId, recordId, cancellationToken);
 			return await GetAsync(departmentId, recordId, true);
 		}
 
@@ -649,6 +678,8 @@ namespace Resgrid.Services.Records
 			});
 
 			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
+			if (string.Equals(record.DefinitionKey, RmsDefinitionKeys.Training, StringComparison.OrdinalIgnoreCase))
+				await SyncTranscriptAsync(departmentId, userId, recordId, cancellationToken);
 			return await GetAsync(departmentId, recordId, true);
 		}
 

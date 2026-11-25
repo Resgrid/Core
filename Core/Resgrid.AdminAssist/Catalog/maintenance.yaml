@@ -281,6 +281,30 @@
       ],
       "Prominence": "Detail",
       "DocsPath": "/web-app/work-orders/"
+    },
+    {
+      "Id": "readiness-signatures",
+      "AreaId": "maintenance",
+      "LabelKey": "Feature.readiness-signatures",
+      "PurposeKey": "FeaturePurpose.readiness-signatures",
+      "ValueKey": "FeatureValue.readiness-signatures",
+      "ExampleKey": "FeatureExample.readiness-signatures",
+      "AdoptionKey": "FeatureSetup.readiness-signatures",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "WorkOrders",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "ReadinessPro"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/work-orders/signatures/"
     }
   ],
   "Rules": [
@@ -400,6 +424,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "readiness-signatures",
+      "Locale": "en",
+      "TitleKey": "Feature.readiness-signatures",
+      "Body": "Vendor acceptance and issue receipts Vendors accept completed work orders, and members or recipients sign receipts for issued equipment, in person or by a Resgrid link. Replace verbal hand-offs with signed acceptances and receipts that the other party can verify. The pump repair shop's technician signs the completed work order on the station tablet before driving away. Open a completed work order, or an issued item's Receipt, and request the signature. Remote links need Readiness Pro and the department's e-sign settings.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "readiness-signatures",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
     }
   ]
 }

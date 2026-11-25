@@ -1,0 +1,68 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsClasses
+@model LmsClassCostsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsClasses.LmsClasses> localizer
+@* Training cost (R-C10): class cost lines rolled up per course, member or year, beside the training-request costs of the same grouping. *@
+@{
+    var culture = CultureInfo.CurrentCulture;
+    ViewBag.Title = "Resgrid | " + localizer["CostsTitle"];
+    ViewData["Title"] = localizer["CostsTitle"].Value;
+    ViewData["Subtitle"] = localizer["CostsIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    string Money(decimal value) => value.ToString("N2", culture);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <form method="get" asp-controller="LmsClasses" asp-action="Costs" asp-route-area="User" class="rgw-toolbar form-inline m-b-sm">
+        <label for="cost-year" class="sr-only">@localizer["Col.Year"]</label>
+        <input id="cost-year" name="year" type="number" min="2000" max="2100" class="form-control input-sm" value="@Model.Year" />
+        <label for="cost-group" class="sr-only">@localizer["GroupBy"]</label>
+        <select id="cost-group" name="groupBy" class="form-control input-sm">
+            <option value="0" selected="@(Model.GroupBy == LmsClassCostGroupings.Course)">@localizer["Col.Course"]</option>
+            <option value="1" selected="@(Model.GroupBy == LmsClassCostGroupings.Member)">@localizer["Col.Member"]</option>
+            <option value="2" selected="@(Model.GroupBy == LmsClassCostGroupings.Year)">@localizer["Col.Year"]</option>
+        </select>
+        <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-filter" aria-hidden="true"></i> @localizer["Filter"]</button>
+        <a class="btn btn-white btn-sm" asp-controller="LmsPrograms" asp-action="Report" asp-route-area="User" asp-route-key="class-costs" asp-route-run="true"><i class="fa fa-table" aria-hidden="true"></i> @localizer["OpenReport"]</a>
+    </form>
+
+    <div class="rgw-stat-tiles m-b-sm">
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Col.ClassCost"]</div><div class="rgw-stat-value">@Money(Model.Rollup.ClassTotal) @Model.Rollup.Currency</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Col.RequestCost"]</div><div class="rgw-stat-value">@Money(Model.Rollup.RequestTotal) @Model.Rollup.Currency</div></div>
+    </div>
+
+    @if (Model.Rollup.Rows.Count == 0)
+    {
+        <p class="text-muted">@localizer["NoCosts"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead><tr><th>@(Model.GroupBy == LmsClassCostGroupings.Member ? localizer["Col.Member"] : Model.GroupBy == LmsClassCostGroupings.Year ? localizer["Col.Year"] : localizer["Col.Course"])</th><th>@localizer["Col.Sessions"]</th><th>@localizer["Col.Attendees"]</th><th>@localizer["Col.Hours"]</th><th>@localizer["Col.ClassCost"]</th><th>@localizer["Col.RequestCost"]</th></tr></thead>
+                <tbody>
+                    @foreach (var row in Model.Rollup.Rows)
+                    {
+                        <tr>
+                            <td>@(Model.GroupBy == LmsClassCostGroupings.Member ? Model.NameOf(row.Key) : row.Key)</td>
+                            <td>@row.Sessions</td>
+                            <td>@row.Attendees</td>
+                            <td>@row.Hours.ToString("0.##", culture)</td>
+                            <td>@Money(row.ClassCost)</td>
+                            <td>@Money(row.RequestCost)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

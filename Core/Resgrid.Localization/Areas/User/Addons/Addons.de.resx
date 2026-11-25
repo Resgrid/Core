@@ -115,4 +115,64 @@
   <data name="MessageAffiliateApplied" xml:space="preserve"><value>Der Partner-/Kontocode wurde für Ihre Abteilung gespeichert.</value></data>
   <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Dieser Partner-/Kontocode ist ungültig oder nicht mehr aktiv.</value></data>
   <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Ihre Abteilung hat bereits einen Partner-/Kontocode. Kontaktieren Sie uns, falls er geändert werden muss.</value></data>
+  <data name="LmsTitle" xml:space="preserve"><value>LMS</value></data>
+  <data name="LmsTagline" xml:space="preserve"><value>Kurse, formelle Ausbildungsberichte und überprüfbare Zertifikate</value></data>
+  <data name="LmsFeature1" xml:space="preserve"><value>Kurse mit Lektionen, Fragenpools und Quiz</value></data>
+  <data name="LmsFeature2" xml:space="preserve"><value>Gehostete Videolektionen, 100 GB pro Abteilung inklusive</value></data>
+  <data name="LmsFeature3" xml:space="preserve"><value>Formelle Ausbildungsberichte nach ISO FSRS und NREMT NCCP</value></data>
+  <data name="LmsFeature4" xml:space="preserve"><value>Zertifikate mit Prüfcode, QR-Code und öffentlicher Prüfseite, in Ihrer eigenen Vorlage</value></data>
+  <data name="LmsFeature5" xml:space="preserve"><value>Plätze nur für die Mitglieder, die Sie freischalten; alle behalten das kostenlose Training</value></data>
+  <data name="LmsNote" xml:space="preserve"><value>Preis pro Paket mit 25 Mitgliedern, gestaffelt: die ersten 4 Pakete zum vollen Preis, danach günstiger. Monatliche Abrechnung pro Abteilung; keine Testphase. Erfordert einen kostenpflichtigen Resgrid-Tarif.</value></data>
+  <data name="PerMemberPack" xml:space="preserve"><value>pro Paket mit {0} Mitgliedern</value></data>
+  <data name="PackTierLine" xml:space="preserve"><value>Pakete {0}–{1}: {2} pro Paket</value></data>
+  <data name="PackTierLineOpen" xml:space="preserve"><value>Pakete ab {0}: {1} pro Paket</value></data>
+  <data name="LmsRequiresPaidPlan" xml:space="preserve"><value>Das LMS wird nur mit einem kostenpflichtigen Resgrid-Tarif verkauft. Wählen Sie zuerst auf der Abonnementseite einen Tarif.</value></data>
+  <data name="LmsBillingPacksNote" xml:space="preserve"><value>Jedes Paket umfasst 25 Mitglieder. Die Pakete sind gestaffelt bepreist: Jedes Paket wird zum Preis seiner eigenen Stufe abgerechnet, sodass zusätzliche Pakete frühere Pakete weder günstiger noch teurer machen. Monatliche Abrechnung; es gibt keine Testphase und keine Jahreslaufzeit.</value></data>
+  <data name="LmsBillingSeatsNote" xml:space="preserve"><value>Zusätzliche Pakete werden sofort anteilig bis zu Ihrem Abrechnungsdatum berechnet. Entfernte Pakete gelten ab dem nächsten Abrechnungsdatum und nur bis zur Zahl der für das LMS freigeschalteten Mitglieder.</value></data>
+  <data name="LmsBillingFreeNote" xml:space="preserve"><value>Mitglieder ohne LMS-Freischaltung behalten das kostenlose Trainingsmodul, ihren Ausbildungsnachweis und die Academy. Ausbilder, Prüfer und Führungskräfte brauchen keinen Platz.</value></data>
+  <data name="LmsManageSeats" xml:space="preserve"><value>LMS-Plätze auf der Personalseite verwalten</value></data>
+  <data name="BillingPacksAdded" xml:space="preserve"><value>Pakete hinzugefügt. Die anteilige Gebühr für den Rest dieses Abrechnungszeitraums wurde in Rechnung gestellt.</value></data>
+  <data name="BillingPacksScheduled" xml:space="preserve"><value>Die Reduzierung der Pakete ist für Ihr nächstes Abrechnungsdatum vorgemerkt. Ihre Plätze bleiben bis dahin bestehen.</value></data>
+  <data name="BillingPacksBelowSeats" xml:space="preserve"><value>Dann gäbe es weniger Plätze als für das LMS freigeschaltete Mitglieder. Schalten Sie zuerst Mitglieder auf der Personalseite ab.</value></data>
+  <data name="BillingPacksFailed" xml:space="preserve"><value>Die Paketanzahl konnte nicht geändert werden, und es wurde nichts berechnet. Bitte versuchen Sie es erneut oder kontaktieren Sie uns.</value></data>
+  <data name="PacksHeading" xml:space="preserve"><value>Pakete und Plätze</value></data>
+  <data name="PacksInForce" xml:space="preserve"><value>{0} Pakete: {1} Plätze, {2} belegt</value></data>
+  <data name="PacksNextMonth" xml:space="preserve"><value>Preis im nächsten Monat: {0}</value></data>
+  <data name="PacksNextMonthLabel" xml:space="preserve"><value>Nächster Monat</value></data>
+  <data name="PacksScheduledNote" xml:space="preserve"><value>Ab {0}: {1} Pakete.</value></data>
+  <data name="PacksLabel" xml:space="preserve"><value>Pakete</value></data>
+  <data name="PacksUpdate" xml:space="preserve"><value>Pakete aktualisieren</value></data>
+  <data name="PackPreviewFirst" xml:space="preserve"><value>{0} Pakete ({1} Plätze): {2} pro Monat.</value></data>
+  <data name="PackPreviewIncrease" xml:space="preserve"><value>{0} Pakete ({1} Plätze): ab sofort {2} pro Monat. Etwa {3} werden jetzt für den Rest dieses Abrechnungszeitraums berechnet.</value></data>
+  <data name="PackPreviewDecrease" xml:space="preserve"><value>{0} Pakete ({1} Plätze): {2} pro Monat ab {3}. Es wird nichts erstattet, und Ihre Plätze bleiben bis dahin bestehen.</value></data>
+  <data name="PackPreviewSame" xml:space="preserve"><value>So viele Pakete haben Sie bereits.</value></data>
+  <data name="PackRefusedBelowSeats" xml:space="preserve"><value>Für die freigeschalteten Mitglieder sind mindestens {0} Pakete nötig. Schalten Sie zuerst einige auf der Personalseite ab.</value></data>
+  <data name="PackRefusedRange" xml:space="preserve"><value>Wählen Sie zwischen {0} und {1} Paketen.</value></data>
+  <data name="PackPreviewFailed" xml:space="preserve"><value>Der Preis konnte nicht angezeigt werden. Bitte versuchen Sie es erneut.</value></data>
+  <data name="LmsSeatHeading" xml:space="preserve"><value>LMS-Platz</value></data>
+  <data name="LmsSeatEnabledLabel" xml:space="preserve"><value>Für das LMS freigeschaltet</value></data>
+  <data name="LmsSeatEnabledHelp" xml:space="preserve"><value>Dieses Mitglied kann über LMS-Kurse und -Anforderungen geschult werden.</value></data>
+  <data name="LmsSeatDisabledLabel" xml:space="preserve"><value>Nicht für das LMS freigeschaltet</value></data>
+  <data name="LmsSeatDisabledHelp" xml:space="preserve"><value>Dieses Mitglied behält das kostenlose Trainingsmodul, seinen Ausbildungsnachweis und die Academy.</value></data>
+  <data name="LmsSeatNotLicensed" xml:space="preserve"><value>Nicht lizenziert</value></data>
+  <data name="LmsSeatCounter" xml:space="preserve"><value>{0} von {1} Plätzen belegt</value></data>
+  <data name="LmsSeatEnable" xml:space="preserve"><value>LMS freischalten</value></data>
+  <data name="LmsSeatDisable" xml:space="preserve"><value>LMS abschalten</value></data>
+  <data name="LmsSeatsFull" xml:space="preserve"><value>Alle {0} Plätze sind belegt. Hinzuzufügende Pakete: {1}.</value></data>
+  <data name="LmsSeatNotActive" xml:space="preserve"><value>Nur aktive Mitglieder können einen LMS-Platz erhalten; gelöschte, deaktivierte und ausgeblendete Mitglieder nicht.</value></data>
+  <data name="LmsSeatAddonInactive" xml:space="preserve"><value>Ihre Abteilung hat kein aktives LMS-Add-on, daher kann kein Mitglied freigeschaltet werden.</value></data>
+  <data name="LmsSeatFailed" xml:space="preserve"><value>Der LMS-Platz konnte nicht geändert werden. Bitte versuchen Sie es erneut.</value></data>
+  <data name="LmsSeatSaved" xml:space="preserve"><value>LMS-Platz aktualisiert.</value></data>
+  <data name="LmsAddPack" xml:space="preserve"><value>Paket hinzufügen</value></data>
+  <data name="LmsSeatBulkHeading" xml:space="preserve"><value>LMS-Plätze</value></data>
+  <data name="LmsSeatBulkGroup" xml:space="preserve"><value>Gruppe</value></data>
+  <data name="LmsSeatBulkEnable" xml:space="preserve"><value>Gruppe freischalten</value></data>
+  <data name="LmsSeatBulkDisable" xml:space="preserve"><value>Gruppe abschalten</value></data>
+  <data name="LmsSeatBulkResult" xml:space="preserve"><value>{0} geändert, {1} bereits gesetzt, {2} übersprungen, weil nicht aktiv, {3} abgelehnt, weil keine Plätze mehr frei waren.</value></data>
+  <data name="LmsSeatDormant" xml:space="preserve"><value>{0} Plätze gehören Mitgliedern, die nicht mehr aktiv sind, und werden nicht gezählt.</value></data>
+  <data name="LmsManagePacks" xml:space="preserve"><value>Pakete verwalten</value></data>
+  <data name="LmsSettingsHeading" xml:space="preserve"><value>LMS-Pakete und -Plätze</value></data>
+  <data name="LmsSettingsNotPurchased" xml:space="preserve"><value>Ihre Abteilung hat das LMS-Add-on nicht gekauft.</value></data>
+  <data name="LmsSettingsLapsed" xml:space="preserve"><value>Das LMS-Add-on ist beendet. Nachweise, Zertifikate und Ausbildungsnachweise bleiben verfügbar und exportierbar.</value></data>
+  <data name="LmsSettingsGrace" xml:space="preserve"><value>Eine Zahlung ist fehlgeschlagen. Das LMS funktioniert bis {0} weiter, während die Zahlung erneut versucht wird.</value></data>
 </root>

@@ -46,6 +46,9 @@
                     <div id="text-editor" aria-labelledby="textLabel" style="height: 320px;">@Html.SanitizedHtmlWithEmbeds(Model.TrainingText)</div>
                     <span class="help-block">@localizer["EmbedsHelp"]</span>
                 </div>
+                <div class="checkbox"><label><input type="checkbox" name="ExcludeFromAi" value="true" checked="@Model.ExcludeFromAi" aria-describedby="ExcludeFromAiHelp" /> @localizer["ExcludeFromAiLabel"]</label></div>
+                <input type="hidden" name="ExcludeFromAi" value="false" />
+                <span class="help-block" id="ExcludeFromAiHelp">@localizer["ExcludeFromAiHelp"]</span>
             </div>
         </div>
 
@@ -233,9 +236,39 @@
                         <input id="CeCourseNumber" name="CeCourseNumber" class="form-control" maxlength="100" value="@Model.CeCourseNumber" />
                     </div>
                     <div class="form-group">
-                        <label for="CategoryId">@localizer["CategoryIdLabel"]</label>
-                        <input id="CategoryId" name="CategoryId" type="number" min="1" class="form-control" value="@Model.CategoryId" />
-                        <span class="help-block">@localizer["CategoryIdHelp"]</span>
+                        <label for="CategoryId">@localizer["Doc.Category"]</label>
+                        <select id="CategoryId" name="CategoryId" class="form-control" aria-describedby="CategoryId-help">
+                            <option value="">@localizer["Doc.Uncategorized"]</option>
+                            @foreach (var category in Model.Categories)
+                            {
+                                <option value="@category.Value" selected="@category.Selected">@category.Text</option>
+                            }
+                        </select>
+                        <span class="help-block" id="CategoryId-help">@localizer["Rec.EditorCategoryHelp"]</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="MethodOfTraining">@localizer["Doc.Method"]</label>
+                        <select id="MethodOfTraining" name="MethodOfTraining" class="form-control">
+                            <option value="">@localizer["SelectPlaceholder"]</option>
+                            @foreach (var method in Enum.GetValues<MethodsOfTraining>())
+                            {
+                                <option value="@((int)method)" selected="@(Model.MethodOfTraining == (int)method)">@localizer["TrainingMethod." + method]</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ExternalCode">@localizer["Rec.CourseCodeLabel"]</label>
+                        <input id="ExternalCode" name="ExternalCode" class="form-control" maxlength="64" value="@Model.ExternalCode" aria-describedby="ExternalCode-help" />
+                        <span class="help-block" id="ExternalCode-help">@localizer["Rec.CourseCodeHelp"]</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="Tags">@localizer["Rec.TagsLabel"]</label>
+                        <input id="Tags" name="Tags" class="form-control" maxlength="500" value="@Model.Tags" aria-describedby="Tags-help" />
+                        <span class="help-block" id="Tags-help">@localizer["Rec.TagsHelp"]</span>
+                    </div>
+                    <div class="form-group rgw-wide">
+                        <label for="Objectives">@localizer["Rec.ObjectivesLabel"]</label>
+                        <textarea id="Objectives" name="Objectives" class="form-control" rows="3" maxlength="@LearningRecord.MaxObjectivesLength">@Model.Objectives</textarea>
                     </div>
                 </div>
             </div>

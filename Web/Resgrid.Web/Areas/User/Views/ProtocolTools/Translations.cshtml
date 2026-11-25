@@ -1,0 +1,127 @@
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolTranslationsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    Content translations of one version (P3): a locale variant per language, written by authors and approved (L2, bound to the
+    translation's own hash) by approvers. The source version, its hash and its signatures never change. Members reading in a
+    language without an approved translation see the source.
+*@
+@{
+    var departmentTime = DepartmentTime.From(ViewData);
+    var p = Model.Protocol;
+    var title = localizer["TranslationsHeader"].Value;
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = (string.IsNullOrWhiteSpace(p.Code) ? "" : p.Code + " · ") + p.Name + " · " + ProtocolDisplay.VersionLabel(Model.Version, localizer);
+    ViewData["Section"] = "Library";
+    ViewData["IsManager"] = true;
+    string Who(string userId) => string.IsNullOrWhiteSpace(userId) ? "" : (Model.Names.TryGetValue(userId, out var n) && !string.IsNullOrWhiteSpace(n) ? n : userId);
+    var languages = new[] { "ar", "de", "el", "en", "es", "fr", "it", "pl", "sv", "uk" }
+        .Where(l => !Resgrid.Model.ProtocolTranslationRules.SameLanguage(l, Model.SourceLocale) && Model.Translations.All(t => !Resgrid.Model.ProtocolTranslationRules.SameLanguage(t.Locale, l)))
+        .ToList();
+}
+
+@await Html.PartialAsync("../Protocols/_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+
+    <div class="rgw-next-action" role="status">
+        <i class="fa fa-language" aria-hidden="true"></i> @string.Format(localizer["TranslationsSourceCallout"].Value, ProtocolDisplay.LanguageName(Model.SourceLocale))
+        <a class="btn btn-xs btn-default" asp-controller="Protocols" asp-action="View" asp-route-area="User" asp-route-id="@p.DispatchProtocolId" asp-route-versionId="@Model.Version.ProtocolVersionId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["BackToProtocolButton"]</a>
+    </div>
+
+    <div class="ibox">
+        <div class="ibox-title"><h5><i class="fa fa-language" aria-hidden="true"></i> @localizer["TranslationsHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.Translations.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoTranslations"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["TranslationLanguageColumn"]</th>
+                                <th>@localizer["StatusLabel"]</th>
+                                <th>@localizer["TranslationUpdatedColumn"]</th>
+                                <th><span class="sr-only">@localizer["ActionsColumn"]</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var translation in Model.Translations)
+                            {
+                                var stale = !string.Equals(translation.SourceContentHash, Model.Version.ContentHash, StringComparison.OrdinalIgnoreCase);
+                                <tr>
+                                    <td>@ProtocolDisplay.LanguageName(translation.Locale) <span class="rgw-sub">@translation.Locale</span></td>
+                                    <td>
+                                        @switch ((ProtocolTranslationStatuses)translation.Status)
+                                        {
+                                            case ProtocolTranslationStatuses.Approved:
+                                                <span class="label label-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["TranslationStatusApproved"]</span>
+                                                break;
+                                            case ProtocolTranslationStatuses.Withdrawn:
+                                                <span class="label label-default"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["TranslationStatusWithdrawn"]</span>
+                                                break;
+                                            default:
+                                                <span class="label label-warning"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["TranslationStatusDraft"]</span>
+                                                break;
+                                        }
+                                        @if (stale)
+                                        {
+                                            <span class="label label-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["TranslationSourceChanged"]</span>
+                                        }
+                                    </td>
+                                    <td>@departmentTime.Format(translation.ApprovedOn ?? translation.UpdatedOn ?? translation.CreatedOn) <span class="rgw-sub">@Who(translation.ApprovedByUserId ?? translation.UpdatedByUserId)</span></td>
+                                    <td class="rgw-row-actions">
+                                        <a class="btn btn-xs btn-default" asp-controller="ProtocolTools" asp-action="Translation" asp-route-area="User" asp-route-id="@p.DispatchProtocolId" asp-route-translationId="@translation.ProtocolVersionTranslationId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["OpenButton"]<span class="sr-only"> @translation.Locale</span></a>
+                                        @if (Model.CanApprove && translation.Status != (int)ProtocolTranslationStatuses.Withdrawn)
+                                        {
+                                            <form method="post" asp-controller="ProtocolTools" asp-action="WithdrawTranslation" asp-route-area="User" class="rgw-inline-form" style="display:inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@p.DispatchProtocolId" />
+                                                <input type="hidden" name="translationId" value="@translation.ProtocolVersionTranslationId" />
+                                                <button type="submit" class="btn btn-xs btn-default" data-confirm="@localizer["WithdrawTranslationConfirm"]"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["WithdrawTranslationButton"]<span class="sr-only"> @translation.Locale</span></button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+            @if (Model.CanAuthor && languages.Count > 0)
+            {
+                <form method="post" class="rgw-toolbar m-t-md" asp-controller="ProtocolTools" asp-action="StartTranslation" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@p.DispatchProtocolId" />
+                    <input type="hidden" name="versionId" value="@Model.Version.ProtocolVersionId" />
+                    <label class="control-label" for="translationLocale">@localizer["TranslationLanguageColumn"]</label>
+                    <select id="translationLocale" name="locale" class="form-control" style="max-width: 220px;">
+                        @foreach (var language in languages)
+                        {
+                            <option value="@language">@ProtocolDisplay.LanguageName(language)</option>
+                        }
+                    </select>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["StartTranslationButton"]</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

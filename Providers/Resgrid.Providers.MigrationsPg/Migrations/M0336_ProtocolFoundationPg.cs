@@ -8,9 +8,10 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	/// name) and the callprotocols questionnaire, source, content hash, attach and removal columns.
 	/// <para>
 	/// Trigger windows were saved as the department's wall-clock time and are now stored in UTC. They are converted once, in
-	/// the same block that adds calltypeid (so a retry never converts twice), for departments whose time zone name PostgreSQL
-	/// knows. Departments store Windows zone names, which PostgreSQL does not, so on most installs existing windows are left as
-	/// they were (still compared as UTC, as before this migration); re-saving the protocol stores them in UTC.
+	/// the same block that adds calltypeid (so a retry never converts twice). Departments store Windows zone names
+	/// ("Pacific Standard Time"), which PostgreSQL does not know, so the name is first mapped to its IANA zone with
+	/// TimeZoneConverter (the mapping the rest of the code uses); an IANA name is used as it is. A department whose zone maps
+	/// to nothing PostgreSQL knows keeps its windows as they were (still compared as UTC, as before this migration).
 	/// </para>
 	/// Guarded for safe retry.
 	/// </summary>
@@ -19,6 +20,8 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
+			// Departments store Windows zone names ("Pacific Standard Time"); PostgreSQL knows IANA names. The mapping comes from
+			// TimeZoneConverter (the one the rest of the code uses), written into the statement as a VALUES list.
 			Execute.Sql(@"
 DO $$
 BEGIN
@@ -26,13 +29,15 @@ BEGIN
 		WHERE table_schema = 'public' AND table_name = 'dispatchprotocoltriggers' AND column_name = 'calltypeid') THEN
 
 		UPDATE public.dispatchprotocoltriggers t
-			SET startson = CASE WHEN t.startson IS NULL THEN NULL ELSE (t.startson AT TIME ZONE d.timezone::text) AT TIME ZONE 'UTC' END,
-				endson = CASE WHEN t.endson IS NULL THEN NULL ELSE (t.endson AT TIME ZONE d.timezone::text) AT TIME ZONE 'UTC' END
-			FROM public.dispatchprotocols p, public.departments d
+			SET startson = CASE WHEN t.startson IS NULL THEN NULL ELSE (t.startson AT TIME ZONE z.tz) AT TIME ZONE 'UTC' END,
+				endson = CASE WHEN t.endson IS NULL THEN NULL ELSE (t.endson AT TIME ZONE z.tz) AT TIME ZONE 'UTC' END
+			FROM public.dispatchprotocols p, public.departments d,
+				LATERAL (SELECT COALESCE((SELECT m.iana FROM (VALUES " + WindowsZoneValues() + @") AS m(windows, iana) WHERE m.windows = d.timezone::text),
+					d.timezone::text) AS tz) z
 			WHERE p.dispatchprotocolid = t.dispatchprotocolid
 				AND d.departmentid = p.departmentid
 				AND (t.startson IS NOT NULL OR t.endson IS NOT NULL)
-				AND d.timezone::text IN (SELECT name FROM pg_timezone_names);
+				AND z.tz IN (SELECT name FROM pg_timezone_names);
 
 		ALTER TABLE public.dispatchprotocoltriggers ADD COLUMN calltypeid integer NULL;
 	END IF;
@@ -60,6 +65,22 @@ UPDATE public.dispatchprotocoltriggers t
 			Execute.Sql("ALTER TABLE callprotocols ADD COLUMN IF NOT EXISTS removedon timestamp without time zone NULL;");
 			Execute.Sql("ALTER TABLE callprotocols ADD COLUMN IF NOT EXISTS removedbyuserid citext NULL;");
 			Execute.Sql("ALTER TABLE callprotocols ADD COLUMN IF NOT EXISTS removedreason text NULL;");
+		}
+
+		/// <summary>Every Windows zone id TimeZoneConverter maps to an IANA zone, as SQL VALUES rows ('windows', 'iana').</summary>
+		internal static string WindowsZoneValues()
+		{
+			var rows = new List<string>();
+			foreach (var windows in TimeZoneConverter.TZConvert.KnownWindowsTimeZoneIds)
+			{
+				if (TimeZoneConverter.TZConvert.TryWindowsToIana(windows, out var iana) && !string.IsNullOrWhiteSpace(iana))
+					rows.Add("('" + windows.Replace("'", "''") + "', '" + iana.Replace("'", "''") + "')");
+			}
+
+			// Never an empty VALUES list: the statement must still parse when no mapping is known.
+			if (rows.Count == 0)
+				rows.Add("('', '')");
+			return string.Join(", ", rows);
 		}
 
 		public override void Down()

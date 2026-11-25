@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AcceptButton" xml:space="preserve">
+    <value>Прийняти вибране</value>
+  </data>
+  <data name="AcceptedNotice" xml:space="preserve">
+    <value>{0} додано до редактора. Збережіть, щоб їх залишити.</value>
+  </data>
+  <data name="AcceptedSummaryNotice" xml:space="preserve">
+    <value>Підсумок змін заповнено. Перевірте його перед надсиланням.</value>
+  </data>
+  <data name="BudgetNotice" xml:space="preserve">
+    <value>Місячний ліміт ШІ вашого підрозділу вичерпано.</value>
+  </data>
+  <data name="BusyNotice" xml:space="preserve">
+    <value>Сервіс ШІ зайнятий. Спробуйте ще раз за мить.</value>
+  </data>
+  <data name="CorrectLabel" xml:space="preserve">
+    <value>Правильна</value>
+  </data>
+  <data name="DiscardButton" xml:space="preserve">
+    <value>Відхилити</value>
+  </data>
+  <data name="DraftChangeSummaryButton" xml:space="preserve">
+    <value>Створити підсумок змін</value>
+  </data>
+  <data name="DraftedNotice" xml:space="preserve">
+    <value>Чернетка лише з цього вмісту. Перевірте кожен елемент; нічого не зберігається, доки ви не приймете.</value>
+  </data>
+  <data name="Drafting" xml:space="preserve">
+    <value>Створення чернетки…</value>
+  </data>
+  <data name="DraftOutlineButton" xml:space="preserve">
+    <value>Створити план курсу</value>
+  </data>
+  <data name="DraftQuizButton" xml:space="preserve">
+    <value>Створити запитання тесту</value>
+  </data>
+  <data name="DroppedNotice" xml:space="preserve">
+    <value>{0} елемент(ів) пропущено, бо вони містили число, якого немає у вмісті.</value>
+  </data>
+  <data name="ExcludedNotice" xml:space="preserve">
+    <value>Цей вміст виключено зі ШІ, тож помічники для чернеток недоступні.</value>
+  </data>
+  <data name="ExplanationLabel" xml:space="preserve">
+    <value>Пояснення</value>
+  </data>
+  <data name="InvalidNotice" xml:space="preserve">
+    <value>Запит недійсний.</value>
+  </data>
+  <data name="KeepLabel" xml:space="preserve">
+    <value>Залишити</value>
+  </data>
+  <data name="KeptLocalNotice" xml:space="preserve">
+    <value>Розширений захист даних тримає вміст підрозділу локально, тож помічники для чернеток недоступні.</value>
+  </data>
+  <data name="ModuleNumber" xml:space="preserve">
+    <value>Модуль {0}</value>
+  </data>
+  <data name="NoChangesNotice" xml:space="preserve">
+    <value>Немає попередньої версії для порівняння, або нічого не змінилося.</value>
+  </data>
+  <data name="NoContentNotice" xml:space="preserve">
+    <value>Спершу додайте більше вмісту; його замало для чернетки.</value>
+  </data>
+  <data name="NotAllowedNotice" xml:space="preserve">
+    <value>Ви не можете редагувати цей вміст.</value>
+  </data>
+  <data name="NotFoundNotice" xml:space="preserve">
+    <value>Цей вміст не знайдено.</value>
+  </data>
+  <data name="NothingSelectedNotice" xml:space="preserve">
+    <value>Позначте принаймні один елемент.</value>
+  </data>
+  <data name="ObjectiveLabel" xml:space="preserve">
+    <value>Мета</value>
+  </data>
+  <data name="PanelHeader" xml:space="preserve">
+    <value>Помічники для чернеток</value>
+  </data>
+  <data name="PanelHelp" xml:space="preserve">
+    <value>Створіть чернетку з цього вмісту за допомогою ШІ, а потім перевірте її. Нічого не зберігається, доки ви не приймете, і кожне число має походити з вмісту.</value>
+  </data>
+  <data name="QuestionCountLabel" xml:space="preserve">
+    <value>Кількість запитань</value>
+  </data>
+  <data name="QuestionCountOption" xml:space="preserve">
+    <value>{0} запитань</value>
+  </data>
+  <data name="QuestionNumber" xml:space="preserve">
+    <value>Запитання {0}</value>
+  </data>
+  <data name="RefusedNotice" xml:space="preserve">
+    <value>Чернетку не вдалося використати. Спробуйте ще раз.</value>
+  </data>
+  <data name="UnavailableNotice" xml:space="preserve">
+    <value>Помічники для чернеток зараз недоступні.</value>
+  </data>
+</root>

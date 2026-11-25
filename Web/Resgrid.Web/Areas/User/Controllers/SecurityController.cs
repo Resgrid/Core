@@ -125,6 +125,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.DeleteTraining = Value(PermissionTypes.DeleteTraining);
 			model.DeleteTrainingPermissions = Options(PermissionTypes.DeleteTraining);
 
+			// Protocols P1 (128-130): with no row, department admins only.
+			model.AuthorProtocols = Value(PermissionTypes.AuthorProtocols);
+			model.AuthorProtocolsPermissions = Options(PermissionTypes.AuthorProtocols);
+			model.ApproveProtocols = Value(PermissionTypes.ApproveProtocols);
+			model.ApproveProtocolsPermissions = Options(PermissionTypes.ApproveProtocols);
+			model.ManageProtocolAcknowledgments = Value(PermissionTypes.ManageProtocolAcknowledgments);
+			model.ManageProtocolAcknowledgmentsPermissions = Options(PermissionTypes.ManageProtocolAcknowledgments);
+
+			// Training T2 (132-133): with no row, department admins only.
+			model.ManageCourses = Value(PermissionTypes.ManageCourses);
+			model.ManageCoursesPermissions = Options(PermissionTypes.ManageCourses);
+			model.GradeAssessments = Value(PermissionTypes.GradeAssessments);
+			model.GradeAssessmentsPermissions = Options(PermissionTypes.GradeAssessments);
+
 			model.CreateDocument = Value(PermissionTypes.CreateDocument);
 			model.CreateDocumentPermissions = Options(PermissionTypes.CreateDocument);
 

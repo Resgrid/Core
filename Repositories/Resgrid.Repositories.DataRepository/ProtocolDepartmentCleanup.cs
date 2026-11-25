@@ -18,8 +18,10 @@ namespace Resgrid.Repositories.DataRepository
 		/// <summary>The tables this cleanup clears, in delete order.</summary>
 		internal static readonly string[] Tables =
 		{
-			"CallProtocols", "DispatchProtocolSnapshots", "DispatchProtocolQuestionAnswers", "DispatchProtocolQuestions",
-			"DispatchProtocolAttachments", "DispatchProtocolTriggers", "DispatchProtocols"
+			"ProtocolAiSuggestions", "CallProtocols", "ProtocolAcknowledgments", "ProtocolFileTextPages", "ProtocolFileTexts", "ProtocolVersionFiles", "ProtocolVersionTranslations",
+			"ProtocolVersionApprovals", "ProtocolComments", "ProtocolAudiences", "ProtocolVersions", "ProtocolCategories",
+			"DispatchProtocolSnapshots", "DispatchProtocolQuestionAnswers", "DispatchProtocolQuestions", "DispatchProtocolAttachments",
+			"DispatchProtocolTriggers", "DispatchProtocols"
 		};
 
 		public static async Task DeleteWithinTransactionAsync(DbConnection connection, DbTransaction transaction, int departmentId, DatabaseTypes type, CancellationToken ct = default)
@@ -31,7 +33,30 @@ namespace Resgrid.Repositories.DataRepository
 			if (!await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, "DispatchProtocols", ct))
 				return;
 
+			// P4 (M0400): AI suggestions carry the department id and no keys.
+			if (await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, "ProtocolAiSuggestions", ct))
+				await DepartmentCleanupCommands.DeleteByDepartmentAsync(connection, transaction, type, departmentId, new[] { "ProtocolAiSuggestions" }, ct);
+
 			await DepartmentCleanupCommands.DeleteChildAsync(connection, transaction, type, departmentId, "CallProtocols", false, ct, protocols, ("Calls", "CallId", "CallId"));
+
+			// P2 (M0354) acknowledgments and P1 wave 2 (M0353) file text pages, extractions and primary files reference versions and
+			// protocols: they go before the versions.
+			await DepartmentCleanupCommands.DeleteChildAsync(connection, transaction, type, departmentId, "ProtocolAcknowledgments", true, ct, protocols);
+			await DepartmentCleanupCommands.DeleteChildAsync(connection, transaction, type, departmentId, "ProtocolFileTextPages", true, ct, ("ProtocolFileTexts", "ProtocolFileTextId", "ProtocolFileTextId"));
+			await DepartmentCleanupCommands.DeleteChildAsync(connection, transaction, type, departmentId, "ProtocolFileTexts", true, ct, protocols);
+			// A primary file's key is its version (FK_ProtocolVersionFiles_ProtocolVersions), never its unkeyed protocol id.
+			await DepartmentCleanupCommands.DeleteChildAsync(connection, transaction, type, departmentId, "ProtocolVersionFiles", true, ct, ("ProtocolVersions", "ProtocolVersionId", "ProtocolVersionId"));
+			// P3 (M0380): content translations reference their version.
+			await DepartmentCleanupCommands.DeleteChildAsync(connection, transaction, type, departmentId, "ProtocolVersionTranslations", true, ct, ("ProtocolVersions", "ProtocolVersionId", "ProtocolVersionId"));
+
+			// P1 (M0343): approval steps, comments and audiences, then the versions they hang off; categories have no keys.
+			// Retention and legal hold never stop a department deletion (R-P10).
+			await DepartmentCleanupCommands.DeleteChildAsync(connection, transaction, type, departmentId, "ProtocolVersionApprovals", true, ct, ("ProtocolVersions", "ProtocolVersionId", "ProtocolVersionId"));
+			await DepartmentCleanupCommands.DeleteChildAsync(connection, transaction, type, departmentId, "ProtocolComments", true, ct, protocols);
+			await DepartmentCleanupCommands.DeleteChildAsync(connection, transaction, type, departmentId, "ProtocolAudiences", true, ct, protocols);
+			await DepartmentCleanupCommands.DeleteChildAsync(connection, transaction, type, departmentId, "ProtocolVersions", true, ct, protocols);
+			await DepartmentCleanupCommands.DeleteByDepartmentAsync(connection, transaction, type, departmentId, new[] { "ProtocolCategories" }, ct);
+
 			await DepartmentCleanupCommands.DeleteChildAsync(connection, transaction, type, departmentId, "DispatchProtocolSnapshots", true, ct, protocols);
 
 			if (await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, "DispatchProtocolQuestionAnswers", ct))

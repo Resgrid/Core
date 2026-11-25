@@ -492,6 +492,8 @@ namespace Resgrid.Web.ServicesCore
 				options.AddPolicy(ResgridResources.Protocol_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.Protocol_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Create));
 				options.AddPolicy(ResgridResources.Protocol_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Delete));
+				options.AddPolicy(ResgridResources.Protocol_Approve, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Approve));
+				options.AddPolicy(ResgridResources.Protocol_ManageAcknowledgments, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Assign));
 
 				options.AddPolicy(ResgridResources.Forms_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Forms, ResgridClaimTypes.Actions.View));
 				options.AddPolicy(ResgridResources.Forms_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Forms, ResgridClaimTypes.Actions.Update));

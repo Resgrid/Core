@@ -411,4 +411,16 @@
   <data name="CheckOutBy" xml:space="preserve">
     <value>Checked out by {0}</value>
   </data>
+  <data name="CountsAsTrainingLabel" xml:space="preserve">
+    <value>Counts as training</value>
+  </data>
+  <data name="CountsAsTrainingHelp" xml:space="preserve">
+    <value>Check-in/out on events of this type becomes training hours on the attendees' transcripts. A check-in without a check-out waits for an officer.</value>
+  </data>
+  <data name="TrainingCategoryLabel" xml:space="preserve">
+    <value>Training category</value>
+  </data>
+  <data name="TrainingCategoryNone" xml:space="preserve">
+    <value>Uncategorized</value>
+  </data>
 </root>

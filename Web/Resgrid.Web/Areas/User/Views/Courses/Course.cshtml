@@ -1,0 +1,246 @@
+@using Resgrid.Model
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Courses
+@model CourseDetailModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* One course for its owners and managers: catalog fields, versions, the version in force with its reports, assignments, owners. *@
+@{
+    var course = Model.Course;
+    ViewBag.Title = "Resgrid | " + course.Title;
+    ViewData["Section"] = "CourseLibrary";
+    ViewData["Title"] = course.Title;
+    ViewData["Subtitle"] = course.Summary;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var openDraft = Model.Versions.FirstOrDefault(v => v.Status == (int)ProtocolVersionStatuses.Draft || v.Status == (int)ProtocolVersionStatuses.InReview || v.Status == (int)ProtocolVersionStatuses.Approved);
+    string Name(string id) => id == null ? "" : Model.Names.TryGetValue(id, out var n) ? n : id;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-toolbar m-b-sm">
+        @if (Model.Rights.Edit)
+        {
+            if (openDraft != null)
+            {
+                <a class="btn btn-primary" asp-controller="Courses" asp-action="Builder" asp-route-area="User" asp-route-id="@openDraft.LmsCourseVersionId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["EditDraftButton"]</a>
+            }
+            else
+            {
+                <form method="post" asp-controller="Courses" asp-action="StartDraft" asp-route-area="User" asp-route-id="@course.LmsCourseId" class="inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-code-fork" aria-hidden="true"></i> @localizer["NewVersionButton"]</button>
+                </form>
+            }
+        }
+        <span class="rgw-toolbar-spacer"></span>
+        @if (Model.Rights.Publish && course.Status != (int)ProtocolStatuses.Retired)
+        {
+            <form method="post" asp-controller="Courses" asp-action="Retire" asp-route-area="User" asp-route-id="@course.LmsCourseId" class="inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-white" data-confirm="@localizer["RetireConfirm"]"><i class="fa fa-archive" aria-hidden="true"></i> @localizer["RetireButton"]</button>
+            </form>
+        }
+    </div>
+
+    @if (Model.Current != null)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5>@string.Format(localizer["InForceFormat"].Value, Model.Current.Version.Label)</h5></div>
+            <div class="ibox-content">
+                <ul class="rgw-journey">
+                    @foreach (var lesson in Model.Current.Lessons)
+                    {
+                        <li>
+                            <span><i class="fa @CourseLabels.LessonIcon(lesson.Kind)" aria-hidden="true"></i> @lesson.Title <span class="rgw-sub">@localizer[CourseLabels.LessonKind(lesson.Kind)]</span></span>
+                            <span>
+                                @if (lesson.Kind == (int)LmsLessonKinds.Assessment)
+                                {
+                                    @if (Model.Actor?.MayGrade == true)
+                                    {
+                                        <a class="btn btn-white btn-xs" asp-controller="Courses" asp-action="ItemAnalysis" asp-route-area="User" asp-route-id="@lesson.LmsLessonId"><i class="fa fa-bar-chart" aria-hidden="true"></i> @localizer["ItemAnalysisTitle"]</a>
+                                    }
+                                    <a class="btn btn-white btn-xs" asp-controller="Courses" asp-action="PrintTest" asp-route-area="User" asp-route-id="@lesson.LmsLessonId" target="_blank"><i class="fa fa-print" aria-hidden="true"></i> @localizer["PrintTestButton"]</a>
+                                    @if (Model.Rights.Edit)
+                                    {
+                                        <a class="btn btn-white btn-xs" asp-controller="Courses" asp-action="PrintTest" asp-route-area="User" asp-route-id="@lesson.LmsLessonId" asp-route-key="true" target="_blank"><i class="fa fa-key" aria-hidden="true"></i> @localizer["PrintKeyButton"]</a>
+                                    }
+                                }
+                                @if (lesson.Kind == (int)LmsLessonKinds.Survey && Model.Rights.Report)
+                                {
+                                    <a class="btn btn-white btn-xs" asp-controller="Courses" asp-action="SurveyResults" asp-route-area="User" asp-route-id="@lesson.LmsLessonId"><i class="fa fa-comments-o" aria-hidden="true"></i> @localizer["SurveyResultsTitle"]</a>
+                                }
+                            </span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+
+    @if (Model.Rights.Assign)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-user-plus" aria-hidden="true"></i> @localizer["AssignHeader"]</h5></div>
+            <div class="ibox-content">
+                @if (!Model.CanAssignNew)
+                {
+                    <p class="text-muted">@localizer["Error.AddonRequired"]</p>
+                }
+                else if (Model.Current == null)
+                {
+                    <p class="text-muted">@localizer["PublishBeforeAssign"]</p>
+                }
+                else
+                {
+                    <form method="post" asp-controller="Courses" asp-action="Assign" asp-route-area="User" asp-route-id="@course.LmsCourseId">
+                        @Html.AntiForgeryToken()
+                        @await Html.PartialAsync("_WhoPicker", Model.Who)
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["AssignButton"]</button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
+
+    @if (Model.Enrollments.Count > 0)
+    {
+        <h3>@localizer["EnrollmentsHeader"]</h3>
+        <div class="table-responsive">
+            <table class="table table-striped rgw-table">
+                <thead>
+                    <tr>
+                        <th>@localizer["MemberColumn"]</th>
+                        <th>@localizer["VersionColumn"]</th>
+                        <th>@localizer["StatusColumn"]</th>
+                        <th>@localizer["ProgressColumn"]</th>
+                        <th>@localizer["DueColumn"]</th>
+                        <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.Enrollments)
+                    {
+                        <tr>
+                            <td>@Name(row.Enrollment.UserId)</td>
+                            <td>@row.VersionLabel</td>
+                            <td>@localizer[CourseLabels.EnrollmentStatus(row.Enrollment.Status)]@if (row.IsOverdue) {<span class="label label-danger m-l-xs">@localizer["OverdueBadge"]</span>}</td>
+                            <td>@row.Enrollment.ProgressPercent%</td>
+                            <td>@Model.Date(row.Enrollment.DueOn)</td>
+                            <td class="rgw-row-actions">
+                                @if (row.Enrollment.IsOpen && Model.Rights.Assign)
+                                {
+                                    <form method="post" asp-controller="Courses" asp-action="WithdrawEnrollment" asp-route-area="User" asp-route-id="@course.LmsCourseId" class="inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="enrollmentId" value="@row.Enrollment.LmsEnrollmentId" />
+                                        <button type="submit" class="btn btn-white btn-xs" data-confirm="@localizer["WithdrawConfirm"]"><i class="fa fa-user-times" aria-hidden="true"></i> @localizer["WithdrawButton"]</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-lg-6">
+            <h3>@localizer["VersionsHeader"]</h3>
+            <table class="table table-condensed rgw-table">
+                <thead><tr><th>@localizer["VersionColumn"]</th><th>@localizer["StatusColumn"]</th><th>@localizer["PublishedColumn"]</th><th>@localizer["ChangeSummaryLabel"]</th></tr></thead>
+                <tbody>
+                    @foreach (var version in Model.Versions)
+                    {
+                        <tr>
+                            <td><a asp-controller="Courses" asp-action="Builder" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId">@(version.Label ?? "#" + version.LmsCourseVersionId)</a></td>
+                            <td>@localizer[CourseLabels.VersionStatus(version.Status)]</td>
+                            <td>@Model.Date(version.PublishedOn)</td>
+                            <td>@version.ChangeSummary</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-lg-6">
+            <h3>@localizer["OwnersHeader"]</h3>
+            <table class="table table-condensed rgw-table">
+                <thead><tr><th>@localizer["MemberColumn"]</th><th>@localizer["RightsColumn"]</th><th class="rgw-row-actions">@localizer["ActionsColumn"]</th></tr></thead>
+                <tbody>
+                    @foreach (var owner in Model.Owners)
+                    {
+                        <tr>
+                            <td>@Name(owner.UserId)</td>
+                            <td>@string.Join(", ", new[] { owner.CanEdit ? localizer["RightEdit"].Value : null, owner.CanAssign ? localizer["RightAssign"].Value : null, owner.CanReport ? localizer["RightReport"].Value : null }.Where(x => x != null))</td>
+                            <td class="rgw-row-actions">
+                                @if (Model.Rights.Publish)
+                                {
+                                    <form method="post" asp-controller="Courses" asp-action="RemoveOwner" asp-route-area="User" asp-route-id="@course.LmsCourseId" class="inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="ownerId" value="@owner.LmsCourseOwnerId" />
+                                        <button type="submit" class="btn btn-white btn-xs"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["RemoveButton"]</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            @if (Model.Rights.Publish && Model.Who != null)
+            {
+                <form method="post" asp-controller="Courses" asp-action="SaveOwner" asp-route-area="User" asp-route-id="@course.LmsCourseId" class="form-inline">
+                    @Html.AntiForgeryToken()
+                    <label class="sr-only" for="owner-user">@localizer["MemberColumn"]</label>
+                    <select id="owner-user" name="userId" class="form-control input-sm" required>
+                        <option value="">@localizer["ChooseMember"]</option>
+                        @foreach (var member in Model.Who.Members.OrderBy(m => m.Value))
+                        {
+                            <option value="@member.Key">@member.Value</option>
+                        }
+                    </select>
+                    <label class="checkbox-inline"><input type="checkbox" name="canEdit" value="true" /> @localizer["RightEdit"]</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="canAssign" value="true" /> @localizer["RightAssign"]</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="canReport" value="true" checked /> @localizer["RightReport"]</label>
+                    <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddOwnerButton"]</button>
+                </form>
+            }
+        </div>
+    </div>
+
+    @if (Model.Rights.Edit)
+    {
+        <div class="ibox float-e-margins m-t-md">
+            <div class="ibox-title"><h5><i class="fa fa-cog" aria-hidden="true"></i> @localizer["CatalogFieldsHeader"]</h5></div>
+            <div class="ibox-content">
+                <form method="post" asp-controller="Courses" asp-action="SaveCourse" asp-route-area="User" asp-route-id="@course.LmsCourseId">
+                    @Html.AntiForgeryToken()
+                    <div class="rgw-grid">
+                        <div class="form-group"><label for="c-title">@localizer["TitleLabel"]</label><input id="c-title" name="title" class="form-control" value="@course.Title" maxlength="250" required /></div>
+                        <div class="form-group"><label for="c-code">@localizer["CodeLabel"]</label><input id="c-code" name="code" class="form-control" value="@course.Code" maxlength="50" /></div>
+                        <div class="form-group"><label for="c-tags">@localizer["TagsLabel"]</label><input id="c-tags" name="tags" class="form-control" value="@course.Tags" maxlength="500" /></div>
+                    </div>
+                    <div class="form-group"><label for="c-summary">@localizer["SummaryLabel"]</label><textarea id="c-summary" name="summary" class="form-control" rows="2" maxlength="2000">@course.Summary</textarea></div>
+                    <div class="checkbox"><label><input type="checkbox" name="selfEnroll" value="true" checked="@course.IsSelfEnrollable" /> @localizer["SelfEnrollLabel"]</label></div>
+                    @if (Model.Who != null)
+                    {
+                        <h4>@localizer["AudienceHeader"]</h4>
+                        <p class="help-block">@localizer["AudienceHelp"]</p>
+                        ViewData["WhoPrefix"] = "audience"; ViewData["WhoDue"] = false; ViewData["WhoSelected"] = Model.Audience;
+                        @await Html.PartialAsync("_WhoPicker", Model.Who)
+                        @if (Model.Audience.Count > 0)
+                        {
+                            <p class="small text-muted">@string.Format(localizer["AudienceCurrentFormat"].Value, Model.Audience.Count)</p>
+                        }
+                    }
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["SaveButton"]</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

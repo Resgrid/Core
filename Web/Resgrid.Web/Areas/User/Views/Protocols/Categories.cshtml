@@ -1,0 +1,163 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolCategoriesModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    Library categories (P1): nested, per kind, ordered, each with optional approval steps (a named member or a role, in order;
+    none = one step by any holder of Approve Protocols). Approvers manage them; authors see them.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["CategoriesTab"];
+    ViewData["Title"] = localizer["CategoriesTab"].Value;
+    ViewData["Subtitle"] = localizer["CategoriesIntro"].Value;
+    ViewData["Section"] = "Categories";
+    ViewData["IsManager"] = true;
+    var canManage = ClaimsAuthorizationHelper.CanApproveProtocols();
+
+    async Task Rows(int? parent, int depth)
+    {
+        foreach (var c in Model.Categories.Where(x => x.ParentCategoryId == parent).OrderBy(x => x.SortOrder).ThenBy(x => x.Name))
+        {
+            <tr>
+                <td style="padding-left: @(8 + depth * 18)px"><i class="fa fa-folder-o" aria-hidden="true"></i> @c.Name</td>
+                <td>@(c.Kind.HasValue ? ProtocolDisplay.KindName(c.Kind.Value, localizer) : localizer["AnyKindLabel"].Value)</td>
+                <td>
+                    @if (c.ApprovalSteps.Count == 0)
+                    {
+                        <span class="text-muted">@localizer["DefaultApprovalStep"]</span>
+                    }
+                    else
+                    {
+                        <ol class="m-b-none">
+                            @foreach (var s in c.ApprovalSteps)
+                            {
+                                <li>@(!string.IsNullOrEmpty(s.ApproverUserId) ? (Model.Members.TryGetValue(s.ApproverUserId, out var m) ? m : s.ApproverUserId) : s.ApproverRoleId.HasValue && Model.Roles.TryGetValue(s.ApproverRoleId.Value, out var r) ? r : "")</li>
+                            }
+                        </ol>
+                    }
+                </td>
+                <td>@(Model.Counts.TryGetValue(c.ProtocolCategoryId, out var n) ? n : 0)</td>
+                <td class="rgw-row-actions">
+                    <a class="btn btn-xs btn-info" asp-controller="Protocols" asp-action="Index" asp-route-area="User" asp-route-category="@c.ProtocolCategoryId"><i class="fa fa-book" aria-hidden="true"></i> @localizer["OpenButton"]<span class="sr-only"> @c.Name</span></a>
+                    @if (canManage)
+                    {
+                        <form method="post" asp-controller="Protocols" asp-action="DeleteCategory" asp-route-area="User" asp-route-id="@c.ProtocolCategoryId">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["DeleteCategoryConfirm"] @c.Name ?"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["DeleteButton"]<span class="sr-only"> @c.Name</span></button>
+                        </form>
+                    }
+                </td>
+            </tr>
+            await Rows(c.ProtocolCategoryId, depth + 1);
+        }
+    }
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ibox">
+                <div class="ibox-content">
+                    @if (Model.Categories.Count == 0)
+                    {
+                        <p class="text-muted">@localizer["NoCategoriesYet"]</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped rgw-table">
+                                <thead>
+                                    <tr>
+                                        <th>@commonLocalizer["Name"]</th>
+                                        <th>@localizer["KindLabel"]</th>
+                                        <th>@localizer["ApprovalStepsHeader"]</th>
+                                        <th>@localizer["ProtocolsLabel"]</th>
+                                        <th class="rgw-row-actions">@commonLocalizer["Action"]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{ await Rows(null, 0); }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        @if (canManage)
+        {
+            <div class="col-md-4">
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddCategoryHeader"]</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-controller="Protocols" asp-action="SaveCategory" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                <label class="control-label required" for="categoryName">@commonLocalizer["Name"]</label>
+                                <input id="categoryName" name="Name" class="form-control" maxlength="@ProtocolCategory.NameMaxLength" required />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="categoryParent">@localizer["ParentCategoryLabel"]</label>
+                                <select id="categoryParent" name="ParentCategoryId" class="form-control">
+                                    <option value="">@localizer["NoCategoryOption"]</option>
+                                    @foreach (var c in Model.Categories.OrderBy(x => x.Name))
+                                    {
+                                        <option value="@c.ProtocolCategoryId">@c.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="categoryKind">@localizer["KindLabel"]</label>
+                                <select id="categoryKind" name="Kind" class="form-control">
+                                    <option value="">@localizer["AnyKindLabel"]</option>
+                                    @foreach (ProtocolKinds kind in ProtocolKindRules.AuthorableKinds)
+                                    {
+                                        <option value="@((int)kind)">@ProtocolDisplay.KindName((int)kind, localizer)</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="categorySort">@localizer["SortOrderLabel"]</label>
+                                <input id="categorySort" name="SortOrder" type="number" class="form-control" value="0" min="0" max="1000" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="categoryApprovers">@localizer["ApprovalStepsHeader"]</label>
+                                <select id="categoryApprovers" name="Approvers" class="form-control" multiple size="6" aria-describedby="ApproversHelp">
+                                    <optgroup label="@localizer["AudienceRoleLabel"]">
+                                        @foreach (var role in Model.Roles.OrderBy(x => x.Value))
+                                        {
+                                            <option value="r:@role.Key">@role.Value</option>
+                                        }
+                                    </optgroup>
+                                    <optgroup label="@localizer["MembersLabel"]">
+                                        @foreach (var member in Model.Members.OrderBy(x => x.Value))
+                                        {
+                                            <option value="u:@member.Key">@member.Value</option>
+                                        }
+                                    </optgroup>
+                                </select>
+                                <span id="ApproversHelp" class="help-block">@localizer["ApprovalStepsHelp"]</span>
+                            </div>
+                            <button type="submit" class="btn btn-success"><i class="fa fa-save" aria-hidden="true"></i> @localizer["SaveCategoryButton"]</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

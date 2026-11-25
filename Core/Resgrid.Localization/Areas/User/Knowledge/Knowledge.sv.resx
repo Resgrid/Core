@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllFilter" xml:space="preserve">
+    <value>Alla</value>
+  </data>
+  <data name="AskButton" xml:space="preserve">
+    <value>Fråga</value>
+  </data>
+  <data name="AskHeader" xml:space="preserve">
+    <value>Fråga avdelningens kunskap</value>
+  </data>
+  <data name="AskHeaderCall" xml:space="preserve">
+    <value>Fråga om protokollet för det här larmet</value>
+  </data>
+  <data name="AskHeaderProtocol" xml:space="preserve">
+    <value>Fråga om det här protokollet</value>
+  </data>
+  <data name="AskHeaderTraining" xml:space="preserve">
+    <value>Fråga om den här utbildningen</value>
+  </data>
+  <data name="AskHelp" xml:space="preserve">
+    <value>Svaren kommer bara från avdelningens publicerade protokoll och utbildningar och Resgrid Academy, och varje svar länkar till sina källor. Kontrollera källan innan du agerar.</value>
+  </data>
+  <data name="Asking" xml:space="preserve">
+    <value>Söker i avdelningens protokoll och utbildningar...</value>
+  </data>
+  <data name="AskLabel" xml:space="preserve">
+    <value>Din fråga</value>
+  </data>
+  <data name="AskPlaceholder" xml:space="preserve">
+    <value>Ställ en fråga om era protokoll eller utbildningar</value>
+  </data>
+  <data name="BudgetNotice" xml:space="preserve">
+    <value>Avdelningen har använt månadens AI-kvot. De här källorna matchar din fråga.</value>
+  </data>
+  <data name="BusyNotice" xml:space="preserve">
+    <value>Svarsfunktionen är upptagen just nu. Försök igen om en stund. De här källorna matchar din fråga.</value>
+  </data>
+  <data name="ColumnActions" xml:space="preserve">
+    <value>Åtgärder</value>
+  </data>
+  <data name="ColumnAsked" xml:space="preserve">
+    <value>Ställd</value>
+  </data>
+  <data name="ColumnNearest" xml:space="preserve">
+    <value>Närmaste källor</value>
+  </data>
+  <data name="ColumnQuestion" xml:space="preserve">
+    <value>Fråga</value>
+  </data>
+  <data name="ColumnReason" xml:space="preserve">
+    <value>Orsak</value>
+  </data>
+  <data name="ConflictLabel" xml:space="preserve">
+    <value>De här källorna säger olika saker</value>
+  </data>
+  <data name="CorpusHeader" xml:space="preserve">
+    <value>Källor</value>
+  </data>
+  <data name="CorpusHelp" xml:space="preserve">
+    <value>Publicerade protokoll och påbörjade utbildningar ingår alltid, utom innehåll som markerats att inte användas för AI. Utkast, quiz, utbildningsintyg och lärandeposter används aldrig.</value>
+  </data>
+  <data name="DismissButton" xml:space="preserve">
+    <value>Avfärda</value>
+  </data>
+  <data name="DismissedTile" xml:space="preserve">
+    <value>Avfärdade</value>
+  </data>
+  <data name="DoseNotice" xml:space="preserve">
+    <value>Doser citeras exakt som källan skriver dem. Inget har räknats ut. Kontrollera källan och ert doseringsverktyg.</value>
+  </data>
+  <data name="DosingToolLink" xml:space="preserve">
+    <value>Öppna avdelningens doseringsverktyg</value>
+  </data>
+  <data name="DosingToolUrlHelp" xml:space="preserve">
+    <value>En https-länk till avdelningens doseringsverktyg. Svar som citerar en dos länkar dit. Resgrid räknar aldrig ut en dos.</value>
+  </data>
+  <data name="DosingToolUrlLabel" xml:space="preserve">
+    <value>Länk till doseringsverktyg</value>
+  </data>
+  <data name="DraftFailed" xml:space="preserve">
+    <value>Det gick inte att öppna ett utkast för det här protokollet.</value>
+  </data>
+  <data name="DraftProtocolButton" xml:space="preserve">
+    <value>Utkast till protokolländring</value>
+  </data>
+  <data name="EffectiveLabel" xml:space="preserve">
+    <value>gäller sedan {0}</value>
+  </data>
+  <data name="ErrorNotice" xml:space="preserve">
+    <value>Något gick fel. Försök igen.</value>
+  </data>
+  <data name="FeedbackGap" xml:space="preserve">
+    <value>Tack. Frågan har lagts till i rapporten över kunskapsluckor.</value>
+  </data>
+  <data name="FeedbackThanks" xml:space="preserve">
+    <value>Tack för din återkoppling.</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Filtrera</value>
+  </data>
+  <data name="GapsIntro" xml:space="preserve">
+    <value>Frågor som era protokoll och utbildningar inte besvarade, och svar som medlemmar markerat som inte hjälpsamma. Gör en lucka till ett utkast till protokolländring eller en ny utbildning.</value>
+  </data>
+  <data name="GapsLink" xml:space="preserve">
+    <value>Kunskapsluckor</value>
+  </data>
+  <data name="GapsTab" xml:space="preserve">
+    <value>Kunskapsluckor</value>
+  </data>
+  <data name="GapsTitle" xml:space="preserve">
+    <value>Kunskapsluckor</value>
+  </data>
+  <data name="GapSuggestionBody" xml:space="preserve">
+    <value>Kunskapslucka: medlemmar frågade ”{0}” och protokollen besvarade det inte.</value>
+  </data>
+  <data name="GapTrainingNoQuestion" xml:space="preserve">
+    <value>Kunskapslucka (frågan sparades inte)</value>
+  </data>
+  <data name="GapUpdated" xml:space="preserve">
+    <value>Luckan har uppdaterats.</value>
+  </data>
+  <data name="Helpful" xml:space="preserve">
+    <value>Hjälpsamt</value>
+  </data>
+  <data name="IncludeDocumentsHelp" xml:space="preserve">
+    <value>Dokument blir källor för svaren. Dokument endast för administratörer används bara för administratörer. Används inte medan Advanced Data Protection är på.</value>
+  </data>
+  <data name="IncludeDocumentsLabel" xml:space="preserve">
+    <value>Ta med modulen Dokument</value>
+  </data>
+  <data name="IndexHeader" xml:space="preserve">
+    <value>Index</value>
+  </data>
+  <data name="IndexNotBuilt" xml:space="preserve">
+    <value>Indexet har inte byggts ännu. Det byggs i bakgrunden efter den första frågan.</value>
+  </data>
+  <data name="IndexStatus" xml:space="preserve">
+    <value>{0} avsnitt indexerade, {1} med inbäddningar. Senast uppdaterat {2}.</value>
+  </data>
+  <data name="IndexWarning" xml:space="preserve">
+    <value>Vissa objekt kunde inte indexeras eller så var inbäddningstjänsten otillgänglig; nästa körning försöker igen.</value>
+  </data>
+  <data name="InvalidUrl" xml:space="preserve">
+    <value>Ange en https-länk.</value>
+  </data>
+  <data name="KeptLocalNotice" xml:space="preserve">
+    <value>Avdelningen använder Advanced Data Protection, så din fråga stannar i Resgrid. De här källorna matchar den.</value>
+  </data>
+  <data name="KeptLocalStatus" xml:space="preserve">
+    <value>Avdelningen använder Advanced Data Protection: din fråga stannar i Resgrid och du får de källor som matchar.</value>
+  </data>
+  <data name="KeywordOnlyNotice" xml:space="preserve">
+    <value>Söktjänsten svarade inte i tid, så källorna hittades bara med nyckelord.</value>
+  </data>
+  <data name="KindAcademy" xml:space="preserve">
+    <value>Resgrid Academy</value>
+  </data>
+  <data name="KindCourse" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="KindDocument" xml:space="preserve">
+    <value>Dokument</value>
+  </data>
+  <data name="KindProtocol" xml:space="preserve">
+    <value>Protokoll</value>
+  </data>
+  <data name="KindProtocolFile" xml:space="preserve">
+    <value>Protokollfil</value>
+  </data>
+  <data name="KindTraining" xml:space="preserve">
+    <value>Utbildning</value>
+  </data>
+  <data name="KindTrainingFile" xml:space="preserve">
+    <value>Utbildningsfil</value>
+  </data>
+  <data name="KnowledgeHeader" xml:space="preserve">
+    <value>Kunskap</value>
+  </data>
+  <data name="MatchedNotice" xml:space="preserve">
+    <value>De här källorna matchar din fråga.</value>
+  </data>
+  <data name="NearestLabel" xml:space="preserve">
+    <value>Närmaste innehåll</value>
+  </data>
+  <data name="NewTrainingButton" xml:space="preserve">
+    <value>Ny utbildning</value>
+  </data>
+  <data name="NextPage" xml:space="preserve">
+    <value>Nästa</value>
+  </data>
+  <data name="NoGaps" xml:space="preserve">
+    <value>Inga kunskapsluckor här.</value>
+  </data>
+  <data name="NoNearest" xml:space="preserve">
+    <value>Inga hittades</value>
+  </data>
+  <data name="NoRole" xml:space="preserve">
+    <value>Ingen roll</value>
+  </data>
+  <data name="NotCovered" xml:space="preserve">
+    <value>Avdelningens protokoll och utbildningar täcker inte detta.</value>
+  </data>
+  <data name="NoteLabel" xml:space="preserve">
+    <value>Anteckning</value>
+  </data>
+  <data name="NotHelpful" xml:space="preserve">
+    <value>Inte hjälpsamt</value>
+  </data>
+  <data name="OpenSource" xml:space="preserve">
+    <value>Öppna</value>
+  </data>
+  <data name="OpenTile" xml:space="preserve">
+    <value>Öppna</value>
+  </data>
+  <data name="PreviousPage" xml:space="preserve">
+    <value>Föregående</value>
+  </data>
+  <data name="ProtocolsCrumb" xml:space="preserve">
+    <value>Protokoll</value>
+  </data>
+  <data name="QuestionNotKept" xml:space="preserve">
+    <value>Frågan sparades inte (Advanced Data Protection)</value>
+  </data>
+  <data name="QuestionRequired" xml:space="preserve">
+    <value>Skriv en fråga först.</value>
+  </data>
+  <data name="ReasonNotCovered" xml:space="preserve">
+    <value>Inte täckt</value>
+  </data>
+  <data name="ReasonThumbsDown" xml:space="preserve">
+    <value>Markerat som inte hjälpsamt</value>
+  </data>
+  <data name="RebuildButton" xml:space="preserve">
+    <value>Bygg om indexet</value>
+  </data>
+  <data name="RebuildQueued" xml:space="preserve">
+    <value>Indexet byggs om i bakgrunden inom några minuter.</value>
+  </data>
+  <data name="ReopenButton" xml:space="preserve">
+    <value>Öppna igen</value>
+  </data>
+  <data name="ResolveButton" xml:space="preserve">
+    <value>Lös</value>
+  </data>
+  <data name="ResolvedTile" xml:space="preserve">
+    <value>Lösta</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Vad avdelningens kunskapssvar får använda.</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Kunskapsinställningarna har sparats.</value>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>Inställningar</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Kunskapsinställningar</value>
+  </data>
+  <data name="SourcesLabel" xml:space="preserve">
+    <value>Källor</value>
+  </data>
+  <data name="StaleCopyNotice" xml:space="preserve">
+    <value>Din offlinekopia av ett citerat innehåll är äldre än den citerade versionen.</value>
+  </data>
+  <data name="StatusFilterLabel" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="SurfaceApi" xml:space="preserve">
+    <value>Mobilapp</value>
+  </data>
+  <data name="SurfaceAssistant" xml:space="preserve">
+    <value>Assistent</value>
+  </data>
+  <data name="SurfaceCall" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="SurfaceLibrary" xml:space="preserve">
+    <value>Protokollbibliotek</value>
+  </data>
+  <data name="SurfaceProtocol" xml:space="preserve">
+    <value>Protokollsida</value>
+  </data>
+  <data name="SurfaceTraining" xml:space="preserve">
+    <value>Utbildningssida</value>
+  </data>
+  <data name="UnavailableNotice" xml:space="preserve">
+    <value>Svar är inte tillgängliga just nu. Försök igen om några minuter.</value>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>version {0}</value>
+  </data>
+  <data name="SurfaceHelp" xml:space="preserve">
+    <value>Hjälpsökning</value>
+  </data>
+  <data name="SurfaceCourse" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="AskHeaderCallWide" xml:space="preserve">
+    <value>Fråga om det här larmet</value>
+  </data>
+  <data name="AskHelpCallWide" xml:space="preserve">
+    <value>Svaren kommer bara från protokollen som larmet hänvisar till och från dess typ, prioritet, determinant och platstyp. Uppgifter om patient och inringare används aldrig.</value>
+  </data>
+  <data name="AskHeaderCourse" xml:space="preserve">
+    <value>Fråga den här kursen</value>
+  </data>
+  <data name="AskHelpCourse" xml:space="preserve">
+    <value>Svaren kommer bara från den version av kursen som du går, och varje del länkar till sin lektion.</value>
+  </data>
+  <data name="CallContextNotice" xml:space="preserve">
+    <value>Besvarat för det här larmet: dess protokoll, typ, prioritet, determinant och platstyp.</value>
+  </data>
+  <data name="PracticeHeader" xml:space="preserve">
+    <value>Öva</value>
+  </data>
+  <data name="PracticeHelp" xml:space="preserve">
+    <value>Öva med ett kort scenario som skrivs utifrån den gällande versionen av protokollet. Dina svar bedöms bara mot protokollet, och inget registreras i din utbildningshistorik.</value>
+  </data>
+  <data name="PracticeStart" xml:space="preserve">
+    <value>Starta ett scenario</value>
+  </data>
+  <data name="PracticeStarting" xml:space="preserve">
+    <value>Skriver ett scenario…</value>
+  </data>
+  <data name="PracticeScenarioLabel" xml:space="preserve">
+    <value>Scenario</value>
+  </data>
+  <data name="PracticeAnswerLabel" xml:space="preserve">
+    <value>Ditt svar</value>
+  </data>
+  <data name="PracticeSubmit" xml:space="preserve">
+    <value>Bedöm mina svar</value>
+  </data>
+  <data name="PracticeScoring" xml:space="preserve">
+    <value>Bedömer dina svar…</value>
+  </data>
+  <data name="PracticeAgain" xml:space="preserve">
+    <value>Ett nytt scenario</value>
+  </data>
+  <data name="PracticeScoreFormat" xml:space="preserve">
+    <value>Resultat: {0} av {1}</value>
+  </data>
+  <data name="PracticeItemScoreFormat" xml:space="preserve">
+    <value>{0} av {1}</value>
+  </data>
+  <data name="PracticeNotScored" xml:space="preserve">
+    <value>Svaret kunde inte bedömas.</value>
+  </data>
+  <data name="PracticeExcluded" xml:space="preserve">
+    <value>Det här protokollet används inte med AI.</value>
+  </data>
+  <data name="PracticeKeptLocal" xml:space="preserve">
+    <value>Avancerat dataskydd håller avdelningens innehåll lokalt, så övning är inte tillgänglig.</value>
+  </data>
+  <data name="PracticeNoContent" xml:space="preserve">
+    <value>Protokollet har för lite text att öva på.</value>
+  </data>
+  <data name="PracticeRefused" xml:space="preserve">
+    <value>Scenariot kunde inte kontrolleras mot protokollet. Försök igen.</value>
+  </data>
+  <data name="PracticeStale" xml:space="preserve">
+    <value>Protokollet har ändrats sedan scenariot skrevs. Starta ett nytt.</value>
+  </data>
+  <data name="PracticeAnswerRequired" xml:space="preserve">
+    <value>Besvara minst en fråga.</value>
+  </data>
+  <data name="PracticeOnlyNotice" xml:space="preserve">
+    <value>Endast övning: inget registreras i din utbildningshistorik.</value>
+  </data>
+</root>

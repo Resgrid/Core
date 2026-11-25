@@ -353,4 +353,16 @@
   <data name="CheckOutBy" xml:space="preserve">
     <value>Вихід зареєстровано: {0}</value>
   </data>
+  <data name="CountsAsTrainingLabel" xml:space="preserve">
+    <value>Зараховується як навчання</value>
+  </data>
+  <data name="CountsAsTrainingHelp" xml:space="preserve">
+    <value>Відмітки прибуття й вибуття на подіях цього типу стають годинами навчання в журналах учасників. Прибуття без вибуття чекає на керівника.</value>
+  </data>
+  <data name="TrainingCategoryLabel" xml:space="preserve">
+    <value>Категорія навчання</value>
+  </data>
+  <data name="TrainingCategoryNone" xml:space="preserve">
+    <value>Без категорії</value>
+  </data>
 </root>

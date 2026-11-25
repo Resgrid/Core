@@ -2609,4 +2609,19 @@
   <data name="ShiftOverSignupHelp" xml:space="preserve">
     <value>Les membres peuvent s'inscrire dans un groupe même lorsque toutes ses places par rôle (obligatoires et facultatives) sont prises. Ils doivent toujours avoir l'un des rôles du groupe.</value>
   </data>
+  <data name="DocumentNumberKindProtocol" xml:space="preserve">
+    <value>Protocoles</value>
+  </data>
+  <data name="RunCardConditionProtocolOutcome" xml:space="preserve">
+    <value>Un déterminant de protocole sur l’appel</value>
+  </data>
+  <data name="RunCardDeterminantEquals" xml:space="preserve">
+    <value>est égal à</value>
+  </data>
+  <data name="RunCardDeterminantStartsWith" xml:space="preserve">
+    <value>commence par</value>
+  </data>
+  <data name="RunCardDeterminantValue" xml:space="preserve">
+    <value>Déterminant (ex. 09-E)</value>
+  </data>
 </root>

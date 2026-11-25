@@ -25,7 +25,8 @@ namespace Resgrid.Repositories.DataRepository
 			[DocumentNumberKinds.Inspection] = ("RmsInspections", "InspectionNumber"),
 			[DocumentNumberKinds.Permit] = ("RmsPermits", "PermitNumber"),
 			[DocumentNumberKinds.Investigation] = ("RmsInvestigationCases", "CaseNumber"),
-			[DocumentNumberKinds.Evidence] = ("RmsInvestigationEvidence", "EvidenceNumber")
+			[DocumentNumberKinds.Evidence] = ("RmsInvestigationEvidence", "EvidenceNumber"),
+			[DocumentNumberKinds.Protocol] = ("DispatchProtocols", "Number")
 		};
 
 		public DocumentNumberSequencesRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)

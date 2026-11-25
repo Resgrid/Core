@@ -230,4 +230,9 @@
   <data name="SelectMember" xml:space="preserve"><value>Select a member</value></data>
   <data name="SelectType" xml:space="preserve"><value>Select a certification type</value></data>
   <data name="CertificationNameRequired" xml:space="preserve"><value>Enter a certification name.</value></data>
+  <data name="RenewalHoursLabel" xml:space="preserve"><value>Hours toward renewal</value></data>
+  <data name="RenewalHoursValue" xml:space="preserve"><value>{0} h credited ({1} h from the transcript)</value></data>
+  <data name="UncreditedLedgerHours" xml:space="preserve"><value>{0} h in mapped categories not yet credited</value></data>
+  <data name="ApplyHistoryLink" xml:space="preserve"><value>Apply history to credits</value></data>
+  <data name="FromTranscript" xml:space="preserve"><value>From transcript</value></data>
 </root>

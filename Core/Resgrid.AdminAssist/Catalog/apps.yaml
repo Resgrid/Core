@@ -431,6 +431,25 @@
       "RuleIds": [],
       "Prominence": "Detail",
       "DocsPath": "/web-app/profile-account/"
+    },
+    {
+      "Id": "help-search",
+      "AreaId": "apps",
+      "LabelKey": "Feature.help-search",
+      "PurposeKey": "FeaturePurpose.help-search",
+      "ValueKey": "FeatureValue.help-search",
+      "ExampleKey": "FeatureExample.help-search",
+      "AdoptionKey": "FeatureSetup.help-search",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Help",
+        "Action": "Search"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/help-center/"
     }
   ],
   "Rules": [],
@@ -1066,6 +1085,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "help-search",
+      "Locale": "en",
+      "TitleKey": "Feature.help-search",
+      "Body": "Help center search Free keyword search over the Resgrid Academy and the product reference from the Help menu. Members find the lesson or setting they need without leaving Resgrid. A new member searches for status and opens the orientation lesson. Nothing to set up: open Help, then Search help. With Enhanced AI knowledge answers, How do I questions are answered from the Academy lessons only.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "help-search",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
     }
   ]
 }

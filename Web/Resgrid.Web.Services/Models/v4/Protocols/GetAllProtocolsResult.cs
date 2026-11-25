@@ -98,6 +98,38 @@ namespace Resgrid.Web.Services.Models.v4.Protocols
 		/// State type
 		/// </summary>
 		public int State { get; set; }
+
+		// ---- P1 library fields (optional additions; older apps ignore them) ----------------------------------------------
+
+		/// <summary>ProtocolKinds: 0 Dispatch, 1 SOP/SOG, 2 Clinical guideline, 3 Policy, 4 Procedure, 5 Reference.</summary>
+		public int Kind { get; set; }
+
+		/// <summary>ProtocolStatuses: 0 Draft (never published), 1 Published, 2 Retired.</summary>
+		public int Status { get; set; }
+
+		/// <summary>The version in force; ProtocolText is its text.</summary>
+		public string CurrentVersionId { get; set; }
+
+		/// <summary>The version in force as "major.minor" (e.g. "2.1").</summary>
+		public string VersionLabel { get; set; }
+
+		public DateTime? EffectiveOn { get; set; }
+
+		public string Number { get; set; }
+
+		public string Tags { get; set; }
+
+		public int? CategoryId { get; set; }
+
+		public string OwnerUserId { get; set; }
+
+		public DateTime? NextReviewOn { get; set; }
+
+		/// <summary>The version in force requires a read-and-sign acknowledgment (P2).</summary>
+		public bool RequiresAcknowledgment { get; set; }
+
+		/// <summary>Excluded from every AI index and answer.</summary>
+		public bool ExcludeFromAi { get; set; }
 	}
 
 	public class ProtocolTriggerResult

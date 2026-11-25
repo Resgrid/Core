@@ -1,0 +1,85 @@
+@model ImportProtocolsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> protocolText
+@*
+    The wizard's Protocols step (P1, wave 2B): bulk JSON in the open protocol exchange format, the one shape the protocol library
+    exports and imports (format "resgrid-protocols", version 1). Preview runs every check and name match and writes nothing; Import
+    lands each protocol as a draft for one review-and-publish pass. Nothing is published by an import.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ModuleName"];
+    ViewData["Title"] = localizer["TabProtocols"].Value;
+    ViewData["Tab"] = "Protocols";
+    var result = Model.Result;
+}
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (result != null)
+    {
+        if (!string.IsNullOrEmpty(result.Error))
+        {
+            <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @protocolText["ImportError" + (result.Error == "unknown_format" ? "Format" : result.Error == "too_many" ? "TooMany" : result.Error == "not_authorized" ? "NotAuthorized" : "File")]</div>
+        }
+        else if (result.DryRun)
+        {
+            <div class="rgw-next-action" role="status"><i class="fa fa-eye" aria-hidden="true"></i> @string.Format(protocolText["ImportPreviewMessage"].Value, result.Created, Model.FileName)</div>
+        }
+        else
+        {
+            <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @string.Format(protocolText["ImportedMessage"].Value, result.Created)
+                <a class="btn btn-xs btn-default" asp-controller="Protocols" asp-action="Index" asp-route-area="User" asp-route-status="draft"><i class="fa fa-book" aria-hidden="true"></i> @protocolText["ProtocolsLabel"]</a>
+            </div>
+        }
+        if (result.Names.Count > 0)
+        {
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-list" aria-hidden="true"></i> @(result.DryRun ? protocolText["ImportPreviewListHeader"] : protocolText["ImportCreatedListHeader"])</h5></div>
+                <div class="ibox-content"><ul class="m-b-none">@foreach (var name in result.Names) { <li>@name</li> }</ul></div>
+            </div>
+        }
+        if (result.Skipped.Count > 0)
+        {
+            <div class="alert alert-warning" role="status">
+                <strong><i class="fa fa-exclamation-circle" aria-hidden="true"></i> @protocolText["ImportSkippedHeader"]</strong>
+                <ul>@foreach (var s in result.Skipped) { <li>@s</li> }</ul>
+            </div>
+        }
+        if (result.Warnings.Count > 0)
+        {
+            <div class="alert alert-info" role="status">
+                <strong><i class="fa fa-info-circle" aria-hidden="true"></i> @protocolText["ImportWarningsHeader"]</strong>
+                <ul>@foreach (var w in result.Warnings) { <li>@w</li> }</ul>
+            </div>
+        }
+    }
+
+    <div class="ibox">
+        <div class="ibox-content">
+            <p>@protocolText["WizardProtocolsHelp"]</p>
+            @if (!Model.CanAuthor)
+            {
+                <div class="rgw-next-action" role="status"><i class="fa fa-lock" aria-hidden="true"></i> @protocolText["ImportErrorNotAuthorized"]</div>
+            }
+            else
+            {
+                <form method="post" enctype="multipart/form-data" asp-controller="DepartmentImport" asp-action="Protocols" asp-route-area="User" asp-route-id="@Model.Workspace.Id">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label class="control-label required" for="protocolsFile">@protocolText["ImportFileLabel"]</label>
+                        <input id="protocolsFile" name="file" type="file" accept=".json,application/json" required />
+                        <span class="help-block">@protocolText["WizardProtocolsFileHelp"]</span>
+                    </div>
+                    <div class="rgw-wizard-actions">
+                        <button type="submit" name="mode" value="preview" class="btn btn-default"><i class="fa fa-eye" aria-hidden="true"></i> @protocolText["ImportPreviewButton"]</button>
+                        <button type="submit" name="mode" value="import" class="btn btn-primary"><i class="fa fa-upload" aria-hidden="true"></i> @protocolText["ImportButton"]</button>
+                    </div>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Check.Title" xml:space="preserve">
+    <value>Compruebe lo aprendido</value>
+  </data>
+  <data name="Path.administrator" xml:space="preserve">
+    <value>Administrador</value>
+  </data>
+  <data name="Path.administrator.Audience" xml:space="preserve">
+    <value>Administradores del departamento</value>
+  </data>
+  <data name="Path.business" xml:space="preserve">
+    <value>Gestión y finanzas</value>
+  </data>
+  <data name="Path.business.Audience" xml:space="preserve">
+    <value>Responsables de finanzas y gestión</value>
+  </data>
+  <data name="Path.dispatcher" xml:space="preserve">
+    <value>Operador de despacho</value>
+  </data>
+  <data name="Path.dispatcher.Audience" xml:space="preserve">
+    <value>Personal de la central</value>
+  </data>
+  <data name="Path.logistics" xml:space="preserve">
+    <value>Logística y disponibilidad</value>
+  </data>
+  <data name="Path.logistics.Audience" xml:space="preserve">
+    <value>Responsables de logística y disponibilidad</value>
+  </data>
+  <data name="Path.member" xml:space="preserve">
+    <value>Miembro / Interviniente</value>
+  </data>
+  <data name="Path.member.Audience" xml:space="preserve">
+    <value>Todos</value>
+  </data>
+  <data name="Path.officer" xml:space="preserve">
+    <value>Mando / Dirección del incidente</value>
+  </data>
+  <data name="Path.officer.Audience" xml:space="preserve">
+    <value>Mandos y jefes</value>
+  </data>
+  <data name="Path.records" xml:space="preserve">
+    <value>Registros e informes</value>
+  </data>
+  <data name="Path.records.Audience" xml:space="preserve">
+    <value>Redactores y revisores de informes</value>
+  </data>
+  <data name="Path.training-officer" xml:space="preserve">
+    <value>Responsable de formación</value>
+  </data>
+  <data name="Path.training-officer.Audience" xml:space="preserve">
+    <value>Personal de formación</value>
+  </data>
+  <data name="TrueFalse.f" xml:space="preserve">
+    <value>Falso</value>
+  </data>
+  <data name="TrueFalse.t" xml:space="preserve">
+    <value>Verdadero</value>
+  </data>
+</root>

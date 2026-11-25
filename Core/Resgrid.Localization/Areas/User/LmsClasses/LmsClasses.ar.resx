@@ -1,0 +1,1240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>تعذّر تنفيذ ذلك.</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="AddCost" xml:space="preserve">
+    <value>إضافة تكلفة</value>
+  </data>
+  <data name="AddInstructor" xml:space="preserve">
+    <value>إضافة مدرّب</value>
+  </data>
+  <data name="AddonNotice" xml:space="preserve">
+    <value>الدورات جزء من إضافة نظام إدارة التعلم، وهي غير مفعّلة لهذا القسم.</value>
+  </data>
+  <data name="AddonRequired" xml:space="preserve">
+    <value>يتطلب هذا إضافة نشطة لنظام إدارة التعلم.</value>
+  </data>
+  <data name="AddPeople" xml:space="preserve">
+    <value>إضافة أشخاص</value>
+  </data>
+  <data name="AddWalkIn" xml:space="preserve">
+    <value>تسجيل حضور شخص دون تسجيل مسبق</value>
+  </data>
+  <data name="AllTags" xml:space="preserve">
+    <value>كل الوسوم</value>
+  </data>
+  <data name="AlreadySignedIn" xml:space="preserve">
+    <value>سجّلت حضورك في</value>
+  </data>
+  <data name="Amount" xml:space="preserve">
+    <value>المبلغ</value>
+  </data>
+  <data name="Approve" xml:space="preserve">
+    <value>موافقة</value>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>تمت الموافقة.</value>
+  </data>
+  <data name="Attendance.Absent" xml:space="preserve">
+    <value>غائب</value>
+  </data>
+  <data name="Attendance.Attended" xml:space="preserve">
+    <value>حضر</value>
+  </data>
+  <data name="Attendance.Excused" xml:space="preserve">
+    <value>غياب بعذر</value>
+  </data>
+  <data name="Attendance.Unmarked" xml:space="preserve">
+    <value>غير مسجّل</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>رجوع</value>
+  </data>
+  <data name="Book" xml:space="preserve">
+    <value>حجز</value>
+  </data>
+  <data name="BookedMessage" xml:space="preserve">
+    <value>تم الحجز.</value>
+  </data>
+  <data name="BookingsHeader" xml:space="preserve">
+    <value>المرافق والمعدات</value>
+  </data>
+  <data name="BookResource" xml:space="preserve">
+    <value>حجز لهذه الدورة</value>
+  </data>
+  <data name="Calendar" xml:space="preserve">
+    <value>التقويم</value>
+  </data>
+  <data name="CalendarIsClass" xml:space="preserve">
+    <value>عنصر التقويم هذا دورة: التسجيل وتسجيل الحضور والحضور في صفحة الدورة.</value>
+  </data>
+  <data name="CancelClass" xml:space="preserve">
+    <value>إلغاء الدورة</value>
+  </data>
+  <data name="Cancelled" xml:space="preserve">
+    <value>أُلغيت الدورة وأُبلغ المسجّلون.</value>
+  </data>
+  <data name="CancelReason" xml:space="preserve">
+    <value>سبب الإلغاء</value>
+  </data>
+  <data name="ClassesIntro" xml:space="preserve">
+    <value>جلسات يقودها مدرّب على التقويم: التسجيل وقائمة الانتظار وتسجيل الحضور وقائمة الحضور المعتمدة.</value>
+  </data>
+  <data name="ClassesTitle" xml:space="preserve">
+    <value>الدورات</value>
+  </data>
+  <data name="Col.Absent" xml:space="preserve">
+    <value>غائبون</value>
+  </data>
+  <data name="Col.Attendance" xml:space="preserve">
+    <value>الحضور</value>
+  </data>
+  <data name="Col.AttendanceRate" xml:space="preserve">
+    <value>نسبة الحضور</value>
+  </data>
+  <data name="Col.Attended" xml:space="preserve">
+    <value>حضروا</value>
+  </data>
+  <data name="Col.Attendee" xml:space="preserve">
+    <value>الحاضر</value>
+  </data>
+  <data name="Col.Attendees" xml:space="preserve">
+    <value>الحاضرون</value>
+  </data>
+  <data name="Col.Bookings" xml:space="preserve">
+    <value>الحجوزات (90 يومًا القادمة)</value>
+  </data>
+  <data name="Col.Capacity" xml:space="preserve">
+    <value>السعة</value>
+  </data>
+  <data name="Col.Class" xml:space="preserve">
+    <value>الدورة</value>
+  </data>
+  <data name="Col.ClassCost" xml:space="preserve">
+    <value>تكلفة الدورة</value>
+  </data>
+  <data name="Col.Classes" xml:space="preserve">
+    <value>الدورات</value>
+  </data>
+  <data name="Col.ContentSummary" xml:space="preserve">
+    <value>ملخص المحتوى</value>
+  </data>
+  <data name="Col.Course" xml:space="preserve">
+    <value>المقرر</value>
+  </data>
+  <data name="Col.Date" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="Col.Enrolled" xml:space="preserve">
+    <value>مسجّلون</value>
+  </data>
+  <data name="Col.Exception" xml:space="preserve">
+    <value>الاستثناء</value>
+  </data>
+  <data name="Col.Hours" xml:space="preserve">
+    <value>الساعات</value>
+  </data>
+  <data name="Col.HoursTaught" xml:space="preserve">
+    <value>ساعات التدريس</value>
+  </data>
+  <data name="Col.Instructor" xml:space="preserve">
+    <value>المدرّب</value>
+  </data>
+  <data name="Col.Instructors" xml:space="preserve">
+    <value>المدرّبون ومؤهلاتهم</value>
+  </data>
+  <data name="Col.JobTitle" xml:space="preserve">
+    <value>المسمى الوظيفي</value>
+  </data>
+  <data name="Col.Kind" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="Col.Member" xml:space="preserve">
+    <value>العضو</value>
+  </data>
+  <data name="Col.Pending" xml:space="preserve">
+    <value>معلّقة</value>
+  </data>
+  <data name="Col.Published" xml:space="preserve">
+    <value>منشورة</value>
+  </data>
+  <data name="Col.Qualifications" xml:space="preserve">
+    <value>المؤهلات</value>
+  </data>
+  <data name="Col.RequestCost" xml:space="preserve">
+    <value>تكلفة طلبات التدريب</value>
+  </data>
+  <data name="Col.Resource" xml:space="preserve">
+    <value>المورد</value>
+  </data>
+  <data name="Col.Role" xml:space="preserve">
+    <value>الدور</value>
+  </data>
+  <data name="Col.Seats" xml:space="preserve">
+    <value>المقاعد</value>
+  </data>
+  <data name="Col.Series" xml:space="preserve">
+    <value>السلسلة</value>
+  </data>
+  <data name="Col.Sessions" xml:space="preserve">
+    <value>الجلسات</value>
+  </data>
+  <data name="Col.SignIn" xml:space="preserve">
+    <value>تسجيل الحضور</value>
+  </data>
+  <data name="Col.Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="Col.Title" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Col.Waitlisted" xml:space="preserve">
+    <value>الانتظار</value>
+  </data>
+  <data name="Col.WalkIns" xml:space="preserve">
+    <value>الحضور دون تسجيل</value>
+  </data>
+  <data name="Col.Year" xml:space="preserve">
+    <value>السنة</value>
+  </data>
+  <data name="Cost.BackfillOvertime" xml:space="preserve">
+    <value>عمل إضافي للتغطية</value>
+  </data>
+  <data name="Cost.Instructor" xml:space="preserve">
+    <value>المدرّب</value>
+  </data>
+  <data name="Cost.Materials" xml:space="preserve">
+    <value>المواد</value>
+  </data>
+  <data name="Cost.Other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="Cost.OutsideFees" xml:space="preserve">
+    <value>رسوم خارجية</value>
+  </data>
+  <data name="CostKind" xml:space="preserve">
+    <value>التكلفة</value>
+  </data>
+  <data name="CostsHeader" xml:space="preserve">
+    <value>التكاليف</value>
+  </data>
+  <data name="CostsIntro" xml:space="preserve">
+    <value>المدرّب والمواد والرسوم الخارجية والعمل الإضافي للتغطية حسب المقرر أو العضو أو السنة، بجانب تكاليف طلبات التدريب.</value>
+  </data>
+  <data name="CostsTitle" xml:space="preserve">
+    <value>تكاليف الدورات</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>إنشاء</value>
+  </data>
+  <data name="CreateClass" xml:space="preserve">
+    <value>إنشاء الدورة</value>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>تم الإنشاء.</value>
+  </data>
+  <data name="DecisionNote" xml:space="preserve">
+    <value>ملاحظة (مطلوبة للإعادة)</value>
+  </data>
+  <data name="Decline" xml:space="preserve">
+    <value>رفض</value>
+  </data>
+  <data name="DeclinedMessage" xml:space="preserve">
+    <value>تم الرفض.</value>
+  </data>
+  <data name="DeleteClass" xml:space="preserve">
+    <value>حذف الدورة</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>تم الحذف.</value>
+  </data>
+  <data name="DeleteLessonPlan" xml:space="preserve">
+    <value>حذف خطة الدرس</value>
+  </data>
+  <data name="DraftOnly" xml:space="preserve">
+    <value>مسودة فقط</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="EditClass" xml:space="preserve">
+    <value>تعديل الدورة</value>
+  </data>
+  <data name="EditIntro" xml:space="preserve">
+    <value>الأوقات بتوقيت القسم.</value>
+  </data>
+  <data name="EditResource" xml:space="preserve">
+    <value>تعديل المرفق أو المعدات</value>
+  </data>
+  <data name="Enroll" xml:space="preserve">
+    <value>تسجيل</value>
+  </data>
+  <data name="EnrolledMessage" xml:space="preserve">
+    <value>تم التسجيل.</value>
+  </data>
+  <data name="EnrollMember" xml:space="preserve">
+    <value>تسجيل عضو</value>
+  </data>
+  <data name="Enrollment.Declined" xml:space="preserve">
+    <value>مرفوض</value>
+  </data>
+  <data name="Enrollment.Enrolled" xml:space="preserve">
+    <value>مسجّل</value>
+  </data>
+  <data name="Enrollment.PendingApproval" xml:space="preserve">
+    <value>بانتظار الموافقة</value>
+  </data>
+  <data name="Enrollment.Removed" xml:space="preserve">
+    <value>أُزيل</value>
+  </data>
+  <data name="Enrollment.Waitlisted" xml:space="preserve">
+    <value>على قائمة الانتظار</value>
+  </data>
+  <data name="Enrollment.Withdrawn" xml:space="preserve">
+    <value>منسحب</value>
+  </data>
+  <data name="Evaluation.CourseAssessment" xml:space="preserve">
+    <value>إسناد الدورة المرتبطة (اختبارها) لكل حاضر</value>
+  </data>
+  <data name="Evaluation.None" xml:space="preserve">
+    <value>لا شيء</value>
+  </data>
+  <data name="Exception.Excused" xml:space="preserve">
+    <value>غياب بعذر</value>
+  </data>
+  <data name="Exception.Inactive" xml:space="preserve">
+    <value>لم يعد عضوًا نشطًا</value>
+  </data>
+  <data name="Exception.NeverPromoted" xml:space="preserve">
+    <value>بقي على قائمة الانتظار</value>
+  </data>
+  <data name="Exception.NoShow" xml:space="preserve">
+    <value>لم يحضر</value>
+  </data>
+  <data name="Exception.OnShift" xml:space="preserve">
+    <value>في المناوبة في ذلك الوقت</value>
+  </data>
+  <data name="Exception.Pending" xml:space="preserve">
+    <value>الطلب لم يُبتّ فيه</value>
+  </data>
+  <data name="Exception.Waitlisted" xml:space="preserve">
+    <value>على قائمة الانتظار</value>
+  </data>
+  <data name="Field.AllowSelfUnenroll" xml:space="preserve">
+    <value>يمكن للأعضاء الانسحاب بأنفسهم</value>
+  </data>
+  <data name="Field.Capacity" xml:space="preserve">
+    <value>السعة</value>
+  </data>
+  <data name="Field.CapacityHelp" xml:space="preserve">
+    <value>0 بلا حد.</value>
+  </data>
+  <data name="Field.Category" xml:space="preserve">
+    <value>فئة التدريب</value>
+  </data>
+  <data name="Field.ChangeSummary" xml:space="preserve">
+    <value>ملخص التغييرات</value>
+  </data>
+  <data name="Field.CompetencyItems" xml:space="preserve">
+    <value>الكفاءات المشمولة</value>
+  </data>
+  <data name="Field.ContentSummary" xml:space="preserve">
+    <value>ملخص المحتوى (القائمة)</value>
+  </data>
+  <data name="Field.ContentSummaryHelp" xml:space="preserve">
+    <value>ما تم تناوله، كما تسجّله القائمة المعتمدة.</value>
+  </data>
+  <data name="Field.Course" xml:space="preserve">
+    <value>مقرر نظام إدارة التعلم</value>
+  </data>
+  <data name="Field.CourseCode" xml:space="preserve">
+    <value>رمز المقرر</value>
+  </data>
+  <data name="Field.Currency" xml:space="preserve">
+    <value>العملة</value>
+  </data>
+  <data name="Field.CutoffDays" xml:space="preserve">
+    <value>يُغلق التسجيل (أيام قبل)</value>
+  </data>
+  <data name="Field.Description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="Field.Duration" xml:space="preserve">
+    <value>المدة (دقائق)</value>
+  </data>
+  <data name="Field.End" xml:space="preserve">
+    <value>ينتهي</value>
+  </data>
+  <data name="Field.EnrollmentOpen" xml:space="preserve">
+    <value>يمكن للأعضاء التسجيل بأنفسهم</value>
+  </data>
+  <data name="Field.GpsRequired" xml:space="preserve">
+    <value>اشتراط موقع الهاتف ضمن النطاق</value>
+  </data>
+  <data name="Field.Instructors" xml:space="preserve">
+    <value>المدرّبون</value>
+  </data>
+  <data name="Field.Latitude" xml:space="preserve">
+    <value>خط العرض</value>
+  </data>
+  <data name="Field.LessonPlan" xml:space="preserve">
+    <value>خطة الدرس</value>
+  </data>
+  <data name="Field.Location" xml:space="preserve">
+    <value>الموقع</value>
+  </data>
+  <data name="Field.Longitude" xml:space="preserve">
+    <value>خط الطول</value>
+  </data>
+  <data name="Field.Materials" xml:space="preserve">
+    <value>المواد</value>
+  </data>
+  <data name="Field.MeetingUrl" xml:space="preserve">
+    <value>رابط الاجتماع</value>
+  </data>
+  <data name="Field.MeetingUrlHelp" xml:space="preserve">
+    <value>رابط Teams أو Zoom أو Meet لدورة افتراضية أو مختلطة.</value>
+  </data>
+  <data name="Field.Notes" xml:space="preserve">
+    <value>ملاحظات</value>
+  </data>
+  <data name="Field.Objectives" xml:space="preserve">
+    <value>الأهداف</value>
+  </data>
+  <data name="Field.Occurrences" xml:space="preserve">
+    <value>عدد الجلسات</value>
+  </data>
+  <data name="Field.PostEvaluation" xml:space="preserve">
+    <value>بعد الدورة</value>
+  </data>
+  <data name="Field.PostEvaluationHelp" xml:space="preserve">
+    <value>تبدأ لكل حاضر عند الاعتماد الأول.</value>
+  </data>
+  <data name="Field.PreBrief" xml:space="preserve">
+    <value>قائمة الإيجاز المسبق</value>
+  </data>
+  <data name="Field.Props" xml:space="preserve">
+    <value>المعدات والمرافق</value>
+  </data>
+  <data name="Field.QrEnabled" xml:space="preserve">
+    <value>تسجيل الحضور برمز QR متغيّر (صورته تتوقف عن العمل)</value>
+  </data>
+  <data name="Field.Radius" xml:space="preserve">
+    <value>النطاق (متر)</value>
+  </data>
+  <data name="Field.Ratio" xml:space="preserve">
+    <value>طلاب لكل مدرّب</value>
+  </data>
+  <data name="Field.ReminderHours" xml:space="preserve">
+    <value>التذكير (ساعات قبل؛ 0 لا يوجد)</value>
+  </data>
+  <data name="Field.Repeat" xml:space="preserve">
+    <value>التكرار</value>
+  </data>
+  <data name="Field.RequiresApproval" xml:space="preserve">
+    <value>يوافق مدير الدورات على كل طلب</value>
+  </data>
+  <data name="Field.RestrictGroups" xml:space="preserve">
+    <value>يمكن لهذه المجموعات فقط التسجيل</value>
+  </data>
+  <data name="Field.RestrictGroupsHelp" xml:space="preserve">
+    <value>دون اختيار: كل الأعضاء.</value>
+  </data>
+  <data name="Field.RetentionYears" xml:space="preserve">
+    <value>الاحتفاظ بالقائمة لمدة (سنوات)</value>
+  </data>
+  <data name="Field.RetentionYearsHelp" xml:space="preserve">
+    <value>فارغ: مدة احتفاظ الفئة (مثل 3 سنوات لتدريب مسببات الأمراض المنقولة بالدم).</value>
+  </data>
+  <data name="Field.Roles" xml:space="preserve">
+    <value>الأدوار</value>
+  </data>
+  <data name="Field.SafetyPlan" xml:space="preserve">
+    <value>خطة السلامة</value>
+  </data>
+  <data name="Field.Start" xml:space="preserve">
+    <value>يبدأ</value>
+  </data>
+  <data name="Field.Tags" xml:space="preserve">
+    <value>الوسوم</value>
+  </data>
+  <data name="Field.Title" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Field.TitleHelp" xml:space="preserve">
+    <value>اتركه فارغًا لاستخدام اسم المقرر أو التدريب.</value>
+  </data>
+  <data name="Field.Training" xml:space="preserve">
+    <value>التدريب</value>
+  </data>
+  <data name="Field.VisibleGroups" xml:space="preserve">
+    <value>يراها هؤلاء فقط</value>
+  </data>
+  <data name="Field.VisibleGroupsHelp" xml:space="preserve">
+    <value>دون اختيار: مرئية لكل الأعضاء.</value>
+  </data>
+  <data name="Field.WaitlistEnabled" xml:space="preserve">
+    <value>قائمة انتظار عند الامتلاء (ترقية بالترتيب)</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>تصفية</value>
+  </data>
+  <data name="Fingerprint" xml:space="preserve">
+    <value>البصمة</value>
+  </data>
+  <data name="Footer.Costs" xml:space="preserve">
+    <value>تكلفة الدورات {0}، طلبات التدريب {1} ({2}).</value>
+  </data>
+  <data name="Footer.Exceptions" xml:space="preserve">
+    <value>{0} استثناءً.</value>
+  </data>
+  <data name="Footer.Sessions" xml:space="preserve">
+    <value>{0} جلسة، {1} شخصًا.</value>
+  </data>
+  <data name="FromStarter" xml:space="preserve">
+    <value>من خطة Resgrid أولية</value>
+  </data>
+  <data name="GpsRequiredNotice" xml:space="preserve">
+    <value>يُتحقّق من موقع هاتفك عند تسجيل الحضور.</value>
+  </data>
+  <data name="GroupBy" xml:space="preserve">
+    <value>التجميع حسب</value>
+  </data>
+  <data name="HoursOverride" xml:space="preserve">
+    <value>الساعات</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>استيراد</value>
+  </data>
+  <data name="ImportAttendance" xml:space="preserve">
+    <value>استيراد تقرير حضور اجتماع</value>
+  </data>
+  <data name="ImportAttendanceHelp" xml:space="preserve">
+    <value>تقرير الحضور بصيغة CSV من Teams أو Zoom أو Google Meet. تتم المطابقة بالبريد الإلكتروني ثم بالاسم.</value>
+  </data>
+  <data name="ImportedMessage" xml:space="preserve">
+    <value>تم استيراد تقرير الاجتماع.</value>
+  </data>
+  <data name="ImportResultFormat" xml:space="preserve">
+    <value>تقرير الاجتماع: {0} شخصًا، طابق {1}، أُضيف {2} حضورًا دون تسجيل، ولم يطابق {3}.</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>غير نشط</value>
+  </data>
+  <data name="InstructorsHeader" xml:space="preserve">
+    <value>المدرّبون</value>
+  </data>
+  <data name="KioskInstruction" xml:space="preserve">
+    <value>امسح هذا الرمز بهاتفك لتسجيل الحضور.</value>
+  </data>
+  <data name="KioskTitle" xml:space="preserve">
+    <value>تسجيل حضور الدورة</value>
+  </data>
+  <data name="LapsedNotice" xml:space="preserve">
+    <value>انتهت إضافة نظام إدارة التعلم: تبقى الدورات قابلة للقراءة ويمكن إدارة الدورات الحالية واعتمادها، لكن لا يمكن إنشاء جديد.</value>
+  </data>
+  <data name="LessonPlanIntro" xml:space="preserve">
+    <value>تُدرَّس الخطة من نسختها المنشورة؛ ويُحتفظ بكل نسخة مقدَّمة.</value>
+  </data>
+  <data name="LessonPlansIntro" xml:space="preserve">
+    <value>الأهداف والكفاءات والمواد والنسبة وخطة السلامة وقائمة الإيجاز المسبق، بإصدارات معتمدة قبل الاستخدام.</value>
+  </data>
+  <data name="LessonPlansTitle" xml:space="preserve">
+    <value>خطط الدروس</value>
+  </data>
+  <data name="lms_class_addon_required" xml:space="preserve">
+    <value>يتطلب هذا إضافة نشطة لنظام إدارة التعلم.</value>
+  </data>
+  <data name="lms_class_calendar_failed" xml:space="preserve">
+    <value>تعذّر إنشاء عنصر التقويم.</value>
+  </data>
+  <data name="lms_class_cancelled" xml:space="preserve">
+    <value>أُلغيت هذه الدورة.</value>
+  </data>
+  <data name="lms_class_capacity_invalid" xml:space="preserve">
+    <value>يجب أن تكون السعة بين 0 و10,000.</value>
+  </data>
+  <data name="lms_class_category_invalid" xml:space="preserve">
+    <value>اختر إحدى فئات التدريب في القسم.</value>
+  </data>
+  <data name="lms_class_change_summary_required" xml:space="preserve">
+    <value>صف ما تغيّر قبل الإرسال.</value>
+  </data>
+  <data name="lms_class_code_expired" xml:space="preserve">
+    <value>انتهت صلاحية هذا الرمز. امسح الرمز المعروض مجددًا.</value>
+  </data>
+  <data name="lms_class_cost_invalid" xml:space="preserve">
+    <value>أدخل نوع التكلفة ومبلغًا قدره 0 أو أكثر.</value>
+  </data>
+  <data name="lms_class_course_invalid" xml:space="preserve">
+    <value>اختر أحد المقررات أو التدريبات المنشورة في القسم.</value>
+  </data>
+  <data name="lms_class_enrollment_closed" xml:space="preserve">
+    <value>يتم التسجيل عبر مدير الدورات.</value>
+  </data>
+  <data name="lms_class_enrollment_cutoff" xml:space="preserve">
+    <value>أُغلق التسجيل في هذه الدورة.</value>
+  </data>
+  <data name="lms_class_full" xml:space="preserve">
+    <value>هذه الدورة ممتلئة.</value>
+  </data>
+  <data name="lms_class_gps_location_required" xml:space="preserve">
+    <value>حدّد موقع الدورة (خط العرض والطول) لاشتراط GPS.</value>
+  </data>
+  <data name="lms_class_gps_required" xml:space="preserve">
+    <value>تتطلب هذه الدورة موقع هاتفك لتسجيل الحضور. اسمح بالوصول إلى الموقع وحاول مجددًا.</value>
+  </data>
+  <data name="lms_class_gps_too_far" xml:space="preserve">
+    <value>هاتفك بعيد جدًا عن موقع الدورة لتسجيل الحضور.</value>
+  </data>
+  <data name="lms_class_hours_invalid" xml:space="preserve">
+    <value>يجب أن تكون الساعات بين 0 و9,999.</value>
+  </data>
+  <data name="lms_class_import_empty" xml:space="preserve">
+    <value>لم يُعثر على صفوف حضور في هذا الملف.</value>
+  </data>
+  <data name="lms_class_instructor_invalid" xml:space="preserve">
+    <value>اختر عضوًا أو أدخل اسم مدرّب خارجي.</value>
+  </data>
+  <data name="lms_class_lesson_plan_invalid" xml:space="preserve">
+    <value>اختر خطة درس منشورة.</value>
+  </data>
+  <data name="lms_class_meeting_url_invalid" xml:space="preserve">
+    <value>يجب أن يكون رابط الاجتماع عنوان ويب (https://...).</value>
+  </data>
+  <data name="lms_class_name_required" xml:space="preserve">
+    <value>أدخل اسمًا.</value>
+  </data>
+  <data name="lms_class_not_eligible" xml:space="preserve">
+    <value>هذه الدورة مخصّصة لمجموعات أخرى.</value>
+  </data>
+  <data name="lms_class_not_enrolled" xml:space="preserve">
+    <value>لست على قائمة هذه الدورة.</value>
+  </data>
+  <data name="lms_class_not_found" xml:space="preserve">
+    <value>لم يُعثر على الدورة.</value>
+  </data>
+  <data name="lms_class_not_member" xml:space="preserve">
+    <value>يمكن للأعضاء الحاليين فقط أن يكونوا على القائمة.</value>
+  </data>
+  <data name="lms_class_not_open" xml:space="preserve">
+    <value>هذه الدورة غير متاحة لذلك الآن.</value>
+  </data>
+  <data name="lms_class_not_pending" xml:space="preserve">
+    <value>سبق البت في هذا الطلب.</value>
+  </data>
+  <data name="lms_class_not_signed_in" xml:space="preserve">
+    <value>لم تسجّل حضورك في هذه الدورة.</value>
+  </data>
+  <data name="lms_class_not_started" xml:space="preserve">
+    <value>يمكن اعتماد الدورة بعد بدئها.</value>
+  </data>
+  <data name="lms_class_plan_changed" xml:space="preserve">
+    <value>تغيّر محتوى الخطة بعد إرسالها؛ أرسلها مجددًا.</value>
+  </data>
+  <data name="lms_class_plan_not_approved" xml:space="preserve">
+    <value>يمكن نشر النسخة المعتمدة فقط.</value>
+  </data>
+  <data name="lms_class_plan_not_draft" xml:space="preserve">
+    <value>يمكن تعديل المسودة أو إرسالها فقط.</value>
+  </data>
+  <data name="lms_class_plan_not_found" xml:space="preserve">
+    <value>لم يُعثر على خطة الدرس.</value>
+  </data>
+  <data name="lms_class_plan_not_in_review" xml:space="preserve">
+    <value>هذه النسخة لا تنتظر قرارًا.</value>
+  </data>
+  <data name="lms_class_reason_required" xml:space="preserve">
+    <value>اذكر سبب الإعادة.</value>
+  </data>
+  <data name="lms_class_resource_conflict" xml:space="preserve">
+    <value>هذا المرفق أو المعدّة محجوز بالفعل في هذا الوقت.</value>
+  </data>
+  <data name="lms_class_retention_hold" xml:space="preserve">
+    <value>تُحفظ القائمة حتى تاريخ الاحتفاظ ولا يمكن محوها بعد.</value>
+  </data>
+  <data name="lms_class_rules_invalid" xml:space="preserve">
+    <value>تحقّق من قواعد التسجيل (الإغلاق 0–365 يومًا، التذكير 0–336 ساعة، 1–52 جلسة).</value>
+  </data>
+  <data name="lms_class_sign_in_closed" xml:space="preserve">
+    <value>تسجيل الحضور غير متاح لهذه الدورة الآن.</value>
+  </data>
+  <data name="lms_class_signed_off" xml:space="preserve">
+    <value>اعتُمدت الدورة؛ لا يمكن تغيير قائمتها بهذه الطريقة.</value>
+  </data>
+  <data name="lms_class_times_invalid" xml:space="preserve">
+    <value>يجب أن تنتهي الدورة بعد بدئها وألا تزيد على 14 يومًا.</value>
+  </data>
+  <data name="lms_class_title_required" xml:space="preserve">
+    <value>أدخل عنوانًا، أو اربط مقررًا أو تدريبًا.</value>
+  </data>
+  <data name="lms_class_unenroll_closed" xml:space="preserve">
+    <value>اطلب من مدير الدورات إزالتك من هذه الدورة.</value>
+  </data>
+  <data name="MajorChange" xml:space="preserve">
+    <value>تغيير جوهري</value>
+  </data>
+  <data name="MarkPresent" xml:space="preserve">
+    <value>تسجيل الحضور</value>
+  </data>
+  <data name="MessageRoster" xml:space="preserve">
+    <value>مراسلة المسجّلين</value>
+  </data>
+  <data name="Method.Calendar" xml:space="preserve">
+    <value>تسجيل حضور التقويم</value>
+  </data>
+  <data name="Method.Import" xml:space="preserve">
+    <value>تقرير الاجتماع</value>
+  </data>
+  <data name="Method.Manual" xml:space="preserve">
+    <value>بواسطة المدرّب</value>
+  </data>
+  <data name="Method.None" xml:space="preserve">
+    <value>لم يسجّل الحضور</value>
+  </data>
+  <data name="Method.Qr" xml:space="preserve">
+    <value>تسجيل عبر رمز QR</value>
+  </data>
+  <data name="MinutesFormat" xml:space="preserve">
+    <value>{0} دقيقة</value>
+  </data>
+  <data name="MyClassesIntro" xml:space="preserve">
+    <value>الدورات التي سجّلت فيها أو تدرّسها، وتلك التي لا يزال بإمكانك الانضمام إليها.</value>
+  </data>
+  <data name="MyClassesTitle" xml:space="preserve">
+    <value>دوراتي</value>
+  </data>
+  <data name="NewClass" xml:space="preserve">
+    <value>دورة جديدة</value>
+  </data>
+  <data name="NewDraft" xml:space="preserve">
+    <value>مسودة جديدة</value>
+  </data>
+  <data name="NewLessonPlan" xml:space="preserve">
+    <value>خطة درس جديدة</value>
+  </data>
+  <data name="NewQrSecret" xml:space="preserve">
+    <value>إصدار رمز QR جديد (تتوقف الصور القديمة)</value>
+  </data>
+  <data name="NewResource" xml:space="preserve">
+    <value>مرفق أو معدات جديدة</value>
+  </data>
+  <data name="NoClasses" xml:space="preserve">
+    <value>لا توجد دورات.</value>
+  </data>
+  <data name="NoConflicts" xml:space="preserve">
+    <value>لا أحد في المناوبة</value>
+  </data>
+  <data name="NoCosts" xml:space="preserve">
+    <value>لا توجد تكاليف دورات في هذه الفترة.</value>
+  </data>
+  <data name="NoInstructors" xml:space="preserve">
+    <value>لا يوجد مدرّبون بعد.</value>
+  </data>
+  <data name="NoLessonPlans" xml:space="preserve">
+    <value>لا توجد خطط دروس بعد.</value>
+  </data>
+  <data name="NoMyClasses" xml:space="preserve">
+    <value>لا توجد دورات لك حاليًا.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>لا شيء</value>
+  </data>
+  <data name="NoResources" xml:space="preserve">
+    <value>لا توجد مرافق أو معدات بعد.</value>
+  </data>
+  <data name="NoRoster" xml:space="preserve">
+    <value>لم يسجّل أحد بعد.</value>
+  </data>
+  <data name="Notice.Cancelled" xml:space="preserve">
+    <value>أُلغيت {0} ({1}).</value>
+  </data>
+  <data name="Notice.CancelledTitle" xml:space="preserve">
+    <value>أُلغيت الدورة</value>
+  </data>
+  <data name="Notice.Declined" xml:space="preserve">
+    <value>رُفض طلبك لـ {0} ({1}).</value>
+  </data>
+  <data name="Notice.Enrolled" xml:space="preserve">
+    <value>أنت مسجّل في {0} ({1}).</value>
+  </data>
+  <data name="Notice.EnrolledTitle" xml:space="preserve">
+    <value>قائمة الدورة</value>
+  </data>
+  <data name="Notice.Promoted" xml:space="preserve">
+    <value>توفّر مقعد: أنت الآن مسجّل في {0} ({1}).</value>
+  </data>
+  <data name="Notice.Reminder" xml:space="preserve">
+    <value>تبدأ {0} في {1}. {2}</value>
+  </data>
+  <data name="Notice.ReminderTitle" xml:space="preserve">
+    <value>تذكير بالدورة</value>
+  </data>
+  <data name="Notice.Removed" xml:space="preserve">
+    <value>أُزلت من {0} ({1}).</value>
+  </data>
+  <data name="Notice.Waitlisted" xml:space="preserve">
+    <value>أنت على قائمة الانتظار لـ {0} ({1}).</value>
+  </data>
+  <data name="OnCalendar" xml:space="preserve">
+    <value>فتح في التقويم</value>
+  </data>
+  <data name="OnePerLine" xml:space="preserve">
+    <value>عنصر في كل سطر.</value>
+  </data>
+  <data name="OnShift" xml:space="preserve">
+    <value>في المناوبة</value>
+  </data>
+  <data name="OnShiftHelp" xml:space="preserve">
+    <value>في مناوبة تتداخل مع الدورة.</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>فتح</value>
+  </data>
+  <data name="OpenClass" xml:space="preserve">
+    <value>فتح الدورة</value>
+  </data>
+  <data name="OpenReport" xml:space="preserve">
+    <value>فتح كتقرير</value>
+  </data>
+  <data name="Outside" xml:space="preserve">
+    <value>خارجي</value>
+  </data>
+  <data name="OutsideInstructor" xml:space="preserve">
+    <value>مدرّب خارجي (أدخل الاسم)</value>
+  </data>
+  <data name="OutsideName" xml:space="preserve">
+    <value>اسم المدرّب الخارجي</value>
+  </data>
+  <data name="PendingHeader" xml:space="preserve">
+    <value>طلبات بانتظار الموافقة</value>
+  </data>
+  <data name="PresentHeader" xml:space="preserve">
+    <value>سجّلوا الحضور</value>
+  </data>
+  <data name="Publish" xml:space="preserve">
+    <value>نشر</value>
+  </data>
+  <data name="PublishedMessage" xml:space="preserve">
+    <value>تم النشر.</value>
+  </data>
+  <data name="QrAlt" xml:space="preserve">
+    <value>رمز QR لتسجيل الحضور</value>
+  </data>
+  <data name="QrRotated" xml:space="preserve">
+    <value>تم إصدار رمز QR جديد.</value>
+  </data>
+  <data name="QrRotates" xml:space="preserve">
+    <value>يتغيّر الرمز كل 30 ثانية.</value>
+  </data>
+  <data name="RecentHeader" xml:space="preserve">
+    <value>الأخيرة</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>تحرير</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>إزالة</value>
+  </data>
+  <data name="RemovedMessage" xml:space="preserve">
+    <value>أُزيل من القائمة.</value>
+  </data>
+  <data name="Repeat.Daily" xml:space="preserve">
+    <value>يوميًا</value>
+  </data>
+  <data name="Repeat.None" xml:space="preserve">
+    <value>مرة واحدة</value>
+  </data>
+  <data name="Repeat.Weekly" xml:space="preserve">
+    <value>أسبوعيًا</value>
+  </data>
+  <data name="RequestPlace" xml:space="preserve">
+    <value>طلب مقعد</value>
+  </data>
+  <data name="Resource.Apparatus" xml:space="preserve">
+    <value>آلية</value>
+  </data>
+  <data name="Resource.Equipment" xml:space="preserve">
+    <value>تجهيزات</value>
+  </data>
+  <data name="Resource.Facility" xml:space="preserve">
+    <value>مرفق</value>
+  </data>
+  <data name="Resource.Other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="Resource.Prop" xml:space="preserve">
+    <value>معدات تدريب</value>
+  </data>
+  <data name="ResourcesIntro" xml:space="preserve">
+    <value>ساحات التدريب والقاعات والمعدات والآليات والتجهيزات؛ لا يُحجز المورد مرتين في الوقت نفسه.</value>
+  </data>
+  <data name="ResourcesTitle" xml:space="preserve">
+    <value>المرافق والمعدات التدريبية</value>
+  </data>
+  <data name="RetainUntil" xml:space="preserve">
+    <value>القائمة محفوظة حتى</value>
+  </data>
+  <data name="RetentionHelpFormat" xml:space="preserve">
+    <value>تُحفظ القائمة المعتمدة حتى {0}؛ حذف الدورة يخفيها ولا تُمحى إلا بعد ذلك التاريخ.</value>
+  </data>
+  <data name="Role.Assistant" xml:space="preserve">
+    <value>مدرّب مساعد</value>
+  </data>
+  <data name="Role.Lead" xml:space="preserve">
+    <value>المدرّب الرئيسي</value>
+  </data>
+  <data name="Role.Safety" xml:space="preserve">
+    <value>ضابط السلامة</value>
+  </data>
+  <data name="RosterHeader" xml:space="preserve">
+    <value>قائمة الحضور</value>
+  </data>
+  <data name="Rule.Approval" xml:space="preserve">
+    <value>تتطلب موافقة</value>
+  </data>
+  <data name="Rule.Closed" xml:space="preserve">
+    <value>بواسطة مديري الدورات فقط</value>
+  </data>
+  <data name="Rule.CutoffFormat" xml:space="preserve">
+    <value>يُغلق قبل {0} أيام</value>
+  </data>
+  <data name="Rule.Open" xml:space="preserve">
+    <value>مفتوح للأعضاء</value>
+  </data>
+  <data name="Rule.Waitlist" xml:space="preserve">
+    <value>قائمة انتظار</value>
+  </data>
+  <data name="Rules" xml:space="preserve">
+    <value>التسجيل</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>تم الحفظ.</value>
+  </data>
+  <data name="SaveDraft" xml:space="preserve">
+    <value>حفظ المسودة</value>
+  </data>
+  <data name="SeatsFormat" xml:space="preserve">
+    <value>{0} من {1} مقعدًا محجوزًا</value>
+  </data>
+  <data name="Section.Details" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="Section.Enrolment" xml:space="preserve">
+    <value>قواعد التسجيل</value>
+  </data>
+  <data name="Section.Records" xml:space="preserve">
+    <value>السجلات والتقييم</value>
+  </data>
+  <data name="Section.SignIn" xml:space="preserve">
+    <value>تسجيل الحضور</value>
+  </data>
+  <data name="Section.What" xml:space="preserve">
+    <value>ما يُدرَّس</value>
+  </data>
+  <data name="Section.When" xml:space="preserve">
+    <value>متى وأين</value>
+  </data>
+  <data name="Section.You" xml:space="preserve">
+    <value>أنت</value>
+  </data>
+  <data name="SendBack" xml:space="preserve">
+    <value>إعادة</value>
+  </data>
+  <data name="SeriesFormat" xml:space="preserve">
+    <value>الجلسة {0} من {1} ضمن سلسلة.</value>
+  </data>
+  <data name="SeriesIntro" xml:space="preserve">
+    <value>حضور كل عضو عبر جلسات هذه الدورة.</value>
+  </data>
+  <data name="SeriesReport" xml:space="preserve">
+    <value>حضور السلسلة</value>
+  </data>
+  <data name="SeriesTitle" xml:space="preserve">
+    <value>حضور السلسلة</value>
+  </data>
+  <data name="ShiftPanelHeader" xml:space="preserve">
+    <value>التدريب على تقويم المناوبات (14 يومًا القادمة)</value>
+  </data>
+  <data name="ShowQr" xml:space="preserve">
+    <value>عرض رمز QR للحضور</value>
+  </data>
+  <data name="SignedInAt" xml:space="preserve">
+    <value>سجّل الحضور في</value>
+  </data>
+  <data name="SignedInMessage" xml:space="preserve">
+    <value>تم تسجيل حضورك.</value>
+  </data>
+  <data name="SignedOffFormat" xml:space="preserve">
+    <value>تم الاعتماد: حضر {0}، غاب {1}؛ كُتب {2} سجلًا، واستُبدل {3}.</value>
+  </data>
+  <data name="SignedOffOn" xml:space="preserve">
+    <value>تاريخ الاعتماد</value>
+  </data>
+  <data name="SignedOutMessage" xml:space="preserve">
+    <value>تم تسجيل خروجك.</value>
+  </data>
+  <data name="SignInButton" xml:space="preserve">
+    <value>سجّل حضوري</value>
+  </data>
+  <data name="SignInClosed" xml:space="preserve">
+    <value>تسجيل الحضور غير متاح لهذه الدورة الآن.</value>
+  </data>
+  <data name="SignInConfirm" xml:space="preserve">
+    <value>هل تسجّل حضورك في هذه الدورة الآن؟</value>
+  </data>
+  <data name="SignInTitle" xml:space="preserve">
+    <value>تسجيل الحضور في الدورة</value>
+  </data>
+  <data name="SignOff" xml:space="preserve">
+    <value>اعتماد القائمة</value>
+  </data>
+  <data name="SignOffAgain" xml:space="preserve">
+    <value>اعتماد مجددًا</value>
+  </data>
+  <data name="SignOffHelp" xml:space="preserve">
+    <value>يكتب الاعتماد سجل تدريب لكل حاضر (لا شيء للغائبين) ويحفظ القائمة طوال مدة الاحتفاظ. الأعضاء غير المسجّلين يُعدّون غائبين ما لم يسجّلوا حضورهم.</value>
+  </data>
+  <data name="SignOut" xml:space="preserve">
+    <value>تسجيل الخروج من الدورة</value>
+  </data>
+  <data name="Starter.evoc" xml:space="preserve">
+    <value>قيادة مركبات الطوارئ</value>
+  </data>
+  <data name="Starter.evoc.Help" xml:space="preserve">
+    <value>فحص ما قبل الرحلة، الرجوع للخلف مع موجّه، تمارين المسار؛ ساعات القيادة والأميال.</value>
+  </data>
+  <data name="Starter.hose-evolutions" xml:space="preserve">
+    <value>تمارين الخراطيم السنوية</value>
+  </data>
+  <data name="Starter.hose-evolutions.Help" xml:space="preserve">
+    <value>الخطوط الموصولة مسبقًا، التقدم عبر السلالم وأنابيب المياه الرأسية، تحميل الخراطيم.</value>
+  </data>
+  <data name="Starter.ladder-evolutions" xml:space="preserve">
+    <value>تمارين السلالم السنوية</value>
+  </data>
+  <data name="Starter.ladder-evolutions.Help" xml:space="preserve">
+    <value>الحمل، الرفع، التموضع للإنقاذ والتهوية، التسلق والتثبيت.</value>
+  </data>
+  <data name="Starter.live-fire" xml:space="preserve">
+    <value>تمرين الحريق الحي (خطة الحرق)</value>
+  </data>
+  <data name="Starter.live-fire.Help" xml:space="preserve">
+    <value>فحوص ما قبل الحرق والأدوار والنسب وخطة السلامة التي يسجّلها القسم.</value>
+  </data>
+  <data name="Starter.physical-ability" xml:space="preserve">
+    <value>اختبار القدرة البدنية</value>
+  </data>
+  <data name="Starter.physical-ability.Help" xml:space="preserve">
+    <value>محطات موقّتة بأزمنة النجاح الخاصة بالقسم.</value>
+  </data>
+  <data name="Starter.pump-evolutions" xml:space="preserve">
+    <value>تمارين المضخات السنوية</value>
+  </data>
+  <data name="Starter.pump-evolutions.Help" xml:space="preserve">
+    <value>التزويد من الحنفية، السحب من مصدر ثابت، الضغوط للخطوط المستخدمة، الضخ المتتابع.</value>
+  </data>
+  <data name="Starter.scba" xml:space="preserve">
+    <value>إتقان جهاز التنفس</value>
+  </data>
+  <data name="Starter.scba.Help" xml:space="preserve">
+    <value>الفحص، الارتداء الموقّت، فحص الإحكام، إدارة الهواء وإجراءات الطوارئ.</value>
+  </data>
+  <data name="StartersHeader" xml:space="preserve">
+    <value>خطط Resgrid الأولية</value>
+  </data>
+  <data name="StartersIntro" xml:space="preserve">
+    <value>بنية وقوائم تحقق كتبتها Resgrid بلغة بسيطة (دون نص أي معيار). تصبح النسخة مسودة لقسمك لتعديلها واعتمادها.</value>
+  </data>
+  <data name="Stat.Pending" xml:space="preserve">
+    <value>بانتظار الموافقة</value>
+  </data>
+  <data name="Stat.Seats" xml:space="preserve">
+    <value>المقاعد المحجوزة</value>
+  </data>
+  <data name="Stat.Upcoming" xml:space="preserve">
+    <value>مجدولة</value>
+  </data>
+  <data name="Stat.Waitlisted" xml:space="preserve">
+    <value>على قوائم الانتظار</value>
+  </data>
+  <data name="Status.Cancelled" xml:space="preserve">
+    <value>ملغاة</value>
+  </data>
+  <data name="Status.Scheduled" xml:space="preserve">
+    <value>مجدولة</value>
+  </data>
+  <data name="Status.SignedOff" xml:space="preserve">
+    <value>معتمدة</value>
+  </data>
+  <data name="StripLabel" xml:space="preserve">
+    <value>الدورات</value>
+  </data>
+  <data name="SubmitForApproval" xml:space="preserve">
+    <value>إرسال للموافقة</value>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>أُرسلت للموافقة.</value>
+  </data>
+  <data name="Tab.Classes" xml:space="preserve">
+    <value>الدورات</value>
+  </data>
+  <data name="Tab.Costs" xml:space="preserve">
+    <value>تكاليف الدورات</value>
+  </data>
+  <data name="Tab.LessonPlans" xml:space="preserve">
+    <value>خطط الدروس</value>
+  </data>
+  <data name="Tab.My" xml:space="preserve">
+    <value>دوراتي</value>
+  </data>
+  <data name="Tab.Resources" xml:space="preserve">
+    <value>المرافق والمعدات التدريبية</value>
+  </data>
+  <data name="TagFilter" xml:space="preserve">
+    <value>الوسم</value>
+  </data>
+  <data name="TaughtHeader" xml:space="preserve">
+    <value>الدورات التي درّستها</value>
+  </data>
+  <data name="TimecardOff" xml:space="preserve">
+    <value>لا توجد بعد بطاقة دوام تستقبل وقت التدريب في هذا القسم (Workforce Pro).</value>
+  </data>
+  <data name="TimecardOn" xml:space="preserve">
+    <value>تُعرض ساعات الحاضرين على بطاقات دوامهم عند الاعتماد.</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>الإجمالي</value>
+  </data>
+  <data name="Uncategorized" xml:space="preserve">
+    <value>بلا فئة</value>
+  </data>
+  <data name="UpcomingHeader" xml:space="preserve">
+    <value>القادمة</value>
+  </data>
+  <data name="UseMyLocation" xml:space="preserve">
+    <value>استخدام موقعي</value>
+  </data>
+  <data name="UseStarter" xml:space="preserve">
+    <value>نسخ كمسودة</value>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>الإصدار</value>
+  </data>
+  <data name="VersionsHeader" xml:space="preserve">
+    <value>الإصدارات</value>
+  </data>
+  <data name="VersionStatus.Approved" xml:space="preserve">
+    <value>معتمدة</value>
+  </data>
+  <data name="VersionStatus.Draft" xml:space="preserve">
+    <value>مسودة</value>
+  </data>
+  <data name="VersionStatus.InReview" xml:space="preserve">
+    <value>قيد المراجعة</value>
+  </data>
+  <data name="VersionStatus.Legacy" xml:space="preserve">
+    <value>قديمة</value>
+  </data>
+  <data name="VersionStatus.Published" xml:space="preserve">
+    <value>منشورة</value>
+  </data>
+  <data name="VersionStatus.Retired" xml:space="preserve">
+    <value>متقاعدة</value>
+  </data>
+  <data name="VersionStatus.Superseded" xml:space="preserve">
+    <value>مستبدلة</value>
+  </data>
+  <data name="Virtual" xml:space="preserve">
+    <value>افتراضية</value>
+  </data>
+  <data name="WaitlistHeader" xml:space="preserve">
+    <value>قائمة الانتظار (بالترتيب)</value>
+  </data>
+  <data name="WaitlistPositionFormat" xml:space="preserve">
+    <value>الترتيب {0}</value>
+  </data>
+  <data name="WalkIn" xml:space="preserve">
+    <value>دون تسجيل مسبق</value>
+  </data>
+  <data name="WalkInMessage" xml:space="preserve">
+    <value>سُجّل الحضور.</value>
+  </data>
+  <data name="Withdraw" xml:space="preserve">
+    <value>انسحاب</value>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>انسحبت من الدورة.</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>نعم</value>
+  </data>
+  <data name="YouTeach" xml:space="preserve">
+    <value>أنت تدرّس هذه الدورة</value>
+  </data>
+</root>

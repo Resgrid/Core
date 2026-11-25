@@ -53,6 +53,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ICertificationService _certificationService;
 		private readonly IUnitsService _unitsService;
 		private readonly IShiftsService _shiftsService;
+		private readonly ILearningRecordService _learningRecordService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> _localizer;
 
 		private TrainingManagementScope _scope;
@@ -63,7 +64,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IPersonnelRolesService personnelRolesService, IAuthorizationService authorizationService, ITrainingAssignmentService assignmentService,
 			IMyTrainingService myTrainingService, IMemberLeaveService leaveService, IDepartmentSettingsService departmentSettingsService,
 			ICertificationService certificationService, IUnitsService unitsService, IShiftsService shiftsService,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer)
+			ILearningRecordService learningRecordService, IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer)
 		{
 			_departmentGroupsService = departmentGroupsService;
 			_departmentsService = departmentService;
@@ -77,6 +78,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_certificationService = certificationService;
 			_unitsService = unitsService;
 			_shiftsService = shiftsService;
+			_learningRecordService = learningRecordService;
 			_localizer = localizer;
 		}
 
@@ -240,6 +242,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			var model = new NewTrainingModel { SendOverdueNotices = true, CanAuthor = true, CanAssign = scope.AssignRight.HoldsAny };
+
+			// K1: "New training" from a knowledge gap starts from the question (carried in TempData, never the URL); the author writes it.
+			if (TempData?[KnowledgeController.TrainingPrefillKey] is string question && !string.IsNullOrWhiteSpace(question))
+			{
+				var line = question.Trim();
+				model.Name = line.Length > 200 ? line.Substring(0, 200) : line;
+				model.Description = "<p>" + System.Net.WebUtility.HtmlEncode(line) + "</p>";
+			}
+
 			await FillOptionsAsync(model);
 			return View(model);
 		}
@@ -265,6 +276,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// A new training is always a new row: nothing posted can reach its id, creator, stamps or children (T-D23).
 			var training = new Training { DepartmentId = DepartmentId, CreatedByUserId = UserId, CreatedOn = now };
 			ApplyContent(training, model, department);
+			await ValidateCategoryAsync(training, null);
 			training.Questions = ToEntities(model.Questions, 0);
 			ValidateQuiz(training);
 			await AddAttachmentsAsync(training, attachments);
@@ -370,8 +382,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var storedHash = TrainingQuizScorer.RevisionHash(existing);
 				var previousFixed = existing.ToBeCompletedBy;
 				var previousDays = existing.DueDays;
+				var previousCategory = existing.CategoryId;
 
 				ApplyContent(existing, model, department);
+				await ValidateCategoryAsync(existing, previousCategory);
 				existing.Questions = ToEntities(model.Questions, trainingId);
 				existing.UpdatedByUserId = UserId;
 				ValidateQuiz(existing);
@@ -1050,6 +1064,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var shifts = new HashSet<int>(model.ShiftIds ?? new List<int>());
 			model.Shifts = (await _shiftsService.GetAllShiftsByDepartmentAsync(DepartmentId) ?? new List<Shift>())
 				.OrderBy(s => s.Name).Select(s => new SelectListItem(s.Name, s.ShiftId.ToString(CultureInfo.InvariantCulture), shifts.Contains(s.ShiftId))).ToList();
+
+			// Training categories (T1): the department's live ones, and a removed one only while it is the stored value.
+			var categories = await _learningRecordService.GetCategoriesAsync(DepartmentId, true) ?? new List<TrainingCategory>();
+			model.Categories = categories.Where(c => c.DepartmentId == DepartmentId && (!c.IsDeleted || c.TrainingCategoryId == model.CategoryId))
+				.OrderBy(c => c.SortOrder).ThenBy(c => c.Name, StringComparer.CurrentCultureIgnoreCase)
+				.Select(c => new SelectListItem(c.IsDeleted ? string.Format(L("Rec.RemovedCategory"), c.Name) : c.Name, c.TrainingCategoryId.ToString(CultureInfo.InvariantCulture), c.TrainingCategoryId == model.CategoryId))
+				.ToList();
 		}
 
 		/// <summary>The audience rules the form describes (ContentAudienceKinds); Everyone stands alone.</summary>
@@ -1152,6 +1173,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			training.Name = name.Length > 500 ? name.Substring(0, 500) : name;
 			training.Description = model.Description ?? string.Empty;
 			training.TrainingText = model.TrainingText ?? string.Empty;
+			training.ExcludeFromAi = model.ExcludeFromAi;
 
 			// Server-side bounds (T-D23): the browser's range check is not a guarantee.
 			if (double.IsNaN(model.MinimumScore) || model.MinimumScore < 0 || model.MinimumScore > 100)
@@ -1216,6 +1238,41 @@ namespace Resgrid.Web.Areas.User.Controllers
 			training.Hours = model.Hours.HasValue ? Math.Round(model.Hours.Value, 2) : (decimal?)null;
 			training.CeHours = model.CeHours.HasValue ? Math.Round(model.CeHours.Value, 2) : (decimal?)null;
 			training.CategoryId = model.CategoryId.HasValue && model.CategoryId.Value > 0 ? model.CategoryId : null;
+
+			// Training T1 parity fields (Vector): delivery method, objectives, tags and the external course code.
+			if (model.MethodOfTraining.HasValue && !Enum.IsDefined(typeof(MethodsOfTraining), model.MethodOfTraining.Value))
+				ModelState.AddModelError(nameof(model.MethodOfTraining), L("Rec.MethodInvalid"));
+			training.MethodOfTraining = model.MethodOfTraining.HasValue && Enum.IsDefined(typeof(MethodsOfTraining), model.MethodOfTraining.Value) ? model.MethodOfTraining : null;
+			training.Objectives = Trim(model.Objectives, LearningRecord.MaxObjectivesLength, nameof(model.Objectives));
+			training.Tags = NormalizeTags(Trim(model.Tags, 500, nameof(model.Tags)));
+			training.ExternalCode = Trim(model.ExternalCode, 64, nameof(model.ExternalCode));
+		}
+
+		/// <summary>Comma separated tags, trimmed and without repeats.</summary>
+		public static string NormalizeTags(string tags)
+		{
+			if (string.IsNullOrWhiteSpace(tags))
+				return null;
+			var parts = tags.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).Where(x => x.Length > 0)
+				.Distinct(StringComparer.CurrentCultureIgnoreCase).ToList();
+			if (parts.Count == 0)
+				return null;
+			var joined = string.Join(", ", parts);
+			return joined.Length > 500 ? joined.Substring(0, 500) : joined;
+		}
+
+		/// <summary>A training's category is one of the department's (a removed one only when it was already stored).</summary>
+		private async Task ValidateCategoryAsync(Training training, int? storedCategoryId)
+		{
+			if (!training.CategoryId.HasValue || training.CategoryId == storedCategoryId)
+				return;
+
+			var categories = await _learningRecordService.GetCategoriesAsync(DepartmentId) ?? new List<TrainingCategory>();
+			if (!categories.Any(c => c.TrainingCategoryId == training.CategoryId.Value && c.DepartmentId == DepartmentId && !c.IsDeleted))
+			{
+				ModelState.AddModelError("CategoryId", L("Rec.CategoryInvalid"));
+				training.CategoryId = storedCategoryId;
+			}
 		}
 
 		private int? Bounded(int? value, int min, int max, string field, string errorKey)
@@ -1289,6 +1346,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				StartsOn = training.StartsOn.HasValue ? DateTime.SpecifyKind(training.StartsOn.Value, DateTimeKind.Utc).TimeConverter(department).ToString("yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture) : null,
 				ClosedToNewAssignees = training.ClosedToNewAssignees,
 				OpenToAllMembers = training.OpenToAllMembers,
+				ExcludeFromAi = training.ExcludeFromAi,
 				AllowSelfEnroll = training.AllowSelfEnroll,
 				RepeatMonths = training.RepeatMonths,
 				QuizAttemptLimit = training.QuizAttemptLimit,
@@ -1302,6 +1360,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				CeProvider = training.CeProvider,
 				CeCourseNumber = training.CeCourseNumber,
 				CategoryId = training.CategoryId,
+				MethodOfTraining = training.MethodOfTraining,
+				Objectives = training.Objectives,
+				Tags = training.Tags,
+				ExternalCode = training.ExternalCode,
 				IsDynamic = training.Audiences?.Count > 0,
 				AssignedCount = training.Users?.Count(u => u != null && !u.RemovedOn.HasValue) ?? 0,
 				CompletedCount = training.Users?.Count(u => u != null && u.Complete && !u.RemovedOn.HasValue) ?? 0,

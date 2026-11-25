@@ -121,6 +121,15 @@ namespace Resgrid.Web.Areas.User.Models.DepartmentImport
 		public Dictionary<string, ImportRollbackPreview> Rollbacks { get; set; } = new Dictionary<string, ImportRollbackPreview>();
 	}
 
+	/// <summary>The wizard's Protocols step: bulk JSON in the open protocol exchange format (preview, then import as drafts).</summary>
+	public sealed class ImportProtocolsView : ImportPageView
+	{
+		public const long MaxFileBytes = 10L * 1024 * 1024;
+		public Resgrid.Model.ProtocolImportResult Result { get; set; }
+		public bool CanAuthor { get; set; }
+		public string FileName { get; set; }
+	}
+
 	public sealed class ImportVerifyView : ImportPageView
 	{
 		public ImportActivationChecklist Checklist { get; set; }

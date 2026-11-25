@@ -206,5 +206,19 @@
   "RecurringCallOccurrenceSkipped": 214,
   "RecurringCallOccurrenceDispatched": 215,
   "RecurringCallAlertRaised": 216,
-  "RecurringCallAlertResolved": 217
+  "RecurringCallAlertResolved": 217,
+  "SignatureRequested": 220,
+  "SignatureCompleted": 221,
+  "SignatureDeclined": 222,
+  "SignatureExpired": 223,
+  "TrainingAssigned": 224,
+  "TrainingCompleted": 225,
+  "TrainingFailed": 226,
+  "TrainingOverdue": 227,
+  "RequirementAtRisk": 228,
+  "RequirementEnforced": 229,
+  "ApprovalRequested": 236,
+  "ApprovalGranted": 237,
+  "ApprovalRejected": 238,
+  "ApprovalEscalated": 239
 }

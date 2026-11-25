@@ -42,13 +42,18 @@ namespace Resgrid.Services
 		private readonly IMemberLeaveService _leaveService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
+		private readonly Lazy<ILearningRecordWriter> _learningRecords;
+		private readonly IKnowledgeIndexQueue _knowledgeQueue;
 
 		public TrainingService(ITrainingRepository trainingRepository, ITrainingAttachmentRepository trainingAttachmentRepository,
 			ITrainingUserRepository trainingUserRepository, ITrainingQuestionRepository trainingQuestionRepository, ICommunicationService communicationService, IDepartmentsService departmentService,
-			IDepartmentSettingsService departmentSettingsService, Lazy<ISearchProjectionService> searchProjections = null, ITrainingQuizAttemptsRepository attemptsRepository = null,
+			IDepartmentSettingsService departmentSettingsService, IKnowledgeIndexQueue knowledgeQueue, Lazy<ISearchProjectionService> searchProjections = null, ITrainingQuizAttemptsRepository attemptsRepository = null,
 			ITrainingAudiencesRepository audiencesRepository = null, ITrainingCompletionHistoriesRepository historiesRepository = null, ITrainingQuestionFlagsRepository flagsRepository = null,
-			IMemberLeaveService leaveService = null, IEventAggregator eventAggregator = null, IDepartmentGroupsService departmentGroupsService = null)
+			IMemberLeaveService leaveService = null, IEventAggregator eventAggregator = null, IDepartmentGroupsService departmentGroupsService = null,
+			Lazy<ILearningRecordWriter> learningRecords = null)
 		{
+			_learningRecords = learningRecords;
+			_knowledgeQueue = knowledgeQueue;
 			_searchProjections = searchProjections;
 			_trainingRepository = trainingRepository;
 			_trainingAttachmentRepository = trainingAttachmentRepository;
@@ -219,6 +224,7 @@ namespace Resgrid.Services
 				_eventAggregator?.SendMessage(new TrainingUpdatedEvent { DepartmentId = saved.DepartmentId, Training = payload });
 
 			if (_searchProjections != null) await _searchProjections.Value.ProjectTrainingAsync(saved, cancellationToken);
+			await ReindexKnowledgeAsync(saved, cancellationToken);
 			return saved;
 		}
 
@@ -353,6 +359,7 @@ namespace Resgrid.Services
 			training.ArchivedByUserId = userId;
 			Audit(departmentId, userId, AuditLogTypes.TrainingArchived, null, JsonConvert.SerializeObject(new { training.TrainingId, training.Name, ArchivedOn = now }));
 			if (_searchProjections != null) await _searchProjections.Value.ProjectTrainingAsync(training, cancellationToken);
+			await ReindexKnowledgeAsync(training, cancellationToken);
 			return true;
 		}
 
@@ -372,6 +379,7 @@ namespace Resgrid.Services
 			training.ArchivedByUserId = null;
 			Audit(departmentId, userId, AuditLogTypes.TrainingRestored, JsonConvert.SerializeObject(new { training.TrainingId, training.Name, ArchivedOn = archivedOn }), null);
 			if (_searchProjections != null) await _searchProjections.Value.ProjectTrainingAsync(training, cancellationToken);
+			await ReindexKnowledgeAsync(training, cancellationToken);
 			return true;
 		}
 
@@ -393,7 +401,18 @@ namespace Resgrid.Services
 			Audit(departmentId, userId, AuditLogTypes.TrainingDeleted, JsonConvert.SerializeObject(new { training.TrainingId, training.Name, training.CreatedByUserId, training.CreatedOn }), null);
 			if (_searchProjections != null)
 				await _searchProjections.Value.RemoveAsync(training.DepartmentId, SearchEntityTypes.Training, training.TrainingId.ToString(), cancellationToken);
+			await ReindexKnowledgeAsync(training, cancellationToken);
 			return TrainingDeleteOutcomes.Deleted;
+		}
+
+		/// <summary>K1: a training's save, start, archive, restore or delete reindexes it (and its files) for knowledge answers.</summary>
+		private async Task ReindexKnowledgeAsync(Training training, CancellationToken cancellationToken)
+		{
+			if (_knowledgeQueue == null || training == null || training.TrainingId <= 0)
+				return;
+			var id = training.TrainingId.ToString(System.Globalization.CultureInfo.InvariantCulture);
+			await _knowledgeQueue.EnqueueAsync(training.DepartmentId, KnowledgeSourceKinds.Training, id, cancellationToken);
+			await _knowledgeQueue.EnqueueAsync(training.DepartmentId, KnowledgeSourceKinds.TrainingFile, id, cancellationToken);
 		}
 
 		public async Task<Training> CopyTrainingAsync(int departmentId, int trainingId, string userId, string name = null, CancellationToken cancellationToken = default(CancellationToken))
@@ -414,6 +433,7 @@ namespace Resgrid.Services
 				MinimumScore = source.MinimumScore,
 				ToBeCompletedBy = source.ToBeCompletedBy.HasValue && source.ToBeCompletedBy.Value.Date >= now.Date ? source.ToBeCompletedBy : null,
 				OpenToAllMembers = source.OpenToAllMembers,
+				ExcludeFromAi = source.ExcludeFromAi,
 				AllowSelfEnroll = source.AllowSelfEnroll,
 				StartsOn = source.StartsOn.HasValue && source.StartsOn.Value > now ? source.StartsOn : null,
 				DueDays = source.DueDays,
@@ -462,6 +482,29 @@ namespace Resgrid.Services
 				string.Equals(x.UserId, userId, StringComparison.OrdinalIgnoreCase));
 		}
 
+		/// <summary>
+		/// Training T1: a completion goes on the member's transcript (one learning record per assignment cycle, R-T1). Never fails
+		/// the completion itself; the history backfill writes any record a failure here left out.
+		/// </summary>
+		private async Task WriteCompletionAsync(int departmentId, int trainingId, string userId, CancellationToken cancellationToken)
+		{
+			if (_learningRecords == null)
+				return;
+
+			try
+			{
+				await _learningRecords.Value.WriteCourseCompletionAsync(departmentId, trainingId, userId, false, cancellationToken);
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Transcript record for training {trainingId}, member {userId} was not written");
+			}
+		}
+
 		public async Task<TrainingUser> SetTrainingAsViewedAsync(int trainingId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var training = await GetTrainingRowByIdAsync(trainingId);
@@ -480,8 +523,11 @@ namespace Resgrid.Services
 			assignment.ViewedOn ??= now;
 			if (completeWithoutQuiz)
 			{
+				var newlyComplete = !assignment.Complete;
 				assignment.Complete = true;
 				assignment.CompletedOn ??= now;
+				if (newlyComplete)
+					await WriteCompletionAsync(training.DepartmentId, trainingId, assignment.UserId, cancellationToken);
 			}
 
 			assignment.Training = training;
@@ -539,6 +585,8 @@ namespace Resgrid.Services
 			}
 
 			await _trainingUserRepository.RecordQuizResultAsync(assignment.TrainingUserId, result.Score, result.Passed, attemptCount, now, cancellationToken);
+			if (result.Passed)
+				await WriteCompletionAsync(departmentId, trainingId, assignment.UserId, cancellationToken);
 
 			return new TrainingQuizSubmission
 			{

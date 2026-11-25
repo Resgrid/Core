@@ -8,6 +8,9 @@ namespace Resgrid.Model
 	{
 		CallPriority = 0,
 		CallType = 1,
-		CallPriorityAndType = 2
+		CallPriorityAndType = 2,
+
+		/// <summary>Protocols P4 shared trigger engine: any call, narrowed only by the trigger's conditions (<see cref="DispatchTriggerBases.Conditions"/>).</summary>
+		Conditions = 3
 	}
 }

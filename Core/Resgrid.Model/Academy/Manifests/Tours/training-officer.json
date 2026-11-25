@@ -1,0 +1,163 @@
+{
+  "schema": 1,
+  "key": "training-officer",
+  "revision": 1,
+  "title": {
+    "en": "Run training",
+    "ar": "أدِر التدريب",
+    "de": "Ausbildung organisieren",
+    "el": "Οργανώστε την εκπαίδευση",
+    "es": "Gestione la formación",
+    "fr": "Organisez la formation",
+    "it": "Gestisci la formazione",
+    "pl": "Prowadź szkolenia",
+    "sv": "Driv utbildningen",
+    "uk": "Організуйте навчання"
+  },
+  "intro": {
+    "en": "Four first steps for training officers. Each links to its page and to a short Academy lesson.",
+    "ar": "أربع خطوات أولى لمسؤولي التدريب. كل خطوة ترتبط بصفحتها وبدرس قصير من الأكاديمية.",
+    "de": "Vier erste Schritte für Ausbildungsverantwortliche. Jeder Schritt verlinkt seine Seite und eine kurze Academy-Lektion.",
+    "el": "Τέσσερα πρώτα βήματα για τους υπεύθυνους εκπαίδευσης. Το καθένα οδηγεί στη σελίδα του και σε ένα σύντομο μάθημα της Academy.",
+    "es": "Cuatro primeros pasos para responsables de formación. Cada uno enlaza con su página y con una breve lección de la Academy.",
+    "fr": "Quatre premières étapes pour les responsables formation. Chacune renvoie à sa page et à une courte leçon de l'Academy.",
+    "it": "Quattro primi passi per i responsabili della formazione. Ognuno rimanda alla sua pagina e a una breve lezione dell'Academy.",
+    "pl": "Cztery pierwsze kroki dla osób odpowiedzialnych za szkolenia. Każdy prowadzi do swojej strony i krótkiej lekcji Academy.",
+    "sv": "Fyra första steg för utbildningsansvariga. Varje steg länkar till sin sida och till en kort lektion i Academy.",
+    "uk": "Чотири перші кроки для відповідальних за навчання. Кожен веде на свою сторінку та до короткого уроку в Academy."
+  },
+  "tasks": [
+    {
+      "key": "training",
+      "lessonId": "09-training",
+      "page": {
+        "controller": "Trainings",
+        "action": "New"
+      },
+      "title": {
+        "en": "Create a training",
+        "ar": "أنشئ تدريبًا",
+        "de": "Ausbildung anlegen",
+        "el": "Δημιουργήστε μια εκπαίδευση",
+        "es": "Cree una formación",
+        "fr": "Créez une formation",
+        "it": "Crea una formazione",
+        "pl": "Utwórz szkolenie",
+        "sv": "Skapa en utbildning",
+        "uk": "Створіть навчання"
+      },
+      "hint": {
+        "en": "Write a training with a short quiz and assign it.",
+        "ar": "اكتب تدريبًا مع اختبار قصير وعيّنه.",
+        "de": "Schreiben Sie eine Ausbildung mit kurzem Quiz und weisen Sie sie zu.",
+        "el": "Γράψτε μια εκπαίδευση με σύντομο κουίζ και αναθέστε την.",
+        "es": "Escriba una formación con un breve cuestionario y asígnela.",
+        "fr": "Rédigez une formation avec un court quiz et attribuez-la.",
+        "it": "Scrivi una formazione con un breve quiz e assegnala.",
+        "pl": "Napisz szkolenie z krótkim quizem i przypisz je.",
+        "sv": "Skriv en utbildning med ett kort quiz och tilldela den.",
+        "uk": "Напишіть навчання з коротким тестом і призначте його."
+      },
+      "visibility": []
+    },
+    {
+      "key": "academy",
+      "lessonId": "09-training",
+      "page": {
+        "controller": "Courses",
+        "action": "Academy"
+      },
+      "title": {
+        "en": "Assign Academy lessons",
+        "ar": "عيّن دروس الأكاديمية",
+        "de": "Academy-Lektionen zuweisen",
+        "el": "Αναθέστε μαθήματα της Academy",
+        "es": "Asigne lecciones de la Academy",
+        "fr": "Attribuez des leçons de l'Academy",
+        "it": "Assegna lezioni dell'Academy",
+        "pl": "Przypisz lekcje Academy",
+        "sv": "Tilldela lektioner i Academy",
+        "uk": "Призначте уроки Academy"
+      },
+      "hint": {
+        "en": "Give new members the Resgrid Academy lessons for their role.",
+        "ar": "امنح الأعضاء الجدد دروس أكاديمية Resgrid المناسبة لدورهم.",
+        "de": "Geben Sie neuen Mitgliedern die Resgrid-Academy-Lektionen für ihre Rolle.",
+        "el": "Δώστε στα νέα μέλη τα μαθήματα της Resgrid Academy για τον ρόλο τους.",
+        "es": "Dé a los nuevos miembros las lecciones de Resgrid Academy de su rol.",
+        "fr": "Donnez aux nouveaux membres les leçons de la Resgrid Academy liées à leur rôle.",
+        "it": "Assegna ai nuovi membri le lezioni della Resgrid Academy per il loro ruolo.",
+        "pl": "Przypisz nowym członkom lekcje Resgrid Academy dla ich roli.",
+        "sv": "Ge nya medlemmar lektionerna i Resgrid Academy för deras roll.",
+        "uk": "Призначте новим учасникам уроки Resgrid Academy для їхньої ролі."
+      },
+      "visibility": []
+    },
+    {
+      "key": "certifications",
+      "lessonId": "09-training",
+      "page": {
+        "controller": "Certifications",
+        "action": "Index"
+      },
+      "title": {
+        "en": "Track certifications",
+        "ar": "تتبّع الشهادات",
+        "de": "Zertifikate verfolgen",
+        "el": "Παρακολουθήστε τις πιστοποιήσεις",
+        "es": "Haga seguimiento de las certificaciones",
+        "fr": "Suivez les certifications",
+        "it": "Monitora le certificazioni",
+        "pl": "Śledź certyfikaty",
+        "sv": "Följ upp certifieringar",
+        "uk": "Відстежуйте сертифікати"
+      },
+      "hint": {
+        "en": "Record certifications and see what is about to expire.",
+        "ar": "سجّل الشهادات واعرف ما يقترب من الانتهاء.",
+        "de": "Erfassen Sie Zertifikate und sehen Sie, was bald abläuft.",
+        "el": "Καταγράψτε πιστοποιήσεις και δείτε ποιες λήγουν σύντομα.",
+        "es": "Registre certificaciones y vea cuáles están por vencer.",
+        "fr": "Enregistrez les certifications et voyez celles qui vont expirer.",
+        "it": "Registra le certificazioni e vedi quelle in scadenza.",
+        "pl": "Zapisuj certyfikaty i sprawdzaj, które wkrótce wygasną.",
+        "sv": "Registrera certifieringar och se vilka som snart går ut.",
+        "uk": "Записуйте сертифікати й перевіряйте, термін яких скоро спливає."
+      },
+      "visibility": []
+    },
+    {
+      "key": "protocols",
+      "lessonId": "10-knowledge",
+      "page": {
+        "controller": "Protocols",
+        "action": "Index"
+      },
+      "title": {
+        "en": "Review your protocols",
+        "ar": "راجع بروتوكولاتك",
+        "de": "Protokolle prüfen",
+        "el": "Ελέγξτε τα πρωτόκολλά σας",
+        "es": "Revise sus protocolos",
+        "fr": "Passez en revue vos protocoles",
+        "it": "Controlla i tuoi protocolli",
+        "pl": "Przejrzyj swoje protokoły",
+        "sv": "Gå igenom era rutiner",
+        "uk": "Перегляньте свої протоколи"
+      },
+      "hint": {
+        "en": "See the protocol library and what members must read.",
+        "ar": "اطّلع على مكتبة البروتوكولات وما يجب على الأعضاء قراءته.",
+        "de": "Sehen Sie die Protokollbibliothek und was Mitglieder lesen müssen.",
+        "el": "Δείτε τη βιβλιοθήκη πρωτοκόλλων και τι πρέπει να διαβάσουν τα μέλη.",
+        "es": "Vea la biblioteca de protocolos y lo que los miembros deben leer.",
+        "fr": "Consultez la bibliothèque de protocoles et ce que les membres doivent lire.",
+        "it": "Vedi la libreria dei protocolli e cosa devono leggere i membri.",
+        "pl": "Zobacz bibliotekę protokołów i to, co członkowie muszą przeczytać.",
+        "sv": "Se rutinbiblioteket och vad medlemmarna måste läsa.",
+        "uk": "Перегляньте бібліотеку протоколів і те, що мають прочитати учасники."
+      },
+      "visibility": []
+    }
+  ]
+}

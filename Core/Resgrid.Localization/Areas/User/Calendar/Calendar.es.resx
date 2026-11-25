@@ -411,4 +411,16 @@
   <data name="CheckOutBy" xml:space="preserve">
     <value>Salida registrada por {0}</value>
   </data>
+  <data name="CountsAsTrainingLabel" xml:space="preserve">
+    <value>Cuenta como formación</value>
+  </data>
+  <data name="CountsAsTrainingHelp" xml:space="preserve">
+    <value>La entrada y salida en eventos de este tipo se convierte en horas de formación en los expedientes de los asistentes. Una entrada sin salida espera a un responsable.</value>
+  </data>
+  <data name="TrainingCategoryLabel" xml:space="preserve">
+    <value>Categoría de formación</value>
+  </data>
+  <data name="TrainingCategoryNone" xml:space="preserve">
+    <value>Sin categoría</value>
+  </data>
 </root>

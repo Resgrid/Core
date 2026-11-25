@@ -2667,4 +2667,19 @@
   <data name="ShiftOverSignupHelp" xml:space="preserve">
     <value>يمكن للأعضاء التسجيل في مجموعة حتى عندما تكون جميع أماكن أدوارها (المطلوبة والاختيارية) مشغولة. يظلون بحاجة إلى أحد أدوار المجموعة.</value>
   </data>
+  <data name="DocumentNumberKindProtocol" xml:space="preserve">
+    <value>البروتوكولات</value>
+  </data>
+  <data name="RunCardConditionProtocolOutcome" xml:space="preserve">
+    <value>رمز محدِّد لبروتوكول في البلاغ</value>
+  </data>
+  <data name="RunCardDeterminantEquals" xml:space="preserve">
+    <value>يساوي</value>
+  </data>
+  <data name="RunCardDeterminantStartsWith" xml:space="preserve">
+    <value>يبدأ بـ</value>
+  </data>
+  <data name="RunCardDeterminantValue" xml:space="preserve">
+    <value>الرمز المحدِّد (مثل 09-E)</value>
+  </data>
 </root>

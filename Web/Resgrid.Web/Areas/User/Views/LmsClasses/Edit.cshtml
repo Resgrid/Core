@@ -1,0 +1,199 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsClasses
+@model LmsClassEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsClasses.LmsClasses> localizer
+@*
+    A class session (or a new series): what it teaches, when and where, the enrolment rules (open / closed, capacity, waitlist, cutoff,
+    groups, approval, self-unenrol, reminders), visibility by group and tags, QR and GPS sign-in, the post-class evaluation and the
+    roster's retention. Times are the department's.
+*@
+@{
+    var input = Model.Input;
+    var title = Model.IsNew ? localizer["NewClass"].Value : localizer["EditClass"].Value;
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["EditIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var inv = CultureInfo.InvariantCulture;
+    string D(DateTime d) => d.ToString("yyyy-MM-ddTHH:mm", inv);
+    string N(decimal? d) => d.HasValue ? d.Value.ToString("0.######", inv) : string.Empty;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+    <form method="post" asp-controller="LmsClasses" asp-action="@(Model.IsNew ? "New" : "Edit")" asp-route-area="User" asp-route-id="@(Model.Session?.LmsClassSessionId)">
+        @Html.AntiForgeryToken()
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["Section.What"]</h5></div>
+            <div class="ibox-content">
+                <div class="rgw-grid">
+                    <div class="form-group"><label for="c-title">@localizer["Field.Title"]</label><input id="c-title" name="Title" class="form-control" maxlength="250" value="@input.Title" /><span class="help-block">@localizer["Field.TitleHelp"]</span></div>
+                    <div class="form-group">
+                        <label for="c-course">@localizer["Field.Course"]</label>
+                        <select id="c-course" name="LmsCourseId" class="form-control">
+                            <option value="">@localizer["None"]</option>
+                            @foreach (var course in Model.Courses)
+                            {
+                                <option value="@course.Key" selected="@(input.LmsCourseId == course.Key)">@course.Value</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="c-training">@localizer["Field.Training"]</label>
+                        <select id="c-training" name="TrainingId" class="form-control">
+                            <option value="">@localizer["None"]</option>
+                            @foreach (var training in Model.Trainings)
+                            {
+                                <option value="@training.Key" selected="@(input.TrainingId == training.Key)">@training.Value</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="c-plan">@localizer["Field.LessonPlan"]</label>
+                        <select id="c-plan" name="LmsLessonPlanId" class="form-control">
+                            <option value="">@localizer["None"]</option>
+                            @foreach (var plan in Model.LessonPlans)
+                            {
+                                <option value="@plan.LmsLessonPlanId" selected="@(input.LmsLessonPlanId == plan.LmsLessonPlanId)">@plan.Title</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="c-category">@localizer["Field.Category"]</label>
+                        <select id="c-category" name="CategoryId" class="form-control">
+                            <option value="">@localizer["Uncategorized"]</option>
+                            @foreach (var category in Model.Categories.Where(c => !c.IsDeleted).OrderBy(c => c.SortOrder).ThenBy(c => c.Name))
+                            {
+                                <option value="@category.TrainingCategoryId" selected="@(input.CategoryId == category.TrainingCategoryId)">@category.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group"><label for="c-code">@localizer["Field.CourseCode"]</label><input id="c-code" name="CourseCode" class="form-control" maxlength="100" value="@input.CourseCode" /></div>
+                </div>
+                <div class="form-group"><label for="c-desc">@localizer["Field.Description"]</label><textarea id="c-desc" name="Description" class="form-control" rows="3" maxlength="4000">@input.Description</textarea></div>
+                <div class="form-group"><label for="c-summary">@localizer["Field.ContentSummary"]</label><textarea id="c-summary" name="ContentSummary" class="form-control" rows="3" maxlength="4000">@input.ContentSummary</textarea><span class="help-block">@localizer["Field.ContentSummaryHelp"]</span></div>
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-clock-o" aria-hidden="true"></i> @localizer["Section.When"]</h5></div>
+            <div class="ibox-content">
+                <div class="rgw-grid">
+                    <div class="form-group"><label for="c-start">@localizer["Field.Start"]</label><input id="c-start" name="Start" type="datetime-local" class="form-control" value="@D(input.LocalStart)" required /></div>
+                    <div class="form-group"><label for="c-end">@localizer["Field.End"]</label><input id="c-end" name="End" type="datetime-local" class="form-control" value="@D(input.LocalEnd)" required /></div>
+                    <div class="form-group"><label for="c-location">@localizer["Field.Location"]</label><input id="c-location" name="Location" class="form-control" maxlength="500" value="@input.Location" /></div>
+                    <div class="form-group"><label for="c-url">@localizer["Field.MeetingUrl"]</label><input id="c-url" name="MeetingUrl" type="url" class="form-control" maxlength="1000" value="@input.MeetingUrl" /><span class="help-block">@localizer["Field.MeetingUrlHelp"]</span></div>
+                    @if (Model.IsNew)
+                    {
+                        <div class="form-group">
+                            <label for="c-repeat">@localizer["Field.Repeat"]</label>
+                            <select id="c-repeat" name="Repeat" class="form-control">
+                                <option value="0">@localizer["Repeat.None"]</option>
+                                <option value="1">@localizer["Repeat.Daily"]</option>
+                                <option value="2">@localizer["Repeat.Weekly"]</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label for="c-occ">@localizer["Field.Occurrences"]</label><input id="c-occ" name="Occurrences" type="number" min="1" max="52" class="form-control" value="@input.Occurrences" /></div>
+                        <div class="form-group">
+                            <label for="c-instructors">@localizer["Field.Instructors"]</label>
+                            <select id="c-instructors" name="InstructorUserIds" class="form-control" multiple size="5">
+                                @foreach (var member in Model.Members)
+                                {
+                                    <option value="@member.Key" selected="@(input.InstructorUserIds.Contains(member.Key, StringComparer.OrdinalIgnoreCase))">@member.Value</option>
+                                }
+                            </select>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-users" aria-hidden="true"></i> @localizer["Section.Enrolment"]</h5></div>
+            <div class="ibox-content">
+                <div class="rgw-grid">
+                    <div class="form-group"><label for="c-capacity">@localizer["Field.Capacity"]</label><input id="c-capacity" name="Capacity" type="number" min="0" max="10000" class="form-control" value="@input.Capacity" /><span class="help-block">@localizer["Field.CapacityHelp"]</span></div>
+                    <div class="form-group"><label for="c-cutoff">@localizer["Field.CutoffDays"]</label><input id="c-cutoff" name="CutoffDays" type="number" min="0" max="365" class="form-control" value="@input.CutoffDays" /></div>
+                    <div class="form-group"><label for="c-reminder">@localizer["Field.ReminderHours"]</label><input id="c-reminder" name="ReminderHours" type="number" min="0" max="336" class="form-control" value="@input.ReminderHours" /></div>
+                    <div class="form-group"><label for="c-tags">@localizer["Field.Tags"]</label><input id="c-tags" name="Tags" class="form-control" maxlength="500" value="@input.Tags" /></div>
+                </div>
+                <div class="checkbox"><label><input type="checkbox" name="EnrollmentOpen" value="true" checked="@input.EnrollmentOpen" /> @localizer["Field.EnrollmentOpen"]</label></div>
+                <div class="checkbox"><label><input type="checkbox" name="RequiresApproval" value="true" checked="@input.RequiresApproval" /> @localizer["Field.RequiresApproval"]</label></div>
+                <div class="checkbox"><label><input type="checkbox" name="WaitlistEnabled" value="true" checked="@input.WaitlistEnabled" /> @localizer["Field.WaitlistEnabled"]</label></div>
+                <div class="checkbox"><label><input type="checkbox" name="AllowSelfUnenroll" value="true" checked="@input.AllowSelfUnenroll" /> @localizer["Field.AllowSelfUnenroll"]</label></div>
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="c-restrict">@localizer["Field.RestrictGroups"]</label>
+                        <select id="c-restrict" name="RestrictGroupIds" class="form-control" multiple size="4">
+                            @foreach (var group in Model.Groups)
+                            {
+                                <option value="@group.DepartmentGroupId" selected="@input.RestrictGroupIds.Contains(group.DepartmentGroupId)">@group.Name</option>
+                            }
+                        </select>
+                        <span class="help-block">@localizer["Field.RestrictGroupsHelp"]</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="c-visible">@localizer["Field.VisibleGroups"]</label>
+                        <select id="c-visible" name="VisibleGroupIds" class="form-control" multiple size="4">
+                            @foreach (var group in Model.Groups)
+                            {
+                                <option value="@group.DepartmentGroupId" selected="@input.VisibleGroupIds.Contains(group.DepartmentGroupId)">@group.Name</option>
+                            }
+                        </select>
+                        <span class="help-block">@localizer["Field.VisibleGroupsHelp"]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-qrcode" aria-hidden="true"></i> @localizer["Section.SignIn"]</h5></div>
+            <div class="ibox-content" id="lms-class-gps">
+                <div class="checkbox"><label><input type="checkbox" name="QrEnabled" value="true" checked="@input.QrEnabled" /> @localizer["Field.QrEnabled"]</label></div>
+                <div class="checkbox"><label><input type="checkbox" name="GpsRequired" value="true" checked="@input.GpsRequired" /> @localizer["Field.GpsRequired"]</label></div>
+                <div class="rgw-grid">
+                    <div class="form-group"><label for="c-lat">@localizer["Field.Latitude"]</label><input id="c-lat" name="GpsLatitude" class="form-control" inputmode="decimal" value="@N(input.GpsLatitude)" /></div>
+                    <div class="form-group"><label for="c-lon">@localizer["Field.Longitude"]</label><input id="c-lon" name="GpsLongitude" class="form-control" inputmode="decimal" value="@N(input.GpsLongitude)" /></div>
+                    <div class="form-group"><label for="c-radius">@localizer["Field.Radius"]</label><input id="c-radius" name="GpsRadiusMeters" type="number" min="10" max="50000" class="form-control" value="@input.GpsRadiusMeters" /></div>
+                </div>
+                <button type="button" class="btn btn-white btn-sm" id="lms-class-here"><i class="fa fa-crosshairs" aria-hidden="true"></i> @localizer["UseMyLocation"]</button>
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-archive" aria-hidden="true"></i> @localizer["Section.Records"]</h5></div>
+            <div class="ibox-content">
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="c-eval">@localizer["Field.PostEvaluation"]</label>
+                        <select id="c-eval" name="PostClassEvaluationKind" class="form-control">
+                            <option value="0">@localizer["Evaluation.None"]</option>
+                            <option value="1" selected="@(input.PostClassEvaluationKind == LmsClassPostEvaluationKinds.CourseAssessment)">@localizer["Evaluation.CourseAssessment"]</option>
+                        </select>
+                        <span class="help-block">@localizer["Field.PostEvaluationHelp"]</span>
+                    </div>
+                    <div class="form-group"><label for="c-retention">@localizer["Field.RetentionYears"]</label><input id="c-retention" name="RetentionYears" type="number" min="0" max="75" class="form-control" value="@input.RetentionYears" /><span class="help-block">@localizer["Field.RetentionYearsHelp"]</span></div>
+                    <div class="form-group"><label for="c-currency">@localizer["Field.Currency"]</label><input id="c-currency" name="Currency" class="form-control" maxlength="3" value="@(input.Currency ?? "USD")" /></div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @(Model.IsNew ? localizer["CreateClass"] : localizer["Save"])</button>
+        @if (!Model.IsNew)
+        {
+            <a class="btn btn-white" asp-controller="LmsClasses" asp-action="Session" asp-route-area="User" asp-route-id="@Model.Session.LmsClassSessionId">@localizer["Back"]</a>
+        }
+    </form>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/lmsclasses/resgrid.lmsclasses.js" asp-append-version="true"></script>
+}

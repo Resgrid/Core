@@ -420,4 +420,7 @@
   <data name="AcademyLearnThisPage" xml:space="preserve">
     <value>درس عن هذه الصفحة ({0} دقيقة)</value>
   </data>
+  <data name="AcademyAssignThisLesson" xml:space="preserve">
+    <value>إسناد هذا الدرس</value>
+  </data>
 </root>

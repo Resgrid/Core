@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllFilter" xml:space="preserve">
+    <value>Όλα</value>
+  </data>
+  <data name="AskButton" xml:space="preserve">
+    <value>Ρωτήστε</value>
+  </data>
+  <data name="AskHeader" xml:space="preserve">
+    <value>Ρωτήστε τη γνώση του τμήματός σας</value>
+  </data>
+  <data name="AskHeaderCall" xml:space="preserve">
+    <value>Ρωτήστε για το πρωτόκολλο αυτής της κλήσης</value>
+  </data>
+  <data name="AskHeaderProtocol" xml:space="preserve">
+    <value>Ρωτήστε για αυτό το πρωτόκολλο</value>
+  </data>
+  <data name="AskHeaderTraining" xml:space="preserve">
+    <value>Ρωτήστε για αυτή την εκπαίδευση</value>
+  </data>
+  <data name="AskHelp" xml:space="preserve">
+    <value>Οι απαντήσεις προέρχονται μόνο από τα δημοσιευμένα πρωτόκολλα και τις εκπαιδεύσεις του τμήματός σας και την Resgrid Academy, και κάθε απάντηση συνδέεται με τις πηγές της. Ελέγξτε την πηγή πριν ενεργήσετε.</value>
+  </data>
+  <data name="Asking" xml:space="preserve">
+    <value>Αναζήτηση στα πρωτόκολλα και τις εκπαιδεύσεις του τμήματός σας...</value>
+  </data>
+  <data name="AskLabel" xml:space="preserve">
+    <value>Η ερώτησή σας</value>
+  </data>
+  <data name="AskPlaceholder" xml:space="preserve">
+    <value>Κάντε μια ερώτηση για τα πρωτόκολλα ή την εκπαίδευσή σας</value>
+  </data>
+  <data name="BudgetNotice" xml:space="preserve">
+    <value>Το τμήμα σας έχει εξαντλήσει το όριο τεχνητής νοημοσύνης αυτού του μήνα. Αυτές οι πηγές ταιριάζουν με την ερώτησή σας.</value>
+  </data>
+  <data name="BusyNotice" xml:space="preserve">
+    <value>Οι απαντήσεις είναι απασχολημένες αυτή τη στιγμή. Δοκιμάστε ξανά σε λίγο. Αυτές οι πηγές ταιριάζουν με την ερώτησή σας.</value>
+  </data>
+  <data name="ColumnActions" xml:space="preserve">
+    <value>Ενέργειες</value>
+  </data>
+  <data name="ColumnAsked" xml:space="preserve">
+    <value>Ερωτήθηκε</value>
+  </data>
+  <data name="ColumnNearest" xml:space="preserve">
+    <value>Πλησιέστερες πηγές</value>
+  </data>
+  <data name="ColumnQuestion" xml:space="preserve">
+    <value>Ερώτηση</value>
+  </data>
+  <data name="ColumnReason" xml:space="preserve">
+    <value>Αιτία</value>
+  </data>
+  <data name="ConflictLabel" xml:space="preserve">
+    <value>Αυτές οι πηγές διαφωνούν</value>
+  </data>
+  <data name="CorpusHeader" xml:space="preserve">
+    <value>Πηγές</value>
+  </data>
+  <data name="CorpusHelp" xml:space="preserve">
+    <value>Τα δημοσιευμένα πρωτόκολλα και οι εκπαιδεύσεις που έχουν ξεκινήσει περιλαμβάνονται πάντα, εκτός από στοιχεία που έχουν σημειωθεί να μη χρησιμοποιούνται για ΤΝ. Προσχέδια, κουίζ, αρχεία και εγγραφές μάθησης δεν χρησιμοποιούνται ποτέ.</value>
+  </data>
+  <data name="DismissButton" xml:space="preserve">
+    <value>Απόρριψη</value>
+  </data>
+  <data name="DismissedTile" xml:space="preserve">
+    <value>Απορριφθέντα</value>
+  </data>
+  <data name="DoseNotice" xml:space="preserve">
+    <value>Οι δόσεις παρατίθενται ακριβώς όπως τις γράφει η πηγή. Δεν υπολογίστηκε τίποτα. Ελέγξτε την πηγή και το εργαλείο δοσολογίας σας.</value>
+  </data>
+  <data name="DosingToolLink" xml:space="preserve">
+    <value>Ανοίξτε το εργαλείο δοσολογίας του τμήματος</value>
+  </data>
+  <data name="DosingToolUrlHelp" xml:space="preserve">
+    <value>Ένας σύνδεσμος https προς το εργαλείο δοσολογίας του τμήματός σας. Οι απαντήσεις που παραθέτουν δόση συνδέονται σε αυτό. Το Resgrid δεν υπολογίζει ποτέ δόση.</value>
+  </data>
+  <data name="DosingToolUrlLabel" xml:space="preserve">
+    <value>Σύνδεσμος εργαλείου δοσολογίας</value>
+  </data>
+  <data name="DraftFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατό να ανοιχτεί προσχέδιο για αυτό το πρωτόκολλο.</value>
+  </data>
+  <data name="DraftProtocolButton" xml:space="preserve">
+    <value>Προσχέδιο αλλαγής πρωτοκόλλου</value>
+  </data>
+  <data name="EffectiveLabel" xml:space="preserve">
+    <value>σε ισχύ από {0}</value>
+  </data>
+  <data name="ErrorNotice" xml:space="preserve">
+    <value>Κάτι πήγε στραβά. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="FeedbackGap" xml:space="preserve">
+    <value>Ευχαριστούμε. Η ερώτηση προστέθηκε στην αναφορά κενών γνώσης.</value>
+  </data>
+  <data name="FeedbackThanks" xml:space="preserve">
+    <value>Ευχαριστούμε για τα σχόλια.</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Φιλτράρισμα</value>
+  </data>
+  <data name="GapsIntro" xml:space="preserve">
+    <value>Ερωτήσεις που δεν απάντησαν τα πρωτόκολλα και οι εκπαιδεύσεις σας, και απαντήσεις που τα μέλη σημείωσαν ως μη χρήσιμες. Μετατρέψτε ένα κενό σε προσχέδιο αλλαγής πρωτοκόλλου ή σε νέα εκπαίδευση.</value>
+  </data>
+  <data name="GapsLink" xml:space="preserve">
+    <value>Κενά γνώσης</value>
+  </data>
+  <data name="GapsTab" xml:space="preserve">
+    <value>Κενά γνώσης</value>
+  </data>
+  <data name="GapsTitle" xml:space="preserve">
+    <value>Κενά γνώσης</value>
+  </data>
+  <data name="GapSuggestionBody" xml:space="preserve">
+    <value>Κενό γνώσης: τα μέλη ρώτησαν «{0}» και τα πρωτόκολλα δεν το απάντησαν.</value>
+  </data>
+  <data name="GapTrainingNoQuestion" xml:space="preserve">
+    <value>Κενό γνώσης (η ερώτηση δεν διατηρήθηκε)</value>
+  </data>
+  <data name="GapUpdated" xml:space="preserve">
+    <value>Το κενό ενημερώθηκε.</value>
+  </data>
+  <data name="Helpful" xml:space="preserve">
+    <value>Χρήσιμο</value>
+  </data>
+  <data name="IncludeDocumentsHelp" xml:space="preserve">
+    <value>Τα έγγραφα γίνονται πηγές για τις απαντήσεις. Τα έγγραφα μόνο για διαχειριστές χρησιμοποιούνται μόνο για διαχειριστές. Δεν χρησιμοποιούνται όσο είναι ενεργό το Advanced Data Protection.</value>
+  </data>
+  <data name="IncludeDocumentsLabel" xml:space="preserve">
+    <value>Συμπερίληψη της ενότητας Έγγραφα</value>
+  </data>
+  <data name="IndexHeader" xml:space="preserve">
+    <value>Ευρετήριο</value>
+  </data>
+  <data name="IndexNotBuilt" xml:space="preserve">
+    <value>Το ευρετήριο δεν έχει δημιουργηθεί ακόμη. Δημιουργείται στο παρασκήνιο μετά την πρώτη ερώτηση.</value>
+  </data>
+  <data name="IndexStatus" xml:space="preserve">
+    <value>{0} ενότητες ευρετηριασμένες, {1} με ενσωματώσεις. Τελευταία ενημέρωση {2}.</value>
+  </data>
+  <data name="IndexWarning" xml:space="preserve">
+    <value>Ορισμένα στοιχεία δεν ευρετηριάστηκαν ή η υπηρεσία ενσωματώσεων δεν ήταν διαθέσιμη· ο επόμενος κύκλος θα ξαναδοκιμάσει.</value>
+  </data>
+  <data name="InvalidUrl" xml:space="preserve">
+    <value>Εισαγάγετε σύνδεσμο https.</value>
+  </data>
+  <data name="KeptLocalNotice" xml:space="preserve">
+    <value>Το τμήμα σας χρησιμοποιεί Advanced Data Protection, οπότε η ερώτησή σας μένει στο Resgrid. Αυτές οι πηγές ταιριάζουν.</value>
+  </data>
+  <data name="KeptLocalStatus" xml:space="preserve">
+    <value>Το τμήμα σας χρησιμοποιεί Advanced Data Protection: η ερώτησή σας μένει στο Resgrid και λαμβάνετε τις αντίστοιχες πηγές.</value>
+  </data>
+  <data name="KeywordOnlyNotice" xml:space="preserve">
+    <value>Η υπηρεσία αναζήτησης δεν απάντησε εγκαίρως, οπότε οι πηγές βρέθηκαν μόνο με λέξεις-κλειδιά.</value>
+  </data>
+  <data name="KindAcademy" xml:space="preserve">
+    <value>Resgrid Academy</value>
+  </data>
+  <data name="KindCourse" xml:space="preserve">
+    <value>Μάθημα</value>
+  </data>
+  <data name="KindDocument" xml:space="preserve">
+    <value>Έγγραφο</value>
+  </data>
+  <data name="KindProtocol" xml:space="preserve">
+    <value>Πρωτόκολλο</value>
+  </data>
+  <data name="KindProtocolFile" xml:space="preserve">
+    <value>Αρχείο πρωτοκόλλου</value>
+  </data>
+  <data name="KindTraining" xml:space="preserve">
+    <value>Εκπαίδευση</value>
+  </data>
+  <data name="KindTrainingFile" xml:space="preserve">
+    <value>Αρχείο εκπαίδευσης</value>
+  </data>
+  <data name="KnowledgeHeader" xml:space="preserve">
+    <value>Γνώση</value>
+  </data>
+  <data name="MatchedNotice" xml:space="preserve">
+    <value>Αυτές οι πηγές ταιριάζουν με την ερώτησή σας.</value>
+  </data>
+  <data name="NearestLabel" xml:space="preserve">
+    <value>Πλησιέστερα στοιχεία</value>
+  </data>
+  <data name="NewTrainingButton" xml:space="preserve">
+    <value>Νέα εκπαίδευση</value>
+  </data>
+  <data name="NextPage" xml:space="preserve">
+    <value>Επόμενη</value>
+  </data>
+  <data name="NoGaps" xml:space="preserve">
+    <value>Δεν υπάρχουν κενά γνώσης εδώ.</value>
+  </data>
+  <data name="NoNearest" xml:space="preserve">
+    <value>Δεν βρέθηκαν</value>
+  </data>
+  <data name="NoRole" xml:space="preserve">
+    <value>Χωρίς ρόλο</value>
+  </data>
+  <data name="NotCovered" xml:space="preserve">
+    <value>Τα πρωτόκολλα και οι εκπαιδεύσεις του τμήματός σας δεν καλύπτουν αυτό.</value>
+  </data>
+  <data name="NoteLabel" xml:space="preserve">
+    <value>Σημείωση</value>
+  </data>
+  <data name="NotHelpful" xml:space="preserve">
+    <value>Μη χρήσιμο</value>
+  </data>
+  <data name="OpenSource" xml:space="preserve">
+    <value>Άνοιγμα</value>
+  </data>
+  <data name="OpenTile" xml:space="preserve">
+    <value>Ανοιχτά</value>
+  </data>
+  <data name="PreviousPage" xml:space="preserve">
+    <value>Προηγούμενη</value>
+  </data>
+  <data name="ProtocolsCrumb" xml:space="preserve">
+    <value>Πρωτόκολλα</value>
+  </data>
+  <data name="QuestionNotKept" xml:space="preserve">
+    <value>Η ερώτηση δεν διατηρήθηκε (Advanced Data Protection)</value>
+  </data>
+  <data name="QuestionRequired" xml:space="preserve">
+    <value>Πληκτρολογήστε πρώτα μια ερώτηση.</value>
+  </data>
+  <data name="ReasonNotCovered" xml:space="preserve">
+    <value>Δεν καλύπτεται</value>
+  </data>
+  <data name="ReasonThumbsDown" xml:space="preserve">
+    <value>Σημειώθηκε ως μη χρήσιμο</value>
+  </data>
+  <data name="RebuildButton" xml:space="preserve">
+    <value>Αναδημιουργία ευρετηρίου</value>
+  </data>
+  <data name="RebuildQueued" xml:space="preserve">
+    <value>Το ευρετήριο θα αναδημιουργηθεί στο παρασκήνιο μέσα σε λίγα λεπτά.</value>
+  </data>
+  <data name="ReopenButton" xml:space="preserve">
+    <value>Επαναφορά</value>
+  </data>
+  <data name="ResolveButton" xml:space="preserve">
+    <value>Επίλυση</value>
+  </data>
+  <data name="ResolvedTile" xml:space="preserve">
+    <value>Επιλυμένα</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Τι μπορούν να χρησιμοποιούν οι απαντήσεις γνώσης του τμήματος.</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Οι ρυθμίσεις γνώσης αποθηκεύτηκαν.</value>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>Ρυθμίσεις</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Ρυθμίσεις γνώσης</value>
+  </data>
+  <data name="SourcesLabel" xml:space="preserve">
+    <value>Πηγές</value>
+  </data>
+  <data name="StaleCopyNotice" xml:space="preserve">
+    <value>Το αντίγραφο εκτός σύνδεσης ενός στοιχείου που αναφέρεται είναι παλαιότερο από την έκδοση που αναφέρεται.</value>
+  </data>
+  <data name="StatusFilterLabel" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="SurfaceApi" xml:space="preserve">
+    <value>Εφαρμογή για κινητά</value>
+  </data>
+  <data name="SurfaceAssistant" xml:space="preserve">
+    <value>Βοηθός</value>
+  </data>
+  <data name="SurfaceCall" xml:space="preserve">
+    <value>Κλήση</value>
+  </data>
+  <data name="SurfaceLibrary" xml:space="preserve">
+    <value>Βιβλιοθήκη πρωτοκόλλων</value>
+  </data>
+  <data name="SurfaceProtocol" xml:space="preserve">
+    <value>Σελίδα πρωτοκόλλου</value>
+  </data>
+  <data name="SurfaceTraining" xml:space="preserve">
+    <value>Σελίδα εκπαίδευσης</value>
+  </data>
+  <data name="UnavailableNotice" xml:space="preserve">
+    <value>Οι απαντήσεις δεν είναι διαθέσιμες αυτή τη στιγμή. Δοκιμάστε ξανά σε λίγα λεπτά.</value>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>έκδοση {0}</value>
+  </data>
+  <data name="SurfaceHelp" xml:space="preserve">
+    <value>Αναζήτηση βοήθειας</value>
+  </data>
+  <data name="SurfaceCourse" xml:space="preserve">
+    <value>Μάθημα</value>
+  </data>
+  <data name="AskHeaderCallWide" xml:space="preserve">
+    <value>Ρωτήστε για αυτή την κλήση</value>
+  </data>
+  <data name="AskHelpCallWide" xml:space="preserve">
+    <value>Οι απαντήσεις προέρχονται μόνο από τα πρωτόκολλα που επικαλείται αυτή η κλήση και από τον τύπο, την προτεραιότητα, τον κωδικό εκτίμησης και τον τύπο τοποθεσίας της. Στοιχεία ασθενούς ή καλούντος δεν χρησιμοποιούνται ποτέ.</value>
+  </data>
+  <data name="AskHeaderCourse" xml:space="preserve">
+    <value>Ρωτήστε αυτό το μάθημα</value>
+  </data>
+  <data name="AskHelpCourse" xml:space="preserve">
+    <value>Οι απαντήσεις προέρχονται μόνο από την έκδοση αυτού του μαθήματος που παρακολουθείτε, και κάθε μέρος συνδέεται με την ενότητά του.</value>
+  </data>
+  <data name="CallContextNotice" xml:space="preserve">
+    <value>Απάντηση για αυτή την κλήση: τα πρωτόκολλά της, ο τύπος, η προτεραιότητα, ο κωδικός εκτίμησης και ο τύπος τοποθεσίας.</value>
+  </data>
+  <data name="PracticeHeader" xml:space="preserve">
+    <value>Εξάσκηση</value>
+  </data>
+  <data name="PracticeHelp" xml:space="preserve">
+    <value>Εξασκηθείτε σε ένα σύντομο σενάριο γραμμένο από την ισχύουσα έκδοση αυτού του πρωτοκόλλου. Οι απαντήσεις σας βαθμολογούνται μόνο με βάση το πρωτόκολλο και τίποτα δεν καταγράφεται στο ιστορικό εκπαίδευσής σας.</value>
+  </data>
+  <data name="PracticeStart" xml:space="preserve">
+    <value>Έναρξη σεναρίου</value>
+  </data>
+  <data name="PracticeStarting" xml:space="preserve">
+    <value>Γράφεται σενάριο…</value>
+  </data>
+  <data name="PracticeScenarioLabel" xml:space="preserve">
+    <value>Σενάριο</value>
+  </data>
+  <data name="PracticeAnswerLabel" xml:space="preserve">
+    <value>Η απάντησή σας</value>
+  </data>
+  <data name="PracticeSubmit" xml:space="preserve">
+    <value>Βαθμολόγηση απαντήσεων</value>
+  </data>
+  <data name="PracticeScoring" xml:space="preserve">
+    <value>Βαθμολογούνται οι απαντήσεις σας…</value>
+  </data>
+  <data name="PracticeAgain" xml:space="preserve">
+    <value>Άλλο σενάριο</value>
+  </data>
+  <data name="PracticeScoreFormat" xml:space="preserve">
+    <value>Βαθμός: {0} από {1}</value>
+  </data>
+  <data name="PracticeItemScoreFormat" xml:space="preserve">
+    <value>{0} από {1}</value>
+  </data>
+  <data name="PracticeNotScored" xml:space="preserve">
+    <value>Αυτή η απάντηση δεν μπόρεσε να βαθμολογηθεί.</value>
+  </data>
+  <data name="PracticeExcluded" xml:space="preserve">
+    <value>Αυτό το πρωτόκολλο δεν χρησιμοποιείται με ΤΝ.</value>
+  </data>
+  <data name="PracticeKeptLocal" xml:space="preserve">
+    <value>Η Προηγμένη Προστασία Δεδομένων κρατά το περιεχόμενο αυτού του τμήματος τοπικά, οπότε η εξάσκηση δεν είναι διαθέσιμη.</value>
+  </data>
+  <data name="PracticeNoContent" xml:space="preserve">
+    <value>Αυτό το πρωτόκολλο έχει πολύ λίγο κείμενο για εξάσκηση.</value>
+  </data>
+  <data name="PracticeRefused" xml:space="preserve">
+    <value>Το σενάριο δεν μπόρεσε να ελεγχθεί με βάση το πρωτόκολλο. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="PracticeStale" xml:space="preserve">
+    <value>Το πρωτόκολλο άλλαξε από τότε που γράφτηκε αυτό το σενάριο. Ξεκινήστε νέο.</value>
+  </data>
+  <data name="PracticeAnswerRequired" xml:space="preserve">
+    <value>Απαντήστε σε τουλάχιστον μία ερώτηση.</value>
+  </data>
+  <data name="PracticeOnlyNotice" xml:space="preserve">
+    <value>Μόνο για εξάσκηση: τίποτα δεν καταγράφεται στο ιστορικό εκπαίδευσής σας.</value>
+  </data>
+</root>

@@ -1,0 +1,109 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolWeeklyModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    The member's weekly micro-learning questions (LMS, round 5F): one scenario question a week from the department's selected protocols.
+    Answered once; then the right answer and the explanation are shown. Before that, the page carries the question and options only.
+*@
+@{
+    var departmentTime = DepartmentTime.From(ViewData);
+    ViewBag.Title = "Resgrid | " + localizer["WeeklyQuestionsHeader"];
+    ViewData["Title"] = localizer["WeeklyQuestionsHeader"].Value;
+    ViewData["Subtitle"] = localizer["WeeklyQuestionsIntro"].Value;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="rgw-next-action" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["WeeklyNoQuestions"]</div>
+    }
+
+    @foreach (var item in Model.Items)
+    {
+        var question = item.Question;
+        if (question == null)
+        {
+            continue;
+        }
+        var answered = item.AnsweredOn.HasValue;
+        var name = "keys";
+        <div class="ibox" id="weekly-@item.Id">
+            <div class="ibox-title">
+                <h5><i class="fa fa-lightbulb-o" aria-hidden="true"></i> @string.Format(localizer["WeeklyWeekLabel"].Value, item.WeekKey) · @((item.ProtocolCode + " " + item.ProtocolName).Trim())</h5>
+                <div class="ibox-tools">
+                    @if (answered)
+                    {
+                        <span class="label @(item.Correct == true ? "label-primary" : "label-warning")"><i class="fa @(item.Correct == true ? "fa-check" : "fa-times")" aria-hidden="true"></i> @(item.Correct == true ? localizer["WeeklyCorrect"] : localizer["WeeklyIncorrect"])</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted small">@departmentTime.Date(item.SentOn)</span>
+                    }
+                </div>
+            </div>
+            <div class="ibox-content">
+                <p><strong>@question.Text</strong></p>
+                @if (answered)
+                {
+                    <ul class="list-unstyled">
+                        @foreach (var option in question.Options)
+                        {
+                            var chosen = item.ChosenKeys.Contains(option.Key);
+                            var right = item.CorrectKeys != null && item.CorrectKeys.Contains(option.Key);
+                            <li class="@(right ? "text-success" : chosen ? "text-danger" : "")">
+                                <i class="fa @(right ? "fa-check-circle" : chosen ? "fa-times-circle" : "fa-circle-o")" aria-hidden="true"></i>
+                                @option.Text
+                                @if (right) { <span class="sr-only">@localizer["WeeklyCorrectAnswerLabel"]</span> }
+                            </li>
+                        }
+                    </ul>
+                    @if (!string.IsNullOrWhiteSpace(item.Explanation))
+                    {
+                        <p class="m-t-sm"><strong>@localizer["WeeklyExplanationLabel"]</strong> @item.Explanation</p>
+                    }
+                }
+                else
+                {
+                    <form method="post" asp-controller="ProtocolAcknowledgments" asp-action="AnswerWeekly" asp-route-area="User">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <fieldset>
+                            <legend class="sr-only">@question.Text</legend>
+                            @if (question.IsMultiple)
+                            {
+                                <p class="help-block small">@localizer["QuizChooseAll"]</p>
+                            }
+                            @foreach (var option in question.Options)
+                            {
+                                var id = "w" + item.Id + "-" + option.Key;
+                                <div class="@(question.IsMultiple ? "checkbox" : "radio")">
+                                    <label for="@id"><input id="@id" type="@(question.IsMultiple ? "checkbox" : "radio")" name="@name" value="@option.Key" /> @option.Text</label>
+                                </div>
+                            }
+                        </fieldset>
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-check" aria-hidden="true"></i> @localizer["WeeklyAnswerButton"]</button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
+
+    <a class="btn btn-default" asp-controller="ProtocolAcknowledgments" asp-action="Mine" asp-route-area="User"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["MyAcknowledgmentsTab"]</a>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

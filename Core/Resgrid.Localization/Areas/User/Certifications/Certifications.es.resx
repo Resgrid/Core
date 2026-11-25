@@ -230,4 +230,9 @@
   <data name="SelectMember" xml:space="preserve"><value>Seleccione un miembro</value></data>
   <data name="SelectType" xml:space="preserve"><value>Seleccione un tipo de certificación</value></data>
   <data name="CertificationNameRequired" xml:space="preserve"><value>Introduzca un nombre para la certificación.</value></data>
+  <data name="RenewalHoursLabel" xml:space="preserve"><value>Horas para la renovación</value></data>
+  <data name="RenewalHoursValue" xml:space="preserve"><value>{0} h acreditadas ({1} h del expediente de formación)</value></data>
+  <data name="UncreditedLedgerHours" xml:space="preserve"><value>{0} h en categorías asignadas aún sin acreditar</value></data>
+  <data name="ApplyHistoryLink" xml:space="preserve"><value>Aplicar el historial a créditos</value></data>
+  <data name="FromTranscript" xml:space="preserve"><value>Del expediente</value></data>
 </root>

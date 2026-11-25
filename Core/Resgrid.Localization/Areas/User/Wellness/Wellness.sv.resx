@@ -1,0 +1,700 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PersonnelLink" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="WellnessModuleLabel" xml:space="preserve">
+    <value>Välmående</value>
+  </data>
+  <data name="MyExposuresTab" xml:space="preserve">
+    <value>Mina exponeringar</value>
+  </data>
+  <data name="ReportTab" xml:space="preserve">
+    <value>Medlemsrapport</value>
+  </data>
+  <data name="FlagCallTab" xml:space="preserve">
+    <value>Markeringar efter larm</value>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>Inställningar</value>
+  </data>
+  <data name="MyExposuresTitle" xml:space="preserve">
+    <value>Mina exponeringar</value>
+  </data>
+  <data name="MemberExposuresTitle" xml:space="preserve">
+    <value>Exponeringslogg: {0}</value>
+  </data>
+  <data name="MyExposuresIntro" xml:space="preserve">
+    <value>Din egen logg över exponeringar och svåra larm. Bara du och din organisations välmåendeansvariga kan se den.</value>
+  </data>
+  <data name="MemberExposuresIntro" xml:space="preserve">
+    <value>Den här medlemmens logg över exponeringar och kritiska händelser. Hantera den varsamt: bara medlemmen och välmåendeansvariga kan se den.</value>
+  </data>
+  <data name="LogExposureButton" xml:space="preserve">
+    <value>Registrera en exponering</value>
+  </data>
+  <data name="ExportPdfButton" xml:space="preserve">
+    <value>Exportera PDF</value>
+  </data>
+  <data name="ExportCsvButton" xml:space="preserve">
+    <value>Exportera CSV</value>
+  </data>
+  <data name="ProtectedWithheldNotice" xml:space="preserve">
+    <value>Vissa uppgifter skyddas av organisationens avancerade dataskydd och visas inte här.</value>
+  </data>
+  <data name="ConfirmedEntriesLabel" xml:space="preserve">
+    <value>Bekräftade poster</value>
+  </data>
+  <data name="CriticalIncidentsLabel" xml:space="preserve">
+    <value>Kritiska händelser</value>
+  </data>
+  <data name="AwaitingReviewLabel" xml:space="preserve">
+    <value>Väntar på granskning</value>
+  </data>
+  <data name="SuggestionsHeader" xml:space="preserve">
+    <value>Förslag från senaste larm</value>
+  </data>
+  <data name="SuggestionsHelp" xml:space="preserve">
+    <value>De här föreslogs från larmdata efter att ett larm markerats. Inget registreras förrän du har granskat och bekräftat det. Om det inte gäller dig, avfärda det.</value>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="CategoryColumn" xml:space="preserve">
+    <value>Kategori</value>
+  </data>
+  <data name="CallColumn" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="DurationColumn" xml:space="preserve">
+    <value>Varaktighet (h:mm)</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Åtgärder</value>
+  </data>
+  <data name="SuggestedFromLabel" xml:space="preserve">
+    <value>Föreslaget från</value>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Granska</value>
+  </data>
+  <data name="DismissButton" xml:space="preserve">
+    <value>Avfärda</value>
+  </data>
+  <data name="ScreeningHeader" xml:space="preserve">
+    <value>Utökad hälsokontroll</value>
+  </data>
+  <data name="ScreeningSelfText" xml:space="preserve">
+    <value>Din organisations välmåendeansvariga har föreslagit extra hälsokontroller för dig. Uppföljningarna nedan hjälper dig att hålla koll.</value>
+  </data>
+  <data name="ScreeningOfficerText" xml:space="preserve">
+    <value>Medlemmen är markerad för utökad hälsokontroll.</value>
+  </data>
+  <data name="ReviewOnLabel" xml:space="preserve">
+    <value>Nästa uppföljning</value>
+  </data>
+  <data name="PlanNotesLabel" xml:space="preserve">
+    <value>Uppföljningsplan</value>
+  </data>
+  <data name="WithheldValue" xml:space="preserve">
+    <value>Skyddat</value>
+  </data>
+  <data name="FollowUpColumn" xml:space="preserve">
+    <value>Uppföljning</value>
+  </data>
+  <data name="AssigneeColumn" xml:space="preserve">
+    <value>Tilldelad</value>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Förfaller</value>
+  </data>
+  <data name="StateColumn" xml:space="preserve">
+    <value>Läge</value>
+  </data>
+  <data name="CompleteButton" xml:space="preserve">
+    <value>Markera som klar</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="ScreeningManageHeader" xml:space="preserve">
+    <value>Hälsokontroll och uppföljning</value>
+  </data>
+  <data name="ScreeningManageHelp" xml:space="preserve">
+    <value>Markera medlemmen för utökad hälsokontroll och för en uppföljningsplan. Planen är skyddad och syns bara för medlemmen och välmåendeansvariga.</value>
+  </data>
+  <data name="ScreeningCategoryLabel" xml:space="preserve">
+    <value>Anledning</value>
+  </data>
+  <data name="NoCategoryOption" xml:space="preserve">
+    <value>Inte angivet</value>
+  </data>
+  <data name="ProtectedFieldHelp" xml:space="preserve">
+    <value>Skyddat: syns bara för medlemmen och välmåendeansvariga.</value>
+  </data>
+  <data name="FlagForScreeningButton" xml:space="preserve">
+    <value>Markera för utökad hälsokontroll</value>
+  </data>
+  <data name="SaveScreeningButton" xml:space="preserve">
+    <value>Spara hälsokontroll</value>
+  </data>
+  <data name="ClearScreeningButton" xml:space="preserve">
+    <value>Avsluta utökad hälsokontroll</value>
+  </data>
+  <data name="AddFollowUpHeader" xml:space="preserve">
+    <value>Lägg till en uppföljning</value>
+  </data>
+  <data name="FollowUpPrivacyHelp" xml:space="preserve">
+    <value>Uppföljningar registrerar bara vilken sorts steg det är och om det är gjort. Håll hälsouppgifter i den skyddade planen.</value>
+  </data>
+  <data name="AddFollowUpButton" xml:space="preserve">
+    <value>Lägg till uppföljning</value>
+  </data>
+  <data name="EntriesHeader" xml:space="preserve">
+    <value>Poster</value>
+  </data>
+  <data name="NoEntriesSelf" xml:space="preserve">
+    <value>Du har inga poster ännu. Du kan registrera en exponering när som helst.</value>
+  </data>
+  <data name="NoEntriesMember" xml:space="preserve">
+    <value>Medlemmen har inga poster.</value>
+  </data>
+  <data name="RetentionNotice" xml:space="preserve">
+    <value>Poster sparas i minst 30 år. En post som registrerats av misstag kan markeras som det; den sparas men räknas inte längre.</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="AnniversaryReminderOnLabel" xml:space="preserve">
+    <value>Påminnelse om årsdag på</value>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Öppna</value>
+  </data>
+  <data name="VoidButton" xml:space="preserve">
+    <value>Registrerad av misstag</value>
+  </data>
+  <data name="VoidHelp" xml:space="preserve">
+    <value>Posten ligger kvar i loggen under lagringstiden men räknas inte längre.</value>
+  </data>
+  <data name="VoidConfirmButton" xml:space="preserve">
+    <value>Bekräfta</value>
+  </data>
+  <data name="SupportNote" xml:space="preserve">
+    <value>Om något från ett larm sitter kvar hos dig behöver du inte hantera det ensam. Ditt kamratstödsteam och organisationens stödresurser finns där för dig.</value>
+  </data>
+  <data name="LogExposureTitle" xml:space="preserve">
+    <value>Registrera en exponering</value>
+  </data>
+  <data name="ReviewSuggestionTitle" xml:space="preserve">
+    <value>Granska en föreslagen post</value>
+  </data>
+  <data name="EntryTitle" xml:space="preserve">
+    <value>Exponeringspost</value>
+  </data>
+  <data name="EntryIntro" xml:space="preserve">
+    <value>Beskriv med egna ord vad som hände. Bara kategori, datum, larm och varaktighet används i räkningar; allt annat är skyddat.</value>
+  </data>
+  <data name="SuggestionReviewNotice" xml:space="preserve">
+    <value>Posten föreslogs från larmdata. Kontrollera uppgifterna, lägg till det du vill och bekräfta den - eller avfärda den om den inte gäller dig.</value>
+  </data>
+  <data name="WhatHappenedHeader" xml:space="preserve">
+    <value>När och vad</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Medlem</value>
+  </data>
+  <data name="OccurredOnLabel" xml:space="preserve">
+    <value>Datum och tid</value>
+  </data>
+  <data name="DurationMinutesLabel" xml:space="preserve">
+    <value>Varaktighet (minuter)</value>
+  </data>
+  <data name="NoCallOption" xml:space="preserve">
+    <value>Inget larm</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Detaljer (skyddade)</value>
+  </data>
+  <data name="DetailsHelp" xml:space="preserve">
+    <value>Uppgifterna är skyddade: bara du och organisationens välmåendeansvariga kan läsa dem, och de används aldrig i sökning eller av någon AI-funktion.</value>
+  </data>
+  <data name="SubstanceLabel" xml:space="preserve">
+    <value>Ämne eller agens</value>
+  </data>
+  <data name="PpeWornLabel" xml:space="preserve">
+    <value>Använd skyddsutrustning</value>
+  </data>
+  <data name="DecontaminationLabel" xml:space="preserve">
+    <value>Sanering efteråt</value>
+  </data>
+  <data name="NarrativeLabel" xml:space="preserve">
+    <value>Vad som hände</value>
+  </data>
+  <data name="HealthDetailsLabel" xml:space="preserve">
+    <value>Hälsouppgifter</value>
+  </data>
+  <data name="HealthDetailsHelp" xml:space="preserve">
+    <value>Valfritt. Symtom, behandling eller annat du vill ha antecknat. Detta är ingen medicinsk bedömning.</value>
+  </data>
+  <data name="RemindersHeader" xml:space="preserve">
+    <value>Påminnelser om årsdagar</value>
+  </data>
+  <data name="RemindersHelp" xml:space="preserve">
+    <value>För kritiska händelser kan du välja en varsam påminnelse före varje årsdag - till dig själv och/eller för att låta kamratstödsteamet veta. Du kan ändra det när som helst.</value>
+  </data>
+  <data name="RemindMemberLabel" xml:space="preserve">
+    <value>Påminn mig före årsdagen</value>
+  </data>
+  <data name="RemindPeerTeamLabel" xml:space="preserve">
+    <value>Låt kamratstödsteamet veta före årsdagen</value>
+  </data>
+  <data name="NoPeerTeamHelp" xml:space="preserve">
+    <value>Din organisation har inte satt upp något kamratstödsteam ännu.</value>
+  </data>
+  <data name="ConfirmButton" xml:space="preserve">
+    <value>Bekräfta post</value>
+  </data>
+  <data name="SaveForLaterButton" xml:space="preserve">
+    <value>Spara utan att bekräfta</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="BackButton" xml:space="preserve">
+    <value>Tillbaka</value>
+  </data>
+  <data name="DismissLongButton" xml:space="preserve">
+    <value>Gäller inte mig - avfärda</value>
+  </data>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>Exponeringsrapport för medlemmar</value>
+  </data>
+  <data name="ReportIntro" xml:space="preserve">
+    <value>Antal per medlem för välmåendeansvariga. Detaljerna stannar i varje medlems egen logg.</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>Filtrera rapporten</value>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>Från</value>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>Till</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Filtrera</value>
+  </data>
+  <data name="MembersHeader" xml:space="preserve">
+    <value>Medlemmar</value>
+  </data>
+  <data name="NoReportRows" xml:space="preserve">
+    <value>Inga poster under perioden.</value>
+  </data>
+  <data name="LastExposureLabel" xml:space="preserve">
+    <value>Senaste</value>
+  </data>
+  <data name="ScreeningFlaggedLabel" xml:space="preserve">
+    <value>Utökad hälsokontroll</value>
+  </data>
+  <data name="OpenFollowUpsValue" xml:space="preserve">
+    <value>{0} öppna uppföljningar</value>
+  </data>
+  <data name="OpenLogButton" xml:space="preserve">
+    <value>Öppna logg</value>
+  </data>
+  <data name="RecentFlagsHeader" xml:space="preserve">
+    <value>Senaste markeringar efter larm</value>
+  </data>
+  <data name="NoFlags" xml:space="preserve">
+    <value>Inga larm har markerats.</value>
+  </data>
+  <data name="FlaggedOnLabel" xml:space="preserve">
+    <value>Markerad</value>
+  </data>
+  <data name="SuggestionsColumn" xml:space="preserve">
+    <value>Förslag</value>
+  </data>
+  <data name="FlagClearedLabel" xml:space="preserve">
+    <value>Borttagen</value>
+  </data>
+  <data name="SuggestionsBuiltValue" xml:space="preserve">
+    <value>{0} föreslagna</value>
+  </data>
+  <data name="SuggestionsPendingLabel" xml:space="preserve">
+    <value>Väntar på att larmet avslutas</value>
+  </data>
+  <data name="FlagCallTitle" xml:space="preserve">
+    <value>Välmåendeuppföljning: larm {0}</value>
+  </data>
+  <data name="FlagCallPickerTitle" xml:space="preserve">
+    <value>Markeringar efter larm</value>
+  </data>
+  <data name="FlagCallIntro" xml:space="preserve">
+    <value>Markera ett larm som kritisk händelse eller exponering. När larmet är avslutat får alla som larmdata placerar där en föreslagen post att granska. Ingen registreras utan att bekräfta.</value>
+  </data>
+  <data name="RecentCallsHeader" xml:space="preserve">
+    <value>Senaste larm</value>
+  </data>
+  <data name="NoRecentCalls" xml:space="preserve">
+    <value>Inga larm de senaste 30 dagarna.</value>
+  </data>
+  <data name="CallActiveNotice" xml:space="preserve">
+    <value>Larmet är fortfarande aktivt. Förslagen skapas när det avslutas.</value>
+  </data>
+  <data name="CriticalIncidentHelp" xml:space="preserve">
+    <value>Ett potentiellt traumatiskt larm. Skilt från larmets prioritet.</value>
+  </data>
+  <data name="NotFlaggedLabel" xml:space="preserve">
+    <value>Inte markerad</value>
+  </data>
+  <data name="FlagButton" xml:space="preserve">
+    <value>Markera</value>
+  </data>
+  <data name="ClearFlagButton" xml:space="preserve">
+    <value>Ta bort markering</value>
+  </data>
+  <data name="FlagPrivacyHelp" xml:space="preserve">
+    <value>En markering registrerar bara larmet och kategorin. Medlemmarna bestämmer själva vad de lägger till i sin logg.</value>
+  </data>
+  <data name="BackToCallButton" xml:space="preserve">
+    <value>Tillbaka till larmet</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Inställningar för välmående</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Vem som läser medlemmarnas exponeringsloggar, vilka som ingår i kamratstödsteamet och hur länge poster sparas.</value>
+  </data>
+  <data name="WellnessOfficerRoleLabel" xml:space="preserve">
+    <value>Roll för välmåendeansvarig</value>
+  </data>
+  <data name="WellnessOfficerRoleHelp" xml:space="preserve">
+    <value>Medlemmar i rollen kan läsa varje medlems exponeringslogg och hantera markeringar för hälsokontroll. Administratörer kan inte läsa loggarna om de inte har rollen.</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>Ingen</value>
+  </data>
+  <data name="PeerTeamLabel" xml:space="preserve">
+    <value>Certifiering för kamratstödsteam</value>
+  </data>
+  <data name="PeerTeamHelp" xml:space="preserve">
+    <value>Medlemmar med en giltig certifiering av den här typen får de påminnelser om årsdagar som medlemmar väljer att dela.</value>
+  </data>
+  <data name="RetentionYearsLabel" xml:space="preserve">
+    <value>Spara poster i (år)</value>
+  </data>
+  <data name="RetentionYearsHelp" xml:space="preserve">
+    <value>Minst 30 år (OSHA 29 CFR 1910.1020). Poster under rättsligt bevarandekrav sparas längre.</value>
+  </data>
+  <data name="WellnessFollowUpButton" xml:space="preserve">
+    <value>Välmåendeuppföljning</value>
+  </data>
+  <data name="WellnessFollowUpHelp" xml:space="preserve">
+    <value>Markera larmet som kritisk händelse eller exponering så att medlemmarna kan lägga till det i sin logg</value>
+  </data>
+  <data name="Msg.Recorded" xml:space="preserve">
+    <value>Posten har registrerats.</value>
+  </data>
+  <data name="Msg.Confirmed" xml:space="preserve">
+    <value>Posten har bekräftats.</value>
+  </data>
+  <data name="Msg.Saved" xml:space="preserve">
+    <value>Sparat.</value>
+  </data>
+  <data name="Msg.Dismissed" xml:space="preserve">
+    <value>Förslaget har avfärdats.</value>
+  </data>
+  <data name="Msg.Voided" xml:space="preserve">
+    <value>Posten har markerats som registrerad av misstag.</value>
+  </data>
+  <data name="Msg.RemindersSaved" xml:space="preserve">
+    <value>Dina val för påminnelser har sparats.</value>
+  </data>
+  <data name="Msg.ScreeningSaved" xml:space="preserve">
+    <value>Markeringen för hälsokontroll har sparats.</value>
+  </data>
+  <data name="Msg.ScreeningCleared" xml:space="preserve">
+    <value>Den utökade hälsokontrollen har avslutats.</value>
+  </data>
+  <data name="Msg.FollowUpAdded" xml:space="preserve">
+    <value>Uppföljningen har lagts till.</value>
+  </data>
+  <data name="Msg.FollowUpCompleted" xml:space="preserve">
+    <value>Uppföljningen har markerats som klar.</value>
+  </data>
+  <data name="Msg.FollowUpCancelled" xml:space="preserve">
+    <value>Uppföljningen har avbrutits.</value>
+  </data>
+  <data name="Msg.CallFlagged" xml:space="preserve">
+    <value>Larmet har markerats. Förslag erbjuds när det avslutats.</value>
+  </data>
+  <data name="Msg.CallFlagCleared" xml:space="preserve">
+    <value>Markeringen har tagits bort. Förslag som ingen bekräftat har tagits bort.</value>
+  </data>
+  <data name="Msg.SettingsSaved" xml:space="preserve">
+    <value>Inställningarna för välmående har sparats.</value>
+  </data>
+  <data name="Error.Generic" xml:space="preserve">
+    <value>Det gick inte att spara. Kontrollera posten och försök igen.</value>
+  </data>
+  <data name="Error.NotAllowed" xml:space="preserve">
+    <value>Du har inte åtkomst till det.</value>
+  </data>
+  <data name="Error.ExportFailed" xml:space="preserve">
+    <value>Exporten kunde inte skapas. Försök igen.</value>
+  </data>
+  <data name="Error.role_not_found" xml:space="preserve">
+    <value>Rollen hittades inte.</value>
+  </data>
+  <data name="Error.certification_type_not_found" xml:space="preserve">
+    <value>Certifieringstypen hittades inte.</value>
+  </data>
+  <data name="Error.member_not_found" xml:space="preserve">
+    <value>Medlemmen hittades inte i organisationen.</value>
+  </data>
+  <data name="Error.entry_not_found" xml:space="preserve">
+    <value>Posten hittades inte.</value>
+  </data>
+  <data name="Error.entry_closed" xml:space="preserve">
+    <value>Posten är stängd och kan inte längre ändras.</value>
+  </data>
+  <data name="Error.entry_changed" xml:space="preserve">
+    <value>Någon annan har ändrat posten. Öppna den igen och försök på nytt.</value>
+  </data>
+  <data name="Error.not_a_suggestion" xml:space="preserve">
+    <value>Bara en föreslagen post kan bekräftas eller avfärdas.</value>
+  </data>
+  <data name="Error.not_confirmed" xml:space="preserve">
+    <value>Bara en bekräftad post kan ändras på det här sättet.</value>
+  </data>
+  <data name="Error.reminders_critical_incident_only" xml:space="preserve">
+    <value>Påminnelser om årsdagar erbjuds bara för kritiska händelser.</value>
+  </data>
+  <data name="Error.category_required" xml:space="preserve">
+    <value>Välj en kategori.</value>
+  </data>
+  <data name="Error.date_invalid" xml:space="preserve">
+    <value>Ange ett giltigt datum.</value>
+  </data>
+  <data name="Error.duration_invalid" xml:space="preserve">
+    <value>Ange en varaktighet mellan 0 och 10 080 minuter.</value>
+  </data>
+  <data name="Error.call_not_found" xml:space="preserve">
+    <value>Larmet hittades inte i organisationen.</value>
+  </data>
+  <data name="Error.protected_write_refused" xml:space="preserve">
+    <value>De skyddade uppgifterna kunde inte sparas. Försök igen.</value>
+  </data>
+  <data name="Error.flag_not_found" xml:space="preserve">
+    <value>Markeringen hittades inte.</value>
+  </data>
+  <data name="Error.follow_up_kind_required" xml:space="preserve">
+    <value>Välj typ av uppföljning.</value>
+  </data>
+  <data name="Error.follow_up_assignee_invalid" xml:space="preserve">
+    <value>En uppföljning kan tilldelas medlemmen eller en välmåendeansvarig.</value>
+  </data>
+  <data name="Error.follow_up_closed" xml:space="preserve">
+    <value>Uppföljningen är redan stängd.</value>
+  </data>
+  <data name="Error.follow_up_not_found" xml:space="preserve">
+    <value>Uppföljningen hittades inte.</value>
+  </data>
+  <data name="Category.Carcinogen" xml:space="preserve">
+    <value>Cancerframkallande ämne</value>
+  </data>
+  <data name="Category.BloodbornePathogen" xml:space="preserve">
+    <value>Blodburen smitta</value>
+  </data>
+  <data name="Category.HazardousSubstance" xml:space="preserve">
+    <value>Farligt ämne</value>
+  </data>
+  <data name="Category.CriticalIncident" xml:space="preserve">
+    <value>Kritisk händelse</value>
+  </data>
+  <data name="Category.Other" xml:space="preserve">
+    <value>Annat</value>
+  </data>
+  <data name="Status.Suggested" xml:space="preserve">
+    <value>Väntar på granskning</value>
+  </data>
+  <data name="Status.Confirmed" xml:space="preserve">
+    <value>Bekräftad</value>
+  </data>
+  <data name="Status.Dismissed" xml:space="preserve">
+    <value>Avfärdad</value>
+  </data>
+  <data name="Status.Voided" xml:space="preserve">
+    <value>Registrerad av misstag</value>
+  </data>
+  <data name="FollowUpKind.screening_appointment" xml:space="preserve">
+    <value>Hälsokontrolltid</value>
+  </data>
+  <data name="FollowUpKind.baseline_test" xml:space="preserve">
+    <value>Basprov</value>
+  </data>
+  <data name="FollowUpKind.medical_review" xml:space="preserve">
+    <value>Medicinsk uppföljning</value>
+  </data>
+  <data name="FollowUpKind.wellness_check_in" xml:space="preserve">
+    <value>Välmåendesamtal</value>
+  </data>
+  <data name="FollowUpKind.other" xml:space="preserve">
+    <value>Annan uppföljning</value>
+  </data>
+  <data name="FollowUpState.Open" xml:space="preserve">
+    <value>Öppen</value>
+  </data>
+  <data name="FollowUpState.Acknowledged" xml:space="preserve">
+    <value>Kvitterad</value>
+  </data>
+  <data name="FollowUpState.Completed" xml:space="preserve">
+    <value>Klar</value>
+  </data>
+  <data name="FollowUpState.Cancelled" xml:space="preserve">
+    <value>Avbruten</value>
+  </data>
+  <data name="Basis.status" xml:space="preserve">
+    <value>personalstatus</value>
+  </data>
+  <data name="Basis.unit_crew" xml:space="preserve">
+    <value>enhetens besättning</value>
+  </data>
+  <data name="Basis.check_in" xml:space="preserve">
+    <value>incheckning</value>
+  </data>
+  <data name="Basis.unit_response" xml:space="preserve">
+    <value>enhetens insatstider</value>
+  </data>
+  <data name="Doc.Title" xml:space="preserve">
+    <value>Logg över exponeringar och kritiska händelser</value>
+  </data>
+  <data name="Doc.Member" xml:space="preserve">
+    <value>Medlem</value>
+  </data>
+  <data name="Doc.Date" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="Doc.Category" xml:space="preserve">
+    <value>Kategori</value>
+  </data>
+  <data name="Doc.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Doc.Call" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="Doc.Duration" xml:space="preserve">
+    <value>Varaktighet (h:mm)</value>
+  </data>
+  <data name="Doc.Substance" xml:space="preserve">
+    <value>Ämne eller agens</value>
+  </data>
+  <data name="Doc.PpeWorn" xml:space="preserve">
+    <value>Använd skyddsutrustning</value>
+  </data>
+  <data name="Doc.Decontamination" xml:space="preserve">
+    <value>Sanering</value>
+  </data>
+  <data name="Doc.Narrative" xml:space="preserve">
+    <value>Vad som hände</value>
+  </data>
+  <data name="Doc.HealthDetails" xml:space="preserve">
+    <value>Hälsouppgifter</value>
+  </data>
+  <data name="Doc.Withheld" xml:space="preserve">
+    <value>Undanhållet (skyddat)</value>
+  </data>
+  <data name="Doc.GeneratedOn" xml:space="preserve">
+    <value>Skapad {0}</value>
+  </data>
+  <data name="Doc.Retention" xml:space="preserve">
+    <value>Din organisation sparar uppgifterna i minst 30 år.</value>
+  </data>
+  <data name="Doc.CriticalIncidents" xml:space="preserve">
+    <value>Kritiska händelser</value>
+  </data>
+  <data name="Doc.ReportTitle" xml:space="preserve">
+    <value>Exponeringsrapport för medlemmar</value>
+  </data>
+  <data name="Doc.Total" xml:space="preserve">
+    <value>Bekräftade poster</value>
+  </data>
+  <data name="Doc.PendingSuggestions" xml:space="preserve">
+    <value>Väntar på granskning</value>
+  </data>
+  <data name="Doc.LastExposure" xml:space="preserve">
+    <value>Senaste</value>
+  </data>
+  <data name="Doc.ScreeningFlagged" xml:space="preserve">
+    <value>Utökad hälsokontroll</value>
+  </data>
+  <data name="Doc.OpenFollowUps" xml:space="preserve">
+    <value>Öppna uppföljningar</value>
+  </data>
+  <data name="Doc.Yes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+</root>

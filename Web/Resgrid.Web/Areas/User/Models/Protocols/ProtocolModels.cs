@@ -5,31 +5,6 @@ using Resgrid.Model;
 
 namespace Resgrid.WebCore.Areas.User.Models.Protocols
 {
-	/// <summary>The protocol library (Protocols/Index).</summary>
-	public class ProtocolIndexModel
-	{
-		public List<ProtocolLibraryRow> Rows { get; set; } = new List<ProtocolLibraryRow>();
-		public int Total { get; set; }
-		public int DisabledCount { get; set; }
-		/// <summary>Distinct protocols used on at least one call logged in the last 30 days.</summary>
-		public int UsedOnCallsCount { get; set; }
-		public string Query { get; set; }
-		/// <summary>"", "enabled" or "disabled".</summary>
-		public string Status { get; set; }
-		public bool CanCreate { get; set; }
-		public bool CanModify { get; set; }
-		public bool CanDelete { get; set; }
-		public string Message { get; set; }
-	}
-
-	public class ProtocolLibraryRow
-	{
-		public DispatchProtocol Protocol { get; set; }
-		/// <summary>One short line per trigger ("Priority: High", "Type: Structure Fire").</summary>
-		public List<string> Triggers { get; set; } = new List<string>();
-		public int CallsLast30Days { get; set; }
-	}
-
 	/// <summary>
 	/// The protocol editor, shared by New and Edit. The protocol's own id is never bound from the form (Edit takes it from the
 	/// route); child rows carry their ids so they are updated in place, and the server checks each one is this protocol's.
@@ -40,12 +15,27 @@ namespace Resgrid.WebCore.Areas.User.Models.Protocols
 		public string Code { get; set; }
 		public string Description { get; set; }
 		public string ProtocolText { get; set; }
+		/// <summary>P3: the block editor's document (ContentJson); null when the draft is P1 html (the html editor and "Convert to blocks").</summary>
+		public string ContentJson { get; set; }
+		/// <summary>
+		/// P4: the case flow builder's decision graph (Dispatch protocols); null when the builder was not on the page (the draft's graph is
+		/// kept), blank to remove it.
+		/// </summary>
+		public string DecisionGraphJson { get; set; }
 		public int MinimumWeight { get; set; }
 		public bool IsDisabled { get; set; }
 		public List<ProtocolTriggerInput> Triggers { get; set; } = new List<ProtocolTriggerInput>();
 		public List<ProtocolQuestionInput> Questions { get; set; } = new List<ProtocolQuestionInput>();
 		/// <summary>Existing attachments to remove on save (Edit).</summary>
 		public List<int> RemoveAttachmentIds { get; set; } = new List<int>();
+		/// <summary>P1 library fields, audience and draft settings.</summary>
+		public ProtocolLibraryEditorFields Library { get; set; } = new ProtocolLibraryEditorFields();
+		/// <summary>The protocol's RowVersion as loaded; a save against an older one is refused (R-P8).</summary>
+		public long RowVersion { get; set; }
+		/// <summary>The open draft's RowVersion as loaded (0 when there was none).</summary>
+		public long DraftRowVersion { get; set; }
+		/// <summary>"save" (default) or "submit" (save, then submit the draft for review).</summary>
+		public string Command { get; set; }
 
 		// Shown, never bound.
 		[BindNever] public int ProtocolId { get; set; }
@@ -53,7 +43,20 @@ namespace Resgrid.WebCore.Areas.User.Models.Protocols
 		[BindNever] public List<DispatchProtocolAttachment> ExistingAttachments { get; set; } = new List<DispatchProtocolAttachment>();
 		[BindNever] public List<DepartmentCallPriority> CallPriorities { get; set; } = new List<DepartmentCallPriority>();
 		[BindNever] public List<CallType> CallTypes { get; set; } = new List<CallType>();
+		/// <summary>P4: groups with a geofence (trigger zones) and the department's POI types (trigger occupancy types).</summary>
+		[BindNever] public List<DepartmentGroup> GeofenceGroups { get; set; } = new List<DepartmentGroup>();
+		[BindNever] public List<PoiType> PoiTypes { get; set; } = new List<PoiType>();
 		[BindNever] public string TimeZoneName { get; set; }
+		[BindNever] public ProtocolEditorLists Lists { get; set; } = new ProtocolEditorLists();
+		[BindNever] public int? DraftVersionId { get; set; }
+		[BindNever] public int? DraftStatus { get; set; }
+		[BindNever] public string DraftUpdatedBy { get; set; }
+		[BindNever] public DateTime? DraftUpdatedOn { get; set; }
+		/// <summary>The draft is in review or approved: its content is locked until it is withdrawn.</summary>
+		[BindNever] public bool ContentLocked { get; set; }
+		[BindNever] public string CurrentVersionLabel { get; set; }
+		[BindNever] public bool CanApprove { get; set; }
+		[BindNever] public string Message { get; set; }
 	}
 
 	public class ProtocolTriggerInput
@@ -69,8 +72,29 @@ namespace Resgrid.WebCore.Areas.User.Models.Protocols
 		public int? Priority { get; set; }
 		/// <summary>Null is "no type".</summary>
 		public int? CallTypeId { get; set; }
+
+		// Protocols P4 conditions (shared trigger engine): all optional, all must hold when set.
+		public int? GeofenceGroupId { get; set; }
+		/// <summary>Department-local days, 0 = Sunday … 6 = Saturday; none = every day.</summary>
+		public List<int> Days { get; set; } = new List<int>();
+		/// <summary>Department-local "HH:mm"; with <see cref="EndTime"/>. A start after the end runs overnight.</summary>
+		public string StartTime { get; set; }
+		public string EndTime { get; set; }
+		public string Keywords { get; set; }
+		public int? PoiTypeId { get; set; }
+		/// <summary><see cref="CallSources"/> values (intake classification).</summary>
+		public List<int> CallSources { get; set; } = new List<int>();
 		/// <summary>The name the trigger already has, kept when its type has since been deleted (shown, and matched by name).</summary>
 		public string CallTypeName { get; set; }
+	}
+
+	/// <summary>P4: one trigger row's conditions as the _TriggerConditions partial renders them.</summary>
+	public class ProtocolTriggerConditionsView
+	{
+		public string Key { get; set; }
+		public ProtocolTriggerInput Trigger { get; set; }
+		public List<DepartmentGroup> Groups { get; set; } = new List<DepartmentGroup>();
+		public List<PoiType> PoiTypes { get; set; } = new List<PoiType>();
 	}
 
 	public class ProtocolQuestionInput
@@ -87,20 +111,6 @@ namespace Resgrid.WebCore.Areas.User.Models.Protocols
 		public int Id { get; set; }
 		public string Text { get; set; }
 		public int Weight { get; set; }
-	}
-
-	/// <summary>The protocol detail page (Protocols/View).</summary>
-	public class ViewProtocolModel
-	{
-		public DispatchProtocol Protocol { get; set; }
-		public Department Department { get; set; }
-		public List<string> TriggerLines { get; set; } = new List<string>();
-		public int CallsLast30Days { get; set; }
-		public bool CanModify { get; set; }
-		public bool CanDelete { get; set; }
-		public string CreatedByName { get; set; }
-		public string UpdatedByName { get; set; }
-		public string Message { get; set; }
 	}
 
 	/// <summary>A protocol as the call forms' protocol panel reads it: no text, no attachment bytes.</summary>

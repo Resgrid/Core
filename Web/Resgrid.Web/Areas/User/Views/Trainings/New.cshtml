@@ -11,6 +11,7 @@
 
 <div class="wrapper wrapper-content">
     @await Html.PartialAsync("_Editor", (TrainingEditorModel)Model)
+    @await Html.PartialAsync("_EditorAids", (TrainingEditorModel)Model)
 </div>
 
 @section Styles {

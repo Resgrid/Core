@@ -716,4 +716,13 @@
   <data name="HelpFieldScheduleName" xml:space="preserve"><value>يظهر في قائمة المستحق، فاجعله سهل التمييز بنظرة واحدة.</value></data>
   <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>المدة المتاحة للطاقم لإنهاء الفحص بعد فتحه. بعدها يُحتسب فائتًا.</value></data>
   <data name="HelpFieldAssignment" xml:space="preserve"><value>التوجيه التلقائي يرسل الفحص إلى من يحوز الهدف. اختر شخصًا أو دورًا أو مجموعة أو مركبة لتجاوز ذلك.</value></data>
+  <data name="The witness signs at L2 (a fresh step-up or a passkey), bound to the content of the completion" xml:space="preserve">
+    <value>يوقّع الشاهد بالمستوى L2 (إعادة تحقق جديدة من الهوية أو مفتاح مرور)، ويرتبط التوقيع بمحتوى الإنجاز</value>
+  </data>
+  <data name="WitnessSignatureRequired" xml:space="preserve">
+    <value>يجب أن يشهد على قائمة التحقق هذه شاهدٌ بتوقيعه. افتح عملية الفحص ووقّع بصفة شاهد.</value>
+  </data>
+  <data name="WitnessSignatureRefused" xml:space="preserve">
+    <value>لم يُسجَّل توقيع الشاهد، لذا لا تزال قائمة التحقق بانتظار شاهدها.</value>
+  </data>
 </root>

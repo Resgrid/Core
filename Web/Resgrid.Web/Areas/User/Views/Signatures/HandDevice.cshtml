@@ -1,0 +1,79 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Signatures.HandDeviceView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureText
+@*
+    "Hand device to signer" (e-Signature S2, in person, Method InPersonOnline): the member hands this device to the customer,
+    occupant or outside party, who reads the statement, consents to sign electronically, prints their name and draws (or adopts
+    a typed) signature; an optional witness is named. The capture is bound to the revision hash shown here and refused if the
+    document changed meanwhile. No e-sign platform is involved, so it works for every department.
+*@
+@{
+    var request = Model.Request;
+    ViewBag.Title = "Resgrid | " + signatureText["HandDeviceTitle"];
+    ViewData["Title"] = signatureText["HandDeviceTitle"].Value;
+    ViewData["Subtitle"] = request.Title;
+    ViewData["Error"] = Model.Message;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Signatures/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-tablet" aria-hidden="true"></i> @Model.DepartmentName · @request.Title</h5></div>
+        <div class="ibox-content">
+            <form method="post" asp-area="User" asp-controller="Signatures" asp-action="HandDevice" asp-route-id="@request.SignatureRequestId" id="rg-handdevice-form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="boundRevisionSha256" value="@request.ArtifactSha256" />
+                <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                <input type="hidden" name="signatureImage" id="rg-handdevice-image" />
+
+                <p><strong>@signatureText["StatementLabel"]</strong></p>
+                <blockquote style="font-size:15px">@request.StatementText</blockquote>
+                <p class="text-muted small"><i class="fa fa-hashtag" aria-hidden="true"></i> @signatureText["ContentCodeLabel"] <span class="rgw-mono">@SignaturePolicy.ShortCode(request.ArtifactSha256)</span></p>
+
+                <div class="panel panel-default">
+                    <div class="panel-body small" style="max-height:180px;overflow:auto">@Model.ConsentText</div>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" name="consent" value="true" required /> @signatureText["ConsentCheckbox"]</label>
+                </div>
+
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label class="control-label" for="rg-handdevice-name">@signatureText["PrintedNameLabel"]</label>
+                        <input class="form-control input-lg" id="rg-handdevice-name" name="printedName" maxlength="200" required autocomplete="off" value="@Model.PrintedName" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="rg-handdevice-witness">@signatureText["WitnessNameLabel"]</label>
+                        <input class="form-control" id="rg-handdevice-witness" name="witnessName" maxlength="200" autocomplete="off" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="rg-handdevice-canvas">@signatureText["DrawSignatureLabel"]</label>
+                    <canvas id="rg-handdevice-canvas" width="600" height="180" role="img" aria-label="@signatureText["DrawSignatureLabel"]"
+                            style="display:block;width:100%;max-width:600px;height:180px;border:1px solid #999;border-radius:4px;background:#fff;touch-action:none"></canvas>
+                    <div class="m-t-xs">
+                        <button type="button" class="btn btn-default btn-sm" id="rg-handdevice-clear"><i class="fa fa-eraser" aria-hidden="true"></i> @signatureText["ClearSignatureButton"]</button>
+                        <button type="button" class="btn btn-default btn-sm" id="rg-handdevice-typed"><i class="fa fa-keyboard-o" aria-hidden="true"></i> @signatureText["AdoptTypedButton"]</button>
+                    </div>
+                    <p class="help-block small">@signatureText["DrawSignatureHelp"]</p>
+                </div>
+
+                <p class="text-danger small" id="rg-handdevice-error" role="alert" hidden>@signatureText["DrawSignatureRequired"]</p>
+                <div class="rgw-wizard-actions">
+                    <button type="submit" class="btn btn-primary btn-lg"><i class="fa fa-check" aria-hidden="true"></i> @signatureText["SignNowButton"]</button>
+                    <a class="btn btn-link" href="@Model.ReturnUrl">@signatureText["CancelLink"]</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/signatures/resgrid.handdevice.js" asp-append-version="true"></script>
+}

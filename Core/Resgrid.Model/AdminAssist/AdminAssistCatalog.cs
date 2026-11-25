@@ -82,6 +82,25 @@ namespace Resgrid.Model.AdminAssist
 			if (matches.Count < 2) return matches.FirstOrDefault();
 			return matches.FirstOrDefault(s => !matches.Any(o => o.Requires.Contains(s.Id) || o.Affects.Contains(s.Id))) ?? matches[0];
 		}
+
+		/// <summary>
+		/// False for an add-on module none of whose features is available or in preview: an add-on built dark and not for sale yet
+		/// (for example the LMS before wave 3). The catalog keeps it for inventory and coverage, but setup, Explore, the printed
+		/// report and Ask neither list nor offer it, and it needs no key feature until one of its features is released.
+		/// </summary>
+		public static bool IsListed(this IAdminAssistCatalog catalog, ProductArea area) =>
+			area != null && (area.Tier != ProductArea.AddOn ||
+				catalog.Capabilities.Any(c => c.AreaId == area.Id && (c.ReleaseStatus == "available" || c.ReleaseStatus == "preview")));
+
+		/// <summary>The modules customers are shown (<see cref="IsListed"/>), in catalog order.</summary>
+		public static IReadOnlyList<ProductArea> ListedAreas(this IAdminAssistCatalog catalog) => catalog.Areas.Where(catalog.IsListed).ToList();
+
+		/// <summary>The features of the listed modules; an unreleased add-on's features are neither listed nor offered.</summary>
+		public static IReadOnlyList<ProductCapability> ListedCapabilities(this IAdminAssistCatalog catalog)
+		{
+			var hidden = catalog.Areas.Where(a => !catalog.IsListed(a)).Select(a => a.Id).ToHashSet(StringComparer.Ordinal);
+			return catalog.Capabilities.Where(c => !hidden.Contains(c.AreaId)).ToList();
+		}
 	}
 
 	public enum EvidenceComparison { IsTrue, IsFalse, Equal, NotEqual, Greater, GreaterOrEqual, Less, LessOrEqual }

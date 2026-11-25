@@ -1,0 +1,130 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsSkills
+@model LmsTaskBookDetailView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsSkills.LmsSkills> localizer
+@*
+    One position task book: its tasks with the evaluations that signed them (date, evaluator, call or deployment), "evaluate" for qualified
+    evaluators, and once every task is complete the certification request (final evaluator, then certifying official). Managers can cancel.
+*@
+@{
+    var book = Model.Book.Book;
+    ViewBag.Title = "Resgrid | " + book.PositionCode;
+    ViewData["Title"] = book.PositionCode + " - " + book.Name;
+    ViewData["Subtitle"] = localizer["Skl.TaskBookIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var complete = Model.Book.CompleteCount;
+    var total = Model.Book.Tasks.Count;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    <div class="rgw-stat-tiles m-b-md">
+        <div class="rgw-stat-tile"><span class="rgw-stat-value">@Model.NameOf(book.UserId)</span><span class="rgw-stat-label"><i class="fa fa-user" aria-hidden="true"></i> @localizer["Skl.Trainee"]</span></div>
+        <div class="rgw-stat-tile"><span class="rgw-stat-value">@complete / @total</span><span class="rgw-stat-label"><i class="fa fa-tasks" aria-hidden="true"></i> @localizer["Skl.TasksComplete"]</span></div>
+        <div class="rgw-stat-tile"><span class="rgw-stat-value">@Model.Date(book.ExpiresOn)</span><span class="rgw-stat-label"><i class="fa fa-clock-o" aria-hidden="true"></i> @localizer["Skl.ValidUntil"]</span></div>
+        <div class="rgw-stat-tile"><span class="rgw-stat-value">@localizer["Skl.TaskBookStatus." + (LmsTaskBookStatuses)book.Status]</span><span class="rgw-stat-label">@localizer["Skl.Col.Status"]</span></div>
+    </div>
+    <div class="rgw-progress-honest m-b-md" role="progressbar" aria-valuemin="0" aria-valuemax="@total" aria-valuenow="@complete" aria-label="@localizer["Skl.TasksComplete"]">
+        <div class="progress"><div class="progress-bar" style="width:@(total == 0 ? 0 : complete * 100 / total)%"></div></div>
+    </div>
+
+    @if (book.Status == (int)LmsTaskBookStatuses.Certified)
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-certificate" aria-hidden="true"></i> @localizer["Skl.CertifiedOn"] @Model.Date(book.CertifiedOn) · @Model.NameOf(book.CertifiedByUserId)</div>
+    }
+    @if (book.Status == (int)LmsTaskBookStatuses.AwaitingCertification && book.SignatureRequestId.HasValue)
+    {
+        <div class="alert alert-info" role="status">
+            <i class="fa fa-pencil-square-o" aria-hidden="true"></i> @localizer["Skl.AwaitingCertification"] (@Model.NameOf(book.FinalEvaluatorUserId) → @Model.NameOf(book.CertifyingOfficialUserId))
+            <a class="btn btn-white btn-xs" asp-controller="Signatures" asp-action="Step" asp-route-area="User" asp-route-id="@book.SignatureRequestId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["Skl.OpenSignature"]</a>
+        </div>
+    }
+
+    <div class="table-responsive">
+        <table class="table rgw-table">
+            <thead><tr><th>@localizer["Skl.Task"]</th><th>@localizer["Skl.Required"]</th><th>@localizer["Skl.Evaluations"]</th><th class="rgw-row-actions">@localizer["Skl.Actions"]</th></tr></thead>
+            <tbody>
+                @foreach (var task in Model.Book.Tasks)
+                {
+                    <tr class="@(task.Complete ? "success" : string.Empty)">
+                        <td>
+                            <strong>@(task.Task.Number ?? task.Task.Key)</strong> @task.Task.Title
+                            @if (task.Task.RequiresIncident) { <span class="label label-info"><i class="fa fa-fire" aria-hidden="true"></i> @localizer["Skl.IncidentTask"]</span> }
+                        </td>
+                        <td>@task.Counted / @Math.Max(1, task.Task.RequiredEvaluations) @if (task.Complete) { <span class="label label-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Skl.Complete"]</span> }</td>
+                        <td>
+                            @foreach (var evaluation in task.Evaluations)
+                            {
+                                <div>
+                                    <a asp-controller="LmsSkills" asp-action="Evaluation" asp-route-area="User" asp-route-id="@evaluation.LmsSkillEvaluationId">@Model.Date(evaluation.SubmittedOn ?? evaluation.StartedOn)</a>
+                                    · @(evaluation.ExternalEvaluatorName ?? Model.NameOf(evaluation.EvaluatorUserId))
+                                    @if (evaluation.CallId.HasValue) { <span class="rgw-sub">@localizer["Skl.Field.CallId"] @evaluation.CallId</span> }
+                                    @if (evaluation.DeploymentId.HasValue) { <span class="rgw-sub">@localizer["Skl.Field.DeploymentId"] @evaluation.DeploymentId</span> }
+                                </div>
+                            }
+                        </td>
+                        <td class="rgw-row-actions">
+                            @if (Model.CanEvaluateTasks && !task.Complete)
+                            {
+                                <a class="btn btn-primary btn-xs" asp-controller="LmsSkills" asp-action="Start" asp-route-area="User" asp-route-taskBookId="@book.LmsTaskBookId" asp-route-taskKey="@task.Task.Key"><i class="fa fa-play" aria-hidden="true"></i> @localizer["Skl.Evaluate"]</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.IsManager && book.Status == (int)LmsTaskBookStatuses.Open && Model.Book.AllTasksComplete)
+    {
+        <form asp-controller="LmsSkills" asp-action="RequestCertification" asp-route-area="User" method="post" class="ibox">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@book.LmsTaskBookId" />
+            <div class="ibox-title"><h5><i class="fa fa-certificate" aria-hidden="true"></i> @localizer["Skl.RequestCertification"]</h5></div>
+            <div class="ibox-content">
+                <p class="help-block">@localizer["Skl.RequestCertificationHelp"]</p>
+                <div class="row">
+                    <div class="col-sm-6 form-group">
+                        <label for="finalEvaluatorUserId">@localizer["Skl.FinalEvaluator"]</label>
+                        <select id="finalEvaluatorUserId" name="finalEvaluatorUserId" class="form-control" required>
+                            <option value="">@localizer["Skl.Choose"]</option>
+                            @foreach (var userId in Model.FinalEvaluatorCandidates) { <option value="@userId">@Model.NameOf(userId)</option> }
+                        </select>
+                    </div>
+                    <div class="col-sm-6 form-group">
+                        <label for="certifyingOfficialUserId">@localizer["Skl.CertifyingOfficial"]</label>
+                        <select id="certifyingOfficialUserId" name="certifyingOfficialUserId" class="form-control" required>
+                            <option value="">@localizer["Skl.Choose"]</option>
+                            @foreach (var userId in Model.CertifyingCandidates) { <option value="@userId">@Model.NameOf(userId)</option> }
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane" aria-hidden="true"></i> @localizer["Skl.RequestCertification"]</button>
+            </div>
+        </form>
+    }
+
+    @if (Model.IsManager && book.IsOpen)
+    {
+        <form asp-controller="LmsSkills" asp-action="CancelTaskBook" asp-route-area="User" method="post" class="rgw-toolbar m-t-md">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@book.LmsTaskBookId" />
+            <label class="sr-only" for="cancel-reason">@localizer["Skl.CancelReason"]</label>
+            <input id="cancel-reason" name="reason" class="form-control" maxlength="1000" required placeholder="@localizer["Skl.CancelReason"]" />
+            <button type="submit" class="btn btn-danger" data-confirm="@localizer["Skl.CancelTaskBookConfirm"]"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["Skl.CancelTaskBook"]</button>
+        </form>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/app/internal/lms/resgrid.lms.skills.js" asp-append-version="true"></script>
+}

@@ -15,7 +15,7 @@ namespace Resgrid.Model
 	/// </summary>
 	[Table("RunCardTriggers")]
 	[ProtoContract]
-	public class RunCardTrigger : IEntity
+	public class RunCardTrigger : IEntity, IDispatchTriggerCriteria
 	{
 		[Key]
 		[Required]
@@ -45,6 +45,34 @@ namespace Resgrid.Model
 
 		[ProtoMember(7)]
 		public DateTime? EndsOn { get; set; }
+
+		/// <inheritdoc />
+		[ProtoMember(8)]
+		public int? GeofenceGroupId { get; set; }
+
+		/// <inheritdoc />
+		[ProtoMember(9)]
+		public int? DaysOfWeek { get; set; }
+
+		/// <inheritdoc />
+		[ProtoMember(10)]
+		public int? StartMinute { get; set; }
+
+		/// <inheritdoc />
+		[ProtoMember(11)]
+		public int? EndMinute { get; set; }
+
+		/// <inheritdoc />
+		[ProtoMember(12)]
+		public string Keywords { get; set; }
+
+		/// <inheritdoc />
+		[ProtoMember(13)]
+		public int? PoiTypeId { get; set; }
+
+		/// <inheritdoc />
+		[ProtoMember(14)]
+		public string CallSources { get; set; }
 
 		[NotMapped]
 		[JsonIgnore]

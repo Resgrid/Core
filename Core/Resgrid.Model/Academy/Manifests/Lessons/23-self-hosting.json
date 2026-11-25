@@ -1,0 +1,195 @@
+{
+  "schema": 1,
+  "id": "23-self-hosting",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Self-hosting",
+  "minutes": 1.5,
+  "walkthrough": false,
+  "audience": [
+    "administrator"
+  ],
+  "visibility": [],
+  "pages": [],
+  "adminAssist": {
+    "areas": [],
+    "capabilities": []
+  },
+  "media": {
+    "video": "media/23-self-hosting.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/23-self-hosting.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Self-hosting: configuration and operating responsibilities",
+    "ar": "الاستضافة الذاتية: الإعداد ومسؤوليات التشغيل",
+    "de": "Selbst-Hosting: Konfiguration und Betriebsverantwortung",
+    "el": "Αυτοφιλοξενία: ρύθμιση και ευθύνες λειτουργίας",
+    "es": "Autoalojamiento: configuración y responsabilidades de operación",
+    "fr": "Auto-hébergement : configuration et responsabilités d’exploitation",
+    "it": "Self-hosting: configurazione e responsabilità operative",
+    "pl": "Hosting własny: konfiguracja i obowiązki operatora",
+    "sv": "Egen drift: konfiguration och driftansvar",
+    "uk": "Самостійне розміщення: налаштування та обов’язки з експлуатації"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "Who is responsible for updates and backups on a self-hosted install?",
+        "ar": "من المسؤول عن التحديثات والنسخ الاحتياطية في التثبيت الذاتي؟",
+        "de": "Wer ist bei einer selbst gehosteten Installation für Updates und Sicherungen verantwortlich?",
+        "el": "Ποιος είναι υπεύθυνος για ενημερώσεις και αντίγραφα ασφαλείας σε αυτοφιλοξενούμενη εγκατάσταση;",
+        "es": "¿Quién se encarga de actualizaciones y copias de seguridad en una instalación propia?",
+        "fr": "Qui est responsable des mises à jour et sauvegardes d’une installation auto-hébergée ?",
+        "it": "Chi è responsabile di aggiornamenti e backup in un’installazione self-hosted?",
+        "pl": "Kto odpowiada za aktualizacje i kopie zapasowe w instalacji własnej?",
+        "sv": "Vem ansvarar för uppdateringar och säkerhetskopior i en egen installation?",
+        "uk": "Хто відповідає за оновлення й резервні копії самостійно розміщеної інсталяції?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Resgrid's hosted service",
+            "ar": "خدمة Resgrid المستضافة",
+            "de": "Der gehostete Dienst von Resgrid",
+            "el": "Η φιλοξενούμενη υπηρεσία του Resgrid",
+            "es": "El servicio alojado de Resgrid",
+            "fr": "Le service hébergé de Resgrid",
+            "it": "Il servizio ospitato di Resgrid",
+            "pl": "Usługa hostowana Resgrid",
+            "sv": "Resgrids hostade tjänst",
+            "uk": "Хмарний сервіс Resgrid"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Nobody",
+            "ar": "لا أحد",
+            "de": "Niemand",
+            "el": "Κανείς",
+            "es": "Nadie",
+            "fr": "Personne",
+            "it": "Nessuno",
+            "pl": "Nikt",
+            "sv": "Ingen",
+            "uk": "Ніхто"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "The operator running the install",
+            "ar": "المشغل الذي يدير التثبيت",
+            "de": "Der Betreiber der Installation",
+            "el": "Ο διαχειριστής που λειτουργεί την εγκατάσταση",
+            "es": "El operador que gestiona la instalación",
+            "fr": "L’exploitant de l’installation",
+            "it": "L’operatore che gestisce l’installazione",
+            "pl": "Operator obsługujący instalację",
+            "sv": "Operatören som driver installationen",
+            "uk": "Оператор, який обслуговує інсталяцію"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "Where is a self-hosted install configured?",
+        "ar": "أين يُضبط التثبيت الذاتي؟",
+        "de": "Wo wird eine selbst gehostete Installation konfiguriert?",
+        "el": "Πού ρυθμίζεται μια αυτοφιλοξενούμενη εγκατάσταση;",
+        "es": "¿Dónde se configura una instalación propia?",
+        "fr": "Où configure-t-on une installation auto-hébergée ?",
+        "it": "Dove si configura un’installazione self-hosted?",
+        "pl": "Gdzie konfiguruje się instalację własną?",
+        "sv": "Var konfigureras en egen installation?",
+        "uk": "Де налаштовують самостійно розміщену інсталяцію?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "In its configuration file or environment variables",
+            "ar": "في ملف الإعداد أو متغيرات البيئة",
+            "de": "In der Konfigurationsdatei oder in Umgebungsvariablen",
+            "el": "Στο αρχείο ρυθμίσεων ή στις μεταβλητές περιβάλλοντος",
+            "es": "En su archivo de configuración o variables de entorno",
+            "fr": "Dans son fichier de configuration ou ses variables d’environnement",
+            "it": "Nel file di configurazione o nelle variabili d’ambiente",
+            "pl": "W pliku konfiguracyjnym lub zmiennych środowiskowych",
+            "sv": "I konfigurationsfilen eller miljövariabler",
+            "uk": "У файлі конфігурації або змінних середовища"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "In a member's profile",
+            "ar": "في ملف تعريف عضو",
+            "de": "Im Profil eines Mitglieds",
+            "el": "Στο προφίλ ενός μέλους",
+            "es": "En el perfil de un miembro",
+            "fr": "Dans le profil d’un membre",
+            "it": "Nel profilo di un membro",
+            "pl": "W profilu członka",
+            "sv": "I en medlems profil",
+            "uk": "У профілі учасника"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "In a call note",
+            "ar": "في ملاحظة بلاغ",
+            "de": "In einer Einsatznotiz",
+            "el": "Σε σημείωση κλήσης",
+            "es": "En una nota de llamada",
+            "fr": "Dans une note d’intervention",
+            "it": "In una nota di chiamata",
+            "pl": "W notatce do zgłoszenia",
+            "sv": "I en larmanteckning",
+            "uk": "У нотатці до виклику"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "t",
+      "text": {
+        "en": "A self-hosted install needs regular security updates.",
+        "ar": "يحتاج التثبيت الذاتي إلى تحديثات أمنية منتظمة.",
+        "de": "Eine selbst gehostete Installation braucht regelmäßige Sicherheitsupdates.",
+        "el": "Μια αυτοφιλοξενούμενη εγκατάσταση χρειάζεται τακτικές ενημερώσεις ασφαλείας.",
+        "es": "Una instalación propia necesita actualizaciones de seguridad periódicas.",
+        "fr": "Une installation auto-hébergée a besoin de mises à jour de sécurité régulières.",
+        "it": "Un’installazione self-hosted ha bisogno di aggiornamenti di sicurezza regolari.",
+        "pl": "Instalacja własna wymaga regularnych aktualizacji zabezpieczeń.",
+        "sv": "En egen installation behöver regelbundna säkerhetsuppdateringar.",
+        "uk": "Самостійно розміщена інсталяція потребує регулярних оновлень безпеки."
+      }
+    }
+  ]
+}

@@ -1,0 +1,862 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HealthRecordsTab" xml:space="preserve">
+    <value>Health records</value>
+  </data>
+  <data name="ClearancesTab" xml:space="preserve">
+    <value>Medical clearance</value>
+  </data>
+  <data name="OshaTab" xml:space="preserve">
+    <value>OSHA log</value>
+  </data>
+  <data name="HealthRecordsTitle" xml:space="preserve">
+    <value>Health records</value>
+  </data>
+  <data name="HealthRecordsIntro" xml:space="preserve">
+    <value>Your exposure cases, injuries, duty status and medical clearance. Only you and your department's health officers see them.</value>
+  </data>
+  <data name="ReportExposureButton" xml:space="preserve">
+    <value>Report an exposure</value>
+  </data>
+  <data name="ReportInjuryButton" xml:space="preserve">
+    <value>Report an injury</value>
+  </data>
+  <data name="DutyStatusLabel" xml:space="preserve">
+    <value>Duty status</value>
+  </data>
+  <data name="ExpectedReturnLabel" xml:space="preserve">
+    <value>Expected back</value>
+  </data>
+  <data name="ClearanceStatusLabel" xml:space="preserve">
+    <value>Medical clearance</value>
+  </data>
+  <data name="NoClearance" xml:space="preserve">
+    <value>None on record</value>
+  </data>
+  <data name="ValidUntilLabel" xml:space="preserve">
+    <value>Next evaluation</value>
+  </data>
+  <data name="OpenCasesLabel" xml:space="preserve">
+    <value>Open exposure cases</value>
+  </data>
+  <data name="OpenInjuriesLabel" xml:space="preserve">
+    <value>Open injuries</value>
+  </data>
+  <data name="OpenCasesHeader" xml:space="preserve">
+    <value>Open exposure cases (designated officer)</value>
+  </data>
+  <data name="NoOpenCases" xml:space="preserve">
+    <value>No exposure case is open.</value>
+  </data>
+  <data name="MemberColumn" xml:space="preserve">
+    <value>Member</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Member</value>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="RouteColumn" xml:space="preserve">
+    <value>How exposed</value>
+  </data>
+  <data name="StageColumn" xml:space="preserve">
+    <value>Stage</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="NotificationOverdue" xml:space="preserve">
+    <value>Answer overdue</value>
+  </data>
+  <data name="OpenInjuriesHeader" xml:space="preserve">
+    <value>Open injuries</value>
+  </data>
+  <data name="NoOpenInjuries" xml:space="preserve">
+    <value>No injury is open.</value>
+  </data>
+  <data name="CaseNumberColumn" xml:space="preserve">
+    <value>Case no.</value>
+  </data>
+  <data name="MyCasesHeader" xml:space="preserve">
+    <value>My exposure cases</value>
+  </data>
+  <data name="NoCasesSelf" xml:space="preserve">
+    <value>You have no exposure case. Report a bloodborne-pathogen or infectious-disease exposure here, or from an exposure entry.</value>
+  </data>
+  <data name="MyInjuriesHeader" xml:space="preserve">
+    <value>My injuries</value>
+  </data>
+  <data name="NoInjuriesSelf" xml:space="preserve">
+    <value>You have no injury on record.</value>
+  </data>
+  <data name="StateColumn" xml:space="preserve">
+    <value>State</value>
+  </data>
+  <data name="DutyBoardHeader" xml:space="preserve">
+    <value>Duty status board</value>
+  </data>
+  <data name="DutyBoardHelp" xml:space="preserve">
+    <value>Members on restricted or off duty, or not fully cleared. It shows the status only, never why.</value>
+  </data>
+  <data name="NoDutyBoard" xml:space="preserve">
+    <value>Everyone you supervise is on full duty and cleared.</value>
+  </data>
+  <data name="SinceLabel" xml:space="preserve">
+    <value>Since</value>
+  </data>
+  <data name="PrivacyNote" xml:space="preserve">
+    <value>These records are restricted: you, the designated officer and the wellness officers see them. Department administrators and supervisors see duty status only, never medical details. They are never searchable or used by AI.</value>
+  </data>
+  <data name="Duty.FullDuty" xml:space="preserve">
+    <value>Full duty</value>
+  </data>
+  <data name="Duty.RestrictedDuty" xml:space="preserve">
+    <value>Restricted duty</value>
+  </data>
+  <data name="Duty.OffDuty" xml:space="preserve">
+    <value>Off duty</value>
+  </data>
+  <data name="Clearance.Cleared" xml:space="preserve">
+    <value>Cleared</value>
+  </data>
+  <data name="Clearance.ClearedWithRestrictions" xml:space="preserve">
+    <value>Cleared with restrictions</value>
+  </data>
+  <data name="Clearance.NotCleared" xml:space="preserve">
+    <value>Not cleared</value>
+  </data>
+  <data name="InjuryState.Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="InjuryState.Cleared" xml:space="preserve">
+    <value>Returned to duty</value>
+  </data>
+  <data name="InjuryState.Voided" xml:space="preserve">
+    <value>Recorded in error</value>
+  </data>
+  <data name="Stage.Reported" xml:space="preserve">
+    <value>Reported</value>
+  </data>
+  <data name="Stage.SourceFollowUpRequested" xml:space="preserve">
+    <value>Source follow-up requested</value>
+  </data>
+  <data name="Stage.NotificationRequested" xml:space="preserve">
+    <value>Notification requested (Ryan White)</value>
+  </data>
+  <data name="Stage.NotificationReceived" xml:space="preserve">
+    <value>Notification answered</value>
+  </data>
+  <data name="Stage.FollowUp" xml:space="preserve">
+    <value>Post-exposure follow-up</value>
+  </data>
+  <data name="Stage.Closed" xml:space="preserve">
+    <value>Closed</value>
+  </data>
+  <data name="Stage.Withdrawn" xml:space="preserve">
+    <value>Recorded in error</value>
+  </data>
+  <data name="Route.Percutaneous" xml:space="preserve">
+    <value>Needlestick or sharps</value>
+  </data>
+  <data name="Route.MucousMembrane" xml:space="preserve">
+    <value>Splash to eyes, nose or mouth</value>
+  </data>
+  <data name="Route.NonIntactSkin" xml:space="preserve">
+    <value>Contact with broken skin</value>
+  </data>
+  <data name="Route.Airborne" xml:space="preserve">
+    <value>Airborne infectious disease</value>
+  </data>
+  <data name="Route.Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="CaseTitle" xml:space="preserve">
+    <value>Exposure case</value>
+  </data>
+  <data name="CaseIntro" xml:space="preserve">
+    <value>A bloodborne-pathogen or infectious-disease exposure, from the report to closure. The designated officer moves it on.</value>
+  </data>
+  <data name="ProtectedWithheldNotice" xml:space="preserve">
+    <value>Some details are protected and withheld without a Protected Data grant.</value>
+  </data>
+  <data name="NotificationOverdueHelp" xml:space="preserve">
+    <value>The medical facility has not answered the notification request within 48 hours. Follow up with the facility, or start the post-exposure follow-up anyway.</value>
+  </data>
+  <data name="CaseFactsHeader" xml:space="preserve">
+    <value>The exposure</value>
+  </data>
+  <data name="OccurredLabel" xml:space="preserve">
+    <value>When it happened</value>
+  </data>
+  <data name="CallLabel" xml:space="preserve">
+    <value>Call</value>
+  </data>
+  <data name="ReportedLabel" xml:space="preserve">
+    <value>Reported</value>
+  </data>
+  <data name="SourceFacilityLabel" xml:space="preserve">
+    <value>Receiving medical facility</value>
+  </data>
+  <data name="NotificationDueLabel" xml:space="preserve">
+    <value>Answer due</value>
+  </data>
+  <data name="NoPatientIdentityNote" xml:space="preserve">
+    <value>Never enter the source patient's name or record number. The case points at the call; the receiving facility identifies the source from it.</value>
+  </data>
+  <data name="BbpTrainingHeader" xml:space="preserve">
+    <value>Bloodborne-pathogen training</value>
+  </data>
+  <data name="ExpiresLabel" xml:space="preserve">
+    <value>Expires</value>
+  </data>
+  <data name="Bbp.NotTracked" xml:space="preserve">
+    <value>Not tracked by the department</value>
+  </data>
+  <data name="Bbp.Current" xml:space="preserve">
+    <value>Current</value>
+  </data>
+  <data name="Bbp.ExpiringSoon" xml:space="preserve">
+    <value>Expiring soon</value>
+  </data>
+  <data name="Bbp.Expired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="Bbp.None" xml:space="preserve">
+    <value>No record</value>
+  </data>
+  <data name="RecordInjuryButton" xml:space="preserve">
+    <value>Record as an injury</value>
+  </data>
+  <data name="RecordInjuryHelp" xml:space="preserve">
+    <value>A needlestick or sharps injury contaminated with blood is an OSHA-recordable privacy case. Record it as an injury so it reaches the OSHA log without the member's name.</value>
+  </data>
+  <data name="NextStepHeader" xml:space="preserve">
+    <value>Next step</value>
+  </data>
+  <data name="NextStepHelp" xml:space="preserve">
+    <value>Record when the step happened and any notes, then choose the step. The receiving facility is required when requesting the source follow-up.</value>
+  </data>
+  <data name="StepDateLabel" xml:space="preserve">
+    <value>When (blank = now)</value>
+  </data>
+  <data name="StepNotesLabel" xml:space="preserve">
+    <value>Notes for this step</value>
+  </data>
+  <data name="ProtectedFieldHelp" xml:space="preserve">
+    <value>Protected: only the member and the officers read it.</value>
+  </data>
+  <data name="MoveToFormat" xml:space="preserve">
+    <value>Move to: {0}</value>
+  </data>
+  <data name="NotesHeader" xml:space="preserve">
+    <value>Protected notes</value>
+  </data>
+  <data name="SourceFollowUpNotesLabel" xml:space="preserve">
+    <value>Source follow-up</value>
+  </data>
+  <data name="NotificationResponseLabel" xml:space="preserve">
+    <value>Notification answer</value>
+  </data>
+  <data name="MedicalNotesLabel" xml:space="preserve">
+    <value>Testing and treatment notes</value>
+  </data>
+  <data name="ClosureNotesLabel" xml:space="preserve">
+    <value>Closing notes</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="WithheldValue" xml:space="preserve">
+    <value>Withheld (protected)</value>
+  </data>
+  <data name="FollowUpsHeader" xml:space="preserve">
+    <value>Post-exposure follow-up tasks</value>
+  </data>
+  <data name="NoFollowUps" xml:space="preserve">
+    <value>No follow-up task yet.</value>
+  </data>
+  <data name="FollowUpColumn" xml:space="preserve">
+    <value>Task</value>
+  </data>
+  <data name="AssigneeColumn" xml:space="preserve">
+    <value>Assigned to</value>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Due</value>
+  </data>
+  <data name="CompleteButton" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="AddFollowUpButton" xml:space="preserve">
+    <value>Add task</value>
+  </data>
+  <data name="FollowUpPrivacyHelp" xml:space="preserve">
+    <value>A task names its kind only, never a result; it goes to the member or a designated officer.</value>
+  </data>
+  <data name="FollowUpKind.baseline_testing" xml:space="preserve">
+    <value>Baseline testing</value>
+  </data>
+  <data name="FollowUpKind.prophylaxis_review" xml:space="preserve">
+    <value>Prophylaxis review</value>
+  </data>
+  <data name="FollowUpKind.six_week_test" xml:space="preserve">
+    <value>Six-week test</value>
+  </data>
+  <data name="FollowUpKind.three_month_test" xml:space="preserve">
+    <value>Three-month test</value>
+  </data>
+  <data name="FollowUpKind.six_month_test" xml:space="preserve">
+    <value>Six-month test</value>
+  </data>
+  <data name="FollowUpKind.counselling" xml:space="preserve">
+    <value>Counselling</value>
+  </data>
+  <data name="FollowUpKind.other" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="FollowUpState.Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="FollowUpState.Acknowledged" xml:space="preserve">
+    <value>Acknowledged</value>
+  </data>
+  <data name="FollowUpState.Completed" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="FollowUpState.Cancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="ReportExposureTitle" xml:space="preserve">
+    <value>Report an exposure</value>
+  </data>
+  <data name="ReportExposureIntro" xml:space="preserve">
+    <value>A bloodborne-pathogen or infectious-disease exposure. The designated officer is told at once and takes it from here.</value>
+  </data>
+  <data name="ExistingEntryLabel" xml:space="preserve">
+    <value>From one of your exposure entries</value>
+  </data>
+  <data name="ExistingEntryHelp" xml:space="preserve">
+    <value>Choose an entry you already logged, or leave this for a new one.</value>
+  </data>
+  <data name="NewEntryOption" xml:space="preserve">
+    <value>A new exposure</value>
+  </data>
+  <data name="NoCallOption" xml:space="preserve">
+    <value>No call</value>
+  </data>
+  <data name="NarrativeLabel" xml:space="preserve">
+    <value>What happened</value>
+  </data>
+  <data name="PpeWornLabel" xml:space="preserve">
+    <value>Protective equipment worn</value>
+  </data>
+  <data name="SubmitReportButton" xml:space="preserve">
+    <value>Send the report</value>
+  </data>
+  <data name="ReportInjuryTitle" xml:space="preserve">
+    <value>Report an injury</value>
+  </data>
+  <data name="InjuryTitle" xml:space="preserve">
+    <value>Injury</value>
+  </data>
+  <data name="InjuryIntro" xml:space="preserve">
+    <value>What happened, the duty status with its dates, restrictions and the return-to-duty clearance. Supervisors see the duty status only.</value>
+  </data>
+  <data name="ReturnedOnLabel" xml:space="preserve">
+    <value>Back on full duty</value>
+  </data>
+  <data name="LinkedCaseLabel" xml:space="preserve">
+    <value>Open the exposure case this injury came from</value>
+  </data>
+  <data name="WhatHappenedHeader" xml:space="preserve">
+    <value>What happened</value>
+  </data>
+  <data name="LocationLabel" xml:space="preserve">
+    <value>Where it happened</value>
+  </data>
+  <data name="JobTitleLabel" xml:space="preserve">
+    <value>Job title</value>
+  </data>
+  <data name="DescriptionLabel" xml:space="preserve">
+    <value>What the member was doing and what happened</value>
+  </data>
+  <data name="InjuryDetailsLabel" xml:space="preserve">
+    <value>The injury, the part of the body and what caused it</value>
+  </data>
+  <data name="TreatmentLabel" xml:space="preserve">
+    <value>Physician, facility and treatment</value>
+  </data>
+  <data name="OshaHeader" xml:space="preserve">
+    <value>OSHA classification</value>
+  </data>
+  <data name="OshaHelp" xml:space="preserve">
+    <value>A recordable case goes on the year's OSHA 300 log and gets a 301 report. The day counts come from the duty status history.</value>
+  </data>
+  <data name="OshaTypeLabel" xml:space="preserve">
+    <value>Injury or illness type</value>
+  </data>
+  <data name="DiedOnLabel" xml:space="preserve">
+    <value>Date of death</value>
+  </data>
+  <data name="RecordableLabel" xml:space="preserve">
+    <value>OSHA-recordable case</value>
+  </data>
+  <data name="PrivacyCaseLabel" xml:space="preserve">
+    <value>Privacy case</value>
+  </data>
+  <data name="PrivacyCaseHelp" xml:space="preserve">
+    <value>The name is withheld from the 300 log (29 CFR 1904.29(b)).</value>
+  </data>
+  <data name="EmergencyRoomLabel" xml:space="preserve">
+    <value>Treated in an emergency room</value>
+  </data>
+  <data name="HospitalizedLabel" xml:space="preserve">
+    <value>Hospitalized overnight</value>
+  </data>
+  <data name="OshaOfficerOnlyNote" xml:space="preserve">
+    <value>Your department's health officers review the report and complete the OSHA classification.</value>
+  </data>
+  <data name="DutyHistoryHeader" xml:space="preserve">
+    <value>Duty status history</value>
+  </data>
+  <data name="RestrictionsLabel" xml:space="preserve">
+    <value>Restrictions</value>
+  </data>
+  <data name="NoPeriods" xml:space="preserve">
+    <value>Full duty throughout.</value>
+  </data>
+  <data name="FromColumn" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="ToColumn" xml:space="preserve">
+    <value>Until</value>
+  </data>
+  <data name="OngoingLabel" xml:space="preserve">
+    <value>Ongoing</value>
+  </data>
+  <data name="SetDutyStatusHeader" xml:space="preserve">
+    <value>Restricted or off duty</value>
+  </data>
+  <data name="RestrictionsHelp" xml:space="preserve">
+    <value>Protected. Supervisors see only that the member is on restricted duty.</value>
+  </data>
+  <data name="SetDutyStatusButton" xml:space="preserve">
+    <value>Set duty status</value>
+  </data>
+  <data name="ReturnHeader" xml:space="preserve">
+    <value>Return to duty</value>
+  </data>
+  <data name="ReturnHelp" xml:space="preserve">
+    <value>The clearance to return to full duty closes the injury's duty stretches.</value>
+  </data>
+  <data name="ClearanceNotesLabel" xml:space="preserve">
+    <value>Clearance notes</value>
+  </data>
+  <data name="ClearReturnButton" xml:space="preserve">
+    <value>Clear for full duty</value>
+  </data>
+  <data name="VoidInjuryButton" xml:space="preserve">
+    <value>Recorded in error</value>
+  </data>
+  <data name="VoidInjuryHelp" xml:space="preserve">
+    <value>The record is kept for its retention period and leaves the OSHA log.</value>
+  </data>
+  <data name="ClearancesTitle" xml:space="preserve">
+    <value>Medical clearance (NFPA 1582)</value>
+  </data>
+  <data name="ClearancesIntro" xml:space="preserve">
+    <value>Occupational medical evaluations with their restriction status. Officers and staffing see the status; the restriction detail is protected.</value>
+  </data>
+  <data name="ClearanceTypeMissingNote" xml:space="preserve">
+    <value>Name a certification type for medical clearance in the wellness settings (from the "Medical Clearance (NFPA 1582)" template) to record each evaluation as a certification too.</value>
+  </data>
+  <data name="CurrentClearancesHeader" xml:space="preserve">
+    <value>Current clearance by member</value>
+  </data>
+  <data name="NoClearances" xml:space="preserve">
+    <value>No clearance recorded yet.</value>
+  </data>
+  <data name="EvaluatedOnLabel" xml:space="preserve">
+    <value>Evaluated</value>
+  </data>
+  <data name="HistoryButton" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="RecordClearanceHeader" xml:space="preserve">
+    <value>Record an evaluation</value>
+  </data>
+  <data name="RestrictionDetailLabel" xml:space="preserve">
+    <value>Restrictions and reasons</value>
+  </data>
+  <data name="ClearanceDetailHelp" xml:space="preserve">
+    <value>Protected (ADP). Officers and staffing see only Cleared, Cleared with restrictions or Not cleared.</value>
+  </data>
+  <data name="RecordClearanceButton" xml:space="preserve">
+    <value>Record evaluation</value>
+  </data>
+  <data name="HistoryHeaderFormat" xml:space="preserve">
+    <value>Clearance history: {0}</value>
+  </data>
+  <data name="VoidedLabel" xml:space="preserve">
+    <value>Voided</value>
+  </data>
+  <data name="VoidButton" xml:space="preserve">
+    <value>Void</value>
+  </data>
+  <data name="HealthSettingsHeader" xml:space="preserve">
+    <value>Exposure cases, injuries and medical clearance</value>
+  </data>
+  <data name="DesignatedOfficerRoleLabel" xml:space="preserve">
+    <value>Designated officer role</value>
+  </data>
+  <data name="DesignatedOfficerRoleHelp" xml:space="preserve">
+    <value>Members of this role receive bloodborne-pathogen and infectious-disease exposure reports (Ryan White Part G) and run the cases.</value>
+  </data>
+  <data name="SameAsWellnessOfficerOption" xml:space="preserve">
+    <value>The wellness officer role</value>
+  </data>
+  <data name="BbpTrainingTypeLabel" xml:space="preserve">
+    <value>Bloodborne-pathogen training certification</value>
+  </data>
+  <data name="BbpTrainingTypeHelp" xml:space="preserve">
+    <value>Each exposure case shows the member's current status of this annual training (OSHA 1910.1030).</value>
+  </data>
+  <data name="ClearanceTypeLabel" xml:space="preserve">
+    <value>Medical clearance certification</value>
+  </data>
+  <data name="ClearanceTypeHelp" xml:space="preserve">
+    <value>Each NFPA 1582 evaluation is also recorded as a certification of this type; Not cleared suspends it.</value>
+  </data>
+  <data name="InjuryRetentionYearsLabel" xml:space="preserve">
+    <value>Keep injury records for (years)</value>
+  </data>
+  <data name="InjuryRetentionYearsHelp" xml:space="preserve">
+    <value>After the end of the year of the injury: at least 5 (OSHA 1904.33). Exposure cases and clearances follow the 30-year exposure retention.</value>
+  </data>
+  <data name="OshaTitle" xml:space="preserve">
+    <value>OSHA 300 and 301</value>
+  </data>
+  <data name="OshaIntro" xml:space="preserve">
+    <value>The year's log of recordable injuries and the incident reports, built from injury records. Privacy cases show without a name.</value>
+  </data>
+  <data name="ShowButton" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="Export300Csv" xml:space="preserve">
+    <value>300 log (CSV)</value>
+  </data>
+  <data name="Export300Pdf" xml:space="preserve">
+    <value>300 log (PDF)</value>
+  </data>
+  <data name="Export301Csv" xml:space="preserve">
+    <value>301 reports (CSV)</value>
+  </data>
+  <data name="Export301Pdf" xml:space="preserve">
+    <value>301 reports (PDF)</value>
+  </data>
+  <data name="NoCasesOnLog" xml:space="preserve">
+    <value>No recordable case this year.</value>
+  </data>
+  <data name="PrivacyMaskNote" xml:space="preserve">
+    <value>A privacy case shows "Privacy case" instead of the name, here and in every export of the 300 log.</value>
+  </data>
+  <data name="OutcomeColumn" xml:space="preserve">
+    <value>Outcome</value>
+  </data>
+  <data name="Outcome.Death" xml:space="preserve">
+    <value>Death</value>
+  </data>
+  <data name="Outcome.DaysAwayFromWork" xml:space="preserve">
+    <value>Days away from work</value>
+  </data>
+  <data name="Outcome.JobTransferOrRestriction" xml:space="preserve">
+    <value>Job transfer or restriction</value>
+  </data>
+  <data name="Outcome.OtherRecordable" xml:space="preserve">
+    <value>Other recordable case</value>
+  </data>
+  <data name="Osha.LogTitle" xml:space="preserve">
+    <value>Log of work-related injuries and illnesses (OSHA Form 300 shape)</value>
+  </data>
+  <data name="Osha.ReportTitle" xml:space="preserve">
+    <value>Injury and illness incident report (OSHA Form 301 shape)</value>
+  </data>
+  <data name="Osha.Establishment" xml:space="preserve">
+    <value>Establishment</value>
+  </data>
+  <data name="Osha.Year" xml:space="preserve">
+    <value>Year</value>
+  </data>
+  <data name="Osha.CaseNumber" xml:space="preserve">
+    <value>Case no.</value>
+  </data>
+  <data name="Osha.EmployeeName" xml:space="preserve">
+    <value>Employee's name</value>
+  </data>
+  <data name="Osha.JobTitle" xml:space="preserve">
+    <value>Job title</value>
+  </data>
+  <data name="Osha.DateOfInjury" xml:space="preserve">
+    <value>Date of injury or onset of illness</value>
+  </data>
+  <data name="Osha.Where" xml:space="preserve">
+    <value>Where the event occurred</value>
+  </data>
+  <data name="Osha.Description" xml:space="preserve">
+    <value>Injury or illness, parts of body affected, and object or substance</value>
+  </data>
+  <data name="Osha.Death" xml:space="preserve">
+    <value>Death</value>
+  </data>
+  <data name="Osha.DaysAwayCase" xml:space="preserve">
+    <value>Days away from work</value>
+  </data>
+  <data name="Osha.RestrictedCase" xml:space="preserve">
+    <value>Job transfer or restriction</value>
+  </data>
+  <data name="Osha.OtherRecordable" xml:space="preserve">
+    <value>Other recordable case</value>
+  </data>
+  <data name="Osha.DaysAway" xml:space="preserve">
+    <value>Away from work (days)</value>
+  </data>
+  <data name="Osha.DaysRestricted" xml:space="preserve">
+    <value>On job transfer or restriction (days)</value>
+  </data>
+  <data name="Osha.Type.Injury" xml:space="preserve">
+    <value>Injury</value>
+  </data>
+  <data name="Osha.Type.SkinDisorder" xml:space="preserve">
+    <value>Skin disorder</value>
+  </data>
+  <data name="Osha.Type.RespiratoryCondition" xml:space="preserve">
+    <value>Respiratory condition</value>
+  </data>
+  <data name="Osha.Type.Poisoning" xml:space="preserve">
+    <value>Poisoning</value>
+  </data>
+  <data name="Osha.Type.HearingLoss" xml:space="preserve">
+    <value>Hearing loss</value>
+  </data>
+  <data name="Osha.Type.AllOtherIllnesses" xml:space="preserve">
+    <value>All other illnesses</value>
+  </data>
+  <data name="Osha.Totals" xml:space="preserve">
+    <value>Totals</value>
+  </data>
+  <data name="Osha.TimeOfEvent" xml:space="preserve">
+    <value>Time of event</value>
+  </data>
+  <data name="Osha.WhatHappened" xml:space="preserve">
+    <value>What was the employee doing, and what happened?</value>
+  </data>
+  <data name="Osha.InjuryDetails" xml:space="preserve">
+    <value>What was the injury or illness, and what harmed the employee?</value>
+  </data>
+  <data name="Osha.Treatment" xml:space="preserve">
+    <value>Physician, facility and treatment</value>
+  </data>
+  <data name="Osha.EmergencyRoom" xml:space="preserve">
+    <value>Treated in an emergency room</value>
+  </data>
+  <data name="Osha.Hospitalized" xml:space="preserve">
+    <value>Hospitalized overnight as an in-patient</value>
+  </data>
+  <data name="Osha.DateOfDeath" xml:space="preserve">
+    <value>Date of death</value>
+  </data>
+  <data name="Osha.PrivacyCase" xml:space="preserve">
+    <value>Privacy case</value>
+  </data>
+  <data name="Osha.PrivacyCaseName" xml:space="preserve">
+    <value>Privacy case</value>
+  </data>
+  <data name="Osha.EmployeeDetailsNote" xml:space="preserve">
+    <value>Employee address, date of birth, date hired and gender are completed from the personnel file.</value>
+  </data>
+  <data name="Osha.Withheld" xml:space="preserve">
+    <value>Withheld (protected)</value>
+  </data>
+  <data name="Osha.Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="Osha.No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="Osha.Retention" xml:space="preserve">
+    <value>Keep these records for five years after the end of the year they cover (29 CFR 1904.33).</value>
+  </data>
+  <data name="Osha.Generated" xml:space="preserve">
+    <value>Generated {0}</value>
+  </data>
+  <data name="Msg.ExposureReported" xml:space="preserve">
+    <value>The exposure was reported and the designated officer was told.</value>
+  </data>
+  <data name="Msg.CaseMoved" xml:space="preserve">
+    <value>The case moved to its next step.</value>
+  </data>
+  <data name="Msg.Saved" xml:space="preserve">
+    <value>Saved.</value>
+  </data>
+  <data name="Msg.FollowUpAdded" xml:space="preserve">
+    <value>The follow-up task was added.</value>
+  </data>
+  <data name="Msg.FollowUpCompleted" xml:space="preserve">
+    <value>The follow-up task is done.</value>
+  </data>
+  <data name="Msg.FollowUpCancelled" xml:space="preserve">
+    <value>The follow-up task was cancelled.</value>
+  </data>
+  <data name="Msg.InjuryReported" xml:space="preserve">
+    <value>The injury was reported.</value>
+  </data>
+  <data name="Msg.DutyStatusSaved" xml:space="preserve">
+    <value>The duty status was set.</value>
+  </data>
+  <data name="Msg.ReturnedToDuty" xml:space="preserve">
+    <value>The member is cleared for full duty.</value>
+  </data>
+  <data name="Msg.InjuryVoided" xml:space="preserve">
+    <value>The injury is marked as recorded in error.</value>
+  </data>
+  <data name="Msg.ClearanceRecorded" xml:space="preserve">
+    <value>The evaluation was recorded.</value>
+  </data>
+  <data name="Msg.ClearanceVoided" xml:space="preserve">
+    <value>The evaluation was voided.</value>
+  </data>
+  <data name="Error.Generic" xml:space="preserve">
+    <value>That could not be saved. Check the form and try again.</value>
+  </data>
+  <data name="Error.NotAllowed" xml:space="preserve">
+    <value>You do not have access to do that.</value>
+  </data>
+  <data name="Error.ExportFailed" xml:space="preserve">
+    <value>The export could not be produced. Try again later.</value>
+  </data>
+  <data name="Error.date_invalid" xml:space="preserve">
+    <value>Enter a valid date (not in the future).</value>
+  </data>
+  <data name="Error.member_not_found" xml:space="preserve">
+    <value>That member is not a current member of the department.</value>
+  </data>
+  <data name="Error.route_required" xml:space="preserve">
+    <value>Choose how the member was exposed.</value>
+  </data>
+  <data name="Error.entry_not_bloodborne" xml:space="preserve">
+    <value>A case can follow only a confirmed bloodborne-pathogen (or other) exposure entry.</value>
+  </data>
+  <data name="Error.case_exists" xml:space="preserve">
+    <value>That exposure entry already has an open case.</value>
+  </data>
+  <data name="Error.call_not_found" xml:space="preserve">
+    <value>That call was not found in this department.</value>
+  </data>
+  <data name="Error.case_changed" xml:space="preserve">
+    <value>Someone else changed this case. Reload it and try again.</value>
+  </data>
+  <data name="Error.stage_not_allowed" xml:space="preserve">
+    <value>The case cannot move to that step from where it is.</value>
+  </data>
+  <data name="Error.facility_required" xml:space="preserve">
+    <value>Enter the receiving medical facility to request the source follow-up.</value>
+  </data>
+  <data name="Error.follow_ups_open" xml:space="preserve">
+    <value>Finish or cancel the open follow-up tasks before closing the case.</value>
+  </data>
+  <data name="Error.case_closed" xml:space="preserve">
+    <value>That case is closed.</value>
+  </data>
+  <data name="Error.follow_up_assignee_invalid" xml:space="preserve">
+    <value>A task goes to the exposed member or a designated officer.</value>
+  </data>
+  <data name="Error.duty_status_required" xml:space="preserve">
+    <value>Choose restricted or off duty.</value>
+  </data>
+  <data name="Error.return_date_invalid" xml:space="preserve">
+    <value>The expected return must be after the start date.</value>
+  </data>
+  <data name="Error.date_before_current_status" xml:space="preserve">
+    <value>That date is before the current duty status began.</value>
+  </data>
+  <data name="Error.injury_not_open" xml:space="preserve">
+    <value>Only an open injury can be cleared for duty.</value>
+  </data>
+  <data name="Error.clearance_status_required" xml:space="preserve">
+    <value>Choose the clearance status.</value>
+  </data>
+  <data name="Error.valid_until_invalid" xml:space="preserve">
+    <value>The next evaluation must be after the evaluation date.</value>
+  </data>
+  <data name="Error.injury_changed" xml:space="preserve">
+    <value>Someone else changed this injury. Reload it and try again.</value>
+  </data>
+  <data name="Error.protected_write_refused" xml:space="preserve">
+    <value>Protected details could not be saved right now. Try again later.</value>
+  </data>
+</root>

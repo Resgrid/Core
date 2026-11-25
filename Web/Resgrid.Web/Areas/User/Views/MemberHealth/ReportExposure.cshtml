@@ -1,0 +1,103 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Wellness
+@model ReportExposureView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.MemberHealth> localizer
+@*
+    Report a bloodborne-pathogen or infectious-disease exposure (member wellness WL1): from one of the member's confirmed exposure entries,
+    or a new one. The designated officer is told at once and runs the case. Nothing here asks for the source patient's identity: the case
+    points at the call, and the receiving facility follows up from there.
+*@
+@{
+    var title = localizer["ReportExposureTitle"].Value;
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Section"] = "Health";
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["ReportExposureIntro"].Value;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Wellness/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <form method="post" asp-controller="MemberHealth" asp-action="ReportExposure" asp-route-area="User" class="ibox float-e-margins">
+        @Html.AntiForgeryToken()
+        <div class="ibox-content">
+            @if (Model.IsDesignatedOfficer && Model.Members.Count > 0)
+            {
+                <div class="form-group">
+                    <label for="report-member">@localizer["MemberLabel"]</label>
+                    <select id="report-member" name="MemberUserId" class="form-control">
+                        @foreach (var member in Model.Members)
+                        {
+                            <option value="@member.UserId" selected="@(string.Equals(member.UserId, Model.MemberUserId, StringComparison.OrdinalIgnoreCase))">@member.Name</option>
+                        }
+                    </select>
+                </div>
+            }
+            else
+            {
+                <input type="hidden" asp-for="MemberUserId" />
+            }
+
+            @if (Model.Entries.Count > 0)
+            {
+                <div class="form-group">
+                    <label for="report-entry">@localizer["ExistingEntryLabel"]</label>
+                    <select id="report-entry" name="ResponderExposureId" class="form-control">
+                        <option value="">@localizer["NewEntryOption"]</option>
+                        @foreach (var entry in Model.Entries)
+                        {
+                            <option value="@entry.Id" selected="@(string.Equals(entry.Id, Model.ResponderExposureId, StringComparison.OrdinalIgnoreCase))">@entry.Label</option>
+                        }
+                    </select>
+                    <small class="text-muted">@localizer["ExistingEntryHelp"]</small>
+                </div>
+            }
+
+            <div class="rgw-grid">
+                <div class="form-group">
+                    <label for="report-route">@localizer["RouteColumn"]</label>
+                    <select id="report-route" asp-for="Route" class="form-control" required>
+                        @foreach (ExposureIncidentRoutes route in Enum.GetValues(typeof(ExposureIncidentRoutes)))
+                        {
+                            <option value="@((int)route)" selected="@(Model.Route == (int)route)">@localizer[MemberHealthPresentation.RouteKey((int)route)]</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="report-occurred">@localizer["OccurredLabel"]</label>
+                    <input id="report-occurred" asp-for="OccurredOnLocal" type="datetime-local" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="report-call">@localizer["CallLabel"]</label>
+                    <select id="report-call" asp-for="CallId" class="form-control">
+                        <option value="">@localizer["NoCallOption"]</option>
+                        @foreach (var call in Model.Calls)
+                        {
+                            <option value="@call.CallId" selected="@(Model.CallId == call.CallId)">@call.Label</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="report-narrative">@localizer["NarrativeLabel"]</label>
+                <textarea id="report-narrative" asp-for="Narrative" class="form-control" rows="3" maxlength="4000"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="report-ppe">@localizer["PpeWornLabel"]</label>
+                <input id="report-ppe" asp-for="PpeWorn" type="text" class="form-control" maxlength="500" />
+                <small class="text-muted">@localizer["ProtectedFieldHelp"]</small>
+            </div>
+            <p class="text-muted small"><i class="fa fa-user-secret" aria-hidden="true"></i> @localizer["NoPatientIdentityNote"]</p>
+        </div>
+        <div class="ibox-content rgw-toolbar">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane" aria-hidden="true"></i> @localizer["SubmitReportButton"]</button>
+            <a class="btn btn-default" asp-controller="MemberHealth" asp-action="Index" asp-route-area="User">@localizer["CancelButton"]</a>
+        </div>
+    </form>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

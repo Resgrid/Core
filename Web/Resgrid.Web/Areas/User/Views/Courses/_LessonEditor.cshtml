@@ -1,0 +1,174 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Courses
+@using Resgrid.Web.Areas.User.Controllers
+@model CourseBuilderModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* One lesson of a draft, by kind. Only a Draft saves (the fieldset is disabled otherwise); rich text is sanitized when stored. *@
+@{
+    var version = Model.Outline.Version;
+    var lesson = Model.Lesson ?? new LmsLesson { LmsCourseModuleId = Model.ModuleForNewLesson ?? 0, Kind = Model.NewLessonKind };
+    var kind = (LmsLessonKinds)lesson.Kind;
+    var isNew = lesson.LmsLessonId == 0;
+}
+<div class="ibox float-e-margins">
+    <div class="ibox-title">
+        <h5><i class="fa @CourseLabels.LessonIcon(lesson.Kind)" aria-hidden="true"></i> @(isNew ? string.Format(localizer["NewLessonFormat"].Value, localizer[CourseLabels.LessonKind(lesson.Kind)].Value) : lesson.Title)</h5>
+    </div>
+    <div class="ibox-content">
+        <form method="post" asp-controller="Courses" asp-action="SaveLesson" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="LmsLessonId" value="@lesson.LmsLessonId" />
+            <input type="hidden" name="Kind" value="@lesson.Kind" />
+            <fieldset disabled="@(!Model.Editable)">
+                <div class="rgw-grid">
+                    <div class="form-group"><label for="l-title">@localizer["TitleLabel"]</label><input id="l-title" name="Title" class="form-control" value="@lesson.Title" maxlength="250" required /></div>
+                    <div class="form-group">
+                        <label for="l-module">@localizer["ModuleLabel"]</label>
+                        <select id="l-module" name="LmsCourseModuleId" class="form-control">
+                            @foreach (var module in Model.Outline.Modules)
+                            {
+                                <option value="@module.Module.LmsCourseModuleId" selected="@(module.Module.LmsCourseModuleId == lesson.LmsCourseModuleId)">@(string.IsNullOrWhiteSpace(module.Module.Title) ? string.Format(localizer["ModuleNumberFormat"].Value, Model.Outline.Modules.IndexOf(module) + 1) : module.Module.Title)</option>
+                            }
+                        </select>
+                    </div>
+                    @if (kind != LmsLessonKinds.Assessment && kind != LmsLessonKinds.Survey)
+                    {
+                        <div class="form-group"><label for="l-seat">@localizer["MinimumSeatLabel"]</label><input id="l-seat" name="MinimumSeatSeconds" type="number" min="0" max="86400" class="form-control" value="@lesson.MinimumSeatSeconds" /></div>
+                    }
+                </div>
+                <div class="checkbox"><label><input type="checkbox" name="IsRequired" value="true" checked="@lesson.IsRequired" /> @localizer["RequiredLabel"]</label><input type="hidden" name="IsRequired" value="false" /></div>
+
+                @switch (kind)
+                {
+                    case LmsLessonKinds.Video:
+                        <div class="rgw-grid">
+                            <div class="form-group">
+                                <label for="l-source">@localizer["VideoSourceLabel"]</label>
+                                <select id="l-source" name="VideoSource" class="form-control">
+                                    <option value="@((int)LmsVideoSources.Embed)" selected="@(lesson.VideoSource != (int)LmsVideoSources.Hosted)">@localizer["VideoSource.Embed"]</option>
+                                    <option value="@((int)LmsVideoSources.Hosted)" selected="@(lesson.VideoSource == (int)LmsVideoSources.Hosted)" disabled="@(!Model.MediaConfigured)">@localizer["VideoSource.Hosted"]</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label for="l-url">@localizer["VideoUrlLabel"]</label><input id="l-url" name="VideoUrl" type="url" class="form-control" value="@lesson.VideoUrl" maxlength="1000" /></div>
+                            <div class="form-group">
+                                <label for="l-asset">@localizer["HostedVideoLabel"]</label>
+                                <select id="l-asset" name="LmsMediaAssetId" class="form-control">
+                                    <option value="">@localizer["NoneOption"]</option>
+                                    @foreach (var asset in Model.Media) {<option value="@asset.Key" selected="@(lesson.LmsMediaAssetId == asset.Key)">@asset.Value</option>}
+                                </select>
+                            </div>
+                            <div class="form-group"><label for="l-watch">@localizer["RequiredWatchLabel"]</label><input id="l-watch" name="RequiredWatchPercent" type="number" min="0" max="100" class="form-control" value="@lesson.RequiredWatchPercent" /></div>
+                        </div>
+                        <div class="form-group"><label for="l-transcript">@localizer["TranscriptHeader"]</label><textarea id="l-transcript" name="TranscriptText" class="form-control" rows="4">@lesson.TranscriptText</textarea></div>
+                        <div class="rgw-builder-toggles">
+                            <div class="checkbox"><label><input type="checkbox" name="AvailableOffline" value="true" checked="@lesson.AvailableOffline" /> @localizer["AvailableOfflineLabel"]</label></div>
+                            <div class="form-group"><label for="l-offline-mb">@localizer["OfflineCapLabel"]</label><input id="l-offline-mb" name="offlineMaxMb" type="number" min="1" max="4096" class="form-control" value="@((lesson.OfflineMaxBytes ?? Resgrid.Config.LmsConfig.DefaultOfflineMaxBytes) / (1024 * 1024))" /></div>
+                            <div class="form-group"><label for="l-offline-days">@localizer["OfflineExpiryLabel"]</label><input id="l-offline-days" name="OfflineExpiryDays" type="number" min="1" max="90" class="form-control" value="@(lesson.OfflineExpiryDays ?? Resgrid.Config.LmsConfig.DefaultOfflineExpiryDays)" /></div>
+                        </div>
+                        <p class="help-block">@localizer["VideoHelp"]</p>
+                        break;
+
+                    case LmsLessonKinds.Document:
+                        <div class="rgw-grid">
+                            <div class="form-group"><label for="l-doc">@localizer["DocumentUrlLabel"]</label><input id="l-doc" name="DocumentUrl" type="url" class="form-control" value="@lesson.DocumentUrl" maxlength="1000" required /></div>
+                            <div class="form-group"><label for="l-docname">@localizer["DocumentNameLabel"]</label><input id="l-docname" name="DocumentName" class="form-control" value="@lesson.DocumentName" maxlength="250" /></div>
+                        </div>
+                        break;
+
+                    case LmsLessonKinds.ProtocolVersion:
+                        <div class="form-group">
+                            <label for="l-protocol">@localizer["ProtocolVersionLabel"]</label>
+                            <select id="l-protocol" name="ProtocolVersionId" class="form-control" required>
+                                <option value="">@localizer["ChooseOption"]</option>
+                                @foreach (var p in Model.ProtocolVersions) {<option value="@p.Key" selected="@(lesson.ProtocolVersionId == p.Key)">@p.Value</option>}
+                            </select>
+                            <span class="help-block">@localizer["ProtocolVersionHelp"]</span>
+                        </div>
+                        break;
+
+                    case LmsLessonKinds.Assessment:
+                        <div class="rgw-grid">
+                            <div class="form-group">
+                                <label for="l-bank">@localizer["BankLabel"]</label>
+                                <select id="l-bank" name="LmsQuestionBankId" class="form-control" required>
+                                    <option value="">@localizer["ChooseOption"]</option>
+                                    @foreach (var b in Model.Banks) {<option value="@b.Key" selected="@(lesson.LmsQuestionBankId == b.Key)">@b.Value</option>}
+                                </select>
+                            </div>
+                            <div class="form-group"><label for="l-draw">@localizer["DrawCountLabel"]</label><input id="l-draw" name="DrawCount" type="number" min="0" max="200" class="form-control" value="@lesson.DrawCount" /></div>
+                            <div class="form-group"><label for="l-tags">@localizer["DrawTagsLabel"]</label><input id="l-tags" name="DrawTags" class="form-control" value="@lesson.DrawTags" maxlength="500" /></div>
+                            <div class="form-group"><label for="l-pass">@localizer["PassMarkLabel"]</label><input id="l-pass" name="PassMark" type="number" min="0" max="100" class="form-control" value="@lesson.PassMark" /></div>
+                            <div class="form-group"><label for="l-attempts">@localizer["AttemptLimitLabel"]</label><input id="l-attempts" name="AttemptLimit" type="number" min="0" max="99" class="form-control" value="@lesson.AttemptLimit" /></div>
+                            <div class="form-group"><label for="l-cooldown">@localizer["CooldownLabel"]</label><input id="l-cooldown" name="RetakeCooldownHours" type="number" min="0" max="8760" class="form-control" value="@lesson.RetakeCooldownHours" /></div>
+                            <div class="form-group"><label for="l-time">@localizer["TimeLimitLabel"]</label><input id="l-time" name="TimeLimitMinutes" type="number" min="0" max="600" class="form-control" value="@lesson.TimeLimitMinutes" /></div>
+                            <div class="form-group">
+                                <label for="l-review">@localizer["ShowAnswersLabel"]</label>
+                                <select id="l-review" name="ShowAnswersPolicy" class="form-control">
+                                    @foreach (LmsShowAnswersPolicies policy in Enum.GetValues(typeof(LmsShowAnswersPolicies)))
+                                    {
+                                        <option value="@((int)policy)" selected="@(lesson.ShowAnswersPolicy == (int)policy)">@localizer["ShowAnswers." + policy]</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="rgw-builder-toggles">
+                            <div class="checkbox"><label><input type="checkbox" name="RandomizeAnswers" value="true" checked="@lesson.RandomizeAnswers" /> @localizer["RandomizeLabel"]</label><input type="hidden" name="RandomizeAnswers" value="false" /></div>
+                            <div class="checkbox"><label><input type="checkbox" name="IsPreTest" value="true" checked="@lesson.IsPreTest" /> @localizer["PreTestLabel"]</label></div>
+                            <div class="checkbox"><label><input type="checkbox" name="RequireAttestation" value="true" checked="@lesson.RequireAttestation" /> @localizer["AttestationLabel"]</label></div>
+                        </div>
+                        <p class="help-block">@localizer["AssessmentHelp"]</p>
+                        break;
+
+                    case LmsLessonKinds.Survey:
+                        <div class="form-group">
+                            <label for="l-survey">@localizer["SurveyQuestionsLabel"]</label>
+                            <textarea id="l-survey" name="surveyText" class="form-control" rows="6" required>@CoursesController.SurveyText(lesson.SurveyJson)</textarea>
+                            <span class="help-block">@localizer["SurveyFormatHelp"]</span>
+                        </div>
+                        break;
+
+                    default:
+                        <div class="form-group"><label for="l-content">@localizer["ContentLabel"]</label><textarea id="l-content" name="ContentHtml" class="form-control" rows="10">@lesson.ContentHtml</textarea><span class="help-block">@localizer["ContentHelp"]</span></div>
+                        <div class="form-group"><label for="l-response">@localizer["FreeResponseLabel"]</label><input id="l-response" name="FreeResponsePrompt" class="form-control" value="@lesson.FreeResponsePrompt" maxlength="2000" /></div>
+                        <div class="form-group"><label for="l-file">@localizer["FileRequestLabel"]</label><input id="l-file" name="FileRequestPrompt" class="form-control" value="@lesson.FileRequestPrompt" maxlength="2000" /></div>
+                        break;
+                }
+
+                @if (Model.Editable)
+                {
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["SaveLessonButton"]</button>
+                }
+                <a class="btn btn-white" asp-controller="Courses" asp-action="Builder" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId">@localizer["CancelButton"]</a>
+            </fieldset>
+        </form>
+
+        @if (kind == LmsLessonKinds.Video && Model.Editable && Model.CanUploadMedia)
+        {
+            <hr />
+            <form method="post" asp-controller="Courses" asp-action="UploadVideo" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId" enctype="multipart/form-data" class="m-b-sm">
+                @Html.AntiForgeryToken()
+                <label for="video-file">@localizer["UploadVideoLabel"]</label>
+                <input id="video-file" name="file" type="file" accept="video/*" class="form-control" required />
+                <button type="submit" class="btn btn-white btn-sm m-t-xs"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["UploadButton"]</button>
+            </form>
+            @if (!isNew)
+            {
+                <form method="post" asp-controller="Courses" asp-action="UploadCaptions" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="lessonId" value="@lesson.LmsLessonId" />
+                    <div class="rgw-grid">
+                        <div class="form-group"><label for="cap-locale">@localizer["CaptionsLocaleLabel"]</label><input id="cap-locale" name="locale" class="form-control" value="en" maxlength="16" required /></div>
+                        <div class="form-group"><label for="cap-label">@localizer["CaptionsLabelLabel"]</label><input id="cap-label" name="label" class="form-control" maxlength="60" /></div>
+                        <div class="form-group"><label for="cap-file">@localizer["CaptionsFileLabel"]</label><input id="cap-file" name="file" type="file" accept=".vtt,text/vtt" class="form-control" required /></div>
+                    </div>
+                    <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-cc" aria-hidden="true"></i> @localizer["UploadCaptionsButton"]</button>
+                    <span class="help-block">@localizer["AiCaptionsNote"]</span>
+                </form>
+            }
+        }
+        else if (kind == LmsLessonKinds.Video && !Model.MediaConfigured)
+        {
+            <p class="text-muted small m-t-sm">@localizer["MediaNotConfigured"]</p>
+        }
+    </div>
+</div>

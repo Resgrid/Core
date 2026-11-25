@@ -353,4 +353,16 @@
   <data name="CheckOutBy" xml:space="preserve">
     <value>Utcheckad av {0}</value>
   </data>
+  <data name="CountsAsTrainingLabel" xml:space="preserve">
+    <value>Räknas som utbildning</value>
+  </data>
+  <data name="CountsAsTrainingHelp" xml:space="preserve">
+    <value>In- och utcheckning på händelser av denna typ blir utbildningstimmar i deltagarnas utbildningsregister. En incheckning utan utcheckning väntar på ett befäl.</value>
+  </data>
+  <data name="TrainingCategoryLabel" xml:space="preserve">
+    <value>Utbildningskategori</value>
+  </data>
+  <data name="TrainingCategoryNone" xml:space="preserve">
+    <value>Utan kategori</value>
+  </data>
 </root>

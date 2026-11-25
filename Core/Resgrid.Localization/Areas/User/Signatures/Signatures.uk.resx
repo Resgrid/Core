@@ -1,0 +1,940 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AnyApprover" xml:space="preserve">
+    <value>будь-який затверджувач</value>
+  </data>
+  <data name="BindsToContentHelp" xml:space="preserve">
+    <value>Підпис стосується саме цього тексту. Якщо текст зміниться, він більше не збігатиметься, і знадобиться новий підпис.</value>
+  </data>
+  <data name="CertificationVerificationStatement" xml:space="preserve">
+    <value>Я підтверджую запис про сертифікацію {0} ({1}, отримано {2}, дійсний до {3}): за результатами моєї перевірки він справжній.</value>
+  </data>
+  <data name="CommentLabel" xml:space="preserve">
+    <value>Коментар (необов'язково)</value>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>Код вмісту</value>
+  </data>
+  <data name="IntentApprove" xml:space="preserve">
+    <value>Затвердження</value>
+  </data>
+  <data name="IntentAttest" xml:space="preserve">
+    <value>Засвідчення</value>
+  </data>
+  <data name="IntentColumn" xml:space="preserve">
+    <value>Значення</value>
+  </data>
+  <data name="IntentReview" xml:space="preserve">
+    <value>Перевірка</value>
+  </data>
+  <data name="IntentVerify" xml:space="preserve">
+    <value>Підтвердження</value>
+  </data>
+  <data name="IntentWitness" xml:space="preserve">
+    <value>Свідок</value>
+  </data>
+  <data name="LevelAttest" xml:space="preserve">
+    <value>сеанс входу</value>
+  </data>
+  <data name="LevelBadge" xml:space="preserve">
+    <value>Рівень {0}: {1}</value>
+  </data>
+  <data name="LevelColumn" xml:space="preserve">
+    <value>Рівень</value>
+  </data>
+  <data name="LevelStepUp" xml:space="preserve">
+    <value>особу перевірено повторно</value>
+  </data>
+  <data name="MethodPasskey" xml:space="preserve">
+    <value>Ключ доступу</value>
+  </data>
+  <data name="MethodSession" xml:space="preserve">
+    <value>Сеанс входу</value>
+  </data>
+  <data name="MethodStepUp" xml:space="preserve">
+    <value>Перевірка другим фактором</value>
+  </data>
+  <data name="NoSignatures" xml:space="preserve">
+    <value>Підписів ще немає.</value>
+  </data>
+  <data name="OthersToSignLabel" xml:space="preserve">
+    <value>Після вас мають підписати:</value>
+  </data>
+  <data name="PasskeyCancelled" xml:space="preserve">
+    <value>Запит ключа доступу закрито. Нічого не підписано.</value>
+  </data>
+  <data name="PasskeyFailed" xml:space="preserve">
+    <value>Не вдалося перевірити ключ доступу. Нічого не підписано.</value>
+  </data>
+  <data name="PasskeyOnlyHelp" xml:space="preserve">
+    <value>Ваш підрозділ вимагає ключ доступу для цього підпису.</value>
+  </data>
+  <data name="PasskeyRequiredHelp" xml:space="preserve">
+    <value>Потрібен ключ доступу.</value>
+  </data>
+  <data name="PasskeyUnsupported" xml:space="preserve">
+    <value>Цей браузер не підтримує ключі доступу. Натомість скористайтеся кнопкою «Підписати».</value>
+  </data>
+  <data name="ProtocolApprovalStatement" xml:space="preserve">
+    <value>Я затверджую цю редакцію протоколу {0} "{1}" (вміст {2}) до публікації як етап {3} з {4} його перевірки.</value>
+  </data>
+  <data name="ProtocolReviewStatement" xml:space="preserve">
+    <value>Протокол {0} "{1}" версії {2} (вміст {3}) мною перевірено, і він залишається правильним без змін.</value>
+  </data>
+  <data name="SignApproveButton" xml:space="preserve">
+    <value>Підписати й затвердити</value>
+  </data>
+  <data name="SignReviewButton" xml:space="preserve">
+    <value>Підписати перевірку</value>
+  </data>
+  <data name="SignWithPasskeyButton" xml:space="preserve">
+    <value>Підписати ключем доступу</value>
+  </data>
+  <data name="SignedOnColumn" xml:space="preserve">
+    <value>Підписано</value>
+  </data>
+  <data name="SignerColumn" xml:space="preserve">
+    <value>Підписант</value>
+  </data>
+  <data name="StatementLabel" xml:space="preserve">
+    <value>Ви підписуєте таку заяву:</value>
+  </data>
+  <data name="StepUpHelp" xml:space="preserve">
+    <value>Під час підписання вас попросять підтвердити особу другим фактором, якщо ви щойно цього не зробили.</value>
+  </data>
+  <data name="VerificationChanged" xml:space="preserve">
+    <value>Вміст змінено</value>
+  </data>
+  <data name="VerificationColumn" xml:space="preserve">
+    <value>Перевірка</value>
+  </data>
+  <data name="VerificationMissing" xml:space="preserve">
+    <value>Вміст не знайдено</value>
+  </data>
+  <data name="VerificationValid" xml:space="preserve">
+    <value>Збігається</value>
+  </data>
+  <data name="VerificationVoided" xml:space="preserve">
+    <value>Анульовано</value>
+  </data>
+  <data name="AdoptTypedButton" xml:space="preserve">
+    <value>Використати друковане ім'я як підпис</value>
+  </data>
+  <data name="AuditDepartment" xml:space="preserve">
+    <value>Підрозділ</value>
+  </data>
+  <data name="AuditDocument" xml:space="preserve">
+    <value>Документ</value>
+  </data>
+  <data name="AuditEvidence" xml:space="preserve">
+    <value>Підтвердження</value>
+  </data>
+  <data name="AuditMethod" xml:space="preserve">
+    <value>Спосіб</value>
+  </data>
+  <data name="AuditNoSigners" xml:space="preserve">
+    <value>У цьому документі немає підписів; його запечатано у виданому вигляді.</value>
+  </data>
+  <data name="AuditPageTitle" xml:space="preserve">
+    <value>Сторінка аудиту Resgrid</value>
+  </data>
+  <data name="AuditPreparedOn" xml:space="preserve">
+    <value>Підготовлено</value>
+  </data>
+  <data name="AuditRevisionHash" xml:space="preserve">
+    <value>Хеш вмісту (SHA-256)</value>
+  </data>
+  <data name="AuditRole" xml:space="preserve">
+    <value>Роль</value>
+  </data>
+  <data name="AuditSealNote" xml:space="preserve">
+    <value>Ця сторінка є частиною запечатаного документа. Печатка (PAdES з позначкою часу RFC 3161) показує, що файл не змінювався після запечатування; перевірте її в розділі «Перевірити документ» у Resgrid або в будь-якій програмі для PDF.</value>
+  </data>
+  <data name="AuditSigners" xml:space="preserve">
+    <value>Підписанти</value>
+  </data>
+  <data name="AuditSubject" xml:space="preserve">
+    <value>Предмет</value>
+  </data>
+  <data name="BackLink" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="CancelLink" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="ChannelInPerson" xml:space="preserve">
+    <value>Особисто</value>
+  </data>
+  <data name="ChannelLabel" xml:space="preserve">
+    <value>Спосіб</value>
+  </data>
+  <data name="ChannelRemote" xml:space="preserve">
+    <value>За посиланням</value>
+  </data>
+  <data name="ClearSignatureButton" xml:space="preserve">
+    <value>Очистити</value>
+  </data>
+  <data name="ClosedText" xml:space="preserve">
+    <value>Це посилання для підпису більше не дійсне. Можливо, його вже використано, відкликано або строк дії минув. Попросіть відправника надіслати нове посилання.</value>
+  </data>
+  <data name="CodeAttemptsLeft" xml:space="preserve">
+    <value>Залишилося спроб: {0}.</value>
+  </data>
+  <data name="CodeHeading" xml:space="preserve">
+    <value>Введіть код</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Шестизначний код</value>
+  </data>
+  <data name="CodeNotSent" xml:space="preserve">
+    <value>Зараз не вдалося надіслати код. Зачекайте хвилину й спробуйте ще раз.</value>
+  </data>
+  <data name="CodeSentEmail" xml:space="preserve">
+    <value>Ми надіслали шестизначний код на {0}.</value>
+  </data>
+  <data name="CodeSentSms" xml:space="preserve">
+    <value>Ми надіслали шестизначний код SMS-повідомленням на {0}.</value>
+  </data>
+  <data name="CodeWrong" xml:space="preserve">
+    <value>Код неправильний або його строк дії минув.</value>
+  </data>
+  <data name="CompletedPdfButton" xml:space="preserve">
+    <value>Завершений документ</value>
+  </data>
+  <data name="ConsentButton" xml:space="preserve">
+    <value>Погодитися й надіслати код</value>
+  </data>
+  <data name="ConsentCheckbox" xml:space="preserve">
+    <value>Я погоджуюся підписати цей документ електронно.</value>
+  </data>
+  <data name="ConsentCodeNote" xml:space="preserve">
+    <value>Далі ми надішлемо одноразовий код на {0}, щоб підтвердити, що це ви.</value>
+  </data>
+  <data name="ConsentHeading" xml:space="preserve">
+    <value>Згода на електронний підпис</value>
+  </data>
+  <data name="ConsentRequired" xml:space="preserve">
+    <value>Позначте поле згоди, щоб продовжити.</value>
+  </data>
+  <data name="ConsentText" xml:space="preserve">
+    <value>Вас просять підписати документ електронно. Погоджуючись, ви даєте згоду на електронне оформлення цього документа і визнаєте, що ваш електронний підпис має таку саму силу, як власноручний. Ви можете попросити відправника про паперову копію і можете відкликати цю згоду, не підписуючи. Ваше ім'я, час підпису та надісланий вам код зберігаються разом із підписом, а підписаний документ запечатується, щоб його не можна було змінити.</value>
+  </data>
+  <data name="ContinueButton" xml:space="preserve">
+    <value>Продовжити</value>
+  </data>
+  <data name="ContinueInPersonLink" xml:space="preserve">
+    <value>Продовжити особисто</value>
+  </data>
+  <data name="DetailIntro" xml:space="preserve">
+    <value>Запит на зовнішній підпис: статус, підписант і документи.</value>
+  </data>
+  <data name="DoneHeading" xml:space="preserve">
+    <value>Дякуємо.</value>
+  </data>
+  <data name="DoneText" xml:space="preserve">
+    <value>Ваш підпис збережено. Можете закрити цю сторінку.</value>
+  </data>
+  <data name="DrawSignatureHelp" xml:space="preserve">
+    <value>Підпишіть пальцем, стилусом або мишею. Без вказівника введіть ім'я та використайте його як підпис.</value>
+  </data>
+  <data name="DrawSignatureLabel" xml:space="preserve">
+    <value>Підпис</value>
+  </data>
+  <data name="DrawSignatureRequired" xml:space="preserve">
+    <value>Підпишіть у полі або використайте ім'я як підпис.</value>
+  </data>
+  <data name="ESignAccountHeading" xml:space="preserve">
+    <value>Команда Documenso цього підрозділу</value>
+  </data>
+  <data name="ESignActiveLabel" xml:space="preserve">
+    <value>Використовувати цей обліковий запис для посилань на підпис</value>
+  </data>
+  <data name="ESignClusterHeading" xml:space="preserve">
+    <value>Служби підпису цієї інсталяції</value>
+  </data>
+  <data name="ESignClusterHelp" xml:space="preserve">
+    <value>Їх налаштовує оператор цієї інсталяції Resgrid. Без платформи електронного підпису посилання на підпис недоступні, але особистий підпис працює. Без запечатування документи підписуються й очікують запечатування, доки його не налаштують.</value>
+  </data>
+  <data name="ESignIntro" xml:space="preserve">
+    <value>Обліковий запис платформи електронного підпису, що надсилає документи на підпис за посиланням, і стан запечатування документів.</value>
+  </data>
+  <data name="ESignPlatformConfigured" xml:space="preserve">
+    <value>Платформа електронного підпису (Documenso)</value>
+  </data>
+  <data name="ESignRemoveButton" xml:space="preserve">
+    <value>Видалити токен</value>
+  </data>
+  <data name="ESignSaved" xml:space="preserve">
+    <value>Налаштування електронного підпису збережено.</value>
+  </data>
+  <data name="ESignTab" xml:space="preserve">
+    <value>Налаштування е-підпису</value>
+  </data>
+  <data name="ESignTeamIdLabel" xml:space="preserve">
+    <value>Ідентифікатор команди</value>
+  </data>
+  <data name="ESignTitle" xml:space="preserve">
+    <value>Налаштування електронного підпису</value>
+  </data>
+  <data name="ESignTokenHelp" xml:space="preserve">
+    <value>API-токен команди. Він зберігається зашифрованим, видно лише чотири останні символи. Залиште порожнім, щоб зберегти поточний.</value>
+  </data>
+  <data name="ESignTokenLabel" xml:space="preserve">
+    <value>API-токен</value>
+  </data>
+  <data name="EmbedFrameTitle" xml:space="preserve">
+    <value>Підписання документа</value>
+  </data>
+  <data name="EmbedUnavailable" xml:space="preserve">
+    <value>Служба підпису зараз недоступна. Спробуйте пізніше.</value>
+  </data>
+  <data name="ExpiresLabel" xml:space="preserve">
+    <value>Спливає</value>
+  </data>
+  <data name="ExternalPanelHelp" xml:space="preserve">
+    <value>Клієнт, мешканець або стороння особа може підписати цей документ особисто на цьому пристрої або, де доступно, за посиланням Resgrid.</value>
+  </data>
+  <data name="ExternalPanelTitle" xml:space="preserve">
+    <value>Зовнішній підпис</value>
+  </data>
+  <data name="FinishedButton" xml:space="preserve">
+    <value>Я завершив підписання</value>
+  </data>
+  <data name="HandDeviceButton" xml:space="preserve">
+    <value>Передати пристрій підписанту</value>
+  </data>
+  <data name="HandDeviceHelp" xml:space="preserve">
+    <value>Відкриває на цьому пристрої сторінку підпису для іншої особи: згода, ім'я та намальований підпис, за бажанням зі свідком.</value>
+  </data>
+  <data name="HandDeviceTitle" xml:space="preserve">
+    <value>Підписати особисто</value>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Головна</value>
+  </data>
+  <data name="InPersonSignedMessage" xml:space="preserve">
+    <value>Підписано особисто. Підписаний документ буде запечатано, щойно запечатування стане доступним.</value>
+  </data>
+  <data name="LandingExpires" xml:space="preserve">
+    <value>Строк дії посилання спливає {0}.</value>
+  </data>
+  <data name="LandingIntro" xml:space="preserve">
+    <value>{0}, {1} просить вас переглянути й підписати документ.</value>
+  </data>
+  <data name="LevelExternal" xml:space="preserve">
+    <value>Зовнішній підписант</value>
+  </data>
+  <data name="LevelSealed" xml:space="preserve">
+    <value>Запечатаний документ</value>
+  </data>
+  <data name="LinkOnceHelp" xml:space="preserve">
+    <value>Не вдалося доставити посилання для підпису. Ви можете передати його підписанту самі; воно показується лише зараз і діє один раз.</value>
+  </data>
+  <data name="MethodExternalLink" xml:space="preserve">
+    <value>Посилання для підпису й код</value>
+  </data>
+  <data name="MethodInPersonOffline" xml:space="preserve">
+    <value>Особисто (офлайн)</value>
+  </data>
+  <data name="MethodInPersonOnline" xml:space="preserve">
+    <value>Особисто</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Ні</value>
+  </data>
+  <data name="NoRightToRequest" xml:space="preserve">
+    <value>Ви не можете запитувати підписи для цього елемента.</value>
+  </data>
+  <data name="OpenRequestStatus" xml:space="preserve">
+    <value>Запит на підпис: {0} ({1}), спливає {2}.</value>
+  </data>
+  <data name="OtpChannelEmail" xml:space="preserve">
+    <value>Електронна пошта</value>
+  </data>
+  <data name="OtpChannelLabel" xml:space="preserve">
+    <value>Надіслати одноразовий код через</value>
+  </data>
+  <data name="OtpChannelSms" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="PdfFailed" xml:space="preserve">
+    <value>Не вдалося створити PDF.</value>
+  </data>
+  <data name="PrintedNameLabel" xml:space="preserve">
+    <value>Ім'я друкованими літерами</value>
+  </data>
+  <data name="ProtocolPdfButton" xml:space="preserve">
+    <value>PDF</value>
+  </data>
+  <data name="RefusalNone" xml:space="preserve">
+    <value>Готово.</value>
+  </data>
+  <data name="RefusalInvalidRequest" xml:space="preserve">
+    <value>Деякі дані відсутні або недійсні.</value>
+  </data>
+  <data name="RefusalSubjectNotFound" xml:space="preserve">
+    <value>Елемент не знайдено або ви не можете його відкрити.</value>
+  </data>
+  <data name="RefusalRemoteNeedsAddon" xml:space="preserve">
+    <value>Підпис за посиланням входить до доповнення, якому належить цей документ. Особистий підпис доступний.</value>
+  </data>
+  <data name="RefusalProviderUnavailable" xml:space="preserve">
+    <value>Підпис за посиланням не налаштовано для цього підрозділу.</value>
+  </data>
+  <data name="RefusalRevisionChanged" xml:space="preserve">
+    <value>Документ змінився після того, як його показали для підпису. Почніть знову.</value>
+  </data>
+  <data name="RefusalRequestClosed" xml:space="preserve">
+    <value>Цей запит уже закрито.</value>
+  </data>
+  <data name="RefusalProviderFailed" xml:space="preserve">
+    <value>Платформа електронного підпису не змогла підготувати документ. Спробуйте пізніше.</value>
+  </data>
+  <data name="RefusalContactRequired" xml:space="preserve">
+    <value>Введіть дійсну адресу електронної пошти або номер телефону в міжнародному форматі для одноразового коду.</value>
+  </data>
+  <data name="RemoteRequestButton" xml:space="preserve">
+    <value>Запитати підпис за посиланням</value>
+  </data>
+  <data name="RemoteRequestHelp" xml:space="preserve">
+    <value>Resgrid надсилає підписанту одноразове посилання. Перед підписанням він дає згоду на електронний підпис і вводить одноразовий код, надісланий на вказану пошту або телефон.</value>
+  </data>
+  <data name="RemoteUnavailableNone" xml:space="preserve">
+    <value>Підпис за посиланням доступний.</value>
+  </data>
+  <data name="RemoteUnavailableInvalidRequest" xml:space="preserve">
+    <value>Підпис за посиланням для цього елемента не пропонується.</value>
+  </data>
+  <data name="RemoteUnavailableSubjectNotFound" xml:space="preserve">
+    <value>Підпис за посиланням для цього елемента не пропонується.</value>
+  </data>
+  <data name="RemoteUnavailableRemoteNeedsAddon" xml:space="preserve">
+    <value>Підпис за посиланням входить до доповнення, якому належить цей документ; особистий підпис безкоштовний.</value>
+  </data>
+  <data name="RemoteUnavailableProviderUnavailable" xml:space="preserve">
+    <value>Підпис за посиланням не налаштовано (налаштування е-підпису); особистий підпис доступний.</value>
+  </data>
+  <data name="RemoteUnavailableRevisionChanged" xml:space="preserve">
+    <value>Підпис за посиланням зараз недоступний.</value>
+  </data>
+  <data name="RemoteUnavailableRequestClosed" xml:space="preserve">
+    <value>Підпис за посиланням зараз недоступний.</value>
+  </data>
+  <data name="RemoteUnavailableProviderFailed" xml:space="preserve">
+    <value>Підпис за посиланням зараз недоступний.</value>
+  </data>
+  <data name="RemoteUnavailableContactRequired" xml:space="preserve">
+    <value>Підпис за посиланням зараз недоступний.</value>
+  </data>
+  <data name="RequestHeading" xml:space="preserve">
+    <value>Запит на підпис</value>
+  </data>
+  <data name="RequestNotDeliveredMessage" xml:space="preserve">
+    <value>Запит створено, але посилання не вдалося доставити.</value>
+  </data>
+  <data name="RequestSentMessage" xml:space="preserve">
+    <value>Посилання для підпису надіслано на {0}.</value>
+  </data>
+  <data name="RequestVoidedMessage" xml:space="preserve">
+    <value>Запит відкликано.</value>
+  </data>
+  <data name="ResendButton" xml:space="preserve">
+    <value>Надіслати нове посилання</value>
+  </data>
+  <data name="ResendCodeButton" xml:space="preserve">
+    <value>Надіслати новий код</value>
+  </data>
+  <data name="RoleCustomer" xml:space="preserve">
+    <value>Клієнт</value>
+  </data>
+  <data name="RoleOccupant" xml:space="preserve">
+    <value>Мешканець</value>
+  </data>
+  <data name="RoleExternalParty" xml:space="preserve">
+    <value>Стороння особа</value>
+  </data>
+  <data name="RoleWitness" xml:space="preserve">
+    <value>Свідок</value>
+  </data>
+  <data name="RoleCounterparty" xml:space="preserve">
+    <value>Контрагент</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="SealedPdfButton" xml:space="preserve">
+    <value>Запечатаний PDF</value>
+  </data>
+  <data name="SealingKey" xml:space="preserve">
+    <value>Сертифікат підпису</value>
+  </data>
+  <data name="SealingPendingState" xml:space="preserve">
+    <value>очікує запечатування</value>
+  </data>
+  <data name="SealingSidecar" xml:space="preserve">
+    <value>Служба запечатування (EU DSS)</value>
+  </data>
+  <data name="SealingStore" xml:space="preserve">
+    <value>Сховище запечатаних документів</value>
+  </data>
+  <data name="SealingTsa" xml:space="preserve">
+    <value>Служба позначок часу</value>
+  </data>
+  <data name="SendCodeButton" xml:space="preserve">
+    <value>Надіслати код</value>
+  </data>
+  <data name="SendRequestButton" xml:space="preserve">
+    <value>Надіслати запит</value>
+  </data>
+  <data name="SignNowButton" xml:space="preserve">
+    <value>Підписати</value>
+  </data>
+  <data name="SignaturePageTitle" xml:space="preserve">
+    <value>Підписи</value>
+  </data>
+  <data name="SignaturesHeading" xml:space="preserve">
+    <value>Підписи</value>
+  </data>
+  <data name="SignaturesModuleTitle" xml:space="preserve">
+    <value>Підписи</value>
+  </data>
+  <data name="SignedByNote" xml:space="preserve">
+    <value>{0} · {1}</value>
+  </data>
+  <data name="SignedState" xml:space="preserve">
+    <value>Підписано</value>
+  </data>
+  <data name="SignerEmailLabel" xml:space="preserve">
+    <value>Електронна пошта</value>
+  </data>
+  <data name="SignerNameLabel" xml:space="preserve">
+    <value>Ім'я підписанта</value>
+  </data>
+  <data name="SignerPhoneLabel" xml:space="preserve">
+    <value>Мобільний телефон</value>
+  </data>
+  <data name="SignerStatusPending" xml:space="preserve">
+    <value>Очікує</value>
+  </data>
+  <data name="SignerStatusOpened" xml:space="preserve">
+    <value>Відкрито</value>
+  </data>
+  <data name="SignerStatusVerified" xml:space="preserve">
+    <value>Код підтверджено</value>
+  </data>
+  <data name="SignerStatusSigned" xml:space="preserve">
+    <value>Підписано</value>
+  </data>
+  <data name="SignerStatusDeclined" xml:space="preserve">
+    <value>Відхилено</value>
+  </data>
+  <data name="SigningBeingConfirmed" xml:space="preserve">
+    <value>Ваш підпис підтверджується. Це може тривати хвилину; можете закрити сторінку.</value>
+  </data>
+  <data name="SigningLinkLabel" xml:space="preserve">
+    <value>Посилання для підпису</value>
+  </data>
+  <data name="SigningPageTitle" xml:space="preserve">
+    <value>Підписати документ</value>
+  </data>
+  <data name="StatementTimeReport" xml:space="preserve">
+    <value>Я підтверджую, що час, зазначений у {0}, правильний (код вмісту {1}).</value>
+  </data>
+  <data name="StatementBid" xml:space="preserve">
+    <value>Я приймаю {0} (код вмісту {1}) від імені клієнта.</value>
+  </data>
+  <data name="StatementServiceContract" xml:space="preserve">
+    <value>Я погоджуюся з {0} (код вмісту {1}) від імені своєї організації.</value>
+  </data>
+  <data name="StatementRecordsInspection" xml:space="preserve">
+    <value>Я підтверджую, що отримав результати {0} (код вмісту {1}).</value>
+  </data>
+  <data name="StatementCustodyTransfer" xml:space="preserve">
+    <value>Я підтверджую, що отримав речовий доказ за {0} (код вмісту {1}).</value>
+  </data>
+  <data name="StatusDraft" xml:space="preserve">
+    <value>Чернетка</value>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>Очікує підпису</value>
+  </data>
+  <data name="StatusPartiallySigned" xml:space="preserve">
+    <value>Частково підписано</value>
+  </data>
+  <data name="StatusCompleted" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="StatusDeclined" xml:space="preserve">
+    <value>Відхилено</value>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>Строк минув</value>
+  </data>
+  <data name="StatusVoided" xml:space="preserve">
+    <value>Відкликано</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="SubjectUnavailable" xml:space="preserve">
+    <value>Цей елемент зараз не можна підписати.</value>
+  </data>
+  <data name="TooManyRequests" xml:space="preserve">
+    <value>Забагато запитів. Зачекайте хвилину й спробуйте ще раз.</value>
+  </data>
+  <data name="VerifyButton" xml:space="preserve">
+    <value>Перевірити</value>
+  </data>
+  <data name="VerifyCodeButton" xml:space="preserve">
+    <value>Підтвердити код</value>
+  </data>
+  <data name="VerifyFileLabel" xml:space="preserve">
+    <value>PDF-документ</value>
+  </data>
+  <data name="VerifyFileRequired" xml:space="preserve">
+    <value>Виберіть PDF-файл розміром до 25 МБ.</value>
+  </data>
+  <data name="VerifyFormatColumn" xml:space="preserve">
+    <value>Формат</value>
+  </data>
+  <data name="VerifyIndicationColumn" xml:space="preserve">
+    <value>Результат</value>
+  </data>
+  <data name="VerifyIntro" xml:space="preserve">
+    <value>Завантажте PDF, щоб перевірити підписи й позначки часу та чи видав Resgrid саме цей файл.</value>
+  </data>
+  <data name="VerifyIssuedElsewhere" xml:space="preserve">
+    <value>Resgrid видав саме цей файл для іншого підрозділу.</value>
+  </data>
+  <data name="VerifyIssuedHere" xml:space="preserve">
+    <value>Resgrid видав саме цей файл для цього підрозділу.</value>
+  </data>
+  <data name="VerifyIssuedLabel" xml:space="preserve">
+    <value>Видано Resgrid</value>
+  </data>
+  <data name="VerifyNoSignatures" xml:space="preserve">
+    <value>Документ не містить підписів.</value>
+  </data>
+  <data name="VerifyNotIssued" xml:space="preserve">
+    <value>Resgrid не має запису про видачу саме цього файла. Змінений файл, навіть на один байт, не збігається.</value>
+  </data>
+  <data name="VerifyNotPdf" xml:space="preserve">
+    <value>Файл не є PDF.</value>
+  </data>
+  <data name="VerifyResultHeading" xml:space="preserve">
+    <value>Результат</value>
+  </data>
+  <data name="VerifySidecarMissing" xml:space="preserve">
+    <value>Службу перевірки в цій інсталяції не налаштовано, тому перевіряються лише записи Resgrid.</value>
+  </data>
+  <data name="VerifySignaturesLabel" xml:space="preserve">
+    <value>Дійсні підписи</value>
+  </data>
+  <data name="VerifyTab" xml:space="preserve">
+    <value>Перевірити документ</value>
+  </data>
+  <data name="VerifyTimestampColumn" xml:space="preserve">
+    <value>Позначка часу</value>
+  </data>
+  <data name="VerifyTimestampedOn" xml:space="preserve">
+    <value>позначка часу {0}</value>
+  </data>
+  <data name="VerifyTitle" xml:space="preserve">
+    <value>Перевірити документ</value>
+  </data>
+  <data name="VerifyUploadHeading" xml:space="preserve">
+    <value>Документ</value>
+  </data>
+  <data name="VerifyValidationUnavailable" xml:space="preserve">
+    <value>Служба перевірки не відповіла.</value>
+  </data>
+  <data name="ViewRequestLink" xml:space="preserve">
+    <value>Деталі</value>
+  </data>
+  <data name="VoidButton" xml:space="preserve">
+    <value>Відкликати запит</value>
+  </data>
+  <data name="WitnessNameLabel" xml:space="preserve">
+    <value>Свідок (необов'язково)</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Так</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Дії</value>
+  </data>
+  <data name="AllMySignaturesLink" xml:space="preserve">
+    <value>Усі мої підписи</value>
+  </data>
+  <data name="AnyEligibleMember" xml:space="preserve">
+    <value>будь-який учасник із відповідними правами</value>
+  </data>
+  <data name="DeclineButton" xml:space="preserve">
+    <value>Відхилити</value>
+  </data>
+  <data name="DeclineConfirmButton" xml:space="preserve">
+    <value>Відмовитися підписувати</value>
+  </data>
+  <data name="DeclineHelp" xml:space="preserve">
+    <value>Відмова завершує запит для всіх; ініціатор запиту дізнається вашу причину.</value>
+  </data>
+  <data name="DeclineReasonLabel" xml:space="preserve">
+    <value>Чому ви відмовляєтеся?</value>
+  </data>
+  <data name="DocumentColumn" xml:space="preserve">
+    <value>Документ</value>
+  </data>
+  <data name="DueByLabel" xml:space="preserve">
+    <value>до {0}</value>
+  </data>
+  <data name="IssueReceiptButton" xml:space="preserve">
+    <value>Розписка</value>
+  </data>
+  <data name="IssueReceiptTitle" xml:space="preserve">
+    <value>Розписка про видачу спорядження</value>
+  </data>
+  <data name="MemberFallbackName" xml:space="preserve">
+    <value>учасник</value>
+  </data>
+  <data name="MemberRequestButton" xml:space="preserve">
+    <value>Запросити підпис: {0}</value>
+  </data>
+  <data name="MemberRequestHelp" xml:space="preserve">
+    <value>Учасник підписує в Resgrid після нової перевірки особи (рівень 2); запит з'являється в розділі «Мої підписи» та на його головній сторінці.</value>
+  </data>
+  <data name="MemberRequestSentMessage" xml:space="preserve">
+    <value>Запит на підпис надіслано.</value>
+  </data>
+  <data name="MySignaturesIntro" xml:space="preserve">
+    <value>Документи, що очікують на ваш підпис, із кроком, який належить вам.</value>
+  </data>
+  <data name="MySignaturesTab" xml:space="preserve">
+    <value>Мої підписи</value>
+  </data>
+  <data name="MySignaturesTitle" xml:space="preserve">
+    <value>Мої підписи</value>
+  </data>
+  <data name="NothingToSign" xml:space="preserve">
+    <value>Ніщо не очікує на ваш підпис.</value>
+  </data>
+  <data name="OpenDocumentLink" xml:space="preserve">
+    <value>Відкрити документ</value>
+  </data>
+  <data name="OpenSigningPageLink" xml:space="preserve">
+    <value>Сторінка підписання</value>
+  </data>
+  <data name="OpenStepButton" xml:space="preserve">
+    <value>Переглянути й підписати</value>
+  </data>
+  <data name="OrderedHelp" xml:space="preserve">
+    <value>Підписанти підписують у порядку номерів кроків; кроки з однаковим номером можна підписувати одночасно.</value>
+  </data>
+  <data name="OutsideSignerFallbackName" xml:space="preserve">
+    <value>зовнішній підписант</value>
+  </data>
+  <data name="PendingSignaturesHeader" xml:space="preserve">
+    <value>Очікують на ваш підпис</value>
+  </data>
+  <data name="ReadinessProRequiredMessage" xml:space="preserve">
+    <value>Прийняття нарядів на роботи постачальником і розписки про видачу спорядження входять до Readiness Pro.</value>
+  </data>
+  <data name="SignedCountLabel" xml:space="preserve">
+    <value>Підписано</value>
+  </data>
+  <data name="SignStepButton" xml:space="preserve">
+    <value>Підписати</value>
+  </data>
+  <data name="StepDeclinedMessage" xml:space="preserve">
+    <value>Ви відмовилися підписувати. Запит закрито.</value>
+  </data>
+  <data name="StepOrderColumn" xml:space="preserve">
+    <value>Крок</value>
+  </data>
+  <data name="StepPageIntro" xml:space="preserve">
+    <value>Прочитайте заяву, перевірте код вмісту й підпишіть свій крок.</value>
+  </data>
+  <data name="StepPanelTitle" xml:space="preserve">
+    <value>Ваш підпис</value>
+  </data>
+  <data name="StepsHeading" xml:space="preserve">
+    <value>Підписанти</value>
+  </data>
+  <data name="StepSignedMessage" xml:space="preserve">
+    <value>Ваш підпис записано.</value>
+  </data>
+  <data name="UnorderedHelp" xml:space="preserve">
+    <value>Кожен підписант може підписати будь-коли.</value>
+  </data>
+  <data name="VendorAcceptanceHeading" xml:space="preserve">
+    <value>Прийняття постачальником</value>
+  </data>
+  <data name="WitnessNotYouNote" xml:space="preserve">
+    <value>Особа, яка заповнила контрольний список, не може бути його свідком.</value>
+  </data>
+  <data name="WitnessPanelTitle" xml:space="preserve">
+    <value>Підпис свідка</value>
+  </data>
+  <data name="WitnessSignatureHelp" xml:space="preserve">
+    <value>Опишіть у полі, що ви засвідчуєте. Ваш підпис прив'язується до показаних результатів (не до приміток чи довільного тексту), а контрольний список завершується, щойно ви підпишете.</value>
+  </data>
+  <data name="WitnessSignButton" xml:space="preserve">
+    <value>Підписати як свідок</value>
+  </data>
+  <data name="WitnessSignedMessage" xml:space="preserve">
+    <value>Ваш підпис свідка записано, контрольний список завершено.</value>
+  </data>
+  <data name="WitnessSignFailedMessage" xml:space="preserve">
+    <value>Не вдалося записати підпис свідка.</value>
+  </data>
+  <data name="YourStepColumn" xml:space="preserve">
+    <value>Ваш крок</value>
+  </data>
+  <data name="YourStepNote" xml:space="preserve">
+    <value>Ваш крок: {0}</value>
+  </data>
+  <data name="RefusalNotYourTurn" xml:space="preserve">
+    <value>Ваша черга ще не настала: не всі попередні підписанти підписали.</value>
+  </data>
+  <data name="RefusalNotEligible" xml:space="preserve">
+    <value>У вас немає сертифікації або ролі, яких вимагає цей крок.</value>
+  </data>
+  <data name="RefusalStepUpRequired" xml:space="preserve">
+    <value>Цей крок потребує рівня 2: підтвердьте особу другим фактором або ключем доступу, а потім підпишіть.</value>
+  </data>
+  <data name="RefusalPasskeyRequired" xml:space="preserve">
+    <value>Цей крок потрібно підписати ключем доступу.</value>
+  </data>
+  <data name="RefusalNotASigner" xml:space="preserve">
+    <value>Ви не є підписантом цього кроку.</value>
+  </data>
+  <data name="RefusalArtifactMismatch" xml:space="preserve">
+    <value>Підтвердження ключем доступу стосувалося іншого вмісту. Перезавантажте сторінку й підпишіть знову.</value>
+  </data>
+  <data name="RoleMember" xml:space="preserve">
+    <value>Учасник</value>
+  </data>
+  <data name="RoleCertifyingOfficial" xml:space="preserve">
+    <value>Відповідальний за сертифікацію</value>
+  </data>
+  <data name="RoleEvaluator" xml:space="preserve">
+    <value>Оцінювач</value>
+  </data>
+  <data name="RoleVendor" xml:space="preserve">
+    <value>Постачальник</value>
+  </data>
+  <data name="RoleRecipient" xml:space="preserve">
+    <value>Отримувач</value>
+  </data>
+  <data name="IntentEvaluate" xml:space="preserve">
+    <value>Оцінювання</value>
+  </data>
+  <data name="IntentCertify" xml:space="preserve">
+    <value>Сертифікація</value>
+  </data>
+  <data name="IntentAccept" xml:space="preserve">
+    <value>Прийняття</value>
+  </data>
+  <data name="OutcomeStepUpRequired" xml:space="preserve">
+    <value>Підтвердьте особу другим фактором, а потім підпишіть знову.</value>
+  </data>
+  <data name="OutcomePasskeyRequired" xml:space="preserve">
+    <value>Для підпису потрібен ключ доступу.</value>
+  </data>
+  <data name="OutcomeArtifactMismatch" xml:space="preserve">
+    <value>Підтвердження ключем доступу стосувалося іншого вмісту.</value>
+  </data>
+  <data name="OutcomeInvalidRequest" xml:space="preserve">
+    <value>Не вдалося записати підпис.</value>
+  </data>
+  <data name="StatementWorkOrderVendorAcceptance" xml:space="preserve">
+    <value>Я приймаю роботи, виконані за {0} (код вмісту {1}).</value>
+  </data>
+  <data name="StatementInventoryIssueReceipt" xml:space="preserve">
+    <value>Я підтверджую отримання {0} (код вмісту {1}).</value>
+  </data>
+  <data name="StatementSkillEvaluation" xml:space="preserve">
+    <value>Я підтверджую оцінювання, записане для {0} (код вмісту {1}).</value>
+  </data>
+  <data name="StatementChecklistWitness" xml:space="preserve">
+    <value>Як свідок я підтверджую виконання контрольного списку {0} для {1} і те, що показані результати відповідають записаним (код вмісту {2}).</value>
+  </data>
+  <data name="StatementPurchaseRequisitionApproval" xml:space="preserve">
+    <value>Я затверджую заявку на закупівлю {0} (код вмісту {1}).</value>
+  </data>
+  <data name="StatementIncidentPlanApproval" xml:space="preserve">
+    <value>Я затверджую план дій щодо інциденту {0} (код вмісту {1}).</value>
+  </data>
+  <data name="StatementInvoiceApproval" xml:space="preserve">
+    <value>Я затверджую надсилання {0} (код вмісту {1}).</value>
+  </data>
+  <data name="StatementPayrollRunApproval" xml:space="preserve">
+    <value>Я затверджую нарахування зарплати {0} (код вмісту {1}).</value>
+  </data>
+  <data name="StatementCalOesMarsPackageApproval" xml:space="preserve">
+    <value>Я затверджую пакет Cal OES MARS {0} до подання (код вмісту {1}).</value>
+  </data>
+  <data name="StatementMutualAidAgreementApproval" xml:space="preserve">
+    <value>Я затверджую угоду про взаємодопомогу {0} від імені підрозділу (код вмісту {1}).</value>
+  </data>
+  <data name="ApprovalsTab" xml:space="preserve">
+    <value>Затвердження</value>
+  </data>
+</root>

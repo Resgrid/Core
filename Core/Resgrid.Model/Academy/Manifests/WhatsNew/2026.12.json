@@ -1,0 +1,199 @@
+{
+  "schema": 1,
+  "release": "2026.12",
+  "publishedOn": "2026-11-25",
+  "minutes": 2.0,
+  "title": {
+    "en": "What's new in Resgrid 2026.12",
+    "ar": "ما الجديد في Resgrid 2026.12",
+    "de": "Neu in Resgrid 2026.12",
+    "el": "Τι νέο υπάρχει στο Resgrid 2026.12",
+    "es": "Novedades de Resgrid 2026.12",
+    "fr": "Nouveautés de Resgrid 2026.12",
+    "it": "Novità di Resgrid 2026.12",
+    "pl": "Co nowego w Resgrid 2026.12",
+    "sv": "Nyheter i Resgrid 2026.12",
+    "uk": "Що нового в Resgrid 2026.12"
+  },
+  "summary": {
+    "en": "Protocols, training and the Resgrid Academy now work together, and help is one search away.",
+    "ar": "أصبحت البروتوكولات والتدريب وأكاديمية Resgrid تعمل معًا، والمساعدة على بُعد بحث واحد.",
+    "de": "Protokolle, Ausbildung und die Resgrid Academy arbeiten jetzt zusammen, und Hilfe ist nur eine Suche entfernt.",
+    "el": "Τα πρωτόκολλα, η εκπαίδευση και η Resgrid Academy λειτουργούν πλέον μαζί, και η βοήθεια είναι μία αναζήτηση μακριά.",
+    "es": "Los protocolos, la formación y Resgrid Academy ahora funcionan juntos, y la ayuda está a una búsqueda de distancia.",
+    "fr": "Les protocoles, la formation et la Resgrid Academy fonctionnent désormais ensemble, et l'aide est à portée de recherche.",
+    "it": "Protocolli, formazione e Resgrid Academy ora lavorano insieme, e l'aiuto è a portata di ricerca.",
+    "pl": "Protokoły, szkolenia i Resgrid Academy działają teraz razem, a pomoc jest na wyciągnięcie wyszukiwania.",
+    "sv": "Rutiner, utbildning och Resgrid Academy fungerar nu tillsammans, och hjälpen finns en sökning bort.",
+    "uk": "Протоколи, навчання та Resgrid Academy тепер працюють разом, а допомога — на відстані одного пошуку."
+  },
+  "items": [
+    {
+      "key": "protocol-library",
+      "title": {
+        "en": "Protocol library",
+        "ar": "مكتبة البروتوكولات",
+        "de": "Protokollbibliothek",
+        "el": "Βιβλιοθήκη πρωτοκόλλων",
+        "es": "Biblioteca de protocolos",
+        "fr": "Bibliothèque de protocoles",
+        "it": "Libreria dei protocolli",
+        "pl": "Biblioteka protokołów",
+        "sv": "Rutinbibliotek",
+        "uk": "Бібліотека протоколів"
+      },
+      "body": {
+        "en": "Protocols have versions, approvals and read-and-sign acknowledgments.",
+        "ar": "أصبحت للبروتوكولات إصدارات وموافقات وإقرارات بالقراءة والتوقيع.",
+        "de": "Protokolle haben Versionen, Freigaben und Lesebestätigungen mit Unterschrift.",
+        "el": "Τα πρωτόκολλα έχουν εκδόσεις, εγκρίσεις και επιβεβαιώσεις ανάγνωσης με υπογραφή.",
+        "es": "Los protocolos tienen versiones, aprobaciones y confirmaciones de lectura con firma.",
+        "fr": "Les protocoles ont des versions, des approbations et des accusés de lecture signés.",
+        "it": "I protocolli hanno versioni, approvazioni e conferme di lettura con firma.",
+        "pl": "Protokoły mają wersje, zatwierdzenia i potwierdzenia przeczytania z podpisem.",
+        "sv": "Rutiner har versioner, godkännanden och läskvitton med signatur.",
+        "uk": "Протоколи мають версії, затвердження та підтвердження прочитання з підписом."
+      },
+      "lessonId": "10-knowledge",
+      "page": {
+        "controller": "Protocols",
+        "action": "Index"
+      },
+      "visibility": []
+    },
+    {
+      "key": "transcript",
+      "title": {
+        "en": "One training transcript",
+        "ar": "سجل تدريب واحد",
+        "de": "Ein gemeinsamer Ausbildungsnachweis",
+        "el": "Ένα ενιαίο ιστορικό εκπαίδευσης",
+        "es": "Un único expediente de formación",
+        "fr": "Un relevé de formation unique",
+        "it": "Un unico libretto formativo",
+        "pl": "Jeden wykaz szkoleń",
+        "sv": "Ett samlat utbildningsregister",
+        "uk": "Єдиний журнал навчання"
+      },
+      "body": {
+        "en": "Trainings, courses, Academy lessons and outside training all land on one transcript.",
+        "ar": "تُسجَّل التدريبات والدورات ودروس الأكاديمية والتدريب الخارجي كلها في سجل واحد.",
+        "de": "Ausbildungen, Kurse, Academy-Lektionen und externe Ausbildung landen in einem Nachweis.",
+        "el": "Εκπαιδεύσεις, μαθήματα, μαθήματα της Academy και εξωτερική εκπαίδευση καταγράφονται σε ένα ιστορικό.",
+        "es": "Formaciones, cursos, lecciones de la Academy y formación externa quedan en un único expediente.",
+        "fr": "Formations, cours, leçons de l'Academy et formations externes figurent sur un seul relevé.",
+        "it": "Formazioni, corsi, lezioni dell'Academy e formazione esterna finiscono in un unico libretto.",
+        "pl": "Szkolenia, kursy, lekcje Academy i szkolenia zewnętrzne trafiają do jednego wykazu.",
+        "sv": "Utbildningar, kurser, Academy-lektioner och extern utbildning hamnar i ett register.",
+        "uk": "Навчання, курси, уроки Academy та зовнішнє навчання потрапляють до одного журналу."
+      },
+      "lessonId": "09-training",
+      "page": {
+        "controller": "Trainings",
+        "action": "Index"
+      },
+      "visibility": []
+    },
+    {
+      "key": "academy",
+      "title": {
+        "en": "Resgrid Academy in Trainings",
+        "ar": "أكاديمية Resgrid ضمن التدريبات",
+        "de": "Resgrid Academy in der Ausbildung",
+        "el": "Η Resgrid Academy στις εκπαιδεύσεις",
+        "es": "Resgrid Academy en Formación",
+        "fr": "La Resgrid Academy dans la formation",
+        "it": "Resgrid Academy nella formazione",
+        "pl": "Resgrid Academy w szkoleniach",
+        "sv": "Resgrid Academy i utbildningen",
+        "uk": "Resgrid Academy у навчанні"
+      },
+      "body": {
+        "en": "Assign Academy lessons and role paths and track completions, free for every department.",
+        "ar": "عيّن دروس الأكاديمية ومسارات الأدوار وتتبّع الإنجاز مجانًا لكل قسم.",
+        "de": "Weisen Sie Academy-Lektionen und Rollenpfade zu und verfolgen Sie Abschlüsse, kostenlos für jede Abteilung.",
+        "el": "Αναθέστε μαθήματα και διαδρομές ρόλων της Academy και παρακολουθήστε τις ολοκληρώσεις, δωρεάν για κάθε υπηρεσία.",
+        "es": "Asigne lecciones y rutas por rol de la Academy y siga su finalización, gratis para todos los departamentos.",
+        "fr": "Attribuez des leçons et des parcours par rôle de l'Academy et suivez leur réalisation, gratuitement pour tous les services.",
+        "it": "Assegna lezioni e percorsi per ruolo dell'Academy e monitora i completamenti, gratis per ogni dipartimento.",
+        "pl": "Przypisuj lekcje i ścieżki ról Academy i śledź ukończenia, bezpłatnie dla każdej jednostki.",
+        "sv": "Tilldela Academy-lektioner och rollvägar och följ upp slutföranden, gratis för alla organisationer.",
+        "uk": "Призначайте уроки та рольові шляхи Academy і відстежуйте завершення — безкоштовно для кожного підрозділу."
+      },
+      "lessonId": "09-training",
+      "page": {
+        "controller": "Courses",
+        "action": "Academy"
+      },
+      "visibility": []
+    },
+    {
+      "key": "help-center",
+      "title": {
+        "en": "Help center and guided tours",
+        "ar": "مركز المساعدة والجولات الإرشادية",
+        "de": "Hilfecenter und geführte Touren",
+        "el": "Κέντρο βοήθειας και καθοδηγούμενες περιηγήσεις",
+        "es": "Centro de ayuda y recorridos guiados",
+        "fr": "Centre d'aide et visites guidées",
+        "it": "Centro assistenza e tour guidati",
+        "pl": "Centrum pomocy i przewodniki",
+        "sv": "Hjälpcenter och guidade turer",
+        "uk": "Довідковий центр і покрокові огляди"
+      },
+      "body": {
+        "en": "Search the Academy and the reference from the Help menu, and follow the first steps for your role.",
+        "ar": "ابحث في الأكاديمية والمرجع من قائمة المساعدة، واتبع الخطوات الأولى الخاصة بدورك.",
+        "de": "Durchsuchen Sie Academy und Referenz im Hilfemenü und folgen Sie den ersten Schritten für Ihre Rolle.",
+        "el": "Αναζητήστε στην Academy και στο εγχειρίδιο από το μενού Βοήθειας και ακολουθήστε τα πρώτα βήματα για τον ρόλο σας.",
+        "es": "Busque en la Academy y en la referencia desde el menú Ayuda y siga los primeros pasos de su rol.",
+        "fr": "Cherchez dans l'Academy et la référence depuis le menu Aide, et suivez les premières étapes de votre rôle.",
+        "it": "Cerca nell'Academy e nel riferimento dal menu Aiuto e segui i primi passi per il tuo ruolo.",
+        "pl": "Przeszukuj Academy i dokumentację z menu Pomoc i wykonaj pierwsze kroki dla swojej roli.",
+        "sv": "Sök i Academy och referensen från hjälpmenyn och följ de första stegen för din roll.",
+        "uk": "Шукайте в Academy та довіднику з меню Довідки й виконайте перші кроки для своєї ролі."
+      },
+      "lessonId": "00-start",
+      "page": {
+        "controller": "Help",
+        "action": "Search"
+      },
+      "visibility": []
+    },
+    {
+      "key": "drafting-aids",
+      "title": {
+        "en": "Drafting aids",
+        "ar": "أدوات المساعدة في الصياغة",
+        "de": "Entwurfshilfen",
+        "el": "Βοηθήματα σύνταξης",
+        "es": "Ayudas de redacción",
+        "fr": "Aides à la rédaction",
+        "it": "Assistenti di stesura",
+        "pl": "Pomoce w redagowaniu",
+        "sv": "Utkasthjälp",
+        "uk": "Помічники для чернеток"
+      },
+      "body": {
+        "en": "With Enhanced AI, draft quiz questions, course outlines and change summaries from your own content, then review them.",
+        "ar": "مع الذكاء الاصطناعي المحسّن، صِغ مسودات أسئلة الاختبار ومخططات الدورات وملخصات التغييرات من محتواك ثم راجعها.",
+        "de": "Mit Enhanced AI entwerfen Sie Quizfragen, Kursgliederungen und Änderungszusammenfassungen aus Ihren eigenen Inhalten und prüfen sie danach.",
+        "el": "Με το Enhanced AI συντάξτε προσχέδια ερωτήσεων κουίζ, διαγραμμάτων μαθημάτων και περιλήψεων αλλαγών από το δικό σας περιεχόμενο και ελέγξτε τα.",
+        "es": "Con Enhanced AI, redacte borradores de preguntas, esquemas de cursos y resúmenes de cambios a partir de su propio contenido y revíselos.",
+        "fr": "Avec Enhanced AI, rédigez des brouillons de questions, de plans de cours et de résumés des modifications à partir de vos contenus, puis relisez-les.",
+        "it": "Con Enhanced AI, prepara bozze di domande, scalette dei corsi e riepiloghi delle modifiche dai tuoi contenuti, poi rivedile.",
+        "pl": "Dzięki Enhanced AI przygotuj szkice pytań, planów kursów i podsumowań zmian z własnych treści, a potem je sprawdź.",
+        "sv": "Med Enhanced AI skapar du utkast till quizfrågor, kursupplägg och ändringssammanfattningar från ert eget innehåll och granskar dem sedan.",
+        "uk": "З Enhanced AI створюйте чернетки запитань, планів курсів і підсумків змін із власного вмісту, а потім перевіряйте їх."
+      },
+      "lessonId": "21-ai",
+      "page": {
+        "controller": "Trainings",
+        "action": "New"
+      },
+      "visibility": [
+        "addon:EnhancedAi"
+      ]
+    }
+  ]
+}

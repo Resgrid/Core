@@ -220,6 +220,56 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>@localizer["PermAuthorProtocolsLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermAuthorProtocolsNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.AuthorProtocols, Model.AuthorProtocolsPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="protocolAuthorNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="protocolAuthorRolesDiv" style="display: none;"><select id="protocolAuthorRoles" name="protocolAuthorRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermApproveProtocolsLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermApproveProtocolsNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ApproveProtocols, Model.ApproveProtocolsPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="protocolApproveNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="protocolApproveRolesDiv" style="display: none;"><select id="protocolApproveRoles" name="protocolApproveRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermManageProtocolAcknowledgmentsLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermManageProtocolAcknowledgmentsNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ManageProtocolAcknowledgments, Model.ManageProtocolAcknowledgmentsPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="protocolAcknowledgeNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="protocolAcknowledgeRolesDiv" style="display: none;"><select id="protocolAcknowledgeRoles" name="protocolAcknowledgeRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermManageCoursesLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermManageCoursesNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ManageCourses, Model.ManageCoursesPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="manageCoursesNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="manageCoursesRolesDiv" style="display: none;"><select id="manageCoursesRoles" name="manageCoursesRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermGradeAssessmentsLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermGradeAssessmentsNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.GradeAssessments, Model.GradeAssessmentsPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="gradeAssessmentsNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="gradeAssessmentsRolesDiv" style="display: none;"><select id="gradeAssessmentsRoles" name="gradeAssessmentsRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td>@localizer["PermCreateDocumentLabel"]</td>
                                         <td style="max-width: 350px">@localizer["PermCreateDocumentNote"]</td>
                                         <td>@Html.DropDownListFor(m => m.CreateDocument, Model.CreateDocumentPermissions)</td>

@@ -640,6 +640,7 @@
 /// <reference path="js/app/internal/connect/resgrid.connect.messages.js" />
 /// <reference path="js/app/internal/connect/resgrid.connect.posts.js" />
 /// <reference path="js/app/internal/connect/resgrid.connect.profile.js" />
+/// <reference path="js/app/internal/courses/resgrid.courses.player.js" />
 /// <reference path="js/app/internal/department/resgrid.department.callsettings.js" />
 /// <reference path="js/app/internal/department/resgrid.department.recipientsgrid.js" />
 /// <reference path="js/app/internal/department/resgrid.department.settings.js" />

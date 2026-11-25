@@ -185,6 +185,9 @@
 	</div>
 </div>
 
+@* Training T4 (LMS): upcoming classes with the enrolled members on shift at that time (rendered by name; nothing when the LMS is dark). *@
+@await Component.InvokeAsync("LmsClassShiftConflicts")
+
 <div class="row">
     <div class="col-xs-12">
       <div class="ibox float-e-margins">

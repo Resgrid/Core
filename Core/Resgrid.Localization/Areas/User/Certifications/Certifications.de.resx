@@ -230,4 +230,9 @@
   <data name="SelectMember" xml:space="preserve"><value>Mitglied auswählen</value></data>
   <data name="SelectType" xml:space="preserve"><value>Zertifizierungstyp auswählen</value></data>
   <data name="CertificationNameRequired" xml:space="preserve"><value>Geben Sie einen Namen für die Zertifizierung ein.</value></data>
+  <data name="RenewalHoursLabel" xml:space="preserve"><value>Stunden für die Verlängerung</value></data>
+  <data name="RenewalHoursValue" xml:space="preserve"><value>{0} Std. gutgeschrieben ({1} Std. aus dem Ausbildungsnachweis)</value></data>
+  <data name="UncreditedLedgerHours" xml:space="preserve"><value>{0} Std. in angerechneten Kategorien noch nicht gutgeschrieben</value></data>
+  <data name="ApplyHistoryLink" xml:space="preserve"><value>Historie als Gutschriften übernehmen</value></data>
+  <data name="FromTranscript" xml:space="preserve"><value>Aus dem Nachweis</value></data>
 </root>

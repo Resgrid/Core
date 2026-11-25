@@ -75,6 +75,44 @@ namespace Resgrid.Model
 		[ProtoMember(14)]
 		public string RemovedReason { get; set; }
 
+		/// <summary>
+		/// The protocol version the call cites (P1 §4 "calls cite versions, never live rows"), set at attach from the protocol's
+		/// version in force. M0344 filled it for rows recorded before P1: from the P0 snapshot hash where there was one (the
+		/// matching version, or a Legacy version for text that differs), else version 1.0. Null only for a protocol without
+		/// any version.
+		/// </summary>
+		[ProtoMember(15)]
+		public int? ProtocolVersionId { get; set; }
+
+		/// <summary>
+		/// P3 step-through: the protocol run on the call like a checklist (<see cref="ProtocolStepLog"/> as JSON), each step timestamped.
+		/// Read with the row; written only by <see cref="Repositories.ICallProtocolsRepository.TryUpdateStepLogAsync"/> (never by the call's
+		/// save cascade, which would write back a copy loaded before the last step), hence not mapped for the ORM's writes.
+		/// </summary>
+		[NotMapped]
+		[ProtoMember(16)]
+		public string StepLogJson { get; set; }
+
+		/// <summary>Bumped on every step-log write; a write against an older value is retried on the fresh log.</summary>
+		[NotMapped]
+		[ProtoMember(17)]
+		public int StepLogRevision { get; set; }
+
+		/// <summary>
+		/// P4: the determinant in force for the call (the case flow's, or the dispatcher's override); null when the protocol has no case
+		/// flow or the case did not reach an outcome. Run card ProtocolOutcome conditions and the dispatch texts read it.
+		/// </summary>
+		[ProtoMember(18)]
+		public string Determinant { get; set; }
+
+		/// <summary>P4: why the dispatcher overrode the computed determinant (required for an override); null when not overridden.</summary>
+		[ProtoMember(19)]
+		public string OverrideReason { get; set; }
+
+		/// <summary>P4: the case record (<see cref="CallProtocolCase"/> as JSON): the path in words, the outcome, the override, the source, caller texts.</summary>
+		[ProtoMember(20)]
+		public string CaseJson { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public bool IsRemoved => RemovedOn.HasValue;
@@ -98,6 +136,6 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Call", "Protocol", "IsRemoved" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Call", "Protocol", "IsRemoved", "StepLogJson", "StepLogRevision" };
 	}
 }

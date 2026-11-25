@@ -30,11 +30,17 @@
         case PlanAddonTypes.DedicatedNumber:
             actionUrl = Url.Action("Index", "DedicatedNumberBilling", new { Area = "User" });
             break;
+        case PlanAddonTypes.Lms:
+            actionUrl = Url.Action("Index", "LmsBilling", new { Area = "User" });
+            break;
         default:
             actionUrl = Url.Action("Index", "AiBilling", new { Area = "User" });
             break;
     }
     var period = addon.Period == AddonBillingPeriod.Yearly ? addonLocalizer["PerYear"] : addonLocalizer["PerMonth"];
+    var schedule = addon.Schedule;
+    var unit = schedule != null ? string.Format(addonLocalizer["PerMemberPack"].Value, schedule.PackSize)
+        : addon.PerUserPack ? addonLocalizer["PerUserPack"].Value : addonLocalizer["PerDepartment"].Value;
     var hasBadge = Model.Owned;
     var title = addonLocalizer[addon.TitleKey];
 }
@@ -60,7 +66,17 @@
         </div>
         <div class="rg-addon-price-row">
             <div class="rg-addon-price"><span class="rg-addon-currency">@AddonCatalog.CurrencySymbol</span>@addon.Price.ToString("N0")<span class="rg-addon-period">@period</span></div>
-            <div class="rg-addon-unit">@(addon.PerUserPack ? addonLocalizer["PerUserPack"] : addonLocalizer["PerDepartment"])</div>
+            <div class="rg-addon-unit">@unit</div>
+            @if (schedule != null)
+            {
+                @* A pack add-on lists its later tiers: graduated, so only the packs in a tier get its price. *@
+                foreach (var tier in schedule.Tiers.Skip(1))
+                {
+                    <div class="rg-addon-unit">@(tier.LastPack.HasValue
+                        ? string.Format(addonLocalizer["PackTierLine"].Value, tier.FirstPack, tier.LastPack.Value, AddonCatalog.CurrencySymbol + tier.UnitAmount.ToString("N0"))
+                        : string.Format(addonLocalizer["PackTierLineOpen"].Value, tier.FirstPack, AddonCatalog.CurrencySymbol + tier.UnitAmount.ToString("N0")))</div>
+                }
+            }
         </div>
         <ul class="rg-addon-features">
             @foreach (var key in addon.FeatureKeys)

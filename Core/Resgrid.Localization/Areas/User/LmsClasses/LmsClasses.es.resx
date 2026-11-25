@@ -1,0 +1,1240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>No se pudo realizar.</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Acciones</value>
+  </data>
+  <data name="AddCost" xml:space="preserve">
+    <value>Añadir coste</value>
+  </data>
+  <data name="AddInstructor" xml:space="preserve">
+    <value>Añadir instructor</value>
+  </data>
+  <data name="AddonNotice" xml:space="preserve">
+    <value>Las clases forman parte del complemento LMS, que no está activo para este departamento.</value>
+  </data>
+  <data name="AddonRequired" xml:space="preserve">
+    <value>Esto requiere un complemento LMS activo.</value>
+  </data>
+  <data name="AddPeople" xml:space="preserve">
+    <value>Añadir personas</value>
+  </data>
+  <data name="AddWalkIn" xml:space="preserve">
+    <value>Marcar presente a alguien sin inscripción</value>
+  </data>
+  <data name="AllTags" xml:space="preserve">
+    <value>Todas las etiquetas</value>
+  </data>
+  <data name="AlreadySignedIn" xml:space="preserve">
+    <value>Se registró a las</value>
+  </data>
+  <data name="Amount" xml:space="preserve">
+    <value>Importe</value>
+  </data>
+  <data name="Approve" xml:space="preserve">
+    <value>Aprobar</value>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>Aprobado.</value>
+  </data>
+  <data name="Attendance.Absent" xml:space="preserve">
+    <value>Ausente</value>
+  </data>
+  <data name="Attendance.Attended" xml:space="preserve">
+    <value>Asistió</value>
+  </data>
+  <data name="Attendance.Excused" xml:space="preserve">
+    <value>Justificado</value>
+  </data>
+  <data name="Attendance.Unmarked" xml:space="preserve">
+    <value>Sin marcar</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Volver</value>
+  </data>
+  <data name="Book" xml:space="preserve">
+    <value>Reservar</value>
+  </data>
+  <data name="BookedMessage" xml:space="preserve">
+    <value>Reservado.</value>
+  </data>
+  <data name="BookingsHeader" xml:space="preserve">
+    <value>Instalaciones y accesorios</value>
+  </data>
+  <data name="BookResource" xml:space="preserve">
+    <value>Reservar para esta clase</value>
+  </data>
+  <data name="Calendar" xml:space="preserve">
+    <value>Calendario</value>
+  </data>
+  <data name="CalendarIsClass" xml:space="preserve">
+    <value>Este elemento del calendario es una clase: la inscripción y la asistencia están en la página de la clase.</value>
+  </data>
+  <data name="CancelClass" xml:space="preserve">
+    <value>Cancelar clase</value>
+  </data>
+  <data name="Cancelled" xml:space="preserve">
+    <value>La clase se canceló y se avisó a los inscritos.</value>
+  </data>
+  <data name="CancelReason" xml:space="preserve">
+    <value>Motivo de la cancelación</value>
+  </data>
+  <data name="ClassesIntro" xml:space="preserve">
+    <value>Sesiones con instructor en el calendario: inscripción, lista de espera, registro de asistencia y la lista firmada.</value>
+  </data>
+  <data name="ClassesTitle" xml:space="preserve">
+    <value>Clases</value>
+  </data>
+  <data name="Col.Absent" xml:space="preserve">
+    <value>Ausentes</value>
+  </data>
+  <data name="Col.Attendance" xml:space="preserve">
+    <value>Asistencia</value>
+  </data>
+  <data name="Col.AttendanceRate" xml:space="preserve">
+    <value>Tasa de asistencia</value>
+  </data>
+  <data name="Col.Attended" xml:space="preserve">
+    <value>Asistieron</value>
+  </data>
+  <data name="Col.Attendee" xml:space="preserve">
+    <value>Asistente</value>
+  </data>
+  <data name="Col.Attendees" xml:space="preserve">
+    <value>Asistentes</value>
+  </data>
+  <data name="Col.Bookings" xml:space="preserve">
+    <value>Reservas (próximos 90 días)</value>
+  </data>
+  <data name="Col.Capacity" xml:space="preserve">
+    <value>Capacidad</value>
+  </data>
+  <data name="Col.Class" xml:space="preserve">
+    <value>Clase</value>
+  </data>
+  <data name="Col.ClassCost" xml:space="preserve">
+    <value>Coste de la clase</value>
+  </data>
+  <data name="Col.Classes" xml:space="preserve">
+    <value>Clases</value>
+  </data>
+  <data name="Col.ContentSummary" xml:space="preserve">
+    <value>Resumen del contenido</value>
+  </data>
+  <data name="Col.Course" xml:space="preserve">
+    <value>Curso</value>
+  </data>
+  <data name="Col.Date" xml:space="preserve">
+    <value>Fecha</value>
+  </data>
+  <data name="Col.Enrolled" xml:space="preserve">
+    <value>Inscritos</value>
+  </data>
+  <data name="Col.Exception" xml:space="preserve">
+    <value>Excepción</value>
+  </data>
+  <data name="Col.Hours" xml:space="preserve">
+    <value>Horas</value>
+  </data>
+  <data name="Col.HoursTaught" xml:space="preserve">
+    <value>Horas impartidas</value>
+  </data>
+  <data name="Col.Instructor" xml:space="preserve">
+    <value>Instructor</value>
+  </data>
+  <data name="Col.Instructors" xml:space="preserve">
+    <value>Formadores y cualificaciones</value>
+  </data>
+  <data name="Col.JobTitle" xml:space="preserve">
+    <value>Puesto</value>
+  </data>
+  <data name="Col.Kind" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="Col.Member" xml:space="preserve">
+    <value>Miembro</value>
+  </data>
+  <data name="Col.Pending" xml:space="preserve">
+    <value>Pendientes</value>
+  </data>
+  <data name="Col.Published" xml:space="preserve">
+    <value>Publicado</value>
+  </data>
+  <data name="Col.Qualifications" xml:space="preserve">
+    <value>Cualificaciones</value>
+  </data>
+  <data name="Col.RequestCost" xml:space="preserve">
+    <value>Coste de las solicitudes de formación</value>
+  </data>
+  <data name="Col.Resource" xml:space="preserve">
+    <value>Recurso</value>
+  </data>
+  <data name="Col.Role" xml:space="preserve">
+    <value>Función</value>
+  </data>
+  <data name="Col.Seats" xml:space="preserve">
+    <value>Plazas</value>
+  </data>
+  <data name="Col.Series" xml:space="preserve">
+    <value>Serie</value>
+  </data>
+  <data name="Col.Sessions" xml:space="preserve">
+    <value>Sesiones</value>
+  </data>
+  <data name="Col.SignIn" xml:space="preserve">
+    <value>Registro</value>
+  </data>
+  <data name="Col.Status" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="Col.Title" xml:space="preserve">
+    <value>Título</value>
+  </data>
+  <data name="Col.Waitlisted" xml:space="preserve">
+    <value>En espera</value>
+  </data>
+  <data name="Col.WalkIns" xml:space="preserve">
+    <value>Sin inscripción</value>
+  </data>
+  <data name="Col.Year" xml:space="preserve">
+    <value>Año</value>
+  </data>
+  <data name="Cost.BackfillOvertime" xml:space="preserve">
+    <value>Horas extra de cobertura</value>
+  </data>
+  <data name="Cost.Instructor" xml:space="preserve">
+    <value>Instructor</value>
+  </data>
+  <data name="Cost.Materials" xml:space="preserve">
+    <value>Materiales</value>
+  </data>
+  <data name="Cost.Other" xml:space="preserve">
+    <value>Otros</value>
+  </data>
+  <data name="Cost.OutsideFees" xml:space="preserve">
+    <value>Tarifas externas</value>
+  </data>
+  <data name="CostKind" xml:space="preserve">
+    <value>Concepto</value>
+  </data>
+  <data name="CostsHeader" xml:space="preserve">
+    <value>Costes</value>
+  </data>
+  <data name="CostsIntro" xml:space="preserve">
+    <value>Instructor, materiales, tarifas externas y horas extra de cobertura por curso, miembro o año, junto a las solicitudes de formación.</value>
+  </data>
+  <data name="CostsTitle" xml:space="preserve">
+    <value>Costes de las clases</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Crear</value>
+  </data>
+  <data name="CreateClass" xml:space="preserve">
+    <value>Crear clase</value>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>Creado.</value>
+  </data>
+  <data name="DecisionNote" xml:space="preserve">
+    <value>Nota (necesaria para devolver)</value>
+  </data>
+  <data name="Decline" xml:space="preserve">
+    <value>Rechazar</value>
+  </data>
+  <data name="DeclinedMessage" xml:space="preserve">
+    <value>Rechazado.</value>
+  </data>
+  <data name="DeleteClass" xml:space="preserve">
+    <value>Eliminar clase</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>Eliminado.</value>
+  </data>
+  <data name="DeleteLessonPlan" xml:space="preserve">
+    <value>Eliminar el plan de lección</value>
+  </data>
+  <data name="DraftOnly" xml:space="preserve">
+    <value>Solo borrador</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="EditClass" xml:space="preserve">
+    <value>Editar clase</value>
+  </data>
+  <data name="EditIntro" xml:space="preserve">
+    <value>Las horas están en la zona horaria del departamento.</value>
+  </data>
+  <data name="EditResource" xml:space="preserve">
+    <value>Editar instalación o accesorio</value>
+  </data>
+  <data name="Enroll" xml:space="preserve">
+    <value>Inscribirse</value>
+  </data>
+  <data name="EnrolledMessage" xml:space="preserve">
+    <value>Inscrito.</value>
+  </data>
+  <data name="EnrollMember" xml:space="preserve">
+    <value>Inscribir a un miembro</value>
+  </data>
+  <data name="Enrollment.Declined" xml:space="preserve">
+    <value>Rechazado</value>
+  </data>
+  <data name="Enrollment.Enrolled" xml:space="preserve">
+    <value>Inscrito</value>
+  </data>
+  <data name="Enrollment.PendingApproval" xml:space="preserve">
+    <value>Pendiente de aprobación</value>
+  </data>
+  <data name="Enrollment.Removed" xml:space="preserve">
+    <value>Retirado por el gestor</value>
+  </data>
+  <data name="Enrollment.Waitlisted" xml:space="preserve">
+    <value>En lista de espera</value>
+  </data>
+  <data name="Enrollment.Withdrawn" xml:space="preserve">
+    <value>Retirado</value>
+  </data>
+  <data name="Evaluation.CourseAssessment" xml:space="preserve">
+    <value>Asignar el curso vinculado (su cuestionario) a cada asistente</value>
+  </data>
+  <data name="Evaluation.None" xml:space="preserve">
+    <value>Ninguna</value>
+  </data>
+  <data name="Exception.Excused" xml:space="preserve">
+    <value>Ausencia justificada</value>
+  </data>
+  <data name="Exception.Inactive" xml:space="preserve">
+    <value>Ya no es miembro activo</value>
+  </data>
+  <data name="Exception.NeverPromoted" xml:space="preserve">
+    <value>Se quedó en lista de espera</value>
+  </data>
+  <data name="Exception.NoShow" xml:space="preserve">
+    <value>No asistió</value>
+  </data>
+  <data name="Exception.OnShift" xml:space="preserve">
+    <value>De turno a esa hora</value>
+  </data>
+  <data name="Exception.Pending" xml:space="preserve">
+    <value>Solicitud sin decidir</value>
+  </data>
+  <data name="Exception.Waitlisted" xml:space="preserve">
+    <value>En lista de espera</value>
+  </data>
+  <data name="Field.AllowSelfUnenroll" xml:space="preserve">
+    <value>Los miembros pueden darse de baja</value>
+  </data>
+  <data name="Field.Capacity" xml:space="preserve">
+    <value>Capacidad</value>
+  </data>
+  <data name="Field.CapacityHelp" xml:space="preserve">
+    <value>0 sin límite.</value>
+  </data>
+  <data name="Field.Category" xml:space="preserve">
+    <value>Categoría de formación</value>
+  </data>
+  <data name="Field.ChangeSummary" xml:space="preserve">
+    <value>Resumen de cambios</value>
+  </data>
+  <data name="Field.CompetencyItems" xml:space="preserve">
+    <value>Competencias cubiertas</value>
+  </data>
+  <data name="Field.ContentSummary" xml:space="preserve">
+    <value>Resumen del contenido (lista)</value>
+  </data>
+  <data name="Field.ContentSummaryHelp" xml:space="preserve">
+    <value>Lo que se trató, tal como lo recoge la lista firmada.</value>
+  </data>
+  <data name="Field.Course" xml:space="preserve">
+    <value>Curso LMS</value>
+  </data>
+  <data name="Field.CourseCode" xml:space="preserve">
+    <value>Código del curso</value>
+  </data>
+  <data name="Field.Currency" xml:space="preserve">
+    <value>Moneda</value>
+  </data>
+  <data name="Field.CutoffDays" xml:space="preserve">
+    <value>Cierre de inscripción (días antes)</value>
+  </data>
+  <data name="Field.Description" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
+  <data name="Field.Duration" xml:space="preserve">
+    <value>Duración (minutos)</value>
+  </data>
+  <data name="Field.End" xml:space="preserve">
+    <value>Fin</value>
+  </data>
+  <data name="Field.EnrollmentOpen" xml:space="preserve">
+    <value>Los miembros pueden inscribirse</value>
+  </data>
+  <data name="Field.GpsRequired" xml:space="preserve">
+    <value>Exigir la ubicación del teléfono dentro del radio</value>
+  </data>
+  <data name="Field.Instructors" xml:space="preserve">
+    <value>Instructores</value>
+  </data>
+  <data name="Field.Latitude" xml:space="preserve">
+    <value>Latitud</value>
+  </data>
+  <data name="Field.LessonPlan" xml:space="preserve">
+    <value>Plan de lección</value>
+  </data>
+  <data name="Field.Location" xml:space="preserve">
+    <value>Lugar</value>
+  </data>
+  <data name="Field.Longitude" xml:space="preserve">
+    <value>Longitud</value>
+  </data>
+  <data name="Field.Materials" xml:space="preserve">
+    <value>Materiales</value>
+  </data>
+  <data name="Field.MeetingUrl" xml:space="preserve">
+    <value>Enlace de la reunión</value>
+  </data>
+  <data name="Field.MeetingUrlHelp" xml:space="preserve">
+    <value>Un enlace de Teams, Zoom o Meet para una clase virtual o híbrida.</value>
+  </data>
+  <data name="Field.Notes" xml:space="preserve">
+    <value>Notas</value>
+  </data>
+  <data name="Field.Objectives" xml:space="preserve">
+    <value>Objetivos</value>
+  </data>
+  <data name="Field.Occurrences" xml:space="preserve">
+    <value>Número de sesiones</value>
+  </data>
+  <data name="Field.PostEvaluation" xml:space="preserve">
+    <value>Después de la clase</value>
+  </data>
+  <data name="Field.PostEvaluationHelp" xml:space="preserve">
+    <value>Se inicia para cada asistente en la primera firma.</value>
+  </data>
+  <data name="Field.PreBrief" xml:space="preserve">
+    <value>Lista de la sesión informativa previa</value>
+  </data>
+  <data name="Field.Props" xml:space="preserve">
+    <value>Accesorios e instalaciones</value>
+  </data>
+  <data name="Field.QrEnabled" xml:space="preserve">
+    <value>Registro con QR rotativo (una foto deja de funcionar)</value>
+  </data>
+  <data name="Field.Radius" xml:space="preserve">
+    <value>Radio (metros)</value>
+  </data>
+  <data name="Field.Ratio" xml:space="preserve">
+    <value>Alumnos por instructor</value>
+  </data>
+  <data name="Field.ReminderHours" xml:space="preserve">
+    <value>Recordatorio (horas antes; 0 ninguno)</value>
+  </data>
+  <data name="Field.Repeat" xml:space="preserve">
+    <value>Repetir</value>
+  </data>
+  <data name="Field.RequiresApproval" xml:space="preserve">
+    <value>Un gestor de clases aprueba cada solicitud</value>
+  </data>
+  <data name="Field.RestrictGroups" xml:space="preserve">
+    <value>Solo estos grupos pueden inscribirse</value>
+  </data>
+  <data name="Field.RestrictGroupsHelp" xml:space="preserve">
+    <value>Sin selección: todos los miembros.</value>
+  </data>
+  <data name="Field.RetentionYears" xml:space="preserve">
+    <value>Conservar la lista (años)</value>
+  </data>
+  <data name="Field.RetentionYearsHelp" xml:space="preserve">
+    <value>Vacío: la retención de la categoría (p. ej. 3 años para patógenos transmitidos por sangre).</value>
+  </data>
+  <data name="Field.Roles" xml:space="preserve">
+    <value>Funciones</value>
+  </data>
+  <data name="Field.SafetyPlan" xml:space="preserve">
+    <value>Plan de seguridad</value>
+  </data>
+  <data name="Field.Start" xml:space="preserve">
+    <value>Inicio</value>
+  </data>
+  <data name="Field.Tags" xml:space="preserve">
+    <value>Etiquetas</value>
+  </data>
+  <data name="Field.Title" xml:space="preserve">
+    <value>Título</value>
+  </data>
+  <data name="Field.TitleHelp" xml:space="preserve">
+    <value>Déjelo vacío para usar el nombre del curso o la formación.</value>
+  </data>
+  <data name="Field.Training" xml:space="preserve">
+    <value>Formación</value>
+  </data>
+  <data name="Field.VisibleGroups" xml:space="preserve">
+    <value>Solo estos grupos la ven</value>
+  </data>
+  <data name="Field.VisibleGroupsHelp" xml:space="preserve">
+    <value>Sin selección: visible para todos.</value>
+  </data>
+  <data name="Field.WaitlistEnabled" xml:space="preserve">
+    <value>Lista de espera si está llena (por orden)</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Filtrar</value>
+  </data>
+  <data name="Fingerprint" xml:space="preserve">
+    <value>Huella</value>
+  </data>
+  <data name="Footer.Costs" xml:space="preserve">
+    <value>Coste de clases {0}, solicitudes de formación {1} ({2}).</value>
+  </data>
+  <data name="Footer.Exceptions" xml:space="preserve">
+    <value>{0} excepciones.</value>
+  </data>
+  <data name="Footer.Sessions" xml:space="preserve">
+    <value>{0} sesiones, {1} personas.</value>
+  </data>
+  <data name="FromStarter" xml:space="preserve">
+    <value>De un plan inicial de Resgrid</value>
+  </data>
+  <data name="GpsRequiredNotice" xml:space="preserve">
+    <value>Se comprueba la ubicación de su teléfono al registrarse.</value>
+  </data>
+  <data name="GroupBy" xml:space="preserve">
+    <value>Agrupar por</value>
+  </data>
+  <data name="HoursOverride" xml:space="preserve">
+    <value>Horas</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="ImportAttendance" xml:space="preserve">
+    <value>Importar un informe de asistencia de la reunión</value>
+  </data>
+  <data name="ImportAttendanceHelp" xml:space="preserve">
+    <value>El informe de asistencia CSV de Teams, Zoom o Google Meet. Se identifica por correo y luego por nombre.</value>
+  </data>
+  <data name="ImportedMessage" xml:space="preserve">
+    <value>Se importó el informe de la reunión.</value>
+  </data>
+  <data name="ImportResultFormat" xml:space="preserve">
+    <value>Informe de la reunión: {0} personas, {1} identificadas, {2} añadidas sin inscripción, {3} sin identificar.</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>No activo</value>
+  </data>
+  <data name="InstructorsHeader" xml:space="preserve">
+    <value>Instructores</value>
+  </data>
+  <data name="KioskInstruction" xml:space="preserve">
+    <value>Escanee este código con su teléfono para registrarse.</value>
+  </data>
+  <data name="KioskTitle" xml:space="preserve">
+    <value>Registro de la clase</value>
+  </data>
+  <data name="LapsedNotice" xml:space="preserve">
+    <value>El complemento LMS ha finalizado: las clases siguen visibles y las existentes pueden impartirse y firmarse, pero no se puede crear nada nuevo.</value>
+  </data>
+  <data name="LessonPlanIntro" xml:space="preserve">
+    <value>Se imparte con la versión publicada; se conserva cada versión enviada.</value>
+  </data>
+  <data name="LessonPlansIntro" xml:space="preserve">
+    <value>Objetivos, competencias, materiales, proporción, plan de seguridad y lista de la sesión informativa previa, versionados y aprobados antes de usarse.</value>
+  </data>
+  <data name="LessonPlansTitle" xml:space="preserve">
+    <value>Planes de lección</value>
+  </data>
+  <data name="lms_class_addon_required" xml:space="preserve">
+    <value>Esto requiere un complemento LMS activo.</value>
+  </data>
+  <data name="lms_class_calendar_failed" xml:space="preserve">
+    <value>No se pudo crear el elemento del calendario.</value>
+  </data>
+  <data name="lms_class_cancelled" xml:space="preserve">
+    <value>Esta clase se canceló.</value>
+  </data>
+  <data name="lms_class_capacity_invalid" xml:space="preserve">
+    <value>La capacidad debe estar entre 0 y 10.000.</value>
+  </data>
+  <data name="lms_class_category_invalid" xml:space="preserve">
+    <value>Elija una de las categorías de formación del departamento.</value>
+  </data>
+  <data name="lms_class_change_summary_required" xml:space="preserve">
+    <value>Describa qué cambió antes de enviarlo.</value>
+  </data>
+  <data name="lms_class_code_expired" xml:space="preserve">
+    <value>Ese código ha caducado. Vuelva a escanear el código de la pantalla.</value>
+  </data>
+  <data name="lms_class_cost_invalid" xml:space="preserve">
+    <value>Indique un concepto y un importe de 0 o más.</value>
+  </data>
+  <data name="lms_class_course_invalid" xml:space="preserve">
+    <value>Elija un curso o una formación publicados del departamento.</value>
+  </data>
+  <data name="lms_class_enrollment_closed" xml:space="preserve">
+    <value>La inscripción la hace un gestor de clases.</value>
+  </data>
+  <data name="lms_class_enrollment_cutoff" xml:space="preserve">
+    <value>La inscripción para esta clase está cerrada.</value>
+  </data>
+  <data name="lms_class_full" xml:space="preserve">
+    <value>Esta clase está completa.</value>
+  </data>
+  <data name="lms_class_gps_location_required" xml:space="preserve">
+    <value>Indique la ubicación de la clase (latitud y longitud) para exigir GPS.</value>
+  </data>
+  <data name="lms_class_gps_required" xml:space="preserve">
+    <value>Esta clase necesita la ubicación de su teléfono. Permita el acceso y vuelva a intentarlo.</value>
+  </data>
+  <data name="lms_class_gps_too_far" xml:space="preserve">
+    <value>Su teléfono está demasiado lejos del lugar de la clase.</value>
+  </data>
+  <data name="lms_class_hours_invalid" xml:space="preserve">
+    <value>Las horas deben estar entre 0 y 9.999.</value>
+  </data>
+  <data name="lms_class_import_empty" xml:space="preserve">
+    <value>No se encontraron filas de asistencia en el archivo.</value>
+  </data>
+  <data name="lms_class_instructor_invalid" xml:space="preserve">
+    <value>Elija un miembro o escriba el nombre de un instructor externo.</value>
+  </data>
+  <data name="lms_class_lesson_plan_invalid" xml:space="preserve">
+    <value>Elija un plan de lección publicado.</value>
+  </data>
+  <data name="lms_class_meeting_url_invalid" xml:space="preserve">
+    <value>El enlace debe ser una dirección web (https://...).</value>
+  </data>
+  <data name="lms_class_name_required" xml:space="preserve">
+    <value>Escriba un nombre.</value>
+  </data>
+  <data name="lms_class_not_eligible" xml:space="preserve">
+    <value>Esta clase es para otros grupos.</value>
+  </data>
+  <data name="lms_class_not_enrolled" xml:space="preserve">
+    <value>No está en la lista de esta clase.</value>
+  </data>
+  <data name="lms_class_not_found" xml:space="preserve">
+    <value>No se encontró la clase.</value>
+  </data>
+  <data name="lms_class_not_member" xml:space="preserve">
+    <value>Solo los miembros actuales del departamento pueden estar en una lista.</value>
+  </data>
+  <data name="lms_class_not_open" xml:space="preserve">
+    <value>La clase no está abierta para eso ahora.</value>
+  </data>
+  <data name="lms_class_not_pending" xml:space="preserve">
+    <value>Esa solicitud ya se decidió.</value>
+  </data>
+  <data name="lms_class_not_signed_in" xml:space="preserve">
+    <value>No se ha registrado en esta clase.</value>
+  </data>
+  <data name="lms_class_not_started" xml:space="preserve">
+    <value>Una clase se puede firmar cuando ha comenzado.</value>
+  </data>
+  <data name="lms_class_plan_changed" xml:space="preserve">
+    <value>El contenido cambió después de enviarse; envíelo de nuevo.</value>
+  </data>
+  <data name="lms_class_plan_not_approved" xml:space="preserve">
+    <value>Solo se puede publicar una versión aprobada.</value>
+  </data>
+  <data name="lms_class_plan_not_draft" xml:space="preserve">
+    <value>Solo un borrador se puede cambiar o enviar.</value>
+  </data>
+  <data name="lms_class_plan_not_found" xml:space="preserve">
+    <value>No se encontró el plan de lección.</value>
+  </data>
+  <data name="lms_class_plan_not_in_review" xml:space="preserve">
+    <value>Esa versión no está pendiente de decisión.</value>
+  </data>
+  <data name="lms_class_reason_required" xml:space="preserve">
+    <value>Indique por qué se devuelve.</value>
+  </data>
+  <data name="lms_class_resource_conflict" xml:space="preserve">
+    <value>Esa instalación o accesorio ya está reservado a esa hora.</value>
+  </data>
+  <data name="lms_class_retention_hold" xml:space="preserve">
+    <value>La lista se conserva hasta su fecha de retención y aún no puede purgarse.</value>
+  </data>
+  <data name="lms_class_rules_invalid" xml:space="preserve">
+    <value>Revise las reglas (cierre 0–365 días, recordatorio 0–336 horas, 1–52 sesiones).</value>
+  </data>
+  <data name="lms_class_sign_in_closed" xml:space="preserve">
+    <value>El registro no está abierto para esta clase ahora.</value>
+  </data>
+  <data name="lms_class_signed_off" xml:space="preserve">
+    <value>La clase está firmada; su lista ya no puede cambiar así.</value>
+  </data>
+  <data name="lms_class_times_invalid" xml:space="preserve">
+    <value>La clase debe terminar después de empezar y durar como máximo 14 días.</value>
+  </data>
+  <data name="lms_class_title_required" xml:space="preserve">
+    <value>Escriba un título o vincule un curso o una formación.</value>
+  </data>
+  <data name="lms_class_unenroll_closed" xml:space="preserve">
+    <value>Pida a un gestor de clases que le dé de baja.</value>
+  </data>
+  <data name="MajorChange" xml:space="preserve">
+    <value>Cambio importante</value>
+  </data>
+  <data name="MarkPresent" xml:space="preserve">
+    <value>Marcar presente</value>
+  </data>
+  <data name="MessageRoster" xml:space="preserve">
+    <value>Enviar mensaje a la lista</value>
+  </data>
+  <data name="Method.Calendar" xml:space="preserve">
+    <value>Registro del calendario</value>
+  </data>
+  <data name="Method.Import" xml:space="preserve">
+    <value>Informe de la reunión</value>
+  </data>
+  <data name="Method.Manual" xml:space="preserve">
+    <value>Por el instructor</value>
+  </data>
+  <data name="Method.None" xml:space="preserve">
+    <value>Sin registro</value>
+  </data>
+  <data name="Method.Qr" xml:space="preserve">
+    <value>Registro por QR</value>
+  </data>
+  <data name="MinutesFormat" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="MyClassesIntro" xml:space="preserve">
+    <value>Clases en las que está inscrito o que imparte, y las que aún puede unirse.</value>
+  </data>
+  <data name="MyClassesTitle" xml:space="preserve">
+    <value>Mis clases</value>
+  </data>
+  <data name="NewClass" xml:space="preserve">
+    <value>Nueva clase</value>
+  </data>
+  <data name="NewDraft" xml:space="preserve">
+    <value>Nuevo borrador</value>
+  </data>
+  <data name="NewLessonPlan" xml:space="preserve">
+    <value>Nuevo plan de lección</value>
+  </data>
+  <data name="NewQrSecret" xml:space="preserve">
+    <value>Emitir un QR nuevo (las fotos antiguas dejan de valer)</value>
+  </data>
+  <data name="NewResource" xml:space="preserve">
+    <value>Nueva instalación o accesorio</value>
+  </data>
+  <data name="NoClasses" xml:space="preserve">
+    <value>No hay clases.</value>
+  </data>
+  <data name="NoConflicts" xml:space="preserve">
+    <value>Nadie de turno</value>
+  </data>
+  <data name="NoCosts" xml:space="preserve">
+    <value>No hay costes de clases en este periodo.</value>
+  </data>
+  <data name="NoInstructors" xml:space="preserve">
+    <value>Aún no hay instructores.</value>
+  </data>
+  <data name="NoLessonPlans" xml:space="preserve">
+    <value>Aún no hay planes de lección.</value>
+  </data>
+  <data name="NoMyClasses" xml:space="preserve">
+    <value>No hay clases para usted en este momento.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Ninguno</value>
+  </data>
+  <data name="NoResources" xml:space="preserve">
+    <value>Aún no hay instalaciones ni accesorios.</value>
+  </data>
+  <data name="NoRoster" xml:space="preserve">
+    <value>Aún no hay nadie inscrito.</value>
+  </data>
+  <data name="Notice.Cancelled" xml:space="preserve">
+    <value>{0} ({1}) se ha cancelado.</value>
+  </data>
+  <data name="Notice.CancelledTitle" xml:space="preserve">
+    <value>Clase cancelada</value>
+  </data>
+  <data name="Notice.Declined" xml:space="preserve">
+    <value>Su solicitud para {0} ({1}) fue rechazada.</value>
+  </data>
+  <data name="Notice.Enrolled" xml:space="preserve">
+    <value>Está inscrito en {0} ({1}).</value>
+  </data>
+  <data name="Notice.EnrolledTitle" xml:space="preserve">
+    <value>Lista de la clase</value>
+  </data>
+  <data name="Notice.Promoted" xml:space="preserve">
+    <value>Se liberó una plaza: ahora está inscrito en {0} ({1}).</value>
+  </data>
+  <data name="Notice.Reminder" xml:space="preserve">
+    <value>{0} empieza el {1}. {2}</value>
+  </data>
+  <data name="Notice.ReminderTitle" xml:space="preserve">
+    <value>Recordatorio de clase</value>
+  </data>
+  <data name="Notice.Removed" xml:space="preserve">
+    <value>Se le retiró de {0} ({1}).</value>
+  </data>
+  <data name="Notice.Waitlisted" xml:space="preserve">
+    <value>Está en la lista de espera de {0} ({1}).</value>
+  </data>
+  <data name="OnCalendar" xml:space="preserve">
+    <value>Abrir en el calendario</value>
+  </data>
+  <data name="OnePerLine" xml:space="preserve">
+    <value>Uno por línea.</value>
+  </data>
+  <data name="OnShift" xml:space="preserve">
+    <value>De turno</value>
+  </data>
+  <data name="OnShiftHelp" xml:space="preserve">
+    <value>En un turno que coincide con la clase.</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Abrir</value>
+  </data>
+  <data name="OpenClass" xml:space="preserve">
+    <value>Abrir la clase</value>
+  </data>
+  <data name="OpenReport" xml:space="preserve">
+    <value>Abrir como informe</value>
+  </data>
+  <data name="Outside" xml:space="preserve">
+    <value>externo</value>
+  </data>
+  <data name="OutsideInstructor" xml:space="preserve">
+    <value>Instructor externo (escriba el nombre)</value>
+  </data>
+  <data name="OutsideName" xml:space="preserve">
+    <value>Nombre del instructor externo</value>
+  </data>
+  <data name="PendingHeader" xml:space="preserve">
+    <value>Solicitudes pendientes de aprobación</value>
+  </data>
+  <data name="PresentHeader" xml:space="preserve">
+    <value>Registrados</value>
+  </data>
+  <data name="Publish" xml:space="preserve">
+    <value>Publicar</value>
+  </data>
+  <data name="PublishedMessage" xml:space="preserve">
+    <value>Publicado.</value>
+  </data>
+  <data name="QrAlt" xml:space="preserve">
+    <value>Código QR de registro</value>
+  </data>
+  <data name="QrRotated" xml:space="preserve">
+    <value>Se emitió un QR nuevo.</value>
+  </data>
+  <data name="QrRotates" xml:space="preserve">
+    <value>El código cambia cada 30 segundos.</value>
+  </data>
+  <data name="RecentHeader" xml:space="preserve">
+    <value>Recientes</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>Liberar</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Quitar</value>
+  </data>
+  <data name="RemovedMessage" xml:space="preserve">
+    <value>Retirado de la lista.</value>
+  </data>
+  <data name="Repeat.Daily" xml:space="preserve">
+    <value>Cada día</value>
+  </data>
+  <data name="Repeat.None" xml:space="preserve">
+    <value>Una vez</value>
+  </data>
+  <data name="Repeat.Weekly" xml:space="preserve">
+    <value>Cada semana</value>
+  </data>
+  <data name="RequestPlace" xml:space="preserve">
+    <value>Solicitar plaza</value>
+  </data>
+  <data name="Resource.Apparatus" xml:space="preserve">
+    <value>Vehículo</value>
+  </data>
+  <data name="Resource.Equipment" xml:space="preserve">
+    <value>Equipo</value>
+  </data>
+  <data name="Resource.Facility" xml:space="preserve">
+    <value>Instalación</value>
+  </data>
+  <data name="Resource.Other" xml:space="preserve">
+    <value>Otro</value>
+  </data>
+  <data name="Resource.Prop" xml:space="preserve">
+    <value>Accesorio de prácticas</value>
+  </data>
+  <data name="ResourcesIntro" xml:space="preserve">
+    <value>Campos de prácticas, aulas, accesorios, vehículos y equipos; un recurso nunca se reserva dos veces a la vez.</value>
+  </data>
+  <data name="ResourcesTitle" xml:space="preserve">
+    <value>Instalaciones y accesorios</value>
+  </data>
+  <data name="RetainUntil" xml:space="preserve">
+    <value>Lista conservada hasta</value>
+  </data>
+  <data name="RetentionHelpFormat" xml:space="preserve">
+    <value>La lista firmada se conserva hasta el {0}; eliminar la clase la oculta y solo se purga después de esa fecha.</value>
+  </data>
+  <data name="Role.Assistant" xml:space="preserve">
+    <value>Instructor asistente</value>
+  </data>
+  <data name="Role.Lead" xml:space="preserve">
+    <value>Instructor principal</value>
+  </data>
+  <data name="Role.Safety" xml:space="preserve">
+    <value>Oficial de seguridad</value>
+  </data>
+  <data name="RosterHeader" xml:space="preserve">
+    <value>Lista de asistentes</value>
+  </data>
+  <data name="Rule.Approval" xml:space="preserve">
+    <value>requiere aprobación</value>
+  </data>
+  <data name="Rule.Closed" xml:space="preserve">
+    <value>solo por gestores de clases</value>
+  </data>
+  <data name="Rule.CutoffFormat" xml:space="preserve">
+    <value>cierra {0} días antes</value>
+  </data>
+  <data name="Rule.Open" xml:space="preserve">
+    <value>abierta a los miembros</value>
+  </data>
+  <data name="Rule.Waitlist" xml:space="preserve">
+    <value>lista de espera</value>
+  </data>
+  <data name="Rules" xml:space="preserve">
+    <value>Inscripción</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Guardado.</value>
+  </data>
+  <data name="SaveDraft" xml:space="preserve">
+    <value>Guardar borrador</value>
+  </data>
+  <data name="SeatsFormat" xml:space="preserve">
+    <value>{0} de {1} plazas ocupadas</value>
+  </data>
+  <data name="Section.Details" xml:space="preserve">
+    <value>Detalles</value>
+  </data>
+  <data name="Section.Enrolment" xml:space="preserve">
+    <value>Reglas de inscripción</value>
+  </data>
+  <data name="Section.Records" xml:space="preserve">
+    <value>Registros y evaluación</value>
+  </data>
+  <data name="Section.SignIn" xml:space="preserve">
+    <value>Registro de asistencia</value>
+  </data>
+  <data name="Section.What" xml:space="preserve">
+    <value>Qué se enseña</value>
+  </data>
+  <data name="Section.When" xml:space="preserve">
+    <value>Cuándo y dónde</value>
+  </data>
+  <data name="Section.You" xml:space="preserve">
+    <value>Usted</value>
+  </data>
+  <data name="SendBack" xml:space="preserve">
+    <value>Devolver</value>
+  </data>
+  <data name="SeriesFormat" xml:space="preserve">
+    <value>Sesión {0} de {1} de una serie.</value>
+  </data>
+  <data name="SeriesIntro" xml:space="preserve">
+    <value>La asistencia de cada miembro en las sesiones de esta clase.</value>
+  </data>
+  <data name="SeriesReport" xml:space="preserve">
+    <value>Asistencia de la serie</value>
+  </data>
+  <data name="SeriesTitle" xml:space="preserve">
+    <value>Asistencia de la serie</value>
+  </data>
+  <data name="ShiftPanelHeader" xml:space="preserve">
+    <value>Formación en el calendario de turnos (próximos 14 días)</value>
+  </data>
+  <data name="ShowQr" xml:space="preserve">
+    <value>Mostrar el QR de registro</value>
+  </data>
+  <data name="SignedInAt" xml:space="preserve">
+    <value>Registrado a las</value>
+  </data>
+  <data name="SignedInMessage" xml:space="preserve">
+    <value>Está registrado.</value>
+  </data>
+  <data name="SignedOffFormat" xml:space="preserve">
+    <value>Firmada: {0} asistieron, {1} ausentes; {2} registros escritos, {3} sustituidos.</value>
+  </data>
+  <data name="SignedOffOn" xml:space="preserve">
+    <value>Firmada</value>
+  </data>
+  <data name="SignedOutMessage" xml:space="preserve">
+    <value>Salida registrada.</value>
+  </data>
+  <data name="SignInButton" xml:space="preserve">
+    <value>Registrarme</value>
+  </data>
+  <data name="SignInClosed" xml:space="preserve">
+    <value>El registro no está abierto para esta clase ahora.</value>
+  </data>
+  <data name="SignInConfirm" xml:space="preserve">
+    <value>¿Registrarse en esta clase ahora?</value>
+  </data>
+  <data name="SignInTitle" xml:space="preserve">
+    <value>Registrarse en la clase</value>
+  </data>
+  <data name="SignOff" xml:space="preserve">
+    <value>Firmar la lista</value>
+  </data>
+  <data name="SignOffAgain" xml:space="preserve">
+    <value>Volver a firmar</value>
+  </data>
+  <data name="SignOffHelp" xml:space="preserve">
+    <value>Firmar crea un registro de formación por asistente (ninguno para los ausentes) y conserva la lista durante su retención. Quien no esté marcado cuenta como ausente salvo que se registrara.</value>
+  </data>
+  <data name="SignOut" xml:space="preserve">
+    <value>Registrar salida</value>
+  </data>
+  <data name="Starter.evoc" xml:space="preserve">
+    <value>Conducción de vehículos de emergencia</value>
+  </data>
+  <data name="Starter.evoc.Help" xml:space="preserve">
+    <value>Inspección previa, marcha atrás con guía, ejercicios de circuito; horas al volante y kilómetros.</value>
+  </data>
+  <data name="Starter.hose-evolutions" xml:space="preserve">
+    <value>Evoluciones anuales con mangueras</value>
+  </data>
+  <data name="Starter.hose-evolutions.Help" xml:space="preserve">
+    <value>Líneas preconectadas, avance por escaleras y columna seca, carga de mangueras.</value>
+  </data>
+  <data name="Starter.ladder-evolutions" xml:space="preserve">
+    <value>Evoluciones anuales con escaleras</value>
+  </data>
+  <data name="Starter.ladder-evolutions.Help" xml:space="preserve">
+    <value>Transporte, elevación, colocación para rescate y ventilación, ascenso y aseguramiento.</value>
+  </data>
+  <data name="Starter.live-fire" xml:space="preserve">
+    <value>Evolución con fuego real (plan de quema)</value>
+  </data>
+  <data name="Starter.live-fire.Help" xml:space="preserve">
+    <value>Comprobaciones previas, funciones, proporciones y el plan de seguridad que registra un departamento.</value>
+  </data>
+  <data name="Starter.physical-ability" xml:space="preserve">
+    <value>Prueba de aptitud física</value>
+  </data>
+  <data name="Starter.physical-ability.Help" xml:space="preserve">
+    <value>Estaciones cronometradas con los tiempos de aprobación del departamento.</value>
+  </data>
+  <data name="Starter.pump-evolutions" xml:space="preserve">
+    <value>Evoluciones anuales con bombas</value>
+  </data>
+  <data name="Starter.pump-evolutions.Help" xml:space="preserve">
+    <value>Suministro desde hidrante, aspiración, presiones de las líneas, bombeo en relevo.</value>
+  </data>
+  <data name="Starter.scba" xml:space="preserve">
+    <value>Destreza con el ERA</value>
+  </data>
+  <data name="Starter.scba.Help" xml:space="preserve">
+    <value>Inspección, colocación cronometrada, prueba de estanqueidad, gestión del aire y procedimientos de emergencia.</value>
+  </data>
+  <data name="StartersHeader" xml:space="preserve">
+    <value>Planes iniciales de Resgrid</value>
+  </data>
+  <data name="StartersIntro" xml:space="preserve">
+    <value>Estructura y listas escritas por Resgrid en lenguaje sencillo (sin texto de ninguna norma). Una copia pasa a ser un borrador de su departamento para adaptar y aprobar.</value>
+  </data>
+  <data name="Stat.Pending" xml:space="preserve">
+    <value>Pendientes de aprobación</value>
+  </data>
+  <data name="Stat.Seats" xml:space="preserve">
+    <value>Plazas ocupadas</value>
+  </data>
+  <data name="Stat.Upcoming" xml:space="preserve">
+    <value>Programadas</value>
+  </data>
+  <data name="Stat.Waitlisted" xml:space="preserve">
+    <value>En listas de espera</value>
+  </data>
+  <data name="Status.Cancelled" xml:space="preserve">
+    <value>Cancelada</value>
+  </data>
+  <data name="Status.Scheduled" xml:space="preserve">
+    <value>Programada</value>
+  </data>
+  <data name="Status.SignedOff" xml:space="preserve">
+    <value>Firmada</value>
+  </data>
+  <data name="StripLabel" xml:space="preserve">
+    <value>Clases</value>
+  </data>
+  <data name="SubmitForApproval" xml:space="preserve">
+    <value>Enviar para aprobación</value>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>Enviado para aprobación.</value>
+  </data>
+  <data name="Tab.Classes" xml:space="preserve">
+    <value>Clases</value>
+  </data>
+  <data name="Tab.Costs" xml:space="preserve">
+    <value>Costes de las clases</value>
+  </data>
+  <data name="Tab.LessonPlans" xml:space="preserve">
+    <value>Planes de lección</value>
+  </data>
+  <data name="Tab.My" xml:space="preserve">
+    <value>Mis clases</value>
+  </data>
+  <data name="Tab.Resources" xml:space="preserve">
+    <value>Instalaciones y accesorios</value>
+  </data>
+  <data name="TagFilter" xml:space="preserve">
+    <value>Etiqueta</value>
+  </data>
+  <data name="TaughtHeader" xml:space="preserve">
+    <value>Clases que impartió</value>
+  </data>
+  <data name="TimecardOff" xml:space="preserve">
+    <value>Ningún parte de horas recibe aún tiempo de formación en este departamento (Workforce Pro).</value>
+  </data>
+  <data name="TimecardOn" xml:space="preserve">
+    <value>Las horas de los asistentes se ofrecen a sus partes de horas al firmar.</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="Uncategorized" xml:space="preserve">
+    <value>Sin categoría</value>
+  </data>
+  <data name="UpcomingHeader" xml:space="preserve">
+    <value>Próximas</value>
+  </data>
+  <data name="UseMyLocation" xml:space="preserve">
+    <value>Usar mi ubicación</value>
+  </data>
+  <data name="UseStarter" xml:space="preserve">
+    <value>Copiar como borrador</value>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>Versión</value>
+  </data>
+  <data name="VersionsHeader" xml:space="preserve">
+    <value>Versiones</value>
+  </data>
+  <data name="VersionStatus.Approved" xml:space="preserve">
+    <value>Aprobada</value>
+  </data>
+  <data name="VersionStatus.Draft" xml:space="preserve">
+    <value>Borrador</value>
+  </data>
+  <data name="VersionStatus.InReview" xml:space="preserve">
+    <value>En revisión</value>
+  </data>
+  <data name="VersionStatus.Legacy" xml:space="preserve">
+    <value>Heredada</value>
+  </data>
+  <data name="VersionStatus.Published" xml:space="preserve">
+    <value>Publicada</value>
+  </data>
+  <data name="VersionStatus.Retired" xml:space="preserve">
+    <value>Retirada</value>
+  </data>
+  <data name="VersionStatus.Superseded" xml:space="preserve">
+    <value>Sustituida</value>
+  </data>
+  <data name="Virtual" xml:space="preserve">
+    <value>Virtual</value>
+  </data>
+  <data name="WaitlistHeader" xml:space="preserve">
+    <value>Lista de espera (por orden)</value>
+  </data>
+  <data name="WaitlistPositionFormat" xml:space="preserve">
+    <value>puesto {0}</value>
+  </data>
+  <data name="WalkIn" xml:space="preserve">
+    <value>Sin inscripción</value>
+  </data>
+  <data name="WalkInMessage" xml:space="preserve">
+    <value>Marcado como presente.</value>
+  </data>
+  <data name="Withdraw" xml:space="preserve">
+    <value>Darse de baja</value>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>Se dio de baja de la clase.</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Sí</value>
+  </data>
+  <data name="YouTeach" xml:space="preserve">
+    <value>Usted imparte esta clase</value>
+  </data>
+</root>

@@ -1,0 +1,202 @@
+{
+  "schema": 1,
+  "id": "20-plans",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Plans",
+  "minutes": 1.7,
+  "walkthrough": false,
+  "audience": [
+    "administrator",
+    "business"
+  ],
+  "visibility": [],
+  "pages": [
+    "Subscription"
+  ],
+  "adminAssist": {
+    "areas": [
+      "plans"
+    ],
+    "capabilities": [
+      "subscription"
+    ]
+  },
+  "media": {
+    "video": "media/20-plans.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/20-plans.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Match subscription capacity to the roster",
+    "ar": "طابق سعة الاشتراك مع قائمة الأفراد",
+    "de": "Den Abonnementumfang an die Personalstärke anpassen",
+    "el": "Ταιριάξτε τη χωρητικότητα της συνδρομής με το προσωπικό",
+    "es": "Ajustar la capacidad de la suscripción a la plantilla",
+    "fr": "Adapter la capacité de l’abonnement à l’effectif",
+    "it": "Adeguare la capacità dell’abbonamento all’organico",
+    "pl": "Dopasuj pojemność subskrypcji do składu osobowego",
+    "sv": "Anpassa abonnemangets kapacitet till personalstyrkan",
+    "uk": "Узгодьте обсяг підписки з особовим складом"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "What should a department check when choosing a plan?",
+        "ar": "ما الذي يجب أن تتحقق منه الإدارة عند اختيار خطة؟",
+        "de": "Was sollte eine Organisation bei der Wahl eines Tarifs prüfen?",
+        "el": "Τι πρέπει να ελέγξει μια υπηρεσία όταν επιλέγει πρόγραμμα;",
+        "es": "¿Qué debe comprobar un departamento al elegir un plan?",
+        "fr": "Que doit vérifier un service en choisissant une formule ?",
+        "it": "Che cosa deve verificare un dipartimento quando sceglie un piano?",
+        "pl": "Co jednostka powinna sprawdzić przy wyborze planu?",
+        "sv": "Vad bör en organisation kontrollera när den väljer en plan?",
+        "uk": "Що має перевірити підрозділ, обираючи тариф?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "The colour of the logo",
+            "ar": "لون الشعار",
+            "de": "Die Farbe des Logos",
+            "el": "Το χρώμα του λογότυπου",
+            "es": "El color del logotipo",
+            "fr": "La couleur du logo",
+            "it": "Il colore del logo",
+            "pl": "Kolor logo",
+            "sv": "Logotypens färg",
+            "uk": "Колір логотипу"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "The weather",
+            "ar": "الطقس",
+            "de": "Das Wetter",
+            "el": "Τον καιρό",
+            "es": "El tiempo",
+            "fr": "La météo",
+            "it": "Il meteo",
+            "pl": "Pogodę",
+            "sv": "Vädret",
+            "uk": "Погоду"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "That its limits fit the number of members and units",
+            "ar": "أن حدودها تناسب عدد الأعضاء والوحدات",
+            "de": "Dass die Grenzen zur Zahl der Mitglieder und Einheiten passen",
+            "el": "Ότι τα όριά του ταιριάζουν στον αριθμό μελών και μονάδων",
+            "es": "Que sus límites se ajusten al número de miembros y unidades",
+            "fr": "Que ses limites correspondent au nombre de membres et d’unités",
+            "it": "Che i limiti siano adatti al numero di membri e mezzi",
+            "pl": "Czy limity pasują do liczby członków i jednostek",
+            "sv": "Att gränserna passar antalet medlemmar och enheter",
+            "uk": "Що обмеження відповідають кількості учасників і підрозділів"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "Who usually manages the subscription?",
+        "ar": "من يدير الاشتراك عادة؟",
+        "de": "Wer verwaltet normalerweise das Abonnement?",
+        "el": "Ποιος διαχειρίζεται συνήθως τη συνδρομή;",
+        "es": "¿Quién suele gestionar la suscripción?",
+        "fr": "Qui gère habituellement l’abonnement ?",
+        "it": "Chi gestisce di solito l’abbonamento?",
+        "pl": "Kto zwykle zarządza subskrypcją?",
+        "sv": "Vem hanterar vanligtvis abonnemanget?",
+        "uk": "Хто зазвичай керує підпискою?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Every member",
+            "ar": "كل عضو",
+            "de": "Jedes Mitglied",
+            "el": "Κάθε μέλος",
+            "es": "Todos los miembros",
+            "fr": "Chaque membre",
+            "it": "Ogni membro",
+            "pl": "Każdy członek",
+            "sv": "Alla medlemmar",
+            "uk": "Кожен учасник"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "The managing member or administrators",
+            "ar": "العضو المسؤول أو المديرون",
+            "de": "Das verwaltende Mitglied oder die Administratoren",
+            "el": "Το διαχειριστικό μέλος ή οι διαχειριστές",
+            "es": "El miembro gestor o los administradores",
+            "fr": "Le membre gestionnaire ou les administrateurs",
+            "it": "Il membro responsabile o gli amministratori",
+            "pl": "Członek zarządzający lub administratorzy",
+            "sv": "Den ansvariga medlemmen eller administratörerna",
+            "uk": "Керівний учасник або адміністратори"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "The dispatcher on duty",
+            "ar": "المرسِل المناوب",
+            "de": "Der diensthabende Disponent",
+            "el": "Ο εφημερεύων διασπορέας",
+            "es": "El operador de turno",
+            "fr": "L’opérateur de service",
+            "it": "L’operatore di turno",
+            "pl": "Dyżurny dyspozytor",
+            "sv": "Larmoperatören i tjänst",
+            "uk": "Черговий диспетчер"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "f",
+      "text": {
+        "en": "Add-ons can never be added to a subscription.",
+        "ar": "لا يمكن أبدًا إضافة إضافات إلى الاشتراك.",
+        "de": "Zusatzpakete können einem Abonnement nie hinzugefügt werden.",
+        "el": "Τα πρόσθετα δεν μπορούν ποτέ να προστεθούν σε συνδρομή.",
+        "es": "Nunca se pueden añadir complementos a una suscripción.",
+        "fr": "Les options ne peuvent jamais être ajoutées à un abonnement.",
+        "it": "I componenti aggiuntivi non possono mai essere aggiunti a un abbonamento.",
+        "pl": "Dodatków nigdy nie można dodać do subskrypcji.",
+        "sv": "Tillägg kan aldrig läggas till ett abonnemang.",
+        "uk": "Доповнення ніколи не можна додати до підписки."
+      }
+    }
+  ]
+}

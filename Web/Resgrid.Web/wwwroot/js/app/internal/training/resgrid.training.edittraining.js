@@ -90,6 +90,41 @@ var resgrid;
                 });
             }
 
+            /* An accepted drafted question: a single-choice question with its options and the correct one ticked. */
+            function acceptQuestion(question) {
+                if (!question || !question.text || !question.options || question.options.length < 2) {
+                    return;
+                }
+                addQuestion();
+                var fieldset = $('#questions .training-question').last();
+                fieldset.find('textarea').first().val(question.text);
+                fieldset.find('.training-question-type').val('0');
+                fieldset.find('.training-answers tbody').empty();
+                question.options.forEach(function (option) { addAnswer(fieldset, option, false); });
+                var n = fieldset.attr('data-question');
+                fieldset.find('input[name="correct_' + n + '"]').eq(question.correctIndex).prop('checked', true);
+            }
+
+            /* An accepted drafted outline, appended to the training text as headings and lists (text only, never markup from the draft). */
+            function acceptOutline(editor, modules) {
+                var index = Math.max(0, editor.getLength() - 1);
+                modules.forEach(function (module) {
+                    if (!module || !module.title) {
+                        return;
+                    }
+                    editor.insertText(index, module.title + '\n', { header: 3 });
+                    index = Math.max(0, editor.getLength() - 1);
+                    if (module.objective) {
+                        editor.insertText(index, module.objective + '\n');
+                        index = Math.max(0, editor.getLength() - 1);
+                    }
+                    (module.lessons || []).forEach(function (lesson) {
+                        editor.insertText(index, lesson + '\n', { list: 'ordered' });
+                        index = Math.max(0, editor.getLength() - 1);
+                    });
+                });
+            }
+
             function syncDueMode() {
                 var mode = $('#DueMode').val();
                 $('.training-due-fixed').toggle(mode === 'fixed');
@@ -117,6 +152,16 @@ var resgrid;
                     if (text) $('#TrainingText').val(text.root.innerHTML);
                     $('.training-audience select').prop('disabled', false);
                     return true;
+                });
+
+                // K2 drafting aids: what the author accepted lands in the editor; nothing is saved until the training is.
+                document.addEventListener('rg:authoring-aid:accept', function (event) {
+                    var detail = event.detail || {};
+                    if (detail.kind === 'quiz' && detail.questions) {
+                        detail.questions.forEach(acceptQuestion);
+                    } else if (detail.kind === 'outline' && detail.modules && text) {
+                        acceptOutline(text, detail.modules);
+                    }
                 });
 
                 $('#addQuestionButton').on('click', function () { addQuestion(); });

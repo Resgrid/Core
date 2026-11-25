@@ -49,6 +49,23 @@ namespace Resgrid.Repositories.DataRepository
 				new { DepartmentId = departmentId });
 		}
 
+		public async Task<IEnumerable<DispatchProtocolAttachment>> GetAttachmentHashesByDepartmentIdAsync(int departmentId)
+		{
+			// Rows stored before M0381 (or written by a path that does not hash) are hashed in the database, once.
+			var hash = IsPostgres ? "encode(sha256(data), 'hex')" : "LOWER(CONVERT(varchar(64), HASHBYTES('SHA2_256', [Data]), 2))";
+			await ExecuteAsync(
+				$"UPDATE {Tbl("DispatchProtocolAttachments")} SET {Col("Sha256")} = {hash} " +
+				$"WHERE {Col("Sha256")} IS NULL AND {Col("Data")} IS NOT NULL AND {Col("DispatchProtocolId")} IN " +
+				$"(SELECT p.{Col("DispatchProtocolId")} FROM {Tbl("DispatchProtocols")} p WHERE p.{Col("DepartmentId")} = {P}DepartmentId)",
+				new { DepartmentId = departmentId });
+
+			return await QueryAsync<DispatchProtocolAttachment>(
+				$"SELECT {InfoColumns("a")}, a.{Col("Sha256")} AS {Col("Sha256")} FROM {Tbl("DispatchProtocolAttachments")} a " +
+				$"INNER JOIN {Tbl("DispatchProtocols")} p ON p.{Col("DispatchProtocolId")} = a.{Col("DispatchProtocolId")} " +
+				$"WHERE p.{Col("DepartmentId")} = {P}DepartmentId ORDER BY a.{Col("DispatchProtocolAttachmentId")}",
+				new { DepartmentId = departmentId });
+		}
+
 		public async Task<IEnumerable<DispatchProtocolAttachment>> GetDispatchProtocolAttachmentByProtocolIdAsync(int protocolId)
 		{
 			try

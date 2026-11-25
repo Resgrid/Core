@@ -187,6 +187,8 @@ namespace Resgrid.Web.Areas.User.Models.Certifications
 		public decimal CreditHours => Credits.Sum(c => c.Hours);
 		public int? DaysUntilExpiry { get; set; }
 		public string VerifiedByName { get; set; }
+		/// <summary>Training T1: credited hours (manual and derived) and mapped-category hours not credited yet; null when unknown.</summary>
+		public CertificationRenewalHours RenewalHours { get; set; }
 	}
 
 	public class CertificationCreditInput

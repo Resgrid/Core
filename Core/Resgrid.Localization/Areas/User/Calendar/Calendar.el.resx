@@ -411,4 +411,16 @@
   <data name="CheckOutBy" xml:space="preserve">
     <value>Δήλωση αναχώρησης από {0}</value>
   </data>
+  <data name="CountsAsTrainingLabel" xml:space="preserve">
+    <value>Μετράει ως εκπαίδευση</value>
+  </data>
+  <data name="CountsAsTrainingHelp" xml:space="preserve">
+    <value>Η καταγραφή άφιξης και αποχώρησης σε συμβάντα αυτού του τύπου γίνεται ώρες εκπαίδευσης στα μητρώα των συμμετεχόντων. Μια άφιξη χωρίς αποχώρηση περιμένει αξιωματικό.</value>
+  </data>
+  <data name="TrainingCategoryLabel" xml:space="preserve">
+    <value>Κατηγορία εκπαίδευσης</value>
+  </data>
+  <data name="TrainingCategoryNone" xml:space="preserve">
+    <value>Χωρίς κατηγορία</value>
+  </data>
 </root>

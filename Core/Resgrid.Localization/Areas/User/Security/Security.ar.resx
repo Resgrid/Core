@@ -1367,4 +1367,301 @@
   <data name="AuditLogTypeTrainingAssignmentExtended" xml:space="preserve"><value>تم تمديد تكليف التدريب</value></data>
   <data name="AuditLogTypeTrainingAssignmentExempted" xml:space="preserve"><value>تم تغيير إعفاء تكليف التدريب</value></data>
   <data name="AuditLogTypeMemberLeavePeriodChanged" xml:space="preserve"><value>تم تغيير فترة إجازة العضو</value></data>
+  <data name="PermAuthorProtocolsLabel" xml:space="preserve">
+    <value>تأليف البروتوكولات</value>
+  </data>
+  <data name="PermAuthorProtocolsNote" xml:space="preserve">
+    <value>إنشاء البروتوكولات وتغيير تفاصيلها ومشغّلاتها وأسئلتها، وكتابة المسودات وتقديمها. يمكن لمسؤولي القسم ذلك دائمًا.</value>
+  </data>
+  <data name="PermApproveProtocolsLabel" xml:space="preserve">
+    <value>اعتماد البروتوكولات ونشرها</value>
+  </data>
+  <data name="PermApproveProtocolsNote" xml:space="preserve">
+    <value>اعتماد إصدارات البروتوكولات (يُوقَّع كل اعتماد مع التحقق من الهوية)، ونشرها أو جدولتها، وتسجيل المراجعات، وإيقاف العمل بالبروتوكولات وحذفها. يمكن لمسؤولي القسم ذلك دائمًا.</value>
+  </data>
+  <data name="PermManageProtocolAcknowledgmentsLabel" xml:space="preserve">
+    <value>إدارة إقرارات البروتوكولات</value>
+  </data>
+  <data name="PermManageProtocolAcknowledgmentsNote" xml:space="preserve">
+    <value>إسناد إقرارات الاطلاع والتوقيع، ومنح الإعفاءات، ومعرفة من أقرّ. يمكن لمسؤولي القسم ذلك دائمًا.</value>
+  </data>
+  <data name="AuditLogTypeSignatureRecorded" xml:space="preserve">
+    <value>تم تسجيل توقيع</value>
+  </data>
+  <data name="AuditLogTypeSignatureVoided" xml:space="preserve">
+    <value>تم إلغاء توقيع</value>
+  </data>
+  <data name="AuditLogTypeProtocolVersionSubmitted" xml:space="preserve">
+    <value>تم تقديم إصدار بروتوكول</value>
+  </data>
+  <data name="AuditLogTypeProtocolVersionWithdrawn" xml:space="preserve">
+    <value>تم سحب إصدار بروتوكول</value>
+  </data>
+  <data name="AuditLogTypeProtocolVersionApproved" xml:space="preserve">
+    <value>تم اعتماد إصدار بروتوكول</value>
+  </data>
+  <data name="AuditLogTypeProtocolVersionRejected" xml:space="preserve">
+    <value>تم رفض إصدار بروتوكول</value>
+  </data>
+  <data name="AuditLogTypeProtocolVersionPublished" xml:space="preserve">
+    <value>تم نشر إصدار بروتوكول</value>
+  </data>
+  <data name="AuditLogTypeProtocolVersionScheduled" xml:space="preserve">
+    <value>تمت جدولة إصدار بروتوكول</value>
+  </data>
+  <data name="AuditLogTypeProtocolRetired" xml:space="preserve">
+    <value>تم إيقاف العمل ببروتوكول</value>
+  </data>
+  <data name="AuditLogTypeProtocolReviewRecorded" xml:space="preserve">
+    <value>تم تسجيل مراجعة بروتوكول</value>
+  </data>
+  <data name="AuditLogTypeProtocolsImported" xml:space="preserve">
+    <value>تم استيراد بروتوكولات</value>
+  </data>
+  <data name="AuditLogTypeProtocolCategoryChanged" xml:space="preserve">
+    <value>تم تغيير فئة بروتوكول</value>
+  </data>
+  <data name="AuditLogTypeProtocolLibrarySettingsChanged" xml:space="preserve">
+    <value>تم تغيير إعدادات مكتبة البروتوكولات</value>
+  </data>
+  <data name="PermManageCoursesLabel" xml:space="preserve">
+    <value>إدارة الدورات</value>
+  </data>
+  <data name="PermManageCoursesNote" xml:space="preserve">
+    <value>إنشاء الدورات وبنوك الأسئلة، ورفع مقاطع فيديو الدورات، وتقديم إصدارات الدورات ونشرها، وإسناد الدورات والاطلاع على نتائجها. تتطلب الموافقة على إصدار دورة هذا الإذن أيضًا وتُوقَّع مع التحقق من الهوية. يمكن لمديري الإدارة ذلك دائمًا.</value>
+  </data>
+  <data name="PermGradeAssessmentsLabel" xml:space="preserve">
+    <value>تصحيح التقييمات</value>
+  </data>
+  <data name="PermGradeAssessmentsNote" xml:space="preserve">
+    <value>تصحيح الإجابات النصية المنتظرة في قائمة التصحيح والاطلاع على تحليل الأسئلة. لا يمكن لأحد تصحيح محاولته. يمكن لمديري الإدارة ذلك دائمًا.</value>
+  </data>
+  <data name="AuditLogTypeLmsCourseCreated" xml:space="preserve">
+    <value>تم إنشاء دورة</value>
+  </data>
+  <data name="AuditLogTypeLmsCourseChanged" xml:space="preserve">
+    <value>تم تغيير دورة</value>
+  </data>
+  <data name="AuditLogTypeLmsCourseVersionSubmitted" xml:space="preserve">
+    <value>تم تقديم إصدار دورة</value>
+  </data>
+  <data name="AuditLogTypeLmsCourseVersionWithdrawn" xml:space="preserve">
+    <value>تم سحب إصدار دورة</value>
+  </data>
+  <data name="AuditLogTypeLmsCourseVersionApproved" xml:space="preserve">
+    <value>تمت الموافقة على إصدار دورة</value>
+  </data>
+  <data name="AuditLogTypeLmsCourseVersionRejected" xml:space="preserve">
+    <value>تم رفض إصدار دورة</value>
+  </data>
+  <data name="AuditLogTypeLmsCourseVersionPublished" xml:space="preserve">
+    <value>تم نشر إصدار دورة</value>
+  </data>
+  <data name="AuditLogTypeLmsCourseRetired" xml:space="preserve">
+    <value>تم إيقاف دورة</value>
+  </data>
+  <data name="AuditLogTypeLmsCourseAssigned" xml:space="preserve">
+    <value>تم إسناد دورة</value>
+  </data>
+  <data name="AuditLogTypeLmsEnrollmentWithdrawn" xml:space="preserve">
+    <value>تم سحب التسجيل في دورة</value>
+  </data>
+  <data name="AuditLogTypeLmsQuestionBankChanged" xml:space="preserve">
+    <value>تم تغيير بنك أسئلة</value>
+  </data>
+  <data name="AuditLogTypeLmsAttemptGraded" xml:space="preserve">
+    <value>تم تصحيح محاولة تقييم</value>
+  </data>
+  <data name="AuditLogTypeLmsMediaUploaded" xml:space="preserve">
+    <value>تم رفع فيديو دورة</value>
+  </data>
+  <data name="AuditLogTypeLmsCrewViewingStarted" xml:space="preserve">
+    <value>بدأت مشاهدة جماعية</value>
+  </data>
+  <data name="AuditLogTypeAcademyPathAssigned" xml:space="preserve">
+    <value>تم إسناد مسار دور في الأكاديمية</value>
+  </data>
+  <data name="AuditLogTypeProtocolContentConverted" xml:space="preserve">
+    <value>تم تحويل محتوى البروتوكول إلى كتل</value>
+  </data>
+  <data name="AuditLogTypeProtocolTranslationSaved" xml:space="preserve">
+    <value>تم حفظ ترجمة البروتوكول</value>
+  </data>
+  <data name="AuditLogTypeProtocolTranslationApproved" xml:space="preserve">
+    <value>تم اعتماد ترجمة البروتوكول</value>
+  </data>
+  <data name="AuditLogTypeProtocolTranslationWithdrawn" xml:space="preserve">
+    <value>تم سحب ترجمة البروتوكول</value>
+  </data>
+  <data name="AuditLogTypeProtocolBookExported" xml:space="preserve">
+    <value>تم تصدير كتاب البروتوكولات</value>
+  </data>
+  <data name="AuditLogTypeLmsTrainingPlanChanged" xml:space="preserve">
+    <value>تغيير خطة التدريب السنوية</value>
+  </data>
+  <data name="AuditLogTypeLmsCompetencyFrameworkChanged" xml:space="preserve">
+    <value>تغيير إطار الكفاءات</value>
+  </data>
+  <data name="AuditLogTypeLmsCompetencyFrameworkImported" xml:space="preserve">
+    <value>استيراد إطار الكفاءات</value>
+  </data>
+  <data name="AuditLogTypeLmsTrainingRequestSubmitted" xml:space="preserve">
+    <value>تقديم طلب تدريب</value>
+  </data>
+  <data name="AuditLogTypeLmsTrainingRequestDecided" xml:space="preserve">
+    <value>البت في طلب تدريب</value>
+  </data>
+  <data name="AuditLogTypeLmsTrainingRequestCompleted" xml:space="preserve">
+    <value>إكمال طلب تدريب</value>
+  </data>
+  <data name="AuditLogTypeLmsReportDefinitionChanged" xml:space="preserve">
+    <value>تغيير تقرير تدريب محفوظ</value>
+  </data>
+  <data name="AuditLogTypeLmsCertificationCycleRuleChanged" xml:space="preserve">
+    <value>تغيير قاعدة دورة الشهادة</value>
+  </data>
+  <data name="AuditLogTypeLmsCertificationCycleAutoRenewed" xml:space="preserve">
+    <value>تجديد دورة الشهادة تلقائيًا</value>
+  </data>
+  <data name="AuditLogTypeLmsProgramSettingsChanged" xml:space="preserve">
+    <value>تغيير إعدادات برامج التدريب</value>
+  </data>
+  <data name="AuditLogTypeLearningRequirementCreated" xml:space="preserve">
+    <value>تم إنشاء متطلب تعلّم</value>
+  </data>
+  <data name="AuditLogTypeLearningRequirementChanged" xml:space="preserve">
+    <value>تم تغيير متطلب تعلّم</value>
+  </data>
+  <data name="AuditLogTypeLearningRequirementDeleted" xml:space="preserve">
+    <value>تم حذف متطلب تعلّم</value>
+  </data>
+  <data name="AuditLogTypeLearningRequirementMemberChanged" xml:space="preserve">
+    <value>إعفاء أو تمديد لمتطلب تعلّم</value>
+  </data>
+  <data name="AuditLogTypeLearningRequirementSettingsChanged" xml:space="preserve">
+    <value>تم تغيير إعدادات متطلبات التعلّم</value>
+  </data>
+  <data name="AuditLogTypeLearningRequirementEnforced" xml:space="preserve">
+    <value>تم فرض متطلب تدريب</value>
+  </data>
+  <data name="AuditLogTypeLearningRequirementEnforcementUndone" xml:space="preserve">
+    <value>تم التراجع عن فرض متطلب تدريب</value>
+  </data>
+  <data name="AuditLogTypeLearningRequirementEnforcementRefused" xml:space="preserve">
+    <value>تم رفض فرض متطلب تدريب</value>
+  </data>
+  <data name="AuditLogTypeLmsPathChanged" xml:space="preserve">
+    <value>تم تغيير مسار تعلّم</value>
+  </data>
+  <data name="AuditLogTypeLmsPathAssigned" xml:space="preserve">
+    <value>تم إسناد مسار تعلّم</value>
+  </data>
+  <data name="AuditLogTypeLmsPathCompleted" xml:space="preserve">
+    <value>تم إكمال مسار تعلّم</value>
+  </data>
+  <data name="AuditLogTypeApprovalChainChanged" xml:space="preserve">
+    <value>تغيّرت سلسلة اعتماد</value>
+  </data>
+  <data name="AuditLogTypeApprovalDelegateChanged" xml:space="preserve">
+    <value>تغيّر مفوَّض اعتماد</value>
+  </data>
+  <data name="AuditLogTypeApprovalSubmitted" xml:space="preserve">
+    <value>قُدّم للاعتماد</value>
+  </data>
+  <data name="AuditLogTypeApprovalGranted" xml:space="preserve">
+    <value>مُنح اعتماد</value>
+  </data>
+  <data name="AuditLogTypeApprovalRejected" xml:space="preserve">
+    <value>رُفض اعتماد</value>
+  </data>
+  <data name="AuditLogTypeApprovalWithdrawn" xml:space="preserve">
+    <value>سُحب طلب اعتماد</value>
+  </data>
+  <data name="AuditLogTypeApprovalEscalated" xml:space="preserve">
+    <value>صُعّد اعتماد</value>
+  </data>
+  <data name="AuditLogTypeApprovalSuperseded" xml:space="preserve">
+    <value>استُبدل اعتماد</value>
+  </data>
+  <data name="AuditLogTypeMutualAidAgreementChanged" xml:space="preserve">
+    <value>تغيّرت اتفاقية مساعدة متبادلة</value>
+  </data>
+  <data name="AuditLogTypeProtocolLearningSettingsChanged" xml:space="preserve">
+    <value>تم تغيير إعدادات التعلم للبروتوكول</value>
+  </data>
+  <data name="AuditLogTypeLmsClassSessionChanged" xml:space="preserve">
+    <value>تغيّرت جلسة الدورة</value>
+  </data>
+  <data name="AuditLogTypeLmsClassSessionCancelled" xml:space="preserve">
+    <value>أُلغيت جلسة الدورة</value>
+  </data>
+  <data name="AuditLogTypeLmsClassSessionDeleted" xml:space="preserve">
+    <value>حُذفت جلسة الدورة</value>
+  </data>
+  <data name="AuditLogTypeLmsClassRosterChanged" xml:space="preserve">
+    <value>تغيّرت قائمة الدورة</value>
+  </data>
+  <data name="AuditLogTypeLmsClassAttendanceChanged" xml:space="preserve">
+    <value>تغيّر حضور الدورة</value>
+  </data>
+  <data name="AuditLogTypeLmsClassSignedOff" xml:space="preserve">
+    <value>اعتُمدت الدورة</value>
+  </data>
+  <data name="AuditLogTypeLmsClassRosterPurged" xml:space="preserve">
+    <value>مُحيت قائمة الدورة</value>
+  </data>
+  <data name="AuditLogTypeLmsLessonPlanChanged" xml:space="preserve">
+    <value>تغيّرت خطة الدرس</value>
+  </data>
+  <data name="AuditLogTypeLmsLessonPlanSubmitted" xml:space="preserve">
+    <value>أُرسلت خطة الدرس</value>
+  </data>
+  <data name="AuditLogTypeLmsLessonPlanDecided" xml:space="preserve">
+    <value>اعتُمدت خطة الدرس أو رُفضت</value>
+  </data>
+  <data name="AuditLogTypeLmsLessonPlanPublished" xml:space="preserve">
+    <value>نُشرت خطة الدرس</value>
+  </data>
+  <data name="AuditLogTypeLmsTrainingResourceChanged" xml:space="preserve">
+    <value>تغيّر مورد التدريب</value>
+  </data>
+  <data name="AuditLogTypeLmsSkillSheetChanged" xml:space="preserve">
+    <value>تغيّرت ورقة المهارات</value>
+  </data>
+  <data name="AuditLogTypeLmsSkillSheetPublished" xml:space="preserve">
+    <value>نُشرت ورقة المهارات</value>
+  </data>
+  <data name="AuditLogTypeLmsSkillEvaluationStarted" xml:space="preserve">
+    <value>بدأ تقييم المهارات</value>
+  </data>
+  <data name="AuditLogTypeLmsSkillEvaluationSubmitted" xml:space="preserve">
+    <value>أُرسل تقييم المهارات</value>
+  </data>
+  <data name="AuditLogTypeLmsSkillEvaluationCompleted" xml:space="preserve">
+    <value>اكتمل تقييم المهارات</value>
+  </data>
+  <data name="AuditLogTypeLmsSkillEvaluationSplit" xml:space="preserve">
+    <value>فُصل عضو من التقييم</value>
+  </data>
+  <data name="AuditLogTypeLmsSkillEvaluationVoided" xml:space="preserve">
+    <value>أُلغي تقييم المهارات</value>
+  </data>
+  <data name="AuditLogTypeLmsTaskBookDefinitionChanged" xml:space="preserve">
+    <value>تغيّر تعريف كتاب المهام</value>
+  </data>
+  <data name="AuditLogTypeLmsTaskBookInitiated" xml:space="preserve">
+    <value>بدأ كتاب المهام</value>
+  </data>
+  <data name="AuditLogTypeLmsTaskBookCertificationRequested" xml:space="preserve">
+    <value>طُلبت المصادقة على كتاب المهام</value>
+  </data>
+  <data name="AuditLogTypeLmsTaskBookCertified" xml:space="preserve">
+    <value>تمت المصادقة على كتاب المهام</value>
+  </data>
+  <data name="AuditLogTypeLmsTaskBookClosed" xml:space="preserve">
+    <value>أُغلق كتاب المهام</value>
+  </data>
+  <data name="AuditLogTypeLmsSkillSettingsChanged" xml:space="preserve">
+    <value>تغيّرت إعدادات إشعارات المهارات</value>
+  </data>
 </root>

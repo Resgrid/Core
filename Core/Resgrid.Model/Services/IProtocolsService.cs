@@ -42,6 +42,12 @@ namespace Resgrid.Model.Services
 		Task<ProtocolCallContext> BuildCallContextAsync(int departmentId, int priority, int? callTypeId, string callTypeName, DateTime? loggedOnUtc);
 
 		/// <summary>
+		/// The call context with the P4 trigger facts filled from the call's details (department-local time, the geofences around its
+		/// location, keywords in its nature and notes, the POI type at its location, its source), for the shared trigger engine.
+		/// </summary>
+		Task<ProtocolCallContext> BuildCallContextWithFactsAsync(int departmentId, int priority, int? callTypeId, string callTypeName, DispatchTriggerCallInput details);
+
+		/// <summary>
 		/// Every enabled protocol of the department evaluated against the call: Active (a trigger matched, no questions), Pending (a
 		/// trigger matched, questions to answer) or Inactive (nothing matched; it can still be picked by hand). The one matcher the
 		/// web forms and the v4 API share.
@@ -63,6 +69,12 @@ namespace Resgrid.Model.Services
 		/// call's or the protocol is not the department's. Removing an already removed row changes nothing.
 		/// </summary>
 		Task<CallProtocol> RemoveProtocolFromCallAsync(int departmentId, int callId, int callProtocolId, string reason, string userId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// The protocol versions calls cite (P1 "calls cite versions"), with their content, the department's only: a call renders the
+		/// version it was dispatched with, Legacy versions included, whatever the reader's library access.
+		/// </summary>
+		Task<List<ProtocolVersion>> GetCitedVersionsAsync(int departmentId, IEnumerable<int> protocolVersionIds);
 
 		/// <summary>The stored "text as dispatched" for the given content hashes, the department's only.</summary>
 		Task<List<DispatchProtocolSnapshot>> GetSnapshotsAsync(int departmentId, IEnumerable<string> contentHashes);

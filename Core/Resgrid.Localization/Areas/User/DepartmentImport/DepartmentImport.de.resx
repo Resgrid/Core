@@ -4714,4 +4714,7 @@
   <data name="Error.IMP-CONFIG-UNAVAILABLE" xml:space="preserve">
     <value>Akten sind für Ihre Abteilung nicht aktiviert, daher kann die Aktennummerierung hier nicht geändert werden. Machen Sie diese Änderung rückgängig.</value>
   </data>
+  <data name="TabProtocols" xml:space="preserve">
+    <value>Protokolle</value>
+  </data>
 </root>

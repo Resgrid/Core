@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllTours" xml:space="preserve">
+    <value>كل الجولات</value>
+  </data>
+  <data name="DismissTour" xml:space="preserve">
+    <value>إخفاء هذه الجولة</value>
+  </data>
+  <data name="DismissWhatsNew" xml:space="preserve">
+    <value>إخفاء</value>
+  </data>
+  <data name="DocsHeader" xml:space="preserve">
+    <value>الميزات والمرجع</value>
+  </data>
+  <data name="DoneLabel" xml:space="preserve">
+    <value>تم</value>
+  </data>
+  <data name="EarlierReleases" xml:space="preserve">
+    <value>إصدارات أخرى</value>
+  </data>
+  <data name="FeatureBadge" xml:space="preserve">
+    <value>ميزة</value>
+  </data>
+  <data name="GoToPage" xml:space="preserve">
+    <value>انتقل إلى الصفحة</value>
+  </data>
+  <data name="HelpCenterHeader" xml:space="preserve">
+    <value>مركز المساعدة</value>
+  </data>
+  <data name="HowDoIHeader" xml:space="preserve">
+    <value>كيف أقوم بـ…؟</value>
+  </data>
+  <data name="HowDoIHelp" xml:space="preserve">
+    <value>اطرح سؤالًا عن استخدام Resgrid. تأتي الإجابات من أكاديمية Resgrid فقط وترتبط بالدروس التي تستند إليها.</value>
+  </data>
+  <data name="LessonMinutes" xml:space="preserve">
+    <value>{0} دقيقة</value>
+  </data>
+  <data name="LessonsHeader" xml:space="preserve">
+    <value>دروس الأكاديمية</value>
+  </data>
+  <data name="MarkDone" xml:space="preserve">
+    <value>وضع علامة تم</value>
+  </data>
+  <data name="MarkNotDone" xml:space="preserve">
+    <value>إلغاء علامة تم</value>
+  </data>
+  <data name="MarkRead" xml:space="preserve">
+    <value>وضع علامة مقروء</value>
+  </data>
+  <data name="MenuSearchHelp" xml:space="preserve">
+    <value>البحث في المساعدة</value>
+  </data>
+  <data name="MenuTours" xml:space="preserve">
+    <value>الجولات الإرشادية</value>
+  </data>
+  <data name="MenuWhatsNew" xml:space="preserve">
+    <value>ما الجديد</value>
+  </data>
+  <data name="NoDocs" xml:space="preserve">
+    <value>لا توجد ميزة أو مقالة مرجعية تطابق بحثك.</value>
+  </data>
+  <data name="NoLessons" xml:space="preserve">
+    <value>لا يوجد درس في الأكاديمية يطابق بحثك.</value>
+  </data>
+  <data name="NoTours" xml:space="preserve">
+    <value>لا توجد جولات إرشادية لقسمك.</value>
+  </data>
+  <data name="OpenDocs" xml:space="preserve">
+    <value>الوثائق</value>
+  </data>
+  <data name="OpenPage" xml:space="preserve">
+    <value>افتح الصفحة</value>
+  </data>
+  <data name="ReadLabel" xml:space="preserve">
+    <value>مقروء</value>
+  </data>
+  <data name="ReadMinutes" xml:space="preserve">
+    <value>اقرأ ({0} دقيقة)</value>
+  </data>
+  <data name="ReferenceBadge" xml:space="preserve">
+    <value>مرجع</value>
+  </data>
+  <data name="ReopenTour" xml:space="preserve">
+    <value>أظهر هذه الجولة مرة أخرى</value>
+  </data>
+  <data name="SearchButton" xml:space="preserve">
+    <value>بحث</value>
+  </data>
+  <data name="SearchEmptyHelp" xml:space="preserve">
+    <value>اكتب بضع كلمات عمّا تريد فعله. يمكنك أيضًا اتباع الجولة الإرشادية الخاصة بدورك أو الاطلاع على الجديد.</value>
+  </data>
+  <data name="SearchIntro" xml:space="preserve">
+    <value>ابحث في أكاديمية Resgrid والمرجع الخاص بالمنتج.</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>البحث في المساعدة</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>ماذا تريد أن تفعل؟ مثال: إضافة وحدة</value>
+  </data>
+  <data name="SearchTab" xml:space="preserve">
+    <value>بحث</value>
+  </data>
+  <data name="SearchTitle" xml:space="preserve">
+    <value>البحث في المساعدة</value>
+  </data>
+  <data name="TourProgress" xml:space="preserve">
+    <value>تم إنجاز {0} من {1}</value>
+  </data>
+  <data name="TourReopened" xml:space="preserve">
+    <value>تظهر الجولة مرة أخرى.</value>
+  </data>
+  <data name="ToursIntro" xml:space="preserve">
+    <value>الخطوات الأولى لكل دور، ولكل منها درس قصير من الأكاديمية.</value>
+  </data>
+  <data name="ToursTab" xml:space="preserve">
+    <value>الجولات الإرشادية</value>
+  </data>
+  <data name="ToursTitle" xml:space="preserve">
+    <value>الجولات الإرشادية</value>
+  </data>
+  <data name="TryIt" xml:space="preserve">
+    <value>جرّبه</value>
+  </data>
+  <data name="WatchLesson" xml:space="preserve">
+    <value>شاهد الدرس</value>
+  </data>
+  <data name="WhatsNewSubtitle" xml:space="preserve">
+    <value>صدر في {0} · قراءة {1} دقيقة</value>
+  </data>
+  <data name="WhatsNewTab" xml:space="preserve">
+    <value>ما الجديد</value>
+  </data>
+  <data name="WhatsNewTitle" xml:space="preserve">
+    <value>ما الجديد</value>
+  </data>
+  <data name="YourTourBadge" xml:space="preserve">
+    <value>دورك</value>
+  </data>
+</root>

@@ -316,9 +316,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var ids = new List<int>();
 			var answers = new Dictionary<int, List<int>>();
+			var cases = new Dictionary<int, ProtocolCaseInput>();
 
 			foreach (var key in collection?.Keys ?? Enumerable.Empty<string>())
 			{
+				// P4: the case flow's answers and any determinant override (protocolCase_{protocolId} = JSON); the server walks the graph.
+				if (key.StartsWith("protocolCase_", StringComparison.Ordinal) && int.TryParse(key.Substring("protocolCase_".Length), out var caseProtocolId) && caseProtocolId > 0)
+				{
+					var input = ProtocolCaseInput.Parse(collection[key].FirstOrDefault());
+					if (input != null)
+						cases[caseProtocolId] = input;
+				}
+
 				foreach (var prefix in new[] { "selectedProtocol_", "activeProtocol_", "pendingProtocol_" })
 				{
 					if (key.StartsWith(prefix, StringComparison.Ordinal) && int.TryParse(key.Substring(prefix.Length), out var id) && id > 0 && !ids.Contains(id))
@@ -343,7 +352,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ProtocolId = id,
 				AnswerIds = answers.TryGetValue(id, out var chosen) ? chosen : new List<int>(),
 				// The web forms run the question flow, so a suggested protocol with questions needs them answered.
-				AnswersRequired = true
+				AnswersRequired = true,
+				Case = cases.TryGetValue(id, out var caseInput) ? caseInput : null
 			}).ToList();
 		}
 
@@ -2143,6 +2153,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.ProtocolSnapshots = (await _protocolsService.GetSnapshotsAsync(DepartmentId, model.Call?.Protocols?.Select(x => x.ContentHash)))
 				.GroupBy(x => x.DispatchProtocolId + ":" + x.ContentHash)
 				.ToDictionary(x => x.Key, x => x.First());
+			// P1: the version each row cites (calls cite versions, never live rows).
+			model.ProtocolVersions = (await _protocolsService.GetCitedVersionsAsync(DepartmentId, model.Call?.Protocols?.Where(x => x.ProtocolVersionId.HasValue).Select(x => x.ProtocolVersionId.Value)) ?? new List<ProtocolVersion>())
+				.ToDictionary(x => x.ProtocolVersionId);
 			model.CanRemoveProtocols = model.Call != null && await _authorizationService.CanUserEditCallAsync(UserId, callId) &&
 									   User.HasClaim(ResgridClaimTypes.Resources.Call, ResgridClaimTypes.Actions.Update);
 			model.CallProtocolMessage = TempData["CallProtocolMessage"] as string;

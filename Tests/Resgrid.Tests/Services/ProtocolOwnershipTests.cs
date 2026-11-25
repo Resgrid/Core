@@ -9,6 +9,8 @@ using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Services;
+using System;
+using Resgrid.Model.Services;
 
 namespace Resgrid.Tests.Services
 {
@@ -31,19 +33,20 @@ namespace Resgrid.Tests.Services
 			_protocols = new Mock<IDispatchProtocolRepository>();
 			_protocols.Setup(x => x.GetAllByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<DispatchProtocol>
 			{
-				new DispatchProtocol { DispatchProtocolId = 1, DepartmentId = DepartmentId },
-				new DispatchProtocol { DispatchProtocolId = 2, DepartmentId = DepartmentId }
+				new DispatchProtocol { DispatchProtocolId = 1, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 1000, DepartmentId = DepartmentId },
+				new DispatchProtocol { DispatchProtocolId = 2, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 2000, DepartmentId = DepartmentId }
 			});
 			_protocols.Setup(x => x.GetAllByDepartmentIdAsync(OtherDepartmentId)).ReturnsAsync(new List<DispatchProtocol>
 			{
-				new DispatchProtocol { DispatchProtocolId = 7, DepartmentId = OtherDepartmentId }
+				new DispatchProtocol { DispatchProtocolId = 7, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 7000, DepartmentId = OtherDepartmentId }
 			});
 
 			_service = new ProtocolsService(_protocols.Object,
 				Mock.Of<IDispatchProtocolAttachmentRepository>(),
 				Mock.Of<IDispatchProtocolQuestionsRepository>(),
 				Mock.Of<IDispatchProtocolTriggersRepository>(),
-				Mock.Of<IDispatchProtocolQuestionAnswersRepository>());
+				Mock.Of<IDispatchProtocolQuestionAnswersRepository>(), new Lazy<IDispatchTriggerFactsService>(() => Mock.Of<IDispatchTriggerFactsService>()),
+				new Lazy<IProtocolAiSuggestionService>(() => Mock.Of<IProtocolAiSuggestionService>()));
 		}
 
 		[Test]
@@ -76,8 +79,8 @@ namespace Resgrid.Tests.Services
 			// The generic department query has returned every department's rows before; ownership never rests on it alone.
 			_protocols.Setup(x => x.GetAllByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<DispatchProtocol>
 			{
-				new DispatchProtocol { DispatchProtocolId = 1, DepartmentId = DepartmentId },
-				new DispatchProtocol { DispatchProtocolId = 7, DepartmentId = OtherDepartmentId }
+				new DispatchProtocol { DispatchProtocolId = 1, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 1000, DepartmentId = DepartmentId },
+				new DispatchProtocol { DispatchProtocolId = 7, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 7000, DepartmentId = OtherDepartmentId }
 			});
 
 			var owned = await _service.GetProtocolIdsOwnedByDepartmentAsync(DepartmentId, new[] { 1, 7 });
@@ -90,8 +93,8 @@ namespace Resgrid.Tests.Services
 		{
 			_protocols.Setup(x => x.GetAllByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<DispatchProtocol>
 			{
-				new DispatchProtocol { DispatchProtocolId = 1, DepartmentId = DepartmentId },
-				new DispatchProtocol { DispatchProtocolId = 2, DepartmentId = DepartmentId, IsDisabled = true }
+				new DispatchProtocol { DispatchProtocolId = 1, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 1000, DepartmentId = DepartmentId },
+				new DispatchProtocol { DispatchProtocolId = 2, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 2000, DepartmentId = DepartmentId, IsDisabled = true }
 			});
 
 			(await _service.GetProtocolIdsOwnedByDepartmentAsync(DepartmentId, new[] { 1, 2 })).Should().Equal(1);

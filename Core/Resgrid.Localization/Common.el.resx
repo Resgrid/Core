@@ -904,4 +904,7 @@
   <data name="AcademyLearnThisPage" xml:space="preserve">
     <value>Μάθημα για αυτή τη σελίδα ({0} λεπτά)</value>
   </data>
+  <data name="AcademyAssignThisLesson" xml:space="preserve">
+    <value>Ανάθεση αυτού του μαθήματος</value>
+  </data>
 </root>

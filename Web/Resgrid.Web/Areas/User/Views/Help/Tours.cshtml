@@ -1,0 +1,106 @@
+@using Resgrid.Model.Academy
+@using Resgrid.Web.Areas.User.Models.Help
+@model HelpToursModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Academy.AcademyGuidance> localizer
+@*
+    Guided tours (A3): first-run tasks per role, each built on an Academy walkthrough or lesson, from the tour manifests. The member's own
+    role tour comes first; every task is ticked off here or on the dashboard card, and a tour can be closed or reopened (remembered per member).
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ToursTitle"];
+    ViewData["Title"] = localizer["ToursTitle"].Value;
+    ViewData["Subtitle"] = localizer["ToursIntro"].Value;
+    ViewData["Section"] = "Tours";
+    var returnUrl = Url.Action("Tours", "Help", new { area = "User" });
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+
+    @if (Model.Tours.Count == 0)
+    {
+        <p class="text-muted">@localizer["NoTours"]</p>
+    }
+
+    <div class="rgw-card-grid">
+        @foreach (var tour in Model.Tours)
+        {
+            <section class="ibox rgw-tour" aria-labelledby="tour-@tour.Key">
+                <div class="ibox-title">
+                    <h5 id="tour-@tour.Key"><i class="fa fa-map-signs" aria-hidden="true"></i> @tour.Title</h5>
+                    @if (tour.IsMine)
+                    {
+                        <span class="label label-primary pull-right">@localizer["YourTourBadge"]</span>
+                    }
+                </div>
+                <div class="ibox-content">
+                    @if (!string.IsNullOrWhiteSpace(tour.Intro))
+                    {
+                        <p class="text-muted">@tour.Intro</p>
+                    }
+                    <p class="rgw-progress-honest small">@string.Format(localizer["TourProgress"].Value, tour.DoneCount, tour.Tasks.Count)</p>
+                    <ol class="rgw-journey">
+                        @foreach (var task in tour.Tasks)
+                        {
+                            <li class="@(task.Done ? "rgw-journey-done" : null)">
+                                <strong>@if (task.Done) {<i class="fa fa-check text-navy" aria-hidden="true"></i><span class="sr-only">@localizer["DoneLabel"]</span>} @task.Title</strong>
+                                @if (!string.IsNullOrWhiteSpace(task.Hint))
+                                {
+                                    <div class="rgw-sub text-muted">@task.Hint</div>
+                                }
+                                <div class="rgw-row-actions">
+                                    @if (!string.IsNullOrWhiteSpace(task.PageUrl))
+                                    {
+                                        <a class="btn btn-white btn-xs" href="@task.PageUrl"><i class="fa fa-arrow-right" aria-hidden="true"></i> @localizer["GoToPage"]</a>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(task.LessonUrl))
+                                    {
+                                        <a class="btn btn-white btn-xs" href="@task.LessonUrl" target="_blank" rel="noopener"><i class="fa fa-play-circle" aria-hidden="true"></i> @localizer["WatchLesson"]</a>
+                                    }
+                                    <form method="post" asp-controller="Help" asp-action="TourTask" asp-route-area="User" class="inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="tour" value="@tour.Key" />
+                                        <input type="hidden" name="task" value="@task.Key" />
+                                        <input type="hidden" name="done" value="@(task.Done ? "false" : "true")" />
+                                        <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                        <button type="submit" class="btn btn-white btn-xs"><i class="fa @(task.Done ? "fa-undo" : "fa-check")" aria-hidden="true"></i> @(task.Done ? localizer["MarkNotDone"] : localizer["MarkDone"])</button>
+                                    </form>
+                                </div>
+                            </li>
+                        }
+                    </ol>
+                    <div class="rgw-toolbar">
+                        @if (tour.Dismissed || tour.Completed)
+                        {
+                            <form method="post" asp-controller="Help" asp-action="ReopenTour" asp-route-area="User" class="inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="tour" value="@tour.Key" />
+                                <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> @localizer["ReopenTour"]</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form method="post" asp-controller="Help" asp-action="Dismiss" asp-route-area="User" class="inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="key" value="@(AcademyManifests.TourKeyPrefix + tour.Key)" />
+                                <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-times" aria-hidden="true"></i> @localizer["DismissTour"]</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </section>
+        }
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

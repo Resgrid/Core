@@ -179,4 +179,58 @@
   <data name="NotAttending" xml:space="preserve">
     <value>Ich nehme nicht teil</value>
   </data>
+  <data name="CredentialAudienceLabel" xml:space="preserve">
+    <value>Nach Zertifizierung</value>
+  </data>
+  <data name="CredentialAudienceNone" xml:space="preserve">
+    <value>Niemand nach Zertifizierung</value>
+  </data>
+  <data name="CredentialAudienceStatus" xml:space="preserve">
+    <value>Zertifizierungsstatus</value>
+  </data>
+  <data name="CredentialAudienceExpired" xml:space="preserve">
+    <value>ist abgelaufen</value>
+  </data>
+  <data name="CredentialAudienceExpiring" xml:space="preserve">
+    <value>läuft innerhalb der Tage ab</value>
+  </data>
+  <data name="CredentialAudienceMissing" xml:space="preserve">
+    <value>nie besessen</value>
+  </data>
+  <data name="CredentialAudienceDays" xml:space="preserve">
+    <value>Tage</value>
+  </data>
+  <data name="CredentialAudienceHelp" xml:space="preserve">
+    <value>Fügt die aktiven Mitglieder hinzu, deren Zertifizierung zutrifft, zusätzlich zu den oben gewählten Empfängern.</value>
+  </data>
+  <data name="CredentialAudienceNoMatch" xml:space="preserve">
+    <value>Kein Mitglied entspricht dem gewählten Zertifizierungsstatus.</value>
+  </data>
+  <data name="RosterAudienceLabel" xml:space="preserve">
+    <value>Kursteilnehmende</value>
+  </data>
+  <data name="RosterAudienceNone" xml:space="preserve">
+    <value>Kein Kurs</value>
+  </data>
+  <data name="RosterAudienceStatus" xml:space="preserve">
+    <value>Status auf der Liste</value>
+  </data>
+  <data name="RosterAudienceEnrolled" xml:space="preserve">
+    <value>Angemeldet</value>
+  </data>
+  <data name="RosterAudienceAttended" xml:space="preserve">
+    <value>Anwesend</value>
+  </data>
+  <data name="RosterAudienceAbsent" xml:space="preserve">
+    <value>Abwesend</value>
+  </data>
+  <data name="RosterAudienceWaitlisted" xml:space="preserve">
+    <value>Auf der Warteliste</value>
+  </data>
+  <data name="RosterAudienceHelp" xml:space="preserve">
+    <value>Fügt den Empfängern oben die aktiven Mitglieder des Kurses mit diesem Status hinzu.</value>
+  </data>
+  <data name="RosterAudienceNoMatch" xml:space="preserve">
+    <value>Niemand auf der Liste dieses Kurses hat diesen Status.</value>
+  </data>
 </root>

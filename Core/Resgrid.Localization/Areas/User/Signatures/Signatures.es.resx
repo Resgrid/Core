@@ -1,0 +1,940 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AnyApprover" xml:space="preserve">
+    <value>cualquier aprobador</value>
+  </data>
+  <data name="BindsToContentHelp" xml:space="preserve">
+    <value>La firma cubre exactamente este texto. Si el texto cambia, deja de coincidir y se necesita una nueva firma.</value>
+  </data>
+  <data name="CertificationVerificationStatement" xml:space="preserve">
+    <value>Verifico el registro de certificación {0} ({1}, recibido el {2}, vence el {3}): lo he comprobado y es auténtico.</value>
+  </data>
+  <data name="CommentLabel" xml:space="preserve">
+    <value>Comentario (opcional)</value>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>Código de contenido</value>
+  </data>
+  <data name="IntentApprove" xml:space="preserve">
+    <value>Aprobación</value>
+  </data>
+  <data name="IntentAttest" xml:space="preserve">
+    <value>Declaración</value>
+  </data>
+  <data name="IntentColumn" xml:space="preserve">
+    <value>Significado</value>
+  </data>
+  <data name="IntentReview" xml:space="preserve">
+    <value>Revisión</value>
+  </data>
+  <data name="IntentVerify" xml:space="preserve">
+    <value>Verificación</value>
+  </data>
+  <data name="IntentWitness" xml:space="preserve">
+    <value>Testigo</value>
+  </data>
+  <data name="LevelAttest" xml:space="preserve">
+    <value>sesión iniciada</value>
+  </data>
+  <data name="LevelBadge" xml:space="preserve">
+    <value>Nivel {0}: {1}</value>
+  </data>
+  <data name="LevelColumn" xml:space="preserve">
+    <value>Nivel</value>
+  </data>
+  <data name="LevelStepUp" xml:space="preserve">
+    <value>identidad verificada de nuevo</value>
+  </data>
+  <data name="MethodPasskey" xml:space="preserve">
+    <value>Llave de acceso</value>
+  </data>
+  <data name="MethodSession" xml:space="preserve">
+    <value>Sesión iniciada</value>
+  </data>
+  <data name="MethodStepUp" xml:space="preserve">
+    <value>Verificación con segundo factor</value>
+  </data>
+  <data name="NoSignatures" xml:space="preserve">
+    <value>Todavía no hay firmas.</value>
+  </data>
+  <data name="OthersToSignLabel" xml:space="preserve">
+    <value>Pendientes de firmar después de usted:</value>
+  </data>
+  <data name="PasskeyCancelled" xml:space="preserve">
+    <value>Se cerró la solicitud de llave de acceso. No se firmó nada.</value>
+  </data>
+  <data name="PasskeyFailed" xml:space="preserve">
+    <value>No se pudo verificar la llave de acceso. No se firmó nada.</value>
+  </data>
+  <data name="PasskeyOnlyHelp" xml:space="preserve">
+    <value>Su departamento exige una llave de acceso para esta firma.</value>
+  </data>
+  <data name="PasskeyRequiredHelp" xml:space="preserve">
+    <value>Se requiere una llave de acceso.</value>
+  </data>
+  <data name="PasskeyUnsupported" xml:space="preserve">
+    <value>Este navegador no puede usar llaves de acceso. Use Firmar en su lugar.</value>
+  </data>
+  <data name="ProtocolApprovalStatement" xml:space="preserve">
+    <value>Apruebo esta versión revisada del protocolo {0} "{1}" (contenido {2}) para su publicación, como paso {3} de {4} de su proceso de revisión.</value>
+  </data>
+  <data name="ProtocolReviewStatement" xml:space="preserve">
+    <value>He revisado el protocolo {0} "{1}" versión {2} (contenido {3}) y sigue siendo correcto sin cambios.</value>
+  </data>
+  <data name="SignApproveButton" xml:space="preserve">
+    <value>Firmar y aprobar</value>
+  </data>
+  <data name="SignReviewButton" xml:space="preserve">
+    <value>Firmar la revisión</value>
+  </data>
+  <data name="SignWithPasskeyButton" xml:space="preserve">
+    <value>Firmar con llave de acceso</value>
+  </data>
+  <data name="SignedOnColumn" xml:space="preserve">
+    <value>Firmado</value>
+  </data>
+  <data name="SignerColumn" xml:space="preserve">
+    <value>Firmante</value>
+  </data>
+  <data name="StatementLabel" xml:space="preserve">
+    <value>Está firmando esta declaración:</value>
+  </data>
+  <data name="StepUpHelp" xml:space="preserve">
+    <value>Al firmar se le pide que confirme su identidad con su segundo factor si no acaba de hacerlo.</value>
+  </data>
+  <data name="VerificationChanged" xml:space="preserve">
+    <value>Contenido modificado</value>
+  </data>
+  <data name="VerificationColumn" xml:space="preserve">
+    <value>Comprobación</value>
+  </data>
+  <data name="VerificationMissing" xml:space="preserve">
+    <value>Contenido no encontrado</value>
+  </data>
+  <data name="VerificationValid" xml:space="preserve">
+    <value>Coincide</value>
+  </data>
+  <data name="VerificationVoided" xml:space="preserve">
+    <value>Anulada</value>
+  </data>
+  <data name="AdoptTypedButton" xml:space="preserve">
+    <value>Usar el nombre impreso como firma</value>
+  </data>
+  <data name="AuditDepartment" xml:space="preserve">
+    <value>Departamento</value>
+  </data>
+  <data name="AuditDocument" xml:space="preserve">
+    <value>Documento</value>
+  </data>
+  <data name="AuditEvidence" xml:space="preserve">
+    <value>Evidencia</value>
+  </data>
+  <data name="AuditMethod" xml:space="preserve">
+    <value>Método</value>
+  </data>
+  <data name="AuditNoSigners" xml:space="preserve">
+    <value>No hay firmas registradas en este documento; se sella tal como se emitió.</value>
+  </data>
+  <data name="AuditPageTitle" xml:space="preserve">
+    <value>Página de auditoría de Resgrid</value>
+  </data>
+  <data name="AuditPreparedOn" xml:space="preserve">
+    <value>Preparado</value>
+  </data>
+  <data name="AuditRevisionHash" xml:space="preserve">
+    <value>Hash del contenido (SHA-256)</value>
+  </data>
+  <data name="AuditRole" xml:space="preserve">
+    <value>Función</value>
+  </data>
+  <data name="AuditSealNote" xml:space="preserve">
+    <value>Esta página forma parte del documento sellado. El sello (PAdES con sello de tiempo RFC 3161) muestra que el archivo no ha cambiado desde que se selló; compruébelo en Verificar un documento en Resgrid o en cualquier lector de PDF.</value>
+  </data>
+  <data name="AuditSigners" xml:space="preserve">
+    <value>Firmantes</value>
+  </data>
+  <data name="AuditSubject" xml:space="preserve">
+    <value>Asunto</value>
+  </data>
+  <data name="BackLink" xml:space="preserve">
+    <value>Volver</value>
+  </data>
+  <data name="CancelLink" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="ChannelInPerson" xml:space="preserve">
+    <value>En persona</value>
+  </data>
+  <data name="ChannelLabel" xml:space="preserve">
+    <value>Forma</value>
+  </data>
+  <data name="ChannelRemote" xml:space="preserve">
+    <value>Por enlace</value>
+  </data>
+  <data name="ClearSignatureButton" xml:space="preserve">
+    <value>Borrar</value>
+  </data>
+  <data name="ClosedText" xml:space="preserve">
+    <value>Este enlace de firma ya no es válido. Puede que ya se haya usado, retirado o caducado. Pida un nuevo enlace al remitente.</value>
+  </data>
+  <data name="CodeAttemptsLeft" xml:space="preserve">
+    <value>Quedan {0} intentos.</value>
+  </data>
+  <data name="CodeHeading" xml:space="preserve">
+    <value>Introduzca su código</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Código de seis dígitos</value>
+  </data>
+  <data name="CodeNotSent" xml:space="preserve">
+    <value>No se pudo enviar el código ahora. Espere un minuto e inténtelo de nuevo.</value>
+  </data>
+  <data name="CodeSentEmail" xml:space="preserve">
+    <value>Hemos enviado un código de seis dígitos a {0}.</value>
+  </data>
+  <data name="CodeSentSms" xml:space="preserve">
+    <value>Hemos enviado un código de seis dígitos por SMS a {0}.</value>
+  </data>
+  <data name="CodeWrong" xml:space="preserve">
+    <value>El código no es correcto o ha caducado.</value>
+  </data>
+  <data name="CompletedPdfButton" xml:space="preserve">
+    <value>Documento completado</value>
+  </data>
+  <data name="ConsentButton" xml:space="preserve">
+    <value>Aceptar y enviar mi código</value>
+  </data>
+  <data name="ConsentCheckbox" xml:space="preserve">
+    <value>Acepto firmar este documento electrónicamente.</value>
+  </data>
+  <data name="ConsentCodeNote" xml:space="preserve">
+    <value>A continuación enviaremos un código de un solo uso a {0} para confirmar que es usted.</value>
+  </data>
+  <data name="ConsentHeading" xml:space="preserve">
+    <value>Consentimiento para firmar electrónicamente</value>
+  </data>
+  <data name="ConsentRequired" xml:space="preserve">
+    <value>Marque la casilla para aceptar antes de continuar.</value>
+  </data>
+  <data name="ConsentText" xml:space="preserve">
+    <value>Se le pide que firme un documento electrónicamente. Al aceptar, consiente en tramitar este documento por medios electrónicos y acepta que su firma electrónica es tan válida como una manuscrita. Puede pedir al remitente una copia en papel y puede retirar este consentimiento no firmando. Su nombre, la hora de la firma y el código que le enviamos se registran con su firma, y el documento firmado se sella para que no pueda modificarse.</value>
+  </data>
+  <data name="ContinueButton" xml:space="preserve">
+    <value>Continuar</value>
+  </data>
+  <data name="ContinueInPersonLink" xml:space="preserve">
+    <value>Continuar en persona</value>
+  </data>
+  <data name="DetailIntro" xml:space="preserve">
+    <value>Una solicitud de firma externa: su estado, el firmante y los documentos.</value>
+  </data>
+  <data name="DoneHeading" xml:space="preserve">
+    <value>Gracias.</value>
+  </data>
+  <data name="DoneText" xml:space="preserve">
+    <value>Su firma se ha registrado. Puede cerrar esta página.</value>
+  </data>
+  <data name="DrawSignatureHelp" xml:space="preserve">
+    <value>Firme con el dedo, un lápiz o el ratón. Sin puntero, escriba el nombre y úselo como firma.</value>
+  </data>
+  <data name="DrawSignatureLabel" xml:space="preserve">
+    <value>Firma</value>
+  </data>
+  <data name="DrawSignatureRequired" xml:space="preserve">
+    <value>Firme en el recuadro o use el nombre como firma.</value>
+  </data>
+  <data name="ESignAccountHeading" xml:space="preserve">
+    <value>Equipo de Documenso de este departamento</value>
+  </data>
+  <data name="ESignActiveLabel" xml:space="preserve">
+    <value>Usar esta cuenta para los enlaces de firma</value>
+  </data>
+  <data name="ESignClusterHeading" xml:space="preserve">
+    <value>Servicios de firma de esta instalación</value>
+  </data>
+  <data name="ESignClusterHelp" xml:space="preserve">
+    <value>Los configura el operador de esta instalación de Resgrid. Sin la plataforma de firma electrónica no hay enlaces de firma, pero la firma en persona sigue funcionando. Sin sellado, los documentos se firman y quedan con sellado pendiente hasta que se configure.</value>
+  </data>
+  <data name="ESignIntro" xml:space="preserve">
+    <value>La cuenta de la plataforma de firma electrónica que envía documentos para firmar por enlace y el estado del sellado de documentos.</value>
+  </data>
+  <data name="ESignPlatformConfigured" xml:space="preserve">
+    <value>Plataforma de firma electrónica (Documenso)</value>
+  </data>
+  <data name="ESignRemoveButton" xml:space="preserve">
+    <value>Quitar el token</value>
+  </data>
+  <data name="ESignSaved" xml:space="preserve">
+    <value>Se guardó la configuración de firma electrónica.</value>
+  </data>
+  <data name="ESignTab" xml:space="preserve">
+    <value>Firma electrónica</value>
+  </data>
+  <data name="ESignTeamIdLabel" xml:space="preserve">
+    <value>ID del equipo</value>
+  </data>
+  <data name="ESignTitle" xml:space="preserve">
+    <value>Configuración de firma electrónica</value>
+  </data>
+  <data name="ESignTokenHelp" xml:space="preserve">
+    <value>Un token de API del equipo. Se guarda cifrado y solo se muestran sus cuatro últimos caracteres. Déjelo vacío para mantener el actual.</value>
+  </data>
+  <data name="ESignTokenLabel" xml:space="preserve">
+    <value>Token de API</value>
+  </data>
+  <data name="EmbedFrameTitle" xml:space="preserve">
+    <value>Firma del documento</value>
+  </data>
+  <data name="EmbedUnavailable" xml:space="preserve">
+    <value>El servicio de firma no está disponible ahora. Inténtelo más tarde.</value>
+  </data>
+  <data name="ExpiresLabel" xml:space="preserve">
+    <value>Caduca</value>
+  </data>
+  <data name="ExternalPanelHelp" xml:space="preserve">
+    <value>Un cliente, ocupante o tercero puede firmar este documento en persona en este dispositivo o, si está disponible, mediante un enlace de firma de Resgrid.</value>
+  </data>
+  <data name="ExternalPanelTitle" xml:space="preserve">
+    <value>Firma externa</value>
+  </data>
+  <data name="FinishedButton" xml:space="preserve">
+    <value>He terminado de firmar</value>
+  </data>
+  <data name="HandDeviceButton" xml:space="preserve">
+    <value>Entregar el dispositivo al firmante</value>
+  </data>
+  <data name="HandDeviceHelp" xml:space="preserve">
+    <value>Abre en este dispositivo una página de firma para la otra persona: consentimiento, nombre y firma dibujada, con testigo opcional.</value>
+  </data>
+  <data name="HandDeviceTitle" xml:space="preserve">
+    <value>Firmar en persona</value>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Inicio</value>
+  </data>
+  <data name="InPersonSignedMessage" xml:space="preserve">
+    <value>Firmado en persona. El documento firmado se sella cuando el sellado está disponible.</value>
+  </data>
+  <data name="LandingExpires" xml:space="preserve">
+    <value>Este enlace caduca el {0}.</value>
+  </data>
+  <data name="LandingIntro" xml:space="preserve">
+    <value>{0}, {1} le pide que revise y firme un documento.</value>
+  </data>
+  <data name="LevelExternal" xml:space="preserve">
+    <value>Firmante externo</value>
+  </data>
+  <data name="LevelSealed" xml:space="preserve">
+    <value>Documento sellado</value>
+  </data>
+  <data name="LinkOnceHelp" xml:space="preserve">
+    <value>No se pudo entregar el enlace de firma. Puede pasarlo usted al firmante; solo se muestra ahora y se puede usar una vez.</value>
+  </data>
+  <data name="MethodExternalLink" xml:space="preserve">
+    <value>Enlace de firma y código</value>
+  </data>
+  <data name="MethodInPersonOffline" xml:space="preserve">
+    <value>En persona (sin conexión)</value>
+  </data>
+  <data name="MethodInPersonOnline" xml:space="preserve">
+    <value>En persona</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="NoRightToRequest" xml:space="preserve">
+    <value>No puede solicitar firmas para este elemento.</value>
+  </data>
+  <data name="OpenRequestStatus" xml:space="preserve">
+    <value>Solicitud de firma: {0} ({1}), caduca el {2}.</value>
+  </data>
+  <data name="OtpChannelEmail" xml:space="preserve">
+    <value>Correo electrónico</value>
+  </data>
+  <data name="OtpChannelLabel" xml:space="preserve">
+    <value>Enviar el código de un solo uso por</value>
+  </data>
+  <data name="OtpChannelSms" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="PdfFailed" xml:space="preserve">
+    <value>No se pudo generar el PDF.</value>
+  </data>
+  <data name="PrintedNameLabel" xml:space="preserve">
+    <value>Nombre en letra de imprenta</value>
+  </data>
+  <data name="ProtocolPdfButton" xml:space="preserve">
+    <value>PDF</value>
+  </data>
+  <data name="RefusalNone" xml:space="preserve">
+    <value>Hecho.</value>
+  </data>
+  <data name="RefusalInvalidRequest" xml:space="preserve">
+    <value>Faltan algunos datos o no son válidos.</value>
+  </data>
+  <data name="RefusalSubjectNotFound" xml:space="preserve">
+    <value>No se encontró el elemento o no puede abrirlo.</value>
+  </data>
+  <data name="RefusalRemoteNeedsAddon" xml:space="preserve">
+    <value>La firma por enlace forma parte del complemento al que pertenece este documento. La firma en persona está disponible.</value>
+  </data>
+  <data name="RefusalProviderUnavailable" xml:space="preserve">
+    <value>La firma por enlace no está configurada para este departamento.</value>
+  </data>
+  <data name="RefusalRevisionChanged" xml:space="preserve">
+    <value>El documento cambió después de mostrarse para la firma. Empiece de nuevo.</value>
+  </data>
+  <data name="RefusalRequestClosed" xml:space="preserve">
+    <value>Esta solicitud ya no está abierta.</value>
+  </data>
+  <data name="RefusalProviderFailed" xml:space="preserve">
+    <value>La plataforma de firma electrónica no pudo preparar el documento. Inténtelo más tarde.</value>
+  </data>
+  <data name="RefusalContactRequired" xml:space="preserve">
+    <value>Introduzca un correo electrónico válido o un teléfono en formato internacional para el código de un solo uso.</value>
+  </data>
+  <data name="RemoteRequestButton" xml:space="preserve">
+    <value>Solicitar firma por enlace</value>
+  </data>
+  <data name="RemoteRequestHelp" xml:space="preserve">
+    <value>Resgrid envía al firmante un enlace de un solo uso. Antes de firmar, consiente firmar electrónicamente e introduce un código de un solo uso enviado al correo o teléfono indicado.</value>
+  </data>
+  <data name="RemoteUnavailableNone" xml:space="preserve">
+    <value>La firma por enlace está disponible.</value>
+  </data>
+  <data name="RemoteUnavailableInvalidRequest" xml:space="preserve">
+    <value>No se ofrece la firma por enlace para este elemento.</value>
+  </data>
+  <data name="RemoteUnavailableSubjectNotFound" xml:space="preserve">
+    <value>No se ofrece la firma por enlace para este elemento.</value>
+  </data>
+  <data name="RemoteUnavailableRemoteNeedsAddon" xml:space="preserve">
+    <value>La firma por enlace se incluye en el complemento al que pertenece este documento; la firma en persona es gratuita.</value>
+  </data>
+  <data name="RemoteUnavailableProviderUnavailable" xml:space="preserve">
+    <value>La firma por enlace no está configurada (firma electrónica); la firma en persona está disponible.</value>
+  </data>
+  <data name="RemoteUnavailableRevisionChanged" xml:space="preserve">
+    <value>La firma por enlace no está disponible ahora.</value>
+  </data>
+  <data name="RemoteUnavailableRequestClosed" xml:space="preserve">
+    <value>La firma por enlace no está disponible ahora.</value>
+  </data>
+  <data name="RemoteUnavailableProviderFailed" xml:space="preserve">
+    <value>La firma por enlace no está disponible ahora.</value>
+  </data>
+  <data name="RemoteUnavailableContactRequired" xml:space="preserve">
+    <value>La firma por enlace no está disponible ahora.</value>
+  </data>
+  <data name="RequestHeading" xml:space="preserve">
+    <value>Solicitud de firma</value>
+  </data>
+  <data name="RequestNotDeliveredMessage" xml:space="preserve">
+    <value>La solicitud se creó, pero no se pudo entregar el enlace.</value>
+  </data>
+  <data name="RequestSentMessage" xml:space="preserve">
+    <value>Se envió el enlace de firma a {0}.</value>
+  </data>
+  <data name="RequestVoidedMessage" xml:space="preserve">
+    <value>La solicitud se retiró.</value>
+  </data>
+  <data name="ResendButton" xml:space="preserve">
+    <value>Enviar un enlace nuevo</value>
+  </data>
+  <data name="ResendCodeButton" xml:space="preserve">
+    <value>Enviar un código nuevo</value>
+  </data>
+  <data name="RoleCustomer" xml:space="preserve">
+    <value>Cliente</value>
+  </data>
+  <data name="RoleOccupant" xml:space="preserve">
+    <value>Ocupante</value>
+  </data>
+  <data name="RoleExternalParty" xml:space="preserve">
+    <value>Parte externa</value>
+  </data>
+  <data name="RoleWitness" xml:space="preserve">
+    <value>Testigo</value>
+  </data>
+  <data name="RoleCounterparty" xml:space="preserve">
+    <value>Contraparte</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="SealedPdfButton" xml:space="preserve">
+    <value>PDF sellado</value>
+  </data>
+  <data name="SealingKey" xml:space="preserve">
+    <value>Certificado de firma</value>
+  </data>
+  <data name="SealingPendingState" xml:space="preserve">
+    <value>sellado pendiente</value>
+  </data>
+  <data name="SealingSidecar" xml:space="preserve">
+    <value>Servicio de sellado (EU DSS)</value>
+  </data>
+  <data name="SealingStore" xml:space="preserve">
+    <value>Almacén de documentos sellados</value>
+  </data>
+  <data name="SealingTsa" xml:space="preserve">
+    <value>Autoridad de sellado de tiempo</value>
+  </data>
+  <data name="SendCodeButton" xml:space="preserve">
+    <value>Enviar mi código</value>
+  </data>
+  <data name="SendRequestButton" xml:space="preserve">
+    <value>Enviar solicitud</value>
+  </data>
+  <data name="SignNowButton" xml:space="preserve">
+    <value>Firmar</value>
+  </data>
+  <data name="SignaturePageTitle" xml:space="preserve">
+    <value>Firmas</value>
+  </data>
+  <data name="SignaturesHeading" xml:space="preserve">
+    <value>Firmas</value>
+  </data>
+  <data name="SignaturesModuleTitle" xml:space="preserve">
+    <value>Firmas</value>
+  </data>
+  <data name="SignedByNote" xml:space="preserve">
+    <value>{0} · {1}</value>
+  </data>
+  <data name="SignedState" xml:space="preserve">
+    <value>Firmado</value>
+  </data>
+  <data name="SignerEmailLabel" xml:space="preserve">
+    <value>Correo electrónico</value>
+  </data>
+  <data name="SignerNameLabel" xml:space="preserve">
+    <value>Nombre del firmante</value>
+  </data>
+  <data name="SignerPhoneLabel" xml:space="preserve">
+    <value>Teléfono móvil</value>
+  </data>
+  <data name="SignerStatusPending" xml:space="preserve">
+    <value>En espera</value>
+  </data>
+  <data name="SignerStatusOpened" xml:space="preserve">
+    <value>Abierto</value>
+  </data>
+  <data name="SignerStatusVerified" xml:space="preserve">
+    <value>Código verificado</value>
+  </data>
+  <data name="SignerStatusSigned" xml:space="preserve">
+    <value>Firmado</value>
+  </data>
+  <data name="SignerStatusDeclined" xml:space="preserve">
+    <value>Rechazado</value>
+  </data>
+  <data name="SigningBeingConfirmed" xml:space="preserve">
+    <value>Se está confirmando su firma. Puede tardar un minuto; puede cerrar esta página.</value>
+  </data>
+  <data name="SigningLinkLabel" xml:space="preserve">
+    <value>Enlace de firma</value>
+  </data>
+  <data name="SigningPageTitle" xml:space="preserve">
+    <value>Firmar un documento</value>
+  </data>
+  <data name="StatementTimeReport" xml:space="preserve">
+    <value>Confirmo que el tiempo registrado en {0} es correcto (código de contenido {1}).</value>
+  </data>
+  <data name="StatementBid" xml:space="preserve">
+    <value>Acepto {0} (código de contenido {1}) en nombre del cliente.</value>
+  </data>
+  <data name="StatementServiceContract" xml:space="preserve">
+    <value>Acepto {0} (código de contenido {1}) en nombre de mi organización.</value>
+  </data>
+  <data name="StatementRecordsInspection" xml:space="preserve">
+    <value>Confirmo que he recibido los resultados de {0} (código de contenido {1}).</value>
+  </data>
+  <data name="StatementCustodyTransfer" xml:space="preserve">
+    <value>Confirmo que he recibido la evidencia de {0} (código de contenido {1}).</value>
+  </data>
+  <data name="StatusDraft" xml:space="preserve">
+    <value>Borrador</value>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>Pendiente de firma</value>
+  </data>
+  <data name="StatusPartiallySigned" xml:space="preserve">
+    <value>Firmado en parte</value>
+  </data>
+  <data name="StatusCompleted" xml:space="preserve">
+    <value>Completado</value>
+  </data>
+  <data name="StatusDeclined" xml:space="preserve">
+    <value>Rechazado</value>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>Caducado</value>
+  </data>
+  <data name="StatusVoided" xml:space="preserve">
+    <value>Retirado</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="SubjectUnavailable" xml:space="preserve">
+    <value>Este elemento no se puede firmar ahora.</value>
+  </data>
+  <data name="TooManyRequests" xml:space="preserve">
+    <value>Demasiadas solicitudes. Espere un minuto e inténtelo de nuevo.</value>
+  </data>
+  <data name="VerifyButton" xml:space="preserve">
+    <value>Verificar</value>
+  </data>
+  <data name="VerifyCodeButton" xml:space="preserve">
+    <value>Confirmar código</value>
+  </data>
+  <data name="VerifyFileLabel" xml:space="preserve">
+    <value>Documento PDF</value>
+  </data>
+  <data name="VerifyFileRequired" xml:space="preserve">
+    <value>Elija un archivo PDF de hasta 25 MB.</value>
+  </data>
+  <data name="VerifyFormatColumn" xml:space="preserve">
+    <value>Formato</value>
+  </data>
+  <data name="VerifyIndicationColumn" xml:space="preserve">
+    <value>Resultado</value>
+  </data>
+  <data name="VerifyIntro" xml:space="preserve">
+    <value>Suba un PDF para comprobar sus firmas y sellos de tiempo, y si Resgrid emitió exactamente este archivo.</value>
+  </data>
+  <data name="VerifyIssuedElsewhere" xml:space="preserve">
+    <value>Resgrid emitió exactamente este archivo para otro departamento.</value>
+  </data>
+  <data name="VerifyIssuedHere" xml:space="preserve">
+    <value>Resgrid emitió exactamente este archivo para este departamento.</value>
+  </data>
+  <data name="VerifyIssuedLabel" xml:space="preserve">
+    <value>Emitido por Resgrid</value>
+  </data>
+  <data name="VerifyNoSignatures" xml:space="preserve">
+    <value>El documento no contiene firmas.</value>
+  </data>
+  <data name="VerifyNotIssued" xml:space="preserve">
+    <value>Resgrid no tiene constancia de haber emitido exactamente este archivo. Un archivo modificado, aunque sea en un byte, no coincide.</value>
+  </data>
+  <data name="VerifyNotPdf" xml:space="preserve">
+    <value>El archivo no es un PDF.</value>
+  </data>
+  <data name="VerifyResultHeading" xml:space="preserve">
+    <value>Resultado</value>
+  </data>
+  <data name="VerifySidecarMissing" xml:space="preserve">
+    <value>El servicio de validación no está configurado en esta instalación, por lo que solo se comprueban los registros de Resgrid.</value>
+  </data>
+  <data name="VerifySignaturesLabel" xml:space="preserve">
+    <value>Firmas válidas</value>
+  </data>
+  <data name="VerifyTab" xml:space="preserve">
+    <value>Verificar un documento</value>
+  </data>
+  <data name="VerifyTimestampColumn" xml:space="preserve">
+    <value>Sello de tiempo</value>
+  </data>
+  <data name="VerifyTimestampedOn" xml:space="preserve">
+    <value>sellado {0}</value>
+  </data>
+  <data name="VerifyTitle" xml:space="preserve">
+    <value>Verificar un documento</value>
+  </data>
+  <data name="VerifyUploadHeading" xml:space="preserve">
+    <value>Documento</value>
+  </data>
+  <data name="VerifyValidationUnavailable" xml:space="preserve">
+    <value>El servicio de validación no respondió.</value>
+  </data>
+  <data name="ViewRequestLink" xml:space="preserve">
+    <value>Detalles</value>
+  </data>
+  <data name="VoidButton" xml:space="preserve">
+    <value>Retirar solicitud</value>
+  </data>
+  <data name="WitnessNameLabel" xml:space="preserve">
+    <value>Testigo (opcional)</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Sí</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Acciones</value>
+  </data>
+  <data name="AllMySignaturesLink" xml:space="preserve">
+    <value>Todas mis firmas</value>
+  </data>
+  <data name="AnyEligibleMember" xml:space="preserve">
+    <value>cualquier miembro habilitado</value>
+  </data>
+  <data name="DeclineButton" xml:space="preserve">
+    <value>Rechazar</value>
+  </data>
+  <data name="DeclineConfirmButton" xml:space="preserve">
+    <value>Rechazar la firma</value>
+  </data>
+  <data name="DeclineHelp" xml:space="preserve">
+    <value>Al rechazar, la solicitud termina para todos; al solicitante se le comunica su motivo.</value>
+  </data>
+  <data name="DeclineReasonLabel" xml:space="preserve">
+    <value>¿Por qué la rechaza?</value>
+  </data>
+  <data name="DocumentColumn" xml:space="preserve">
+    <value>Documento</value>
+  </data>
+  <data name="DueByLabel" xml:space="preserve">
+    <value>vence el {0}</value>
+  </data>
+  <data name="IssueReceiptButton" xml:space="preserve">
+    <value>Recibo</value>
+  </data>
+  <data name="IssueReceiptTitle" xml:space="preserve">
+    <value>Recibo de entrega de equipo</value>
+  </data>
+  <data name="MemberFallbackName" xml:space="preserve">
+    <value>un miembro</value>
+  </data>
+  <data name="MemberRequestButton" xml:space="preserve">
+    <value>Pedir a {0} que firme</value>
+  </data>
+  <data name="MemberRequestHelp" xml:space="preserve">
+    <value>El miembro firma en Resgrid tras una nueva verificación de identidad (nivel 2); la solicitud aparece en Mis firmas y en su página de inicio.</value>
+  </data>
+  <data name="MemberRequestSentMessage" xml:space="preserve">
+    <value>Se envió la solicitud de firma.</value>
+  </data>
+  <data name="MySignaturesIntro" xml:space="preserve">
+    <value>Documentos que esperan su firma, con el paso que le corresponde.</value>
+  </data>
+  <data name="MySignaturesTab" xml:space="preserve">
+    <value>Mis firmas</value>
+  </data>
+  <data name="MySignaturesTitle" xml:space="preserve">
+    <value>Mis firmas</value>
+  </data>
+  <data name="NothingToSign" xml:space="preserve">
+    <value>No hay nada pendiente de su firma.</value>
+  </data>
+  <data name="OpenDocumentLink" xml:space="preserve">
+    <value>Abrir el documento</value>
+  </data>
+  <data name="OpenSigningPageLink" xml:space="preserve">
+    <value>Página de firma</value>
+  </data>
+  <data name="OpenStepButton" xml:space="preserve">
+    <value>Revisar y firmar</value>
+  </data>
+  <data name="OrderedHelp" xml:space="preserve">
+    <value>Los firmantes firman en el orden del número de paso; los pasos con el mismo número pueden firmar a la vez.</value>
+  </data>
+  <data name="OutsideSignerFallbackName" xml:space="preserve">
+    <value>firmante externo</value>
+  </data>
+  <data name="PendingSignaturesHeader" xml:space="preserve">
+    <value>Pendientes de su firma</value>
+  </data>
+  <data name="ReadinessProRequiredMessage" xml:space="preserve">
+    <value>La aceptación de órdenes de trabajo por el proveedor y los recibos de entrega de equipo forman parte de Readiness Pro.</value>
+  </data>
+  <data name="SignedCountLabel" xml:space="preserve">
+    <value>Firmadas</value>
+  </data>
+  <data name="SignStepButton" xml:space="preserve">
+    <value>Firmar</value>
+  </data>
+  <data name="StepDeclinedMessage" xml:space="preserve">
+    <value>Ha rechazado firmar. La solicitud está cerrada.</value>
+  </data>
+  <data name="StepOrderColumn" xml:space="preserve">
+    <value>Paso</value>
+  </data>
+  <data name="StepPageIntro" xml:space="preserve">
+    <value>Lea la declaración, compruebe el código de contenido y firme su paso.</value>
+  </data>
+  <data name="StepPanelTitle" xml:space="preserve">
+    <value>Su firma</value>
+  </data>
+  <data name="StepsHeading" xml:space="preserve">
+    <value>Firmantes</value>
+  </data>
+  <data name="StepSignedMessage" xml:space="preserve">
+    <value>Se registró su firma.</value>
+  </data>
+  <data name="UnorderedHelp" xml:space="preserve">
+    <value>Cada firmante puede firmar en cualquier momento.</value>
+  </data>
+  <data name="VendorAcceptanceHeading" xml:space="preserve">
+    <value>Aceptación del proveedor</value>
+  </data>
+  <data name="WitnessNotYouNote" xml:space="preserve">
+    <value>La persona que completó la lista de verificación no puede ser su testigo.</value>
+  </data>
+  <data name="WitnessPanelTitle" xml:space="preserve">
+    <value>Firma del testigo</value>
+  </data>
+  <data name="WitnessSignatureHelp" xml:space="preserve">
+    <value>Escriba en el cuadro lo que presenció. Su firma se vincula a los resultados mostrados (no a notas ni a texto libre), y la lista de verificación queda completada cuando firma.</value>
+  </data>
+  <data name="WitnessSignButton" xml:space="preserve">
+    <value>Firmar como testigo</value>
+  </data>
+  <data name="WitnessSignedMessage" xml:space="preserve">
+    <value>Se registró su firma como testigo y la lista de verificación está completada.</value>
+  </data>
+  <data name="WitnessSignFailedMessage" xml:space="preserve">
+    <value>No se pudo registrar la firma del testigo.</value>
+  </data>
+  <data name="YourStepColumn" xml:space="preserve">
+    <value>Su paso</value>
+  </data>
+  <data name="YourStepNote" xml:space="preserve">
+    <value>Su paso: {0}</value>
+  </data>
+  <data name="RefusalNotYourTurn" xml:space="preserve">
+    <value>Aún no es su turno: no todos los firmantes anteriores han firmado.</value>
+  </data>
+  <data name="RefusalNotEligible" xml:space="preserve">
+    <value>No tiene una certificación o un rol que este paso exige.</value>
+  </data>
+  <data name="RefusalStepUpRequired" xml:space="preserve">
+    <value>Este paso requiere el nivel 2: confirme su identidad con su segundo factor o una llave de acceso y luego firme.</value>
+  </data>
+  <data name="RefusalPasskeyRequired" xml:space="preserve">
+    <value>Este paso debe firmarse con una llave de acceso.</value>
+  </data>
+  <data name="RefusalNotASigner" xml:space="preserve">
+    <value>Usted no es firmante de este paso.</value>
+  </data>
+  <data name="RefusalArtifactMismatch" xml:space="preserve">
+    <value>La confirmación con llave de acceso correspondía a otro contenido. Vuelva a cargar la página y firme de nuevo.</value>
+  </data>
+  <data name="RoleMember" xml:space="preserve">
+    <value>Miembro</value>
+  </data>
+  <data name="RoleCertifyingOfficial" xml:space="preserve">
+    <value>Responsable de certificación</value>
+  </data>
+  <data name="RoleEvaluator" xml:space="preserve">
+    <value>Evaluador</value>
+  </data>
+  <data name="RoleVendor" xml:space="preserve">
+    <value>Proveedor</value>
+  </data>
+  <data name="RoleRecipient" xml:space="preserve">
+    <value>Destinatario</value>
+  </data>
+  <data name="IntentEvaluate" xml:space="preserve">
+    <value>Evaluación</value>
+  </data>
+  <data name="IntentCertify" xml:space="preserve">
+    <value>Certificación</value>
+  </data>
+  <data name="IntentAccept" xml:space="preserve">
+    <value>Aceptación</value>
+  </data>
+  <data name="OutcomeStepUpRequired" xml:space="preserve">
+    <value>Confirme su identidad con su segundo factor y vuelva a firmar.</value>
+  </data>
+  <data name="OutcomePasskeyRequired" xml:space="preserve">
+    <value>Se requiere una llave de acceso para firmar.</value>
+  </data>
+  <data name="OutcomeArtifactMismatch" xml:space="preserve">
+    <value>La confirmación con llave de acceso correspondía a otro contenido.</value>
+  </data>
+  <data name="OutcomeInvalidRequest" xml:space="preserve">
+    <value>No se pudo registrar la firma.</value>
+  </data>
+  <data name="StatementWorkOrderVendorAcceptance" xml:space="preserve">
+    <value>Acepto el trabajo realizado en {0} (código de contenido {1}).</value>
+  </data>
+  <data name="StatementInventoryIssueReceipt" xml:space="preserve">
+    <value>Confirmo que he recibido {0} (código de contenido {1}).</value>
+  </data>
+  <data name="StatementSkillEvaluation" xml:space="preserve">
+    <value>Confirmo la evaluación registrada para {0} (código de contenido {1}).</value>
+  </data>
+  <data name="StatementChecklistWitness" xml:space="preserve">
+    <value>Presencié la lista de verificación {0} de {1} y confirmo que los resultados mostrados son los que se registraron (código de contenido {2}).</value>
+  </data>
+  <data name="StatementPurchaseRequisitionApproval" xml:space="preserve">
+    <value>Apruebo la requisición de compra {0} (código de contenido {1}).</value>
+  </data>
+  <data name="StatementIncidentPlanApproval" xml:space="preserve">
+    <value>Apruebo el Plan de Acción del Incidente {0} (código de contenido {1}).</value>
+  </data>
+  <data name="StatementInvoiceApproval" xml:space="preserve">
+    <value>Apruebo el envío de {0} (código de contenido {1}).</value>
+  </data>
+  <data name="StatementPayrollRunApproval" xml:space="preserve">
+    <value>Apruebo el proceso de nómina {0} (código de contenido {1}).</value>
+  </data>
+  <data name="StatementCalOesMarsPackageApproval" xml:space="preserve">
+    <value>Apruebo el paquete Cal OES MARS {0} para su presentación (código de contenido {1}).</value>
+  </data>
+  <data name="StatementMutualAidAgreementApproval" xml:space="preserve">
+    <value>Apruebo el acuerdo de ayuda mutua {0} en nombre del departamento (código de contenido {1}).</value>
+  </data>
+  <data name="ApprovalsTab" xml:space="preserve">
+    <value>Aprobaciones</value>
+  </data>
+</root>

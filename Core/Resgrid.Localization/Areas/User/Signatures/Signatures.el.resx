@@ -1,0 +1,940 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AnyApprover" xml:space="preserve">
+    <value>οποιοσδήποτε εγκρίνων</value>
+  </data>
+  <data name="BindsToContentHelp" xml:space="preserve">
+    <value>Η υπογραφή καλύπτει ακριβώς αυτό το κείμενο. Αν το κείμενο αλλάξει, δεν ταιριάζει πλέον και χρειάζεται νέα υπογραφή.</value>
+  </data>
+  <data name="CertificationVerificationStatement" xml:space="preserve">
+    <value>Επαληθεύω την εγγραφή πιστοποίησης {0} ({1}, ελήφθη {2}, λήγει {3}): την έλεγξα και είναι γνήσια.</value>
+  </data>
+  <data name="CommentLabel" xml:space="preserve">
+    <value>Σχόλιο (προαιρετικό)</value>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>Κωδικός περιεχομένου</value>
+  </data>
+  <data name="IntentApprove" xml:space="preserve">
+    <value>Έγκριση</value>
+  </data>
+  <data name="IntentAttest" xml:space="preserve">
+    <value>Βεβαίωση</value>
+  </data>
+  <data name="IntentColumn" xml:space="preserve">
+    <value>Σημασία</value>
+  </data>
+  <data name="IntentReview" xml:space="preserve">
+    <value>Επανεξέταση</value>
+  </data>
+  <data name="IntentVerify" xml:space="preserve">
+    <value>Επαλήθευση</value>
+  </data>
+  <data name="IntentWitness" xml:space="preserve">
+    <value>Μάρτυρας</value>
+  </data>
+  <data name="LevelAttest" xml:space="preserve">
+    <value>συνεδρία σύνδεσης</value>
+  </data>
+  <data name="LevelBadge" xml:space="preserve">
+    <value>Επίπεδο {0}: {1}</value>
+  </data>
+  <data name="LevelColumn" xml:space="preserve">
+    <value>Επίπεδο</value>
+  </data>
+  <data name="LevelStepUp" xml:space="preserve">
+    <value>η ταυτότητα ελέγχθηκε εκ νέου</value>
+  </data>
+  <data name="MethodPasskey" xml:space="preserve">
+    <value>Κλειδί πρόσβασης</value>
+  </data>
+  <data name="MethodSession" xml:space="preserve">
+    <value>Συνεδρία σύνδεσης</value>
+  </data>
+  <data name="MethodStepUp" xml:space="preserve">
+    <value>Έλεγχος δεύτερου παράγοντα</value>
+  </data>
+  <data name="NoSignatures" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη υπογραφές.</value>
+  </data>
+  <data name="OthersToSignLabel" xml:space="preserve">
+    <value>Θα υπογράψουν ακόμη μετά από εσάς:</value>
+  </data>
+  <data name="PasskeyCancelled" xml:space="preserve">
+    <value>Το παράθυρο του κλειδιού πρόσβασης έκλεισε. Δεν υπογράφηκε τίποτα.</value>
+  </data>
+  <data name="PasskeyFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η επαλήθευση του κλειδιού πρόσβασης. Δεν υπογράφηκε τίποτα.</value>
+  </data>
+  <data name="PasskeyOnlyHelp" xml:space="preserve">
+    <value>Το τμήμα σας απαιτεί κλειδί πρόσβασης για αυτήν την υπογραφή.</value>
+  </data>
+  <data name="PasskeyRequiredHelp" xml:space="preserve">
+    <value>Απαιτείται κλειδί πρόσβασης.</value>
+  </data>
+  <data name="PasskeyUnsupported" xml:space="preserve">
+    <value>Αυτό το πρόγραμμα περιήγησης δεν μπορεί να χρησιμοποιήσει κλειδιά πρόσβασης. Χρησιμοποιήστε την επιλογή «Υπογραφή».</value>
+  </data>
+  <data name="ProtocolApprovalStatement" xml:space="preserve">
+    <value>Εγκρίνω αυτήν την αναθεώρηση του πρωτοκόλλου {0} "{1}" (περιεχόμενο {2}) για δημοσίευση, ως βήμα {3} από {4} του ελέγχου του.</value>
+  </data>
+  <data name="ProtocolReviewStatement" xml:space="preserve">
+    <value>Επανεξέτασα το πρωτόκολλο {0} "{1}", έκδοση {2} (περιεχόμενο {3}), και παραμένει σωστό χωρίς αλλαγές.</value>
+  </data>
+  <data name="SignApproveButton" xml:space="preserve">
+    <value>Υπογραφή και έγκριση</value>
+  </data>
+  <data name="SignReviewButton" xml:space="preserve">
+    <value>Υπογραφή της επανεξέτασης</value>
+  </data>
+  <data name="SignWithPasskeyButton" xml:space="preserve">
+    <value>Υπογραφή με κλειδί πρόσβασης</value>
+  </data>
+  <data name="SignedOnColumn" xml:space="preserve">
+    <value>Υπογράφηκε</value>
+  </data>
+  <data name="SignerColumn" xml:space="preserve">
+    <value>Υπογράφων</value>
+  </data>
+  <data name="StatementLabel" xml:space="preserve">
+    <value>Υπογράφετε την εξής δήλωση:</value>
+  </data>
+  <data name="StepUpHelp" xml:space="preserve">
+    <value>Κατά την υπογραφή θα σας ζητηθεί να επιβεβαιώσετε την ταυτότητά σας με τον δεύτερο παράγοντα, αν δεν το έχετε κάνει μόλις τώρα.</value>
+  </data>
+  <data name="VerificationChanged" xml:space="preserve">
+    <value>Το περιεχόμενο άλλαξε</value>
+  </data>
+  <data name="VerificationColumn" xml:space="preserve">
+    <value>Έλεγχος</value>
+  </data>
+  <data name="VerificationMissing" xml:space="preserve">
+    <value>Το περιεχόμενο δεν βρέθηκε</value>
+  </data>
+  <data name="VerificationValid" xml:space="preserve">
+    <value>Ταιριάζει</value>
+  </data>
+  <data name="VerificationVoided" xml:space="preserve">
+    <value>Ακυρώθηκε</value>
+  </data>
+  <data name="AdoptTypedButton" xml:space="preserve">
+    <value>Χρήση του ονόματος ως υπογραφής</value>
+  </data>
+  <data name="AuditDepartment" xml:space="preserve">
+    <value>Υπηρεσία</value>
+  </data>
+  <data name="AuditDocument" xml:space="preserve">
+    <value>Έγγραφο</value>
+  </data>
+  <data name="AuditEvidence" xml:space="preserve">
+    <value>Τεκμήριο</value>
+  </data>
+  <data name="AuditMethod" xml:space="preserve">
+    <value>Μέθοδος</value>
+  </data>
+  <data name="AuditNoSigners" xml:space="preserve">
+    <value>Δεν έχουν καταγραφεί υπογραφές σε αυτό το έγγραφο· σφραγίζεται όπως εκδόθηκε.</value>
+  </data>
+  <data name="AuditPageTitle" xml:space="preserve">
+    <value>Σελίδα ελέγχου Resgrid</value>
+  </data>
+  <data name="AuditPreparedOn" xml:space="preserve">
+    <value>Συντάχθηκε</value>
+  </data>
+  <data name="AuditRevisionHash" xml:space="preserve">
+    <value>Κατακερματισμός περιεχομένου (SHA-256)</value>
+  </data>
+  <data name="AuditRole" xml:space="preserve">
+    <value>Ρόλος</value>
+  </data>
+  <data name="AuditSealNote" xml:space="preserve">
+    <value>Αυτή η σελίδα είναι μέρος του σφραγισμένου εγγράφου. Η σφραγίδα (PAdES με χρονοσφραγίδα RFC 3161) δείχνει ότι το αρχείο δεν έχει αλλάξει από τη σφράγισή του· ελέγξτε την στην Επαλήθευση εγγράφου στο Resgrid ή σε οποιοδήποτε πρόγραμμα PDF.</value>
+  </data>
+  <data name="AuditSigners" xml:space="preserve">
+    <value>Υπογράφοντες</value>
+  </data>
+  <data name="AuditSubject" xml:space="preserve">
+    <value>Αντικείμενο</value>
+  </data>
+  <data name="BackLink" xml:space="preserve">
+    <value>Πίσω</value>
+  </data>
+  <data name="CancelLink" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="ChannelInPerson" xml:space="preserve">
+    <value>Αυτοπροσώπως</value>
+  </data>
+  <data name="ChannelLabel" xml:space="preserve">
+    <value>Τρόπος</value>
+  </data>
+  <data name="ChannelRemote" xml:space="preserve">
+    <value>Μέσω συνδέσμου</value>
+  </data>
+  <data name="ClearSignatureButton" xml:space="preserve">
+    <value>Καθαρισμός</value>
+  </data>
+  <data name="ClosedText" xml:space="preserve">
+    <value>Αυτός ο σύνδεσμος υπογραφής δεν ισχύει πλέον. Μπορεί να έχει ήδη χρησιμοποιηθεί, ανακληθεί ή λήξει. Ζητήστε νέο σύνδεσμο από τον αποστολέα.</value>
+  </data>
+  <data name="CodeAttemptsLeft" xml:space="preserve">
+    <value>Απομένουν {0} προσπάθειες.</value>
+  </data>
+  <data name="CodeHeading" xml:space="preserve">
+    <value>Εισαγάγετε τον κωδικό σας</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Εξαψήφιος κωδικός</value>
+  </data>
+  <data name="CodeNotSent" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποστολή κωδικού τώρα. Περιμένετε ένα λεπτό και δοκιμάστε ξανά.</value>
+  </data>
+  <data name="CodeSentEmail" xml:space="preserve">
+    <value>Στείλαμε έναν εξαψήφιο κωδικό στο {0}.</value>
+  </data>
+  <data name="CodeSentSms" xml:space="preserve">
+    <value>Στείλαμε έναν εξαψήφιο κωδικό με SMS στο {0}.</value>
+  </data>
+  <data name="CodeWrong" xml:space="preserve">
+    <value>Ο κωδικός δεν είναι σωστός ή έχει λήξει.</value>
+  </data>
+  <data name="CompletedPdfButton" xml:space="preserve">
+    <value>Ολοκληρωμένο έγγραφο</value>
+  </data>
+  <data name="ConsentButton" xml:space="preserve">
+    <value>Αποδοχή και αποστολή κωδικού</value>
+  </data>
+  <data name="ConsentCheckbox" xml:space="preserve">
+    <value>Συμφωνώ να υπογράψω αυτό το έγγραφο ηλεκτρονικά.</value>
+  </data>
+  <data name="ConsentCodeNote" xml:space="preserve">
+    <value>Στη συνέχεια θα στείλουμε έναν κωδικό μίας χρήσης στο {0} για να επιβεβαιώσουμε ότι είστε εσείς.</value>
+  </data>
+  <data name="ConsentHeading" xml:space="preserve">
+    <value>Συναίνεση για ηλεκτρονική υπογραφή</value>
+  </data>
+  <data name="ConsentRequired" xml:space="preserve">
+    <value>Επιλέξτε το πλαίσιο αποδοχής πριν συνεχίσετε.</value>
+  </data>
+  <data name="ConsentText" xml:space="preserve">
+    <value>Σας ζητείται να υπογράψετε ένα έγγραφο ηλεκτρονικά. Αποδεχόμενοι, συναινείτε στη διεκπεραίωση αυτού του εγγράφου ηλεκτρονικά και αποδέχεστε ότι η ηλεκτρονική σας υπογραφή είναι εξίσου έγκυρη με τη χειρόγραφη. Μπορείτε να ζητήσετε έντυπο αντίγραφο από τον αποστολέα και να ανακαλέσετε αυτή τη συναίνεση μην υπογράφοντας. Το όνομά σας, η ώρα της υπογραφής και ο κωδικός που σας στέλνουμε καταγράφονται μαζί με την υπογραφή σας, και το υπογεγραμμένο έγγραφο σφραγίζεται ώστε να μην μπορεί να αλλάξει.</value>
+  </data>
+  <data name="ContinueButton" xml:space="preserve">
+    <value>Συνέχεια</value>
+  </data>
+  <data name="ContinueInPersonLink" xml:space="preserve">
+    <value>Συνέχεια αυτοπροσώπως</value>
+  </data>
+  <data name="DetailIntro" xml:space="preserve">
+    <value>Αίτημα εξωτερικής υπογραφής: κατάσταση, υπογράφων και έγγραφα.</value>
+  </data>
+  <data name="DoneHeading" xml:space="preserve">
+    <value>Ευχαριστούμε.</value>
+  </data>
+  <data name="DoneText" xml:space="preserve">
+    <value>Η υπογραφή σας καταγράφηκε. Μπορείτε να κλείσετε αυτή τη σελίδα.</value>
+  </data>
+  <data name="DrawSignatureHelp" xml:space="preserve">
+    <value>Υπογράψτε με το δάχτυλο, γραφίδα ή ποντίκι. Χωρίς δείκτη, πληκτρολογήστε το όνομα και χρησιμοποιήστε το ως υπογραφή.</value>
+  </data>
+  <data name="DrawSignatureLabel" xml:space="preserve">
+    <value>Υπογραφή</value>
+  </data>
+  <data name="DrawSignatureRequired" xml:space="preserve">
+    <value>Υπογράψτε στο πλαίσιο ή χρησιμοποιήστε το όνομα ως υπογραφή.</value>
+  </data>
+  <data name="ESignAccountHeading" xml:space="preserve">
+    <value>Ομάδα Documenso αυτής της υπηρεσίας</value>
+  </data>
+  <data name="ESignActiveLabel" xml:space="preserve">
+    <value>Χρήση αυτού του λογαριασμού για συνδέσμους υπογραφής</value>
+  </data>
+  <data name="ESignClusterHeading" xml:space="preserve">
+    <value>Υπηρεσίες υπογραφής αυτής της εγκατάστασης</value>
+  </data>
+  <data name="ESignClusterHelp" xml:space="preserve">
+    <value>Ορίζονται από τον διαχειριστή αυτής της εγκατάστασης Resgrid. Χωρίς την πλατφόρμα ηλεκτρονικής υπογραφής δεν υπάρχουν σύνδεσμοι υπογραφής, ενώ η αυτοπρόσωπη υπογραφή λειτουργεί. Χωρίς σφράγιση, τα έγγραφα υπογράφονται και περιμένουν σφράγιση μέχρι να ρυθμιστεί.</value>
+  </data>
+  <data name="ESignIntro" xml:space="preserve">
+    <value>Ο λογαριασμός της πλατφόρμας ηλεκτρονικής υπογραφής που στέλνει έγγραφα για υπογραφή μέσω συνδέσμου, και η κατάσταση σφράγισης εγγράφων.</value>
+  </data>
+  <data name="ESignPlatformConfigured" xml:space="preserve">
+    <value>Πλατφόρμα ηλεκτρονικής υπογραφής (Documenso)</value>
+  </data>
+  <data name="ESignRemoveButton" xml:space="preserve">
+    <value>Αφαίρεση διακριτικού</value>
+  </data>
+  <data name="ESignSaved" xml:space="preserve">
+    <value>Οι ρυθμίσεις ηλεκτρονικής υπογραφής αποθηκεύτηκαν.</value>
+  </data>
+  <data name="ESignTab" xml:space="preserve">
+    <value>Ρυθμίσεις ηλεκτρονικής υπογραφής</value>
+  </data>
+  <data name="ESignTeamIdLabel" xml:space="preserve">
+    <value>Αναγνωριστικό ομάδας</value>
+  </data>
+  <data name="ESignTitle" xml:space="preserve">
+    <value>Ρυθμίσεις ηλεκτρονικής υπογραφής</value>
+  </data>
+  <data name="ESignTokenHelp" xml:space="preserve">
+    <value>Διακριτικό API της ομάδας. Αποθηκεύεται κρυπτογραφημένο και εμφανίζονται μόνο οι τέσσερις τελευταίοι χαρακτήρες. Αφήστε κενό για να διατηρήσετε το τρέχον.</value>
+  </data>
+  <data name="ESignTokenLabel" xml:space="preserve">
+    <value>Διακριτικό API</value>
+  </data>
+  <data name="EmbedFrameTitle" xml:space="preserve">
+    <value>Υπογραφή εγγράφου</value>
+  </data>
+  <data name="EmbedUnavailable" xml:space="preserve">
+    <value>Η υπηρεσία υπογραφής δεν είναι διαθέσιμη τώρα. Δοκιμάστε αργότερα.</value>
+  </data>
+  <data name="ExpiresLabel" xml:space="preserve">
+    <value>Λήγει</value>
+  </data>
+  <data name="ExternalPanelHelp" xml:space="preserve">
+    <value>Πελάτης, ένοικος ή τρίτος μπορεί να υπογράψει αυτό το έγγραφο αυτοπροσώπως σε αυτή τη συσκευή ή, όπου διατίθεται, μέσω συνδέσμου υπογραφής Resgrid.</value>
+  </data>
+  <data name="ExternalPanelTitle" xml:space="preserve">
+    <value>Εξωτερική υπογραφή</value>
+  </data>
+  <data name="FinishedButton" xml:space="preserve">
+    <value>Ολοκλήρωσα την υπογραφή</value>
+  </data>
+  <data name="HandDeviceButton" xml:space="preserve">
+    <value>Παράδοση συσκευής στον υπογράφοντα</value>
+  </data>
+  <data name="HandDeviceHelp" xml:space="preserve">
+    <value>Ανοίγει σε αυτή τη συσκευή σελίδα υπογραφής για το άλλο πρόσωπο: συναίνεση, όνομα και ζωγραφισμένη υπογραφή, με προαιρετικό μάρτυρα.</value>
+  </data>
+  <data name="HandDeviceTitle" xml:space="preserve">
+    <value>Αυτοπρόσωπη υπογραφή</value>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Αρχική</value>
+  </data>
+  <data name="InPersonSignedMessage" xml:space="preserve">
+    <value>Υπογράφηκε αυτοπροσώπως. Το υπογεγραμμένο έγγραφο σφραγίζεται όταν είναι διαθέσιμη η σφράγιση.</value>
+  </data>
+  <data name="LandingExpires" xml:space="preserve">
+    <value>Αυτός ο σύνδεσμος λήγει στις {0}.</value>
+  </data>
+  <data name="LandingIntro" xml:space="preserve">
+    <value>{0}, η υπηρεσία {1} σας ζητά να ελέγξετε και να υπογράψετε ένα έγγραφο.</value>
+  </data>
+  <data name="LevelExternal" xml:space="preserve">
+    <value>Εξωτερικός υπογράφων</value>
+  </data>
+  <data name="LevelSealed" xml:space="preserve">
+    <value>Σφραγισμένο έγγραφο</value>
+  </data>
+  <data name="LinkOnceHelp" xml:space="preserve">
+    <value>Ο σύνδεσμος υπογραφής δεν παραδόθηκε. Μπορείτε να τον δώσετε εσείς στον υπογράφοντα· εμφανίζεται μόνο τώρα και χρησιμοποιείται μία φορά.</value>
+  </data>
+  <data name="MethodExternalLink" xml:space="preserve">
+    <value>Σύνδεσμος υπογραφής και κωδικός</value>
+  </data>
+  <data name="MethodInPersonOffline" xml:space="preserve">
+    <value>Αυτοπροσώπως (εκτός σύνδεσης)</value>
+  </data>
+  <data name="MethodInPersonOnline" xml:space="preserve">
+    <value>Αυτοπροσώπως</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Όχι</value>
+  </data>
+  <data name="NoRightToRequest" xml:space="preserve">
+    <value>Δεν μπορείτε να ζητήσετε υπογραφές για αυτό το στοιχείο.</value>
+  </data>
+  <data name="OpenRequestStatus" xml:space="preserve">
+    <value>Αίτημα υπογραφής: {0} ({1}), λήγει {2}.</value>
+  </data>
+  <data name="OtpChannelEmail" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="OtpChannelLabel" xml:space="preserve">
+    <value>Αποστολή κωδικού μίας χρήσης με</value>
+  </data>
+  <data name="OtpChannelSms" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="PdfFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η δημιουργία του PDF.</value>
+  </data>
+  <data name="PrintedNameLabel" xml:space="preserve">
+    <value>Ονοματεπώνυμο</value>
+  </data>
+  <data name="ProtocolPdfButton" xml:space="preserve">
+    <value>PDF</value>
+  </data>
+  <data name="RefusalNone" xml:space="preserve">
+    <value>Ολοκληρώθηκε.</value>
+  </data>
+  <data name="RefusalInvalidRequest" xml:space="preserve">
+    <value>Ορισμένα στοιχεία λείπουν ή δεν είναι έγκυρα.</value>
+  </data>
+  <data name="RefusalSubjectNotFound" xml:space="preserve">
+    <value>Το στοιχείο δεν βρέθηκε ή δεν μπορείτε να το ανοίξετε.</value>
+  </data>
+  <data name="RefusalRemoteNeedsAddon" xml:space="preserve">
+    <value>Η υπογραφή μέσω συνδέσμου ανήκει στο πρόσθετο του οποίου μέρος είναι το έγγραφο. Η αυτοπρόσωπη υπογραφή είναι διαθέσιμη.</value>
+  </data>
+  <data name="RefusalProviderUnavailable" xml:space="preserve">
+    <value>Η υπογραφή μέσω συνδέσμου δεν έχει ρυθμιστεί για αυτή την υπηρεσία.</value>
+  </data>
+  <data name="RefusalRevisionChanged" xml:space="preserve">
+    <value>Το έγγραφο άλλαξε αφού εμφανίστηκε για υπογραφή. Ξεκινήστε ξανά.</value>
+  </data>
+  <data name="RefusalRequestClosed" xml:space="preserve">
+    <value>Αυτό το αίτημα δεν είναι πλέον ανοιχτό.</value>
+  </data>
+  <data name="RefusalProviderFailed" xml:space="preserve">
+    <value>Η πλατφόρμα ηλεκτρονικής υπογραφής δεν μπόρεσε να προετοιμάσει το έγγραφο. Δοκιμάστε αργότερα.</value>
+  </data>
+  <data name="RefusalContactRequired" xml:space="preserve">
+    <value>Εισαγάγετε έγκυρο email ή αριθμό τηλεφώνου σε διεθνή μορφή για τον κωδικό μίας χρήσης.</value>
+  </data>
+  <data name="RemoteRequestButton" xml:space="preserve">
+    <value>Αίτημα υπογραφής μέσω συνδέσμου</value>
+  </data>
+  <data name="RemoteRequestHelp" xml:space="preserve">
+    <value>Το Resgrid στέλνει στον υπογράφοντα σύνδεσμο μίας χρήσης. Πριν υπογράψει, συναινεί στην ηλεκτρονική υπογραφή και εισάγει κωδικό μίας χρήσης που αποστέλλεται στο παραπάνω email ή τηλέφωνο.</value>
+  </data>
+  <data name="RemoteUnavailableNone" xml:space="preserve">
+    <value>Η υπογραφή μέσω συνδέσμου είναι διαθέσιμη.</value>
+  </data>
+  <data name="RemoteUnavailableInvalidRequest" xml:space="preserve">
+    <value>Η υπογραφή μέσω συνδέσμου δεν προσφέρεται για αυτό το στοιχείο.</value>
+  </data>
+  <data name="RemoteUnavailableSubjectNotFound" xml:space="preserve">
+    <value>Η υπογραφή μέσω συνδέσμου δεν προσφέρεται για αυτό το στοιχείο.</value>
+  </data>
+  <data name="RemoteUnavailableRemoteNeedsAddon" xml:space="preserve">
+    <value>Η υπογραφή μέσω συνδέσμου περιλαμβάνεται στο πρόσθετο αυτού του εγγράφου· η αυτοπρόσωπη υπογραφή είναι δωρεάν.</value>
+  </data>
+  <data name="RemoteUnavailableProviderUnavailable" xml:space="preserve">
+    <value>Η υπογραφή μέσω συνδέσμου δεν έχει ρυθμιστεί (ρυθμίσεις ηλεκτρονικής υπογραφής)· η αυτοπρόσωπη υπογραφή είναι διαθέσιμη.</value>
+  </data>
+  <data name="RemoteUnavailableRevisionChanged" xml:space="preserve">
+    <value>Η υπογραφή μέσω συνδέσμου δεν είναι διαθέσιμη τώρα.</value>
+  </data>
+  <data name="RemoteUnavailableRequestClosed" xml:space="preserve">
+    <value>Η υπογραφή μέσω συνδέσμου δεν είναι διαθέσιμη τώρα.</value>
+  </data>
+  <data name="RemoteUnavailableProviderFailed" xml:space="preserve">
+    <value>Η υπογραφή μέσω συνδέσμου δεν είναι διαθέσιμη τώρα.</value>
+  </data>
+  <data name="RemoteUnavailableContactRequired" xml:space="preserve">
+    <value>Η υπογραφή μέσω συνδέσμου δεν είναι διαθέσιμη τώρα.</value>
+  </data>
+  <data name="RequestHeading" xml:space="preserve">
+    <value>Αίτημα υπογραφής</value>
+  </data>
+  <data name="RequestNotDeliveredMessage" xml:space="preserve">
+    <value>Το αίτημα δημιουργήθηκε αλλά ο σύνδεσμος δεν παραδόθηκε.</value>
+  </data>
+  <data name="RequestSentMessage" xml:space="preserve">
+    <value>Ο σύνδεσμος υπογραφής στάλθηκε στο {0}.</value>
+  </data>
+  <data name="RequestVoidedMessage" xml:space="preserve">
+    <value>Το αίτημα ανακλήθηκε.</value>
+  </data>
+  <data name="ResendButton" xml:space="preserve">
+    <value>Αποστολή νέου συνδέσμου</value>
+  </data>
+  <data name="ResendCodeButton" xml:space="preserve">
+    <value>Αποστολή νέου κωδικού</value>
+  </data>
+  <data name="RoleCustomer" xml:space="preserve">
+    <value>Πελάτης</value>
+  </data>
+  <data name="RoleOccupant" xml:space="preserve">
+    <value>Ένοικος</value>
+  </data>
+  <data name="RoleExternalParty" xml:space="preserve">
+    <value>Τρίτο μέρος</value>
+  </data>
+  <data name="RoleWitness" xml:space="preserve">
+    <value>Μάρτυρας</value>
+  </data>
+  <data name="RoleCounterparty" xml:space="preserve">
+    <value>Αντισυμβαλλόμενος</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="SealedPdfButton" xml:space="preserve">
+    <value>Σφραγισμένο PDF</value>
+  </data>
+  <data name="SealingKey" xml:space="preserve">
+    <value>Πιστοποιητικό υπογραφής</value>
+  </data>
+  <data name="SealingPendingState" xml:space="preserve">
+    <value>εκκρεμεί σφράγιση</value>
+  </data>
+  <data name="SealingSidecar" xml:space="preserve">
+    <value>Υπηρεσία σφράγισης (EU DSS)</value>
+  </data>
+  <data name="SealingStore" xml:space="preserve">
+    <value>Αποθήκευση σφραγισμένων εγγράφων</value>
+  </data>
+  <data name="SealingTsa" xml:space="preserve">
+    <value>Αρχή χρονοσήμανσης</value>
+  </data>
+  <data name="SendCodeButton" xml:space="preserve">
+    <value>Αποστολή κωδικού</value>
+  </data>
+  <data name="SendRequestButton" xml:space="preserve">
+    <value>Αποστολή αιτήματος</value>
+  </data>
+  <data name="SignNowButton" xml:space="preserve">
+    <value>Υπογραφή</value>
+  </data>
+  <data name="SignaturePageTitle" xml:space="preserve">
+    <value>Υπογραφές</value>
+  </data>
+  <data name="SignaturesHeading" xml:space="preserve">
+    <value>Υπογραφές</value>
+  </data>
+  <data name="SignaturesModuleTitle" xml:space="preserve">
+    <value>Υπογραφές</value>
+  </data>
+  <data name="SignedByNote" xml:space="preserve">
+    <value>{0} · {1}</value>
+  </data>
+  <data name="SignedState" xml:space="preserve">
+    <value>Υπογράφηκε</value>
+  </data>
+  <data name="SignerEmailLabel" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="SignerNameLabel" xml:space="preserve">
+    <value>Όνομα υπογράφοντα</value>
+  </data>
+  <data name="SignerPhoneLabel" xml:space="preserve">
+    <value>Κινητό τηλέφωνο</value>
+  </data>
+  <data name="SignerStatusPending" xml:space="preserve">
+    <value>Σε αναμονή</value>
+  </data>
+  <data name="SignerStatusOpened" xml:space="preserve">
+    <value>Άνοιξε</value>
+  </data>
+  <data name="SignerStatusVerified" xml:space="preserve">
+    <value>Επαληθευμένος κωδικός</value>
+  </data>
+  <data name="SignerStatusSigned" xml:space="preserve">
+    <value>Υπογράφηκε</value>
+  </data>
+  <data name="SignerStatusDeclined" xml:space="preserve">
+    <value>Απορρίφθηκε</value>
+  </data>
+  <data name="SigningBeingConfirmed" xml:space="preserve">
+    <value>Η υπογραφή σας επιβεβαιώνεται. Μπορεί να διαρκέσει ένα λεπτό· μπορείτε να κλείσετε τη σελίδα.</value>
+  </data>
+  <data name="SigningLinkLabel" xml:space="preserve">
+    <value>Σύνδεσμος υπογραφής</value>
+  </data>
+  <data name="SigningPageTitle" xml:space="preserve">
+    <value>Υπογραφή εγγράφου</value>
+  </data>
+  <data name="StatementTimeReport" xml:space="preserve">
+    <value>Επιβεβαιώνω ότι ο χρόνος που καταγράφεται στο {0} είναι σωστός (κωδικός περιεχομένου {1}).</value>
+  </data>
+  <data name="StatementBid" xml:space="preserve">
+    <value>Αποδέχομαι το {0} (κωδικός περιεχομένου {1}) εκ μέρους του πελάτη.</value>
+  </data>
+  <data name="StatementServiceContract" xml:space="preserve">
+    <value>Συμφωνώ με το {0} (κωδικός περιεχομένου {1}) εκ μέρους του οργανισμού μου.</value>
+  </data>
+  <data name="StatementRecordsInspection" xml:space="preserve">
+    <value>Βεβαιώνω ότι έλαβα τα αποτελέσματα του {0} (κωδικός περιεχομένου {1}).</value>
+  </data>
+  <data name="StatementCustodyTransfer" xml:space="preserve">
+    <value>Βεβαιώνω ότι παρέλαβα το πειστήριο του {0} (κωδικός περιεχομένου {1}).</value>
+  </data>
+  <data name="StatusDraft" xml:space="preserve">
+    <value>Πρόχειρο</value>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>Αναμονή υπογραφής</value>
+  </data>
+  <data name="StatusPartiallySigned" xml:space="preserve">
+    <value>Μερικώς υπογεγραμμένο</value>
+  </data>
+  <data name="StatusCompleted" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+  </data>
+  <data name="StatusDeclined" xml:space="preserve">
+    <value>Απορρίφθηκε</value>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>Έληξε</value>
+  </data>
+  <data name="StatusVoided" xml:space="preserve">
+    <value>Ανακλήθηκε</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="SubjectUnavailable" xml:space="preserve">
+    <value>Αυτό το στοιχείο δεν μπορεί να υπογραφεί τώρα.</value>
+  </data>
+  <data name="TooManyRequests" xml:space="preserve">
+    <value>Πάρα πολλά αιτήματα. Περιμένετε ένα λεπτό και δοκιμάστε ξανά.</value>
+  </data>
+  <data name="VerifyButton" xml:space="preserve">
+    <value>Επαλήθευση</value>
+  </data>
+  <data name="VerifyCodeButton" xml:space="preserve">
+    <value>Επιβεβαίωση κωδικού</value>
+  </data>
+  <data name="VerifyFileLabel" xml:space="preserve">
+    <value>Έγγραφο PDF</value>
+  </data>
+  <data name="VerifyFileRequired" xml:space="preserve">
+    <value>Επιλέξτε αρχείο PDF έως 25 MB.</value>
+  </data>
+  <data name="VerifyFormatColumn" xml:space="preserve">
+    <value>Μορφή</value>
+  </data>
+  <data name="VerifyIndicationColumn" xml:space="preserve">
+    <value>Αποτέλεσμα</value>
+  </data>
+  <data name="VerifyIntro" xml:space="preserve">
+    <value>Ανεβάστε ένα PDF για έλεγχο υπογραφών και χρονοσφραγίδων, και αν το Resgrid εξέδωσε ακριβώς αυτό το αρχείο.</value>
+  </data>
+  <data name="VerifyIssuedElsewhere" xml:space="preserve">
+    <value>Το Resgrid εξέδωσε ακριβώς αυτό το αρχείο, για άλλη υπηρεσία.</value>
+  </data>
+  <data name="VerifyIssuedHere" xml:space="preserve">
+    <value>Το Resgrid εξέδωσε ακριβώς αυτό το αρχείο για αυτή την υπηρεσία.</value>
+  </data>
+  <data name="VerifyIssuedLabel" xml:space="preserve">
+    <value>Εκδόθηκε από το Resgrid</value>
+  </data>
+  <data name="VerifyNoSignatures" xml:space="preserve">
+    <value>Το έγγραφο δεν φέρει υπογραφές.</value>
+  </data>
+  <data name="VerifyNotIssued" xml:space="preserve">
+    <value>Το Resgrid δεν έχει καταγραφή έκδοσης ακριβώς αυτού του αρχείου. Ένα αρχείο που άλλαξε, έστω κατά ένα byte, δεν ταιριάζει.</value>
+  </data>
+  <data name="VerifyNotPdf" xml:space="preserve">
+    <value>Το αρχείο δεν είναι PDF.</value>
+  </data>
+  <data name="VerifyResultHeading" xml:space="preserve">
+    <value>Αποτέλεσμα</value>
+  </data>
+  <data name="VerifySidecarMissing" xml:space="preserve">
+    <value>Η υπηρεσία επικύρωσης δεν έχει ρυθμιστεί σε αυτή την εγκατάσταση, οπότε ελέγχονται μόνο τα αρχεία του Resgrid.</value>
+  </data>
+  <data name="VerifySignaturesLabel" xml:space="preserve">
+    <value>Έγκυρες υπογραφές</value>
+  </data>
+  <data name="VerifyTab" xml:space="preserve">
+    <value>Επαλήθευση εγγράφου</value>
+  </data>
+  <data name="VerifyTimestampColumn" xml:space="preserve">
+    <value>Χρονοσφραγίδα</value>
+  </data>
+  <data name="VerifyTimestampedOn" xml:space="preserve">
+    <value>χρονοσφραγίδα {0}</value>
+  </data>
+  <data name="VerifyTitle" xml:space="preserve">
+    <value>Επαλήθευση εγγράφου</value>
+  </data>
+  <data name="VerifyUploadHeading" xml:space="preserve">
+    <value>Έγγραφο</value>
+  </data>
+  <data name="VerifyValidationUnavailable" xml:space="preserve">
+    <value>Η υπηρεσία επικύρωσης δεν απάντησε.</value>
+  </data>
+  <data name="ViewRequestLink" xml:space="preserve">
+    <value>Λεπτομέρειες</value>
+  </data>
+  <data name="VoidButton" xml:space="preserve">
+    <value>Ανάκληση αιτήματος</value>
+  </data>
+  <data name="WitnessNameLabel" xml:space="preserve">
+    <value>Μάρτυρας (προαιρετικό)</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ναι</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Ενέργειες</value>
+  </data>
+  <data name="AllMySignaturesLink" xml:space="preserve">
+    <value>Όλες οι υπογραφές μου</value>
+  </data>
+  <data name="AnyEligibleMember" xml:space="preserve">
+    <value>οποιοδήποτε μέλος πληροί τις προϋποθέσεις</value>
+  </data>
+  <data name="DeclineButton" xml:space="preserve">
+    <value>Απόρριψη</value>
+  </data>
+  <data name="DeclineConfirmButton" xml:space="preserve">
+    <value>Άρνηση υπογραφής</value>
+  </data>
+  <data name="DeclineHelp" xml:space="preserve">
+    <value>Η άρνηση τερματίζει το αίτημα για όλους· ο αιτών ενημερώνεται για τον λόγο σας.</value>
+  </data>
+  <data name="DeclineReasonLabel" xml:space="preserve">
+    <value>Γιατί αρνείστε;</value>
+  </data>
+  <data name="DocumentColumn" xml:space="preserve">
+    <value>Έγγραφο</value>
+  </data>
+  <data name="DueByLabel" xml:space="preserve">
+    <value>προθεσμία έως {0}</value>
+  </data>
+  <data name="IssueReceiptButton" xml:space="preserve">
+    <value>Απόδειξη</value>
+  </data>
+  <data name="IssueReceiptTitle" xml:space="preserve">
+    <value>Απόδειξη χορήγησης εξοπλισμού</value>
+  </data>
+  <data name="MemberFallbackName" xml:space="preserve">
+    <value>ένα μέλος</value>
+  </data>
+  <data name="MemberRequestButton" xml:space="preserve">
+    <value>Αίτημα υπογραφής προς {0}</value>
+  </data>
+  <data name="MemberRequestHelp" xml:space="preserve">
+    <value>Το μέλος υπογράφει στο Resgrid μετά από νέο έλεγχο ταυτότητας (επίπεδο 2)· το αίτημα εμφανίζεται στις Υπογραφές μου και στην αρχική του σελίδα.</value>
+  </data>
+  <data name="MemberRequestSentMessage" xml:space="preserve">
+    <value>Το αίτημα υπογραφής στάλθηκε.</value>
+  </data>
+  <data name="MySignaturesIntro" xml:space="preserve">
+    <value>Έγγραφα που περιμένουν την υπογραφή σας, με το βήμα που σας αντιστοιχεί.</value>
+  </data>
+  <data name="MySignaturesTab" xml:space="preserve">
+    <value>Οι υπογραφές μου</value>
+  </data>
+  <data name="MySignaturesTitle" xml:space="preserve">
+    <value>Οι υπογραφές μου</value>
+  </data>
+  <data name="NothingToSign" xml:space="preserve">
+    <value>Τίποτα δεν περιμένει την υπογραφή σας.</value>
+  </data>
+  <data name="OpenDocumentLink" xml:space="preserve">
+    <value>Άνοιγμα εγγράφου</value>
+  </data>
+  <data name="OpenSigningPageLink" xml:space="preserve">
+    <value>Σελίδα υπογραφής</value>
+  </data>
+  <data name="OpenStepButton" xml:space="preserve">
+    <value>Έλεγχος και υπογραφή</value>
+  </data>
+  <data name="OrderedHelp" xml:space="preserve">
+    <value>Οι υπογράφοντες υπογράφουν με τη σειρά του αριθμού βήματος· βήματα με τον ίδιο αριθμό μπορούν να υπογραφούν ταυτόχρονα.</value>
+  </data>
+  <data name="OutsideSignerFallbackName" xml:space="preserve">
+    <value>εξωτερικός υπογράφων</value>
+  </data>
+  <data name="PendingSignaturesHeader" xml:space="preserve">
+    <value>Αναμένουν την υπογραφή σας</value>
+  </data>
+  <data name="ReadinessProRequiredMessage" xml:space="preserve">
+    <value>Η αποδοχή εντολών εργασίας από προμηθευτές και οι αποδείξεις χορήγησης εξοπλισμού αποτελούν μέρος του Readiness Pro.</value>
+  </data>
+  <data name="SignedCountLabel" xml:space="preserve">
+    <value>Υπογεγραμμένα</value>
+  </data>
+  <data name="SignStepButton" xml:space="preserve">
+    <value>Υπογραφή</value>
+  </data>
+  <data name="StepDeclinedMessage" xml:space="preserve">
+    <value>Αρνηθήκατε να υπογράψετε. Το αίτημα έκλεισε.</value>
+  </data>
+  <data name="StepOrderColumn" xml:space="preserve">
+    <value>Βήμα</value>
+  </data>
+  <data name="StepPageIntro" xml:space="preserve">
+    <value>Διαβάστε τη δήλωση, ελέγξτε τον κωδικό περιεχομένου και υπογράψτε το βήμα σας.</value>
+  </data>
+  <data name="StepPanelTitle" xml:space="preserve">
+    <value>Η υπογραφή σας</value>
+  </data>
+  <data name="StepsHeading" xml:space="preserve">
+    <value>Υπογράφοντες</value>
+  </data>
+  <data name="StepSignedMessage" xml:space="preserve">
+    <value>Η υπογραφή σας καταγράφηκε.</value>
+  </data>
+  <data name="UnorderedHelp" xml:space="preserve">
+    <value>Κάθε υπογράφων μπορεί να υπογράψει οποιαδήποτε στιγμή.</value>
+  </data>
+  <data name="VendorAcceptanceHeading" xml:space="preserve">
+    <value>Αποδοχή από τον προμηθευτή</value>
+  </data>
+  <data name="WitnessNotYouNote" xml:space="preserve">
+    <value>Όποιος συμπλήρωσε τη λίστα ελέγχου δεν μπορεί να είναι μάρτυράς της.</value>
+  </data>
+  <data name="WitnessPanelTitle" xml:space="preserve">
+    <value>Υπογραφή μάρτυρα</value>
+  </data>
+  <data name="WitnessSignatureHelp" xml:space="preserve">
+    <value>Γράψτε στο πλαίσιο τι παρακολουθήσατε ως μάρτυρας. Η υπογραφή σας δεσμεύεται με τα αποτελέσματα που εμφανίζονται (όχι με σημειώσεις ή ελεύθερο κείμενο) και η λίστα ελέγχου ολοκληρώνεται όταν υπογράψετε.</value>
+  </data>
+  <data name="WitnessSignButton" xml:space="preserve">
+    <value>Υπογραφή ως μάρτυρας</value>
+  </data>
+  <data name="WitnessSignedMessage" xml:space="preserve">
+    <value>Η υπογραφή σας ως μάρτυρα καταγράφηκε και η λίστα ελέγχου ολοκληρώθηκε.</value>
+  </data>
+  <data name="WitnessSignFailedMessage" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η καταγραφή της υπογραφής του μάρτυρα.</value>
+  </data>
+  <data name="YourStepColumn" xml:space="preserve">
+    <value>Το βήμα σας</value>
+  </data>
+  <data name="YourStepNote" xml:space="preserve">
+    <value>Το βήμα σας: {0}</value>
+  </data>
+  <data name="RefusalNotYourTurn" xml:space="preserve">
+    <value>Δεν είναι ακόμη η σειρά σας: δεν έχουν υπογράψει όλοι οι προηγούμενοι υπογράφοντες.</value>
+  </data>
+  <data name="RefusalNotEligible" xml:space="preserve">
+    <value>Δεν διαθέτετε πιστοποίηση ή ρόλο που απαιτεί αυτό το βήμα.</value>
+  </data>
+  <data name="RefusalStepUpRequired" xml:space="preserve">
+    <value>Αυτό το βήμα απαιτεί επίπεδο 2: επιβεβαιώστε την ταυτότητά σας με τον δεύτερο παράγοντα ή με κλειδί πρόσβασης και, στη συνέχεια, υπογράψτε.</value>
+  </data>
+  <data name="RefusalPasskeyRequired" xml:space="preserve">
+    <value>Αυτό το βήμα πρέπει να υπογραφεί με κλειδί πρόσβασης.</value>
+  </data>
+  <data name="RefusalNotASigner" xml:space="preserve">
+    <value>Δεν είστε υπογράφων αυτού του βήματος.</value>
+  </data>
+  <data name="RefusalArtifactMismatch" xml:space="preserve">
+    <value>Η επιβεβαίωση με κλειδί πρόσβασης αφορούσε διαφορετικό περιεχόμενο. Φορτώστε ξανά τη σελίδα και υπογράψτε εκ νέου.</value>
+  </data>
+  <data name="RoleMember" xml:space="preserve">
+    <value>Μέλος</value>
+  </data>
+  <data name="RoleCertifyingOfficial" xml:space="preserve">
+    <value>Υπεύθυνος πιστοποίησης</value>
+  </data>
+  <data name="RoleEvaluator" xml:space="preserve">
+    <value>Αξιολογητής</value>
+  </data>
+  <data name="RoleVendor" xml:space="preserve">
+    <value>Προμηθευτής</value>
+  </data>
+  <data name="RoleRecipient" xml:space="preserve">
+    <value>Παραλήπτης</value>
+  </data>
+  <data name="IntentEvaluate" xml:space="preserve">
+    <value>Αξιολόγηση</value>
+  </data>
+  <data name="IntentCertify" xml:space="preserve">
+    <value>Πιστοποίηση</value>
+  </data>
+  <data name="IntentAccept" xml:space="preserve">
+    <value>Αποδοχή</value>
+  </data>
+  <data name="OutcomeStepUpRequired" xml:space="preserve">
+    <value>Επιβεβαιώστε την ταυτότητά σας με τον δεύτερο παράγοντα και υπογράψτε ξανά.</value>
+  </data>
+  <data name="OutcomePasskeyRequired" xml:space="preserve">
+    <value>Για την υπογραφή απαιτείται κλειδί πρόσβασης.</value>
+  </data>
+  <data name="OutcomeArtifactMismatch" xml:space="preserve">
+    <value>Η επιβεβαίωση με κλειδί πρόσβασης αφορούσε διαφορετικό περιεχόμενο.</value>
+  </data>
+  <data name="OutcomeInvalidRequest" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η καταγραφή της υπογραφής.</value>
+  </data>
+  <data name="StatementWorkOrderVendorAcceptance" xml:space="preserve">
+    <value>Αποδέχομαι την εργασία που ολοκληρώθηκε στο {0} (κωδικός περιεχομένου {1}).</value>
+  </data>
+  <data name="StatementInventoryIssueReceipt" xml:space="preserve">
+    <value>Επιβεβαιώνω την παραλαβή: {0} (κωδικός περιεχομένου {1}).</value>
+  </data>
+  <data name="StatementSkillEvaluation" xml:space="preserve">
+    <value>Επιβεβαιώνω την αξιολόγηση που καταγράφηκε για {0} (κωδικός περιεχομένου {1}).</value>
+  </data>
+  <data name="StatementChecklistWitness" xml:space="preserve">
+    <value>Παρακολούθησα ως μάρτυρας τη λίστα ελέγχου {0} για {1} και επιβεβαιώνω ότι τα αποτελέσματα που εμφανίζονται είναι αυτά που καταγράφηκαν (κωδικός περιεχομένου {2}).</value>
+  </data>
+  <data name="StatementPurchaseRequisitionApproval" xml:space="preserve">
+    <value>Εγκρίνω την αίτηση αγοράς {0} (κωδικός περιεχομένου {1}).</value>
+  </data>
+  <data name="StatementIncidentPlanApproval" xml:space="preserve">
+    <value>Εγκρίνω το σχέδιο δράσης συμβάντος {0} (κωδικός περιεχομένου {1}).</value>
+  </data>
+  <data name="StatementInvoiceApproval" xml:space="preserve">
+    <value>Εγκρίνω την αποστολή του {0} (κωδικός περιεχομένου {1}).</value>
+  </data>
+  <data name="StatementPayrollRunApproval" xml:space="preserve">
+    <value>Εγκρίνω την εκκαθάριση μισθοδοσίας {0} (κωδικός περιεχομένου {1}).</value>
+  </data>
+  <data name="StatementCalOesMarsPackageApproval" xml:space="preserve">
+    <value>Εγκρίνω το πακέτο Cal OES MARS {0} για υποβολή (κωδικός περιεχομένου {1}).</value>
+  </data>
+  <data name="StatementMutualAidAgreementApproval" xml:space="preserve">
+    <value>Εγκρίνω τη συμφωνία αμοιβαίας συνδρομής {0} εκ μέρους του τμήματος (κωδικός περιεχομένου {1}).</value>
+  </data>
+  <data name="ApprovalsTab" xml:space="preserve">
+    <value>Εγκρίσεις</value>
+  </data>
+</root>

@@ -9,6 +9,8 @@
 @using Resgrid.Web.Helpers
 @model InventoryWorkspaceView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureText
+@inject Resgrid.Model.Services.IReadinessAccessService readinessAccess
 @*
     Catalog and stock. One tab per kind of record; every list is a table with columns that
     suit that record, and every piece of data entry that needs more than two or three
@@ -67,6 +69,8 @@
 @{
     ViewBag.Title = "Resgrid | " + localizer["Inventory"];
     var protectedData = ViewBag.ProtectionEnforced == true;
+    // e-Signature S3: issue receipts are a Readiness Pro use, offered only while the add-on is active (one check per page).
+    var issueReceipts = Model.CanIssue && Model.Tab is "Issuances" or "PersonnelGear" && await readinessAccess.CanUseMaintenanceAsync(Resgrid.Web.Helpers.ClaimsAuthorizationHelper.GetDepartmentId());
 
     var itemOptions = Choice(Model.Items.Select(x => new InventoryChoice { Id = x.Id, Name = InventoryWorkspaceView.Details<InventoryItemContent>(x).Name }));
     var locationOptions = Choice(Model.Locations.Select(x => new InventoryChoice { Id = x.Id, Name = InventoryWorkspaceView.Details<InventoryLabel>(x).Name }));
@@ -508,6 +512,11 @@
                                                     @if (Model.CanIssue && issued.Status is 0 or 2)
                                                     {
                                                         <button class="btn btn-xs btn-primary" type="button" data-toggle="modal" data-target="#rgw-return-@issued.Id">@localizer["Return"]</button>
+                                                    }
+                                                    @* e-Signature S3 (Readiness Pro): the issue receipt, signed by the member recipient (L2) or in person. *@
+                                                    @if (issueReceipts)
+                                                    {
+                                                        <a class="btn btn-xs btn-default" asp-controller="Signatures" asp-action="Subject" asp-route-area="User" asp-route-kind="@((int)Resgrid.Model.SignatureSubjectKinds.InventoryIssueReceipt)" asp-route-subjectId="@issued.Id"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> @signatureText["IssueReceiptButton"]</a>
                                                     }
                                                 </td>
                                             </tr>

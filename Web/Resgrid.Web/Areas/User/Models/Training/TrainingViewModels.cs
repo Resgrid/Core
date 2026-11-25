@@ -116,6 +116,9 @@ namespace Resgrid.Web.Areas.User.Models.Training
 
 		public bool OpenToAllMembers { get; set; }
 
+		/// <summary>Never used for knowledge answers (K1, decision 14: licensed material whose license forbids processing).</summary>
+		public bool ExcludeFromAi { get; set; }
+
 		public bool AllowSelfEnroll { get; set; }
 
 		public int? RepeatMonths { get; set; }
@@ -141,6 +144,18 @@ namespace Resgrid.Web.Areas.User.Models.Training
 		public string CeCourseNumber { get; set; }
 
 		public int? CategoryId { get; set; }
+
+		/// <summary><see cref="MethodsOfTraining"/> (Vector parity, Training T1).</summary>
+		public int? MethodOfTraining { get; set; }
+
+		/// <summary>Plain text, at most 2000 characters.</summary>
+		public string Objectives { get; set; }
+
+		/// <summary>Comma separated, at most 500 characters.</summary>
+		public string Tags { get; set; }
+
+		/// <summary>The course code exports and the transcript carry, at most 64 characters.</summary>
+		public string ExternalCode { get; set; }
 
 		// Assignment (audience rules; ContentAudienceKinds)
 		public bool AssignEveryone { get; set; }
@@ -182,6 +197,9 @@ namespace Resgrid.Web.Areas.User.Models.Training
 		public List<SelectListItem> UnitTypes { get; set; } = new List<SelectListItem>();
 
 		public List<SelectListItem> Shifts { get; set; } = new List<SelectListItem>();
+
+		/// <summary>The department's training categories (a removed one only when it is the stored value).</summary>
+		public List<SelectListItem> Categories { get; set; } = new List<SelectListItem>();
 
 		public bool CanAuthor { get; set; } = true;
 

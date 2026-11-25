@@ -1,0 +1,1174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Skl.ActionFailed" xml:space="preserve">
+    <value>Die Aktion konnte nicht abgeschlossen werden.</value>
+  </data>
+  <data name="Skl.Actions" xml:space="preserve">
+    <value>Aktionen</value>
+  </data>
+  <data name="Skl.AddEvidence" xml:space="preserve">
+    <value>Nachweis hinzufügen</value>
+  </data>
+  <data name="Skl.AddStep" xml:space="preserve">
+    <value>Schritt hinzufügen</value>
+  </data>
+  <data name="Skl.AddTask" xml:space="preserve">
+    <value>Aufgabe hinzufügen</value>
+  </data>
+  <data name="Skl.AddTimedNote" xml:space="preserve">
+    <value>Notiz hinzufügen (Zeit wird erfasst)</value>
+  </data>
+  <data name="Skl.AddonNotice" xml:space="preserve">
+    <value>Fertigkeitsbewertungen und Ausbildungsnachweise benötigen das LMS-Add-on. Alles Erfasste bleibt lesbar.</value>
+  </data>
+  <data name="Skl.AllSheets" xml:space="preserve">
+    <value>Alle Fertigkeitsbögen</value>
+  </data>
+  <data name="Skl.AllStates" xml:space="preserve">
+    <value>Alle Zustände</value>
+  </data>
+  <data name="Skl.AllTaskBooks" xml:space="preserve">
+    <value>Alle Ausbildungsnachweise</value>
+  </data>
+  <data name="Skl.Annotation" xml:space="preserve">
+    <value>Anmerkung</value>
+  </data>
+  <data name="Skl.Answer" xml:space="preserve">
+    <value>Antwort</value>
+  </data>
+  <data name="Skl.AnyEligible" xml:space="preserve">
+    <value>Jedes berechtigte Mitglied</value>
+  </data>
+  <data name="Skl.Attempt" xml:space="preserve">
+    <value>Versuch</value>
+  </data>
+  <data name="Skl.AwaitingCertification" xml:space="preserve">
+    <value>Wartet auf den abschließenden Prüfer und die zertifizierende Stelle</value>
+  </data>
+  <data name="Skl.BooksToEvaluate" xml:space="preserve">
+    <value>Ausbildungsnachweise, in denen Sie Aufgaben abzeichnen können</value>
+  </data>
+  <data name="Skl.CancelReason" xml:space="preserve">
+    <value>Grund für den Abbruch</value>
+  </data>
+  <data name="Skl.CancelTaskBook" xml:space="preserve">
+    <value>Ausbildungsnachweis abbrechen</value>
+  </data>
+  <data name="Skl.CancelTaskBookConfirm" xml:space="preserve">
+    <value>Diesen Ausbildungsnachweis abbrechen? Abgezeichnete Aufgaben bleiben erhalten.</value>
+  </data>
+  <data name="Skl.CertificationRequested" xml:space="preserve">
+    <value>Die Zertifizierung wurde angefordert. Der abschließende Prüfer unterschreibt zuerst.</value>
+  </data>
+  <data name="Skl.CertifiedOn" xml:space="preserve">
+    <value>Zertifiziert am</value>
+  </data>
+  <data name="Skl.CertifyingOfficial" xml:space="preserve">
+    <value>Zertifizierende Stelle</value>
+  </data>
+  <data name="Skl.ChangeSummary" xml:space="preserve">
+    <value>Änderungsübersicht</value>
+  </data>
+  <data name="Skl.Choose" xml:space="preserve">
+    <value>Auswählen...</value>
+  </data>
+  <data name="Skl.Col.Date" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="Skl.Col.Evaluation" xml:space="preserve">
+    <value>Bewertung</value>
+  </data>
+  <data name="Skl.Col.Evaluator" xml:space="preserve">
+    <value>Prüfer</value>
+  </data>
+  <data name="Skl.Col.Expires" xml:space="preserve">
+    <value>Läuft ab</value>
+  </data>
+  <data name="Skl.Col.Score" xml:space="preserve">
+    <value>Punktzahl</value>
+  </data>
+  <data name="Skl.Col.Signer" xml:space="preserve">
+    <value>Unterzeichner</value>
+  </data>
+  <data name="Skl.Col.Started" xml:space="preserve">
+    <value>Begonnen</value>
+  </data>
+  <data name="Skl.Col.Status" xml:space="preserve">
+    <value>Zustand</value>
+  </data>
+  <data name="Skl.Col.Step" xml:space="preserve">
+    <value>Schritt</value>
+  </data>
+  <data name="Skl.Col.Version" xml:space="preserve">
+    <value>Fassung</value>
+  </data>
+  <data name="Skl.Complete" xml:space="preserve">
+    <value>Erledigt</value>
+  </data>
+  <data name="Skl.Compute.Average" xml:space="preserve">
+    <value>Durchschnitt</value>
+  </data>
+  <data name="Skl.Compute.Max" xml:space="preserve">
+    <value>Höchstwert</value>
+  </data>
+  <data name="Skl.Compute.Min" xml:space="preserve">
+    <value>Tiefstwert</value>
+  </data>
+  <data name="Skl.Compute.Sum" xml:space="preserve">
+    <value>Summe</value>
+  </data>
+  <data name="Skl.ComputedHelp" xml:space="preserve">
+    <value>Aus den genannten Schritten berechnet</value>
+  </data>
+  <data name="Skl.Continue" xml:space="preserve">
+    <value>Fortsetzen</value>
+  </data>
+  <data name="Skl.CrewHelp" xml:space="preserve">
+    <value>Ein Formular für die ganze Mannschaft: alle erhalten dasselbe Ergebnis und denselben Eintrag. Trennen Sie ein Mitglied ab, das anders bewertet werden soll.</value>
+  </data>
+  <data name="Skl.CriticalFailedNotice" xml:space="preserve">
+    <value>Ein kritischer Schritt wurde nicht erfüllt: Die Bewertung ist unabhängig von der Punktzahl nicht bestanden.</value>
+  </data>
+  <data name="Skl.Declined" xml:space="preserve">
+    <value>Abgelehnt</value>
+  </data>
+  <data name="Skl.Definition" xml:space="preserve">
+    <value>Vorlage für Ausbildungsnachweise</value>
+  </data>
+  <data name="Skl.DefinitionCreated" xml:space="preserve">
+    <value>Die Vorlage wurde angelegt. Legen Sie fest, wer abzeichnet und zertifiziert, und speichern Sie.</value>
+  </data>
+  <data name="Skl.DefinitionDeleted" xml:space="preserve">
+    <value>Die Vorlage wurde entfernt. Offene Ausbildungsnachweise behalten ihre Aufgaben.</value>
+  </data>
+  <data name="Skl.DefinitionIntro" xml:space="preserve">
+    <value>Positionscode, Aufgaben und wer abzeichnet, empfiehlt und zertifiziert.</value>
+  </data>
+  <data name="Skl.DefinitionsIntro" xml:space="preserve">
+    <value>Ihre Ausbildungsnachweise für Positionen und die Resgrid-Vorlagen als Ausgangspunkt.</value>
+  </data>
+  <data name="Skl.DefinitionsTitle" xml:space="preserve">
+    <value>Vorlagen für Ausbildungsnachweise</value>
+  </data>
+  <data name="Skl.DeleteDefinition" xml:space="preserve">
+    <value>Vorlage entfernen</value>
+  </data>
+  <data name="Skl.DeleteDefinitionConfirm" xml:space="preserve">
+    <value>Diese Vorlage entfernen? Offene Ausbildungsnachweise behalten ihre Aufgaben.</value>
+  </data>
+  <data name="Skl.DeleteSheet" xml:space="preserve">
+    <value>Fertigkeitsbogen außer Dienst stellen</value>
+  </data>
+  <data name="Skl.DeleteSheetConfirm" xml:space="preserve">
+    <value>Diesen Fertigkeitsbogen außer Dienst stellen? Seine Bewertungen bleiben erhalten.</value>
+  </data>
+  <data name="Skl.Digest.Daily" xml:space="preserve">
+    <value>Tägliche Zusammenfassung</value>
+  </data>
+  <data name="Skl.Digest.Immediate" xml:space="preserve">
+    <value>Sofort</value>
+  </data>
+  <data name="Skl.Digest.Off" xml:space="preserve">
+    <value>Aus</value>
+  </data>
+  <data name="Skl.Digest.Weekly" xml:space="preserve">
+    <value>Wöchentliche Zusammenfassung</value>
+  </data>
+  <data name="Skl.DigestHour" xml:space="preserve">
+    <value>Uhrzeit der Zusammenfassung (Ortszeit der Abteilung)</value>
+  </data>
+  <data name="Skl.DigestMode" xml:space="preserve">
+    <value>Hinweise zustellen</value>
+  </data>
+  <data name="Skl.DigestWeekday" xml:space="preserve">
+    <value>Tag der wöchentlichen Zusammenfassung</value>
+  </data>
+  <data name="Skl.Draft" xml:space="preserve">
+    <value>Entwurf</value>
+  </data>
+  <data name="Skl.DraftNotReady" xml:space="preserve">
+    <value>Der Entwurf kann noch nicht veröffentlicht werden:</value>
+  </data>
+  <data name="Skl.DraftSaved" xml:space="preserve">
+    <value>Der Entwurf wurde gespeichert.</value>
+  </data>
+  <data name="Skl.DraftSteps" xml:space="preserve">
+    <value>Schritte</value>
+  </data>
+  <data name="Skl.Edit" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
+  <data name="Skl.EditorNeedsScript" xml:space="preserve">
+    <value>Der Schritteditor benötigt JavaScript.</value>
+  </data>
+  <data name="Skl.Elapsed" xml:space="preserve">
+    <value>Verstrichen</value>
+  </data>
+  <data name="Skl.Evaluate" xml:space="preserve">
+    <value>Bewerten</value>
+  </data>
+  <data name="Skl.EvaluationIntro" xml:space="preserve">
+    <value>Ergebnis, alle Schritte, Nachweise und Unterschriften.</value>
+  </data>
+  <data name="Skl.EvaluationStarted" xml:space="preserve">
+    <value>Die Bewertung hat begonnen. Die Zeitmessung läuft.</value>
+  </data>
+  <data name="Skl.Evaluations" xml:space="preserve">
+    <value>Bewertungen</value>
+  </data>
+  <data name="Skl.EvaluationsIntro" xml:space="preserve">
+    <value>Alle Bewertungen der Abteilung nach Bogen und Zustand.</value>
+  </data>
+  <data name="Skl.EvaluationsTitle" xml:space="preserve">
+    <value>Fertigkeitsbewertungen</value>
+  </data>
+  <data name="Skl.EvaluatorComments" xml:space="preserve">
+    <value>Anmerkungen des Prüfers</value>
+  </data>
+  <data name="Skl.Evidence" xml:space="preserve">
+    <value>Nachweise</value>
+  </data>
+  <data name="Skl.EvidenceAdded" xml:space="preserve">
+    <value>Der Nachweis wurde hinzugefügt.</value>
+  </data>
+  <data name="Skl.EvidenceFile" xml:space="preserve">
+    <value>Foto, Video oder Datei</value>
+  </data>
+  <data name="Skl.EvidenceHelp" xml:space="preserve">
+    <value>Bis zu 30 MB pro Datei. Der SHA-256-Wert jeder Datei wird in den versiegelten Nachweis aufgenommen.</value>
+  </data>
+  <data name="Skl.EvidenceStep" xml:space="preserve">
+    <value>Für Schritt</value>
+  </data>
+  <data name="Skl.EvidenceStepHelp" xml:space="preserve">
+    <value>Fügen Sie Foto, Video oder Datei unten hinzu.</value>
+  </data>
+  <data name="Skl.Fail" xml:space="preserve">
+    <value>Nicht bestanden</value>
+  </data>
+  <data name="Skl.Family" xml:space="preserve">
+    <value>Bereich</value>
+  </data>
+  <data name="Skl.Family.Custom" xml:space="preserve">
+    <value>Eigene</value>
+  </data>
+  <data name="Skl.Family.DriverOperator" xml:space="preserve">
+    <value>Maschinist</value>
+  </data>
+  <data name="Skl.Family.FieldTraining" xml:space="preserve">
+    <value>Praktische Einarbeitung</value>
+  </data>
+  <data name="Skl.Family.NccpSkills" xml:space="preserve">
+    <value>NCCP-Fertigkeitsnachweis</value>
+  </data>
+  <data name="Skl.Family.Officer" xml:space="preserve">
+    <value>Führungskraft</value>
+  </data>
+  <data name="Skl.Family.OshaOperator" xml:space="preserve">
+    <value>OSHA-Bedienerbewertung</value>
+  </data>
+  <data name="Skl.Family.Wildland" xml:space="preserve">
+    <value>Vegetationsbrand (NWCG)</value>
+  </data>
+  <data name="Skl.Field.AllowCrew" xml:space="preserve">
+    <value>Bewertungen der ganzen Mannschaft zulassen (ein Formular für mehrere Mitglieder)</value>
+  </data>
+  <data name="Skl.Field.AllowSelf" xml:space="preserve">
+    <value>Selbstbewertung zulassen</value>
+  </data>
+  <data name="Skl.Field.AttemptWindow" xml:space="preserve">
+    <value>Zeitraum für Versuche (Tage)</value>
+  </data>
+  <data name="Skl.Field.CallId" xml:space="preserve">
+    <value>Einsatznummer</value>
+  </data>
+  <data name="Skl.Field.Category" xml:space="preserve">
+    <value>Angerechnete Ausbildungskategorie</value>
+  </data>
+  <data name="Skl.Field.CertificationType" xml:space="preserve">
+    <value>Aktivierte Qualifikation</value>
+  </data>
+  <data name="Skl.Field.CertificationTypeHelp" xml:space="preserve">
+    <value>Das Anlegen eines Nachweises eröffnet einen Eintrag „In Ausbildung“ dieses Typs; die Zertifizierung macht ihn aktiv.</value>
+  </data>
+  <data name="Skl.Field.CertificationTypes" xml:space="preserve">
+    <value>Qualifikationsarten</value>
+  </data>
+  <data name="Skl.Field.Code" xml:space="preserve">
+    <value>Fertigkeitscode</value>
+  </data>
+  <data name="Skl.Field.CodeHelp" xml:space="preserve">
+    <value>Wird als Kurscode im Ausbildungsnachweis und von Anforderungen „N bestandene Bewertungen“ verwendet.</value>
+  </data>
+  <data name="Skl.Field.DefaultMinutes" xml:space="preserve">
+    <value>Angerechnete Minuten ohne Zeitmessung</value>
+  </data>
+  <data name="Skl.Field.DeploymentId" xml:space="preserve">
+    <value>Abordnungsnummer</value>
+  </data>
+  <data name="Skl.Field.Description" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="Skl.Field.Evaluators" xml:space="preserve">
+    <value>Wer bewerten darf</value>
+  </data>
+  <data name="Skl.Field.EvaluatorsHelp" xml:space="preserve">
+    <value>Mitglieder mit gültiger Qualifikation einer gewählten Art oder einer gewählten Funktion. Nichts gewählt: nur LMS-Verwalter.</value>
+  </data>
+  <data name="Skl.Field.Kind" xml:space="preserve">
+    <value>Art</value>
+  </data>
+  <data name="Skl.Field.Location" xml:space="preserve">
+    <value>Ort</value>
+  </data>
+  <data name="Skl.Field.MaxAttempts" xml:space="preserve">
+    <value>Erlaubte Fehlversuche (0 = unbegrenzt)</value>
+  </data>
+  <data name="Skl.Field.NextSigner" xml:space="preserve">
+    <value>Wen der Prüfer als nächsten Unterzeichner wählen darf</value>
+  </data>
+  <data name="Skl.Field.NextSignerHelp" xml:space="preserve">
+    <value>Wenn festgelegt, muss der Prüfer ein Mitglied wählen, das diese Regel zulässt; es unterschreibt nach dem Prüfer.</value>
+  </data>
+  <data name="Skl.Field.PassThreshold" xml:space="preserve">
+    <value>Bestehensgrenze (%)</value>
+  </data>
+  <data name="Skl.Field.RecertifyMonths" xml:space="preserve">
+    <value>Erneute Bewertung nach (Monaten)</value>
+  </data>
+  <data name="Skl.Field.RecertifyMonthsHelp" xml:space="preserve">
+    <value>Ablauf des zertifizierten Eintrags (OSHA-Bediener: 36). 0 verwendet die Gültigkeit der Qualifikationsart.</value>
+  </data>
+  <data name="Skl.Field.Roles" xml:space="preserve">
+    <value>Funktionen</value>
+  </data>
+  <data name="Skl.Field.TimeLimit" xml:space="preserve">
+    <value>Zeitlimit (Sekunden, 0 = keines)</value>
+  </data>
+  <data name="Skl.Field.Title" xml:space="preserve">
+    <value>Titel</value>
+  </data>
+  <data name="Skl.Field.ValidityMonths" xml:space="preserve">
+    <value>Gültig für (Monate)</value>
+  </data>
+  <data name="Skl.Filter" xml:space="preserve">
+    <value>Filtern</value>
+  </data>
+  <data name="Skl.FinalEvaluator" xml:space="preserve">
+    <value>Abschließender Prüfer</value>
+  </data>
+  <data name="Skl.Grading" xml:space="preserve">
+    <value>Bewertungsregeln</value>
+  </data>
+  <data name="Skl.HomeIntro" xml:space="preserve">
+    <value>Ihre durchgeführten Bewertungen, wartende Unterschriften, Ihre Ergebnisse und Ausbildungsnachweise.</value>
+  </data>
+  <data name="Skl.HomeTitle" xml:space="preserve">
+    <value>Fertigkeiten und Ausbildungsnachweise</value>
+  </data>
+  <data name="Skl.IncidentRequired" xml:space="preserve">
+    <value>Diese Aufgabe zählt nur Bewertungen bei einem Einsatz oder einer Abordnung: Nummer eingeben.</value>
+  </data>
+  <data name="Skl.IncidentTask" xml:space="preserve">
+    <value>Einsatzaufgabe</value>
+  </data>
+  <data name="Skl.Initiate" xml:space="preserve">
+    <value>Ausbildungsnachweis anlegen</value>
+  </data>
+  <data name="Skl.InitiatedOn" xml:space="preserve">
+    <value>Angelegt am</value>
+  </data>
+  <data name="Skl.Kind.ObservationReport" xml:space="preserve">
+    <value>Tägliche Beobachtungsbewertung</value>
+  </data>
+  <data name="Skl.Kind.SkillSheet" xml:space="preserve">
+    <value>Fertigkeitsbogen</value>
+  </data>
+  <data name="Skl.LapsedNotice" xml:space="preserve">
+    <value>Das LMS-Add-on ist nicht aktiv: Erfasstes bleibt lesbar, offene Bewertungen und Nachweise können abgeschlossen werden, Neues kann nicht beginnen.</value>
+  </data>
+  <data name="Skl.MajorVersion" xml:space="preserve">
+    <value>Hauptversion (erneute Bewertung kann nötig sein)</value>
+  </data>
+  <data name="Skl.MemberSplit" xml:space="preserve">
+    <value>Das Mitglied wurde in eine eigene Bewertung übernommen.</value>
+  </data>
+  <data name="Skl.MembersHelp" xml:space="preserve">
+    <value>Wählen Sie ein Mitglied oder mehrere für eine Mannschaftsbewertung, wenn der Bogen dies erlaubt.</value>
+  </data>
+  <data name="Skl.MembersToEvaluate" xml:space="preserve">
+    <value>Bewertete Mitglieder</value>
+  </data>
+  <data name="Skl.MoveDown" xml:space="preserve">
+    <value>Nach unten</value>
+  </data>
+  <data name="Skl.MoveUp" xml:space="preserve">
+    <value>Nach oben</value>
+  </data>
+  <data name="Skl.MyOpenEvaluations" xml:space="preserve">
+    <value>Meine laufenden Bewertungen</value>
+  </data>
+  <data name="Skl.MyResults" xml:space="preserve">
+    <value>Meine Ergebnisse</value>
+  </data>
+  <data name="Skl.MySignatures" xml:space="preserve">
+    <value>Bewertungen, die auf meine Unterschrift warten</value>
+  </data>
+  <data name="Skl.MyTaskBooks" xml:space="preserve">
+    <value>Meine Ausbildungsnachweise</value>
+  </data>
+  <data name="Skl.NeedsAnswer" xml:space="preserve">
+    <value>Antwort nötig</value>
+  </data>
+  <data name="Skl.NewDefinition" xml:space="preserve">
+    <value>Neue Vorlage für Ausbildungsnachweise</value>
+  </data>
+  <data name="Skl.NewSheet" xml:space="preserve">
+    <value>Neuer Fertigkeitsbogen</value>
+  </data>
+  <data name="Skl.NextSigner" xml:space="preserve">
+    <value>Nächster Unterzeichner</value>
+  </data>
+  <data name="Skl.NextSignerHelp" xml:space="preserve">
+    <value>Der Bogen verlangt eine zweite Unterschrift eines Mitglieds, das seine Regel zulässt.</value>
+  </data>
+  <data name="Skl.NoDefinitions" xml:space="preserve">
+    <value>Noch keine Vorlagen. Beginnen Sie mit einer Resgrid-Vorlage.</value>
+  </data>
+  <data name="Skl.NoEvaluations" xml:space="preserve">
+    <value>Keine passenden Bewertungen.</value>
+  </data>
+  <data name="Skl.NoOpenEvaluations" xml:space="preserve">
+    <value>Sie führen keine Bewertungen durch.</value>
+  </data>
+  <data name="Skl.NoResults" xml:space="preserve">
+    <value>Noch keine Bewertungen von Ihnen.</value>
+  </data>
+  <data name="Skl.NoSheet" xml:space="preserve">
+    <value>Kein Bogen (bestanden/nicht bestanden)</value>
+  </data>
+  <data name="Skl.NoSheets" xml:space="preserve">
+    <value>Noch keine Fertigkeitsbögen.</value>
+  </data>
+  <data name="Skl.NoSheetsToEvaluate" xml:space="preserve">
+    <value>Es gibt keinen veröffentlichten Bogen, auf dem Sie bewerten dürfen.</value>
+  </data>
+  <data name="Skl.NoSignatures" xml:space="preserve">
+    <value>Keine Bewertungen warten auf Ihre Unterschrift.</value>
+  </data>
+  <data name="Skl.NoTaskBooks" xml:space="preserve">
+    <value>Keine Ausbildungsnachweise.</value>
+  </data>
+  <data name="Skl.None" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="Skl.NotApplicable" xml:space="preserve">
+    <value>Nicht zutreffend</value>
+  </data>
+  <data name="Skl.NotApplicableReason" xml:space="preserve">
+    <value>Warum nicht zutreffend</value>
+  </data>
+  <data name="Skl.NotifyMembers" xml:space="preserve">
+    <value>Bewertete Mitglieder und Auszubildende über ihre eigenen Bewertungen und Nachweise informieren</value>
+  </data>
+  <data name="Skl.NotifyOfficers" xml:space="preserve">
+    <value>Abteilungsadministratoren über alle Bewertungen und Nachweise informieren</value>
+  </data>
+  <data name="Skl.Open" xml:space="preserve">
+    <value>Öffnen</value>
+  </data>
+  <data name="Skl.OpenSignature" xml:space="preserve">
+    <value>Unterschrift öffnen</value>
+  </data>
+  <data name="Skl.OpenTaskBooks" xml:space="preserve">
+    <value>Offene Ausbildungsnachweise</value>
+  </data>
+  <data name="Skl.OutsideEvaluator" xml:space="preserve">
+    <value>Ein externer Prüfer unterschreibt stattdessen</value>
+  </data>
+  <data name="Skl.OutsideEvaluatorEmail" xml:space="preserve">
+    <value>E-Mail (für einen Unterschriftslink)</value>
+  </data>
+  <data name="Skl.OutsideEvaluatorHelp" xml:space="preserve">
+    <value>Externe Prüfer unterschreiben auf Stufe L4 persönlich auf diesem Gerät oder per Link, solange das LMS-Add-on aktiv ist.</value>
+  </data>
+  <data name="Skl.OutsideEvaluatorName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Skl.OutsideEvaluatorRemote" xml:space="preserve">
+    <value>Unterschriftslink senden statt auf diesem Gerät zu unterschreiben</value>
+  </data>
+  <data name="Skl.Pass" xml:space="preserve">
+    <value>Bestanden</value>
+  </data>
+  <data name="Skl.PassAll" xml:space="preserve">
+    <value>Alle offenen Schritte bestanden</value>
+  </data>
+  <data name="Skl.PassAt" xml:space="preserve">
+    <value>bestanden ab</value>
+  </data>
+  <data name="Skl.PassFailReport" xml:space="preserve">
+    <value>Bericht bestanden/nicht bestanden</value>
+  </data>
+  <data name="Skl.PassRange" xml:space="preserve">
+    <value>Bestanden von-bis:</value>
+  </data>
+  <data name="Skl.PassingRatingIs" xml:space="preserve">
+    <value>Bestandene Bewertung ab:</value>
+  </data>
+  <data name="Skl.Position" xml:space="preserve">
+    <value>Positionscode</value>
+  </data>
+  <data name="Skl.Publish" xml:space="preserve">
+    <value>Veröffentlichen</value>
+  </data>
+  <data name="Skl.PublishTitle" xml:space="preserve">
+    <value>Entwurf veröffentlichen</value>
+  </data>
+  <data name="Skl.Published" xml:space="preserve">
+    <value>Die Version wurde veröffentlicht. Neue Bewertungen verwenden sie.</value>
+  </data>
+  <data name="Skl.RatingsReport" xml:space="preserve">
+    <value>Bewertungen je Frage</value>
+  </data>
+  <data name="Skl.Remove" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
+  <data name="Skl.RequestCertification" xml:space="preserve">
+    <value>Zertifizierung anfordern</value>
+  </data>
+  <data name="Skl.RequestCertificationHelp" xml:space="preserve">
+    <value>Alle Aufgaben sind erledigt. Der abschließende Prüfer empfiehlt, danach zertifiziert die zertifizierende Stelle; beide unterschreiben auf Stufe L2.</value>
+  </data>
+  <data name="Skl.Required" xml:space="preserve">
+    <value>Nötige Bewertungen</value>
+  </data>
+  <data name="Skl.Result.Failed" xml:space="preserve">
+    <value>Nicht bestanden</value>
+  </data>
+  <data name="Skl.Result.Passed" xml:space="preserve">
+    <value>Bestanden</value>
+  </data>
+  <data name="Skl.Role.Evaluator" xml:space="preserve">
+    <value>Prüfer</value>
+  </data>
+  <data name="Skl.Role.NextSigner" xml:space="preserve">
+    <value>Nächster Unterzeichner</value>
+  </data>
+  <data name="Skl.RunIntro" xml:space="preserve">
+    <value>Bewerten Sie jeden Schritt; Anmerkungen und Nachweise gehen in den versiegelten Nachweis ein.</value>
+  </data>
+  <data name="Skl.Save" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="Skl.SaveDraft" xml:space="preserve">
+    <value>Entwurf speichern</value>
+  </data>
+  <data name="Skl.Saved" xml:space="preserve">
+    <value>Gespeichert.</value>
+  </data>
+  <data name="Skl.SealFailed" xml:space="preserve">
+    <value>Die Bewertung ist unterschrieben, der Nachweis konnte jedoch nicht versiegelt werden. Ein Administrator kann es erneut versuchen.</value>
+  </data>
+  <data name="Skl.SealPending" xml:space="preserve">
+    <value>Unterschrieben, Versiegelung ausstehend: Der versiegelte Nachweis ist noch nicht verfügbar.</value>
+  </data>
+  <data name="Skl.SealedPdf" xml:space="preserve">
+    <value>Versiegelter Nachweis (PDF)</value>
+  </data>
+  <data name="Skl.Seconds" xml:space="preserve">
+    <value>Sekunden</value>
+  </data>
+  <data name="Skl.SettingsHelp" xml:space="preserve">
+    <value>Tägliche und wöchentliche Zusammenfassungen bündeln alle fälligen Hinweise in einer Nachricht pro Person. Inaktive Mitglieder erhalten keine Hinweise.</value>
+  </data>
+  <data name="Skl.SettingsIntro" xml:space="preserve">
+    <value>Wie Hinweise zu Bewertungen und Ausbildungsnachweisen zugestellt werden.</value>
+  </data>
+  <data name="Skl.SettingsTitle" xml:space="preserve">
+    <value>Hinweise zu Fertigkeiten</value>
+  </data>
+  <data name="Skl.Sheet" xml:space="preserve">
+    <value>Fertigkeitsbogen</value>
+  </data>
+  <data name="Skl.SheetCreated" xml:space="preserve">
+    <value>Der Fertigkeitsbogen wurde angelegt. Passen Sie die Schritte an und veröffentlichen Sie.</value>
+  </data>
+  <data name="Skl.SheetDeleted" xml:space="preserve">
+    <value>Der Fertigkeitsbogen wurde außer Dienst gestellt.</value>
+  </data>
+  <data name="Skl.SheetDetails" xml:space="preserve">
+    <value>Bogenangaben und Unterzeichner</value>
+  </data>
+  <data name="Skl.SheetIntro" xml:space="preserve">
+    <value>Geordnete Schritte, kritische Kriterien und Bewertungsregeln, versioniert.</value>
+  </data>
+  <data name="Skl.SheetsIntro" xml:space="preserve">
+    <value>Fertigkeitsbögen nach Leistungsanforderungen und die Vorlagenbibliothek.</value>
+  </data>
+  <data name="Skl.SheetsTitle" xml:space="preserve">
+    <value>Fertigkeitsbögen</value>
+  </data>
+  <data name="Skl.Sign" xml:space="preserve">
+    <value>Unterschreiben</value>
+  </data>
+  <data name="Skl.Signatures" xml:space="preserve">
+    <value>Unterschriften</value>
+  </data>
+  <data name="Skl.Signed" xml:space="preserve">
+    <value>Unterschrieben</value>
+  </data>
+  <data name="Skl.SignerRulesHelp" xml:space="preserve">
+    <value>Ein Mitglied qualifiziert sich durch eine gültige Qualifikation einer gewählten Art oder eine gewählte Funktion. Ohne Regel bewerten LMS-Verwalter die Aufgaben; Empfehlung und Zertifizierung erfolgen durch Abteilungsadministratoren.</value>
+  </data>
+  <data name="Skl.SplitConfirm" xml:space="preserve">
+    <value>Dieses Mitglied in eine eigene Bewertung übernehmen? Die bisherigen Antworten werden kopiert.</value>
+  </data>
+  <data name="Skl.SplitOut" xml:space="preserve">
+    <value>Abtrennen</value>
+  </data>
+  <data name="Skl.SplitTo" xml:space="preserve">
+    <value>Getrennt bewertet</value>
+  </data>
+  <data name="Skl.StartEvaluation" xml:space="preserve">
+    <value>Bewertung beginnen</value>
+  </data>
+  <data name="Skl.StartIntro" xml:space="preserve">
+    <value>Wählen Sie Bogen und zu bewertende Personen. Die Zeitmessung beginnt jetzt.</value>
+  </data>
+  <data name="Skl.Status.AwaitingSignature" xml:space="preserve">
+    <value>Wartet auf Unterschrift</value>
+  </data>
+  <data name="Skl.Status.Completed" xml:space="preserve">
+    <value>Abgeschlossen</value>
+  </data>
+  <data name="Skl.Status.InProgress" xml:space="preserve">
+    <value>Läuft</value>
+  </data>
+  <data name="Skl.Status.Open" xml:space="preserve">
+    <value>Offen</value>
+  </data>
+  <data name="Skl.Status.Voided" xml:space="preserve">
+    <value>Annulliert</value>
+  </data>
+  <data name="Skl.Step.AllowNa" xml:space="preserve">
+    <value>„Nicht zutreffend“ zulassen</value>
+  </data>
+  <data name="Skl.Step.Compute" xml:space="preserve">
+    <value>Berechnung</value>
+  </data>
+  <data name="Skl.Step.ComputeKeys" xml:space="preserve">
+    <value>Aus Schritten (Schlüssel, durch Komma getrennt)</value>
+  </data>
+  <data name="Skl.Step.Critical" xml:space="preserve">
+    <value>Kritisch</value>
+  </data>
+  <data name="Skl.Step.EvidenceOnFail" xml:space="preserve">
+    <value>Nachweis bei Nichtbestehen</value>
+  </data>
+  <data name="Skl.Step.Help" xml:space="preserve">
+    <value>Hinweise für den Prüfer</value>
+  </data>
+  <data name="Skl.Step.Key" xml:space="preserve">
+    <value>Schlüssel</value>
+  </data>
+  <data name="Skl.Step.Label" xml:space="preserve">
+    <value>Schritt</value>
+  </data>
+  <data name="Skl.Step.Max" xml:space="preserve">
+    <value>Höchster zulässiger Wert</value>
+  </data>
+  <data name="Skl.Step.Min" xml:space="preserve">
+    <value>Niedrigster zulässiger Wert</value>
+  </data>
+  <data name="Skl.Step.NoteOnFail" xml:space="preserve">
+    <value>Notiz bei Nichtbestehen</value>
+  </data>
+  <data name="Skl.Step.Options" xml:space="preserve">
+    <value>Auswahlmöglichkeiten</value>
+  </data>
+  <data name="Skl.Step.OptionsHelp" xml:space="preserve">
+    <value>Eine pro Zeile: Bezeichnung | Punkte | fail (der letzte Teil nur für eine Option, die den Schritt nicht bestehen lässt).</value>
+  </data>
+  <data name="Skl.Step.PassingRating" xml:space="preserve">
+    <value>Niedrigste bestandene Bewertung</value>
+  </data>
+  <data name="Skl.Step.Rating" xml:space="preserve">
+    <value>Bewertungsskala</value>
+  </data>
+  <data name="Skl.Step.Required" xml:space="preserve">
+    <value>Antwort erforderlich</value>
+  </data>
+  <data name="Skl.Step.Type" xml:space="preserve">
+    <value>Fragetyp</value>
+  </data>
+  <data name="Skl.Step.Weight" xml:space="preserve">
+    <value>Gewichtung</value>
+  </data>
+  <data name="Skl.StepType.ChooseAny" xml:space="preserve">
+    <value>Mehrfachauswahl</value>
+  </data>
+  <data name="Skl.StepType.ChooseOne" xml:space="preserve">
+    <value>Einfachauswahl</value>
+  </data>
+  <data name="Skl.StepType.Computed" xml:space="preserve">
+    <value>Berechneter Wert</value>
+  </data>
+  <data name="Skl.StepType.Date" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="Skl.StepType.DateTime" xml:space="preserve">
+    <value>Datum und Uhrzeit</value>
+  </data>
+  <data name="Skl.StepType.Duration" xml:space="preserve">
+    <value>Dauer (gemessen)</value>
+  </data>
+  <data name="Skl.StepType.Evidence" xml:space="preserve">
+    <value>Foto, Video oder Datei</value>
+  </data>
+  <data name="Skl.StepType.Heading" xml:space="preserve">
+    <value>Überschrift</value>
+  </data>
+  <data name="Skl.StepType.Instructions" xml:space="preserve">
+    <value>Hinweise</value>
+  </data>
+  <data name="Skl.StepType.Number" xml:space="preserve">
+    <value>Zahl</value>
+  </data>
+  <data name="Skl.StepType.PassFail" xml:space="preserve">
+    <value>Bestanden / nicht bestanden</value>
+  </data>
+  <data name="Skl.StepType.RatingScale" xml:space="preserve">
+    <value>Bewertungsskala</value>
+  </data>
+  <data name="Skl.StepType.Text" xml:space="preserve">
+    <value>Freitext</value>
+  </data>
+  <data name="Skl.StepType.Time" xml:space="preserve">
+    <value>Uhrzeit</value>
+  </data>
+  <data name="Skl.StepType.TimestampedNotes" xml:space="preserve">
+    <value>Notizen mit Zeitstempel</value>
+  </data>
+  <data name="Skl.Steps" xml:space="preserve">
+    <value>Schritte</value>
+  </data>
+  <data name="Skl.StripLabel" xml:space="preserve">
+    <value>Bereiche Fertigkeiten</value>
+  </data>
+  <data name="Skl.SubmitAndSign" xml:space="preserve">
+    <value>Abschließen und unterschreiben</value>
+  </data>
+  <data name="Skl.SubmitConfirm" xml:space="preserve">
+    <value>Bewertung abschließen? Das Ergebnis wird festgelegt und die Unterschrift geöffnet.</value>
+  </data>
+  <data name="Skl.SubmitTitle" xml:space="preserve">
+    <value>Abschließen</value>
+  </data>
+  <data name="Skl.Submitted" xml:space="preserve">
+    <value>Die Bewertung wurde abgeschlossen. Unterschreiben Sie sie zum Abschluss.</value>
+  </data>
+  <data name="Skl.Tab.Definitions" xml:space="preserve">
+    <value>Vorlagen</value>
+  </data>
+  <data name="Skl.Tab.Evaluations" xml:space="preserve">
+    <value>Bewertungen</value>
+  </data>
+  <data name="Skl.Tab.Home" xml:space="preserve">
+    <value>Übersicht</value>
+  </data>
+  <data name="Skl.Tab.Settings" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="Skl.Tab.Sheets" xml:space="preserve">
+    <value>Fertigkeitsbögen</value>
+  </data>
+  <data name="Skl.Tab.TaskBooks" xml:space="preserve">
+    <value>Ausbildungsnachweise</value>
+  </data>
+  <data name="Skl.Task" xml:space="preserve">
+    <value>Aufgabe</value>
+  </data>
+  <data name="Skl.TaskBookCancelled" xml:space="preserve">
+    <value>Der Ausbildungsnachweis wurde abgebrochen.</value>
+  </data>
+  <data name="Skl.TaskBookInitiated" xml:space="preserve">
+    <value>Der Ausbildungsnachweis wurde angelegt.</value>
+  </data>
+  <data name="Skl.TaskBookIntro" xml:space="preserve">
+    <value>Aufgaben mit ihren Bewertungen, dann Empfehlung des abschließenden Prüfers und Zertifizierung.</value>
+  </data>
+  <data name="Skl.TaskBookStatus.AwaitingCertification" xml:space="preserve">
+    <value>Wartet auf Zertifizierung</value>
+  </data>
+  <data name="Skl.TaskBookStatus.Cancelled" xml:space="preserve">
+    <value>Abgebrochen</value>
+  </data>
+  <data name="Skl.TaskBookStatus.Certified" xml:space="preserve">
+    <value>Zertifiziert</value>
+  </data>
+  <data name="Skl.TaskBookStatus.Expired" xml:space="preserve">
+    <value>Abgelaufen</value>
+  </data>
+  <data name="Skl.TaskBookStatus.Open" xml:space="preserve">
+    <value>Offen</value>
+  </data>
+  <data name="Skl.TaskBookTemplates" xml:space="preserve">
+    <value>Vorlagen von Resgrid</value>
+  </data>
+  <data name="Skl.TaskBookTemplatesIntro" xml:space="preserve">
+    <value>Von Resgrid erstellt: nur Positionscodes, Aufgabennummern und kurze Aufgabennamen. Tragen Sie den Aufgabentext aus Ihrem eigenen Exemplar ein und gleichen Sie die aktuelle Ausgabe ab.</value>
+  </data>
+  <data name="Skl.TaskBooksIntro" xml:space="preserve">
+    <value>Ausbildungsnachweise für Positionen: mit Datum angelegt, Aufgabe für Aufgabe abgezeichnet, dann zertifiziert.</value>
+  </data>
+  <data name="Skl.TaskBooksTitle" xml:space="preserve">
+    <value>Ausbildungsnachweise für Positionen</value>
+  </data>
+  <data name="Skl.TaskEvaluators" xml:space="preserve">
+    <value>Wer Aufgaben abzeichnet</value>
+  </data>
+  <data name="Skl.TaskNumber" xml:space="preserve">
+    <value>Nr.</value>
+  </data>
+  <data name="Skl.Tasks" xml:space="preserve">
+    <value>Aufgaben</value>
+  </data>
+  <data name="Skl.TasksComplete" xml:space="preserve">
+    <value>Erledigte Aufgaben</value>
+  </data>
+  <data name="Skl.TemplateLibrary" xml:space="preserve">
+    <value>Vorlagenbibliothek für Fertigkeitsbögen</value>
+  </data>
+  <data name="Skl.TemplateLibraryIntro" xml:space="preserve">
+    <value>Von Resgrid erstellte Ausgangspunkte, nur die Struktur. Passen Sie sie vor der Verwendung an Ihre Ausrüstung und Verfahren an.</value>
+  </data>
+  <data name="Skl.TimeExceededNotice" xml:space="preserve">
+    <value>Das Zeitlimit wurde überschritten: Die Bewertung ist nicht bestanden.</value>
+  </data>
+  <data name="Skl.Trainee" xml:space="preserve">
+    <value>Auszubildender</value>
+  </data>
+  <data name="Skl.Upload" xml:space="preserve">
+    <value>Hochladen</value>
+  </data>
+  <data name="Skl.UseTemplate" xml:space="preserve">
+    <value>Vorlage verwenden</value>
+  </data>
+  <data name="Skl.ValidUntil" xml:space="preserve">
+    <value>Gültig bis</value>
+  </data>
+  <data name="Skl.VersionStatus.Approved" xml:space="preserve">
+    <value>Genehmigt</value>
+  </data>
+  <data name="Skl.VersionStatus.Draft" xml:space="preserve">
+    <value>Entwurf</value>
+  </data>
+  <data name="Skl.VersionStatus.InReview" xml:space="preserve">
+    <value>In Prüfung</value>
+  </data>
+  <data name="Skl.VersionStatus.Published" xml:space="preserve">
+    <value>In Kraft</value>
+  </data>
+  <data name="Skl.VersionStatus.Retired" xml:space="preserve">
+    <value>Außer Dienst</value>
+  </data>
+  <data name="Skl.VersionStatus.Superseded" xml:space="preserve">
+    <value>Ersetzt</value>
+  </data>
+  <data name="Skl.Versions" xml:space="preserve">
+    <value>Versionen</value>
+  </data>
+  <data name="Skl.Void" xml:space="preserve">
+    <value>Bewertung annullieren</value>
+  </data>
+  <data name="Skl.VoidConfirm" xml:space="preserve">
+    <value>Diese Bewertung annullieren? Die zugehörigen Ausbildungseinträge werden ebenfalls annulliert.</value>
+  </data>
+  <data name="Skl.VoidReason" xml:space="preserve">
+    <value>Grund der Annullierung</value>
+  </data>
+  <data name="Skl.Voided" xml:space="preserve">
+    <value>Die Bewertung wurde annulliert.</value>
+  </data>
+  <data name="Skl.Waiting" xml:space="preserve">
+    <value>Ausstehend</value>
+  </data>
+  <data name="Skl.WholeEvaluation" xml:space="preserve">
+    <value>Die gesamte Bewertung</value>
+  </data>
+  <data name="lms_skill_addon_required" xml:space="preserve">
+    <value>Dafür ist das LMS-Add-on erforderlich.</value>
+  </data>
+  <data name="lms_skill_answer_unknown_step" xml:space="preserve">
+    <value>Eine Antwort gehört nicht zu dieser Bogenversion.</value>
+  </data>
+  <data name="lms_skill_attempts_exhausted" xml:space="preserve">
+    <value>Für dieses Mitglied sind im Zeitraum keine Versuche mehr übrig.</value>
+  </data>
+  <data name="lms_skill_crew_not_allowed" xml:space="preserve">
+    <value>Dieser Bogen bewertet jeweils ein Mitglied.</value>
+  </data>
+  <data name="lms_skill_evaluation_closed" xml:space="preserve">
+    <value>Die Bewertung läuft nicht mehr.</value>
+  </data>
+  <data name="lms_skill_evaluation_not_found" xml:space="preserve">
+    <value>Die Bewertung wurde nicht gefunden.</value>
+  </data>
+  <data name="lms_skill_evidence_count" xml:space="preserve">
+    <value>Diese Bewertung hat bereits die höchstzulässige Zahl an Nachweisdateien.</value>
+  </data>
+  <data name="lms_skill_evidence_size" xml:space="preserve">
+    <value>Wählen Sie eine Datei bis 30 MB.</value>
+  </data>
+  <data name="lms_skill_evidence_step" xml:space="preserve">
+    <value>Dieser Schritt gehört nicht zum Bogen.</value>
+  </data>
+  <data name="lms_skill_evidence_type" xml:space="preserve">
+    <value>Fügen Sie ein Foto, Video, PDF oder eine Textdatei hinzu.</value>
+  </data>
+  <data name="lms_skill_idempotency_key_required" xml:space="preserve">
+    <value>Eine Offline-Übermittlung braucht ihren Postausgangsschlüssel.</value>
+  </data>
+  <data name="lms_skill_member_invalid" xml:space="preserve">
+    <value>Wählen Sie aktive Mitglieder der Abteilung.</value>
+  </data>
+  <data name="lms_skill_members_required" xml:space="preserve">
+    <value>Wählen Sie, wer bewertet wird (bis zu 50 Mitglieder).</value>
+  </data>
+  <data name="lms_skill_next_signer_not_allowed" xml:space="preserve">
+    <value>Dieser Bogen sieht keinen nächsten Unterzeichner vor.</value>
+  </data>
+  <data name="lms_skill_next_signer_not_eligible" xml:space="preserve">
+    <value>Der nächste Unterzeichner muss ein anderes aktives, nach der Regel zugelassenes Mitglied sein, weder Prüfer noch bewertetes Mitglied.</value>
+  </data>
+  <data name="lms_skill_next_signer_required" xml:space="preserve">
+    <value>Wählen Sie den nächsten Unterzeichner, den der Bogen verlangt.</value>
+  </data>
+  <data name="lms_skill_not_allowed" xml:space="preserve">
+    <value>Dazu sind Sie nicht berechtigt.</value>
+  </data>
+  <data name="lms_skill_not_eligible" xml:space="preserve">
+    <value>Sie sind kein berechtigter Prüfer für diesen Bogen oder Nachweis.</value>
+  </data>
+  <data name="lms_skill_not_evaluator" xml:space="preserve">
+    <value>Nur der Prüfer kann diese Bewertung ändern.</value>
+  </data>
+  <data name="lms_skill_not_found" xml:space="preserve">
+    <value>Nicht gefunden.</value>
+  </data>
+  <data name="lms_skill_self_evaluation" xml:space="preserve">
+    <value>Sie können sich mit diesem Bogen oder Nachweis nicht selbst bewerten.</value>
+  </data>
+  <data name="lms_skill_sheet_category_invalid" xml:space="preserve">
+    <value>Wählen Sie eine Ausbildungskategorie der Abteilung.</value>
+  </data>
+  <data name="lms_skill_sheet_change_summary_required" xml:space="preserve">
+    <value>Beschreiben Sie die Änderung.</value>
+  </data>
+  <data name="lms_skill_sheet_kind_invalid" xml:space="preserve">
+    <value>Wählen Sie Fertigkeitsbogen oder tägliche Beobachtungsbewertung.</value>
+  </data>
+  <data name="lms_skill_sheet_no_draft" xml:space="preserve">
+    <value>Es gibt keinen Entwurf zum Veröffentlichen.</value>
+  </data>
+  <data name="lms_skill_sheet_no_gradable_step" xml:space="preserve">
+    <value>Fügen Sie mindestens einen zu beantwortenden Schritt hinzu.</value>
+  </data>
+  <data name="lms_skill_sheet_not_found" xml:space="preserve">
+    <value>Der Fertigkeitsbogen wurde nicht gefunden.</value>
+  </data>
+  <data name="lms_skill_sheet_not_published" xml:space="preserve">
+    <value>Der Fertigkeitsbogen hat keine veröffentlichte Version.</value>
+  </data>
+  <data name="lms_skill_sheet_step_bounds" xml:space="preserve">
+    <value>Ein niedrigster Wert liegt über dem höchsten.</value>
+  </data>
+  <data name="lms_skill_sheet_step_compute" xml:space="preserve">
+    <value>Ein berechneter Schritt muss frühere Zahlen-, Dauer- oder Bewertungsschritte nennen.</value>
+  </data>
+  <data name="lms_skill_sheet_step_count" xml:space="preserve">
+    <value>Ein Bogen hat 1 bis 200 Schritte.</value>
+  </data>
+  <data name="lms_skill_sheet_step_critical" xml:space="preserve">
+    <value>Nur bewertete Schritte können kritisch sein.</value>
+  </data>
+  <data name="lms_skill_sheet_step_key" xml:space="preserve">
+    <value>Jeder Schritt braucht einen eindeutigen Schlüssel.</value>
+  </data>
+  <data name="lms_skill_sheet_step_label" xml:space="preserve">
+    <value>Jeder Schritt braucht eine Bezeichnung mit bis zu 300 Zeichen.</value>
+  </data>
+  <data name="lms_skill_sheet_step_options" xml:space="preserve">
+    <value>Auswahlschritte brauchen 2 bis 30 verschiedene Möglichkeiten.</value>
+  </data>
+  <data name="lms_skill_sheet_step_rating" xml:space="preserve">
+    <value>Eine Bewertungsskala braucht einen niedrigsten und höchsten Wert und dazwischen die Bestehensgrenze.</value>
+  </data>
+  <data name="lms_skill_sheet_step_type" xml:space="preserve">
+    <value>Wählen Sie einen Fragetyp.</value>
+  </data>
+  <data name="lms_skill_sheet_step_weight" xml:space="preserve">
+    <value>Gewichtungen liegen zwischen 0 und 1000; ein kritischer Schritt braucht mehr als 0.</value>
+  </data>
+  <data name="lms_skill_sheet_title_required" xml:space="preserve">
+    <value>Geben Sie einen Titel ein.</value>
+  </data>
+  <data name="lms_skill_signature_refused" xml:space="preserve">
+    <value>Die Unterschriftsanforderung konnte nicht erstellt werden; die Bewertung läuft weiter.</value>
+  </data>
+  <data name="lms_skill_split_last_member" xml:space="preserve">
+    <value>Das letzte Mitglied einer Mannschaftsbewertung kann nicht abgetrennt werden.</value>
+  </data>
+  <data name="lms_skill_split_not_crew" xml:space="preserve">
+    <value>Nur bei einer Mannschaftsbewertung kann ein Mitglied abgetrennt werden.</value>
+  </data>
+  <data name="lms_skill_stale" xml:space="preserve">
+    <value>Jemand anderes hat dies inzwischen geändert. Neu laden und erneut versuchen.</value>
+  </data>
+  <data name="lms_skill_step_evidence_required" xml:space="preserve">
+    <value>Ein nicht bestandener Schritt braucht einen Nachweis.</value>
+  </data>
+  <data name="lms_skill_step_invalid" xml:space="preserve">
+    <value>Eine Antwort passt nicht zu ihrem Schritt.</value>
+  </data>
+  <data name="lms_skill_step_not_applicable" xml:space="preserve">
+    <value>„Nicht zutreffend“ braucht einen Grund und ist bei kritischen Schritten nicht erlaubt.</value>
+  </data>
+  <data name="lms_skill_step_note_required" xml:space="preserve">
+    <value>Ein nicht bestandener Schritt braucht eine Anmerkung.</value>
+  </data>
+  <data name="lms_skill_step_required" xml:space="preserve">
+    <value>Beantworten Sie vor dem Abschluss alle erforderlichen Schritte.</value>
+  </data>
+  <data name="lms_skill_step_too_long" xml:space="preserve">
+    <value>Eine Antwort oder Anmerkung ist zu lang.</value>
+  </data>
+  <data name="lms_skill_template_not_found" xml:space="preserve">
+    <value>Die Vorlage wurde nicht gefunden.</value>
+  </data>
+  <data name="lms_skill_void_reason_required" xml:space="preserve">
+    <value>Geben Sie einen Grund ein.</value>
+  </data>
+  <data name="lms_task_book_already_open" xml:space="preserve">
+    <value>Dieses Mitglied hat bereits einen offenen Nachweis dieser Vorlage.</value>
+  </data>
+  <data name="lms_task_book_certification_type_invalid" xml:space="preserve">
+    <value>Wählen Sie eine personenbezogene Qualifikationsart der Abteilung.</value>
+  </data>
+  <data name="lms_task_book_certifying_official_not_eligible" xml:space="preserve">
+    <value>Die zertifizierende Stelle erfüllt die Regel der Vorlage nicht.</value>
+  </data>
+  <data name="lms_task_book_certifying_official_required" xml:space="preserve">
+    <value>Wählen Sie die zertifizierende Stelle.</value>
+  </data>
+  <data name="lms_task_book_code_required" xml:space="preserve">
+    <value>Geben Sie den Positionscode ein.</value>
+  </data>
+  <data name="lms_task_book_date_invalid" xml:space="preserve">
+    <value>Das Anlagedatum muss innerhalb der Gültigkeit liegen und darf nicht in der Zukunft sein.</value>
+  </data>
+  <data name="lms_task_book_expired" xml:space="preserve">
+    <value>Die Gültigkeit des Nachweises ist abgelaufen.</value>
+  </data>
+  <data name="lms_task_book_family_invalid" xml:space="preserve">
+    <value>Wählen Sie einen Bereich.</value>
+  </data>
+  <data name="lms_task_book_final_evaluator_not_eligible" xml:space="preserve">
+    <value>Der abschließende Prüfer erfüllt die Regel der Vorlage nicht.</value>
+  </data>
+  <data name="lms_task_book_final_evaluator_required" xml:space="preserve">
+    <value>Wählen Sie den abschließenden Prüfer.</value>
+  </data>
+  <data name="lms_task_book_member_mismatch" xml:space="preserve">
+    <value>Eine Nachweisaufgabe bewertet nur den eigenen Auszubildenden.</value>
+  </data>
+  <data name="lms_task_book_name_required" xml:space="preserve">
+    <value>Geben Sie die Positionsbezeichnung ein.</value>
+  </data>
+  <data name="lms_task_book_not_found" xml:space="preserve">
+    <value>Der Ausbildungsnachweis wurde nicht gefunden.</value>
+  </data>
+  <data name="lms_task_book_not_open" xml:space="preserve">
+    <value>Der Ausbildungsnachweis ist nicht offen.</value>
+  </data>
+  <data name="lms_task_book_sheet_invalid" xml:space="preserve">
+    <value>Eine Aufgabe nennt einen nicht vorhandenen Fertigkeitsbogen.</value>
+  </data>
+  <data name="lms_task_book_signers_invalid" xml:space="preserve">
+    <value>Auszubildender, abschließender Prüfer und zertifizierende Stelle müssen drei verschiedene Mitglieder sein.</value>
+  </data>
+  <data name="lms_task_book_task_count" xml:space="preserve">
+    <value>Ein Nachweis hat 1 bis 200 Aufgaben.</value>
+  </data>
+  <data name="lms_task_book_task_invalid" xml:space="preserve">
+    <value>Jede Aufgabe braucht einen Titel und 1 bis 50 Bewertungen.</value>
+  </data>
+  <data name="lms_task_book_task_key" xml:space="preserve">
+    <value>Jede Aufgabe braucht einen eindeutigen Schlüssel.</value>
+  </data>
+  <data name="lms_task_book_task_not_found" xml:space="preserve">
+    <value>Diese Aufgabe gehört nicht zum Nachweis.</value>
+  </data>
+  <data name="lms_task_book_tasks_incomplete" xml:space="preserve">
+    <value>Vor der Zertifizierung müssen alle Aufgaben erledigt sein.</value>
+  </data>
+</root>

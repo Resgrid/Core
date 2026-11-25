@@ -176,7 +176,92 @@ namespace Resgrid.Model.Events
 
 		/// <summary>The aggregate outbound projection changed materially (LI-B, rebased from 45). To LSC, OSC, RESL and DMOB.</summary>
 		[NotMapped]
-		IncidentReleaseProjection = 49
+		IncidentReleaseProjection = 49,
+
+		// -- Protocols P2 block 57-59 (protocols-training-knowledge-plan.md §5 P2). Member-targeted (the assignee, the overdue
+		// member and their supervisor or group admin) and delivered directly by IProtocolAcknowledgmentService with push + email,
+		// so NotMapped like the import block: not department broadcasts the notification settings UI should offer. The value is
+		// also the push event code prefix the apps route on ("PA:" acknowledgment, "PB:" bulletin).
+
+		/// <summary>A protocol version that requires acknowledgment was assigned to the member (publish, or entering its audience).</summary>
+		[NotMapped]
+		ProtocolAcknowledgmentAssigned = 57,
+
+		/// <summary>A priority bulletin was issued to the member's audience (must-read).</summary>
+		[NotMapped]
+		ProtocolBulletinIssued = 58,
+
+		/// <summary>An acknowledgment is due or overdue (to the member), or escalated (to their supervisor or group admin).</summary>
+		[NotMapped]
+		ProtocolAcknowledgmentOverdue = 59,
+
+		// -- Member wellness WL1 block 68-69 (protocols-training-knowledge-plan.md §13b). Restricted tier: delivered directly by
+		// IMemberHealthService to the designated or wellness officers (and the member), never a department broadcast, so NotMapped. The
+		// text names no health detail. Push event code prefixes: "EI:" exposure case, "DS:" injury and duty status.
+
+		/// <summary>A BBP / infectious-disease exposure was reported, or its Ryan White answer is overdue (to the designated officers).</summary>
+		[NotMapped]
+		ExposureIncidentNotice = 68,
+
+		/// <summary>An injury was reported or a return-to-duty review is due (to the health officers).</summary>
+		[NotMapped]
+		DutyStatusNotice = 69,
+		// -- e-Signature S3 block 66-67 (protocols-training-knowledge-plan.md §21.3, §23): multi-signer requests. Member-targeted and
+		// delivered directly by ISignatureNotificationService with push + email, so NotMapped like the P2 block. The push event code
+		// is "SG:{requestId}".
+
+		/// <summary>It is the member's turn to sign a step of a multi-signer request (also the worker 90 reminder).</summary>
+		[NotMapped]
+		SignatureStepAssigned = 66,
+
+		/// <summary>A multi-signer request the member requested or signs in was completed, declined, expired or withdrawn.</summary>
+		[NotMapped]
+		SignatureRequestClosed = 67,
+		// -- Training T3 block 61-63 (protocols-training-knowledge-plan.md §13 T3, LMS). Member-, supervisor- and admin-targeted and
+		// delivered directly by the LMS requirement engine with push + email (push code prefix "LR:"), so NotMapped like 57-59.
+
+		/// <summary>A learning requirement (or an onboarding path) now applies to the member, with its due date.</summary>
+		[NotMapped]
+		LearningRequirementAssigned = 61,
+
+		/// <summary>A requirement is at risk or overdue (to the member), escalated (to supervisors and named people), or completed (alerts).</summary>
+		[NotMapped]
+		LearningRequirementDue = 62,
+
+		/// <summary>Training-backed enforcement acted or was undone (to the member), or a sweep refused to act (to the admins, R-L11).</summary>
+		[NotMapped]
+		LearningRequirementEnforcement = 63,
+		// -- e-Signature S4 block 73-74 (protocols-training-knowledge-plan.md §23 S4): approval chains. Member-targeted and delivered
+		// directly by IApprovalNotificationService with push + email, so NotMapped like 66-67. The push event code is "AP:{approvalRequestId}".
+
+		/// <summary>An approval step is waiting for the member (its turn started, it was delegated to them, or it escalated to them).</summary>
+		[NotMapped]
+		ApprovalAwaiting = 73,
+
+		/// <summary>The member's submission was approved, rejected (with the reason) or expired.</summary>
+		[NotMapped]
+		ApprovalDecided = 74,
+		// -- Training T4 block 64-65 (protocols-training-knowledge-plan.md §13 T4, LMS): class sessions. Member-targeted and delivered
+		// directly by the class service and worker 95 with push + email (push code prefix "CL:"), so NotMapped like 57-59.
+
+		/// <summary>A class the member is enrolled in starts soon (worker 95 reminder).</summary>
+		[NotMapped]
+		ClassSessionReminder = 64,
+
+		/// <summary>The member's place on a class roster changed: approved, declined, promoted from the waitlist, removed or cancelled.</summary>
+		[NotMapped]
+		ClassEnrollmentChanged = 65,
+		// -- Training T4 skills block 70-71 (protocols-training-knowledge-plan.md §13 T4, LMS). Member- and officer-targeted, queued into the
+		// skill notification digest (immediate, daily or weekly) and sent by worker 96 with push + email (push code prefix "SK:"), so
+		// NotMapped like 61-63.
+
+		/// <summary>A skill evaluation of the member was completed, failed or is waiting for a signature (to the member and the officers).</summary>
+		[NotMapped]
+		SkillEvaluationNotice = 70,
+
+		/// <summary>A position task book was initiated, a task signed, the book recommended, certified or expired (to the trainee and the officers).</summary>
+		[NotMapped]
+		TaskBookNotice = 71
 	}
 
 	public static class EventOptions

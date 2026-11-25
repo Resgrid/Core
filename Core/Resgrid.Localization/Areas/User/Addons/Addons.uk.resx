@@ -115,4 +115,64 @@
   <data name="MessageAffiliateApplied" xml:space="preserve"><value>Код партнера/акаунта збережено для вашого підрозділу.</value></data>
   <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Цей код партнера/акаунта недійсний або більше не активний.</value></data>
   <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Ваш підрозділ уже має код партнера/акаунта. Зв'яжіться з нами, якщо його потрібно змінити.</value></data>
+  <data name="LmsTitle" xml:space="preserve"><value>LMS</value></data>
+  <data name="LmsTagline" xml:space="preserve"><value>Курси, офіційні звіти про навчання та сертифікати, які можна перевірити</value></data>
+  <data name="LmsFeature1" xml:space="preserve"><value>Курси з уроками, банками запитань і тестами</value></data>
+  <data name="LmsFeature2" xml:space="preserve"><value>Відеоуроки на нашому хостингу, 100 ГБ на підрозділ включено</value></data>
+  <data name="LmsFeature3" xml:space="preserve"><value>Офіційні звіти про навчання ISO FSRS і NREMT NCCP</value></data>
+  <data name="LmsFeature4" xml:space="preserve"><value>Сертифікати з кодом перевірки, QR-кодом і публічною сторінкою перевірки, за вашим власним шаблоном</value></data>
+  <data name="LmsFeature5" xml:space="preserve"><value>Місця лише для учасників, яких ви ввімкнете; усі зберігають безкоштовне навчання</value></data>
+  <data name="LmsNote" xml:space="preserve"><value>Ціна за пакет на 25 учасників, ступінчаста: перші 4 пакети за повною ціною, далі дешевше. Оплата щомісяця за підрозділ; без пробного періоду. Потрібен платний план Resgrid.</value></data>
+  <data name="PerMemberPack" xml:space="preserve"><value>за пакет на {0} учасників</value></data>
+  <data name="PackTierLine" xml:space="preserve"><value>Пакети {0}–{1}: {2} за пакет</value></data>
+  <data name="PackTierLineOpen" xml:space="preserve"><value>Пакети від {0}: {1} за пакет</value></data>
+  <data name="LmsRequiresPaidPlan" xml:space="preserve"><value>LMS продається разом із платним планом Resgrid. Спершу виберіть план на сторінці підписки.</value></data>
+  <data name="LmsBillingPacksNote" xml:space="preserve"><value>Кожен пакет охоплює 25 учасників. Ціни на пакети ступінчасті: кожен пакет оплачується за ціною власного рівня, тож додавання пакетів ніколи не робить попередні дешевшими чи дорожчими. Оплата щомісяця; без пробного періоду й без річного терміну.</value></data>
+  <data name="LmsBillingSeatsNote" xml:space="preserve"><value>Додані пакети оплачуються одразу, пропорційно до дати оплати. Вилучення пакетів діє з наступної дати оплати і лише до кількості учасників з увімкненим LMS.</value></data>
+  <data name="LmsBillingFreeNote" xml:space="preserve"><value>Учасники без увімкненого LMS зберігають безкоштовний модуль «Навчання», свій перелік навчання та Academy. Інструкторам, оцінювачам і офіцерам місце не потрібне.</value></data>
+  <data name="LmsManageSeats" xml:space="preserve"><value>Керувати місцями LMS на сторінці персоналу</value></data>
+  <data name="BillingPacksAdded" xml:space="preserve"><value>Пакети додано. Пропорційну плату за решту цього розрахункового періоду виставлено в рахунку.</value></data>
+  <data name="BillingPacksScheduled" xml:space="preserve"><value>Зменшення кількості пакетів заплановано на наступну дату оплати. Ваші місця зберігаються до того часу.</value></data>
+  <data name="BillingPacksBelowSeats" xml:space="preserve"><value>Тоді місць було б менше, ніж учасників з увімкненим LMS. Спершу вимкніть учасників на сторінці персоналу.</value></data>
+  <data name="BillingPacksFailed" xml:space="preserve"><value>Не вдалося змінити кількість пакетів, і нічого не було стягнуто. Спробуйте ще раз або зв'яжіться з нами.</value></data>
+  <data name="PacksHeading" xml:space="preserve"><value>Пакети та місця</value></data>
+  <data name="PacksInForce" xml:space="preserve"><value>Пакетів: {0}, місць: {1}, зайнято: {2}</value></data>
+  <data name="PacksNextMonth" xml:space="preserve"><value>Ціна наступного місяця: {0}</value></data>
+  <data name="PacksNextMonthLabel" xml:space="preserve"><value>Наступний місяць</value></data>
+  <data name="PacksScheduledNote" xml:space="preserve"><value>З {0}: пакетів — {1}.</value></data>
+  <data name="PacksLabel" xml:space="preserve"><value>Пакети</value></data>
+  <data name="PacksUpdate" xml:space="preserve"><value>Оновити пакети</value></data>
+  <data name="PackPreviewFirst" xml:space="preserve"><value>Пакетів: {0} (місць: {1}): {2} на місяць.</value></data>
+  <data name="PackPreviewIncrease" xml:space="preserve"><value>Пакетів: {0} (місць: {1}): {2} на місяць відтепер. Зараз буде стягнуто приблизно {3} за решту цього розрахункового періоду.</value></data>
+  <data name="PackPreviewDecrease" xml:space="preserve"><value>Пакетів: {0} (місць: {1}): {2} на місяць з {3}. Нічого не повертається, а ваші місця зберігаються до того часу.</value></data>
+  <data name="PackPreviewSame" xml:space="preserve"><value>Саме стільки пакетів у вас зараз.</value></data>
+  <data name="PackRefusedBelowSeats" xml:space="preserve"><value>Для учасників з увімкненим LMS потрібно щонайменше {0} пакетів. Спершу вимкніть деяких на сторінці персоналу.</value></data>
+  <data name="PackRefusedRange" xml:space="preserve"><value>Виберіть від {0} до {1} пакетів.</value></data>
+  <data name="PackPreviewFailed" xml:space="preserve"><value>Не вдалося показати ціну. Спробуйте ще раз.</value></data>
+  <data name="LmsSeatHeading" xml:space="preserve"><value>Місце LMS</value></data>
+  <data name="LmsSeatEnabledLabel" xml:space="preserve"><value>LMS увімкнено</value></data>
+  <data name="LmsSeatEnabledHelp" xml:space="preserve"><value>Цього учасника можна навчати через курси та вимоги LMS.</value></data>
+  <data name="LmsSeatDisabledLabel" xml:space="preserve"><value>LMS не ввімкнено</value></data>
+  <data name="LmsSeatDisabledHelp" xml:space="preserve"><value>Цей учасник зберігає безкоштовний модуль «Навчання», свій перелік навчання та Academy.</value></data>
+  <data name="LmsSeatNotLicensed" xml:space="preserve"><value>Без ліцензії</value></data>
+  <data name="LmsSeatCounter" xml:space="preserve"><value>Зайнято місць: {0} з {1}</value></data>
+  <data name="LmsSeatEnable" xml:space="preserve"><value>Увімкнути LMS</value></data>
+  <data name="LmsSeatDisable" xml:space="preserve"><value>Вимкнути LMS</value></data>
+  <data name="LmsSeatsFull" xml:space="preserve"><value>Усі місця ({0}) зайнято. Пакетів додати: {1}.</value></data>
+  <data name="LmsSeatNotActive" xml:space="preserve"><value>Місце LMS може мати лише активний учасник; видалені, вимкнені та приховані учасники — ні.</value></data>
+  <data name="LmsSeatAddonInactive" xml:space="preserve"><value>Ваш підрозділ не має активного доповнення LMS, тому жодному учаснику не можна ввімкнути LMS.</value></data>
+  <data name="LmsSeatFailed" xml:space="preserve"><value>Не вдалося змінити місце LMS. Спробуйте ще раз.</value></data>
+  <data name="LmsSeatSaved" xml:space="preserve"><value>Місце LMS оновлено.</value></data>
+  <data name="LmsAddPack" xml:space="preserve"><value>Додати пакет</value></data>
+  <data name="LmsSeatBulkHeading" xml:space="preserve"><value>Місця LMS</value></data>
+  <data name="LmsSeatBulkGroup" xml:space="preserve"><value>Група</value></data>
+  <data name="LmsSeatBulkEnable" xml:space="preserve"><value>Увімкнути групу</value></data>
+  <data name="LmsSeatBulkDisable" xml:space="preserve"><value>Вимкнути групу</value></data>
+  <data name="LmsSeatBulkResult" xml:space="preserve"><value>Змінено: {0}, уже встановлено: {1}, пропущено як неактивних: {2}, відхилено через брак місць: {3}.</value></data>
+  <data name="LmsSeatDormant" xml:space="preserve"><value>Місць, що належать неактивним учасникам і не враховуються: {0}.</value></data>
+  <data name="LmsManagePacks" xml:space="preserve"><value>Керувати пакетами</value></data>
+  <data name="LmsSettingsHeading" xml:space="preserve"><value>Пакети та місця LMS</value></data>
+  <data name="LmsSettingsNotPurchased" xml:space="preserve"><value>Ваш підрозділ не придбав доповнення LMS.</value></data>
+  <data name="LmsSettingsLapsed" xml:space="preserve"><value>Дію доповнення LMS завершено. Записи, сертифікати та переліки навчання залишаються доступними, їх можна експортувати.</value></data>
+  <data name="LmsSettingsGrace" xml:space="preserve"><value>Платіж не пройшов. LMS працюватиме до {0}, поки платіж повторюється.</value></data>
 </root>

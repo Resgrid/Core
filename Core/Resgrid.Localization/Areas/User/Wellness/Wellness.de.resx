@@ -1,0 +1,700 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PersonnelLink" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Startseite</value>
+  </data>
+  <data name="WellnessModuleLabel" xml:space="preserve">
+    <value>Wohlbefinden</value>
+  </data>
+  <data name="MyExposuresTab" xml:space="preserve">
+    <value>Meine Expositionen</value>
+  </data>
+  <data name="ReportTab" xml:space="preserve">
+    <value>Mitgliederbericht</value>
+  </data>
+  <data name="FlagCallTab" xml:space="preserve">
+    <value>Einsatz-Markierungen</value>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="MyExposuresTitle" xml:space="preserve">
+    <value>Meine Expositionen</value>
+  </data>
+  <data name="MemberExposuresTitle" xml:space="preserve">
+    <value>Expositionsprotokoll: {0}</value>
+  </data>
+  <data name="MyExposuresIntro" xml:space="preserve">
+    <value>Ihr eigenes Protokoll über Expositionen und belastende Einsätze. Nur Sie und die Wellness-Beauftragten Ihrer Organisation können es sehen.</value>
+  </data>
+  <data name="MemberExposuresIntro" xml:space="preserve">
+    <value>Das Expositions- und Belastungsprotokoll dieses Mitglieds. Bitte vertraulich behandeln: nur das Mitglied und die Wellness-Beauftragten sehen es.</value>
+  </data>
+  <data name="LogExposureButton" xml:space="preserve">
+    <value>Exposition erfassen</value>
+  </data>
+  <data name="ExportPdfButton" xml:space="preserve">
+    <value>PDF exportieren</value>
+  </data>
+  <data name="ExportCsvButton" xml:space="preserve">
+    <value>CSV exportieren</value>
+  </data>
+  <data name="ProtectedWithheldNotice" xml:space="preserve">
+    <value>Einige Angaben sind durch den erweiterten Datenschutz Ihrer Organisation geschützt und werden hier nicht angezeigt.</value>
+  </data>
+  <data name="ConfirmedEntriesLabel" xml:space="preserve">
+    <value>Bestätigte Einträge</value>
+  </data>
+  <data name="CriticalIncidentsLabel" xml:space="preserve">
+    <value>Belastende Ereignisse</value>
+  </data>
+  <data name="AwaitingReviewLabel" xml:space="preserve">
+    <value>Zur Durchsicht</value>
+  </data>
+  <data name="SuggestionsHeader" xml:space="preserve">
+    <value>Vorschläge aus letzten Einsätzen</value>
+  </data>
+  <data name="SuggestionsHelp" xml:space="preserve">
+    <value>Diese Vorschläge stammen aus den Einsatzdaten, nachdem ein Einsatz markiert wurde. Nichts wird erfasst, bevor Sie es geprüft und bestätigt haben. Trifft es nicht zu, verwerfen Sie es.</value>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="CategoryColumn" xml:space="preserve">
+    <value>Kategorie</value>
+  </data>
+  <data name="CallColumn" xml:space="preserve">
+    <value>Einsatz</value>
+  </data>
+  <data name="DurationColumn" xml:space="preserve">
+    <value>Dauer (h:mm)</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Aktionen</value>
+  </data>
+  <data name="SuggestedFromLabel" xml:space="preserve">
+    <value>Vorgeschlagen aus</value>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Prüfen</value>
+  </data>
+  <data name="DismissButton" xml:space="preserve">
+    <value>Verwerfen</value>
+  </data>
+  <data name="ScreeningHeader" xml:space="preserve">
+    <value>Verstärkte Vorsorge</value>
+  </data>
+  <data name="ScreeningSelfText" xml:space="preserve">
+    <value>Der Wellness-Beauftragte Ihrer Organisation hat Ihnen zusätzliche Vorsorgeuntersuchungen empfohlen. Die folgenden Schritte helfen Ihnen, den Überblick zu behalten.</value>
+  </data>
+  <data name="ScreeningOfficerText" xml:space="preserve">
+    <value>Für dieses Mitglied ist eine verstärkte Vorsorge vermerkt.</value>
+  </data>
+  <data name="ReviewOnLabel" xml:space="preserve">
+    <value>Nächste Überprüfung</value>
+  </data>
+  <data name="PlanNotesLabel" xml:space="preserve">
+    <value>Nachsorgeplan</value>
+  </data>
+  <data name="WithheldValue" xml:space="preserve">
+    <value>Geschützt</value>
+  </data>
+  <data name="FollowUpColumn" xml:space="preserve">
+    <value>Nachsorge</value>
+  </data>
+  <data name="AssigneeColumn" xml:space="preserve">
+    <value>Zugewiesen an</value>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Fällig</value>
+  </data>
+  <data name="StateColumn" xml:space="preserve">
+    <value>Stand</value>
+  </data>
+  <data name="CompleteButton" xml:space="preserve">
+    <value>Als erledigt markieren</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="ScreeningManageHeader" xml:space="preserve">
+    <value>Vorsorge und Nachsorge</value>
+  </data>
+  <data name="ScreeningManageHelp" xml:space="preserve">
+    <value>Vermerken Sie für dieses Mitglied eine verstärkte Vorsorge und führen Sie einen Nachsorgeplan. Der Plan ist geschützt und nur für das Mitglied und die Wellness-Beauftragten sichtbar.</value>
+  </data>
+  <data name="ScreeningCategoryLabel" xml:space="preserve">
+    <value>Anlass</value>
+  </data>
+  <data name="NoCategoryOption" xml:space="preserve">
+    <value>Nicht angegeben</value>
+  </data>
+  <data name="ProtectedFieldHelp" xml:space="preserve">
+    <value>Geschützt: nur für das Mitglied und die Wellness-Beauftragten sichtbar.</value>
+  </data>
+  <data name="FlagForScreeningButton" xml:space="preserve">
+    <value>Verstärkte Vorsorge vermerken</value>
+  </data>
+  <data name="SaveScreeningButton" xml:space="preserve">
+    <value>Vorsorge speichern</value>
+  </data>
+  <data name="ClearScreeningButton" xml:space="preserve">
+    <value>Verstärkte Vorsorge beenden</value>
+  </data>
+  <data name="AddFollowUpHeader" xml:space="preserve">
+    <value>Nachsorgeschritt hinzufügen</value>
+  </data>
+  <data name="FollowUpPrivacyHelp" xml:space="preserve">
+    <value>Nachsorgeschritte erfassen nur die Art des Schritts und ob er erledigt wurde. Gesundheitliche Details gehören in den geschützten Plan.</value>
+  </data>
+  <data name="AddFollowUpButton" xml:space="preserve">
+    <value>Hinzufügen</value>
+  </data>
+  <data name="EntriesHeader" xml:space="preserve">
+    <value>Einträge</value>
+  </data>
+  <data name="NoEntriesSelf" xml:space="preserve">
+    <value>Sie haben noch keine Einträge. Sie können jederzeit eine Exposition erfassen.</value>
+  </data>
+  <data name="NoEntriesMember" xml:space="preserve">
+    <value>Für dieses Mitglied gibt es keine Einträge.</value>
+  </data>
+  <data name="RetentionNotice" xml:space="preserve">
+    <value>Einträge werden mindestens 30 Jahre aufbewahrt. Ein irrtümlich erfasster Eintrag kann so markiert werden; er bleibt erhalten, zählt aber nicht mehr.</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="AnniversaryReminderOnLabel" xml:space="preserve">
+    <value>Jahrestags-Erinnerung aktiv</value>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Öffnen</value>
+  </data>
+  <data name="VoidButton" xml:space="preserve">
+    <value>Irrtümlich erfasst</value>
+  </data>
+  <data name="VoidHelp" xml:space="preserve">
+    <value>Der Eintrag bleibt für die Aufbewahrungsfrist im Protokoll, zählt aber nicht mehr.</value>
+  </data>
+  <data name="VoidConfirmButton" xml:space="preserve">
+    <value>Bestätigen</value>
+  </data>
+  <data name="SupportNote" xml:space="preserve">
+    <value>Wenn Sie etwas aus einem Einsatz nicht loslässt, müssen Sie damit nicht allein bleiben. Ihr Peer-Support-Team und die Angebote Ihrer Organisation sind für Sie da.</value>
+  </data>
+  <data name="LogExposureTitle" xml:space="preserve">
+    <value>Exposition erfassen</value>
+  </data>
+  <data name="ReviewSuggestionTitle" xml:space="preserve">
+    <value>Vorgeschlagenen Eintrag prüfen</value>
+  </data>
+  <data name="EntryTitle" xml:space="preserve">
+    <value>Expositionseintrag</value>
+  </data>
+  <data name="EntryIntro" xml:space="preserve">
+    <value>Halten Sie in eigenen Worten fest, was passiert ist. Nur Kategorie, Datum, Einsatz und Dauer werden gezählt; alles andere ist geschützt.</value>
+  </data>
+  <data name="SuggestionReviewNotice" xml:space="preserve">
+    <value>Dieser Eintrag wurde aus den Einsatzdaten vorgeschlagen. Prüfen Sie die Angaben, ergänzen Sie, was Sie möchten, und bestätigen Sie ihn - oder verwerfen Sie ihn, wenn er nicht zutrifft.</value>
+  </data>
+  <data name="WhatHappenedHeader" xml:space="preserve">
+    <value>Wann und was</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Mitglied</value>
+  </data>
+  <data name="OccurredOnLabel" xml:space="preserve">
+    <value>Datum und Uhrzeit</value>
+  </data>
+  <data name="DurationMinutesLabel" xml:space="preserve">
+    <value>Dauer (Minuten)</value>
+  </data>
+  <data name="NoCallOption" xml:space="preserve">
+    <value>Kein Einsatz</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Details (geschützt)</value>
+  </data>
+  <data name="DetailsHelp" xml:space="preserve">
+    <value>Diese Angaben sind geschützt: nur Sie und die Wellness-Beauftragten Ihrer Organisation können sie lesen, und sie werden nie für die Suche oder von einer KI-Funktion verwendet.</value>
+  </data>
+  <data name="SubstanceLabel" xml:space="preserve">
+    <value>Stoff oder Erreger</value>
+  </data>
+  <data name="PpeWornLabel" xml:space="preserve">
+    <value>Getragene Schutzausrüstung</value>
+  </data>
+  <data name="DecontaminationLabel" xml:space="preserve">
+    <value>Dekontamination danach</value>
+  </data>
+  <data name="NarrativeLabel" xml:space="preserve">
+    <value>Was ist passiert</value>
+  </data>
+  <data name="HealthDetailsLabel" xml:space="preserve">
+    <value>Gesundheitliche Angaben</value>
+  </data>
+  <data name="HealthDetailsHelp" xml:space="preserve">
+    <value>Optional. Symptome, Behandlung oder was Sie festhalten möchten. Dies ist keine medizinische Beurteilung.</value>
+  </data>
+  <data name="RemindersHeader" xml:space="preserve">
+    <value>Erinnerungen an Jahrestage</value>
+  </data>
+  <data name="RemindersHelp" xml:space="preserve">
+    <value>Bei belastenden Ereignissen können Sie vor jedem Jahrestag eine behutsame Erinnerung wählen - für sich selbst und/oder als Hinweis an das Peer-Support-Team. Sie können das jederzeit ändern.</value>
+  </data>
+  <data name="RemindMemberLabel" xml:space="preserve">
+    <value>Mich vor dem Jahrestag erinnern</value>
+  </data>
+  <data name="RemindPeerTeamLabel" xml:space="preserve">
+    <value>Das Peer-Support-Team vor dem Jahrestag informieren</value>
+  </data>
+  <data name="NoPeerTeamHelp" xml:space="preserve">
+    <value>Ihre Organisation hat noch kein Peer-Support-Team eingerichtet.</value>
+  </data>
+  <data name="ConfirmButton" xml:space="preserve">
+    <value>Eintrag bestätigen</value>
+  </data>
+  <data name="SaveForLaterButton" xml:space="preserve">
+    <value>Ohne Bestätigung speichern</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="BackButton" xml:space="preserve">
+    <value>Zurück</value>
+  </data>
+  <data name="DismissLongButton" xml:space="preserve">
+    <value>Trifft auf mich nicht zu - verwerfen</value>
+  </data>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>Expositionsbericht der Mitglieder</value>
+  </data>
+  <data name="ReportIntro" xml:space="preserve">
+    <value>Zahlen je Mitglied für die Wellness-Beauftragten. Details bleiben im Protokoll des jeweiligen Mitglieds.</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>Bericht filtern</value>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>Von</value>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>Bis</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Filtern</value>
+  </data>
+  <data name="MembersHeader" xml:space="preserve">
+    <value>Mitglieder</value>
+  </data>
+  <data name="NoReportRows" xml:space="preserve">
+    <value>Keine Einträge in diesem Zeitraum.</value>
+  </data>
+  <data name="LastExposureLabel" xml:space="preserve">
+    <value>Zuletzt</value>
+  </data>
+  <data name="ScreeningFlaggedLabel" xml:space="preserve">
+    <value>Verstärkte Vorsorge</value>
+  </data>
+  <data name="OpenFollowUpsValue" xml:space="preserve">
+    <value>{0} offene Nachsorgeschritte</value>
+  </data>
+  <data name="OpenLogButton" xml:space="preserve">
+    <value>Protokoll öffnen</value>
+  </data>
+  <data name="RecentFlagsHeader" xml:space="preserve">
+    <value>Letzte Einsatz-Markierungen</value>
+  </data>
+  <data name="NoFlags" xml:space="preserve">
+    <value>Es wurden keine Einsätze markiert.</value>
+  </data>
+  <data name="FlaggedOnLabel" xml:space="preserve">
+    <value>Markiert</value>
+  </data>
+  <data name="SuggestionsColumn" xml:space="preserve">
+    <value>Vorschläge</value>
+  </data>
+  <data name="FlagClearedLabel" xml:space="preserve">
+    <value>Aufgehoben</value>
+  </data>
+  <data name="SuggestionsBuiltValue" xml:space="preserve">
+    <value>{0} vorgeschlagen</value>
+  </data>
+  <data name="SuggestionsPendingLabel" xml:space="preserve">
+    <value>Wartet auf Einsatzende</value>
+  </data>
+  <data name="FlagCallTitle" xml:space="preserve">
+    <value>Wellness-Nachsorge: Einsatz {0}</value>
+  </data>
+  <data name="FlagCallPickerTitle" xml:space="preserve">
+    <value>Einsatz-Markierungen</value>
+  </data>
+  <data name="FlagCallIntro" xml:space="preserve">
+    <value>Markieren Sie einen Einsatz als belastendes Ereignis oder Exposition. Nach Einsatzende erhält jeder, den die Einsatzdaten dort verzeichnen, einen Vorschlag zur Durchsicht. Niemand wird ohne eigene Bestätigung erfasst.</value>
+  </data>
+  <data name="RecentCallsHeader" xml:space="preserve">
+    <value>Letzte Einsätze</value>
+  </data>
+  <data name="NoRecentCalls" xml:space="preserve">
+    <value>Keine Einsätze in den letzten 30 Tagen.</value>
+  </data>
+  <data name="CallActiveNotice" xml:space="preserve">
+    <value>Dieser Einsatz läuft noch. Vorschläge entstehen nach Einsatzende.</value>
+  </data>
+  <data name="CriticalIncidentHelp" xml:space="preserve">
+    <value>Ein möglicherweise belastender Einsatz. Unabhängig von der Einsatzpriorität.</value>
+  </data>
+  <data name="NotFlaggedLabel" xml:space="preserve">
+    <value>Nicht markiert</value>
+  </data>
+  <data name="FlagButton" xml:space="preserve">
+    <value>Markieren</value>
+  </data>
+  <data name="ClearFlagButton" xml:space="preserve">
+    <value>Markierung aufheben</value>
+  </data>
+  <data name="FlagPrivacyHelp" xml:space="preserve">
+    <value>Eine Markierung erfasst nur den Einsatz und die Kategorie. Die Mitglieder entscheiden, was sie in ihr eigenes Protokoll aufnehmen.</value>
+  </data>
+  <data name="BackToCallButton" xml:space="preserve">
+    <value>Zurück zum Einsatz</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Wellness-Einstellungen</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Wer die Expositionsprotokolle lesen darf, wer zum Peer-Support-Team gehört und wie lange Einträge aufbewahrt werden.</value>
+  </data>
+  <data name="WellnessOfficerRoleLabel" xml:space="preserve">
+    <value>Rolle der Wellness-Beauftragten</value>
+  </data>
+  <data name="WellnessOfficerRoleHelp" xml:space="preserve">
+    <value>Mitglieder dieser Rolle können jedes Expositionsprotokoll lesen und Vorsorgevermerke führen. Administratoren können die Protokolle nur lesen, wenn sie diese Rolle haben.</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="PeerTeamLabel" xml:space="preserve">
+    <value>Zertifizierung des Peer-Support-Teams</value>
+  </data>
+  <data name="PeerTeamHelp" xml:space="preserve">
+    <value>Mitglieder mit einer gültigen Zertifizierung dieses Typs erhalten die Jahrestags-Erinnerungen, die Mitglieder teilen möchten.</value>
+  </data>
+  <data name="RetentionYearsLabel" xml:space="preserve">
+    <value>Einträge aufbewahren (Jahre)</value>
+  </data>
+  <data name="RetentionYearsHelp" xml:space="preserve">
+    <value>Mindestens 30 Jahre (OSHA 29 CFR 1910.1020). Einträge unter einer rechtlichen Aufbewahrungspflicht bleiben länger erhalten.</value>
+  </data>
+  <data name="WellnessFollowUpButton" xml:space="preserve">
+    <value>Wellness-Nachsorge</value>
+  </data>
+  <data name="WellnessFollowUpHelp" xml:space="preserve">
+    <value>Diesen Einsatz als belastendes Ereignis oder Exposition markieren, damit Mitglieder ihn in ihr Protokoll aufnehmen können</value>
+  </data>
+  <data name="Msg.Recorded" xml:space="preserve">
+    <value>Der Eintrag wurde erfasst.</value>
+  </data>
+  <data name="Msg.Confirmed" xml:space="preserve">
+    <value>Der Eintrag wurde bestätigt.</value>
+  </data>
+  <data name="Msg.Saved" xml:space="preserve">
+    <value>Gespeichert.</value>
+  </data>
+  <data name="Msg.Dismissed" xml:space="preserve">
+    <value>Der Vorschlag wurde verworfen.</value>
+  </data>
+  <data name="Msg.Voided" xml:space="preserve">
+    <value>Der Eintrag wurde als irrtümlich erfasst markiert.</value>
+  </data>
+  <data name="Msg.RemindersSaved" xml:space="preserve">
+    <value>Ihre Erinnerungseinstellungen wurden gespeichert.</value>
+  </data>
+  <data name="Msg.ScreeningSaved" xml:space="preserve">
+    <value>Der Vorsorgevermerk wurde gespeichert.</value>
+  </data>
+  <data name="Msg.ScreeningCleared" xml:space="preserve">
+    <value>Die verstärkte Vorsorge wurde beendet.</value>
+  </data>
+  <data name="Msg.FollowUpAdded" xml:space="preserve">
+    <value>Der Nachsorgeschritt wurde hinzugefügt.</value>
+  </data>
+  <data name="Msg.FollowUpCompleted" xml:space="preserve">
+    <value>Der Nachsorgeschritt wurde als erledigt markiert.</value>
+  </data>
+  <data name="Msg.FollowUpCancelled" xml:space="preserve">
+    <value>Der Nachsorgeschritt wurde abgebrochen.</value>
+  </data>
+  <data name="Msg.CallFlagged" xml:space="preserve">
+    <value>Der Einsatz wurde markiert. Vorschläge folgen nach Einsatzende.</value>
+  </data>
+  <data name="Msg.CallFlagCleared" xml:space="preserve">
+    <value>Die Markierung wurde aufgehoben. Nicht bestätigte Vorschläge wurden entfernt.</value>
+  </data>
+  <data name="Msg.SettingsSaved" xml:space="preserve">
+    <value>Die Wellness-Einstellungen wurden gespeichert.</value>
+  </data>
+  <data name="Error.Generic" xml:space="preserve">
+    <value>Das konnte nicht gespeichert werden. Bitte prüfen Sie die Angaben und versuchen Sie es erneut.</value>
+  </data>
+  <data name="Error.NotAllowed" xml:space="preserve">
+    <value>Dafür haben Sie keinen Zugriff.</value>
+  </data>
+  <data name="Error.ExportFailed" xml:space="preserve">
+    <value>Der Export konnte nicht erstellt werden. Bitte versuchen Sie es erneut.</value>
+  </data>
+  <data name="Error.role_not_found" xml:space="preserve">
+    <value>Diese Rolle wurde nicht gefunden.</value>
+  </data>
+  <data name="Error.certification_type_not_found" xml:space="preserve">
+    <value>Dieser Zertifizierungstyp wurde nicht gefunden.</value>
+  </data>
+  <data name="Error.member_not_found" xml:space="preserve">
+    <value>Dieses Mitglied wurde in dieser Organisation nicht gefunden.</value>
+  </data>
+  <data name="Error.entry_not_found" xml:space="preserve">
+    <value>Dieser Eintrag wurde nicht gefunden.</value>
+  </data>
+  <data name="Error.entry_closed" xml:space="preserve">
+    <value>Dieser Eintrag ist abgeschlossen und kann nicht mehr geändert werden.</value>
+  </data>
+  <data name="Error.entry_changed" xml:space="preserve">
+    <value>Jemand anderes hat diesen Eintrag geändert. Bitte öffnen Sie ihn erneut und versuchen Sie es noch einmal.</value>
+  </data>
+  <data name="Error.not_a_suggestion" xml:space="preserve">
+    <value>Nur ein vorgeschlagener Eintrag kann bestätigt oder verworfen werden.</value>
+  </data>
+  <data name="Error.not_confirmed" xml:space="preserve">
+    <value>Nur ein bestätigter Eintrag kann so geändert werden.</value>
+  </data>
+  <data name="Error.reminders_critical_incident_only" xml:space="preserve">
+    <value>Jahrestags-Erinnerungen gibt es nur für belastende Ereignisse.</value>
+  </data>
+  <data name="Error.category_required" xml:space="preserve">
+    <value>Bitte wählen Sie eine Kategorie.</value>
+  </data>
+  <data name="Error.date_invalid" xml:space="preserve">
+    <value>Bitte geben Sie ein gültiges Datum ein.</value>
+  </data>
+  <data name="Error.duration_invalid" xml:space="preserve">
+    <value>Bitte geben Sie eine Dauer zwischen 0 und 10.080 Minuten ein.</value>
+  </data>
+  <data name="Error.call_not_found" xml:space="preserve">
+    <value>Dieser Einsatz wurde in dieser Organisation nicht gefunden.</value>
+  </data>
+  <data name="Error.protected_write_refused" xml:space="preserve">
+    <value>Die geschützten Angaben konnten nicht gespeichert werden. Bitte versuchen Sie es erneut.</value>
+  </data>
+  <data name="Error.flag_not_found" xml:space="preserve">
+    <value>Diese Markierung wurde nicht gefunden.</value>
+  </data>
+  <data name="Error.follow_up_kind_required" xml:space="preserve">
+    <value>Bitte wählen Sie die Art des Nachsorgeschritts.</value>
+  </data>
+  <data name="Error.follow_up_assignee_invalid" xml:space="preserve">
+    <value>Ein Nachsorgeschritt kann dem Mitglied oder einem Wellness-Beauftragten zugewiesen werden.</value>
+  </data>
+  <data name="Error.follow_up_closed" xml:space="preserve">
+    <value>Dieser Nachsorgeschritt ist bereits abgeschlossen.</value>
+  </data>
+  <data name="Error.follow_up_not_found" xml:space="preserve">
+    <value>Dieser Nachsorgeschritt wurde nicht gefunden.</value>
+  </data>
+  <data name="Category.Carcinogen" xml:space="preserve">
+    <value>Krebserregender Stoff</value>
+  </data>
+  <data name="Category.BloodbornePathogen" xml:space="preserve">
+    <value>Blutübertragbarer Erreger</value>
+  </data>
+  <data name="Category.HazardousSubstance" xml:space="preserve">
+    <value>Gefahrstoff</value>
+  </data>
+  <data name="Category.CriticalIncident" xml:space="preserve">
+    <value>Belastendes Ereignis</value>
+  </data>
+  <data name="Category.Other" xml:space="preserve">
+    <value>Sonstiges</value>
+  </data>
+  <data name="Status.Suggested" xml:space="preserve">
+    <value>Zur Durchsicht</value>
+  </data>
+  <data name="Status.Confirmed" xml:space="preserve">
+    <value>Bestätigt</value>
+  </data>
+  <data name="Status.Dismissed" xml:space="preserve">
+    <value>Verworfen</value>
+  </data>
+  <data name="Status.Voided" xml:space="preserve">
+    <value>Irrtümlich erfasst</value>
+  </data>
+  <data name="FollowUpKind.screening_appointment" xml:space="preserve">
+    <value>Vorsorgetermin</value>
+  </data>
+  <data name="FollowUpKind.baseline_test" xml:space="preserve">
+    <value>Basisuntersuchung</value>
+  </data>
+  <data name="FollowUpKind.medical_review" xml:space="preserve">
+    <value>Ärztliche Überprüfung</value>
+  </data>
+  <data name="FollowUpKind.wellness_check_in" xml:space="preserve">
+    <value>Wellness-Gespräch</value>
+  </data>
+  <data name="FollowUpKind.other" xml:space="preserve">
+    <value>Sonstiger Schritt</value>
+  </data>
+  <data name="FollowUpState.Open" xml:space="preserve">
+    <value>Offen</value>
+  </data>
+  <data name="FollowUpState.Acknowledged" xml:space="preserve">
+    <value>Zur Kenntnis genommen</value>
+  </data>
+  <data name="FollowUpState.Completed" xml:space="preserve">
+    <value>Erledigt</value>
+  </data>
+  <data name="FollowUpState.Cancelled" xml:space="preserve">
+    <value>Abgebrochen</value>
+  </data>
+  <data name="Basis.status" xml:space="preserve">
+    <value>Personalstatus</value>
+  </data>
+  <data name="Basis.unit_crew" xml:space="preserve">
+    <value>Fahrzeugbesatzung</value>
+  </data>
+  <data name="Basis.check_in" xml:space="preserve">
+    <value>Check-in</value>
+  </data>
+  <data name="Basis.unit_response" xml:space="preserve">
+    <value>Einsatzzeiten des Fahrzeugs</value>
+  </data>
+  <data name="Doc.Title" xml:space="preserve">
+    <value>Protokoll über Expositionen und belastende Ereignisse</value>
+  </data>
+  <data name="Doc.Member" xml:space="preserve">
+    <value>Mitglied</value>
+  </data>
+  <data name="Doc.Date" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="Doc.Category" xml:space="preserve">
+    <value>Kategorie</value>
+  </data>
+  <data name="Doc.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Doc.Call" xml:space="preserve">
+    <value>Einsatz</value>
+  </data>
+  <data name="Doc.Duration" xml:space="preserve">
+    <value>Dauer (h:mm)</value>
+  </data>
+  <data name="Doc.Substance" xml:space="preserve">
+    <value>Stoff oder Erreger</value>
+  </data>
+  <data name="Doc.PpeWorn" xml:space="preserve">
+    <value>Getragene PSA</value>
+  </data>
+  <data name="Doc.Decontamination" xml:space="preserve">
+    <value>Dekontamination</value>
+  </data>
+  <data name="Doc.Narrative" xml:space="preserve">
+    <value>Was ist passiert</value>
+  </data>
+  <data name="Doc.HealthDetails" xml:space="preserve">
+    <value>Gesundheitliche Angaben</value>
+  </data>
+  <data name="Doc.Withheld" xml:space="preserve">
+    <value>Zurückgehalten (geschützt)</value>
+  </data>
+  <data name="Doc.GeneratedOn" xml:space="preserve">
+    <value>Erstellt am {0}</value>
+  </data>
+  <data name="Doc.Retention" xml:space="preserve">
+    <value>Ihre Organisation bewahrt diese Aufzeichnungen mindestens 30 Jahre auf.</value>
+  </data>
+  <data name="Doc.CriticalIncidents" xml:space="preserve">
+    <value>Belastende Ereignisse</value>
+  </data>
+  <data name="Doc.ReportTitle" xml:space="preserve">
+    <value>Expositionsbericht der Mitglieder</value>
+  </data>
+  <data name="Doc.Total" xml:space="preserve">
+    <value>Bestätigte Einträge</value>
+  </data>
+  <data name="Doc.PendingSuggestions" xml:space="preserve">
+    <value>Zur Durchsicht</value>
+  </data>
+  <data name="Doc.LastExposure" xml:space="preserve">
+    <value>Zuletzt</value>
+  </data>
+  <data name="Doc.ScreeningFlagged" xml:space="preserve">
+    <value>Verstärkte Vorsorge</value>
+  </data>
+  <data name="Doc.OpenFollowUps" xml:space="preserve">
+    <value>Offene Nachsorgeschritte</value>
+  </data>
+  <data name="Doc.Yes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+</root>

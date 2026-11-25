@@ -3,6 +3,7 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Records.DisclosureDetailView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> sealedText
 @{
 	ViewBag.Title = "Resgrid | " + localizer["Disclosure"];
 	var request = Model.Request;
@@ -200,6 +201,7 @@
 											<td>
 												<a class="btn btn-xs btn-white" asp-controller="Disclosures" asp-action="Download" asp-route-area="User" asp-route-id="@request.RmsDisclosureRequestId" asp-route-productionId="@production.RmsDisclosureProductionId" asp-route-format="zip">ZIP</a>
 												<a class="btn btn-xs btn-white" asp-action="Download" asp-route-id="@request.RmsDisclosureRequestId" asp-route-productionId="@production.RmsDisclosureProductionId" asp-route-format="pdf">PDF</a>
+												<a class="btn btn-xs btn-white" asp-action="Download" asp-route-id="@request.RmsDisclosureRequestId" asp-route-productionId="@production.RmsDisclosureProductionId" asp-route-format="pdf" asp-route-sealedCopy="true"><i class="fa fa-shield" aria-hidden="true"></i> @sealedText["SealedPdfButton"]</a>
 												<a class="btn btn-xs btn-white" asp-action="Download" asp-route-id="@request.RmsDisclosureRequestId" asp-route-productionId="@production.RmsDisclosureProductionId" asp-route-format="json">JSON</a>
 												<form method="post" style="display:inline" asp-controller="Disclosures" asp-action="Verify" asp-route-area="User">
 													@Html.AntiForgeryToken()

@@ -84,6 +84,7 @@ namespace Resgrid.Tests.Web.User
 				Mock.Of<ICertificationService>(),
 				Mock.Of<IUnitsService>(),
 				Mock.Of<IShiftsService>(),
+				Mock.Of<ILearningRecordService>(),
 				localizer.Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }

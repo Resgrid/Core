@@ -56,7 +56,7 @@ namespace Resgrid.Tests.Dashboard.Widgets
 			trainings.Setup(x => x.GetQuestionCountsForDepartmentAsync(DepartmentId)).ReturnsAsync(new Dictionary<int, int> { [3] = 1, [4] = 2 });
 			var departments = new Mock<IDepartmentsService>();
 			departments.Setup(x => x.GetDepartmentByIdAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = DepartmentId, TimeZone = "Eastern Standard Time" });
-			var service = new TrainingService(trainings.Object, null, null, Mock.Of<ITrainingQuestionRepository>(MockBehavior.Strict), null, departments.Object, null);
+			var service = new TrainingService(trainings.Object, null, null, Mock.Of<ITrainingQuestionRepository>(MockBehavior.Strict), null, departments.Object, null, Mock.Of<IKnowledgeIndexQueue>());
 
 			var outstanding = await service.GetOutstandingTrainingsForUserAsync(DepartmentId, UserId);
 

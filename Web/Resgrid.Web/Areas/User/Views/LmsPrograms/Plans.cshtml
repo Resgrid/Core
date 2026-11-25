@@ -1,0 +1,113 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsPrograms
+@model LmsPlansView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@* Annual training plans (R-C5): every plan by year, and a new plan for the department, a group or a shift. *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Prg.PlansTitle"];
+    ViewData["Title"] = localizer["Prg.PlansTitle"].Value;
+    ViewData["Subtitle"] = localizer["Prg.PlansIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    @if (Model.CanAuthor)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-plus" aria-hidden="true"></i> @localizer["Prg.NewPlan"]</h5></div>
+            <div class="ibox-content">
+                <form method="post" asp-controller="LmsPrograms" asp-action="SavePlan" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label for="plan-name">@localizer["Prg.Name"]</label>
+                            <input id="plan-name" name="name" class="form-control" maxlength="150" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="plan-year">@localizer["Prg.Year"]</label>
+                            <input id="plan-year" name="year" type="number" min="2000" max="2100" class="form-control" value="@Model.DefaultYear" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="plan-scope">@localizer["Prg.Audience"]</label>
+                            <select id="plan-scope" name="scopeKind" class="form-control">
+                                <option value="@((int)LmsTrainingPlanScopes.Department)">@localizer["Prg.Scope.Department"]</option>
+                                <option value="@((int)LmsTrainingPlanScopes.Group)">@localizer["Prg.Scope.Group"]</option>
+                                <option value="@((int)LmsTrainingPlanScopes.Shift)">@localizer["Prg.Scope.Shift"]</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="plan-group">@localizer["Prg.Scope.Group"]</label>
+                            <select id="plan-group" name="groupId" class="form-control">
+                                <option value="">—</option>
+                                @foreach (var group in Model.Groups.OrderBy(g => g.Name))
+                                {
+                                    <option value="@group.DepartmentGroupId">@group.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="plan-shift">@localizer["Prg.Scope.Shift"]</label>
+                            <select id="plan-shift" name="shiftId" class="form-control">
+                                <option value="">—</option>
+                                @foreach (var shift in Model.Shifts.OrderBy(s => s.Name))
+                                {
+                                    <option value="@shift.ShiftId">@shift.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="plan-notes">@localizer["Prg.Notes"]</label>
+                        <textarea id="plan-notes" name="notes" class="form-control" rows="2" maxlength="4000"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["Prg.CreatePlan"]</button>
+                </form>
+            </div>
+        </div>
+    }
+
+    @if (Model.Plans.Count == 0)
+    {
+        <p class="text-muted">@localizer["Prg.NoPlans"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead>
+                    <tr>
+                        <th>@localizer["Prg.Name"]</th>
+                        <th>@localizer["Prg.Year"]</th>
+                        <th>@localizer["Prg.Audience"]</th>
+                        <th>@localizer["Prg.Col.Status"]</th>
+                        <th class="rgw-row-actions">@localizer["Prg.Actions"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var plan in Model.Plans)
+                    {
+                        <tr>
+                            <td><a asp-controller="LmsPrograms" asp-action="Plan" asp-route-area="User" asp-route-id="@plan.LmsTrainingPlanId">@plan.Name</a></td>
+                            <td>@plan.Year</td>
+                            <td>@localizer["Prg.Scope." + (LmsTrainingPlanScopes)plan.ScopeKind]</td>
+                            <td><span class="label @(plan.Status == (int)LmsTrainingPlanStatuses.Adopted ? "label-primary" : "label-default")">@localizer["Prg.PlanStatus." + (LmsTrainingPlanStatuses)plan.Status]</span></td>
+                            <td class="rgw-row-actions">
+                                <a class="btn btn-white btn-xs" asp-controller="LmsPrograms" asp-action="Plan" asp-route-area="User" asp-route-id="@plan.LmsTrainingPlanId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["Prg.Open"]</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

@@ -904,4 +904,7 @@
   <data name="AcademyLearnThisPage" xml:space="preserve">
     <value>Lesson for this page ({0} min)</value>
   </data>
+  <data name="AcademyAssignThisLesson" xml:space="preserve">
+    <value>Assign this lesson</value>
+  </data>
 </root>

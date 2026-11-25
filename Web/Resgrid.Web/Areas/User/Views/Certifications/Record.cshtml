@@ -109,6 +109,23 @@
                     {
                         <p class="text-muted">@string.Format(localizer["CreditTotal"].Value, Model.CreditHours.ToString("0.##"))</p>
                     }
+                    @if (Model.RenewalHours != null)
+                    {
+                        var renewal = Model.RenewalHours;
+                        <div class="certification-renewal-hours m-b-sm">
+                            <p class="m-b-xs"><i class="fa fa-clock-o" aria-hidden="true"></i> <strong>@localizer["RenewalHoursLabel"]:</strong> @string.Format(localizer["RenewalHoursValue"].Value, renewal.CreditedHours.ToString("0.##"), renewal.DerivedHours.ToString("0.##"))</p>
+                            @if (renewal.UncreditedLedgerHours > 0)
+                            {
+                                <p class="text-warning m-b-xs">
+                                    <i class="fa fa-info-circle" aria-hidden="true"></i> @string.Format(localizer["UncreditedLedgerHours"].Value, renewal.UncreditedLedgerHours.ToString("0.##"))
+                                    @if (Model.CanManage && t != null)
+                                    {
+                                        <a class="btn btn-xs btn-default" asp-controller="TrainingRecords" asp-action="ApplyHistory" asp-route-area="User" asp-route-typeId="@t.DepartmentCertificationTypeId"><i class="fa fa-history" aria-hidden="true"></i> @localizer["ApplyHistoryLink"]</a>
+                                    }
+                                </p>
+                            }
+                        </div>
+                    }
                     @if (Model.Credits.Count == 0)
                     {
                         <p class="text-muted">@localizer["NoCredits"]</p>
@@ -124,7 +141,12 @@
                                         <td>@c.CreditDate.ToString("yyyy-MM-dd")</td>
                                         <td class="text-right">@c.Hours.ToString("0.##")</td>
                                         <td>@c.Category</td>
-                                        <td><span data-adp-field="personnelcertificationcredits.description:@c.PersonnelCertificationCreditId">@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(c.Description)</span> @if (!string.IsNullOrWhiteSpace(c.FileName)) { <a asp-controller="Certifications" asp-action="CreditFile" asp-route-area="User" asp-route-id="@c.PersonnelCertificationCreditId"><i class="fa fa-paperclip"></i></a> }</td>
+                                        <td><span data-adp-field="personnelcertificationcredits.description:@c.PersonnelCertificationCreditId">@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(c.Description)</span> @if (!string.IsNullOrWhiteSpace(c.FileName)) { <a asp-controller="Certifications" asp-action="CreditFile" asp-route-area="User" asp-route-id="@c.PersonnelCertificationCreditId"><i class="fa fa-paperclip"></i></a> }
+                                            @if (c.IsDerived)
+                                            {
+                                                <a class="label label-info" asp-controller="TrainingRecords" asp-action="Transcript" asp-route-area="User" asp-route-userId="@(Model.IsSelf ? null : r.UserId)"><i class="fa fa-id-card-o" aria-hidden="true"></i> @localizer["FromTranscript"]</a>
+                                            }
+                                        </td>
                                         <td class="text-right">
                                             @if (Model.CanManage)
                                             {

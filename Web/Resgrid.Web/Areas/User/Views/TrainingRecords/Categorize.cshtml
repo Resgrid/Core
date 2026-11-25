@@ -1,0 +1,116 @@
+@using System.Globalization
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingCategorizeView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    Bulk categorize (R-T3): uncategorized records grouped by course name and code; one category for the whole group. Derived
+    certification credits follow for records that are not backfilled.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Rec.CategorizeTitle"];
+    ViewData["Section"] = "Records";
+    ViewData["Title"] = localizer["Rec.CategorizeTitle"].Value;
+    ViewData["Subtitle"] = localizer["Rec.CategorizeIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["SubTabs"] = Model.OfficerTabs;
+    var categories = Model.LiveCategories;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <form method="get" asp-controller="TrainingRecords" asp-action="Categorize" asp-route-area="User" class="rgw-filter" role="search" aria-label="@localizer["Rec.FilterLabel"]">
+        <div class="rgw-grid">
+            <div class="form-group">
+                <label for="categorize-from">@localizer["Rec.FromLabel"]</label>
+                <input id="categorize-from" name="from" type="date" class="form-control" value="@Model.From" />
+            </div>
+            <div class="form-group">
+                <label for="categorize-to">@localizer["Rec.ToLabel"]</label>
+                <input id="categorize-to" name="to" type="date" class="form-control" value="@Model.To" />
+            </div>
+        </div>
+        <div class="rgw-filter-actions">
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-filter" aria-hidden="true"></i> @localizer["FilterButton"]</button>
+        </div>
+    </form>
+
+    @if (categories.Count == 0)
+    {
+        <div class="rgw-next-action">
+            <p class="m-b-xs"><strong><i class="fa fa-tags" aria-hidden="true"></i> @localizer["Rec.NoCategories"]</strong></p>
+            <a class="btn btn-primary btn-sm" asp-controller="TrainingRecords" asp-action="Categories" asp-route-area="User"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["Rec.AddCategoryHeader"]</a>
+        </div>
+    }
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-folder-open-o" aria-hidden="true"></i> @localizer["Rec.UncategorizedGroupsHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.Groups.Count == 0)
+            {
+                <p class="text-muted">@localizer["Rec.NoUncategorized"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["Doc.Course"]</th>
+                                <th>@localizer["Doc.Code"]</th>
+                                <th class="text-right">@localizer["Doc.Records"]</th>
+                                <th class="text-right">@localizer["Doc.Hours"]</th>
+                                <th>@localizer["Rec.DatesColumn"]</th>
+                                <th class="rgw-row-actions">@localizer["Doc.Category"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ var row = 0; }
+                            @foreach (var group in Model.Groups)
+                            {
+                                row++;
+                                <tr>
+                                    <td>@(string.IsNullOrWhiteSpace(group.Title) ? localizer["Rec.NoTitle"].Value : group.Title)</td>
+                                    <td>@group.CourseCode</td>
+                                    <td class="text-right">@group.Count.ToString("#,0", CultureInfo.CurrentCulture)</td>
+                                    <td class="text-right">@LearningRecordPresentation.Hours(group.Hours)</td>
+                                    <td class="text-nowrap">@TrainingStatePresentation.LocalDate(group.FirstOn, Model.Department) – @TrainingStatePresentation.LocalDate(group.LastOn, Model.Department)</td>
+                                    <td class="rgw-row-actions">
+                                        @if (categories.Count > 0)
+                                        {
+                                            <form method="post" asp-controller="TrainingRecords" asp-action="Categorize" asp-route-area="User" asp-route-from="@Model.From" asp-route-to="@Model.To" class="categorize-row">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="title" value="@group.Title" />
+                                                <input type="hidden" name="courseCode" value="@group.CourseCode" />
+                                                <label for="categorize-@row" class="sr-only">@localizer["Doc.Category"]</label>
+                                                <select id="categorize-@row" name="categoryId" class="form-control input-sm" required>
+                                                    <option value="">@localizer["SelectPlaceholder"]</option>
+                                                    @foreach (var category in categories)
+                                                    {
+                                                        <option value="@category.TrainingCategoryId">@category.Name</option>
+                                                    }
+                                                </select>
+                                                <button type="submit" class="btn btn-xs btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Rec.CategorizeButton"]</button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <style>
+        .categorize-row { display: flex; gap: 6px; align-items: center; justify-content: flex-end; flex-wrap: wrap; }
+        .categorize-row select { width: auto; min-width: 160px; max-width: 260px; }
+    </style>
+}

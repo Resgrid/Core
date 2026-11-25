@@ -1,0 +1,940 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AnyApprover" xml:space="preserve">
+    <value>أي معتمِد</value>
+  </data>
+  <data name="BindsToContentHelp" xml:space="preserve">
+    <value>يغطي التوقيع هذا النص تحديدًا. إذا تغيّر النص، فلن يعود مطابقًا وسيلزم توقيع جديد.</value>
+  </data>
+  <data name="CertificationVerificationStatement" xml:space="preserve">
+    <value>أتحقق من سجل الشهادة {0} ({1}، تاريخ الاستلام {2}، تاريخ الانتهاء {3}): لقد فحصته وهو أصلي.</value>
+  </data>
+  <data name="CommentLabel" xml:space="preserve">
+    <value>تعليق (اختياري)</value>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>رمز المحتوى</value>
+  </data>
+  <data name="IntentApprove" xml:space="preserve">
+    <value>اعتماد</value>
+  </data>
+  <data name="IntentAttest" xml:space="preserve">
+    <value>تصديق</value>
+  </data>
+  <data name="IntentColumn" xml:space="preserve">
+    <value>المعنى</value>
+  </data>
+  <data name="IntentReview" xml:space="preserve">
+    <value>مراجعة</value>
+  </data>
+  <data name="IntentVerify" xml:space="preserve">
+    <value>تحقق</value>
+  </data>
+  <data name="IntentWitness" xml:space="preserve">
+    <value>شاهد</value>
+  </data>
+  <data name="LevelAttest" xml:space="preserve">
+    <value>جلسة تسجيل الدخول</value>
+  </data>
+  <data name="LevelBadge" xml:space="preserve">
+    <value>المستوى {0}: {1}</value>
+  </data>
+  <data name="LevelColumn" xml:space="preserve">
+    <value>المستوى</value>
+  </data>
+  <data name="LevelStepUp" xml:space="preserve">
+    <value>أُعيد التحقق من الهوية</value>
+  </data>
+  <data name="MethodPasskey" xml:space="preserve">
+    <value>مفتاح المرور</value>
+  </data>
+  <data name="MethodSession" xml:space="preserve">
+    <value>جلسة تسجيل الدخول</value>
+  </data>
+  <data name="MethodStepUp" xml:space="preserve">
+    <value>التحقق بالعامل الثاني</value>
+  </data>
+  <data name="NoSignatures" xml:space="preserve">
+    <value>لا توجد توقيعات بعد.</value>
+  </data>
+  <data name="OthersToSignLabel" xml:space="preserve">
+    <value>سيوقّع بعدك:</value>
+  </data>
+  <data name="PasskeyCancelled" xml:space="preserve">
+    <value>أُغلقت نافذة مفتاح المرور. لم يُوقَّع أي شيء.</value>
+  </data>
+  <data name="PasskeyFailed" xml:space="preserve">
+    <value>تعذر التحقق من مفتاح المرور. لم يُوقَّع أي شيء.</value>
+  </data>
+  <data name="PasskeyOnlyHelp" xml:space="preserve">
+    <value>يتطلب قسمك مفتاح مرور لهذا التوقيع.</value>
+  </data>
+  <data name="PasskeyRequiredHelp" xml:space="preserve">
+    <value>مفتاح المرور مطلوب.</value>
+  </data>
+  <data name="PasskeyUnsupported" xml:space="preserve">
+    <value>لا يمكن لهذا المتصفح استخدام مفاتيح المرور. استخدم «توقيع» بدلًا من ذلك.</value>
+  </data>
+  <data name="ProtocolApprovalStatement" xml:space="preserve">
+    <value>أعتمد هذا التنقيح للبروتوكول {0} «{1}» (المحتوى {2}) للنشر، بوصفه الخطوة {3} من {4} في مراجعته.</value>
+  </data>
+  <data name="ProtocolReviewStatement" xml:space="preserve">
+    <value>لقد راجعت البروتوكول {0} «{1}» الإصدار {2} (المحتوى {3}) وما زال صحيحًا دون تغيير.</value>
+  </data>
+  <data name="SignApproveButton" xml:space="preserve">
+    <value>توقيع واعتماد</value>
+  </data>
+  <data name="SignReviewButton" xml:space="preserve">
+    <value>توقيع المراجعة</value>
+  </data>
+  <data name="SignWithPasskeyButton" xml:space="preserve">
+    <value>التوقيع بمفتاح المرور</value>
+  </data>
+  <data name="SignedOnColumn" xml:space="preserve">
+    <value>تاريخ التوقيع</value>
+  </data>
+  <data name="SignerColumn" xml:space="preserve">
+    <value>الموقّع</value>
+  </data>
+  <data name="StatementLabel" xml:space="preserve">
+    <value>أنت توقّع على هذا البيان:</value>
+  </data>
+  <data name="StepUpHelp" xml:space="preserve">
+    <value>عند التوقيع، يُطلب منك تأكيد هويتك بالعامل الثاني إن لم تكن قد فعلت ذلك للتو.</value>
+  </data>
+  <data name="VerificationChanged" xml:space="preserve">
+    <value>تغيّر المحتوى</value>
+  </data>
+  <data name="VerificationColumn" xml:space="preserve">
+    <value>الفحص</value>
+  </data>
+  <data name="VerificationMissing" xml:space="preserve">
+    <value>المحتوى غير موجود</value>
+  </data>
+  <data name="VerificationValid" xml:space="preserve">
+    <value>مطابق</value>
+  </data>
+  <data name="VerificationVoided" xml:space="preserve">
+    <value>مُلغى</value>
+  </data>
+  <data name="AdoptTypedButton" xml:space="preserve">
+    <value>استخدام الاسم المطبوع كتوقيع</value>
+  </data>
+  <data name="AuditDepartment" xml:space="preserve">
+    <value>الإدارة</value>
+  </data>
+  <data name="AuditDocument" xml:space="preserve">
+    <value>المستند</value>
+  </data>
+  <data name="AuditEvidence" xml:space="preserve">
+    <value>الدليل</value>
+  </data>
+  <data name="AuditMethod" xml:space="preserve">
+    <value>الطريقة</value>
+  </data>
+  <data name="AuditNoSigners" xml:space="preserve">
+    <value>لا توجد توقيعات مسجلة على هذا المستند؛ يُختم كما صدر.</value>
+  </data>
+  <data name="AuditPageTitle" xml:space="preserve">
+    <value>صفحة تدقيق Resgrid</value>
+  </data>
+  <data name="AuditPreparedOn" xml:space="preserve">
+    <value>أُعد في</value>
+  </data>
+  <data name="AuditRevisionHash" xml:space="preserve">
+    <value>تجزئة المحتوى (SHA-256)</value>
+  </data>
+  <data name="AuditRole" xml:space="preserve">
+    <value>الدور</value>
+  </data>
+  <data name="AuditSealNote" xml:space="preserve">
+    <value>هذه الصفحة جزء من المستند المختوم. يُظهر الختم (PAdES مع ختم زمني RFC 3161) أن الملف لم يتغير منذ ختمه؛ تحقق منه عبر «التحقق من مستند» في Resgrid أو في أي قارئ PDF.</value>
+  </data>
+  <data name="AuditSigners" xml:space="preserve">
+    <value>الموقّعون</value>
+  </data>
+  <data name="AuditSubject" xml:space="preserve">
+    <value>الموضوع</value>
+  </data>
+  <data name="BackLink" xml:space="preserve">
+    <value>رجوع</value>
+  </data>
+  <data name="CancelLink" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="ChannelInPerson" xml:space="preserve">
+    <value>حضوريًا</value>
+  </data>
+  <data name="ChannelLabel" xml:space="preserve">
+    <value>الطريقة</value>
+  </data>
+  <data name="ChannelRemote" xml:space="preserve">
+    <value>عبر رابط</value>
+  </data>
+  <data name="ClearSignatureButton" xml:space="preserve">
+    <value>مسح</value>
+  </data>
+  <data name="ClosedText" xml:space="preserve">
+    <value>رابط التوقيع هذا لم يعد صالحًا. ربما استُخدم أو سُحب أو انتهت صلاحيته. اطلب رابطًا جديدًا من المرسل.</value>
+  </data>
+  <data name="CodeAttemptsLeft" xml:space="preserve">
+    <value>المحاولات المتبقية: {0}.</value>
+  </data>
+  <data name="CodeHeading" xml:space="preserve">
+    <value>أدخل الرمز</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>رمز من ستة أرقام</value>
+  </data>
+  <data name="CodeNotSent" xml:space="preserve">
+    <value>تعذر إرسال الرمز الآن. انتظر دقيقة ثم حاول مرة أخرى.</value>
+  </data>
+  <data name="CodeSentEmail" xml:space="preserve">
+    <value>أرسلنا رمزًا من ستة أرقام إلى {0}.</value>
+  </data>
+  <data name="CodeSentSms" xml:space="preserve">
+    <value>أرسلنا رمزًا من ستة أرقام برسالة نصية إلى {0}.</value>
+  </data>
+  <data name="CodeWrong" xml:space="preserve">
+    <value>الرمز غير صحيح أو انتهت صلاحيته.</value>
+  </data>
+  <data name="CompletedPdfButton" xml:space="preserve">
+    <value>المستند المكتمل</value>
+  </data>
+  <data name="ConsentButton" xml:space="preserve">
+    <value>موافقة وإرسال الرمز</value>
+  </data>
+  <data name="ConsentCheckbox" xml:space="preserve">
+    <value>أوافق على توقيع هذا المستند إلكترونيًا.</value>
+  </data>
+  <data name="ConsentCodeNote" xml:space="preserve">
+    <value>بعد ذلك سنرسل رمزًا لمرة واحدة إلى {0} للتأكد من هويتك.</value>
+  </data>
+  <data name="ConsentHeading" xml:space="preserve">
+    <value>الموافقة على التوقيع الإلكتروني</value>
+  </data>
+  <data name="ConsentRequired" xml:space="preserve">
+    <value>يرجى تحديد المربع للموافقة قبل المتابعة.</value>
+  </data>
+  <data name="ConsentText" xml:space="preserve">
+    <value>يُطلب منك توقيع مستند إلكترونيًا. بموافقتك، توافق على إنجاز هذا المستند إلكترونيًا وعلى أن توقيعك الإلكتروني صالح مثل التوقيع بخط اليد. يمكنك طلب نسخة ورقية من المرسل، ويمكنك سحب هذه الموافقة بعدم التوقيع. يُسجَّل اسمك ووقت التوقيع والرمز الذي نرسله إليك مع توقيعك، ويُختم المستند الموقّع بحيث لا يمكن تغييره.</value>
+  </data>
+  <data name="ContinueButton" xml:space="preserve">
+    <value>متابعة</value>
+  </data>
+  <data name="ContinueInPersonLink" xml:space="preserve">
+    <value>المتابعة حضوريًا</value>
+  </data>
+  <data name="DetailIntro" xml:space="preserve">
+    <value>طلب توقيع خارجي: حالته والموقّع والمستندات.</value>
+  </data>
+  <data name="DoneHeading" xml:space="preserve">
+    <value>شكرًا لك.</value>
+  </data>
+  <data name="DoneText" xml:space="preserve">
+    <value>تم تسجيل توقيعك. يمكنك إغلاق هذه الصفحة.</value>
+  </data>
+  <data name="DrawSignatureHelp" xml:space="preserve">
+    <value>وقّع بإصبعك أو بقلم أو بالفأرة. بدون مؤشر، اكتب الاسم واستخدمه كتوقيع.</value>
+  </data>
+  <data name="DrawSignatureLabel" xml:space="preserve">
+    <value>التوقيع</value>
+  </data>
+  <data name="DrawSignatureRequired" xml:space="preserve">
+    <value>يرجى التوقيع في المربع أو استخدام الاسم كتوقيع.</value>
+  </data>
+  <data name="ESignAccountHeading" xml:space="preserve">
+    <value>فريق Documenso لهذه الإدارة</value>
+  </data>
+  <data name="ESignActiveLabel" xml:space="preserve">
+    <value>استخدام هذا الحساب لروابط التوقيع</value>
+  </data>
+  <data name="ESignClusterHeading" xml:space="preserve">
+    <value>خدمات التوقيع في هذا التثبيت</value>
+  </data>
+  <data name="ESignClusterHelp" xml:space="preserve">
+    <value>يضبطها مشغّل تثبيت Resgrid هذا. بدون منصة التوقيع الإلكتروني لا تتوفر روابط التوقيع ويظل التوقيع الحضوري متاحًا. بدون الختم، تُوقَّع المستندات وتبقى بانتظار الختم حتى يتم إعداده.</value>
+  </data>
+  <data name="ESignIntro" xml:space="preserve">
+    <value>حساب منصة التوقيع الإلكتروني الذي يرسل المستندات للتوقيع عبر رابط، وحالة ختم المستندات.</value>
+  </data>
+  <data name="ESignPlatformConfigured" xml:space="preserve">
+    <value>منصة التوقيع الإلكتروني (Documenso)</value>
+  </data>
+  <data name="ESignRemoveButton" xml:space="preserve">
+    <value>إزالة الرمز المميز</value>
+  </data>
+  <data name="ESignSaved" xml:space="preserve">
+    <value>تم حفظ إعدادات التوقيع الإلكتروني.</value>
+  </data>
+  <data name="ESignTab" xml:space="preserve">
+    <value>إعدادات التوقيع الإلكتروني</value>
+  </data>
+  <data name="ESignTeamIdLabel" xml:space="preserve">
+    <value>معرّف الفريق</value>
+  </data>
+  <data name="ESignTitle" xml:space="preserve">
+    <value>إعدادات التوقيع الإلكتروني</value>
+  </data>
+  <data name="ESignTokenHelp" xml:space="preserve">
+    <value>رمز API خاص بالفريق. يُخزَّن مشفرًا ولا تظهر إلا أحرفه الأربعة الأخيرة. اتركه فارغًا للإبقاء على الرمز الحالي.</value>
+  </data>
+  <data name="ESignTokenLabel" xml:space="preserve">
+    <value>رمز API</value>
+  </data>
+  <data name="EmbedFrameTitle" xml:space="preserve">
+    <value>توقيع المستند</value>
+  </data>
+  <data name="EmbedUnavailable" xml:space="preserve">
+    <value>خدمة التوقيع غير متاحة حاليًا. حاول لاحقًا.</value>
+  </data>
+  <data name="ExpiresLabel" xml:space="preserve">
+    <value>تنتهي</value>
+  </data>
+  <data name="ExternalPanelHelp" xml:space="preserve">
+    <value>يمكن للعميل أو الشاغل أو الطرف الخارجي توقيع هذا المستند حضوريًا على هذا الجهاز، أو عبر رابط توقيع من Resgrid عند توفره.</value>
+  </data>
+  <data name="ExternalPanelTitle" xml:space="preserve">
+    <value>توقيع خارجي</value>
+  </data>
+  <data name="FinishedButton" xml:space="preserve">
+    <value>لقد انتهيت من التوقيع</value>
+  </data>
+  <data name="HandDeviceButton" xml:space="preserve">
+    <value>تسليم الجهاز إلى الموقّع</value>
+  </data>
+  <data name="HandDeviceHelp" xml:space="preserve">
+    <value>يفتح صفحة توقيع على هذا الجهاز للشخص الآخر: موافقة واسم وتوقيع مرسوم، مع شاهد اختياري.</value>
+  </data>
+  <data name="HandDeviceTitle" xml:space="preserve">
+    <value>التوقيع حضوريًا</value>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>الرئيسية</value>
+  </data>
+  <data name="InPersonSignedMessage" xml:space="preserve">
+    <value>تم التوقيع حضوريًا. يُختم المستند الموقّع عند توفر الختم.</value>
+  </data>
+  <data name="LandingExpires" xml:space="preserve">
+    <value>تنتهي صلاحية هذا الرابط في {0}.</value>
+  </data>
+  <data name="LandingIntro" xml:space="preserve">
+    <value>{0}، تطلب منك {1} مراجعة مستند وتوقيعه.</value>
+  </data>
+  <data name="LevelExternal" xml:space="preserve">
+    <value>موقّع خارجي</value>
+  </data>
+  <data name="LevelSealed" xml:space="preserve">
+    <value>مستند مختوم</value>
+  </data>
+  <data name="LinkOnceHelp" xml:space="preserve">
+    <value>تعذر تسليم رابط التوقيع. يمكنك تمريره إلى الموقّع بنفسك؛ يظهر الآن فقط ويمكن استخدامه مرة واحدة.</value>
+  </data>
+  <data name="MethodExternalLink" xml:space="preserve">
+    <value>رابط توقيع ورمز</value>
+  </data>
+  <data name="MethodInPersonOffline" xml:space="preserve">
+    <value>حضوريًا (دون اتصال)</value>
+  </data>
+  <data name="MethodInPersonOnline" xml:space="preserve">
+    <value>حضوريًا</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>لا</value>
+  </data>
+  <data name="NoRightToRequest" xml:space="preserve">
+    <value>لا يمكنك طلب توقيعات على هذا العنصر.</value>
+  </data>
+  <data name="OpenRequestStatus" xml:space="preserve">
+    <value>طلب التوقيع: {0} ({1})، ينتهي في {2}.</value>
+  </data>
+  <data name="OtpChannelEmail" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="OtpChannelLabel" xml:space="preserve">
+    <value>إرسال الرمز لمرة واحدة عبر</value>
+  </data>
+  <data name="OtpChannelSms" xml:space="preserve">
+    <value>رسالة نصية</value>
+  </data>
+  <data name="PdfFailed" xml:space="preserve">
+    <value>تعذر إنشاء ملف PDF.</value>
+  </data>
+  <data name="PrintedNameLabel" xml:space="preserve">
+    <value>الاسم بخط واضح</value>
+  </data>
+  <data name="ProtocolPdfButton" xml:space="preserve">
+    <value>PDF</value>
+  </data>
+  <data name="RefusalNone" xml:space="preserve">
+    <value>تم.</value>
+  </data>
+  <data name="RefusalInvalidRequest" xml:space="preserve">
+    <value>بعض البيانات مفقودة أو غير صالحة.</value>
+  </data>
+  <data name="RefusalSubjectNotFound" xml:space="preserve">
+    <value>لم يُعثر على العنصر أو لا يمكنك فتحه.</value>
+  </data>
+  <data name="RefusalRemoteNeedsAddon" xml:space="preserve">
+    <value>التوقيع عبر رابط جزء من الإضافة التي يتبعها هذا المستند. التوقيع الحضوري متاح.</value>
+  </data>
+  <data name="RefusalProviderUnavailable" xml:space="preserve">
+    <value>لم يتم إعداد التوقيع عبر رابط لهذه الإدارة.</value>
+  </data>
+  <data name="RefusalRevisionChanged" xml:space="preserve">
+    <value>تغيّر المستند بعد عرضه للتوقيع. يرجى البدء من جديد.</value>
+  </data>
+  <data name="RefusalRequestClosed" xml:space="preserve">
+    <value>لم يعد هذا الطلب مفتوحًا.</value>
+  </data>
+  <data name="RefusalProviderFailed" xml:space="preserve">
+    <value>تعذر على منصة التوقيع الإلكتروني تجهيز المستند. حاول لاحقًا.</value>
+  </data>
+  <data name="RefusalContactRequired" xml:space="preserve">
+    <value>أدخل بريدًا إلكترونيًا صالحًا أو رقم هاتف بالتنسيق الدولي للرمز لمرة واحدة.</value>
+  </data>
+  <data name="RemoteRequestButton" xml:space="preserve">
+    <value>طلب التوقيع عبر رابط</value>
+  </data>
+  <data name="RemoteRequestHelp" xml:space="preserve">
+    <value>يرسل Resgrid إلى الموقّع رابطًا لمرة واحدة. قبل التوقيع يوافق على التوقيع الإلكتروني ويدخل رمزًا لمرة واحدة يُرسل إلى البريد الإلكتروني أو رقم الهاتف أعلاه.</value>
+  </data>
+  <data name="RemoteUnavailableNone" xml:space="preserve">
+    <value>التوقيع عبر رابط متاح.</value>
+  </data>
+  <data name="RemoteUnavailableInvalidRequest" xml:space="preserve">
+    <value>التوقيع عبر رابط غير متاح لهذا العنصر.</value>
+  </data>
+  <data name="RemoteUnavailableSubjectNotFound" xml:space="preserve">
+    <value>التوقيع عبر رابط غير متاح لهذا العنصر.</value>
+  </data>
+  <data name="RemoteUnavailableRemoteNeedsAddon" xml:space="preserve">
+    <value>التوقيع عبر رابط يأتي مع الإضافة التي يتبعها هذا المستند؛ التوقيع الحضوري مجاني.</value>
+  </data>
+  <data name="RemoteUnavailableProviderUnavailable" xml:space="preserve">
+    <value>لم يتم إعداد التوقيع عبر رابط (إعدادات التوقيع الإلكتروني)؛ التوقيع الحضوري متاح.</value>
+  </data>
+  <data name="RemoteUnavailableRevisionChanged" xml:space="preserve">
+    <value>التوقيع عبر رابط غير متاح حاليًا.</value>
+  </data>
+  <data name="RemoteUnavailableRequestClosed" xml:space="preserve">
+    <value>التوقيع عبر رابط غير متاح حاليًا.</value>
+  </data>
+  <data name="RemoteUnavailableProviderFailed" xml:space="preserve">
+    <value>التوقيع عبر رابط غير متاح حاليًا.</value>
+  </data>
+  <data name="RemoteUnavailableContactRequired" xml:space="preserve">
+    <value>التوقيع عبر رابط غير متاح حاليًا.</value>
+  </data>
+  <data name="RequestHeading" xml:space="preserve">
+    <value>طلب توقيع</value>
+  </data>
+  <data name="RequestNotDeliveredMessage" xml:space="preserve">
+    <value>تم إنشاء الطلب لكن تعذر تسليم الرابط.</value>
+  </data>
+  <data name="RequestSentMessage" xml:space="preserve">
+    <value>أُرسل رابط التوقيع إلى {0}.</value>
+  </data>
+  <data name="RequestVoidedMessage" xml:space="preserve">
+    <value>تم سحب الطلب.</value>
+  </data>
+  <data name="ResendButton" xml:space="preserve">
+    <value>إرسال رابط جديد</value>
+  </data>
+  <data name="ResendCodeButton" xml:space="preserve">
+    <value>إرسال رمز جديد</value>
+  </data>
+  <data name="RoleCustomer" xml:space="preserve">
+    <value>العميل</value>
+  </data>
+  <data name="RoleOccupant" xml:space="preserve">
+    <value>الشاغل</value>
+  </data>
+  <data name="RoleExternalParty" xml:space="preserve">
+    <value>طرف خارجي</value>
+  </data>
+  <data name="RoleWitness" xml:space="preserve">
+    <value>الشاهد</value>
+  </data>
+  <data name="RoleCounterparty" xml:space="preserve">
+    <value>الطرف المقابل</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="SealedPdfButton" xml:space="preserve">
+    <value>ملف PDF مختوم</value>
+  </data>
+  <data name="SealingKey" xml:space="preserve">
+    <value>شهادة التوقيع</value>
+  </data>
+  <data name="SealingPendingState" xml:space="preserve">
+    <value>الختم قيد الانتظار</value>
+  </data>
+  <data name="SealingSidecar" xml:space="preserve">
+    <value>خدمة الختم (EU DSS)</value>
+  </data>
+  <data name="SealingStore" xml:space="preserve">
+    <value>تخزين المستندات المختومة</value>
+  </data>
+  <data name="SealingTsa" xml:space="preserve">
+    <value>جهة الختم الزمني</value>
+  </data>
+  <data name="SendCodeButton" xml:space="preserve">
+    <value>إرسال الرمز</value>
+  </data>
+  <data name="SendRequestButton" xml:space="preserve">
+    <value>إرسال الطلب</value>
+  </data>
+  <data name="SignNowButton" xml:space="preserve">
+    <value>توقيع</value>
+  </data>
+  <data name="SignaturePageTitle" xml:space="preserve">
+    <value>التوقيعات</value>
+  </data>
+  <data name="SignaturesHeading" xml:space="preserve">
+    <value>التوقيعات</value>
+  </data>
+  <data name="SignaturesModuleTitle" xml:space="preserve">
+    <value>التوقيعات</value>
+  </data>
+  <data name="SignedByNote" xml:space="preserve">
+    <value>{0} · {1}</value>
+  </data>
+  <data name="SignedState" xml:space="preserve">
+    <value>تم التوقيع</value>
+  </data>
+  <data name="SignerEmailLabel" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="SignerNameLabel" xml:space="preserve">
+    <value>اسم الموقّع</value>
+  </data>
+  <data name="SignerPhoneLabel" xml:space="preserve">
+    <value>الهاتف المحمول</value>
+  </data>
+  <data name="SignerStatusPending" xml:space="preserve">
+    <value>قيد الانتظار</value>
+  </data>
+  <data name="SignerStatusOpened" xml:space="preserve">
+    <value>تم الفتح</value>
+  </data>
+  <data name="SignerStatusVerified" xml:space="preserve">
+    <value>تم التحقق من الرمز</value>
+  </data>
+  <data name="SignerStatusSigned" xml:space="preserve">
+    <value>تم التوقيع</value>
+  </data>
+  <data name="SignerStatusDeclined" xml:space="preserve">
+    <value>مرفوض</value>
+  </data>
+  <data name="SigningBeingConfirmed" xml:space="preserve">
+    <value>جارٍ تأكيد توقيعك. قد يستغرق ذلك دقيقة؛ يمكنك إغلاق هذه الصفحة.</value>
+  </data>
+  <data name="SigningLinkLabel" xml:space="preserve">
+    <value>رابط التوقيع</value>
+  </data>
+  <data name="SigningPageTitle" xml:space="preserve">
+    <value>توقيع مستند</value>
+  </data>
+  <data name="StatementTimeReport" xml:space="preserve">
+    <value>أؤكد أن الوقت المسجل في {0} صحيح (رمز المحتوى {1}).</value>
+  </data>
+  <data name="StatementBid" xml:space="preserve">
+    <value>أقبل {0} (رمز المحتوى {1}) نيابة عن العميل.</value>
+  </data>
+  <data name="StatementServiceContract" xml:space="preserve">
+    <value>أوافق على {0} (رمز المحتوى {1}) نيابة عن مؤسستي.</value>
+  </data>
+  <data name="StatementRecordsInspection" xml:space="preserve">
+    <value>أُقر بأنني استلمت نتائج {0} (رمز المحتوى {1}).</value>
+  </data>
+  <data name="StatementCustodyTransfer" xml:space="preserve">
+    <value>أُقر بأنني استلمت الدليل الوارد في {0} (رمز المحتوى {1}).</value>
+  </data>
+  <data name="StatusDraft" xml:space="preserve">
+    <value>مسودة</value>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>بانتظار التوقيع</value>
+  </data>
+  <data name="StatusPartiallySigned" xml:space="preserve">
+    <value>موقّع جزئيًا</value>
+  </data>
+  <data name="StatusCompleted" xml:space="preserve">
+    <value>مكتمل</value>
+  </data>
+  <data name="StatusDeclined" xml:space="preserve">
+    <value>مرفوض</value>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>منتهي الصلاحية</value>
+  </data>
+  <data name="StatusVoided" xml:space="preserve">
+    <value>مسحوب</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="SubjectUnavailable" xml:space="preserve">
+    <value>لا يمكن توقيع هذا العنصر الآن.</value>
+  </data>
+  <data name="TooManyRequests" xml:space="preserve">
+    <value>طلبات كثيرة جدًا. انتظر دقيقة ثم حاول مرة أخرى.</value>
+  </data>
+  <data name="VerifyButton" xml:space="preserve">
+    <value>تحقق</value>
+  </data>
+  <data name="VerifyCodeButton" xml:space="preserve">
+    <value>تأكيد الرمز</value>
+  </data>
+  <data name="VerifyFileLabel" xml:space="preserve">
+    <value>مستند PDF</value>
+  </data>
+  <data name="VerifyFileRequired" xml:space="preserve">
+    <value>اختر ملف PDF بحجم يصل إلى 25 ميغابايت.</value>
+  </data>
+  <data name="VerifyFormatColumn" xml:space="preserve">
+    <value>التنسيق</value>
+  </data>
+  <data name="VerifyIndicationColumn" xml:space="preserve">
+    <value>النتيجة</value>
+  </data>
+  <data name="VerifyIntro" xml:space="preserve">
+    <value>ارفع ملف PDF للتحقق من توقيعاته وأختامه الزمنية، ومما إذا كان Resgrid قد أصدر هذا الملف بعينه.</value>
+  </data>
+  <data name="VerifyIssuedElsewhere" xml:space="preserve">
+    <value>أصدر Resgrid هذا الملف بعينه لإدارة أخرى.</value>
+  </data>
+  <data name="VerifyIssuedHere" xml:space="preserve">
+    <value>أصدر Resgrid هذا الملف بعينه لهذه الإدارة.</value>
+  </data>
+  <data name="VerifyIssuedLabel" xml:space="preserve">
+    <value>صادر عن Resgrid</value>
+  </data>
+  <data name="VerifyNoSignatures" xml:space="preserve">
+    <value>لا يحمل المستند أي توقيعات.</value>
+  </data>
+  <data name="VerifyNotIssued" xml:space="preserve">
+    <value>لا يملك Resgrid سجلًا بإصدار هذا الملف بعينه. الملف المعدَّل ولو ببايت واحد لا يطابق.</value>
+  </data>
+  <data name="VerifyNotPdf" xml:space="preserve">
+    <value>الملف ليس بتنسيق PDF.</value>
+  </data>
+  <data name="VerifyResultHeading" xml:space="preserve">
+    <value>النتيجة</value>
+  </data>
+  <data name="VerifySidecarMissing" xml:space="preserve">
+    <value>خدمة التحقق غير مُعدّة في هذا التثبيت، لذا يتم التحقق من سجلات Resgrid فقط.</value>
+  </data>
+  <data name="VerifySignaturesLabel" xml:space="preserve">
+    <value>توقيعات صالحة</value>
+  </data>
+  <data name="VerifyTab" xml:space="preserve">
+    <value>التحقق من مستند</value>
+  </data>
+  <data name="VerifyTimestampColumn" xml:space="preserve">
+    <value>الختم الزمني</value>
+  </data>
+  <data name="VerifyTimestampedOn" xml:space="preserve">
+    <value>مختوم زمنيًا في {0}</value>
+  </data>
+  <data name="VerifyTitle" xml:space="preserve">
+    <value>التحقق من مستند</value>
+  </data>
+  <data name="VerifyUploadHeading" xml:space="preserve">
+    <value>المستند</value>
+  </data>
+  <data name="VerifyValidationUnavailable" xml:space="preserve">
+    <value>لم تستجب خدمة التحقق.</value>
+  </data>
+  <data name="ViewRequestLink" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="VoidButton" xml:space="preserve">
+    <value>سحب الطلب</value>
+  </data>
+  <data name="WitnessNameLabel" xml:space="preserve">
+    <value>الشاهد (اختياري)</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>نعم</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="AllMySignaturesLink" xml:space="preserve">
+    <value>جميع توقيعاتي</value>
+  </data>
+  <data name="AnyEligibleMember" xml:space="preserve">
+    <value>أي عضو مؤهل</value>
+  </data>
+  <data name="DeclineButton" xml:space="preserve">
+    <value>رفض</value>
+  </data>
+  <data name="DeclineConfirmButton" xml:space="preserve">
+    <value>رفض التوقيع</value>
+  </data>
+  <data name="DeclineHelp" xml:space="preserve">
+    <value>يُنهي الرفض الطلب للجميع، ويُبلَّغ مقدّم الطلب بسببك.</value>
+  </data>
+  <data name="DeclineReasonLabel" xml:space="preserve">
+    <value>لماذا ترفض؟</value>
+  </data>
+  <data name="DocumentColumn" xml:space="preserve">
+    <value>المستند</value>
+  </data>
+  <data name="DueByLabel" xml:space="preserve">
+    <value>مستحق بحلول {0}</value>
+  </data>
+  <data name="IssueReceiptButton" xml:space="preserve">
+    <value>إيصال</value>
+  </data>
+  <data name="IssueReceiptTitle" xml:space="preserve">
+    <value>إيصال صرف المعدات</value>
+  </data>
+  <data name="MemberFallbackName" xml:space="preserve">
+    <value>أحد الأعضاء</value>
+  </data>
+  <data name="MemberRequestButton" xml:space="preserve">
+    <value>اطلب من {0} التوقيع</value>
+  </data>
+  <data name="MemberRequestHelp" xml:space="preserve">
+    <value>يوقّع العضو في Resgrid بعد إعادة التحقق من هويته (المستوى 2)، ويظهر الطلب ضمن «توقيعاتي» وفي صفحته الرئيسية.</value>
+  </data>
+  <data name="MemberRequestSentMessage" xml:space="preserve">
+    <value>أُرسل طلب التوقيع.</value>
+  </data>
+  <data name="MySignaturesIntro" xml:space="preserve">
+    <value>المستندات التي تنتظر توقيعك، مع الخطوة الخاصة بك.</value>
+  </data>
+  <data name="MySignaturesTab" xml:space="preserve">
+    <value>توقيعاتي</value>
+  </data>
+  <data name="MySignaturesTitle" xml:space="preserve">
+    <value>توقيعاتي</value>
+  </data>
+  <data name="NothingToSign" xml:space="preserve">
+    <value>لا يوجد ما ينتظر توقيعك.</value>
+  </data>
+  <data name="OpenDocumentLink" xml:space="preserve">
+    <value>فتح المستند</value>
+  </data>
+  <data name="OpenSigningPageLink" xml:space="preserve">
+    <value>صفحة التوقيع</value>
+  </data>
+  <data name="OpenStepButton" xml:space="preserve">
+    <value>المراجعة والتوقيع</value>
+  </data>
+  <data name="OrderedHelp" xml:space="preserve">
+    <value>يوقّع الموقّعون حسب ترتيب رقم الخطوة، ويمكن للخطوات التي تحمل الرقم نفسه التوقيع في الوقت نفسه.</value>
+  </data>
+  <data name="OutsideSignerFallbackName" xml:space="preserve">
+    <value>موقّع خارجي</value>
+  </data>
+  <data name="PendingSignaturesHeader" xml:space="preserve">
+    <value>بانتظار توقيعك</value>
+  </data>
+  <data name="ReadinessProRequiredMessage" xml:space="preserve">
+    <value>قبول المورد لأوامر العمل وإيصالات صرف المعدات جزء من Readiness Pro.</value>
+  </data>
+  <data name="SignedCountLabel" xml:space="preserve">
+    <value>الموقَّعة</value>
+  </data>
+  <data name="SignStepButton" xml:space="preserve">
+    <value>توقيع</value>
+  </data>
+  <data name="StepDeclinedMessage" xml:space="preserve">
+    <value>لقد رفضت التوقيع. أُغلق الطلب.</value>
+  </data>
+  <data name="StepOrderColumn" xml:space="preserve">
+    <value>الخطوة</value>
+  </data>
+  <data name="StepPageIntro" xml:space="preserve">
+    <value>اقرأ البيان، وتحقق من رمز المحتوى، ثم وقّع خطوتك.</value>
+  </data>
+  <data name="StepPanelTitle" xml:space="preserve">
+    <value>توقيعك</value>
+  </data>
+  <data name="StepsHeading" xml:space="preserve">
+    <value>الموقّعون</value>
+  </data>
+  <data name="StepSignedMessage" xml:space="preserve">
+    <value>سُجّل توقيعك.</value>
+  </data>
+  <data name="UnorderedHelp" xml:space="preserve">
+    <value>يمكن لكل موقّع التوقيع في أي وقت.</value>
+  </data>
+  <data name="VendorAcceptanceHeading" xml:space="preserve">
+    <value>قبول المورد</value>
+  </data>
+  <data name="WitnessNotYouNote" xml:space="preserve">
+    <value>لا يمكن للشخص الذي أكمل قائمة التحقق أن يشهد عليها.</value>
+  </data>
+  <data name="WitnessPanelTitle" xml:space="preserve">
+    <value>توقيع الشاهد</value>
+  </data>
+  <data name="WitnessSignatureHelp" xml:space="preserve">
+    <value>اكتب في المربع ما شهدته. يرتبط توقيعك بالنتائج المعروضة (لا بالملاحظات أو النص الحر)، وتكتمل قائمة التحقق عند توقيعك.</value>
+  </data>
+  <data name="WitnessSignButton" xml:space="preserve">
+    <value>التوقيع بصفة شاهد</value>
+  </data>
+  <data name="WitnessSignedMessage" xml:space="preserve">
+    <value>سُجّل توقيعك بصفة شاهد واكتملت قائمة التحقق.</value>
+  </data>
+  <data name="WitnessSignFailedMessage" xml:space="preserve">
+    <value>تعذّر تسجيل توقيع الشاهد.</value>
+  </data>
+  <data name="YourStepColumn" xml:space="preserve">
+    <value>خطوتك</value>
+  </data>
+  <data name="YourStepNote" xml:space="preserve">
+    <value>خطوتك: {0}</value>
+  </data>
+  <data name="RefusalNotYourTurn" xml:space="preserve">
+    <value>لم يحن دورك بعد: لم يوقّع جميع الموقّعين السابقين.</value>
+  </data>
+  <data name="RefusalNotEligible" xml:space="preserve">
+    <value>لا تحمل شهادة أو دورًا تتطلبه هذه الخطوة.</value>
+  </data>
+  <data name="RefusalStepUpRequired" xml:space="preserve">
+    <value>تتطلب هذه الخطوة المستوى 2: أكّد هويتك بالعامل الثاني أو بمفتاح مرور، ثم وقّع.</value>
+  </data>
+  <data name="RefusalPasskeyRequired" xml:space="preserve">
+    <value>يجب توقيع هذه الخطوة بمفتاح مرور.</value>
+  </data>
+  <data name="RefusalNotASigner" xml:space="preserve">
+    <value>لست موقّعًا في هذه الخطوة.</value>
+  </data>
+  <data name="RefusalArtifactMismatch" xml:space="preserve">
+    <value>كان تأكيد مفتاح المرور لمحتوى مختلف. أعد تحميل الصفحة ووقّع مرة أخرى.</value>
+  </data>
+  <data name="RoleMember" xml:space="preserve">
+    <value>العضو</value>
+  </data>
+  <data name="RoleCertifyingOfficial" xml:space="preserve">
+    <value>المسؤول المصادِق</value>
+  </data>
+  <data name="RoleEvaluator" xml:space="preserve">
+    <value>المقيِّم</value>
+  </data>
+  <data name="RoleVendor" xml:space="preserve">
+    <value>المورد</value>
+  </data>
+  <data name="RoleRecipient" xml:space="preserve">
+    <value>المستلم</value>
+  </data>
+  <data name="IntentEvaluate" xml:space="preserve">
+    <value>تقييم</value>
+  </data>
+  <data name="IntentCertify" xml:space="preserve">
+    <value>مصادقة</value>
+  </data>
+  <data name="IntentAccept" xml:space="preserve">
+    <value>قبول</value>
+  </data>
+  <data name="OutcomeStepUpRequired" xml:space="preserve">
+    <value>أكّد هويتك بالعامل الثاني، ثم وقّع مرة أخرى.</value>
+  </data>
+  <data name="OutcomePasskeyRequired" xml:space="preserve">
+    <value>مفتاح المرور مطلوب للتوقيع.</value>
+  </data>
+  <data name="OutcomeArtifactMismatch" xml:space="preserve">
+    <value>كان تأكيد مفتاح المرور لمحتوى مختلف.</value>
+  </data>
+  <data name="OutcomeInvalidRequest" xml:space="preserve">
+    <value>تعذّر تسجيل التوقيع.</value>
+  </data>
+  <data name="StatementWorkOrderVendorAcceptance" xml:space="preserve">
+    <value>أقبل العمل المنجز في {0} (رمز المحتوى {1}).</value>
+  </data>
+  <data name="StatementInventoryIssueReceipt" xml:space="preserve">
+    <value>أؤكد أنني استلمت {0} (رمز المحتوى {1}).</value>
+  </data>
+  <data name="StatementSkillEvaluation" xml:space="preserve">
+    <value>أؤكد التقييم المسجل لـ {0} (رمز المحتوى {1}).</value>
+  </data>
+  <data name="StatementChecklistWitness" xml:space="preserve">
+    <value>شهدتُ قائمة التحقق {0} الخاصة بـ {1} وأؤكد أن النتائج المعروضة هي ما سُجّل (رمز المحتوى {2}).</value>
+  </data>
+  <data name="StatementPurchaseRequisitionApproval" xml:space="preserve">
+    <value>أعتمد طلب الشراء {0} (رمز المحتوى {1}).</value>
+  </data>
+  <data name="StatementIncidentPlanApproval" xml:space="preserve">
+    <value>أعتمد خطة عمل الحادث {0} (رمز المحتوى {1}).</value>
+  </data>
+  <data name="StatementInvoiceApproval" xml:space="preserve">
+    <value>أعتمد إرسال {0} (رمز المحتوى {1}).</value>
+  </data>
+  <data name="StatementPayrollRunApproval" xml:space="preserve">
+    <value>أعتمد دورة الرواتب {0} (رمز المحتوى {1}).</value>
+  </data>
+  <data name="StatementCalOesMarsPackageApproval" xml:space="preserve">
+    <value>أعتمد حزمة Cal OES MARS {0} لتقديمها (رمز المحتوى {1}).</value>
+  </data>
+  <data name="StatementMutualAidAgreementApproval" xml:space="preserve">
+    <value>أعتمد اتفاقية المساعدة المتبادلة {0} نيابةً عن القسم (رمز المحتوى {1}).</value>
+  </data>
+  <data name="ApprovalsTab" xml:space="preserve">
+    <value>الاعتمادات</value>
+  </data>
+</root>

@@ -1,0 +1,117 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingCertificateTemplatesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    LMS (dark, §24): the department's own certificate layouts. The body is HTML, sanitized when saved, with placeholders filled in
+    when a certificate prints; the default template replaces the standard certificate.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Rec.CertificateTemplatesTitle"];
+    ViewData["Section"] = "Records";
+    ViewData["Title"] = localizer["Rec.CertificateTemplatesTitle"].Value;
+    ViewData["Subtitle"] = localizer["Rec.CertificateTemplatesIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["SubTabs"] = Model.OfficerTabs;
+    var input = Model.Input;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-id-badge" aria-hidden="true"></i> @localizer["Rec.CertificateTemplatesTitle"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.Templates.Count == 0)
+            {
+                <p class="text-muted m-b-none">@localizer["Rec.NoTemplates"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead><tr><th>@localizer["NameColumn"]</th><th>@localizer["Rec.UpdatedColumn"]</th><th class="rgw-row-actions">@localizer["ActionColumn"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var template in Model.Templates)
+                            {
+                                <tr>
+                                    <td>
+                                        @template.Name
+                                        @if (template.IsDefault)
+                                        {
+                                            <span class="label label-primary"><i class="fa fa-star" aria-hidden="true"></i> @localizer["Rec.DefaultLabel"]</span>
+                                        }
+                                    </td>
+                                    <td>@TrainingStatePresentation.LocalDate(template.UpdatedOn ?? template.CreatedOn, Model.Department)</td>
+                                    <td class="rgw-row-actions">
+                                        <a class="btn btn-xs btn-default" asp-controller="TrainingRecords" asp-action="CertificateTemplates" asp-route-area="User" asp-route-id="@template.LmsCertificateTemplateId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["EditButton"]</a>
+                                        <form method="post" asp-controller="TrainingRecords" asp-action="DeleteCertificateTemplate" asp-route-area="User" asp-route-id="@template.LmsCertificateTemplateId">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["Rec.DeleteTemplateConfirm"]"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["DeleteButton"]</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa @(input.IsNew ? "fa-plus" : "fa-pencil")" aria-hidden="true"></i> @localizer[input.IsNew ? "Rec.AddTemplateHeader" : "Rec.EditTemplateHeader"]</h5></div>
+        <div class="ibox-content">
+            <form method="post" asp-controller="TrainingRecords" asp-action="SaveCertificateTemplate" asp-route-area="User">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="LmsCertificateTemplateId" value="@input.LmsCertificateTemplateId" />
+                <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="Name" class="required">@localizer["NameColumn"]</label>
+                        <input id="Name" name="Name" class="form-control" maxlength="200" value="@input.Name" required />
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="IsDefault" value="true" checked="@input.IsDefault" />
+                                <input type="hidden" name="IsDefault" value="false" />
+                                @localizer["Rec.DefaultTemplateLabel"]
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group rgw-wide">
+                        <label for="Body" class="required">@localizer["Rec.TemplateBodyLabel"]</label>
+                        <textarea id="Body" name="Body" class="form-control rgw-mono" rows="12" maxlength="50000" required aria-describedby="Body-help">@input.Body</textarea>
+                        <span class="help-block" id="Body-help">@localizer["Rec.TemplateBodyHelp"] <code>{{member}}</code> <code>{{course}}</code> <code>{{date}}</code> <code>{{hours}}</code> <code>{{department}}</code> <code>{{code}}</code></span>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Rec.SaveTemplateButton"]</button>
+                @if (!input.IsNew)
+                {
+                    <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="CertificateTemplates" asp-route-area="User"><i class="fa fa-times" aria-hidden="true"></i> @localizer["CancelButton"]</a>
+                }
+            </form>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(input.Body))
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-eye" aria-hidden="true"></i> @localizer["Rec.TemplatePreviewHeader"]</h5></div>
+            <div class="ibox-content certificate-template-preview">
+                @Html.SanitizedHtml(input.Body)
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <style>
+        .rgw-row-actions form { display: inline-block; }
+        .certificate-template-preview { overflow-x: auto; }
+    </style>
+}

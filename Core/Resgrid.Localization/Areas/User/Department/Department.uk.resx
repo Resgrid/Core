@@ -2609,4 +2609,19 @@
   <data name="ShiftOverSignupHelp" xml:space="preserve">
     <value>Учасники можуть записатися до групи, навіть коли всі місця для ролей (обов'язкові й необов'язкові) зайняті. Їм усе одно потрібна одна з ролей групи.</value>
   </data>
+  <data name="DocumentNumberKindProtocol" xml:space="preserve">
+    <value>Протоколи</value>
+  </data>
+  <data name="RunCardConditionProtocolOutcome" xml:space="preserve">
+    <value>Детермінанта протоколу у виклику</value>
+  </data>
+  <data name="RunCardDeterminantEquals" xml:space="preserve">
+    <value>дорівнює</value>
+  </data>
+  <data name="RunCardDeterminantStartsWith" xml:space="preserve">
+    <value>починається з</value>
+  </data>
+  <data name="RunCardDeterminantValue" xml:space="preserve">
+    <value>Детермінанта (напр. 09-E)</value>
+  </data>
 </root>

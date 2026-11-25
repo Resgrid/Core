@@ -146,6 +146,15 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddListener<RecurringCallOccurrenceEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
 			_eventAggregator.AddListener<RecurringCallAlertEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
 
+			// e-Signature S2 (220-223): requested, completed, declined, expired. The payload carries no signer contact details.
+			_eventAggregator.AddListener<SignatureRequestEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+
+			// Training T3 (224-229): LMS assigned, completed, failed, overdue, at risk and enforced. No contact data in the payload.
+			_eventAggregator.AddListener<TrainingWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+
+			// e-Signature S4 (236-239): approval requested, granted, rejected and escalated. No contact data in the payload.
+			_eventAggregator.AddListener<ApprovalWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+
 			// Records (RMS) lifecycle triggers 100-107 arrive through the DomainEventOutbox dispatcher (post-commit in
 			// the producing process, or worker command 40's sweep), never straight from the Records transaction
 			// (plan section 5.6). The legacy LogAdded compatibility projection rides the same road with

@@ -175,4 +175,35 @@ El equipo de Resgrid</value>
   <data name="SecurityNoticeWhere" xml:space="preserve"><value>Dónde: {0}</value></data>
   <data name="SecurityNoticeNotYou" xml:space="preserve"><value>Si no fue usted, restablezca su contraseña ahora en {0}, luego inicie sesión y revise sus métodos de inicio de sesión. Resgrid nunca le pedirá un código ni una contraseña por correo electrónico.</value></data>
   <data name="SecurityNoticeFooter" xml:space="preserve"><value>Este es un aviso de seguridad automático sobre su cuenta de Resgrid.</value></data>
+  <data name="SigningLinkEmailSubject" xml:space="preserve">
+    <value>{0}: un documento para firmar</value>
+  </data>
+  <data name="SigningLinkEmailBody" xml:space="preserve">
+    <value>Hola {0}:
+
+{1} le pide que revise y firme "{2}".
+
+Abra este enlace para firmar:
+{3}
+
+El enlace se puede usar una vez y caduca el {4}. Antes de firmar confirmará un código de un solo uso.
+
+Si no esperaba este mensaje, puede ignorarlo.</value>
+  </data>
+  <data name="SigningLinkSmsBody" xml:space="preserve">
+    <value>{0} le pide que firme "{1}": {2}</value>
+  </data>
+  <data name="SigningCodeEmailSubject" xml:space="preserve">
+    <value>{0}: su código de firma</value>
+  </data>
+  <data name="SigningCodeEmailBody" xml:space="preserve">
+    <value>Hola {0}:
+
+Su código para firmar el documento de {3} es {1}. Caduca en {2} minutos.
+
+Si no ha pedido este código, puede ignorar este mensaje.</value>
+  </data>
+  <data name="SigningCodeSmsBody" xml:space="preserve">
+    <value>Su código de firma para {2} es {0}. Caduca en {1} minutos.</value>
+  </data>
 </root>

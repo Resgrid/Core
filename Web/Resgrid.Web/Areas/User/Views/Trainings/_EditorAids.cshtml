@@ -1,0 +1,24 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.AuthoringAids
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingEditorModel
+@*
+    K2 drafting aids for the training editor (outside the editor's form, so it posts its own token). The drafts are grounded in the text being
+    written (unsaved), and the "exclude from AI" box as it stands refuses them. Accepting puts the questions into the quiz builder and the
+    outline into the training text (resgrid.training.edittraining.js); the author still saves the training.
+*@
+@if (Model.CanAuthor)
+{
+    @await Html.PartialAsync("_AuthoringAids", new AuthoringAidsPanelModel
+    {
+        PanelId = "aids-training",
+        SourceKind = (int)AuthoringAidSourceKinds.Training,
+        SourceId = Model.IsNew ? 0 : Model.TrainingId,
+        OfferQuiz = true,
+        OfferOutline = true,
+        OfferChangeSummary = false,
+        ContentSelector = "#text-editor",
+        TitleSelector = "#Name",
+        ExcludeSelector = "input[name=ExcludeFromAi][type=checkbox]"
+    })
+}

@@ -4714,4 +4714,7 @@
   <data name="Error.IMP-CONFIG-UNAVAILABLE" xml:space="preserve">
     <value>Registros no está activado para su departamento, así que la numeración de registros no se puede cambiar aquí. Deshaga este cambio.</value>
   </data>
+  <data name="TabProtocols" xml:space="preserve">
+    <value>Protocolos</value>
+  </data>
 </root>

@@ -1,0 +1,96 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsClasses
+@model LmsMyClassesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsClasses.LmsClasses> localizer
+@* My classes (T4, LMS): the member's enrolments, waitlist places and requests, classes they can still join, and what they taught. *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["MyClassesTitle"];
+    ViewData["Title"] = localizer["MyClassesTitle"].Value;
+    ViewData["Subtitle"] = localizer["MyClassesIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var culture = CultureInfo.CurrentCulture;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    @if (Model.Classes.Count == 0)
+    {
+        <p class="text-muted">@localizer["NoMyClasses"]</p>
+    }
+    else
+    {
+        <div class="rgw-card-grid">
+            @foreach (var item in Model.Classes)
+            {
+                var session = item.Session;
+                <div class="rgw-card">
+                    <h4>@session.Title</h4>
+                    <p class="rgw-card-meta">@Model.Local(session.StartsOn).ToString("g", culture) – @Model.Local(session.EndsOn).ToString("t", culture)</p>
+                    @if (!string.IsNullOrWhiteSpace(session.Location))
+                    {
+                        <p class="rgw-card-meta"><i class="fa fa-map-marker" aria-hidden="true"></i> @session.Location</p>
+                    }
+                    @if (item.IsInstructor)
+                    {
+                        <p><span class="label label-info">@localizer["YouTeach"]</span></p>
+                    }
+                    @if (item.Enrollment != null)
+                    {
+                        <p><span class="label label-primary">@localizer["Enrollment." + (LmsClassEnrollmentStatuses)item.Enrollment.Status]</span>
+                            @if (item.Enrollment.Status == (int)LmsClassEnrollmentStatuses.Waitlisted && item.Enrollment.WaitlistPosition.HasValue)
+                            {
+                                <span class="text-muted">@string.Format(culture, localizer["WaitlistPositionFormat"].Value, item.Enrollment.WaitlistPosition.Value)</span>
+                            }
+                        </p>
+                    }
+                    else if (item.EnrollRefusal == null)
+                    {
+                        <p class="text-muted">@string.Format(culture, localizer["SeatsFormat"].Value, item.SeatsTaken, session.Capacity > 0 ? session.Capacity.ToString(culture) : "∞")</p>
+                    }
+                    <a class="btn btn-white btn-sm" asp-controller="LmsClasses" asp-action="Session" asp-route-area="User" asp-route-id="@session.LmsClassSessionId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["Open"]</a>
+                    @if (item.Enrollment == null && item.EnrollRefusal == null && Model.CanAuthor)
+                    {
+                        <form method="post" asp-controller="LmsClasses" asp-action="Enroll" asp-route-area="User" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@session.LmsClassSessionId" />
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-user-plus" aria-hidden="true"></i> @localizer["Enroll"]</button>
+                        </form>
+                    }
+                </div>
+            }
+        </div>
+    }
+
+    @if (Model.Taught.Count > 0)
+    {
+        <h3><i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer["TaughtHeader"]</h3>
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead><tr><th>@localizer["Col.Date"]</th><th>@localizer["Col.Class"]</th><th>@localizer["Col.Role"]</th><th>@localizer["Col.HoursTaught"]</th></tr></thead>
+                <tbody>
+                    @foreach (var taught in Model.Taught.Where(t => Model.TaughtSessions.ContainsKey(t.LmsClassSessionId)))
+                    {
+                        var session = Model.TaughtSessions[taught.LmsClassSessionId];
+                        var hours = taught.HoursTaught ?? (decimal)Math.Round((session.EndsOn - session.StartsOn).TotalHours, 2);
+                        <tr>
+                            <td>@Model.Local(session.StartsOn).ToString("d", culture)</td>
+                            <td><a asp-controller="LmsClasses" asp-action="Session" asp-route-area="User" asp-route-id="@session.LmsClassSessionId">@session.Title</a></td>
+                            <td>@localizer["Role." + (LmsClassInstructorRoles)taught.Role]</td>
+                            <td>@hours.ToString("0.##", culture)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

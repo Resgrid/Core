@@ -1,0 +1,1174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Skl.ActionFailed" xml:space="preserve">
+    <value>The action could not be completed.</value>
+  </data>
+  <data name="Skl.Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Skl.AddEvidence" xml:space="preserve">
+    <value>Add evidence</value>
+  </data>
+  <data name="Skl.AddStep" xml:space="preserve">
+    <value>Add step</value>
+  </data>
+  <data name="Skl.AddTask" xml:space="preserve">
+    <value>Add task</value>
+  </data>
+  <data name="Skl.AddTimedNote" xml:space="preserve">
+    <value>Add a note (time is recorded)</value>
+  </data>
+  <data name="Skl.AddonNotice" xml:space="preserve">
+    <value>Skill evaluations and task books need the LMS add-on. Everything recorded stays readable.</value>
+  </data>
+  <data name="Skl.AllSheets" xml:space="preserve">
+    <value>All skill sheets</value>
+  </data>
+  <data name="Skl.AllStates" xml:space="preserve">
+    <value>All states</value>
+  </data>
+  <data name="Skl.AllTaskBooks" xml:space="preserve">
+    <value>All task books</value>
+  </data>
+  <data name="Skl.Annotation" xml:space="preserve">
+    <value>Annotation</value>
+  </data>
+  <data name="Skl.Answer" xml:space="preserve">
+    <value>Answer</value>
+  </data>
+  <data name="Skl.AnyEligible" xml:space="preserve">
+    <value>Any eligible member</value>
+  </data>
+  <data name="Skl.Attempt" xml:space="preserve">
+    <value>Attempt</value>
+  </data>
+  <data name="Skl.AwaitingCertification" xml:space="preserve">
+    <value>Waiting for the final evaluator and the certifying official</value>
+  </data>
+  <data name="Skl.BooksToEvaluate" xml:space="preserve">
+    <value>Task books you can sign tasks in</value>
+  </data>
+  <data name="Skl.CancelReason" xml:space="preserve">
+    <value>Reason for cancelling</value>
+  </data>
+  <data name="Skl.CancelTaskBook" xml:space="preserve">
+    <value>Cancel task book</value>
+  </data>
+  <data name="Skl.CancelTaskBookConfirm" xml:space="preserve">
+    <value>Cancel this task book? Signed tasks stay on record.</value>
+  </data>
+  <data name="Skl.CertificationRequested" xml:space="preserve">
+    <value>The certification was requested. The final evaluator signs first.</value>
+  </data>
+  <data name="Skl.CertifiedOn" xml:space="preserve">
+    <value>Certified on</value>
+  </data>
+  <data name="Skl.CertifyingOfficial" xml:space="preserve">
+    <value>Certifying official</value>
+  </data>
+  <data name="Skl.ChangeSummary" xml:space="preserve">
+    <value>Change summary</value>
+  </data>
+  <data name="Skl.Choose" xml:space="preserve">
+    <value>Choose...</value>
+  </data>
+  <data name="Skl.Col.Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="Skl.Col.Evaluation" xml:space="preserve">
+    <value>Evaluation</value>
+  </data>
+  <data name="Skl.Col.Evaluator" xml:space="preserve">
+    <value>Evaluator</value>
+  </data>
+  <data name="Skl.Col.Expires" xml:space="preserve">
+    <value>Expires</value>
+  </data>
+  <data name="Skl.Col.Score" xml:space="preserve">
+    <value>Score</value>
+  </data>
+  <data name="Skl.Col.Signer" xml:space="preserve">
+    <value>Signer</value>
+  </data>
+  <data name="Skl.Col.Started" xml:space="preserve">
+    <value>Started</value>
+  </data>
+  <data name="Skl.Col.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Skl.Col.Step" xml:space="preserve">
+    <value>Step</value>
+  </data>
+  <data name="Skl.Col.Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="Skl.Complete" xml:space="preserve">
+    <value>Complete</value>
+  </data>
+  <data name="Skl.Compute.Average" xml:space="preserve">
+    <value>Average</value>
+  </data>
+  <data name="Skl.Compute.Max" xml:space="preserve">
+    <value>Highest</value>
+  </data>
+  <data name="Skl.Compute.Min" xml:space="preserve">
+    <value>Lowest</value>
+  </data>
+  <data name="Skl.Compute.Sum" xml:space="preserve">
+    <value>Sum</value>
+  </data>
+  <data name="Skl.ComputedHelp" xml:space="preserve">
+    <value>Calculated from the steps it names</value>
+  </data>
+  <data name="Skl.Continue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="Skl.CrewHelp" xml:space="preserve">
+    <value>One form for the whole crew: everyone gets the same result and record. Split out a member who should be graded differently.</value>
+  </data>
+  <data name="Skl.CriticalFailedNotice" xml:space="preserve">
+    <value>A critical step was not met: the evaluation is not passed, whatever the score.</value>
+  </data>
+  <data name="Skl.Declined" xml:space="preserve">
+    <value>Declined</value>
+  </data>
+  <data name="Skl.Definition" xml:space="preserve">
+    <value>Task book definition</value>
+  </data>
+  <data name="Skl.DefinitionCreated" xml:space="preserve">
+    <value>The task book definition was created. Set who signs and certifies, then save.</value>
+  </data>
+  <data name="Skl.DefinitionDeleted" xml:space="preserve">
+    <value>The task book definition was removed. Open task books keep their tasks.</value>
+  </data>
+  <data name="Skl.DefinitionIntro" xml:space="preserve">
+    <value>The position code, tasks and who signs, recommends and certifies.</value>
+  </data>
+  <data name="Skl.DefinitionsIntro" xml:space="preserve">
+    <value>Your position task books and the Resgrid starters to build them from.</value>
+  </data>
+  <data name="Skl.DefinitionsTitle" xml:space="preserve">
+    <value>Task book definitions</value>
+  </data>
+  <data name="Skl.DeleteDefinition" xml:space="preserve">
+    <value>Remove definition</value>
+  </data>
+  <data name="Skl.DeleteDefinitionConfirm" xml:space="preserve">
+    <value>Remove this definition? Open task books keep their tasks.</value>
+  </data>
+  <data name="Skl.DeleteSheet" xml:space="preserve">
+    <value>Retire skill sheet</value>
+  </data>
+  <data name="Skl.DeleteSheetConfirm" xml:space="preserve">
+    <value>Retire this skill sheet? Its evaluations stay on record.</value>
+  </data>
+  <data name="Skl.Digest.Daily" xml:space="preserve">
+    <value>Daily digest</value>
+  </data>
+  <data name="Skl.Digest.Immediate" xml:space="preserve">
+    <value>Immediately</value>
+  </data>
+  <data name="Skl.Digest.Off" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="Skl.Digest.Weekly" xml:space="preserve">
+    <value>Weekly digest</value>
+  </data>
+  <data name="Skl.DigestHour" xml:space="preserve">
+    <value>Digest time (department time)</value>
+  </data>
+  <data name="Skl.DigestMode" xml:space="preserve">
+    <value>Deliver notices</value>
+  </data>
+  <data name="Skl.DigestWeekday" xml:space="preserve">
+    <value>Weekly digest day</value>
+  </data>
+  <data name="Skl.Draft" xml:space="preserve">
+    <value>Draft</value>
+  </data>
+  <data name="Skl.DraftNotReady" xml:space="preserve">
+    <value>The draft cannot be published yet:</value>
+  </data>
+  <data name="Skl.DraftSaved" xml:space="preserve">
+    <value>The draft was saved.</value>
+  </data>
+  <data name="Skl.DraftSteps" xml:space="preserve">
+    <value>Steps</value>
+  </data>
+  <data name="Skl.Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Skl.EditorNeedsScript" xml:space="preserve">
+    <value>The step editor needs JavaScript.</value>
+  </data>
+  <data name="Skl.Elapsed" xml:space="preserve">
+    <value>Elapsed</value>
+  </data>
+  <data name="Skl.Evaluate" xml:space="preserve">
+    <value>Evaluate</value>
+  </data>
+  <data name="Skl.EvaluationIntro" xml:space="preserve">
+    <value>The result, every step, the evidence and the signatures.</value>
+  </data>
+  <data name="Skl.EvaluationStarted" xml:space="preserve">
+    <value>The evaluation started. The timer is running.</value>
+  </data>
+  <data name="Skl.Evaluations" xml:space="preserve">
+    <value>Evaluations</value>
+  </data>
+  <data name="Skl.EvaluationsIntro" xml:space="preserve">
+    <value>Every evaluation in the department, by sheet and state.</value>
+  </data>
+  <data name="Skl.EvaluationsTitle" xml:space="preserve">
+    <value>Skill evaluations</value>
+  </data>
+  <data name="Skl.EvaluatorComments" xml:space="preserve">
+    <value>Evaluator comments</value>
+  </data>
+  <data name="Skl.Evidence" xml:space="preserve">
+    <value>Evidence</value>
+  </data>
+  <data name="Skl.EvidenceAdded" xml:space="preserve">
+    <value>The evidence was added.</value>
+  </data>
+  <data name="Skl.EvidenceFile" xml:space="preserve">
+    <value>Photo, video or file</value>
+  </data>
+  <data name="Skl.EvidenceHelp" xml:space="preserve">
+    <value>Up to 30 MB per file. Each file's SHA-256 goes into the sealed record.</value>
+  </data>
+  <data name="Skl.EvidenceStep" xml:space="preserve">
+    <value>For step</value>
+  </data>
+  <data name="Skl.EvidenceStepHelp" xml:space="preserve">
+    <value>Add the photo, video or file below.</value>
+  </data>
+  <data name="Skl.Fail" xml:space="preserve">
+    <value>Fail</value>
+  </data>
+  <data name="Skl.Family" xml:space="preserve">
+    <value>Family</value>
+  </data>
+  <data name="Skl.Family.Custom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="Skl.Family.DriverOperator" xml:space="preserve">
+    <value>Driver/operator</value>
+  </data>
+  <data name="Skl.Family.FieldTraining" xml:space="preserve">
+    <value>Field training</value>
+  </data>
+  <data name="Skl.Family.NccpSkills" xml:space="preserve">
+    <value>NCCP skills verification</value>
+  </data>
+  <data name="Skl.Family.Officer" xml:space="preserve">
+    <value>Officer</value>
+  </data>
+  <data name="Skl.Family.OshaOperator" xml:space="preserve">
+    <value>OSHA operator evaluation</value>
+  </data>
+  <data name="Skl.Family.Wildland" xml:space="preserve">
+    <value>Wildland (NWCG)</value>
+  </data>
+  <data name="Skl.Field.AllowCrew" xml:space="preserve">
+    <value>Allow crew-wide evaluations (one form for several members)</value>
+  </data>
+  <data name="Skl.Field.AllowSelf" xml:space="preserve">
+    <value>Allow members to evaluate themselves</value>
+  </data>
+  <data name="Skl.Field.AttemptWindow" xml:space="preserve">
+    <value>Attempt window (days)</value>
+  </data>
+  <data name="Skl.Field.CallId" xml:space="preserve">
+    <value>Call number</value>
+  </data>
+  <data name="Skl.Field.Category" xml:space="preserve">
+    <value>Training category credited</value>
+  </data>
+  <data name="Skl.Field.CertificationType" xml:space="preserve">
+    <value>Certification activated</value>
+  </data>
+  <data name="Skl.Field.CertificationTypeHelp" xml:space="preserve">
+    <value>Initiating a book opens a Trainee record of this type; certification makes it Active.</value>
+  </data>
+  <data name="Skl.Field.CertificationTypes" xml:space="preserve">
+    <value>Certification types</value>
+  </data>
+  <data name="Skl.Field.Code" xml:space="preserve">
+    <value>Skill code</value>
+  </data>
+  <data name="Skl.Field.CodeHelp" xml:space="preserve">
+    <value>Used as the course code on the transcript and by "N passed evaluations" requirements.</value>
+  </data>
+  <data name="Skl.Field.DefaultMinutes" xml:space="preserve">
+    <value>Minutes credited when not timed</value>
+  </data>
+  <data name="Skl.Field.DeploymentId" xml:space="preserve">
+    <value>Deployment number</value>
+  </data>
+  <data name="Skl.Field.Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Skl.Field.Evaluators" xml:space="preserve">
+    <value>Who may evaluate</value>
+  </data>
+  <data name="Skl.Field.EvaluatorsHelp" xml:space="preserve">
+    <value>Members holding a valid certification of a chosen type or a chosen role. None chosen: LMS managers only.</value>
+  </data>
+  <data name="Skl.Field.Kind" xml:space="preserve">
+    <value>Kind</value>
+  </data>
+  <data name="Skl.Field.Location" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="Skl.Field.MaxAttempts" xml:space="preserve">
+    <value>Failed attempts allowed (0 = no limit)</value>
+  </data>
+  <data name="Skl.Field.NextSigner" xml:space="preserve">
+    <value>Who the evaluator may pick to sign next</value>
+  </data>
+  <data name="Skl.Field.NextSignerHelp" xml:space="preserve">
+    <value>When set, the evaluator must pick a member this rule allows; that member signs after the evaluator.</value>
+  </data>
+  <data name="Skl.Field.PassThreshold" xml:space="preserve">
+    <value>Pass mark (%)</value>
+  </data>
+  <data name="Skl.Field.RecertifyMonths" xml:space="preserve">
+    <value>Re-evaluate after (months)</value>
+  </data>
+  <data name="Skl.Field.RecertifyMonthsHelp" xml:space="preserve">
+    <value>The certified record's expiry (OSHA operators: 36). 0 uses the certification type's own validity.</value>
+  </data>
+  <data name="Skl.Field.Roles" xml:space="preserve">
+    <value>Roles</value>
+  </data>
+  <data name="Skl.Field.TimeLimit" xml:space="preserve">
+    <value>Time limit (seconds, 0 = none)</value>
+  </data>
+  <data name="Skl.Field.Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="Skl.Field.ValidityMonths" xml:space="preserve">
+    <value>Valid for (months)</value>
+  </data>
+  <data name="Skl.Filter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="Skl.FinalEvaluator" xml:space="preserve">
+    <value>Final evaluator</value>
+  </data>
+  <data name="Skl.Grading" xml:space="preserve">
+    <value>Grading</value>
+  </data>
+  <data name="Skl.HomeIntro" xml:space="preserve">
+    <value>Evaluations you run, signatures waiting for you, your results and task books.</value>
+  </data>
+  <data name="Skl.HomeTitle" xml:space="preserve">
+    <value>Skills and task books</value>
+  </data>
+  <data name="Skl.IncidentRequired" xml:space="preserve">
+    <value>This task counts only evaluations on a call or a deployment: enter its number.</value>
+  </data>
+  <data name="Skl.IncidentTask" xml:space="preserve">
+    <value>Incident task</value>
+  </data>
+  <data name="Skl.Initiate" xml:space="preserve">
+    <value>Initiate task book</value>
+  </data>
+  <data name="Skl.InitiatedOn" xml:space="preserve">
+    <value>Initiated on</value>
+  </data>
+  <data name="Skl.Kind.ObservationReport" xml:space="preserve">
+    <value>Daily observation report</value>
+  </data>
+  <data name="Skl.Kind.SkillSheet" xml:space="preserve">
+    <value>Skill sheet</value>
+  </data>
+  <data name="Skl.LapsedNotice" xml:space="preserve">
+    <value>The LMS add-on is not active: recorded skills stay readable and open evaluations and task books can be finished, but nothing new can start.</value>
+  </data>
+  <data name="Skl.MajorVersion" xml:space="preserve">
+    <value>Major version (re-evaluation may be needed)</value>
+  </data>
+  <data name="Skl.MemberSplit" xml:space="preserve">
+    <value>The member was split out to their own evaluation.</value>
+  </data>
+  <data name="Skl.MembersHelp" xml:space="preserve">
+    <value>Choose one member, or several for a crew-wide evaluation when the sheet allows it.</value>
+  </data>
+  <data name="Skl.MembersToEvaluate" xml:space="preserve">
+    <value>Members evaluated</value>
+  </data>
+  <data name="Skl.MoveDown" xml:space="preserve">
+    <value>Down</value>
+  </data>
+  <data name="Skl.MoveUp" xml:space="preserve">
+    <value>Up</value>
+  </data>
+  <data name="Skl.MyOpenEvaluations" xml:space="preserve">
+    <value>Evaluations I am running</value>
+  </data>
+  <data name="Skl.MyResults" xml:space="preserve">
+    <value>My results</value>
+  </data>
+  <data name="Skl.MySignatures" xml:space="preserve">
+    <value>Evaluations waiting for my signature</value>
+  </data>
+  <data name="Skl.MyTaskBooks" xml:space="preserve">
+    <value>My task books</value>
+  </data>
+  <data name="Skl.NeedsAnswer" xml:space="preserve">
+    <value>Needs an answer</value>
+  </data>
+  <data name="Skl.NewDefinition" xml:space="preserve">
+    <value>New task book definition</value>
+  </data>
+  <data name="Skl.NewSheet" xml:space="preserve">
+    <value>New skill sheet</value>
+  </data>
+  <data name="Skl.NextSigner" xml:space="preserve">
+    <value>Next signer</value>
+  </data>
+  <data name="Skl.NextSignerHelp" xml:space="preserve">
+    <value>The sheet asks for a second signature from a member its rule allows.</value>
+  </data>
+  <data name="Skl.NoDefinitions" xml:space="preserve">
+    <value>No task book definitions yet. Start from a Resgrid starter.</value>
+  </data>
+  <data name="Skl.NoEvaluations" xml:space="preserve">
+    <value>No evaluations match.</value>
+  </data>
+  <data name="Skl.NoOpenEvaluations" xml:space="preserve">
+    <value>You are not running any evaluations.</value>
+  </data>
+  <data name="Skl.NoResults" xml:space="preserve">
+    <value>No evaluations of you yet.</value>
+  </data>
+  <data name="Skl.NoSheet" xml:space="preserve">
+    <value>No sheet (pass/fail)</value>
+  </data>
+  <data name="Skl.NoSheets" xml:space="preserve">
+    <value>No skill sheets yet.</value>
+  </data>
+  <data name="Skl.NoSheetsToEvaluate" xml:space="preserve">
+    <value>There is no published sheet you may evaluate on.</value>
+  </data>
+  <data name="Skl.NoSignatures" xml:space="preserve">
+    <value>No evaluations are waiting for your signature.</value>
+  </data>
+  <data name="Skl.NoTaskBooks" xml:space="preserve">
+    <value>No task books.</value>
+  </data>
+  <data name="Skl.None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Skl.NotApplicable" xml:space="preserve">
+    <value>Not applicable</value>
+  </data>
+  <data name="Skl.NotApplicableReason" xml:space="preserve">
+    <value>Why it does not apply</value>
+  </data>
+  <data name="Skl.NotifyMembers" xml:space="preserve">
+    <value>Notify the evaluated members and trainees about their own evaluations and task books</value>
+  </data>
+  <data name="Skl.NotifyOfficers" xml:space="preserve">
+    <value>Notify the department admins about every evaluation and task book</value>
+  </data>
+  <data name="Skl.Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Skl.OpenSignature" xml:space="preserve">
+    <value>Open the signature</value>
+  </data>
+  <data name="Skl.OpenTaskBooks" xml:space="preserve">
+    <value>Open task books</value>
+  </data>
+  <data name="Skl.OutsideEvaluator" xml:space="preserve">
+    <value>An outside evaluator signs instead</value>
+  </data>
+  <data name="Skl.OutsideEvaluatorEmail" xml:space="preserve">
+    <value>Their email (for a signing link)</value>
+  </data>
+  <data name="Skl.OutsideEvaluatorHelp" xml:space="preserve">
+    <value>Outside evaluators sign at L4, in person on this device or by link while the LMS add-on is active.</value>
+  </data>
+  <data name="Skl.OutsideEvaluatorName" xml:space="preserve">
+    <value>Their name</value>
+  </data>
+  <data name="Skl.OutsideEvaluatorRemote" xml:space="preserve">
+    <value>Send a signing link instead of signing on this device</value>
+  </data>
+  <data name="Skl.Pass" xml:space="preserve">
+    <value>Pass</value>
+  </data>
+  <data name="Skl.PassAll" xml:space="preserve">
+    <value>Pass all remaining steps</value>
+  </data>
+  <data name="Skl.PassAt" xml:space="preserve">
+    <value>pass at</value>
+  </data>
+  <data name="Skl.PassFailReport" xml:space="preserve">
+    <value>Pass/fail report</value>
+  </data>
+  <data name="Skl.PassRange" xml:space="preserve">
+    <value>Passes from-to:</value>
+  </data>
+  <data name="Skl.PassingRatingIs" xml:space="preserve">
+    <value>Passing rating:</value>
+  </data>
+  <data name="Skl.Position" xml:space="preserve">
+    <value>Position code</value>
+  </data>
+  <data name="Skl.Publish" xml:space="preserve">
+    <value>Publish</value>
+  </data>
+  <data name="Skl.PublishTitle" xml:space="preserve">
+    <value>Publish the draft</value>
+  </data>
+  <data name="Skl.Published" xml:space="preserve">
+    <value>The version was published. New evaluations use it.</value>
+  </data>
+  <data name="Skl.RatingsReport" xml:space="preserve">
+    <value>Ratings by question</value>
+  </data>
+  <data name="Skl.Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Skl.RequestCertification" xml:space="preserve">
+    <value>Request certification</value>
+  </data>
+  <data name="Skl.RequestCertificationHelp" xml:space="preserve">
+    <value>Every task is complete. The final evaluator recommends, then the certifying official certifies; both sign at L2.</value>
+  </data>
+  <data name="Skl.Required" xml:space="preserve">
+    <value>Evaluations needed</value>
+  </data>
+  <data name="Skl.Result.Failed" xml:space="preserve">
+    <value>Not passed</value>
+  </data>
+  <data name="Skl.Result.Passed" xml:space="preserve">
+    <value>Passed</value>
+  </data>
+  <data name="Skl.Role.Evaluator" xml:space="preserve">
+    <value>Evaluator</value>
+  </data>
+  <data name="Skl.Role.NextSigner" xml:space="preserve">
+    <value>Next signer</value>
+  </data>
+  <data name="Skl.RunIntro" xml:space="preserve">
+    <value>Grade each step; your annotations and evidence go into the sealed record.</value>
+  </data>
+  <data name="Skl.Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Skl.SaveDraft" xml:space="preserve">
+    <value>Save draft</value>
+  </data>
+  <data name="Skl.Saved" xml:space="preserve">
+    <value>Saved.</value>
+  </data>
+  <data name="Skl.SealFailed" xml:space="preserve">
+    <value>The evaluation is signed, but its record could not be sealed. An administrator can retry the seal.</value>
+  </data>
+  <data name="Skl.SealPending" xml:space="preserve">
+    <value>Signed, sealing pending: the sealed record is not available yet.</value>
+  </data>
+  <data name="Skl.SealedPdf" xml:space="preserve">
+    <value>Sealed record (PDF)</value>
+  </data>
+  <data name="Skl.Seconds" xml:space="preserve">
+    <value>seconds</value>
+  </data>
+  <data name="Skl.SettingsHelp" xml:space="preserve">
+    <value>Daily and weekly digests collect every notice due into one message per person. Inactive members never receive notices.</value>
+  </data>
+  <data name="Skl.SettingsIntro" xml:space="preserve">
+    <value>How evaluation and task book notices are delivered.</value>
+  </data>
+  <data name="Skl.SettingsTitle" xml:space="preserve">
+    <value>Skill notices</value>
+  </data>
+  <data name="Skl.Sheet" xml:space="preserve">
+    <value>Skill sheet</value>
+  </data>
+  <data name="Skl.SheetCreated" xml:space="preserve">
+    <value>The skill sheet was created. Adapt its steps, then publish.</value>
+  </data>
+  <data name="Skl.SheetDeleted" xml:space="preserve">
+    <value>The skill sheet was retired.</value>
+  </data>
+  <data name="Skl.SheetDetails" xml:space="preserve">
+    <value>Sheet details and signers</value>
+  </data>
+  <data name="Skl.SheetIntro" xml:space="preserve">
+    <value>Ordered steps, critical criteria and grading, versioned.</value>
+  </data>
+  <data name="Skl.SheetsIntro" xml:space="preserve">
+    <value>Job-performance skill sheets and the template library.</value>
+  </data>
+  <data name="Skl.SheetsTitle" xml:space="preserve">
+    <value>Skill sheets</value>
+  </data>
+  <data name="Skl.Sign" xml:space="preserve">
+    <value>Sign</value>
+  </data>
+  <data name="Skl.Signatures" xml:space="preserve">
+    <value>Signatures</value>
+  </data>
+  <data name="Skl.Signed" xml:space="preserve">
+    <value>Signed</value>
+  </data>
+  <data name="Skl.SignerRulesHelp" xml:space="preserve">
+    <value>A member qualifies by a valid certification of a chosen type or a chosen role. With no rule, task evaluators are LMS managers and the recommender and certifier are department admins.</value>
+  </data>
+  <data name="Skl.SplitConfirm" xml:space="preserve">
+    <value>Split this member out to their own evaluation? Their answers so far are copied.</value>
+  </data>
+  <data name="Skl.SplitOut" xml:space="preserve">
+    <value>Split out</value>
+  </data>
+  <data name="Skl.SplitTo" xml:space="preserve">
+    <value>Graded separately</value>
+  </data>
+  <data name="Skl.StartEvaluation" xml:space="preserve">
+    <value>Start an evaluation</value>
+  </data>
+  <data name="Skl.StartIntro" xml:space="preserve">
+    <value>Choose the sheet and who you are evaluating. The timer starts now.</value>
+  </data>
+  <data name="Skl.Status.AwaitingSignature" xml:space="preserve">
+    <value>Awaiting signature</value>
+  </data>
+  <data name="Skl.Status.Completed" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="Skl.Status.InProgress" xml:space="preserve">
+    <value>In progress</value>
+  </data>
+  <data name="Skl.Status.Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Skl.Status.Voided" xml:space="preserve">
+    <value>Voided</value>
+  </data>
+  <data name="Skl.Step.AllowNa" xml:space="preserve">
+    <value>Allow "not applicable"</value>
+  </data>
+  <data name="Skl.Step.Compute" xml:space="preserve">
+    <value>Calculation</value>
+  </data>
+  <data name="Skl.Step.ComputeKeys" xml:space="preserve">
+    <value>From steps (keys, comma separated)</value>
+  </data>
+  <data name="Skl.Step.Critical" xml:space="preserve">
+    <value>Critical</value>
+  </data>
+  <data name="Skl.Step.EvidenceOnFail" xml:space="preserve">
+    <value>Evidence when failed</value>
+  </data>
+  <data name="Skl.Step.Help" xml:space="preserve">
+    <value>Instructions to the evaluator</value>
+  </data>
+  <data name="Skl.Step.Key" xml:space="preserve">
+    <value>Key</value>
+  </data>
+  <data name="Skl.Step.Label" xml:space="preserve">
+    <value>Step</value>
+  </data>
+  <data name="Skl.Step.Max" xml:space="preserve">
+    <value>Highest passing value</value>
+  </data>
+  <data name="Skl.Step.Min" xml:space="preserve">
+    <value>Lowest passing value</value>
+  </data>
+  <data name="Skl.Step.NoteOnFail" xml:space="preserve">
+    <value>Note when failed</value>
+  </data>
+  <data name="Skl.Step.Options" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="Skl.Step.OptionsHelp" xml:space="preserve">
+    <value>One per line: Label | points | fail (the last part only for an option that fails the step).</value>
+  </data>
+  <data name="Skl.Step.PassingRating" xml:space="preserve">
+    <value>Lowest passing rating</value>
+  </data>
+  <data name="Skl.Step.Rating" xml:space="preserve">
+    <value>Rating</value>
+  </data>
+  <data name="Skl.Step.Required" xml:space="preserve">
+    <value>Answer required</value>
+  </data>
+  <data name="Skl.Step.Type" xml:space="preserve">
+    <value>Question type</value>
+  </data>
+  <data name="Skl.Step.Weight" xml:space="preserve">
+    <value>Weight</value>
+  </data>
+  <data name="Skl.StepType.ChooseAny" xml:space="preserve">
+    <value>Choose any</value>
+  </data>
+  <data name="Skl.StepType.ChooseOne" xml:space="preserve">
+    <value>Choose one</value>
+  </data>
+  <data name="Skl.StepType.Computed" xml:space="preserve">
+    <value>Computed value</value>
+  </data>
+  <data name="Skl.StepType.Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="Skl.StepType.DateTime" xml:space="preserve">
+    <value>Date and time</value>
+  </data>
+  <data name="Skl.StepType.Duration" xml:space="preserve">
+    <value>Duration (timed)</value>
+  </data>
+  <data name="Skl.StepType.Evidence" xml:space="preserve">
+    <value>Photo, video or file</value>
+  </data>
+  <data name="Skl.StepType.Heading" xml:space="preserve">
+    <value>Heading</value>
+  </data>
+  <data name="Skl.StepType.Instructions" xml:space="preserve">
+    <value>Instructions</value>
+  </data>
+  <data name="Skl.StepType.Number" xml:space="preserve">
+    <value>Number</value>
+  </data>
+  <data name="Skl.StepType.PassFail" xml:space="preserve">
+    <value>Pass / fail</value>
+  </data>
+  <data name="Skl.StepType.RatingScale" xml:space="preserve">
+    <value>Rating scale</value>
+  </data>
+  <data name="Skl.StepType.Text" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="Skl.StepType.Time" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="Skl.StepType.TimestampedNotes" xml:space="preserve">
+    <value>Timestamped notes</value>
+  </data>
+  <data name="Skl.Steps" xml:space="preserve">
+    <value>Steps</value>
+  </data>
+  <data name="Skl.StripLabel" xml:space="preserve">
+    <value>Skills sections</value>
+  </data>
+  <data name="Skl.SubmitAndSign" xml:space="preserve">
+    <value>Submit and sign</value>
+  </data>
+  <data name="Skl.SubmitConfirm" xml:space="preserve">
+    <value>Submit the evaluation? The result is fixed and the signature opens.</value>
+  </data>
+  <data name="Skl.SubmitTitle" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="Skl.Submitted" xml:space="preserve">
+    <value>The evaluation was submitted. Sign it to complete it.</value>
+  </data>
+  <data name="Skl.Tab.Definitions" xml:space="preserve">
+    <value>Definitions</value>
+  </data>
+  <data name="Skl.Tab.Evaluations" xml:space="preserve">
+    <value>Evaluations</value>
+  </data>
+  <data name="Skl.Tab.Home" xml:space="preserve">
+    <value>Overview</value>
+  </data>
+  <data name="Skl.Tab.Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Skl.Tab.Sheets" xml:space="preserve">
+    <value>Skill sheets</value>
+  </data>
+  <data name="Skl.Tab.TaskBooks" xml:space="preserve">
+    <value>Task books</value>
+  </data>
+  <data name="Skl.Task" xml:space="preserve">
+    <value>Task</value>
+  </data>
+  <data name="Skl.TaskBookCancelled" xml:space="preserve">
+    <value>The task book was cancelled.</value>
+  </data>
+  <data name="Skl.TaskBookInitiated" xml:space="preserve">
+    <value>The task book was initiated.</value>
+  </data>
+  <data name="Skl.TaskBookIntro" xml:space="preserve">
+    <value>Tasks with their evaluations, then the final evaluator's recommendation and certification.</value>
+  </data>
+  <data name="Skl.TaskBookStatus.AwaitingCertification" xml:space="preserve">
+    <value>Awaiting certification</value>
+  </data>
+  <data name="Skl.TaskBookStatus.Cancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="Skl.TaskBookStatus.Certified" xml:space="preserve">
+    <value>Certified</value>
+  </data>
+  <data name="Skl.TaskBookStatus.Expired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="Skl.TaskBookStatus.Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Skl.TaskBookTemplates" xml:space="preserve">
+    <value>Task book starters</value>
+  </data>
+  <data name="Skl.TaskBookTemplatesIntro" xml:space="preserve">
+    <value>Written by Resgrid: position codes, task numbers and short task names only. Enter each task's text from your own copy and match the current edition.</value>
+  </data>
+  <data name="Skl.TaskBooksIntro" xml:space="preserve">
+    <value>Position task books: initiated with a date, signed task by task, then certified.</value>
+  </data>
+  <data name="Skl.TaskBooksTitle" xml:space="preserve">
+    <value>Position task books</value>
+  </data>
+  <data name="Skl.TaskEvaluators" xml:space="preserve">
+    <value>Who signs tasks</value>
+  </data>
+  <data name="Skl.TaskNumber" xml:space="preserve">
+    <value>No.</value>
+  </data>
+  <data name="Skl.Tasks" xml:space="preserve">
+    <value>Tasks</value>
+  </data>
+  <data name="Skl.TasksComplete" xml:space="preserve">
+    <value>Tasks complete</value>
+  </data>
+  <data name="Skl.TemplateLibrary" xml:space="preserve">
+    <value>Skill-sheet template library</value>
+  </data>
+  <data name="Skl.TemplateLibraryIntro" xml:space="preserve">
+    <value>Resgrid-authored starting points: structure only. Adapt them to your equipment and procedures before use.</value>
+  </data>
+  <data name="Skl.TimeExceededNotice" xml:space="preserve">
+    <value>The time limit was exceeded: the evaluation is not passed.</value>
+  </data>
+  <data name="Skl.Trainee" xml:space="preserve">
+    <value>Trainee</value>
+  </data>
+  <data name="Skl.Upload" xml:space="preserve">
+    <value>Upload</value>
+  </data>
+  <data name="Skl.UseTemplate" xml:space="preserve">
+    <value>Use template</value>
+  </data>
+  <data name="Skl.ValidUntil" xml:space="preserve">
+    <value>Valid until</value>
+  </data>
+  <data name="Skl.VersionStatus.Approved" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="Skl.VersionStatus.Draft" xml:space="preserve">
+    <value>Draft</value>
+  </data>
+  <data name="Skl.VersionStatus.InReview" xml:space="preserve">
+    <value>In review</value>
+  </data>
+  <data name="Skl.VersionStatus.Published" xml:space="preserve">
+    <value>In force</value>
+  </data>
+  <data name="Skl.VersionStatus.Retired" xml:space="preserve">
+    <value>Retired</value>
+  </data>
+  <data name="Skl.VersionStatus.Superseded" xml:space="preserve">
+    <value>Superseded</value>
+  </data>
+  <data name="Skl.Versions" xml:space="preserve">
+    <value>Versions</value>
+  </data>
+  <data name="Skl.Void" xml:space="preserve">
+    <value>Void evaluation</value>
+  </data>
+  <data name="Skl.VoidConfirm" xml:space="preserve">
+    <value>Void this evaluation? Its learning records are voided too.</value>
+  </data>
+  <data name="Skl.VoidReason" xml:space="preserve">
+    <value>Reason for voiding</value>
+  </data>
+  <data name="Skl.Voided" xml:space="preserve">
+    <value>The evaluation was voided.</value>
+  </data>
+  <data name="Skl.Waiting" xml:space="preserve">
+    <value>Waiting</value>
+  </data>
+  <data name="Skl.WholeEvaluation" xml:space="preserve">
+    <value>The whole evaluation</value>
+  </data>
+  <data name="lms_skill_addon_required" xml:space="preserve">
+    <value>This needs the LMS add-on.</value>
+  </data>
+  <data name="lms_skill_answer_unknown_step" xml:space="preserve">
+    <value>An answer does not belong to this sheet version.</value>
+  </data>
+  <data name="lms_skill_attempts_exhausted" xml:space="preserve">
+    <value>No attempts are left on this sheet for that member in the attempt window.</value>
+  </data>
+  <data name="lms_skill_crew_not_allowed" xml:space="preserve">
+    <value>This sheet evaluates one member at a time.</value>
+  </data>
+  <data name="lms_skill_evaluation_closed" xml:space="preserve">
+    <value>The evaluation is no longer in progress.</value>
+  </data>
+  <data name="lms_skill_evaluation_not_found" xml:space="preserve">
+    <value>The evaluation was not found.</value>
+  </data>
+  <data name="lms_skill_evidence_count" xml:space="preserve">
+    <value>This evaluation already has the most evidence files allowed.</value>
+  </data>
+  <data name="lms_skill_evidence_size" xml:space="preserve">
+    <value>Choose a file of up to 30 MB.</value>
+  </data>
+  <data name="lms_skill_evidence_step" xml:space="preserve">
+    <value>That step is not on this sheet.</value>
+  </data>
+  <data name="lms_skill_evidence_type" xml:space="preserve">
+    <value>Add a photo, video, PDF or text file.</value>
+  </data>
+  <data name="lms_skill_idempotency_key_required" xml:space="preserve">
+    <value>An offline submission needs its outbox key.</value>
+  </data>
+  <data name="lms_skill_member_invalid" xml:space="preserve">
+    <value>Choose active members of the department.</value>
+  </data>
+  <data name="lms_skill_members_required" xml:space="preserve">
+    <value>Choose who is evaluated (up to 50 members).</value>
+  </data>
+  <data name="lms_skill_next_signer_not_allowed" xml:space="preserve">
+    <value>This sheet does not ask for a next signer.</value>
+  </data>
+  <data name="lms_skill_next_signer_not_eligible" xml:space="preserve">
+    <value>The next signer must be another active member that the sheet's rule allows, not the evaluator or a member evaluated.</value>
+  </data>
+  <data name="lms_skill_next_signer_required" xml:space="preserve">
+    <value>Pick the next signer the sheet asks for.</value>
+  </data>
+  <data name="lms_skill_not_allowed" xml:space="preserve">
+    <value>You cannot do this.</value>
+  </data>
+  <data name="lms_skill_not_eligible" xml:space="preserve">
+    <value>You are not an eligible evaluator for this sheet or task book.</value>
+  </data>
+  <data name="lms_skill_not_evaluator" xml:space="preserve">
+    <value>Only the evaluator can change this evaluation.</value>
+  </data>
+  <data name="lms_skill_not_found" xml:space="preserve">
+    <value>Not found.</value>
+  </data>
+  <data name="lms_skill_self_evaluation" xml:space="preserve">
+    <value>You cannot evaluate yourself on this sheet or task book.</value>
+  </data>
+  <data name="lms_skill_sheet_category_invalid" xml:space="preserve">
+    <value>Choose a training category of the department.</value>
+  </data>
+  <data name="lms_skill_sheet_change_summary_required" xml:space="preserve">
+    <value>Describe what changed.</value>
+  </data>
+  <data name="lms_skill_sheet_kind_invalid" xml:space="preserve">
+    <value>Choose a skill sheet or a daily observation report.</value>
+  </data>
+  <data name="lms_skill_sheet_no_draft" xml:space="preserve">
+    <value>There is no draft to publish.</value>
+  </data>
+  <data name="lms_skill_sheet_no_gradable_step" xml:space="preserve">
+    <value>Add at least one step the evaluator answers.</value>
+  </data>
+  <data name="lms_skill_sheet_not_found" xml:space="preserve">
+    <value>The skill sheet was not found.</value>
+  </data>
+  <data name="lms_skill_sheet_not_published" xml:space="preserve">
+    <value>The skill sheet has no published version.</value>
+  </data>
+  <data name="lms_skill_sheet_step_bounds" xml:space="preserve">
+    <value>A lowest value is above the highest.</value>
+  </data>
+  <data name="lms_skill_sheet_step_compute" xml:space="preserve">
+    <value>A computed step must name earlier number, duration or rating steps.</value>
+  </data>
+  <data name="lms_skill_sheet_step_count" xml:space="preserve">
+    <value>A sheet has 1 to 200 steps.</value>
+  </data>
+  <data name="lms_skill_sheet_step_critical" xml:space="preserve">
+    <value>Only scored steps can be critical.</value>
+  </data>
+  <data name="lms_skill_sheet_step_key" xml:space="preserve">
+    <value>Each step needs a unique key.</value>
+  </data>
+  <data name="lms_skill_sheet_step_label" xml:space="preserve">
+    <value>Each step needs a label of up to 300 characters.</value>
+  </data>
+  <data name="lms_skill_sheet_step_options" xml:space="preserve">
+    <value>Choice steps need 2 to 30 distinct options.</value>
+  </data>
+  <data name="lms_skill_sheet_step_rating" xml:space="preserve">
+    <value>A rating scale needs a lowest and highest rating, and its passing rating within them.</value>
+  </data>
+  <data name="lms_skill_sheet_step_type" xml:space="preserve">
+    <value>Choose a question type.</value>
+  </data>
+  <data name="lms_skill_sheet_step_weight" xml:space="preserve">
+    <value>Weights are 0 to 1000; a critical step needs a weight above 0.</value>
+  </data>
+  <data name="lms_skill_sheet_title_required" xml:space="preserve">
+    <value>Enter a title.</value>
+  </data>
+  <data name="lms_skill_signature_refused" xml:space="preserve">
+    <value>The signature request could not be created; the evaluation stays in progress.</value>
+  </data>
+  <data name="lms_skill_split_last_member" xml:space="preserve">
+    <value>The last member of a crew evaluation cannot be split out.</value>
+  </data>
+  <data name="lms_skill_split_not_crew" xml:space="preserve">
+    <value>Only a crew evaluation can split a member out.</value>
+  </data>
+  <data name="lms_skill_stale" xml:space="preserve">
+    <value>Someone else changed this meanwhile. Reload and try again.</value>
+  </data>
+  <data name="lms_skill_step_evidence_required" xml:space="preserve">
+    <value>A failed step needs evidence.</value>
+  </data>
+  <data name="lms_skill_step_invalid" xml:space="preserve">
+    <value>An answer is not valid for its step.</value>
+  </data>
+  <data name="lms_skill_step_not_applicable" xml:space="preserve">
+    <value>"Not applicable" needs a reason and is not allowed on critical steps.</value>
+  </data>
+  <data name="lms_skill_step_note_required" xml:space="preserve">
+    <value>A failed step needs an annotation.</value>
+  </data>
+  <data name="lms_skill_step_required" xml:space="preserve">
+    <value>Answer every required step before submitting.</value>
+  </data>
+  <data name="lms_skill_step_too_long" xml:space="preserve">
+    <value>An answer or annotation is too long.</value>
+  </data>
+  <data name="lms_skill_template_not_found" xml:space="preserve">
+    <value>The template was not found.</value>
+  </data>
+  <data name="lms_skill_void_reason_required" xml:space="preserve">
+    <value>Enter a reason.</value>
+  </data>
+  <data name="lms_task_book_already_open" xml:space="preserve">
+    <value>That member already has an open task book of this definition.</value>
+  </data>
+  <data name="lms_task_book_certification_type_invalid" xml:space="preserve">
+    <value>Choose a person certification type of the department.</value>
+  </data>
+  <data name="lms_task_book_certifying_official_not_eligible" xml:space="preserve">
+    <value>The certifying official does not meet the definition's rule.</value>
+  </data>
+  <data name="lms_task_book_certifying_official_required" xml:space="preserve">
+    <value>Choose the certifying official.</value>
+  </data>
+  <data name="lms_task_book_code_required" xml:space="preserve">
+    <value>Enter the position code.</value>
+  </data>
+  <data name="lms_task_book_date_invalid" xml:space="preserve">
+    <value>The initiation date must be within the book's validity and not in the future.</value>
+  </data>
+  <data name="lms_task_book_expired" xml:space="preserve">
+    <value>The task book's validity has ended.</value>
+  </data>
+  <data name="lms_task_book_family_invalid" xml:space="preserve">
+    <value>Choose a family.</value>
+  </data>
+  <data name="lms_task_book_final_evaluator_not_eligible" xml:space="preserve">
+    <value>The final evaluator does not meet the definition's rule.</value>
+  </data>
+  <data name="lms_task_book_final_evaluator_required" xml:space="preserve">
+    <value>Choose the final evaluator.</value>
+  </data>
+  <data name="lms_task_book_member_mismatch" xml:space="preserve">
+    <value>A task book task evaluates its trainee only.</value>
+  </data>
+  <data name="lms_task_book_name_required" xml:space="preserve">
+    <value>Enter the position name.</value>
+  </data>
+  <data name="lms_task_book_not_found" xml:space="preserve">
+    <value>The task book was not found.</value>
+  </data>
+  <data name="lms_task_book_not_open" xml:space="preserve">
+    <value>The task book is not open.</value>
+  </data>
+  <data name="lms_task_book_sheet_invalid" xml:space="preserve">
+    <value>A task names a skill sheet that does not exist.</value>
+  </data>
+  <data name="lms_task_book_signers_invalid" xml:space="preserve">
+    <value>The trainee, the final evaluator and the certifying official must be three different members.</value>
+  </data>
+  <data name="lms_task_book_task_count" xml:space="preserve">
+    <value>A task book has 1 to 200 tasks.</value>
+  </data>
+  <data name="lms_task_book_task_invalid" xml:space="preserve">
+    <value>Each task needs a title and 1 to 50 evaluations.</value>
+  </data>
+  <data name="lms_task_book_task_key" xml:space="preserve">
+    <value>Each task needs a unique key.</value>
+  </data>
+  <data name="lms_task_book_task_not_found" xml:space="preserve">
+    <value>That task is not in this task book.</value>
+  </data>
+  <data name="lms_task_book_tasks_incomplete" xml:space="preserve">
+    <value>Every task must be complete before certification.</value>
+  </data>
+</root>

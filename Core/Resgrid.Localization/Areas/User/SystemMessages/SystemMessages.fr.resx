@@ -175,4 +175,35 @@ L'équipe Resgrid</value>
   <data name="SecurityNoticeWhere" xml:space="preserve"><value>Où : {0}</value></data>
   <data name="SecurityNoticeNotYou" xml:space="preserve"><value>Si ce n'était pas vous, réinitialisez votre mot de passe dès maintenant sur {0}, puis connectez-vous et vérifiez vos méthodes de connexion. Resgrid ne vous demande jamais de code ni de mot de passe par e-mail.</value></data>
   <data name="SecurityNoticeFooter" xml:space="preserve"><value>Ceci est un avis de sécurité automatique concernant votre compte Resgrid.</value></data>
+  <data name="SigningLinkEmailSubject" xml:space="preserve">
+    <value>{0} : un document à signer</value>
+  </data>
+  <data name="SigningLinkEmailBody" xml:space="preserve">
+    <value>Bonjour {0},
+
+{1} vous demande de relire et de signer « {2} ».
+
+Ouvrez ce lien pour signer :
+{3}
+
+Le lien ne peut servir qu'une fois et expire le {4}. Avant de signer, vous confirmerez un code à usage unique.
+
+Si vous n'attendiez pas ce message, vous pouvez l'ignorer.</value>
+  </data>
+  <data name="SigningLinkSmsBody" xml:space="preserve">
+    <value>{0} vous demande de signer « {1} » : {2}</value>
+  </data>
+  <data name="SigningCodeEmailSubject" xml:space="preserve">
+    <value>{0} : votre code de signature</value>
+  </data>
+  <data name="SigningCodeEmailBody" xml:space="preserve">
+    <value>Bonjour {0},
+
+Votre code pour signer le document de {3} est {1}. Il expire dans {2} minutes.
+
+Si vous n'avez pas demandé ce code, vous pouvez ignorer ce message.</value>
+  </data>
+  <data name="SigningCodeSmsBody" xml:space="preserve">
+    <value>Votre code de signature pour {2} est {0}. Il expire dans {1} minutes.</value>
+  </data>
 </root>

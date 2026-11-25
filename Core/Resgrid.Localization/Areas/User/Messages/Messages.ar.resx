@@ -237,4 +237,58 @@
   <data name="NotAttending" xml:space="preserve">
     <value>لن أحضر</value>
   </data>
+  <data name="CredentialAudienceLabel" xml:space="preserve">
+    <value>حسب الشهادة</value>
+  </data>
+  <data name="CredentialAudienceNone" xml:space="preserve">
+    <value>لا أحد حسب الشهادة</value>
+  </data>
+  <data name="CredentialAudienceStatus" xml:space="preserve">
+    <value>حالة الشهادة</value>
+  </data>
+  <data name="CredentialAudienceExpired" xml:space="preserve">
+    <value>انتهت صلاحيتها</value>
+  </data>
+  <data name="CredentialAudienceExpiring" xml:space="preserve">
+    <value>تنتهي خلال الأيام المحددة</value>
+  </data>
+  <data name="CredentialAudienceMissing" xml:space="preserve">
+    <value>لم يحملها قط</value>
+  </data>
+  <data name="CredentialAudienceDays" xml:space="preserve">
+    <value>الأيام</value>
+  </data>
+  <data name="CredentialAudienceHelp" xml:space="preserve">
+    <value>يضيف الأعضاء النشطين الذين تطابق شهاداتهم، إلى جانب المستلمين المختارين أعلاه.</value>
+  </data>
+  <data name="CredentialAudienceNoMatch" xml:space="preserve">
+    <value>لا يوجد عضو يطابق حالة الشهادة التي اخترتها.</value>
+  </data>
+  <data name="RosterAudienceLabel" xml:space="preserve">
+    <value>قائمة الدورة</value>
+  </data>
+  <data name="RosterAudienceNone" xml:space="preserve">
+    <value>بدون دورة</value>
+  </data>
+  <data name="RosterAudienceStatus" xml:space="preserve">
+    <value>حالة القائمة</value>
+  </data>
+  <data name="RosterAudienceEnrolled" xml:space="preserve">
+    <value>المسجّلون</value>
+  </data>
+  <data name="RosterAudienceAttended" xml:space="preserve">
+    <value>الحاضرون</value>
+  </data>
+  <data name="RosterAudienceAbsent" xml:space="preserve">
+    <value>الغائبون</value>
+  </data>
+  <data name="RosterAudienceWaitlisted" xml:space="preserve">
+    <value>على قائمة الانتظار</value>
+  </data>
+  <data name="RosterAudienceHelp" xml:space="preserve">
+    <value>يضيف الأعضاء النشطين في الدورة بحالة القائمة هذه إلى المستلمين أعلاه.</value>
+  </data>
+  <data name="RosterAudienceNoMatch" xml:space="preserve">
+    <value>لا أحد على قائمة تلك الدورة بهذه الحالة.</value>
+  </data>
 </root>

@@ -1279,7 +1279,14 @@ namespace Resgrid.Services
 
 		public async Task<bool> DeleteActiveRolesForUnitAsync(int unitId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _unitActiveRolesRepository.DeleteActiveRolesByUnitIdAsync(unitId, cancellationToken);
+			// Read the crew first: members who leave a unit are re-evaluated too (T0 left removals out of the audience queue).
+			var crew = _audienceChanges == null ? null : await _unitActiveRolesRepository.GetActiveRolesByUnitIdAsync(unitId);
+			var deleted = await _unitActiveRolesRepository.DeleteActiveRolesByUnitIdAsync(unitId, cancellationToken);
+
+			foreach (var department in (crew ?? Enumerable.Empty<UnitActiveRole>()).Where(r => r != null && !string.IsNullOrWhiteSpace(r.UserId)).GroupBy(r => r.DepartmentId))
+				await _audienceChanges.EnqueueManyAsync(department.Key, department.Select(r => r.UserId).Distinct(StringComparer.OrdinalIgnoreCase), ContentAudienceChangeSources.Unit, cancellationToken);
+
+			return deleted;
 		}
 
 		public async Task NotifyActiveRolesUpdatedAsync(int departmentId, int unitId)

@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboveAmountNote" xml:space="preserve">
+    <value>(понад {0})</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Дії</value>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>Активний</value>
+  </data>
+  <data name="AddDelegateHeading" xml:space="preserve">
+    <value>Додати заступника</value>
+  </data>
+  <data name="AgreementDeletedMessage" xml:space="preserve">
+    <value>Угоду видалено.</value>
+  </data>
+  <data name="AgreementInvalidMessage" xml:space="preserve">
+    <value>Не вдалося зберегти угоду. Перевірте назву й дати; затверджену угоду не можна змінити.</value>
+  </data>
+  <data name="AgreementSavedMessage" xml:space="preserve">
+    <value>Угоду збережено.</value>
+  </data>
+  <data name="AgreementTitleLabel" xml:space="preserve">
+    <value>Угода</value>
+  </data>
+  <data name="AgreementsIntro" xml:space="preserve">
+    <value>Угоди про взаємодопомогу, які ваш підрозділ затверджує й запечатує.</value>
+  </data>
+  <data name="AgreementsTab" xml:space="preserve">
+    <value>Угоди про взаємодопомогу</value>
+  </data>
+  <data name="AllMyApprovalsLink" xml:space="preserve">
+    <value>Усі мої затвердження</value>
+  </data>
+  <data name="AllowSelfApprovalLabel" xml:space="preserve">
+    <value>Дозволити автору подання затверджувати</value>
+  </data>
+  <data name="AmountColumn" xml:space="preserve">
+    <value>Сума</value>
+  </data>
+  <data name="ApplyErrorNote" xml:space="preserve">
+    <value>Затвердження залишається чинним, але модуль не зміг його застосувати (відмовили його власні правила). Завершіть етап у модулі.</value>
+  </data>
+  <data name="ApprovalsHeading" xml:space="preserve">
+    <value>Затвердження</value>
+  </data>
+  <data name="ApprovalsModuleTitle" xml:space="preserve">
+    <value>Затвердження</value>
+  </data>
+  <data name="ApproveButton" xml:space="preserve">
+    <value>Затвердити</value>
+  </data>
+  <data name="ApprovePanelTitle" xml:space="preserve">
+    <value>Ваше затвердження</value>
+  </data>
+  <data name="ApprovedByColumn" xml:space="preserve">
+    <value>Ким затверджено</value>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>Ваше затвердження записано.</value>
+  </data>
+  <data name="ApprovedStepsLabel" xml:space="preserve">
+    <value>Затверджені етапи</value>
+  </data>
+  <data name="ApproverColumn" xml:space="preserve">
+    <value>Затверджувач</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="CandidatesHeading" xml:space="preserve">
+    <value>Готові до подання</value>
+  </data>
+  <data name="CertificationTypeLabel" xml:space="preserve">
+    <value>Тип сертифікації</value>
+  </data>
+  <data name="ChainDeactivatedMessage" xml:space="preserve">
+    <value>Ланцюжок вимкнено.</value>
+  </data>
+  <data name="ChainEditorHelp" xml:space="preserve">
+    <value>Етапи з однаковим номером виконуються паралельно, і всі мають затвердити. Поріг обмежує етап сумами, що його перевищують. Збереження створює нову версію; уже подані запити зберігають етапи, з якими вони почалися.</value>
+  </data>
+  <data name="ChainNameLabel" xml:space="preserve">
+    <value>Назва ланцюжка</value>
+  </data>
+  <data name="ChainSavedMessage" xml:space="preserve">
+    <value>Ланцюжок затвердження збережено.</value>
+  </data>
+  <data name="ChainsIntro" xml:space="preserve">
+    <value>Хто що затверджує, у якому порядку, понад які суми і коли завислий етап ескалюється.</value>
+  </data>
+  <data name="ChainsTab" xml:space="preserve">
+    <value>Ланцюжки</value>
+  </data>
+  <data name="ChangedSinceApproval" xml:space="preserve">
+    <value>Це змінили після затвердження. Затвердження більше не дійсне; подайте знову.</value>
+  </data>
+  <data name="ChangedSinceSubmission" xml:space="preserve">
+    <value>Це змінили після подання. Попередні затвердження не переносяться; подайте знову.</value>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>Код вмісту</value>
+  </data>
+  <data name="DeactivateChainButton" xml:space="preserve">
+    <value>Вимкнути</value>
+  </data>
+  <data name="DecidedColumn" xml:space="preserve">
+    <value>Дата рішення</value>
+  </data>
+  <data name="DefineChainButton" xml:space="preserve">
+    <value>Визначити ланцюжок</value>
+  </data>
+  <data name="DelegateForLabel" xml:space="preserve">
+    <value>Учасник</value>
+  </data>
+  <data name="DelegateHelp" xml:space="preserve">
+    <value>Поки учасник у відпустці, його іменні етапи затвердження також надходять його заступникові. Якщо вказано дати, заступник також заміщує його в цей період.</value>
+  </data>
+  <data name="DelegateInvalidMessage" xml:space="preserve">
+    <value>Не вдалося зберегти заступника. Виберіть двох різних активних учасників і правильні дати.</value>
+  </data>
+  <data name="DelegateLabel" xml:space="preserve">
+    <value>Заступник</value>
+  </data>
+  <data name="DelegateRemovedMessage" xml:space="preserve">
+    <value>Заступника видалено.</value>
+  </data>
+  <data name="DelegateSavedMessage" xml:space="preserve">
+    <value>Заступника збережено.</value>
+  </data>
+  <data name="DelegatedNote" xml:space="preserve">
+    <value>Делеговано: призначений затверджувач відсутній</value>
+  </data>
+  <data name="DelegatesIntro" xml:space="preserve">
+    <value>Хто затверджує за учасника, поки він у відпустці.</value>
+  </data>
+  <data name="DelegatesTab" xml:space="preserve">
+    <value>Заступники</value>
+  </data>
+  <data name="DeleteAgreementButton" xml:space="preserve">
+    <value>Видалити угоду</value>
+  </data>
+  <data name="DepartmentLinkLabel" xml:space="preserve">
+    <value>Зв'язок підрозділів</value>
+  </data>
+  <data name="DownloadSealedLink" xml:space="preserve">
+    <value>Завантажити запечатаний документ</value>
+  </data>
+  <data name="DueByLabel" xml:space="preserve">
+    <value>до {0}</value>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Термін</value>
+  </data>
+  <data name="EditChainButton" xml:space="preserve">
+    <value>Редагувати ланцюжок</value>
+  </data>
+  <data name="EditChainTitle" xml:space="preserve">
+    <value>Ланцюжок затвердження</value>
+  </data>
+  <data name="EffectiveLabel" xml:space="preserve">
+    <value>Діє з</value>
+  </data>
+  <data name="EndsLabel" xml:space="preserve">
+    <value>Закінчується</value>
+  </data>
+  <data name="EscalatedLabel" xml:space="preserve">
+    <value>Ескальовано</value>
+  </data>
+  <data name="EscalatesAfterNote" xml:space="preserve">
+    <value>(ескалація через {0} год)</value>
+  </data>
+  <data name="EscalationColumn" xml:space="preserve">
+    <value>Ескалація</value>
+  </data>
+  <data name="ExpiresInDaysLabel" xml:space="preserve">
+    <value>Спливає через (днів)</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Група</value>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Головна</value>
+  </data>
+  <data name="HoursPlaceholder" xml:space="preserve">
+    <value>Години (порожньо: ніколи)</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Учасник</value>
+  </data>
+  <data name="MyApprovalsIntro" xml:space="preserve">
+    <value>Запити, що чекають на ваше затвердження, і ті, які подали ви.</value>
+  </data>
+  <data name="MyApprovalsTab" xml:space="preserve">
+    <value>Мої затвердження</value>
+  </data>
+  <data name="MyApprovalsTitle" xml:space="preserve">
+    <value>Мої затвердження</value>
+  </data>
+  <data name="MySubmissionsHeader" xml:space="preserve">
+    <value>Мої подання в очікуванні</value>
+  </data>
+  <data name="NewAgreementButton" xml:space="preserve">
+    <value>Нова угода</value>
+  </data>
+  <data name="NextApprovalLabel" xml:space="preserve">
+    <value>Наступне на затвердження</value>
+  </data>
+  <data name="NoAgreements" xml:space="preserve">
+    <value>Угод про взаємодопомогу ще немає.</value>
+  </data>
+  <data name="NoApprovalYet" xml:space="preserve">
+    <value>Ще не подано на затвердження.</value>
+  </data>
+  <data name="NoCandidates" xml:space="preserve">
+    <value>Ніщо не чекає на подання.</value>
+  </data>
+  <data name="NoChainDefined" xml:space="preserve">
+    <value>Немає ланцюжка: ці елементи не потребують затвердження.</value>
+  </data>
+  <data name="NoDelegates" xml:space="preserve">
+    <value>Немає заступників.</value>
+  </data>
+  <data name="NoPendingSubmissions" xml:space="preserve">
+    <value>Нічого в очікуванні.</value>
+  </data>
+  <data name="NoRequests" xml:space="preserve">
+    <value>Немає запитів.</value>
+  </data>
+  <data name="NothingToApprove" xml:space="preserve">
+    <value>Ніщо не чекає на ваше затвердження.</value>
+  </data>
+  <data name="OnLeaveOnly" xml:space="preserve">
+    <value>Під час відпустки</value>
+  </data>
+  <data name="OpenInModuleLink" xml:space="preserve">
+    <value>Відкрити</value>
+  </data>
+  <data name="OpenRequestLink" xml:space="preserve">
+    <value>Відкрити</value>
+  </data>
+  <data name="PartnerLabel" xml:space="preserve">
+    <value>Партнерський підрозділ</value>
+  </data>
+  <data name="PartnerSignatureOwedNote" xml:space="preserve">
+    <value>Ланцюжок вашого підрозділу затверджує й запечатує цю угоду. Контрпідпис партнерського підрозділу через зв'язок підрозділів поки недоступний.</value>
+  </data>
+  <data name="PayrollRunsNote" xml:space="preserve">
+    <value>Нарахування зарплати отримають ланцюжок затвердження, щойно нарахування зарплати з'являться в Resgrid.</value>
+  </data>
+  <data name="PendingApprovalsHeader" xml:space="preserve">
+    <value>Чекають на ваше затвердження</value>
+  </data>
+  <data name="PendingInDepartmentHeader" xml:space="preserve">
+    <value>В очікуванні в підрозділі</value>
+  </data>
+  <data name="PendingSubmittedLabel" xml:space="preserve">
+    <value>В очікуванні</value>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Відхилити</value>
+  </data>
+  <data name="RejectHeading" xml:space="preserve">
+    <value>Відхилити</value>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>Причина</value>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>Запит відхилено, автора подання повідомлено.</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="RequestsIntro" xml:space="preserve">
+    <value>Усі запити на затвердження в підрозділі.</value>
+  </data>
+  <data name="RequestsTab" xml:space="preserve">
+    <value>Запити</value>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Переглянути</value>
+  </data>
+  <data name="RoleLabel" xml:space="preserve">
+    <value>Роль</value>
+  </data>
+  <data name="SaveAgreementButton" xml:space="preserve">
+    <value>Зберегти угоду</value>
+  </data>
+  <data name="SaveChainButton" xml:space="preserve">
+    <value>Зберегти ланцюжок</value>
+  </data>
+  <data name="SaveDelegateButton" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="SealedNote" xml:space="preserve">
+    <value>Затверджено й запечатано.</value>
+  </data>
+  <data name="SealingPendingNote" xml:space="preserve">
+    <value>Затверджено. Запечатування очікує: запечатаний документ буде створено, щойно служба запечатування стане доступною.</value>
+  </data>
+  <data name="StartsLabel" xml:space="preserve">
+    <value>Починається</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="StepApproved" xml:space="preserve">
+    <value>Затверджено</value>
+  </data>
+  <data name="StepColumn" xml:space="preserve">
+    <value>Етап</value>
+  </data>
+  <data name="StepLabelPlaceholder" xml:space="preserve">
+    <value>Назва етапу (необов'язково)</value>
+  </data>
+  <data name="StepNotYet" xml:space="preserve">
+    <value>Ще ні</value>
+  </data>
+  <data name="StepOrderColumn" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="StepRejected" xml:space="preserve">
+    <value>Відхилено</value>
+  </data>
+  <data name="StepWaiting" xml:space="preserve">
+    <value>Очікує</value>
+  </data>
+  <data name="StepsHeading" xml:space="preserve">
+    <value>Етапи</value>
+  </data>
+  <data name="StepsHelp" xml:space="preserve">
+    <value>Етапи виконуються по черзі; етапи з однаковим номером виконуються паралельно. Кожне затвердження підписується на рівні 2 і прив'язується до коду вмісту.</value>
+  </data>
+  <data name="SubjectColumn" xml:space="preserve">
+    <value>Предмет</value>
+  </data>
+  <data name="SubjectGroupOption" xml:space="preserve">
+    <value>Власна група предмета</value>
+  </data>
+  <data name="SubjectHeading" xml:space="preserve">
+    <value>Що затверджується</value>
+  </data>
+  <data name="SubmitForApprovalButton" xml:space="preserve">
+    <value>Подати на затвердження</value>
+  </data>
+  <data name="SubmitHeading" xml:space="preserve">
+    <value>Подати на затвердження</value>
+  </data>
+  <data name="SubmittedByLine" xml:space="preserve">
+    <value>Подав {0}, {1} UTC</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Подано</value>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>Подано на затвердження. Затверджувачів повідомлено.</value>
+  </data>
+  <data name="TermsLabel" xml:space="preserve">
+    <value>Умови</value>
+  </data>
+  <data name="ThresholdColumn" xml:space="preserve">
+    <value>Лише понад суму</value>
+  </data>
+  <data name="UseStepColumn" xml:space="preserve">
+    <value>Використати</value>
+  </data>
+  <data name="WaitingForMeLabel" xml:space="preserve">
+    <value>Чекають на мене</value>
+  </data>
+  <data name="WindowColumn" xml:space="preserve">
+    <value>Коли</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Відкликати</value>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>Запит відкликано.</value>
+  </data>
+  <data name="KindPurchaseRequisitionApproval" xml:space="preserve">
+    <value>Заявки на закупівлю</value>
+  </data>
+  <data name="KindIncidentPlanApproval" xml:space="preserve">
+    <value>Плани дій щодо інциденту (IAP)</value>
+  </data>
+  <data name="KindInvoiceApproval" xml:space="preserve">
+    <value>Рахунки</value>
+  </data>
+  <data name="KindPayrollRunApproval" xml:space="preserve">
+    <value>Нарахування зарплати</value>
+  </data>
+  <data name="KindCalOesMarsPackageApproval" xml:space="preserve">
+    <value>Пакети Cal OES MARS</value>
+  </data>
+  <data name="KindMutualAidAgreementApproval" xml:space="preserve">
+    <value>Угоди про взаємодопомогу</value>
+  </data>
+  <data name="StatusPending" xml:space="preserve">
+    <value>В очікуванні</value>
+  </data>
+  <data name="StatusApproved" xml:space="preserve">
+    <value>Затверджено</value>
+  </data>
+  <data name="StatusRejected" xml:space="preserve">
+    <value>Відхилено</value>
+  </data>
+  <data name="StatusWithdrawn" xml:space="preserve">
+    <value>Відкликано</value>
+  </data>
+  <data name="StatusSuperseded" xml:space="preserve">
+    <value>Замінено</value>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>Термін минув</value>
+  </data>
+  <data name="ApproverRole" xml:space="preserve">
+    <value>Будь-хто з роллю</value>
+  </data>
+  <data name="ApproverNamedMember" xml:space="preserve">
+    <value>Визначений учасник</value>
+  </data>
+  <data name="ApproverGroupAdmin" xml:space="preserve">
+    <value>Адміністратори групи</value>
+  </data>
+  <data name="ApproverCertifyingOfficial" xml:space="preserve">
+    <value>Відповідальний за сертифікацію</value>
+  </data>
+  <data name="ApproverDepartmentAdmins" xml:space="preserve">
+    <value>Адміністратори підрозділу</value>
+  </data>
+  <data name="EscalateToDepartmentAdmins" xml:space="preserve">
+    <value>Ескалювати адміністраторам підрозділу</value>
+  </data>
+  <data name="EscalateToRole" xml:space="preserve">
+    <value>Ескалювати ролі</value>
+  </data>
+  <data name="EscalateToNamedMember" xml:space="preserve">
+    <value>Ескалювати учаснику</value>
+  </data>
+  <data name="AgreementStatusDraft" xml:space="preserve">
+    <value>Чернетка</value>
+  </data>
+  <data name="AgreementStatusInApproval" xml:space="preserve">
+    <value>На затвердженні</value>
+  </data>
+  <data name="AgreementStatusApproved" xml:space="preserve">
+    <value>Затверджено</value>
+  </data>
+  <data name="AgreementStatusWithdrawn" xml:space="preserve">
+    <value>Відкликано</value>
+  </data>
+  <data name="RefusalNone" xml:space="preserve">
+    <value>Готово.</value>
+  </data>
+  <data name="RefusalInvalidRequest" xml:space="preserve">
+    <value>Не вдалося обробити запит.</value>
+  </data>
+  <data name="RefusalSubjectNotFound" xml:space="preserve">
+    <value>Елемент більше не існує.</value>
+  </data>
+  <data name="RefusalModuleUnavailable" xml:space="preserve">
+    <value>Цей модуль або його доповнення не активні для вашого підрозділу.</value>
+  </data>
+  <data name="RefusalNoChain" xml:space="preserve">
+    <value>У вашому підрозділі немає ланцюжка затвердження для цих елементів.</value>
+  </data>
+  <data name="RefusalAlreadyPending" xml:space="preserve">
+    <value>Це вже чекає на затвердження.</value>
+  </data>
+  <data name="RefusalUnchanged" xml:space="preserve">
+    <value>Від затвердження чи відхилення нічого не змінилося. Змініть це, перш ніж подавати знову.</value>
+  </data>
+  <data name="RefusalNotSubmittable" xml:space="preserve">
+    <value>Це не можна подати в поточному стані.</value>
+  </data>
+  <data name="RefusalClosed" xml:space="preserve">
+    <value>Цей запит більше не в очікуванні.</value>
+  </data>
+  <data name="RefusalSubjectChanged" xml:space="preserve">
+    <value>Це змінили після подання. Подайте знову.</value>
+  </data>
+  <data name="RefusalNotAnApprover" xml:space="preserve">
+    <value>Ви не є затверджувачем цього етапу.</value>
+  </data>
+  <data name="RefusalNotYourTurn" xml:space="preserve">
+    <value>Спершу має затвердити попередній етап.</value>
+  </data>
+  <data name="RefusalStepUpRequired" xml:space="preserve">
+    <value>Підтвердьте особу (двоетапна перевірка або ключ доступу), щоб затвердити.</value>
+  </data>
+  <data name="RefusalPasskeyRequired" xml:space="preserve">
+    <value>Ваш підрозділ вимагає ключ доступу для цього затвердження.</value>
+  </data>
+  <data name="RefusalReasonRequired" xml:space="preserve">
+    <value>Вкажіть причину відхилення.</value>
+  </data>
+  <data name="RefusalNoApprover" xml:space="preserve">
+    <value>Етап не називає нікого, хто може його затвердити. Перевірте ролі та учасників ланцюжка.</value>
+  </data>
+  <data name="RefusalNotAllowed" xml:space="preserve">
+    <value>Це може зробити лише автор подання або адміністратор підрозділу.</value>
+  </data>
+  <data name="RefusalSignatureFailed" xml:space="preserve">
+    <value>Не вдалося підписати затвердження. Спробуйте ще раз.</value>
+  </data>
+  <data name="RefusalNotRequired" xml:space="preserve">
+    <value>Жоден етап ланцюжка не стосується цієї суми: затвердження не потрібне.</value>
+  </data>
+</root>

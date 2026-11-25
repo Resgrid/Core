@@ -1,0 +1,24 @@
+@using Resgrid.Model.Lms
+@model LmsRequirementStates
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsPrograms.LmsPrograms> localizer
+@* A requirement state as a labelled pill (colour and text, never colour alone), the certification dashboard's cell colours. *@
+@{
+    var css = Model switch
+    {
+        LmsRequirementStates.Compliant => "label-primary",
+        LmsRequirementStates.AtRisk => "label-warning",
+        LmsRequirementStates.Overdue => "label-danger",
+        LmsRequirementStates.Pending => "label-info",
+        _ => "label-default"
+    };
+    var icon = Model switch
+    {
+        LmsRequirementStates.Compliant => "fa-check",
+        LmsRequirementStates.AtRisk => "fa-exclamation-triangle",
+        LmsRequirementStates.Overdue => "fa-exclamation-circle",
+        LmsRequirementStates.Pending => "fa-clock-o",
+        LmsRequirementStates.OnLeave => "fa-pause",
+        _ => "fa-minus-circle"
+    };
+}
+<span class="label @css"><i class="fa @icon" aria-hidden="true"></i> @localizer["State." + Model]</span>

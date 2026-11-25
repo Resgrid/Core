@@ -2667,4 +2667,19 @@
   <data name="ShiftOverSignupHelp" xml:space="preserve">
     <value>Τα μέλη μπορούν να εγγραφούν σε ομάδα ακόμη κι όταν όλες οι θέσεις ρόλων της (υποχρεωτικές και προαιρετικές) είναι κατειλημμένες. Χρειάζονται πάντα έναν από τους ρόλους της ομάδας.</value>
   </data>
+  <data name="DocumentNumberKindProtocol" xml:space="preserve">
+    <value>Πρωτόκολλα</value>
+  </data>
+  <data name="RunCardConditionProtocolOutcome" xml:space="preserve">
+    <value>Κωδικός πρωτοκόλλου στην κλήση</value>
+  </data>
+  <data name="RunCardDeterminantEquals" xml:space="preserve">
+    <value>ισούται με</value>
+  </data>
+  <data name="RunCardDeterminantStartsWith" xml:space="preserve">
+    <value>ξεκινά με</value>
+  </data>
+  <data name="RunCardDeterminantValue" xml:space="preserve">
+    <value>Κωδικός (π.χ. 09-E)</value>
+  </data>
 </root>

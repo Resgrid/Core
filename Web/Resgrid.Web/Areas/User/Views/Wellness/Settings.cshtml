@@ -1,0 +1,106 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Wellness
+@model WellnessSettingsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.Wellness> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.MemberHealth> healthLocalizer
+@*
+    Wellness settings (setting 141, department administrators): the wellness officer role - its members read every member's exposure
+    log and keep screening flags; administration alone does not - the peer support team's certification type, and how many years
+    entries are kept (never below 30).
+*@
+@{
+    var title = localizer["SettingsTitle"].Value;
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Section"] = "Settings";
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["SettingsIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    <form method="post" asp-controller="Wellness" asp-action="Settings" asp-route-area="User" class="ibox float-e-margins">
+        @Html.AntiForgeryToken()
+        <div class="ibox-content">
+            <div class="form-group">
+                <label for="settings-officer-role">@localizer["WellnessOfficerRoleLabel"]</label>
+                <select id="settings-officer-role" asp-for="WellnessOfficerRoleId" class="form-control">
+                    <option value="0">@localizer["NoneOption"]</option>
+                    @foreach (var role in Model.Roles)
+                    {
+                        <option value="@role.PersonnelRoleId" selected="@(Model.WellnessOfficerRoleId == role.PersonnelRoleId)">@role.Name</option>
+                    }
+                </select>
+                <small class="text-muted">@localizer["WellnessOfficerRoleHelp"]</small>
+            </div>
+            <div class="form-group">
+                <label for="settings-peer-team">@localizer["PeerTeamLabel"]</label>
+                <select id="settings-peer-team" asp-for="PeerTeamCertificationTypeId" class="form-control">
+                    <option value="0">@localizer["NoneOption"]</option>
+                    @foreach (var type in Model.CertificationTypes)
+                    {
+                        <option value="@type.DepartmentCertificationTypeId" selected="@(Model.PeerTeamCertificationTypeId == type.DepartmentCertificationTypeId)">@type.Type</option>
+                    }
+                </select>
+                <small class="text-muted">@localizer["PeerTeamHelp"]</small>
+            </div>
+            <div class="form-group">
+                <label for="settings-retention">@localizer["RetentionYearsLabel"]</label>
+                <input id="settings-retention" asp-for="RetentionYears" type="number" class="form-control" min="@MemberWellnessRules.MinimumRetentionYears" max="@MemberWellnessRules.MaximumRetentionYears" />
+                <small class="text-muted">@localizer["RetentionYearsHelp"]</small>
+            </div>
+        </div>
+        @* Member wellness WL1: the designated officer, the BBP training and medical clearance certification types, injury retention. *@
+        <div class="ibox-title"><h5><i class="fa fa-medkit" aria-hidden="true"></i> @healthLocalizer["HealthSettingsHeader"]</h5></div>
+        <div class="ibox-content">
+            <div class="form-group">
+                <label for="settings-designated-role">@healthLocalizer["DesignatedOfficerRoleLabel"]</label>
+                <select id="settings-designated-role" asp-for="DesignatedOfficerRoleId" class="form-control">
+                    <option value="0">@healthLocalizer["SameAsWellnessOfficerOption"]</option>
+                    @foreach (var role in Model.Roles)
+                    {
+                        <option value="@role.PersonnelRoleId" selected="@(Model.DesignatedOfficerRoleId == role.PersonnelRoleId)">@role.Name</option>
+                    }
+                </select>
+                <small class="text-muted">@healthLocalizer["DesignatedOfficerRoleHelp"]</small>
+            </div>
+            <div class="form-group">
+                <label for="settings-bbp-type">@healthLocalizer["BbpTrainingTypeLabel"]</label>
+                <select id="settings-bbp-type" asp-for="BbpTrainingCertificationTypeId" class="form-control">
+                    <option value="0">@localizer["NoneOption"]</option>
+                    @foreach (var type in Model.CertificationTypes)
+                    {
+                        <option value="@type.DepartmentCertificationTypeId" selected="@(Model.BbpTrainingCertificationTypeId == type.DepartmentCertificationTypeId)">@type.Type</option>
+                    }
+                </select>
+                <small class="text-muted">@healthLocalizer["BbpTrainingTypeHelp"]</small>
+            </div>
+            <div class="form-group">
+                <label for="settings-clearance-type">@healthLocalizer["ClearanceTypeLabel"]</label>
+                <select id="settings-clearance-type" asp-for="MedicalClearanceCertificationTypeId" class="form-control">
+                    <option value="0">@localizer["NoneOption"]</option>
+                    @foreach (var type in Model.CertificationTypes)
+                    {
+                        <option value="@type.DepartmentCertificationTypeId" selected="@(Model.MedicalClearanceCertificationTypeId == type.DepartmentCertificationTypeId)">@type.Type</option>
+                    }
+                </select>
+                <small class="text-muted">@healthLocalizer["ClearanceTypeHelp"]</small>
+            </div>
+            <div class="form-group">
+                <label for="settings-injury-retention">@healthLocalizer["InjuryRetentionYearsLabel"]</label>
+                <input id="settings-injury-retention" asp-for="InjuryRetentionYears" type="number" class="form-control" min="@OshaRules.MinimumRetentionYears" max="@OshaRules.MaximumRetentionYears" />
+                <small class="text-muted">@healthLocalizer["InjuryRetentionYearsHelp"]</small>
+            </div>
+        </div>
+        <div class="ibox-content rgw-toolbar">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["SaveButton"]</button>
+        </div>
+    </form>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

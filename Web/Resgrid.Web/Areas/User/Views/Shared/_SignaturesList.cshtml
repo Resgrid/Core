@@ -1,0 +1,66 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Signatures.SignatureListModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureText
+@* A subject's signatures (S0): who signed what, at which level and by which method, and whether it still matches the content. *@
+@{
+    var departmentTime = DepartmentTime.From(ViewData);
+}
+@if (Model.Items.Count == 0)
+{
+    <p class="text-muted m-t-sm">@(Model.EmptyText ?? signatureText["NoSignatures"].Value)</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped rgw-table">
+            <thead>
+                <tr>
+                    <th>@signatureText["SignerColumn"]</th>
+                    <th>@signatureText["IntentColumn"]</th>
+                    <th>@signatureText["LevelColumn"]</th>
+                    <th>@signatureText["SignedOnColumn"]</th>
+                    <th>@signatureText["VerificationColumn"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    var r = item.Record;
+                    var (css, icon, state) = item.State switch
+                    {
+                        SignatureVerificationStates.Valid => ("label-primary", "fa-check", signatureText["VerificationValid"].Value),
+                        SignatureVerificationStates.ArtifactChanged => ("label-danger", "fa-exclamation-triangle", signatureText["VerificationChanged"].Value),
+                        SignatureVerificationStates.Voided => ("label-default", "fa-ban", signatureText["VerificationVoided"].Value),
+                        _ => ("label-default", "fa-question", signatureText["VerificationMissing"].Value)
+                    };
+                    <tr>
+                        <td>
+                            @(r.SignerNameSnapshot ?? r.SignerUserId)
+                            @if (!string.IsNullOrEmpty(r.SignerRoleSnapshot))
+                            {
+                                <small class="rgw-sub text-muted">@r.SignerRoleSnapshot</small>
+                            }
+                        </td>
+                        <td>
+                            @signatureText["Intent" + (SignatureIntents)r.Intent]
+                            <small class="rgw-sub text-muted" title="@r.StatementText">@r.StatementText</small>
+                        </td>
+                        <td>
+                            <span class="label label-info"><i class="fa fa-shield" aria-hidden="true"></i> L@(r.Level)</span>
+                            <small class="rgw-sub text-muted">@signatureText["Method" + (SignatureMethods)r.Method]</small>
+                        </td>
+                        <td>@departmentTime.Format(r.SignedOn)</td>
+                        <td>
+                            <span class="label @css"><i class="fa @icon" aria-hidden="true"></i> @state</span>
+                            <small class="rgw-sub text-muted rgw-mono">@SignaturePolicy.ShortCode(r.ArtifactSha256)</small>
+                            @if (r.VoidedOn.HasValue)
+                            {
+                                <small class="rgw-sub text-muted">@r.VoidReason</small>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,209 @@
+{
+  "schema": 1,
+  "id": "11-checklists",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Checklists",
+  "minutes": 2.3,
+  "walkthrough": false,
+  "audience": [
+    "member",
+    "training-officer",
+    "logistics"
+  ],
+  "visibility": [
+    "module:Checklists"
+  ],
+  "pages": [
+    "Checklists"
+  ],
+  "adminAssist": {
+    "areas": [
+      "checklists"
+    ],
+    "capabilities": [
+      "checklist-templates",
+      "checklists",
+      "checklist-schedules",
+      "new-checklist",
+      "checklist-reports"
+    ]
+  },
+  "media": {
+    "video": "media/11-checklists.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/11-checklists.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Record routine checks and missed work",
+    "ar": "سجّل الفحوصات الدورية والأعمال الفائتة",
+    "de": "Routineprüfungen und versäumte Arbeiten erfassen",
+    "el": "Καταγράψτε τους τακτικούς ελέγχους και τις παραλείψεις",
+    "es": "Registrar comprobaciones rutinarias y tareas pendientes",
+    "fr": "Consigner les vérifications de routine et le travail manqué",
+    "it": "Registrare i controlli di routine e il lavoro mancato",
+    "pl": "Rejestruj rutynowe kontrole i pominięte zadania",
+    "sv": "Registrera rutinkontroller och missat arbete",
+    "uk": "Фіксуйте планові перевірки та пропущену роботу"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "What is a checklist used for?",
+        "ar": "فيمَ تُستخدم قائمة التحقق؟",
+        "de": "Wofür wird eine Checkliste verwendet?",
+        "el": "Σε τι χρησιμοποιείται μια λίστα ελέγχου;",
+        "es": "¿Para qué se usa una lista de comprobación?",
+        "fr": "À quoi sert une liste de contrôle ?",
+        "it": "A che cosa serve una checklist?",
+        "pl": "Do czego służy lista kontrolna?",
+        "sv": "Vad används en checklista till?",
+        "uk": "Для чого використовують контрольний список?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Dispatching calls",
+            "ar": "إرسال البلاغات",
+            "de": "Einsätze alarmieren",
+            "el": "Διασπορά κλήσεων",
+            "es": "Despachar llamadas",
+            "fr": "Engager des interventions",
+            "it": "Inviare chiamate",
+            "pl": "Dysponowanie zgłoszeń",
+            "sv": "Larma ut händelser",
+            "uk": "Відправлення викликів"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Paying invoices",
+            "ar": "دفع الفواتير",
+            "de": "Rechnungen bezahlen",
+            "el": "Πληρωμή τιμολογίων",
+            "es": "Pagar facturas",
+            "fr": "Payer des factures",
+            "it": "Pagare fatture",
+            "pl": "Opłacanie faktur",
+            "sv": "Betala fakturor",
+            "uk": "Оплата рахунків"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Recording routine checks such as a daily apparatus check",
+            "ar": "تسجيل الفحوصات الدورية مثل الفحص اليومي للمركبة",
+            "de": "Routineprüfungen wie die tägliche Fahrzeugkontrolle erfassen",
+            "el": "Καταγραφή τακτικών ελέγχων, όπως ο ημερήσιος έλεγχος οχήματος",
+            "es": "Registrar comprobaciones rutinarias como la revisión diaria del vehículo",
+            "fr": "Consigner des vérifications comme le contrôle quotidien d’un engin",
+            "it": "Registrare controlli di routine come la verifica giornaliera del mezzo",
+            "pl": "Rejestrowanie rutynowych kontroli, np. codziennego przeglądu pojazdu",
+            "sv": "Registrera rutinkontroller som den dagliga fordonskontrollen",
+            "uk": "Фіксація планових перевірок, як-от щоденний огляд техніки"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "What happens when a scheduled checklist is not done?",
+        "ar": "ماذا يحدث عند عدم تنفيذ قائمة تحقق مجدولة؟",
+        "de": "Was passiert, wenn eine geplante Checkliste nicht erledigt wird?",
+        "el": "Τι συμβαίνει όταν μια προγραμματισμένη λίστα δεν γίνεται;",
+        "es": "¿Qué ocurre si no se hace una lista programada?",
+        "fr": "Que se passe-t-il quand une liste planifiée n’est pas faite ?",
+        "it": "Che cosa succede se una checklist programmata non viene svolta?",
+        "pl": "Co się dzieje, gdy zaplanowana lista nie zostanie wykonana?",
+        "sv": "Vad händer när en schemalagd checklista inte görs?",
+        "uk": "Що стається, коли запланований список не виконано?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Nothing is recorded",
+            "ar": "لا يُسجَّل شيء",
+            "de": "Nichts wird erfasst",
+            "el": "Δεν καταγράφεται τίποτα",
+            "es": "No se registra nada",
+            "fr": "Rien n’est consigné",
+            "it": "Non viene registrato nulla",
+            "pl": "Nic nie jest rejestrowane",
+            "sv": "Inget registreras",
+            "uk": "Нічого не фіксується"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "It shows as missed so someone can follow up",
+            "ar": "تظهر كفائتة ليتابعها أحد",
+            "de": "Sie wird als versäumt angezeigt, damit jemand nachfassen kann",
+            "el": "Εμφανίζεται ως χαμένη ώστε κάποιος να την παρακολουθήσει",
+            "es": "Aparece como no realizada para que alguien haga seguimiento",
+            "fr": "Elle apparaît comme manquée pour qu’on assure le suivi",
+            "it": "Risulta mancata, così qualcuno può intervenire",
+            "pl": "Jest oznaczona jako pominięta, aby ktoś to sprawdził",
+            "sv": "Den visas som missad så att någon kan följa upp",
+            "uk": "Він позначається пропущеним, щоб хтось на це відреагував"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "The unit is deleted",
+            "ar": "تُحذف الوحدة",
+            "de": "Die Einheit wird gelöscht",
+            "el": "Η μονάδα διαγράφεται",
+            "es": "Se elimina la unidad",
+            "fr": "L’unité est supprimée",
+            "it": "Il mezzo viene eliminato",
+            "pl": "Jednostka zostaje usunięta",
+            "sv": "Enheten raderas",
+            "uk": "Підрозділ видаляється"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "f",
+      "text": {
+        "en": "A failed checklist item can never be followed up.",
+        "ar": "لا يمكن أبدًا متابعة بند فاشل في قائمة التحقق.",
+        "de": "Ein nicht bestandener Checklistenpunkt kann nie nachverfolgt werden.",
+        "el": "Ένα αποτυχημένο στοιχείο λίστας δεν μπορεί ποτέ να παρακολουθηθεί.",
+        "es": "Un elemento fallido de la lista nunca se puede seguir.",
+        "fr": "Un point de contrôle en échec ne peut jamais être suivi.",
+        "it": "Una voce di checklist non superata non può mai essere seguita.",
+        "pl": "Niezaliczonego punktu listy nigdy nie da się obsłużyć.",
+        "sv": "En underkänd punkt i checklistan kan aldrig följas upp.",
+        "uk": "Невдалий пункт списку ніколи не можна відпрацювати."
+      }
+    }
+  ]
+}

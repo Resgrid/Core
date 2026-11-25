@@ -2,9 +2,11 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
 @*
     Page heading shared by the protocol screens (module-workspace.css): title, breadcrumb and an optional line under it,
-    the page's actions (ViewData["HeaderActions"]), and the module's sections in a strip underneath.
-    ViewData["Title"] heading + last crumb; ViewData["Subtitle"] optional; ViewData["Section"] "Library" or "Editor";
-    ViewData["CanCreate"] shows the New Protocol section.
+    the page's actions (ViewData["HeaderActions"]), and the module's sections in a strip underneath (Shared/_ModuleTabs).
+    ViewData["Title"] heading + last crumb; ViewData["Subtitle"] optional; ViewData["Section"] Library, Review, Categories,
+    Settings, Import or Editor; ViewData["CanCreate"] shows New and Import; ViewData["IsManager"] the review queue and
+    categories; ViewData["IsAdmin"] the settings. P2: every member gets "My acknowledgments"; ViewData["ManagesAcknowledgments"]
+    (Manage Protocol Acknowledgments 130, approvers, admins) the compliance grid; managers the bulletins; authors the bulk upload.
 *@
 @{
     var moduleName = localizer["ProtocolsHeader"].Value;
@@ -12,6 +14,9 @@
     var subtitle = (string)ViewData["Subtitle"];
     var section = (string)ViewData["Section"] ?? "Library";
     var canCreate = ViewData["CanCreate"] as bool? ?? false;
+    var isManager = ViewData["IsManager"] as bool? ?? false;
+    var isAdmin = ViewData["IsAdmin"] as bool? ?? false;
+    var managesAcknowledgments = ViewData["ManagesAcknowledgments"] as bool? ?? isManager;
     var isRoot = string.Equals(title, moduleName, StringComparison.Ordinal);
     // Optional status pill beside the title (the detail page): text, label class and icon.
     var status = ViewData["TitleStatus"] as string;
@@ -20,9 +25,37 @@
 
     var sections = new ModuleTabsView { Label = moduleName };
     sections.Tabs.Add(new ModuleTab(localizer["LibraryTab"].Value, "fa-book", "Protocols", "Index", section == "Library"));
+    sections.Tabs.Add(new ModuleTab(localizer["MyAcknowledgmentsTab"].Value, "fa-check-circle-o", "ProtocolAcknowledgments", "Mine", section == "Acknowledgments"));
+    if (isManager || section == "Review")
+    {
+        sections.Tabs.Add(new ModuleTab(localizer["ReviewQueueTab"].Value, "fa-check-square-o", "Protocols", "ReviewQueue", section == "Review"));
+        sections.Tabs.Add(new ModuleTab(localizer["CategoriesTab"].Value, "fa-folder-open-o", "Protocols", "Categories", section == "Categories"));
+    }
+    if (managesAcknowledgments || section == "Compliance")
+    {
+        sections.Tabs.Add(new ModuleTab(localizer["ComplianceTab"].Value, "fa-th", "ProtocolAcknowledgments", "Compliance", section == "Compliance"));
+    }
+    if (isManager || section == "Bulletins")
+    {
+        sections.Tabs.Add(new ModuleTab(localizer["BulletinsTab"].Value, "fa-bullhorn", "ProtocolAcknowledgments", "Bulletins", section == "Bulletins"));
+    }
+    // P3: the PDF book of the library or a category; every member can export what they can read.
+    sections.Tabs.Add(new ModuleTab(localizer["BookTab"].Value, "fa-file-pdf-o", "ProtocolTools", "Book", section == "Book"));
     if (canCreate || section == "Editor")
     {
         sections.Tabs.Add(new ModuleTab(localizer["NewProtocolButton"].Value, "fa-plus", "Protocols", "New", section == "Editor"));
+    }
+    if (canCreate || section == "BulkUpload")
+    {
+        sections.Tabs.Add(new ModuleTab(localizer["BulkUploadTab"].Value, "fa-files-o", "ProtocolDocuments", "BulkUpload", section == "BulkUpload"));
+    }
+    if (canCreate || section == "Import")
+    {
+        sections.Tabs.Add(new ModuleTab(localizer["ImportTab"].Value, "fa-upload", "Protocols", "Import", section == "Import"));
+    }
+    if (isAdmin || section == "Settings")
+    {
+        sections.Tabs.Add(new ModuleTab(localizer["SettingsTab"].Value, "fa-cog", "Protocols", "Settings", section == "Settings"));
     }
 }
 <div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">

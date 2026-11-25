@@ -1,0 +1,94 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingRecordSettingsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    Trainings → Records settings (department setting 135): how calendar check-in/out hours are rounded, whether members may submit
+    outside certificates, and the default minimum years a record is kept after its member leaves. Field names are fixed: Admin
+    Assist links to them.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Rec.SettingsTitle"];
+    ViewData["Section"] = "Records";
+    ViewData["Title"] = localizer["Rec.SettingsTitle"].Value;
+    ViewData["Subtitle"] = localizer["Rec.SettingsIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["SubTabs"] = Model.OfficerTabs;
+    var settings = Model.Settings;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <form method="post" asp-controller="TrainingRecords" asp-action="Settings" asp-route-area="User">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-calendar-check-o" aria-hidden="true"></i> @localizer["Rec.RoundingSection"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted">@localizer["Rec.RoundingHelp"]</p>
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="HoursRoundingMinutes">@localizer["Rec.RoundingMinutesLabel"]</label>
+                        <select id="HoursRoundingMinutes" name="HoursRoundingMinutes" class="form-control">
+                            @foreach (var minutes in TrainingRecordSettings.AllowedRoundingMinutes)
+                            {
+                                <option value="@minutes" selected="@(settings.HoursRoundingMinutes == minutes)">@(minutes == 0 ? localizer["Rec.RoundingExact"].Value : string.Format(localizer["Rec.RoundingMinutesValue"].Value, minutes))</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="HoursRoundingMode">@localizer["Rec.RoundingModeLabel"]</label>
+                        <select id="HoursRoundingMode" name="HoursRoundingMode" class="form-control">
+                            @foreach (var mode in Enum.GetValues<TrainingHoursRoundingModes>())
+                            {
+                                <option value="@((int)mode)" selected="@(settings.HoursRoundingMode == (int)mode)">@localizer["RoundingMode." + mode]</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-upload" aria-hidden="true"></i> @localizer["Rec.SubmissionsSection"]</h5></div>
+            <div class="ibox-content">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="MemberSubmissionsDisabled" name="MemberSubmissionsDisabled" value="true" checked="@settings.MemberSubmissionsDisabled" aria-describedby="MemberSubmissionsDisabled-help" />
+                        <input type="hidden" name="MemberSubmissionsDisabled" value="false" />
+                        @localizer["Rec.SubmissionsDisabledLabel"]
+                    </label>
+                </div>
+                <span class="help-block" id="MemberSubmissionsDisabled-help">@localizer["Rec.SubmissionsDisabledSettingHelp"]</span>
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-archive" aria-hidden="true"></i> @localizer["Rec.RetentionSection"]</h5></div>
+            <div class="ibox-content">
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="DefaultRetentionYears">@localizer["Rec.DefaultRetentionLabel"]</label>
+                        <input id="DefaultRetentionYears" name="DefaultRetentionYears" type="number" min="0" max="75" step="1" class="form-control" value="@settings.DefaultRetentionYears" aria-describedby="DefaultRetentionYears-help" />
+                        <span class="help-block" id="DefaultRetentionYears-help">@localizer["Rec.DefaultRetentionHelp"]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Rec.SaveSettingsButton"]</button>
+    </form>
+
+    @* LMS packs, seats and next month's price (shown while the LMS is on for the department). *@
+    <div class="m-t-md">
+        @await Component.InvokeAsync("LmsSettingsSummary")
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

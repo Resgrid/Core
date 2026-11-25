@@ -1,0 +1,165 @@
+@using System.Globalization
+@using Microsoft.AspNetCore.Html
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingHoursView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    Training hours (free): verified hours by category, member or month. Former members only with the switch (R-T13), for audits
+    covering a period when they served. Unresolved possible duplicates and pending records show beside the total (R-T2).
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Rec.HoursTitle"];
+    ViewData["Section"] = "Records";
+    ViewData["Title"] = localizer["Rec.HoursTitle"].Value;
+    ViewData["Subtitle"] = localizer["Rec.HoursIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["SubTabs"] = Model.OfficerTabs;
+    var report = Model.Report;
+    var grouping = Enum.IsDefined(typeof(TrainingHoursGroupings), Model.GroupBy) ? (TrainingHoursGroupings)Model.GroupBy : TrainingHoursGroupings.Category;
+
+    Func<dynamic, IHtmlContent> headerActions = @<text>
+        <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="HoursPdf" asp-route-area="User" asp-route-from="@Model.From" asp-route-to="@Model.To" asp-route-groupBy="@Model.GroupBy" asp-route-categoryId="@Model.CategoryId" asp-route-former="@(Model.Former ? "true" : null)" asp-route-onDuty="@(Model.OnDuty ? "true" : null)"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> @localizer["Rec.ExportPdfButton"]</a>
+        <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="HoursCsv" asp-route-area="User" asp-route-from="@Model.From" asp-route-to="@Model.To" asp-route-groupBy="@Model.GroupBy" asp-route-categoryId="@Model.CategoryId" asp-route-former="@(Model.Former ? "true" : null)" asp-route-onDuty="@(Model.OnDuty ? "true" : null)"><i class="fa fa-file-excel-o" aria-hidden="true"></i> @localizer["Rec.ExportCsvButton"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <form method="get" asp-controller="TrainingRecords" asp-action="Hours" asp-route-area="User" class="rgw-filter" role="search" aria-label="@localizer["Rec.FilterLabel"]">
+        <div class="rgw-grid">
+            <div class="form-group">
+                <label for="hours-from">@localizer["Rec.FromLabel"]</label>
+                <input id="hours-from" name="from" type="date" class="form-control" value="@Model.From" />
+            </div>
+            <div class="form-group">
+                <label for="hours-to">@localizer["Rec.ToLabel"]</label>
+                <input id="hours-to" name="to" type="date" class="form-control" value="@Model.To" />
+            </div>
+            <div class="form-group">
+                <label for="hours-group">@localizer["Rec.GroupByLabel"]</label>
+                <select id="hours-group" name="groupBy" class="form-control">
+                    @foreach (var option in Enum.GetValues<TrainingHoursGroupings>())
+                    {
+                        <option value="@((int)option)" selected="@(grouping == option)">@localizer["Grouping." + option]</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="hours-category">@localizer["Doc.Category"]</label>
+                <select id="hours-category" name="categoryId" class="form-control">
+                    <option value="">@localizer["Rec.AllCategories"]</option>
+                    @foreach (var category in Model.LiveCategories)
+                    {
+                        <option value="@category.TrainingCategoryId" selected="@(Model.CategoryId == category.TrainingCategoryId)">@category.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label><input type="checkbox" name="former" value="true" checked="@Model.Former" /> @localizer["Rec.IncludeFormerLabel"]</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" name="onDuty" value="true" checked="@Model.OnDuty" /> @localizer["Rec.OnDutyNowLabel"]</label>
+                </div>
+            </div>
+        </div>
+        <div class="rgw-filter-actions">
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-filter" aria-hidden="true"></i> @localizer["FilterButton"]</button>
+        </div>
+    </form>
+
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label"><i class="fa fa-clock-o" aria-hidden="true"></i> @localizer["Doc.TotalHours"]</div>
+            <div class="rgw-stat-value">@LearningRecordPresentation.Hours(report.TotalHours)</div>
+            @if (report.UnresolvedDuplicates > 0)
+            {
+                <small class="rgw-sub text-warning"><i class="fa fa-clone" aria-hidden="true"></i> @string.Format(localizer["Doc.UnresolvedDuplicates"].Value, report.UnresolvedDuplicates)</small>
+            }
+        </div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-list" aria-hidden="true"></i> @localizer["Doc.Records"]</div><div class="rgw-stat-value">@report.TotalRecords.ToString("#,0", CultureInfo.CurrentCulture)</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-users" aria-hidden="true"></i> @localizer["Doc.Members"]</div><div class="rgw-stat-value">@report.Members.ToString("#,0", CultureInfo.CurrentCulture)</div></div>
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label"><i class="fa fa-hourglass-half" aria-hidden="true"></i> @localizer["LearningStatus.Pending"]</div>
+            <div class="rgw-stat-value">@report.PendingRecords.ToString("#,0", CultureInfo.CurrentCulture)</div>
+            @if (report.PendingRecords > 0)
+            {
+                <a class="rgw-sub" asp-controller="TrainingRecords" asp-action="Queue" asp-route-area="User">@localizer["Rec.OpenQueueLink"]</a>
+            }
+        </div>
+    </div>
+
+    <div class="ibox float-e-margins m-t-sm">
+        <div class="ibox-title"><h5><i class="fa fa-bar-chart" aria-hidden="true"></i> @localizer["Grouping." + grouping]</h5></div>
+        <div class="ibox-content">
+            @if (report.Rows.Count == 0)
+            {
+                <p class="text-muted">@localizer["Rec.NoHours"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["Grouping." + grouping]</th>
+                                <th class="text-right">@localizer["Doc.Records"]</th>
+                                @if (grouping != TrainingHoursGroupings.Member)
+                                {
+                                    <th class="text-right">@localizer["Doc.Members"]</th>
+                                }
+                                <th class="text-right">@localizer["Doc.Hours"]</th>
+                                <th class="text-right">@localizer["Doc.CeHours"]</th>
+                                @if (grouping == TrainingHoursGroupings.Category)
+                                {
+                                    <th class="text-right">@localizer["Doc.Target"]</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in report.Rows)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (grouping == TrainingHoursGroupings.Member && !string.IsNullOrWhiteSpace(row.Key))
+                                        {
+                                            <a asp-controller="TrainingRecords" asp-action="Transcript" asp-route-area="User" asp-route-userId="@row.Key" asp-route-from="@Model.From" asp-route-to="@Model.To">@(string.IsNullOrWhiteSpace(row.Label) ? Model.NameOf(row.Key) : row.Label)</a>
+                                        }
+                                        else
+                                        {
+                                            @(string.IsNullOrWhiteSpace(row.Label) ? localizer["Doc.Uncategorized"].Value : row.Label)
+                                        }
+                                        @if (row.IsFormerMember)
+                                        {
+                                            <small class="rgw-sub text-muted"><i class="fa fa-user-times" aria-hidden="true"></i> @localizer["FormerMemberLabel"]</small>
+                                        }
+                                    </td>
+                                    <td class="text-right">@row.Records.ToString("#,0", CultureInfo.CurrentCulture)</td>
+                                    @if (grouping != TrainingHoursGroupings.Member)
+                                    {
+                                        <td class="text-right">@row.Members.ToString("#,0", CultureInfo.CurrentCulture)</td>
+                                    }
+                                    <td class="text-right">@LearningRecordPresentation.Hours(row.Hours)</td>
+                                    <td class="text-right">@LearningRecordPresentation.Hours(row.CeHours)</td>
+                                    @if (grouping == TrainingHoursGroupings.Category)
+                                    {
+                                        <td class="text-right">@(row.TargetHours.HasValue ? string.Format(localizer["Rec.TargetPerMember"].Value, LearningRecordPresentation.Hours(row.TargetHours)) : "—")</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

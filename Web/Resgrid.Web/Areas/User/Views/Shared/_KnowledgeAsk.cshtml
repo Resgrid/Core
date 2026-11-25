@@ -1,0 +1,83 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Knowledge
+@model KnowledgeAskPanelModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Knowledge.Knowledge> localizer
+@*
+    "Ask" (K1): a question to the department's knowledge, answered only from its published protocols, training and the Resgrid Academy, each
+    claim citing its source (opens the exact version and section). Rendered hidden; resgrid.knowledge.ask.js asks Knowledge/Status and shows
+    the panel only when the department has Ai.Knowledge (the free tier keeps Unified Search and sees nothing here).
+*@
+@{
+    var id = string.IsNullOrWhiteSpace(Model.PanelId) ? "kask" : Model.PanelId;
+    var header = !string.IsNullOrWhiteSpace(Model.Header) ? Model.Header
+        : Model.CallId.HasValue && !Model.CallProtocolId.HasValue ? localizer["AskHeaderCallWide"].Value
+        : Model.CallId.HasValue ? localizer["AskHeaderCall"].Value
+        : Model.ScopeKind == (int)KnowledgeSourceKinds.Course ? localizer["AskHeaderCourse"].Value
+        : Model.ScopeKind == (int)KnowledgeSourceKinds.Protocol ? localizer["AskHeaderProtocol"].Value
+        : Model.ScopeKind == (int)KnowledgeSourceKinds.Training ? localizer["AskHeaderTraining"].Value
+        : localizer["AskHeader"].Value;
+    var text = new
+    {
+        asking = localizer["Asking"].Value,
+        questionRequired = localizer["QuestionRequired"].Value,
+        error = localizer["ErrorNotice"].Value,
+        sources = localizer["SourcesLabel"].Value,
+        nearest = localizer["NearestLabel"].Value,
+        conflict = localizer["ConflictLabel"].Value,
+        dosingTool = localizer["DosingToolLink"].Value,
+        helpful = localizer["Helpful"].Value,
+        notHelpful = localizer["NotHelpful"].Value,
+        openSource = localizer["OpenSource"].Value
+    };
+}
+<section class="ibox rgw-knowledge-ask" id="@id" hidden aria-labelledby="@(id)-title"
+         data-status-url="@Url.Action("Status", "Knowledge", new { area = "User" })"
+         data-ask-url="@Url.Action("Ask", "Knowledge", new { area = "User" })"
+         data-feedback-url="@Url.Action("Feedback", "Knowledge", new { area = "User" })"
+         data-surface="@Model.Surface"
+         data-text='@Html.ScriptJson(text)'>
+    <div class="ibox-title">
+        <h5 id="@(id)-title"><i class="fa fa-comments-o" aria-hidden="true"></i> @header</h5>
+    </div>
+    <div class="ibox-content">
+        <p class="text-muted small">@(!string.IsNullOrWhiteSpace(Model.HelpText) ? Model.HelpText
+            : Model.CallId.HasValue && !Model.CallProtocolId.HasValue ? localizer["AskHelpCallWide"].Value
+            : Model.ScopeKind == (int)KnowledgeSourceKinds.Course ? localizer["AskHelpCourse"].Value
+            : localizer["AskHelp"].Value)</p>
+        <p class="text-info small" data-role="kept-local" hidden><i class="fa fa-lock" aria-hidden="true"></i> @localizer["KeptLocalStatus"]</p>
+        <form data-role="ask-form" novalidate>
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="Surface" value="@Model.Surface" />
+            @if (Model.ScopeKind.HasValue && !string.IsNullOrWhiteSpace(Model.ScopeItemId))
+            {
+                <input type="hidden" name="ScopeKind" value="@Model.ScopeKind" />
+                <input type="hidden" name="ScopeItemId" value="@Model.ScopeItemId" />
+                if (!string.IsNullOrWhiteSpace(Model.ScopeVersionId))
+                {
+                    <input type="hidden" name="ScopeVersionId" value="@Model.ScopeVersionId" />
+                }
+            }
+            else if (Model.ScopeKind == (int)KnowledgeSourceKinds.Academy)
+            {
+                <input type="hidden" name="ScopeKind" value="@Model.ScopeKind" />
+            }
+            @if (Model.CallId.HasValue)
+            {
+                @* A call protocol row asks about that cited version; the call alone asks about the whole call (K3). *@
+                <input type="hidden" name="CallId" value="@Model.CallId" />
+                if (Model.CallProtocolId.HasValue)
+                {
+                    <input type="hidden" name="CallProtocolId" value="@Model.CallProtocolId" />
+                }
+            }
+            <p class="text-warning small" id="@(id)-warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @commonLocalizer["AiPromptPiiWarning"]</p>
+            <label class="sr-only" for="@(id)-question">@localizer["AskLabel"]</label>
+            <textarea id="@(id)-question" name="Question" class="form-control" rows="2" maxlength="@KnowledgeAskRequest.QuestionMaxLength"
+                      placeholder="@localizer["AskPlaceholder"]" aria-describedby="@(id)-warning"></textarea>
+            <button type="submit" class="btn btn-primary m-t-xs"><i class="fa fa-search" aria-hidden="true"></i> @localizer["AskButton"]</button>
+        </form>
+        <div data-role="result" class="m-t-sm" aria-live="polite"></div>
+        <p class="m-t-sm m-b-none small" data-role="gaps" hidden><a href="#"><i class="fa fa-question-circle" aria-hidden="true"></i> @localizer["GapsLink"]</a></p>
+    </div>
+</section>
+<script src="~/js/app/internal/knowledge/resgrid.knowledge.ask.js" asp-append-version="true" defer></script>

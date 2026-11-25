@@ -1,0 +1,70 @@
+@using Resgrid.Web.Areas.User.Models.Lms
+@model LmsPathsIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsPrograms.LmsPrograms> localizer
+@* Learning paths (T3 item 4): the department's paths and the Resgrid Academy role paths, with step, assignment and completion counts. *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["PathsTitle"];
+    ViewData["Title"] = localizer["PathsTitle"].Value;
+    ViewData["Subtitle"] = localizer["PathsIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["Scope"] = Model.Scope;
+    ViewData["Sub"] = "Paths";
+    ViewData["CanManage"] = Model.Actor?.MayManage == true;
+    ViewData["CanPaths"] = Model.Actor?.MayAssignAcademy == true;
+    ViewData["Paused"] = Model.Paused;
+    var department = Model.Rows.Where(r => !r.Path.IsSystem).ToList();
+    var academy = Model.Rows.Where(r => r.Path.IsSystem).ToList();
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a class="btn btn-success" asp-controller="LmsRequirements" asp-action="Path" asp-route-area="User"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["NewPath"]</a>
+    </text>;
+    ViewData["HeaderActions"] = Model.CanEdit ? headerActions : null;
+}
+
+@await Html.PartialAsync("_Heading")
+
+<div class="wrapper wrapper-content rgw-page">
+    <h3>@localizer["DepartmentPathsHeader"]</h3>
+    @if (department.Count == 0)
+    {
+        <p class="text-muted">@localizer["NoPaths"]</p>
+    }
+    else
+    {
+        <div class="rgw-card-grid">
+            @foreach (var row in department)
+            {
+                <div class="rgw-card">
+                    <h4><a asp-controller="LmsRequirements" asp-action="Path" asp-route-area="User" asp-route-id="@row.Path.LmsPathId">@row.Title</a></h4>
+                    @if (!string.IsNullOrWhiteSpace(row.Path.Description))
+                    {
+                        <div class="rgw-card-meta">@row.Path.Description</div>
+                    }
+                    <div class="rgw-card-meta">@string.Format(localizer["PathCountsFormat"].Value, row.Steps, row.Assigned, row.Completed)</div>
+                    @if (row.Path.IssuesCertificationTypeId.HasValue)
+                    {
+                        <div class="rgw-card-meta"><i class="fa fa-certificate" aria-hidden="true"></i> @localizer["IssuesCertificationBadge"]</div>
+                    }
+                </div>
+            }
+        </div>
+    }
+
+    <h3 class="m-t-lg">@localizer["AcademyPathsHeader"]</h3>
+    <p class="text-muted">@localizer["AcademyPathsIntro"]</p>
+    <div class="rgw-card-grid">
+        @foreach (var row in academy)
+        {
+            <div class="rgw-card">
+                <h4><a asp-controller="LmsRequirements" asp-action="Path" asp-route-area="User" asp-route-id="@row.Path.LmsPathId">@row.Title</a></h4>
+                <div class="rgw-card-meta">@string.Format(localizer["PathCountsFormat"].Value, row.Steps, row.Assigned, row.Completed)</div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

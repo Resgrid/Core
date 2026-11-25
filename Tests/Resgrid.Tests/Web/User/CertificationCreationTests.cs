@@ -57,7 +57,7 @@ namespace Resgrid.Tests.Web.User
                 .ReturnsAsync((PersonnelCertification record, CancellationToken _) => record);
             var strings = new Mock<IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications>>();
             strings.Setup(x => x[It.IsAny<string>()]).Returns((string key) => new LocalizedString(key, key));
-            _controller = new CertificationsController(_certifications.Object, null, null, _departments.Object, null, null, null, strings.Object, null)
+            _controller = new CertificationsController(_certifications.Object, null, null, _departments.Object, null, null, null, strings.Object, null, Mock.Of<ILearningRecordService>(), null, null)
             {
                 ControllerContext = new ControllerContext { HttpContext = _http },
                 TempData = new TempDataDictionary(_http, Mock.Of<ITempDataProvider>())

@@ -1,0 +1,96 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsClasses
+@model LmsTrainingResourcesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsClasses.LmsClasses> localizer
+@* Facility and prop booking (§13a T4): the department's training grounds, classrooms, props, apparatus and equipment, and their bookings. *@
+@{
+    var culture = CultureInfo.CurrentCulture;
+    ViewBag.Title = "Resgrid | " + localizer["ResourcesTitle"];
+    ViewData["Title"] = localizer["ResourcesTitle"].Value;
+    ViewData["Subtitle"] = localizer["ResourcesIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var editing = Model.Editing;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    @if (Model.Resources.Count == 0)
+    {
+        <p class="text-muted">@localizer["NoResources"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead><tr><th>@localizer["Col.Resource"]</th><th>@localizer["Col.Kind"]</th><th>@localizer["Col.Bookings"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                <tbody>
+                    @foreach (var resource in Model.Resources)
+                    {
+                        var bookings = Model.Bookings.TryGetValue(resource.LmsTrainingResourceId, out var list) ? list : new List<LmsClassResourceBooking>();
+                        <tr>
+                            <td>@resource.Name<span class="rgw-sub">@resource.Notes</span></td>
+                            <td>@localizer["Resource." + (LmsTrainingResourceKinds)resource.Kind]@(resource.Capacity.HasValue ? " · " + resource.Capacity.Value.ToString(culture) : string.Empty)</td>
+                            <td>
+                                @foreach (var booking in bookings)
+                                {
+                                    <div>@Model.Local(booking.StartsOn).ToString("g", culture)
+                                        @if (Model.Sessions.TryGetValue(booking.LmsClassSessionId, out var session))
+                                        {
+                                            <a asp-controller="LmsClasses" asp-action="Session" asp-route-area="User" asp-route-id="@session.LmsClassSessionId">@session.Title</a>
+                                        }
+                                    </div>
+                                }
+                            </td>
+                            <td class="rgw-row-actions">
+                                <a class="btn btn-white btn-xs" asp-controller="LmsClasses" asp-action="Resources" asp-route-area="User" asp-route-edit="@resource.LmsTrainingResourceId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["Edit"]</a>
+                                <form method="post" asp-controller="LmsClasses" asp-action="DeleteResource" asp-route-area="User" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@resource.LmsTrainingResourceId" />
+                                    <button type="submit" class="btn btn-white btn-xs"><i class="fa fa-times" aria-hidden="true"></i> @localizer["Remove"]</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (Model.CanAuthor)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-plus" aria-hidden="true"></i> @(editing == null ? localizer["NewResource"] : localizer["EditResource"])</h5></div>
+            <div class="ibox-content">
+                <form method="post" asp-controller="LmsClasses" asp-action="SaveResource" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@(editing?.LmsTrainingResourceId ?? 0)" />
+                    <div class="rgw-grid">
+                        <div class="form-group"><label for="r-name">@localizer["Col.Resource"]</label><input id="r-name" name="name" class="form-control" maxlength="150" value="@editing?.Name" required /></div>
+                        <div class="form-group">
+                            <label for="r-kind">@localizer["Col.Kind"]</label>
+                            <select id="r-kind" name="kind" class="form-control">
+                                @foreach (LmsTrainingResourceKinds kind in Enum.GetValues(typeof(LmsTrainingResourceKinds)))
+                                {
+                                    <option value="@((int)kind)" selected="@(editing?.Kind == (int)kind)">@localizer["Resource." + kind]</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group"><label for="r-capacity">@localizer["Field.Capacity"]</label><input id="r-capacity" name="capacity" type="number" min="0" class="form-control" value="@editing?.Capacity" /></div>
+                    </div>
+                    <div class="form-group"><label for="r-notes">@localizer["Field.Notes"]</label><textarea id="r-notes" name="notes" class="form-control" rows="2" maxlength="1000">@editing?.Notes</textarea></div>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Save"]</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

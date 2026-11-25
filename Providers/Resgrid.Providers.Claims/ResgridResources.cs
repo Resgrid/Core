@@ -113,6 +113,10 @@ namespace Resgrid.Providers.Claims
 		public const string Protocol_Update = "Protocol_Update";
 		public const string Protocol_Create = "Protocol_Create";
 		public const string Protocol_Delete = "Protocol_Delete";
+		/// <summary>Protocols P1: approve and publish versions (permission 129).</summary>
+		public const string Protocol_Approve = "Protocol_Approve";
+		/// <summary>Protocols P2: manage acknowledgments (permission 130, added with P1).</summary>
+		public const string Protocol_ManageAcknowledgments = "Protocol_ManageAcknowledgments";
 
 		public const string Forms_View = "Forms_View";
 		public const string Forms_Update = "Forms_Update";

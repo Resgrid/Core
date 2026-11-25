@@ -622,4 +622,2470 @@
   <data name="PanelChoose" xml:space="preserve">
     <value>Elija un protocolo…</value>
   </data>
+  <data name="AcknowledgmentLabel" xml:space="preserve">
+    <value>Confirmación de lectura</value>
+  </data>
+  <data name="AddCategoryHeader" xml:space="preserve">
+    <value>Agregar una categoría</value>
+  </data>
+  <data name="AddCommentButton" xml:space="preserve">
+    <value>Agregar comentario</value>
+  </data>
+  <data name="AiLabel" xml:space="preserve">
+    <value>IA</value>
+  </data>
+  <data name="AllKinds" xml:space="preserve">
+    <value>Todas las clases</value>
+  </data>
+  <data name="AllProtocols" xml:space="preserve">
+    <value>Todos los protocolos</value>
+  </data>
+  <data name="AnyApproverLabel" xml:space="preserve">
+    <value>Cualquier aprobador</value>
+  </data>
+  <data name="AnyAudience" xml:space="preserve">
+    <value>Cualquier destinatario</value>
+  </data>
+  <data name="AnyKindLabel" xml:space="preserve">
+    <value>Cualquier clase</value>
+  </data>
+  <data name="AnyOwner" xml:space="preserve">
+    <value>Cualquier responsable</value>
+  </data>
+  <data name="ApprovalStepsHeader" xml:space="preserve">
+    <value>Pasos de aprobación</value>
+  </data>
+  <data name="ApprovalStepsHelp" xml:space="preserve">
+    <value>Elija los roles o miembros que aprueban, en orden. Déjelo vacío para un único paso que puede decidir cualquier miembro con permiso para aprobar protocolos.</value>
+  </data>
+  <data name="ApproveHeader" xml:space="preserve">
+    <value>Aprobar esta versión</value>
+  </data>
+  <data name="ApprovedLabel" xml:space="preserve">
+    <value>Aprobado</value>
+  </data>
+  <data name="AudienceCertificationLabel" xml:space="preserve">
+    <value>Certificación</value>
+  </data>
+  <data name="AudienceEveryoneLabel" xml:space="preserve">
+    <value>Todos</value>
+  </data>
+  <data name="AudienceEveryoneOption" xml:space="preserve">
+    <value>Todos los miembros del departamento</value>
+  </data>
+  <data name="AudienceGroupLabel" xml:space="preserve">
+    <value>Grupo</value>
+  </data>
+  <data name="AudienceHelp" xml:space="preserve">
+    <value>Solo los miembros a quienes va dirigido este protocolo pueden leerlo, en la biblioteca, las aplicaciones y la búsqueda. Los despachadores siempre leen los protocolos de despacho, y los autores y aprobadores leen todos los protocolos.</value>
+  </data>
+  <data name="AudienceLabel" xml:space="preserve">
+    <value>Destinatarios</value>
+  </data>
+  <data name="AudienceRestrictedLabel" xml:space="preserve">
+    <value>Destinatarios restringidos</value>
+  </data>
+  <data name="AudienceRestrictedOption" xml:space="preserve">
+    <value>Solo miembros de estos grupos, roles, turnos, tipos de unidad o certificaciones</value>
+  </data>
+  <data name="AudienceRoleLabel" xml:space="preserve">
+    <value>Rol</value>
+  </data>
+  <data name="AudienceShiftLabel" xml:space="preserve">
+    <value>Turno</value>
+  </data>
+  <data name="AudienceUnitTypeLabel" xml:space="preserve">
+    <value>Tipo de unidad</value>
+  </data>
+  <data name="AutosaveFailed" xml:space="preserve">
+    <value>No se pudo guardar el borrador automáticamente. Guarde la página para conservar sus cambios.</value>
+  </data>
+  <data name="AutosaveSaved" xml:space="preserve">
+    <value>Borrador guardado</value>
+  </data>
+  <data name="AutosaveSaving" xml:space="preserve">
+    <value>Guardando el borrador...</value>
+  </data>
+  <data name="BackButton" xml:space="preserve">
+    <value>Atrás</value>
+  </data>
+  <data name="BackToProtocolButton" xml:space="preserve">
+    <value>Volver al protocolo</value>
+  </data>
+  <data name="CallColumn" xml:space="preserve">
+    <value>Llamada</value>
+  </data>
+  <data name="CallsColumn" xml:space="preserve">
+    <value>Llamadas</value>
+  </data>
+  <data name="CategoriesHeader" xml:space="preserve">
+    <value>Categorías</value>
+  </data>
+  <data name="CategoriesIntro" xml:space="preserve">
+    <value>Organice la biblioteca en categorías anidadas y defina quién aprueba las versiones de cada una.</value>
+  </data>
+  <data name="CategoriesTab" xml:space="preserve">
+    <value>Categorías</value>
+  </data>
+  <data name="CategoryLabel" xml:space="preserve">
+    <value>Categoría</value>
+  </data>
+  <data name="ChangeSummaryHelp" xml:space="preserve">
+    <value>Qué cambió y por qué. Es obligatorio para publicar y se conserva con la versión.</value>
+  </data>
+  <data name="ChangeSummaryLabel" xml:space="preserve">
+    <value>Resumen de cambios</value>
+  </data>
+  <data name="ChangesSinceHeader" xml:space="preserve">
+    <value>Cambios desde {0}</value>
+  </data>
+  <data name="CitedVersionLabel" xml:space="preserve">
+    <value>Texto tal como se despachó ({0})</value>
+  </data>
+  <data name="CommentRefused" xml:space="preserve">
+    <value>No se pudo guardar el comentario.</value>
+  </data>
+  <data name="CompareButton" xml:space="preserve">
+    <value>Comparar</value>
+  </data>
+  <data name="CompareFromLabel" xml:space="preserve">
+    <value>Desde</value>
+  </data>
+  <data name="CompareHeader" xml:space="preserve">
+    <value>Comparar versiones</value>
+  </data>
+  <data name="CompareToLabel" xml:space="preserve">
+    <value>Con</value>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>Código de contenido</value>
+  </data>
+  <data name="ContentLockedNotice" xml:space="preserve">
+    <value>Esta versión está en revisión o aprobada, por lo que su texto está bloqueado. Retírela para volver a editar el texto.</value>
+  </data>
+  <data name="CopyButton" xml:space="preserve">
+    <value>Copiar como nuevo</value>
+  </data>
+  <data name="CreateDraftButton" xml:space="preserve">
+    <value>Crear borrador</value>
+  </data>
+  <data name="DefaultApprovalStep" xml:space="preserve">
+    <value>Un paso, cualquier aprobador</value>
+  </data>
+  <data name="DefaultReviewIntervalHelp" xml:space="preserve">
+    <value>Los protocolos nuevos empiezan con este intervalo de revisión en días. 0 significa sin ciclo de revisión.</value>
+  </data>
+  <data name="DefaultReviewIntervalLabel" xml:space="preserve">
+    <value>Intervalo de revisión predeterminado (días)</value>
+  </data>
+  <data name="DeleteCategoryConfirm" xml:space="preserve">
+    <value>Eliminar la categoría</value>
+  </data>
+  <data name="DeletedTextLabel" xml:space="preserve">
+    <value>Texto eliminado</value>
+  </data>
+  <data name="DepartmentLegalHoldCheckbox" xml:space="preserve">
+    <value>Bloqueo legal en toda la biblioteca</value>
+  </data>
+  <data name="DepartmentLegalHoldHelp" xml:space="preserve">
+    <value>Mientras esté activo, no se depura ninguna versión, independientemente de lo que indiquen los períodos de conservación.</value>
+  </data>
+  <data name="DiscardDraftButton" xml:space="preserve">
+    <value>Descartar borrador</value>
+  </data>
+  <data name="DiscardDraftConfirm" xml:space="preserve">
+    <value>¿Descartar este borrador? Su texto se eliminará.</value>
+  </data>
+  <data name="DraftDiscardedMessage" xml:space="preserve">
+    <value>Se descartó el borrador.</value>
+  </data>
+  <data name="EditDraftButton" xml:space="preserve">
+    <value>Editar el borrador</value>
+  </data>
+  <data name="EditingDraftCallout" xml:space="preserve">
+    <value>Está editando el borrador ({0}), guardado por última vez por {1} el {2}. El texto vigente no cambia hasta que esta versión se apruebe y se publique.</value>
+  </data>
+  <data name="EditingNoDraftCallout" xml:space="preserve">
+    <value>La versión {0} está vigente. Si cambia el texto y guarda, se inicia una nueva versión en borrador.</value>
+  </data>
+  <data name="EffectiveColumn" xml:space="preserve">
+    <value>Vigencia</value>
+  </data>
+  <data name="EffectiveOnHelp" xml:space="preserve">
+    <value>Déjelo vacío para publicar ahora. Una fecha y hora posteriores ({0}) programan la versión; entra en vigor automáticamente.</value>
+  </data>
+  <data name="EffectiveOnLabel" xml:space="preserve">
+    <value>Vigente desde</value>
+  </data>
+  <data name="ErrorCategoryName" xml:space="preserve">
+    <value>Introduzca un nombre de categoría.</value>
+  </data>
+  <data name="ErrorKind" xml:space="preserve">
+    <value>Elija una clase de protocolo.</value>
+  </data>
+  <data name="ExcludeFromAiCheckbox" xml:space="preserve">
+    <value>Excluir de la IA</value>
+  </data>
+  <data name="ExcludeFromAiHelp" xml:space="preserve">
+    <value>Mantiene este protocolo fuera de todos los índices y respuestas de IA (para contenido con licencia o sensible).</value>
+  </data>
+  <data name="ExcludedFromAi" xml:space="preserve">
+    <value>Excluido de la IA</value>
+  </data>
+  <data name="ExpiresLabel" xml:space="preserve">
+    <value>Vence</value>
+  </data>
+  <data name="ExpiresOnLabel" xml:space="preserve">
+    <value>Vence el</value>
+  </data>
+  <data name="ExportButton" xml:space="preserve">
+    <value>Exportar</value>
+  </data>
+  <data name="FavoriteButton" xml:space="preserve">
+    <value>Agregar a favoritos</value>
+  </data>
+  <data name="FavoriteLabel" xml:space="preserve">
+    <value>Favorito</value>
+  </data>
+  <data name="FavoritesHeader" xml:space="preserve">
+    <value>Favoritos</value>
+  </data>
+  <data name="FirstVersionHeader" xml:space="preserve">
+    <value>Primera versión</value>
+  </data>
+  <data name="FormerMemberOption" xml:space="preserve">
+    <value>Antiguo miembro</value>
+  </data>
+  <data name="FullTextToggle" xml:space="preserve">
+    <value>Mostrar el texto completo</value>
+  </data>
+  <data name="ImportButton" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="ImportErrorFile" xml:space="preserve">
+    <value>Elija un archivo JSON de 10 MB o menos.</value>
+  </data>
+  <data name="ImportErrorFormat" xml:space="preserve">
+    <value>El archivo no es una exportación de protocolos de Resgrid (formato resgrid-protocols, versión 1).</value>
+  </data>
+  <data name="ImportErrorNotAuthorized" xml:space="preserve">
+    <value>No tiene permiso para redactar protocolos.</value>
+  </data>
+  <data name="ImportErrorTooMany" xml:space="preserve">
+    <value>El archivo tiene demasiados protocolos. Importe como máximo 500 a la vez.</value>
+  </data>
+  <data name="ImportFileLabel" xml:space="preserve">
+    <value>Archivo de exportación de protocolos (JSON)</value>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>Importe protocolos exportados desde Resgrid o escritos en el mismo formato abierto. Cada protocolo se crea como borrador para su revisión y publicación; una importación no publica nada. Las prioridades, los tipos de llamada, las categorías, los grupos, los roles y los turnos se emparejan por nombre con los de este departamento.</value>
+  </data>
+  <data name="ImportIntro" xml:space="preserve">
+    <value>Traiga protocolos desde una exportación JSON.</value>
+  </data>
+  <data name="ImportSkippedHeader" xml:space="preserve">
+    <value>No importados</value>
+  </data>
+  <data name="ImportTab" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="ImportWarningsHeader" xml:space="preserve">
+    <value>Importados con cambios</value>
+  </data>
+  <data name="ImportedMessage" xml:space="preserve">
+    <value>Se importaron {0} protocolos como borradores.</value>
+  </data>
+  <data name="InForceLabel" xml:space="preserve">
+    <value>Vigente</value>
+  </data>
+  <data name="InsertedLabel" xml:space="preserve">
+    <value>Texto añadido</value>
+  </data>
+  <data name="KindClinicalGuideline" xml:space="preserve">
+    <value>Guía clínica</value>
+  </data>
+  <data name="KindDispatch" xml:space="preserve">
+    <value>Protocolo de despacho</value>
+  </data>
+  <data name="KindHelp" xml:space="preserve">
+    <value>Los protocolos de despacho y los procedimientos pueden sugerirse en las llamadas según sus disparadores. Las políticas y los POE piden por defecto a los miembros que confirmen su lectura.</value>
+  </data>
+  <data name="KindHelpClinicalGuideline" xml:space="preserve">
+    <value>Orientación clínica para la atención al paciente.</value>
+  </data>
+  <data name="KindHelpDispatch" xml:space="preserve">
+    <value>Se asocia a las llamadas por tipo, prioridad y hora, con preguntas clave.</value>
+  </data>
+  <data name="KindHelpPolicy" xml:space="preserve">
+    <value>Una política del departamento cuya lectura deben confirmar los miembros.</value>
+  </data>
+  <data name="KindHelpProcedure" xml:space="preserve">
+    <value>Un procedimiento paso a paso o una lista de verificación; puede sugerirse en las llamadas.</value>
+  </data>
+  <data name="KindHelpReference" xml:space="preserve">
+    <value>Material de consulta: mapas, contactos, tablas.</value>
+  </data>
+  <data name="KindHelpSog" xml:space="preserve">
+    <value>Un procedimiento operativo estándar o una guía operativa.</value>
+  </data>
+  <data name="KindLabel" xml:space="preserve">
+    <value>Clase</value>
+  </data>
+  <data name="KindPolicy" xml:space="preserve">
+    <value>Política</value>
+  </data>
+  <data name="KindProcedure" xml:space="preserve">
+    <value>Procedimiento o lista de verificación</value>
+  </data>
+  <data name="KindReference" xml:space="preserve">
+    <value>Referencia</value>
+  </data>
+  <data name="KindSog" xml:space="preserve">
+    <value>POE / Guía operativa</value>
+  </data>
+  <data name="KpiDueForReview" xml:space="preserve">
+    <value>Revisión pendiente (30 días)</value>
+  </data>
+  <data name="KpiInReview" xml:space="preserve">
+    <value>En revisión</value>
+  </data>
+  <data name="KpiPublished" xml:space="preserve">
+    <value>Publicados</value>
+  </data>
+  <data name="LastReviewedLabel" xml:space="preserve">
+    <value>Última revisión</value>
+  </data>
+  <data name="LegalHoldCheckbox" xml:space="preserve">
+    <value>Bloqueo legal</value>
+  </data>
+  <data name="LegalHoldHelp" xml:space="preserve">
+    <value>Mientras el bloqueo legal esté activo, no se depura ninguna versión de este protocolo.</value>
+  </data>
+  <data name="LegalHoldLabel" xml:space="preserve">
+    <value>Bloqueo legal</value>
+  </data>
+  <data name="LicenseLabel" xml:space="preserve">
+    <value>Licencia</value>
+  </data>
+  <data name="LicensedContentCheckbox" xml:space="preserve">
+    <value>Contenido con licencia</value>
+  </data>
+  <data name="LicensedContentHelp" xml:space="preserve">
+    <value>Contenido de terceros bajo licencia: nunca se comparte fuera del departamento ni se hace público.</value>
+  </data>
+  <data name="LicensedContentLabel" xml:space="preserve">
+    <value>Contenido con licencia</value>
+  </data>
+  <data name="LifecycleErrorAlreadyDecided" xml:space="preserve">
+    <value>Este paso ya se decidió, o usted aprobó un paso anterior de esta revisión.</value>
+  </data>
+  <data name="LifecycleErrorArtifactChanged" xml:space="preserve">
+    <value>El texto ya no coincide con lo que se firmó. La versión debe revisarse de nuevo.</value>
+  </data>
+  <data name="LifecycleErrorChangeSummaryRequired" xml:space="preserve">
+    <value>Introduzca un resumen de cambios para publicar.</value>
+  </data>
+  <data name="LifecycleErrorDraftExists" xml:space="preserve">
+    <value>Este protocolo ya tiene un borrador abierto.</value>
+  </data>
+  <data name="LifecycleErrorEffectiveDateInPast" xml:space="preserve">
+    <value>La fecha de vigencia está en el pasado.</value>
+  </data>
+  <data name="LifecycleErrorEmptyContent" xml:space="preserve">
+    <value>El borrador no tiene texto. Redacte el protocolo antes de enviarlo.</value>
+  </data>
+  <data name="LifecycleErrorInvalidInput" xml:space="preserve">
+    <value>Algunos de los valores no son válidos.</value>
+  </data>
+  <data name="LifecycleErrorNotApproved" xml:space="preserve">
+    <value>Solo se puede publicar una versión aprobada.</value>
+  </data>
+  <data name="LifecycleErrorNotAuthorized" xml:space="preserve">
+    <value>No tiene permiso para hacer esto.</value>
+  </data>
+  <data name="LifecycleErrorNotDraft" xml:space="preserve">
+    <value>Solo se puede cambiar o enviar un borrador.</value>
+  </data>
+  <data name="LifecycleErrorNotFound" xml:space="preserve">
+    <value>No se encontró el protocolo o la versión.</value>
+  </data>
+  <data name="LifecycleErrorNotInReview" xml:space="preserve">
+    <value>Esta versión no está pendiente de revisión.</value>
+  </data>
+  <data name="LifecycleErrorNotPublished" xml:space="preserve">
+    <value>Este protocolo no tiene ninguna versión vigente.</value>
+  </data>
+  <data name="LifecycleErrorOpenComments" xml:space="preserve">
+    <value>Resuelva los comentarios de revisión abiertos antes de aprobar.</value>
+  </data>
+  <data name="LifecycleErrorPasskeyRequired" xml:space="preserve">
+    <value>Su departamento exige una llave de acceso para esta firma. Use Firmar con llave de acceso.</value>
+  </data>
+  <data name="LifecycleErrorRetentionProtected" xml:space="preserve">
+    <value>Las versiones enviadas y publicadas se conservan y no se pueden eliminar.</value>
+  </data>
+  <data name="LifecycleErrorSignatureRequired" xml:space="preserve">
+    <value>Esta firma necesita una nueva verificación de identidad. Verifíquese con su segundo factor o una llave de acceso y vuelva a firmar.</value>
+  </data>
+  <data name="LifecycleErrorStaleCopy" xml:space="preserve">
+    <value>Otra persona cambió este protocolo después de que usted lo abriera.</value>
+  </data>
+  <data name="LifecycleLabel" xml:space="preserve">
+    <value>Ciclo de vida</value>
+  </data>
+  <data name="LoggedColumn" xml:space="preserve">
+    <value>Registrado</value>
+  </data>
+  <data name="MajorVersionOption" xml:space="preserve">
+    <value>Mayor (siguiente número entero)</value>
+  </data>
+  <data name="MembersLabel" xml:space="preserve">
+    <value>Miembros</value>
+  </data>
+  <data name="MessageLabel" xml:space="preserve">
+    <value>Mensaje</value>
+  </data>
+  <data name="MinorVersionOption" xml:space="preserve">
+    <value>Menor (siguiente decimal)</value>
+  </data>
+  <data name="NewVersionButton" xml:space="preserve">
+    <value>Nueva versión</value>
+  </data>
+  <data name="NextButton" xml:space="preserve">
+    <value>Siguiente</value>
+  </data>
+  <data name="NoCallsYet" xml:space="preserve">
+    <value>Todavía ninguna llamada ha citado este protocolo.</value>
+  </data>
+  <data name="NoCategoriesYet" xml:space="preserve">
+    <value>Todavía no hay categorías.</value>
+  </data>
+  <data name="NoCategoryOption" xml:space="preserve">
+    <value>Sin categoría</value>
+  </data>
+  <data name="NoOutline" xml:space="preserve">
+    <value>Los encabezados del texto forman aquí un esquema.</value>
+  </data>
+  <data name="NoReviewCycle" xml:space="preserve">
+    <value>Sin ciclo de revisión</value>
+  </data>
+  <data name="NoTextChanges" xml:space="preserve">
+    <value>El texto es el mismo.</value>
+  </data>
+  <data name="NotCurrentVersionNotice" xml:space="preserve">
+    <value>Está leyendo {0}. La versión vigente es {1}.</value>
+  </data>
+  <data name="NotPublishedYet" xml:space="preserve">
+    <value>No publicado</value>
+  </data>
+  <data name="NotRequiredLabel" xml:space="preserve">
+    <value>No obligatorio</value>
+  </data>
+  <data name="NotSubmittedYet" xml:space="preserve">
+    <value>Todavía no enviado.</value>
+  </data>
+  <data name="NumberHelp" xml:space="preserve">
+    <value>Su propio número para él, como POE-204. Si se deja vacío, lo asigna el patrón de numeración de protocolos del departamento (Departamento, Numeración de documentos).</value>
+  </data>
+  <data name="NumberLabel" xml:space="preserve">
+    <value>Número</value>
+  </data>
+  <data name="OnHoldLabel" xml:space="preserve">
+    <value>Con bloqueo legal</value>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Abrir</value>
+  </data>
+  <data name="OpenDraftNote" xml:space="preserve">
+    <value>Próxima versión: {0}</value>
+  </data>
+  <data name="OpenLabel" xml:space="preserve">
+    <value>abierto</value>
+  </data>
+  <data name="OpenReviewButton" xml:space="preserve">
+    <value>Abrir la revisión</value>
+  </data>
+  <data name="OpenVersionCallout" xml:space="preserve">
+    <value>Hay una nueva versión en curso: {0}.</value>
+  </data>
+  <data name="OutlineHeader" xml:space="preserve">
+    <value>Esquema</value>
+  </data>
+  <data name="OwnerHelp" xml:space="preserve">
+    <value>El responsable mantiene el protocolo actualizado: recibe los recordatorios de revisión y las sugerencias de los miembros.</value>
+  </data>
+  <data name="OwnerLabel" xml:space="preserve">
+    <value>Responsable</value>
+  </data>
+  <data name="ParentCategoryLabel" xml:space="preserve">
+    <value>Categoría principal</value>
+  </data>
+  <data name="PendingLabel" xml:space="preserve">
+    <value>Pendiente</value>
+  </data>
+  <data name="PreviewAsMemberButton" xml:space="preserve">
+    <value>Vista previa como miembro</value>
+  </data>
+  <data name="PreviewAsMemberNotice" xml:space="preserve">
+    <value>Así verán los miembros esta versión una vez publicada.</value>
+  </data>
+  <data name="PrintButton" xml:space="preserve">
+    <value>Imprimir</value>
+  </data>
+  <data name="ProtocolCopiedMessage" xml:space="preserve">
+    <value>Se creó una copia como nuevo protocolo en borrador.</value>
+  </data>
+  <data name="ProtocolCreatedMessage" xml:space="preserve">
+    <value>El protocolo se creó como borrador. Termínelo aquí y luego envíelo a revisión.</value>
+  </data>
+  <data name="ProtocolTextHeadingsHelp" xml:space="preserve">
+    <value>Use encabezados para estructurar el texto: forman el esquema y los anclajes a los que apuntan los comentarios de revisión.</value>
+  </data>
+  <data name="PublishButton" xml:space="preserve">
+    <value>Publicar</value>
+  </data>
+  <data name="PublishHeader" xml:space="preserve">
+    <value>Publicación</value>
+  </data>
+  <data name="QuestionOption" xml:space="preserve">
+    <value>Pregunta</value>
+  </data>
+  <data name="ReadAndSignStepUpCheckbox" xml:space="preserve">
+    <value>Las confirmaciones de lectura y firma necesitan una nueva verificación de identidad (L2) en lugar de la sesión iniciada (L1)</value>
+  </data>
+  <data name="RecentHeader" xml:space="preserve">
+    <value>Abiertos recientemente</value>
+  </data>
+  <data name="RecordReviewHeader" xml:space="preserve">
+    <value>Revisado, sin cambios</value>
+  </data>
+  <data name="RecordReviewHelp" xml:space="preserve">
+    <value>Registre que la versión vigente se revisó y sigue siendo correcta. La próxima fecha de revisión se desplaza; no se crea ninguna versión nueva y nadie tiene que volver a confirmar su lectura.</value>
+  </data>
+  <data name="RecordedBeforeVersions" xml:space="preserve">
+    <value>Registrado antes de las versiones</value>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Rechazar</value>
+  </data>
+  <data name="RejectHeader" xml:space="preserve">
+    <value>Rechazo</value>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>Motivo</value>
+  </data>
+  <data name="RejectedLabel" xml:space="preserve">
+    <value>Rechazado</value>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>La versión se devolvió a sus autores como borrador.</value>
+  </data>
+  <data name="ReplyButton" xml:space="preserve">
+    <value>Responder</value>
+  </data>
+  <data name="ReplyLabel" xml:space="preserve">
+    <value>Respuesta</value>
+  </data>
+  <data name="RequirePasskeyForApprovalCheckbox" xml:space="preserve">
+    <value>Las aprobaciones y los sellos de revisión deben firmarse con una llave de acceso</value>
+  </data>
+  <data name="RequiredLabel" xml:space="preserve">
+    <value>Obligatorio</value>
+  </data>
+  <data name="RequiresAcknowledgmentCheckbox" xml:space="preserve">
+    <value>Los miembros deben confirmar la lectura de esta versión</value>
+  </data>
+  <data name="RequiresAcknowledgmentHelp" xml:space="preserve">
+    <value>Activado por defecto para políticas y POE. Las asignaciones de lectura y firma llegarán en una actualización posterior.</value>
+  </data>
+  <data name="ResolveButton" xml:space="preserve">
+    <value>Resolver</value>
+  </data>
+  <data name="ResolvedLabel" xml:space="preserve">
+    <value>Resuelto</value>
+  </data>
+  <data name="RetentionHeader" xml:space="preserve">
+    <value>Conservación</value>
+  </data>
+  <data name="RetentionHelp" xml:space="preserve">
+    <value>Las versiones sustituidas y dadas de baja se conservan por defecto. Indique los días que una clase las conserva antes de que puedan depurarse; 0 las conserva. Una versión citada por una llamada, y todo lo que esté bajo bloqueo legal, nunca se depura.</value>
+  </data>
+  <data name="RetireButton" xml:space="preserve">
+    <value>Dar de baja</value>
+  </data>
+  <data name="RetireConfirm" xml:space="preserve">
+    <value>Dar de baja el protocolo</value>
+  </data>
+  <data name="RetiredMessage" xml:space="preserve">
+    <value>El protocolo se dio de baja. Sus versiones se mantienen para las llamadas y el historial que las citan.</value>
+  </data>
+  <data name="ReviewAny" xml:space="preserve">
+    <value>Cualquier fecha de revisión</value>
+  </data>
+  <data name="ReviewCommentLabel" xml:space="preserve">
+    <value>Comentario</value>
+  </data>
+  <data name="ReviewCommentsHeader" xml:space="preserve">
+    <value>Comentarios de revisión</value>
+  </data>
+  <data name="ReviewDue30" xml:space="preserve">
+    <value>Vence en los próximos 30 días</value>
+  </data>
+  <data name="ReviewDueCallout" xml:space="preserve">
+    <value>La revisión de este protocolo vence el {0}.</value>
+  </data>
+  <data name="ReviewDueLabel" xml:space="preserve">
+    <value>Vencimiento de revisión</value>
+  </data>
+  <data name="ReviewHeader" xml:space="preserve">
+    <value>Revisión</value>
+  </data>
+  <data name="ReviewIntervalHelp" xml:space="preserve">
+    <value>Días entre revisiones. Se avisa al responsable 30 y 7 días antes, y cuando está vencida. Vacío significa sin ciclo de revisión.</value>
+  </data>
+  <data name="ReviewIntervalLabel" xml:space="preserve">
+    <value>Intervalo de revisión (días)</value>
+  </data>
+  <data name="ReviewNowButton" xml:space="preserve">
+    <value>Revisar</value>
+  </data>
+  <data name="ReviewOverdue" xml:space="preserve">
+    <value>Vencida</value>
+  </data>
+  <data name="ReviewOverdueCallout" xml:space="preserve">
+    <value>La revisión de este protocolo venció el {0}.</value>
+  </data>
+  <data name="ReviewQueueCallout" xml:space="preserve">
+    <value>{0} versiones esperan su aprobación.</value>
+  </data>
+  <data name="ReviewQueueEmpty" xml:space="preserve">
+    <value>No hay nada pendiente de revisión.</value>
+  </data>
+  <data name="ReviewQueueIntro" xml:space="preserve">
+    <value>Versiones enviadas a revisión, con los pasos que usted puede decidir.</value>
+  </data>
+  <data name="ReviewQueueTab" xml:space="preserve">
+    <value>Cola de revisión</value>
+  </data>
+  <data name="ReviewRecordedMessage" xml:space="preserve">
+    <value>La revisión se registró y firmó. La próxima fecha de revisión se ha desplazado.</value>
+  </data>
+  <data name="ReviewSettingsHeader" xml:space="preserve">
+    <value>Ciclo de revisión</value>
+  </data>
+  <data name="SaveAndSubmitButton" xml:space="preserve">
+    <value>Guardar y enviar a revisión</value>
+  </data>
+  <data name="SaveCategoryButton" xml:space="preserve">
+    <value>Guardar categoría</value>
+  </data>
+  <data name="SaveSettingsButton" xml:space="preserve">
+    <value>Guardar configuración</value>
+  </data>
+  <data name="ScheduledNotice" xml:space="preserve">
+    <value>La versión {0} está programada para entrar en vigor el {1}.</value>
+  </data>
+  <data name="SectionLabel" xml:space="preserve">
+    <value>Sección</value>
+  </data>
+  <data name="SendSuggestionButton" xml:space="preserve">
+    <value>Enviar</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Niveles de firma, ciclos de revisión y conservación de la biblioteca de protocolos.</value>
+  </data>
+  <data name="SettingsSavedMessage" xml:space="preserve">
+    <value>Se guardó la configuración de protocolos.</value>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>Configuración</value>
+  </data>
+  <data name="ShowButton" xml:space="preserve">
+    <value>Mostrar</value>
+  </data>
+  <data name="SignatureFloorsHelp" xml:space="preserve">
+    <value>Las aprobaciones y los sellos de revisión siempre necesitan una nueva verificación de identidad (L2); la lectura y firma necesita al menos la sesión iniciada (L1). Puede exigir más, nunca menos.</value>
+  </data>
+  <data name="SignatureSettingsHeader" xml:space="preserve">
+    <value>Firmas</value>
+  </data>
+  <data name="SignaturesTab" xml:space="preserve">
+    <value>Firmas</value>
+  </data>
+  <data name="SortOrderLabel" xml:space="preserve">
+    <value>Orden</value>
+  </data>
+  <data name="StaleProtocolMessage" xml:space="preserve">
+    <value>{0} cambió este protocolo el {1}, después de que usted lo abriera. Vuelva a cargar la página para ver esos cambios y luego haga de nuevo los suyos.</value>
+  </data>
+  <data name="StatusApproved" xml:space="preserve">
+    <value>Aprobado</value>
+  </data>
+  <data name="StatusDraft" xml:space="preserve">
+    <value>Borrador</value>
+  </data>
+  <data name="StatusInReview" xml:space="preserve">
+    <value>En revisión</value>
+  </data>
+  <data name="StatusPublished" xml:space="preserve">
+    <value>Publicado</value>
+  </data>
+  <data name="StatusRetired" xml:space="preserve">
+    <value>Dado de baja</value>
+  </data>
+  <data name="StatusScheduled" xml:space="preserve">
+    <value>Programado</value>
+  </data>
+  <data name="StepColumn" xml:space="preserve">
+    <value>Paso</value>
+  </data>
+  <data name="SubmitHeader" xml:space="preserve">
+    <value>Enviar a revisión</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Enviado</value>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>La versión se envió a revisión.</value>
+  </data>
+  <data name="SuggestHeader" xml:space="preserve">
+    <value>Sugerir un cambio o hacer una pregunta</value>
+  </data>
+  <data name="SuggestHelp" xml:space="preserve">
+    <value>Su mensaje llega al responsable del protocolo y se conserva con el próximo borrador.</value>
+  </data>
+  <data name="SuggestKindLabel" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="SuggestionOption" xml:space="preserve">
+    <value>Sugerencia</value>
+  </data>
+  <data name="TagsHelp" xml:space="preserve">
+    <value>Separe las etiquetas con comas.</value>
+  </data>
+  <data name="TagsLabel" xml:space="preserve">
+    <value>Etiquetas</value>
+  </data>
+  <data name="ThreadsHeader" xml:space="preserve">
+    <value>Sugerencias y preguntas</value>
+  </data>
+  <data name="TriggersKindHelp" xml:space="preserve">
+    <value>Solo los protocolos de despacho y los procedimientos se sugieren en las llamadas, por lo que esta clase no tiene disparadores ni preguntas clave.</value>
+  </data>
+  <data name="UnfavoriteButton" xml:space="preserve">
+    <value>Quitar de favoritos</value>
+  </data>
+  <data name="UsageHelp" xml:space="preserve">
+    <value>Usado en {0} llamadas en los últimos 30 días. Las llamadas más recientes que lo citan:</value>
+  </data>
+  <data name="UsageTab" xml:space="preserve">
+    <value>Uso</value>
+  </data>
+  <data name="VersionColumn" xml:space="preserve">
+    <value>Versión</value>
+  </data>
+  <data name="VersionKindLabel" xml:space="preserve">
+    <value>Número de versión</value>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>Versión</value>
+  </data>
+  <data name="VersionStatusApproved" xml:space="preserve">
+    <value>Aprobada</value>
+  </data>
+  <data name="VersionStatusDraft" xml:space="preserve">
+    <value>Borrador</value>
+  </data>
+  <data name="VersionStatusInReview" xml:space="preserve">
+    <value>En revisión</value>
+  </data>
+  <data name="VersionStatusLegacy" xml:space="preserve">
+    <value>Texto heredado</value>
+  </data>
+  <data name="VersionStatusPublished" xml:space="preserve">
+    <value>Publicada</value>
+  </data>
+  <data name="VersionStatusRetired" xml:space="preserve">
+    <value>Dada de baja</value>
+  </data>
+  <data name="VersionStatusSuperseded" xml:space="preserve">
+    <value>Sustituida</value>
+  </data>
+  <data name="VersionsTab" xml:space="preserve">
+    <value>Versiones</value>
+  </data>
+  <data name="WholeProtocolOption" xml:space="preserve">
+    <value>Todo el protocolo</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Devolver a borrador</value>
+  </data>
+  <data name="WithdrawnLabel" xml:space="preserve">
+    <value>Retirada</value>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>La versión se retiró y vuelve a ser un borrador.</value>
+  </data>
+  <data name="WizardAudienceStep" xml:space="preserve">
+    <value>Destinatarios</value>
+  </data>
+  <data name="WizardBasicsStep" xml:space="preserve">
+    <value>Datos básicos</value>
+  </data>
+  <data name="WizardContentStep" xml:space="preserve">
+    <value>Contenido</value>
+  </data>
+  <data name="WizardKindHelp" xml:space="preserve">
+    <value>¿Qué clase de protocolo es? La clase decide si puede sugerirse en las llamadas y si los miembros confirman su lectura por defecto.</value>
+  </data>
+  <data name="WizardKindStep" xml:space="preserve">
+    <value>Clase</value>
+  </data>
+  <data name="WizardReviewHelp" xml:space="preserve">
+    <value>Compruebe lo que introdujo. El protocolo se crea como borrador; puede seguir editándolo antes de enviarlo a revisión.</value>
+  </data>
+  <data name="WizardReviewStep" xml:space="preserve">
+    <value>Comprobación</value>
+  </data>
+  <data name="WizardTriggersStep" xml:space="preserve">
+    <value>Disparadores</value>
+  </data>
+  <data name="WordsAdded" xml:space="preserve">
+    <value>{0} palabras añadidas</value>
+  </data>
+  <data name="WordsRemoved" xml:space="preserve">
+    <value>{0} palabras eliminadas</value>
+  </data>
+  <data name="AckAwaitingQuizLabel" xml:space="preserve">
+    <value>Firmado; pendiente del cuestionario de {0}</value>
+  </data>
+  <data name="AckBundleOrderHelp" xml:space="preserve">
+    <value>Posición de este protocolo en el paquete de incorporación de un nuevo miembro: los números menores van primero.</value>
+  </data>
+  <data name="AckBundleOrderLabel" xml:space="preserve">
+    <value>Orden de incorporación</value>
+  </data>
+  <data name="AckCannotSignNotice" xml:space="preserve">
+    <value>Esta versión no puede confirmarse ahora. Lea en su lugar la versión vigente.</value>
+  </data>
+  <data name="AckCarriedForwardLabel" xml:space="preserve">
+    <value>Trasladado desde la versión menor anterior</value>
+  </data>
+  <data name="AckCompletedHeader" xml:space="preserve">
+    <value>Confirmados</value>
+  </data>
+  <data name="AckDueDaysHelp" xml:space="preserve">
+    <value>Días que tiene un miembro para confirmar, contados desde que se le asigna o entra en el público. Vacío para {0} días.</value>
+  </data>
+  <data name="AckDueDaysLabel" xml:space="preserve">
+    <value>Días para confirmar</value>
+  </data>
+  <data name="AckDueLabel" xml:space="preserve">
+    <value>Vence el {0}</value>
+  </data>
+  <data name="AckDueWasLabel" xml:space="preserve">
+    <value>Vencía el {0}</value>
+  </data>
+  <data name="AckFutureVersionNotice" xml:space="preserve">
+    <value>Esta versión entra en vigor el {0}. Ya puede confirmarla.</value>
+  </data>
+  <data name="AckNoQuizOption" xml:space="preserve">
+    <value>Sin cuestionario</value>
+  </data>
+  <data name="AckNotAssignedNotice" xml:space="preserve">
+    <value>No se le pide confirmar esta versión.</value>
+  </data>
+  <data name="AckOfflineLabel" xml:space="preserve">
+    <value>Firmado sin conexión</value>
+  </data>
+  <data name="AckOutstandingLabel" xml:space="preserve">
+    <value>Por confirmar</value>
+  </data>
+  <data name="AckPromptAwaitingQuiz" xml:space="preserve">
+    <value>Ha firmado este protocolo. Quedará completo cuando apruebe el cuestionario de {0}.</value>
+  </data>
+  <data name="AckPromptDue" xml:space="preserve">
+    <value>Se le pide leer y firmar {0} antes del {1}.</value>
+  </data>
+  <data name="AckPromptOverdue" xml:space="preserve">
+    <value>Su confirmación de {0} vencía el {1}.</value>
+  </data>
+  <data name="AckQuizRequiredNotice" xml:space="preserve">
+    <value>Tras firmar, apruebe el cuestionario de {0} para completar la confirmación.</value>
+  </data>
+  <data name="AckQuizTrainingHelp" xml:space="preserve">
+    <value>Una formación con cuestionario. Se asigna con el protocolo y la confirmación solo se completa al aprobar el cuestionario.</value>
+  </data>
+  <data name="AckQuizTrainingLabel" xml:space="preserve">
+    <value>Formación con cuestionario</value>
+  </data>
+  <data name="AckSettingsButton" xml:space="preserve">
+    <value>Ajustes de confirmación</value>
+  </data>
+  <data name="AckSettingsHeader" xml:space="preserve">
+    <value>Configuración de la confirmación</value>
+  </data>
+  <data name="AckSettingsInvalidTraining" xml:space="preserve">
+    <value>Elija una formación de este departamento que tenga cuestionario.</value>
+  </data>
+  <data name="AckSettingsSavedMessage" xml:space="preserve">
+    <value>Ajustes de confirmación guardados.</value>
+  </data>
+  <data name="AckSignedNotice" xml:space="preserve">
+    <value>Firmó esta versión el {0}.</value>
+  </data>
+  <data name="AckSourceAudienceEntry" xml:space="preserve">
+    <value>Asignado al entrar en el público</value>
+  </data>
+  <data name="AckState_acknowledged" xml:space="preserve">
+    <value>Confirmado</value>
+  </data>
+  <data name="AckState_awaiting_quiz" xml:space="preserve">
+    <value>Pendiente de cuestionario</value>
+  </data>
+  <data name="AckState_open" xml:space="preserve">
+    <value>Aún sin firmar</value>
+  </data>
+  <data name="AckState_overdue" xml:space="preserve">
+    <value>Vencido</value>
+  </data>
+  <data name="AckState_withdrawn" xml:space="preserve">
+    <value>Retirado</value>
+  </data>
+  <data name="AckState_superseded" xml:space="preserve">
+    <value>Sustituido por una versión más reciente</value>
+  </data>
+  <data name="AcknowledgedLabel" xml:space="preserve">
+    <value>Confirmados</value>
+  </data>
+  <data name="AcknowledgedMessage" xml:space="preserve">
+    <value>Gracias. Su confirmación ha quedado registrada.</value>
+  </data>
+  <data name="AcknowledgedAwaitingQuizMessage" xml:space="preserve">
+    <value>Su firma ha quedado registrada. Apruebe el cuestionario para completar la confirmación.</value>
+  </data>
+  <data name="AcknowledgeOutcomeAcknowledged" xml:space="preserve">
+    <value>Confirmado.</value>
+  </data>
+  <data name="AcknowledgeOutcomeAwaitingQuiz" xml:space="preserve">
+    <value>Firmado. Apruebe el cuestionario para completarlo.</value>
+  </data>
+  <data name="AcknowledgeOutcomeNotAssigned" xml:space="preserve">
+    <value>No tiene pendiente confirmar esta versión.</value>
+  </data>
+  <data name="AcknowledgeOutcomeNotOpened" xml:space="preserve">
+    <value>Abra y lea la versión antes de firmarla.</value>
+  </data>
+  <data name="AcknowledgeOutcomeReadNewerVersion" xml:space="preserve">
+    <value>Hay una versión más reciente vigente. Léala y firme esa.</value>
+  </data>
+  <data name="AcknowledgeOutcomeContentChanged" xml:space="preserve">
+    <value>El contenido cambió desde que lo abrió. Vuelva a leerlo antes de firmar.</value>
+  </data>
+  <data name="AcknowledgeOutcomeStepUpRequired" xml:space="preserve">
+    <value>Su departamento exige un segundo paso de verificación para firmar. Inténtelo de nuevo y complételo.</value>
+  </data>
+  <data name="AcknowledgeOutcomeAlreadyAcknowledged" xml:space="preserve">
+    <value>Ya confirmó esta versión.</value>
+  </data>
+  <data name="AcknowledgeOutcomeInvalidRequest" xml:space="preserve">
+    <value>No se pudo registrar la confirmación.</value>
+  </data>
+  <data name="ActionsLabel" xml:space="preserve">
+    <value>Acciones</value>
+  </data>
+  <data name="AllGroupsOption" xml:space="preserve">
+    <value>Todos los grupos</value>
+  </data>
+  <data name="AllProtocolsOption" xml:space="preserve">
+    <value>Todos los protocolos (resumen)</value>
+  </data>
+  <data name="AssignedLabel" xml:space="preserve">
+    <value>Asignados</value>
+  </data>
+  <data name="AvailableLabel" xml:space="preserve">
+    <value>Disponible</value>
+  </data>
+  <data name="BankQuizzesLabel" xml:space="preserve">
+    <value>Cuestionarios de confirmación desde bancos de preguntas</value>
+  </data>
+  <data name="BulkUploadButton" xml:space="preserve">
+    <value>Subir como borradores</value>
+  </data>
+  <data name="BulkUploadCreatedDraft" xml:space="preserve">
+    <value>Borrador creado</value>
+  </data>
+  <data name="BulkUploadDuplicate" xml:space="preserve">
+    <value>El mismo archivo se subió dos veces</value>
+  </data>
+  <data name="BulkUploadFilesHelp" xml:space="preserve">
+    <value>Archivos PDF y Word (DOCX), o un zip con ellos, hasta {0} archivos. Un nombre como "SOG-204 Mayday.pdf" aporta el número y el título.</value>
+  </data>
+  <data name="BulkUploadFilesLabel" xml:space="preserve">
+    <value>Archivos</value>
+  </data>
+  <data name="BulkUploadIntro" xml:space="preserve">
+    <value>Incorpore de una vez una carpeta de procedimientos y políticas. Cada archivo se convierte en un borrador para una única revisión y publicación.</value>
+  </data>
+  <data name="BulkUploadNoFiles" xml:space="preserve">
+    <value>Elija al menos un archivo PDF, DOCX o zip.</value>
+  </data>
+  <data name="BulkUploadResultSummary" xml:space="preserve">
+    <value>{0} de {1} archivos se convirtieron en borradores de protocolo.</value>
+  </data>
+  <data name="BulkUploadTab" xml:space="preserve">
+    <value>Carga masiva</value>
+  </data>
+  <data name="BulletinApprovalLabel" xml:space="preserve">
+    <value>Aprobación</value>
+  </data>
+  <data name="BulletinAudienceHelp" xml:space="preserve">
+    <value>Si no elige grupo ni rol, el aviso se envía a todo el departamento.</value>
+  </data>
+  <data name="BulletinAwaitingApproval" xml:space="preserve">
+    <value>Pendiente de refrendo</value>
+  </data>
+  <data name="BulletinContentHelp" xml:space="preserve">
+    <value>Sea breve: hasta {0} caracteres. Una directiva más larga corresponde a un protocolo.</value>
+  </data>
+  <data name="BulletinContentLabel" xml:space="preserve">
+    <value>Texto del aviso</value>
+  </data>
+  <data name="BulletinCountersignedBy" xml:space="preserve">
+    <value>Refrendado por {0}</value>
+  </data>
+  <data name="BulletinCountersignedMessage" xml:space="preserve">
+    <value>El aviso está refrendado.</value>
+  </data>
+  <data name="BulletinExpiredLabel" xml:space="preserve">
+    <value>Caducado</value>
+  </data>
+  <data name="BulletinExpiresHelp" xml:space="preserve">
+    <value>Sale de la biblioteca sola a esta hora; como máximo {0} días después.</value>
+  </data>
+  <data name="BulletinExpiresLabel" xml:space="preserve">
+    <value>Caduca</value>
+  </data>
+  <data name="BulletinInvalidMessage" xml:space="preserve">
+    <value>Revise el título, el texto y la caducidad (en el futuro y dentro de los días permitidos).</value>
+  </data>
+  <data name="BulletinIssuedBy" xml:space="preserve">
+    <value>Emitido por {0} el {1}</value>
+  </data>
+  <data name="BulletinIssuedMessage" xml:space="preserve">
+    <value>El aviso está vigente y se ha enviado.</value>
+  </data>
+  <data name="BulletinMustReadLabel" xml:space="preserve">
+    <value>Lectura obligatoria: cada miembro del público debe confirmarlo</value>
+  </data>
+  <data name="BulletinTitleLabel" xml:space="preserve">
+    <value>Título</value>
+  </data>
+  <data name="BulletinWithdrawReasonLabel" xml:space="preserve">
+    <value>Motivo</value>
+  </data>
+  <data name="BulletinWithdrawnLabel" xml:space="preserve">
+    <value>Retirado</value>
+  </data>
+  <data name="BulletinWithdrawnMessage" xml:space="preserve">
+    <value>El aviso se ha retirado.</value>
+  </data>
+  <data name="BulletinsIntro" xml:space="preserve">
+    <value>Avisos de seguridad y directivas provisionales que no pueden esperar a un ciclo de revisión. Entran en vigor al momento y se aprueban después.</value>
+  </data>
+  <data name="BulletinsListHeader" xml:space="preserve">
+    <value>Avisos</value>
+  </data>
+  <data name="BulletinsTab" xml:space="preserve">
+    <value>Avisos</value>
+  </data>
+  <data name="ComingWithCoursesLabel" xml:space="preserve">
+    <value>Llega con los cursos del LMS</value>
+  </data>
+  <data name="ComplianceHeader" xml:space="preserve">
+    <value>Cumplimiento de confirmaciones de protocolos</value>
+  </data>
+  <data name="ComplianceIntro" xml:space="preserve">
+    <value>Quién ha leído y firmado cada versión de protocolo, por grupo.</value>
+  </data>
+  <data name="ComplianceTab" xml:space="preserve">
+    <value>Cumplimiento</value>
+  </data>
+  <data name="CountersignButton" xml:space="preserve">
+    <value>Refrendar</value>
+  </data>
+  <data name="CurrentDocumentLabel" xml:space="preserve">
+    <value>Vigente: {0} (versión {1})</value>
+  </data>
+  <data name="DocumentFileHelp" xml:space="preserve">
+    <value>PDF o Word (DOCX), hasta 30 MB.</value>
+  </data>
+  <data name="DocumentFileLabel" xml:space="preserve">
+    <value>Archivo</value>
+  </data>
+  <data name="DocumentMissingNotice" xml:space="preserve">
+    <value>Esta versión no tiene archivo.</value>
+  </data>
+  <data name="DocumentProtocolCreatedMessage" xml:space="preserve">
+    <value>El protocolo se creó como borrador a partir del archivo.</value>
+  </data>
+  <data name="DocumentTitleHelp" xml:space="preserve">
+    <value>Vacío toma el título del nombre del archivo.</value>
+  </data>
+  <data name="DocumentTitleLabel" xml:space="preserve">
+    <value>Título</value>
+  </data>
+  <data name="DocumentVersionUploadedMessage" xml:space="preserve">
+    <value>El archivo es el contenido de la nueva versión borrador.</value>
+  </data>
+  <data name="DocxNoViewerNotice" xml:space="preserve">
+    <value>Los archivos Word se abren en Word. Descárguelo o lea el texto de abajo.</value>
+  </data>
+  <data name="DownloadDocumentButton" xml:space="preserve">
+    <value>Descargar</value>
+  </data>
+  <data name="DueLabel" xml:space="preserve">
+    <value>Vence</value>
+  </data>
+  <data name="ExportCsvButton" xml:space="preserve">
+    <value>Exportar CSV</value>
+  </data>
+  <data name="ExportPdfButton" xml:space="preserve">
+    <value>Exportar PDF</value>
+  </data>
+  <data name="ExtractedTextHeader" xml:space="preserve">
+    <value>Texto del documento</value>
+  </data>
+  <data name="ExtractedTextNone_encrypted" xml:space="preserve">
+    <value>El documento está protegido y no se pudo leer su texto.</value>
+  </data>
+  <data name="ExtractedTextNone_scanned" xml:space="preserve">
+    <value>El documento no tiene capa de texto (parece escaneado).</value>
+  </data>
+  <data name="ExtractedTextNone_too_large" xml:space="preserve">
+    <value>El documento es demasiado grande para leer su texto.</value>
+  </data>
+  <data name="ExtractedTextNone_unsupported" xml:space="preserve">
+    <value>No se puede leer texto de este tipo de archivo.</value>
+  </data>
+  <data name="ExtractedTextNone_unreadable" xml:space="preserve">
+    <value>No se pudo leer el texto del documento.</value>
+  </data>
+  <data name="ExtractedTextNone_timeout" xml:space="preserve">
+    <value>La lectura del texto tardó demasiado y se detuvo.</value>
+  </data>
+  <data name="ExtractedTextPending" xml:space="preserve">
+    <value>Se está leyendo el texto; aparecerá aquí en breve.</value>
+  </data>
+  <data name="FoldersAsCategoriesLabel" xml:space="preserve">
+    <value>Las carpetas de un zip se convierten en categorías</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Grupo</value>
+  </data>
+  <data name="HideCompletedButton" xml:space="preserve">
+    <value>Ocultar confirmados</value>
+  </data>
+  <data name="ImportCreatedListHeader" xml:space="preserve">
+    <value>Creados como borradores</value>
+  </data>
+  <data name="ImportPreviewButton" xml:space="preserve">
+    <value>Vista previa</value>
+  </data>
+  <data name="ImportPreviewListHeader" xml:space="preserve">
+    <value>Se crearían como borradores</value>
+  </data>
+  <data name="ImportPreviewMessage" xml:space="preserve">
+    <value>Vista previa de {1}: se crearían {0} protocolos como borradores. No se guardó nada.</value>
+  </data>
+  <data name="IssueBulletinButton" xml:space="preserve">
+    <value>Emitir aviso</value>
+  </data>
+  <data name="IssueBulletinConfirm" xml:space="preserve">
+    <value>¿Emitir ahora este aviso y enviarlo al público?</value>
+  </data>
+  <data name="IssueBulletinHeader" xml:space="preserve">
+    <value>Nuevo aviso prioritario</value>
+  </data>
+  <data name="IssueBulletinHelp" xml:space="preserve">
+    <value>El aviso entra en vigor al momento y se envía por notificación. La aprobación viene después: un aprobador lo refrenda o lo retira.</value>
+  </data>
+  <data name="KindBulletin" xml:space="preserve">
+    <value>Aviso prioritario</value>
+  </data>
+  <data name="LifecycleErrorFileRequired" xml:space="preserve">
+    <value>Suba primero el documento.</value>
+  </data>
+  <data name="LifecycleErrorFileTypeNotAllowed" xml:space="preserve">
+    <value>Solo los archivos PDF y Word (DOCX) pueden ser el contenido de un protocolo.</value>
+  </data>
+  <data name="LifecycleErrorFileTooLarge" xml:space="preserve">
+    <value>El archivo supera los 30 MB.</value>
+  </data>
+  <data name="LmsAcknowledgmentExtrasHeader" xml:space="preserve">
+    <value>Con el complemento LMS</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Miembro</value>
+  </data>
+  <data name="MicroLearningLabel" xml:space="preserve">
+    <value>Preguntas semanales de escenario de protocolos seleccionados</value>
+  </data>
+  <data name="MoveCategoryToProtocolsLabel" xml:space="preserve">
+    <value>Mover esta categoría a Protocolos como</value>
+  </data>
+  <data name="MoveDocumentFailedError" xml:space="preserve">
+    <value>No se pudo mover el documento a Protocolos. Solo es posible con archivos PDF y Word (DOCX) de hasta 30 MB.</value>
+  </data>
+  <data name="MoveProtectedDocumentError" xml:space="preserve">
+    <value>Un documento protegido permanece en Documentos.</value>
+  </data>
+  <data name="MoveToProtocolsButton" xml:space="preserve">
+    <value>Mover a Protocolos</value>
+  </data>
+  <data name="MoveToProtocolsConfirm" xml:space="preserve">
+    <value>¿Mover a Protocolos? Se convierte en un borrador de protocolo para revisión y el enlace anterior abre el protocolo.</value>
+  </data>
+  <data name="MovedCategoryMessage" xml:space="preserve">
+    <value>Movidos a Protocolos: {0}.</value>
+  </data>
+  <data name="MustReadHeader" xml:space="preserve">
+    <value>Lectura obligatoria</value>
+  </data>
+  <data name="MyAcknowledgmentsIntro" xml:space="preserve">
+    <value>Protocolos y avisos que se le pide leer y firmar.</value>
+  </data>
+  <data name="MyAcknowledgmentsTab" xml:space="preserve">
+    <value>Mis confirmaciones</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="NewDocumentProtocolHeader" xml:space="preserve">
+    <value>Nuevo protocolo desde un documento</value>
+  </data>
+  <data name="NewDocumentProtocolIntro" xml:space="preserve">
+    <value>Suba un archivo PDF o Word. Se convierte en el contenido del protocolo, con la misma revisión, publicación y confirmación.</value>
+  </data>
+  <data name="NoAcknowledgmentVersion" xml:space="preserve">
+    <value>Ninguna versión publicada de este protocolo requiere confirmación.</value>
+  </data>
+  <data name="NoAcknowledgmentsYet" xml:space="preserve">
+    <value>Aún no hay confirmaciones.</value>
+  </data>
+  <data name="NoBulletins" xml:space="preserve">
+    <value>Aún no hay avisos.</value>
+  </data>
+  <data name="NoCompletedAcknowledgments" xml:space="preserve">
+    <value>Aún no ha confirmado nada.</value>
+  </data>
+  <data name="NothingToAcknowledge" xml:space="preserve">
+    <value>No tiene nada que confirmar.</value>
+  </data>
+  <data name="OpenDocumentButton" xml:space="preserve">
+    <value>Abrir en una pestaña nueva</value>
+  </data>
+  <data name="OverdueLabel" xml:space="preserve">
+    <value>Vencidos</value>
+  </data>
+  <data name="PageNumberLabel" xml:space="preserve">
+    <value>Página {0}</value>
+  </data>
+  <data name="ReadAndSignButton" xml:space="preserve">
+    <value>Leer y firmar</value>
+  </data>
+  <data name="ReadAndSignHeader" xml:space="preserve">
+    <value>Confirmar</value>
+  </data>
+  <data name="ReadAndSignHelp" xml:space="preserve">
+    <value>La firma registra su nombre, la hora y esta versión exacta.</value>
+  </data>
+  <data name="ReadAndSignStatement" xml:space="preserve">
+    <value>He leído el protocolo {0} "{1}" versión {2} (contenido {3}), lo entiendo y lo seguiré.</value>
+  </data>
+  <data name="ReadBulletinButton" xml:space="preserve">
+    <value>Leer</value>
+  </data>
+  <data name="RequiresAcknowledgmentLabel" xml:space="preserve">
+    <value>Los miembros deben leerlo y firmarlo</value>
+  </data>
+  <data name="ResultLabel" xml:space="preserve">
+    <value>Resultado</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="ShowCompletedButton" xml:space="preserve">
+    <value>Mostrar confirmados</value>
+  </data>
+  <data name="SignAcknowledgmentButton" xml:space="preserve">
+    <value>Firmar</value>
+  </data>
+  <data name="SignedLabel" xml:space="preserve">
+    <value>Firmado</value>
+  </data>
+  <data name="StandardsReportButton" xml:space="preserve">
+    <value>Prueba de cumplimiento</value>
+  </data>
+  <data name="StandardsReportEmpty" xml:space="preserve">
+    <value>Aún no hay protocolos etiquetados con una norma. Añada normas en los ajustes de confirmación de un protocolo.</value>
+  </data>
+  <data name="StandardsReportIntro" xml:space="preserve">
+    <value>Protocolos por norma (CFAI, CAAS, CALEA, NFPA, ISO 45001 y las suyas), con evidencia de confirmación y aprobación.</value>
+  </data>
+  <data name="StandardsReportLmsOnly" xml:space="preserve">
+    <value>El informe de prueba de cumplimiento se incluye con el complemento LMS.</value>
+  </data>
+  <data name="StandardsTagsHelp" xml:space="preserve">
+    <value>Separadas por comas, por ejemplo CFAI, CALEA.</value>
+  </data>
+  <data name="StandardsTagsLabel" xml:space="preserve">
+    <value>Normas</value>
+  </data>
+  <data name="StandardsTagsLmsOnly" xml:space="preserve">
+    <value>La asignación de normas se incluye con el complemento LMS.</value>
+  </data>
+  <data name="StateLabel" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="TakeQuizButton" xml:space="preserve">
+    <value>Hacer el cuestionario</value>
+  </data>
+  <data name="UploadBlockedByReview" xml:space="preserve">
+    <value>Una versión de este protocolo está en revisión. Retírela o termine su revisión antes de subir un archivo nuevo.</value>
+  </data>
+  <data name="UploadDocumentButton" xml:space="preserve">
+    <value>Subir</value>
+  </data>
+  <data name="UploadNewVersionButton" xml:space="preserve">
+    <value>Subir nueva versión</value>
+  </data>
+  <data name="UploadNewVersionHelp" xml:space="preserve">
+    <value>El archivo pasa a ser el contenido de la próxima versión, un borrador para revisar y publicar. Hasta entonces sigue la versión vigente.</value>
+  </data>
+  <data name="VerifiedApprovalsLabel" xml:space="preserve">
+    <value>{0} aprobaciones verificadas</value>
+  </data>
+  <data name="WithdrawBulletinButton" xml:space="preserve">
+    <value>Retirar</value>
+  </data>
+  <data name="WithdrawBulletinConfirm" xml:space="preserve">
+    <value>¿Retirar este aviso? Deja de estar vigente ahora.</value>
+  </data>
+  <data name="WizardProtocolsFileHelp" xml:space="preserve">
+    <value>Un archivo exportado de una biblioteca de protocolos de Resgrid (formato resgrid-protocols, versión 1), hasta 10 MB y 500 protocolos.</value>
+  </data>
+  <data name="WizardProtocolsHelp" xml:space="preserve">
+    <value>Traiga protocolos en el formato abierto de intercambio. Primero la vista previa; la importación crea borradores para una única revisión y publicación. No se publica nada.</value>
+  </data>
+  <data name="BlockLabelCaution" xml:space="preserve">
+    <value>Precaución</value>
+  </data>
+  <data name="BlockLabelWarning" xml:space="preserve">
+    <value>Advertencia</value>
+  </data>
+  <data name="BlockLabelContactMedicalControl" xml:space="preserve">
+    <value>Contactar con el control médico</value>
+  </data>
+  <data name="BlockLabelContact" xml:space="preserve">
+    <value>Contacto</value>
+  </data>
+  <data name="BlockLabelScopeOfPractice" xml:space="preserve">
+    <value>Ámbito de práctica</value>
+  </data>
+  <data name="BlockLabelMedication" xml:space="preserve">
+    <value>Medicamento</value>
+  </data>
+  <data name="BlockLabelIndication" xml:space="preserve">
+    <value>Indicación</value>
+  </data>
+  <data name="BlockLabelConcentration" xml:space="preserve">
+    <value>Concentración</value>
+  </data>
+  <data name="BlockLabelDosePerKg" xml:space="preserve">
+    <value>Dosis por kg</value>
+  </data>
+  <data name="BlockLabelMaxSingleDose" xml:space="preserve">
+    <value>Dosis única máxima</value>
+  </data>
+  <data name="BlockLabelMaxTotalDose" xml:space="preserve">
+    <value>Dosis total máxima</value>
+  </data>
+  <data name="BlockLabelRoute" xml:space="preserve">
+    <value>Vía de administración</value>
+  </data>
+  <data name="BlockLabelRepeatInterval" xml:space="preserve">
+    <value>Intervalo de repetición</value>
+  </data>
+  <data name="BlockLabelInventoryItem" xml:space="preserve">
+    <value>Artículo de inventario</value>
+  </data>
+  <data name="BlockLabelDoseAsAuthored" xml:space="preserve">
+    <value>Las dosis se muestran tal como se redactaron. No se calcula nada.</value>
+  </data>
+  <data name="BlockLabelVideo" xml:space="preserve">
+    <value>Enlace de vídeo</value>
+  </data>
+  <data name="BlockLabelAttachment" xml:space="preserve">
+    <value>Archivo adjunto</value>
+  </data>
+  <data name="BlockLabelLinkProtocol" xml:space="preserve">
+    <value>Protocolo relacionado</value>
+  </data>
+  <data name="BlockLabelLinkPoi" xml:space="preserve">
+    <value>Punto de interés</value>
+  </data>
+  <data name="BlockLabelLinkInventory" xml:space="preserve">
+    <value>Artículo de inventario vinculado</value>
+  </data>
+  <data name="BlockLabelLinkChecklist" xml:space="preserve">
+    <value>Lista de comprobación relacionada</value>
+  </data>
+  <data name="BlockLabelLinkTraining" xml:space="preserve">
+    <value>Formación relacionada</value>
+  </data>
+  <data name="BlockLabelLinkUrl" xml:space="preserve">
+    <value>Página web</value>
+  </data>
+  <data name="BlockTypeHeading" xml:space="preserve">
+    <value>Encabezado</value>
+  </data>
+  <data name="BlockTypeParagraph" xml:space="preserve">
+    <value>Párrafo</value>
+  </data>
+  <data name="BlockTypeSteps" xml:space="preserve">
+    <value>Pasos ordenados</value>
+  </data>
+  <data name="BlockTypeCaution" xml:space="preserve">
+    <value>Precaución</value>
+  </data>
+  <data name="BlockTypeWarning" xml:space="preserve">
+    <value>Advertencia</value>
+  </data>
+  <data name="BlockTypeGate" xml:space="preserve">
+    <value>Contactar con el control médico</value>
+  </data>
+  <data name="BlockTypeTable" xml:space="preserve">
+    <value>Tabla</value>
+  </data>
+  <data name="BlockTypeImage" xml:space="preserve">
+    <value>Imagen</value>
+  </data>
+  <data name="BlockTypeVideo" xml:space="preserve">
+    <value>Enlace de vídeo</value>
+  </data>
+  <data name="BlockTypeAttachment" xml:space="preserve">
+    <value>Adjunto</value>
+  </data>
+  <data name="BlockTypeLink" xml:space="preserve">
+    <value>Enlace</value>
+  </data>
+  <data name="BlockTypeMedication" xml:space="preserve">
+    <value>Medicamento</value>
+  </data>
+  <data name="BlockTypeVariants" xml:space="preserve">
+    <value>Variantes adulto / pediátrico</value>
+  </data>
+  <data name="BlockTypeHtml" xml:space="preserve">
+    <value>Texto enriquecido</value>
+  </data>
+  <data name="BlockMoveUp" xml:space="preserve">
+    <value>Subir</value>
+  </data>
+  <data name="BlockMoveDown" xml:space="preserve">
+    <value>Bajar</value>
+  </data>
+  <data name="BlockRemove" xml:space="preserve">
+    <value>Quitar bloque</value>
+  </data>
+  <data name="BlockAddStep" xml:space="preserve">
+    <value>Añadir paso</value>
+  </data>
+  <data name="BlockRemoveStep" xml:space="preserve">
+    <value>Quitar paso</value>
+  </data>
+  <data name="BlockAddRow" xml:space="preserve">
+    <value>Añadir fila</value>
+  </data>
+  <data name="BlockAddColumn" xml:space="preserve">
+    <value>Añadir columna</value>
+  </data>
+  <data name="BlockRemoveRow" xml:space="preserve">
+    <value>Quitar la última fila</value>
+  </data>
+  <data name="BlockRemoveColumn" xml:space="preserve">
+    <value>Quitar la última columna</value>
+  </data>
+  <data name="BlockAddVariant" xml:space="preserve">
+    <value>Añadir variante</value>
+  </data>
+  <data name="BlockRemoveVariant" xml:space="preserve">
+    <value>Quitar variante</value>
+  </data>
+  <data name="BlockAddBlock" xml:space="preserve">
+    <value>Añadir un bloque</value>
+  </data>
+  <data name="BlockEditorEmpty" xml:space="preserve">
+    <value>Aún no hay bloques. Añada abajo un encabezado, pasos o un medicamento.</value>
+  </data>
+  <data name="BlockSelectNone" xml:space="preserve">
+    <value>Ninguno seleccionado</value>
+  </data>
+  <data name="BlockPreviewFailed" xml:space="preserve">
+    <value>No se pudo cargar la vista previa.</value>
+  </data>
+  <data name="BlockFieldText" xml:space="preserve">
+    <value>Texto del encabezado</value>
+  </data>
+  <data name="BlockFieldLevel" xml:space="preserve">
+    <value>Nivel del encabezado</value>
+  </data>
+  <data name="BlockFieldTitle" xml:space="preserve">
+    <value>Título (opcional)</value>
+  </data>
+  <data name="BlockFieldBody" xml:space="preserve">
+    <value>Texto</value>
+  </data>
+  <data name="BlockFieldStep" xml:space="preserve">
+    <value>Paso</value>
+  </data>
+  <data name="BlockFieldContact" xml:space="preserve">
+    <value>A quién y cómo contactar</value>
+  </data>
+  <data name="BlockFieldCaption" xml:space="preserve">
+    <value>Leyenda</value>
+  </data>
+  <data name="BlockFieldHeaderRow" xml:space="preserve">
+    <value>La primera fila es un encabezado</value>
+  </data>
+  <data name="BlockFieldCell" xml:space="preserve">
+    <value>Celda</value>
+  </data>
+  <data name="BlockFieldUrl" xml:space="preserve">
+    <value>Dirección web (https)</value>
+  </data>
+  <data name="BlockFieldAttachment" xml:space="preserve">
+    <value>Adjunto del protocolo</value>
+  </data>
+  <data name="BlockFieldAlt" xml:space="preserve">
+    <value>Descripción para lectores de pantalla</value>
+  </data>
+  <data name="BlockFieldLabel" xml:space="preserve">
+    <value>Texto del enlace</value>
+  </data>
+  <data name="BlockFieldLinkKind" xml:space="preserve">
+    <value>Enlazar con</value>
+  </data>
+  <data name="BlockFieldLinkTarget" xml:space="preserve">
+    <value>Elemento vinculado</value>
+  </data>
+  <data name="BlockFieldLinkId" xml:space="preserve">
+    <value>Número o identificador del elemento</value>
+  </data>
+  <data name="BlockFieldScopes" xml:space="preserve">
+    <value>Ámbito de práctica (tipos de certificación)</value>
+  </data>
+  <data name="BlockFieldVariantLabel" xml:space="preserve">
+    <value>Nombre de la variante</value>
+  </data>
+  <data name="BlockFieldDrug" xml:space="preserve">
+    <value>Fármaco</value>
+  </data>
+  <data name="BlockFieldInventoryItemId" xml:space="preserve">
+    <value>Identificador del artículo de inventario</value>
+  </data>
+  <data name="BlockFieldInventoryItemName" xml:space="preserve">
+    <value>Nombre del artículo de inventario</value>
+  </data>
+  <data name="BlockFieldNotes" xml:space="preserve">
+    <value>Notas</value>
+  </data>
+  <data name="BlockLevel2" xml:space="preserve">
+    <value>Sección</value>
+  </data>
+  <data name="BlockLevel3" xml:space="preserve">
+    <value>Subsección</value>
+  </data>
+  <data name="BlockLevel4" xml:space="preserve">
+    <value>Encabezado menor</value>
+  </data>
+  <data name="BlockAdultLabel" xml:space="preserve">
+    <value>Adulto</value>
+  </data>
+  <data name="BlockPediatricLabel" xml:space="preserve">
+    <value>Pediátrico</value>
+  </data>
+  <data name="BlockDoseNoticeEditor" xml:space="preserve">
+    <value>Las dosis se muestran exactamente como se escriben aquí. Resgrid nunca calcula una dosis; el enlace a la herramienta de dosificación del departamento aparece con cada medicamento.</value>
+  </data>
+  <data name="RichBold" xml:space="preserve">
+    <value>Negrita</value>
+  </data>
+  <data name="RichItalic" xml:space="preserve">
+    <value>Cursiva</value>
+  </data>
+  <data name="RichBullets" xml:space="preserve">
+    <value>Lista con viñetas</value>
+  </data>
+  <data name="RichNumbers" xml:space="preserve">
+    <value>Lista numerada</value>
+  </data>
+  <data name="BlockEditorHelp" xml:space="preserve">
+    <value>Construya el protocolo con bloques: los encabezados forman el esquema, los pasos ordenados y los puntos de contacto con el control médico se pueden seguir paso a paso en un incidente, y cada bloque tiene un ancla estable para comentarios de revisión y citas de IA.</value>
+  </data>
+  <data name="BlockEditorNeedsScript" xml:space="preserve">
+    <value>El editor de bloques necesita JavaScript. Actívelo para editar este borrador.</value>
+  </data>
+  <data name="BlockPreviewButton" xml:space="preserve">
+    <value>Actualizar vista previa</value>
+  </data>
+  <data name="BlockPreviewHeader" xml:space="preserve">
+    <value>Vista previa tal como la leerán los miembros</value>
+  </data>
+  <data name="BlockPreviewHelp" xml:space="preserve">
+    <value>Seleccione Actualizar vista previa para ver los bloques exactamente como los leerán los miembros.</value>
+  </data>
+  <data name="ConvertToBlocksCallout" xml:space="preserve">
+    <value>Este borrador es texto enriquecido. Conviértalo en bloques para añadir pasos, precauciones, medicamentos y otro contenido estructurado; las versiones publicadas no cambian.</value>
+  </data>
+  <data name="ConvertToBlocksButton" xml:space="preserve">
+    <value>Convertir en bloques</value>
+  </data>
+  <data name="ConvertToBlocksConfirm" xml:space="preserve">
+    <value>¿Convertir el texto de este borrador en bloques? Las versiones publicadas no cambian.</value>
+  </data>
+  <data name="ConvertedToBlocksMessage" xml:space="preserve">
+    <value>El borrador se convirtió en bloques.</value>
+  </data>
+  <data name="DosingToolLinkText" xml:space="preserve">
+    <value>Abrir la herramienta de dosificación del departamento</value>
+  </data>
+  <data name="StepThroughHeader" xml:space="preserve">
+    <value>Paso a paso</value>
+  </data>
+  <data name="StepThroughSubtitle" xml:space="preserve">
+    <value>Incidente {0} · {1}</value>
+  </data>
+  <data name="StepProgressLabel" xml:space="preserve">
+    <value>Pasos hechos</value>
+  </data>
+  <data name="StepProgressFormat" xml:space="preserve">
+    <value>{0} de {1}</value>
+  </data>
+  <data name="StepStartedLabel" xml:space="preserve">
+    <value>Iniciado</value>
+  </data>
+  <data name="StepNotStarted" xml:space="preserve">
+    <value>Sin iniciar</value>
+  </data>
+  <data name="CitedVersionColumn" xml:space="preserve">
+    <value>Versión usada</value>
+  </data>
+  <data name="StepsCompletedBy" xml:space="preserve">
+    <value>Terminado por {0} el {1}.</value>
+  </data>
+  <data name="StepsHeader" xml:space="preserve">
+    <value>Pasos</value>
+  </data>
+  <data name="StepStateDone" xml:space="preserve">
+    <value>Hecho</value>
+  </data>
+  <data name="StepStateSkipped" xml:space="preserve">
+    <value>Omitido</value>
+  </data>
+  <data name="StepStateNotApplicable" xml:space="preserve">
+    <value>No aplica</value>
+  </data>
+  <data name="StepStatePending" xml:space="preserve">
+    <value>Aún sin hacer</value>
+  </data>
+  <data name="StepMarkDone" xml:space="preserve">
+    <value>Hecho</value>
+  </data>
+  <data name="StepMarkSkipped" xml:space="preserve">
+    <value>Omitir</value>
+  </data>
+  <data name="StepMarkNotApplicable" xml:space="preserve">
+    <value>No aplica</value>
+  </data>
+  <data name="StepMarkPending" xml:space="preserve">
+    <value>Deshacer</value>
+  </data>
+  <data name="BackToCallButton" xml:space="preserve">
+    <value>Volver al incidente</value>
+  </data>
+  <data name="CompleteStepsButton" xml:space="preserve">
+    <value>Terminar la lista</value>
+  </data>
+  <data name="CompleteStepsConfirm" xml:space="preserve">
+    <value>¿Terminar esta lista? Los pasos no hechos quedan registrados como no hechos.</value>
+  </data>
+  <data name="StepSaveFailed" xml:space="preserve">
+    <value>No se pudo guardar el paso. Inténtelo de nuevo.</value>
+  </data>
+  <data name="StepsCompletedMessage" xml:space="preserve">
+    <value>La lista se terminó.</value>
+  </data>
+  <data name="StepsCompletedLabel" xml:space="preserve">
+    <value>Terminada</value>
+  </data>
+  <data name="SopChecklistsHeader" xml:space="preserve">
+    <value>Paso a paso y listas de PNO</value>
+  </data>
+  <data name="IncidentSopLabel" xml:space="preserve">
+    <value>PNO de incidente</value>
+  </data>
+  <data name="StartSopLabel" xml:space="preserve">
+    <value>Iniciar una lista de PNO</value>
+  </data>
+  <data name="StartSopButton" xml:space="preserve">
+    <value>Iniciar lista</value>
+  </data>
+  <data name="StepErrorNotFound" xml:space="preserve">
+    <value>Ese protocolo no está en este incidente.</value>
+  </data>
+  <data name="StepErrorNotAuthorized" xml:space="preserve">
+    <value>No puede cambiar esta lista.</value>
+  </data>
+  <data name="StepErrorNoSteps" xml:space="preserve">
+    <value>Este protocolo no tiene pasos que seguir.</value>
+  </data>
+  <data name="StepErrorUnknownStep" xml:space="preserve">
+    <value>Ese paso no está en la versión que usa este incidente.</value>
+  </data>
+  <data name="StepErrorCompleted" xml:space="preserve">
+    <value>Esta lista está terminada.</value>
+  </data>
+  <data name="StepErrorConflict" xml:space="preserve">
+    <value>Otra persona estaba guardando en ese momento. Inténtelo de nuevo.</value>
+  </data>
+  <data name="StepErrorNotAttachable" xml:space="preserve">
+    <value>Este protocolo no se puede añadir al incidente (está desactivado, eliminado o se quitó del incidente).</value>
+  </data>
+  <data name="QrCodeHeader" xml:space="preserve">
+    <value>Cartel con código QR</value>
+  </data>
+  <data name="QrCodeButton" xml:space="preserve">
+    <value>Código QR</value>
+  </data>
+  <data name="QrCodeAlt" xml:space="preserve">
+    <value>Código QR de {0}</value>
+  </data>
+  <data name="QrCodeUnavailable" xml:space="preserve">
+    <value>No se pudo generar el código QR.</value>
+  </data>
+  <data name="QrCodeHelp" xml:space="preserve">
+    <value>Imprima este cartel para un vehículo o la pared de una estación. Al escanearlo se abre la versión vigente para los miembros que pueden leer el protocolo.</value>
+  </data>
+  <data name="DeepLinkLabel" xml:space="preserve">
+    <value>Enlace directo</value>
+  </data>
+  <data name="PrintViewButton" xml:space="preserve">
+    <value>Vista de impresión</value>
+  </data>
+  <data name="BookTab" xml:space="preserve">
+    <value>Libro PDF</value>
+  </data>
+  <data name="BookHeader" xml:space="preserve">
+    <value>Libro PDF de protocolos</value>
+  </data>
+  <data name="BookHelp" xml:space="preserve">
+    <value>Descargue toda la biblioteca o una categoría (con sus subcategorías) en un solo PDF: un índice y cada protocolo vigente con su versión, fecha de vigencia y aprobador. Solo se incluyen los protocolos que puede leer.</value>
+  </data>
+  <data name="BookReadableCount" xml:space="preserve">
+    <value>Protocolos que puede leer</value>
+  </data>
+  <data name="BookSealingLabel" xml:space="preserve">
+    <value>Sello electrónico</value>
+  </data>
+  <data name="BookSealingReady" xml:space="preserve">
+    <value>Sellado (L3)</value>
+  </data>
+  <data name="BookSealingPending" xml:space="preserve">
+    <value>Sin sellar, sellado pendiente</value>
+  </data>
+  <data name="BookUnsealedNotice" xml:space="preserve">
+    <value>El sellado no está configurado, así que el PDF no se sella. La exportación queda registrada como sellado pendiente y se sella cuando se configure.</value>
+  </data>
+  <data name="BookWholeLibrary" xml:space="preserve">
+    <value>Toda la biblioteca</value>
+  </data>
+  <data name="BookDownloadButton" xml:space="preserve">
+    <value>Descargar PDF</value>
+  </data>
+  <data name="BookLibraryTitle" xml:space="preserve">
+    <value>Biblioteca de protocolos</value>
+  </data>
+  <data name="BookContents" xml:space="preserve">
+    <value>Índice</value>
+  </data>
+  <data name="BookVersion" xml:space="preserve">
+    <value>Versión</value>
+  </data>
+  <data name="BookEffective" xml:space="preserve">
+    <value>Vigente desde</value>
+  </data>
+  <data name="BookApprovedBy" xml:space="preserve">
+    <value>Aprobado por</value>
+  </data>
+  <data name="BookContent" xml:space="preserve">
+    <value>Contenido</value>
+  </data>
+  <data name="BookGenerated" xml:space="preserve">
+    <value>Generado</value>
+  </data>
+  <data name="BookDocumentBacked" xml:space="preserve">
+    <value>Este protocolo es un documento; ábralo en Resgrid para leer el archivo.</value>
+  </data>
+  <data name="BookEmpty" xml:space="preserve">
+    <value>No hay protocolos publicados.</value>
+  </data>
+  <data name="BookUncategorized" xml:space="preserve">
+    <value>Sin categoría</value>
+  </data>
+  <data name="BookFailed" xml:space="preserve">
+    <value>No se pudo generar el libro PDF.</value>
+  </data>
+  <data name="TranslationsButton" xml:space="preserve">
+    <value>Traducciones</value>
+  </data>
+  <data name="TranslationsHeader" xml:space="preserve">
+    <value>Traducciones del contenido</value>
+  </data>
+  <data name="TranslationHeader" xml:space="preserve">
+    <value>Traducción: {0}</value>
+  </data>
+  <data name="TranslationsSourceCallout" xml:space="preserve">
+    <value>Esta versión está escrita en {0}. Cada traducción se aprueba por separado; la versión, su hash y sus firmas nunca cambian.</value>
+  </data>
+  <data name="NoTranslations" xml:space="preserve">
+    <value>Aún no hay traducciones.</value>
+  </data>
+  <data name="TranslationLanguageColumn" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="TranslationUpdatedColumn" xml:space="preserve">
+    <value>Último cambio</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Acciones</value>
+  </data>
+  <data name="TranslationStatusDraft" xml:space="preserve">
+    <value>Traducción en borrador</value>
+  </data>
+  <data name="TranslationStatusApproved" xml:space="preserve">
+    <value>Traducción aprobada</value>
+  </data>
+  <data name="TranslationStatusWithdrawn" xml:space="preserve">
+    <value>Traducción retirada</value>
+  </data>
+  <data name="TranslationSourceChanged" xml:space="preserve">
+    <value>El original cambió</value>
+  </data>
+  <data name="TranslationSourceChangedNotice" xml:space="preserve">
+    <value>El contenido original cambió después de hacer esta traducción. No se puede aprobar ni se muestra a los miembros; inicie una traducción nueva de la versión actual.</value>
+  </data>
+  <data name="WithdrawTranslationButton" xml:space="preserve">
+    <value>Retirar la traducción</value>
+  </data>
+  <data name="WithdrawTranslationConfirm" xml:space="preserve">
+    <value>¿Retirar esta traducción? Los miembros que leen en este idioma verán el original.</value>
+  </data>
+  <data name="StartTranslationButton" xml:space="preserve">
+    <value>Iniciar traducción</value>
+  </data>
+  <data name="TranslationRulesCallout" xml:space="preserve">
+    <value>Solo se traduce la redacción. Las dosis, los enlaces, los adjuntos y la estructura quedan exactamente como en el original.</value>
+  </data>
+  <data name="TranslationWordingHeader" xml:space="preserve">
+    <value>Redacción traducida</value>
+  </data>
+  <data name="TranslationSourceColumn" xml:space="preserve">
+    <value>Original</value>
+  </data>
+  <data name="TranslationTranslatedColumn" xml:space="preserve">
+    <value>Traducción</value>
+  </data>
+  <data name="TranslationDosesLocked" xml:space="preserve">
+    <value>Las dosis no se traducen</value>
+  </data>
+  <data name="SaveTranslationButton" xml:space="preserve">
+    <value>Guardar traducción</value>
+  </data>
+  <data name="TranslationPreviewHeader" xml:space="preserve">
+    <value>La traducción tal como la leerán los miembros</value>
+  </data>
+  <data name="ApproveTranslationHeader" xml:space="preserve">
+    <value>Aprobar la traducción</value>
+  </data>
+  <data name="ApproveTranslationHelp" xml:space="preserve">
+    <value>La aprobación firma esta traducción en L2 (verificación adicional), vinculada al contenido de la propia traducción. La versión original no cambia.</value>
+  </data>
+  <data name="ApproveTranslationButton" xml:space="preserve">
+    <value>Aprobar con verificación adicional</value>
+  </data>
+  <data name="TranslationApprovalStatement" xml:space="preserve">
+    <value>Apruebo la traducción ({3}) del protocolo {0} «{1}» versión {2} (contenido de la traducción {4}) para los miembros que leen en ese idioma.</value>
+  </data>
+  <data name="TranslationSavedMessage" xml:space="preserve">
+    <value>Se guardó la traducción.</value>
+  </data>
+  <data name="TranslationApprovedMessage" xml:space="preserve">
+    <value>Se aprobó la traducción; ahora la ven los miembros que leen en ese idioma.</value>
+  </data>
+  <data name="TranslationWithdrawnMessage" xml:space="preserve">
+    <value>Se retiró la traducción.</value>
+  </data>
+  <data name="TranslationShownNotice" xml:space="preserve">
+    <value>Se muestra en {0} (traducción aprobada).</value>
+  </data>
+  <data name="TranslationFallbackNotice" xml:space="preserve">
+    <value>No hay traducción aprobada en su idioma, así que se muestra en el idioma del departamento.</value>
+  </data>
+  <data name="ContentLanguageLabel" xml:space="preserve">
+    <value>Idioma del contenido</value>
+  </data>
+  <data name="TranslationErrorNotFound" xml:space="preserve">
+    <value>No se encontró esa traducción o versión.</value>
+  </data>
+  <data name="TranslationErrorNotAuthorized" xml:space="preserve">
+    <value>No puede hacer eso con las traducciones.</value>
+  </data>
+  <data name="TranslationErrorSourceNotLocked" xml:space="preserve">
+    <value>Solo se puede traducir una versión enviada, aprobada o publicada.</value>
+  </data>
+  <data name="TranslationErrorInvalidLocale" xml:space="preserve">
+    <value>Elija un idioma distinto del de la versión.</value>
+  </data>
+  <data name="TranslationErrorAlreadyExists" xml:space="preserve">
+    <value>Esta versión ya tiene una traducción en ese idioma.</value>
+  </data>
+  <data name="TranslationErrorStaleCopy" xml:space="preserve">
+    <value>Otra persona guardó esta traducción después de que la abriera. Vuelva a cargar para ver sus cambios.</value>
+  </data>
+  <data name="TranslationErrorNotDraft" xml:space="preserve">
+    <value>Solo una traducción en borrador se puede cambiar o aprobar.</value>
+  </data>
+  <data name="TranslationErrorEmptyContent" xml:space="preserve">
+    <value>La traducción está vacía.</value>
+  </data>
+  <data name="TranslationErrorSignatureRequired" xml:space="preserve">
+    <value>Aprobar requiere una verificación adicional reciente.</value>
+  </data>
+  <data name="TranslationErrorPasskeyRequired" xml:space="preserve">
+    <value>Su departamento exige una clave de acceso para las aprobaciones.</value>
+  </data>
+  <data name="TranslationErrorSourceChanged" xml:space="preserve">
+    <value>El contenido original cambió después de hacer esta traducción.</value>
+  </data>
+  <data name="StaleVersionMessage" xml:space="preserve">
+    <value>Está viendo {0}. {1} está vigente desde {2}.</value>
+  </data>
+  <data name="StaleRetiredMessage" xml:space="preserve">
+    <value>Está viendo {0}. Este protocolo ya no está vigente.</value>
+  </data>
+  <data name="DefaultContentLocaleLabel" xml:space="preserve">
+    <value>Idioma en que se redactan los protocolos</value>
+  </data>
+  <data name="DefaultContentLocaleBlank" xml:space="preserve">
+    <value>Inglés (predeterminado)</value>
+  </data>
+  <data name="DefaultContentLocaleHelp" xml:space="preserve">
+    <value>Los miembros cuyo idioma no tiene una traducción aprobada de una versión la leen en este idioma, y las etiquetas de bloque como Precaución se escriben en él.</value>
+  </data>
+  <data name="BankQuizHeader" xml:space="preserve">
+    <value>Cuestionario del protocolo</value>
+  </data>
+  <data name="AckAwaitingBankQuizLabel" xml:space="preserve">
+    <value>Firmado; a la espera del cuestionario del protocolo</value>
+  </data>
+  <data name="TakeBankQuizButton" xml:space="preserve">
+    <value>Hacer el cuestionario</value>
+  </data>
+  <data name="ResumeBankQuizButton" xml:space="preserve">
+    <value>Continuar el cuestionario</value>
+  </data>
+  <data name="BankQuizRequiredNotice" xml:space="preserve">
+    <value>Su confirmación se completa cuando aprueba un cuestionario de {0} preguntas (nota mínima {1} %).</value>
+  </data>
+  <data name="BankQuizPassedNotice" xml:space="preserve">
+    <value>Cuestionario aprobado ({0} %).</value>
+  </data>
+  <data name="QuizIntro" xml:space="preserve">
+    <value>{0} preguntas, nota mínima {1} %. Sus respuestas se califican en el servidor; las respuestas correctas no se muestran.</value>
+  </data>
+  <data name="QuizChooseAll" xml:space="preserve">
+    <value>Elija todas las respuestas que correspondan.</value>
+  </data>
+  <data name="SubmitQuizButton" xml:space="preserve">
+    <value>Enviar respuestas</value>
+  </data>
+  <data name="QuizResultPassed" xml:space="preserve">
+    <value>Aprobado: {0} % ({1} de {2} correctas, nota mínima {3} %).</value>
+  </data>
+  <data name="QuizResultFailed" xml:space="preserve">
+    <value>No aprobado: {0} % ({1} de {2} correctas, nota mínima {3} %). Puede hacer un nuevo cuestionario.</value>
+  </data>
+  <data name="QuizAckCompletedMessage" xml:space="preserve">
+    <value>Su confirmación está completa.</value>
+  </data>
+  <data name="QuizError_NotAssigned" xml:space="preserve">
+    <value>No debe una confirmación de esta versión, o esta no pide un cuestionario.</value>
+  </data>
+  <data name="QuizError_NoQuestions" xml:space="preserve">
+    <value>El banco de preguntas aún no tiene preguntas para extraer. Avise a su responsable de formación.</value>
+  </data>
+  <data name="QuizError_AlreadySubmitted" xml:space="preserve">
+    <value>Este cuestionario ya está hecho.</value>
+  </data>
+  <data name="QuizError_NotAuthorized" xml:space="preserve">
+    <value>No puede hacer este cuestionario.</value>
+  </data>
+  <data name="QuizError_NotFound" xml:space="preserve">
+    <value>No se encontró el cuestionario.</value>
+  </data>
+  <data name="LearningSettingsHeader" xml:space="preserve">
+    <value>Cuestionario del banco de preguntas y microaprendizaje</value>
+  </data>
+  <data name="LearningBankLabel" xml:space="preserve">
+    <value>Banco de preguntas</value>
+  </data>
+  <data name="LearningNoBankOption" xml:space="preserve">
+    <value>Sin banco de preguntas</value>
+  </data>
+  <data name="LearningBankHelp" xml:space="preserve">
+    <value>Un banco de preguntas compartido del departamento vinculado a este protocolo (entre paréntesis, las preguntas que se pueden extraer). Los cuestionarios y el microaprendizaje semanal extraen de él preguntas de opción única, opción múltiple y verdadero/falso.</value>
+  </data>
+  <data name="LearningQuizRequiredLabel" xml:space="preserve">
+    <value>La confirmación exige aprobar un cuestionario extraído del banco</value>
+  </data>
+  <data name="LearningQuestionCountLabel" xml:space="preserve">
+    <value>Preguntas por cuestionario</value>
+  </data>
+  <data name="LearningPassMarkLabel" xml:space="preserve">
+    <value>Nota mínima (%)</value>
+  </data>
+  <data name="LearningTagsLabel" xml:space="preserve">
+    <value>Solo preguntas con las etiquetas</value>
+  </data>
+  <data name="LearningTagsHelp" xml:space="preserve">
+    <value>Opcional, separadas por comas. Déjelo vacío para extraer de todo el banco.</value>
+  </data>
+  <data name="LearningMicroLabel" xml:space="preserve">
+    <value>Incluir en el microaprendizaje semanal</value>
+  </data>
+  <data name="LearningLmsOnly" xml:space="preserve">
+    <value>Incluido en el complemento LMS.</value>
+  </data>
+  <data name="LearningSettingsError_InvalidInput" xml:space="preserve">
+    <value>Elija un banco de preguntas compartido del departamento para un cuestionario obligatorio.</value>
+  </data>
+  <data name="LearningSettingsError_NoQuestions" xml:space="preserve">
+    <value>El banco de preguntas no tiene preguntas de opción única, opción múltiple o verdadero/falso para extraer.</value>
+  </data>
+  <data name="LearningSettingsError_AddonRequired" xml:space="preserve">
+    <value>Los cuestionarios de bancos de preguntas y el microaprendizaje requieren el complemento LMS.</value>
+  </data>
+  <data name="LearningSettingsError_NotAuthorized" xml:space="preserve">
+    <value>No puede cambiar la configuración de aprendizaje de este protocolo.</value>
+  </data>
+  <data name="LearningSettingsError_NotFound" xml:space="preserve">
+    <value>No se encontró el protocolo.</value>
+  </data>
+  <data name="MicroLearningSelectionHeader" xml:space="preserve">
+    <value>Microaprendizaje semanal</value>
+  </data>
+  <data name="MicroLearningSelectionHelp" xml:space="preserve">
+    <value>Cada lunes a las 09:00, hora del departamento, cada miembro activo con plaza LMS en la audiencia de un protocolo seleccionado recibe una pregunta de escenario de los bancos de preguntas asociados: su banco vinculado o un banco compartido etiquetado con el código o el número del protocolo.</value>
+  </data>
+  <data name="MicroLearningSaveButton" xml:space="preserve">
+    <value>Guardar selección</value>
+  </data>
+  <data name="MicroLearningSavedMessage" xml:space="preserve">
+    <value>Selección de microaprendizaje guardada: {0} protocolos.</value>
+  </data>
+  <data name="WeeklyQuestionsHeader" xml:space="preserve">
+    <value>Preguntas semanales</value>
+  </data>
+  <data name="WeeklyQuestionsIntro" xml:space="preserve">
+    <value>Una pregunta de escenario por semana de los protocolos de su departamento. Respóndala una vez y luego vea la respuesta correcta y por qué.</value>
+  </data>
+  <data name="WeeklyNoQuestions" xml:space="preserve">
+    <value>Aún no hay preguntas semanales.</value>
+  </data>
+  <data name="WeeklyAnswerButton" xml:space="preserve">
+    <value>Responder</value>
+  </data>
+  <data name="WeeklyCorrect" xml:space="preserve">
+    <value>Correcto</value>
+  </data>
+  <data name="WeeklyIncorrect" xml:space="preserve">
+    <value>No del todo</value>
+  </data>
+  <data name="WeeklyCorrectAnswerLabel" xml:space="preserve">
+    <value>(la respuesta correcta)</value>
+  </data>
+  <data name="WeeklyExplanationLabel" xml:space="preserve">
+    <value>Por qué:</value>
+  </data>
+  <data name="WeeklyWeekLabel" xml:space="preserve">
+    <value>Semana {0}</value>
+  </data>
+  <data name="WeeklyChooseAnswer" xml:space="preserve">
+    <value>Elija primero una respuesta.</value>
+  </data>
+  <data name="LifecycleErrorDecisionGraphInvalid" xml:space="preserve">
+    <value>El flujo del caso tiene problemas: necesita exactamente un primer paso, cada camino debe terminar en un resultado con determinante y no puede tener bucles. Corríjalo antes de la revisión.</value>
+  </data>
+  <data name="LifecycleErrorDecisionGraphNotAllowed" xml:space="preserve">
+    <value>Un flujo del caso pertenece a un protocolo de despacho redactado, no a otro tipo ni a un documento cargado.</value>
+  </data>
+  <data name="GraphLabelCaseFlow" xml:space="preserve">
+    <value>Flujo del caso</value>
+  </data>
+  <data name="GraphLabelEntryQuestion" xml:space="preserve">
+    <value>Pregunta de entrada</value>
+  </data>
+  <data name="GraphLabelKeyQuestion" xml:space="preserve">
+    <value>Pregunta clave</value>
+  </data>
+  <data name="GraphLabelInstruction" xml:space="preserve">
+    <value>Instrucción</value>
+  </data>
+  <data name="GraphLabelOutcome" xml:space="preserve">
+    <value>Resultado</value>
+  </data>
+  <data name="GraphLabelDeterminant" xml:space="preserve">
+    <value>Determinante</value>
+  </data>
+  <data name="GraphLabelPriority" xml:space="preserve">
+    <value>Prioridad</value>
+  </data>
+  <data name="GraphLabelResponse" xml:space="preserve">
+    <value>Respuesta</value>
+  </data>
+  <data name="GraphLabelPostDispatch" xml:space="preserve">
+    <value>Después del despacho</value>
+  </data>
+  <data name="GraphLabelGoTo" xml:space="preserve">
+    <value>ir al paso {0}</value>
+  </data>
+  <data name="GraphLabelAnyAnswer" xml:space="preserve">
+    <value>Cualquier respuesta</value>
+  </data>
+  <data name="GraphLabelYes" xml:space="preserve">
+    <value>Sí</value>
+  </data>
+  <data name="GraphLabelNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="GraphLabelStart" xml:space="preserve">
+    <value>Inicio</value>
+  </data>
+  <data name="AiSuggestSuggested" xml:space="preserve">
+    <value>Sugerido.</value>
+  </data>
+  <data name="AiSuggestNotEntitled" xml:space="preserve">
+    <value>Las sugerencias de protocolo con IA requieren el complemento Enhanced AI.</value>
+  </data>
+  <data name="AiSuggestProtectionUnsupported" xml:space="preserve">
+    <value>Las sugerencias de IA están desactivadas mientras la protección avanzada de datos esté activa.</value>
+  </data>
+  <data name="AiSuggestUnconfigured" xml:space="preserve">
+    <value>No hay ningún modelo de IA configurado en esta instalación.</value>
+  </data>
+  <data name="AiSuggestNoCandidates" xml:space="preserve">
+    <value>Ningún protocolo de despacho publicado con flujo del caso puede usarse con IA.</value>
+  </data>
+  <data name="AiSuggestNoInput" xml:space="preserve">
+    <value>La llamada aún no tiene texto ni conversación SMS que leer.</value>
+  </data>
+  <data name="AiSuggestNoMatch" xml:space="preserve">
+    <value>La IA no encontró un protocolo adecuado. Elija uno a mano.</value>
+  </data>
+  <data name="AiSuggestUnavailable" xml:space="preserve">
+    <value>La IA no responde ahora. Inténtelo de nuevo o elija un protocolo a mano.</value>
+  </data>
+  <data name="AiSuggestNotFound" xml:space="preserve">
+    <value>No se encontró la llamada.</value>
+  </data>
+  <data name="CaseDone" xml:space="preserve">
+    <value>Guardado.</value>
+  </data>
+  <data name="CaseNotFound" xml:space="preserve">
+    <value>Ese protocolo no está en esta llamada.</value>
+  </data>
+  <data name="CaseNoCase" xml:space="preserve">
+    <value>Este protocolo no tiene un caso registrado en la llamada.</value>
+  </data>
+  <data name="CaseOverrideReasonRequired" xml:space="preserve">
+    <value>Un determinante distinto necesita un motivo.</value>
+  </data>
+  <data name="CaseDeterminantInvalid" xml:space="preserve">
+    <value>Un determinante tiene letras, dígitos, espacios y . _ / - (máximo 32).</value>
+  </data>
+  <data name="CaseNotAnInstruction" xml:space="preserve">
+    <value>Ese paso no es una instrucción que pueda enviarse a quien llama.</value>
+  </data>
+  <data name="CaseNoThread" xml:space="preserve">
+    <value>La llamada no tiene una conversación SMS abierta con quien llama.</value>
+  </data>
+  <data name="CaseOptedOut" xml:space="preserve">
+    <value>Quien llama se dio de baja de los SMS (STOP); no se envió nada.</value>
+  </data>
+  <data name="CaseHeldByAnotherDispatcher" xml:space="preserve">
+    <value>Otro despachador está conectado a la conversación de quien llama.</value>
+  </data>
+  <data name="CaseSendFailed" xml:space="preserve">
+    <value>No se pudo enviar el texto. Queda registrado en la llamada.</value>
+  </data>
+  <data name="CaseCallerDone" xml:space="preserve">
+    <value>Enviado a quien llama y registrado en la llamada.</value>
+  </data>
+  <data name="CaseCallerNotFound" xml:space="preserve">
+    <value>Ese protocolo no está en esta llamada.</value>
+  </data>
+  <data name="CaseCallerNoCase" xml:space="preserve">
+    <value>Este protocolo no tiene un caso registrado en la llamada.</value>
+  </data>
+  <data name="CaseCallerOverrideReasonRequired" xml:space="preserve">
+    <value>Un determinante distinto necesita un motivo.</value>
+  </data>
+  <data name="CaseCallerDeterminantInvalid" xml:space="preserve">
+    <value>Un determinante tiene letras, dígitos, espacios y . _ / - (máximo 32).</value>
+  </data>
+  <data name="CaseCallerNotAnInstruction" xml:space="preserve">
+    <value>Ese paso no es una instrucción que pueda enviarse a quien llama.</value>
+  </data>
+  <data name="CaseCallerNoThread" xml:space="preserve">
+    <value>La llamada no tiene una conversación SMS abierta con quien llama.</value>
+  </data>
+  <data name="CaseCallerOptedOut" xml:space="preserve">
+    <value>Quien llama se dio de baja de los SMS (STOP); no se envió nada.</value>
+  </data>
+  <data name="CaseCallerHeldByAnotherDispatcher" xml:space="preserve">
+    <value>Otro despachador está conectado a la conversación de quien llama.</value>
+  </data>
+  <data name="CaseCallerSendFailed" xml:space="preserve">
+    <value>No se pudo enviar el texto. Queda registrado en la llamada.</value>
+  </data>
+  <data name="TriggerConditionsLabel" xml:space="preserve">
+    <value>Condiciones</value>
+  </data>
+  <data name="TriggerConditionsHelp" xml:space="preserve">
+    <value>Cada condición que fije también debe cumplirse: la llamada dentro del área de una estación o grupo, en estos días y horas (hora del departamento), con una palabra en la naturaleza o las notas, en un punto de interés de este tipo, o desde estas fuentes. Un disparador para cualquier llamada necesita al menos una.</value>
+  </data>
+  <data name="TriggerKeywordsLabel" xml:space="preserve">
+    <value>Palabras en la naturaleza o las notas</value>
+  </data>
+  <data name="TriggerKeywordsPlaceholder" xml:space="preserve">
+    <value>dolor torácico, no respira</value>
+  </data>
+  <data name="TriggerZoneLabel" xml:space="preserve">
+    <value>Dentro del área de</value>
+  </data>
+  <data name="TriggerAnyOption" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="TriggerPoiTypeLabel" xml:space="preserve">
+    <value>Tipo de punto de interés en la ubicación</value>
+  </data>
+  <data name="TriggerFromLabel" xml:space="preserve">
+    <value>Desde (hora)</value>
+  </data>
+  <data name="TriggerToLabel" xml:space="preserve">
+    <value>Hasta (hora)</value>
+  </data>
+  <data name="TriggerDaysLabel" xml:space="preserve">
+    <value>Días</value>
+  </data>
+  <data name="TriggerSourcesLabel" xml:space="preserve">
+    <value>Entró por</value>
+  </data>
+  <data name="CallSourceUser" xml:space="preserve">
+    <value>Despachador (formulario)</value>
+  </data>
+  <data name="CallSourceEmailImport" xml:space="preserve">
+    <value>Importación de correo</value>
+  </data>
+  <data name="CallSourceAudioImport" xml:space="preserve">
+    <value>Importación de audio</value>
+  </data>
+  <data name="CallSourceChatbot" xml:space="preserve">
+    <value>Asistente de chat</value>
+  </data>
+  <data name="CallSourceIntake" xml:space="preserve">
+    <value>Canal de entrada (SMS, correo, chat, webhook)</value>
+  </data>
+  <data name="CallSourceVoiceIntake" xml:space="preserve">
+    <value>Entrada por voz (IA)</value>
+  </data>
+  <data name="ErrorTriggerConditions" xml:space="preserve">
+    <value>Una condición del disparador no es válida: revise el área, el tipo de punto de interés, la franja horaria (ambas horas) y que un disparador para cualquier llamada tenga al menos una condición.</value>
+  </data>
+  <data name="ConditionsTrigger" xml:space="preserve">
+    <value>Cualquier llamada (solo condiciones)</value>
+  </data>
+  <data name="DispatchSettingsHeader" xml:space="preserve">
+    <value>Textos de despacho</value>
+  </data>
+  <data name="ShowDeterminantInDispatchCheckbox" xml:space="preserve">
+    <value>Incluir el determinante y el nombre del protocolo en las notificaciones, SMS y mensajes de voz de despacho</value>
+  </data>
+  <data name="ShowDeterminantInDispatchHelp" xml:space="preserve">
+    <value>Desactivado por defecto. Si se activa, los intervinientes ven el determinante y el protocolo tras el nombre de la llamada; las apps antiguas lo muestran dentro del texto.</value>
+  </data>
+  <data name="CaseFlowHeader" xml:space="preserve">
+    <value>Flujo del caso (árbol de decisión)</value>
+  </data>
+  <data name="CaseFlowLockedNotice" xml:space="preserve">
+    <value>El flujo del caso forma parte de la versión en revisión y no puede cambiar hasta retirarla o publicarla.</value>
+  </data>
+  <data name="CaseFlowHelp" xml:space="preserve">
+    <value>Los despachadores recorren estos pasos en el formulario: preguntas de entrada, preguntas clave e instrucciones llevan a un resultado con determinante, prioridad sugerida y lo que se dice a quien llama. El flujo se guarda con el borrador, se muestra en el texto y se aprueba con la versión.</value>
+  </data>
+  <data name="CaseFlowLicensingNotice" xml:space="preserve">
+    <value>Escriba sus propias preguntas y códigos. El contenido de protocolos con licencia (p. ej. MPDS) solo puede estar en su departamento con «Contenido con licencia» marcado; nunca se comparte, publica ni usa con IA.</value>
+  </data>
+  <data name="CaseFlowAddQuestion" xml:space="preserve">
+    <value>Añadir pregunta</value>
+  </data>
+  <data name="CaseFlowAddInstruction" xml:space="preserve">
+    <value>Añadir instrucción</value>
+  </data>
+  <data name="CaseFlowAddOutcome" xml:space="preserve">
+    <value>Añadir resultado</value>
+  </data>
+  <data name="CaseFlowEmpty" xml:space="preserve">
+    <value>Aún no hay flujo del caso. Sin él, el protocolo se adjunta a las llamadas como antes.</value>
+  </data>
+  <data name="CaseFlowFirstStep" xml:space="preserve">
+    <value>Primer paso</value>
+  </data>
+  <data name="CaseFlowMakeFirst" xml:space="preserve">
+    <value>Hacer primero</value>
+  </data>
+  <data name="CaseFlowStepLabel" xml:space="preserve">
+    <value>Nombre corto</value>
+  </data>
+  <data name="CaseFlowStepText" xml:space="preserve">
+    <value>Pregunta tal como se lee a quien llama</value>
+  </data>
+  <data name="CaseFlowInstructionText" xml:space="preserve">
+    <value>Guion para leer en voz alta</value>
+  </data>
+  <data name="CaseFlowStage" xml:space="preserve">
+    <value>Etapa</value>
+  </data>
+  <data name="CaseFlowAnswerType" xml:space="preserve">
+    <value>Se responde con</value>
+  </data>
+  <data name="CaseFlowTypeYesNo" xml:space="preserve">
+    <value>Sí / no</value>
+  </data>
+  <data name="CaseFlowTypeChoice" xml:space="preserve">
+    <value>Una de varias respuestas</value>
+  </data>
+  <data name="CaseFlowTypeNumber" xml:space="preserve">
+    <value>Un número</value>
+  </data>
+  <data name="CaseFlowTypeFreeText" xml:space="preserve">
+    <value>Texto libre</value>
+  </data>
+  <data name="CaseFlowMin" xml:space="preserve">
+    <value>Valor mínimo</value>
+  </data>
+  <data name="CaseFlowMax" xml:space="preserve">
+    <value>Valor máximo</value>
+  </data>
+  <data name="CaseFlowNext" xml:space="preserve">
+    <value>Después</value>
+  </data>
+  <data name="CaseFlowChooseStep" xml:space="preserve">
+    <value>Elija un paso…</value>
+  </data>
+  <data name="CaseFlowSpeak" xml:space="preserve">
+    <value>Ofrecer «Reproducir» (texto a voz) al despachador</value>
+  </data>
+  <data name="CaseFlowSendToCaller" xml:space="preserve">
+    <value>Puede enviarse por SMS a quien llama</value>
+  </data>
+  <data name="CaseFlowNoPriority" xml:space="preserve">
+    <value>Sin sugerencia</value>
+  </data>
+  <data name="CaseFlowProblems" xml:space="preserve">
+    <value>A corregir antes de la revisión:</value>
+  </data>
+  <data name="CaseFlowProblemRoot" xml:space="preserve">
+    <value>Exactamente un paso debe ser el primero.</value>
+  </data>
+  <data name="CaseFlowProblemNext" xml:space="preserve">
+    <value>cada respuesta necesita un paso siguiente.</value>
+  </data>
+  <data name="CaseFlowProblemDeterminant" xml:space="preserve">
+    <value>un resultado necesita un determinante.</value>
+  </data>
+  <data name="CaseFlowProblemLoop" xml:space="preserve">
+    <value>El flujo del caso vuelve sobre sí mismo.</value>
+  </data>
+  <data name="CaseFlowProblemUnreachable" xml:space="preserve">
+    <value>no se alcanza desde el primer paso.</value>
+  </data>
+  <data name="CaseAiSuggestButton" xml:space="preserve">
+    <value>Sugerir con IA</value>
+  </data>
+  <data name="CasePlayButton" xml:space="preserve">
+    <value>Reproducir</value>
+  </data>
+  <data name="CaseChangeAnswer" xml:space="preserve">
+    <value>Cambiar</value>
+  </data>
+  <data name="CaseOverridden" xml:space="preserve">
+    <value>Modificado</value>
+  </data>
+  <data name="CasePriorityApplied" xml:space="preserve">
+    <value>aplicada a la llamada</value>
+  </data>
+  <data name="CaseOverrideDeterminant" xml:space="preserve">
+    <value>Modificar el determinante</value>
+  </data>
+  <data name="CaseOverrideReason" xml:space="preserve">
+    <value>Motivo (obligatorio)</value>
+  </data>
+  <data name="CaseInvalid" xml:space="preserve">
+    <value>No se pudo recorrer este flujo del caso. Adjunte el protocolo sin él o avise a su responsable.</value>
+  </data>
+  <data name="CaseAiPrefilled" xml:space="preserve">
+    <value>Sugerido por Enhanced AI. Revise cada respuesta antes de guardar.</value>
+  </data>
+  <data name="CaseAiAsking" xml:space="preserve">
+    <value>Consultando a Enhanced AI…</value>
+  </data>
+  <data name="CaseAiFailed" xml:space="preserve">
+    <value>No se pudo hacer la sugerencia.</value>
+  </data>
+  <data name="CaseSourceAi" xml:space="preserve">
+    <value>Sugerencia de Enhanced AI confirmada por el despachador</value>
+  </data>
+  <data name="CaseOverrideFrom" xml:space="preserve">
+    <value>calculado {0}; motivo: {1}</value>
+  </data>
+  <data name="CaseNotComplete" xml:space="preserve">
+    <value>El caso no llegó a un resultado.</value>
+  </data>
+  <data name="CaseCallerTexts" xml:space="preserve">
+    <value>Enviado a quien llama</value>
+  </data>
+  <data name="CaseSendToCallerButton" xml:space="preserve">
+    <value>Enviar a quien llama: {0}</value>
+  </data>
+  <data name="CaseOverrideSave" xml:space="preserve">
+    <value>Guardar determinante</value>
+  </data>
+  <data name="CaseOverrideHelp" xml:space="preserve">
+    <value>Deje el determinante en blanco para volver al del flujo del caso. Cualquier otro necesita un motivo, que queda en la llamada.</value>
+  </data>
+  <data name="CaseExportSection" xml:space="preserve">
+    <value>Casos del protocolo</value>
+  </data>
 </root>

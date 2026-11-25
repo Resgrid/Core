@@ -140,6 +140,9 @@ var resgrid;
                     }
                 });
                 panel().find('.protocol-panel-manual').prop('hidden', $pick.find('option').length <= 1);
+
+                // P4: protocols with a case flow get it under their row (resgrid.dispatch.protocolcase.js).
+                if (resgrid.dispatch.protocolcase) resgrid.dispatch.protocolcase.decorate();
             }
 
             function refresh() {
@@ -147,6 +150,10 @@ var resgrid;
                 var current = ++request;
                 var url = resgrid.absoluteBaseUrl + '/User/Protocols/GetProtocolsForCall?priority=' + encodeURIComponent(options.getPriority ? options.getPriority() || '' : '') +
                     '&type=' + encodeURIComponent(options.getType ? options.getType() || '' : '');
+                // P4 trigger facts the form knows: the location (zone triggers).
+                var lat = options.getLatitude ? options.getLatitude() : null;
+                var lon = options.getLongitude ? options.getLongitude() : null;
+                if (lat && lon && !isNaN(Number(lat)) && !isNaN(Number(lon))) url += '&latitude=' + encodeURIComponent(lat) + '&longitude=' + encodeURIComponent(lon);
                 var loggedOn = options.getLoggedOn ? options.getLoggedOn() : null;
                 if (loggedOn) url += '&loggedOn=' + encodeURIComponent(loggedOn);
                 var callId = options.getCallId ? options.getCallId() : null;
@@ -165,6 +172,16 @@ var resgrid;
                 options = settings || {};
                 var $panel = panel();
                 if (!$panel.length) return;
+
+                // P4: the case flow; an AI suggestion for a protocol not suggested by a trigger adds it like a pick by hand.
+                options.addProtocol = function (id) {
+                    var protocol = find(Number(id));
+                    if (!protocol) return;
+                    if (!(protocol.State === 1 || protocol.State === 2)) manual[protocol.Id] = true;
+                    render();
+                    $('#selectedProtocol_' + protocol.Id).prop('checked', true).trigger('change');
+                };
+                if (resgrid.dispatch.protocolcase) resgrid.dispatch.protocolcase.init(options);
 
                 $panel.on('change', 'input[type=radio]', function () {
                     var protocolId = Number($(this).data('protocol'));

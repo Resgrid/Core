@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboveAmountNote" xml:space="preserve">
+    <value>(au-dessus de {0})</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>Activée</value>
+  </data>
+  <data name="AddDelegateHeading" xml:space="preserve">
+    <value>Ajouter un suppléant</value>
+  </data>
+  <data name="AgreementDeletedMessage" xml:space="preserve">
+    <value>L'accord a été supprimé.</value>
+  </data>
+  <data name="AgreementInvalidMessage" xml:space="preserve">
+    <value>L'accord n'a pas pu être enregistré. Vérifiez le titre et les dates ; un accord approuvé ne peut plus être modifié.</value>
+  </data>
+  <data name="AgreementSavedMessage" xml:space="preserve">
+    <value>L'accord a été enregistré.</value>
+  </data>
+  <data name="AgreementTitleLabel" xml:space="preserve">
+    <value>Accord</value>
+  </data>
+  <data name="AgreementsIntro" xml:space="preserve">
+    <value>Les accords d'entraide que votre département approuve et scelle.</value>
+  </data>
+  <data name="AgreementsTab" xml:space="preserve">
+    <value>Accords d'entraide</value>
+  </data>
+  <data name="AllMyApprovalsLink" xml:space="preserve">
+    <value>Toutes mes approbations</value>
+  </data>
+  <data name="AllowSelfApprovalLabel" xml:space="preserve">
+    <value>Autoriser le demandeur à approuver</value>
+  </data>
+  <data name="AmountColumn" xml:space="preserve">
+    <value>Montant</value>
+  </data>
+  <data name="ApplyErrorNote" xml:space="preserve">
+    <value>L'approbation est maintenue, mais le module n'a pas pu l'appliquer (ses propres règles l'ont refusée). Terminez l'étape dans le module.</value>
+  </data>
+  <data name="ApprovalsHeading" xml:space="preserve">
+    <value>Approbations</value>
+  </data>
+  <data name="ApprovalsModuleTitle" xml:space="preserve">
+    <value>Approbations</value>
+  </data>
+  <data name="ApproveButton" xml:space="preserve">
+    <value>Approuver</value>
+  </data>
+  <data name="ApprovePanelTitle" xml:space="preserve">
+    <value>Votre approbation</value>
+  </data>
+  <data name="ApprovedByColumn" xml:space="preserve">
+    <value>Approuvé par</value>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>Votre approbation a été enregistrée.</value>
+  </data>
+  <data name="ApprovedStepsLabel" xml:space="preserve">
+    <value>Étapes approuvées</value>
+  </data>
+  <data name="ApproverColumn" xml:space="preserve">
+    <value>Approbateur</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="CandidatesHeading" xml:space="preserve">
+    <value>Prêts à soumettre</value>
+  </data>
+  <data name="CertificationTypeLabel" xml:space="preserve">
+    <value>Type de certification</value>
+  </data>
+  <data name="ChainDeactivatedMessage" xml:space="preserve">
+    <value>La chaîne a été désactivée.</value>
+  </data>
+  <data name="ChainEditorHelp" xml:space="preserve">
+    <value>Les étapes portant le même numéro se déroulent en parallèle et toutes doivent approuver. Un seuil limite une étape aux montants supérieurs. L'enregistrement crée une nouvelle version ; les demandes déjà soumises conservent les étapes avec lesquelles elles ont commencé.</value>
+  </data>
+  <data name="ChainNameLabel" xml:space="preserve">
+    <value>Nom de la chaîne</value>
+  </data>
+  <data name="ChainSavedMessage" xml:space="preserve">
+    <value>La chaîne d'approbation a été enregistrée.</value>
+  </data>
+  <data name="ChainsIntro" xml:space="preserve">
+    <value>Qui approuve quoi, dans quel ordre, au-dessus de quels montants, et quand une étape bloquée est escaladée.</value>
+  </data>
+  <data name="ChainsTab" xml:space="preserve">
+    <value>Chaînes</value>
+  </data>
+  <data name="ChangedSinceApproval" xml:space="preserve">
+    <value>Ceci a été modifié après son approbation. L'approbation ne compte plus ; soumettez-le à nouveau.</value>
+  </data>
+  <data name="ChangedSinceSubmission" xml:space="preserve">
+    <value>Ceci a été modifié après sa soumission. Les approbations précédentes ne sont pas reprises ; soumettez-le à nouveau.</value>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>Code de contenu</value>
+  </data>
+  <data name="DeactivateChainButton" xml:space="preserve">
+    <value>Désactiver</value>
+  </data>
+  <data name="DecidedColumn" xml:space="preserve">
+    <value>Décidé le</value>
+  </data>
+  <data name="DefineChainButton" xml:space="preserve">
+    <value>Définir une chaîne</value>
+  </data>
+  <data name="DelegateForLabel" xml:space="preserve">
+    <value>Membre</value>
+  </data>
+  <data name="DelegateHelp" xml:space="preserve">
+    <value>Pendant l'absence du membre, ses étapes d'approbation nominatives sont aussi envoyées à son suppléant. Avec des dates, le suppléant le remplace aussi entre ces dates.</value>
+  </data>
+  <data name="DelegateInvalidMessage" xml:space="preserve">
+    <value>Le suppléant n'a pas pu être enregistré. Choisissez deux membres actifs différents et des dates valides.</value>
+  </data>
+  <data name="DelegateLabel" xml:space="preserve">
+    <value>Suppléant</value>
+  </data>
+  <data name="DelegateRemovedMessage" xml:space="preserve">
+    <value>Le suppléant a été retiré.</value>
+  </data>
+  <data name="DelegateSavedMessage" xml:space="preserve">
+    <value>Le suppléant a été enregistré.</value>
+  </data>
+  <data name="DelegatedNote" xml:space="preserve">
+    <value>Délégué : l'approbateur désigné est absent</value>
+  </data>
+  <data name="DelegatesIntro" xml:space="preserve">
+    <value>Qui approuve pour un membre pendant son absence.</value>
+  </data>
+  <data name="DelegatesTab" xml:space="preserve">
+    <value>Suppléants</value>
+  </data>
+  <data name="DeleteAgreementButton" xml:space="preserve">
+    <value>Supprimer l'accord</value>
+  </data>
+  <data name="DepartmentLinkLabel" xml:space="preserve">
+    <value>Lien de département</value>
+  </data>
+  <data name="DownloadSealedLink" xml:space="preserve">
+    <value>Télécharger le document scellé</value>
+  </data>
+  <data name="DueByLabel" xml:space="preserve">
+    <value>échéance : {0}</value>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Échéance</value>
+  </data>
+  <data name="EditChainButton" xml:space="preserve">
+    <value>Modifier la chaîne</value>
+  </data>
+  <data name="EditChainTitle" xml:space="preserve">
+    <value>Chaîne d'approbation</value>
+  </data>
+  <data name="EffectiveLabel" xml:space="preserve">
+    <value>En vigueur le</value>
+  </data>
+  <data name="EndsLabel" xml:space="preserve">
+    <value>Fin</value>
+  </data>
+  <data name="EscalatedLabel" xml:space="preserve">
+    <value>Escaladé</value>
+  </data>
+  <data name="EscalatesAfterNote" xml:space="preserve">
+    <value>(escalade après {0} h)</value>
+  </data>
+  <data name="EscalationColumn" xml:space="preserve">
+    <value>Escalade</value>
+  </data>
+  <data name="ExpiresInDaysLabel" xml:space="preserve">
+    <value>Expire après (jours)</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Groupe</value>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Accueil</value>
+  </data>
+  <data name="HoursPlaceholder" xml:space="preserve">
+    <value>Heures (vide : jamais)</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Membre</value>
+  </data>
+  <data name="MyApprovalsIntro" xml:space="preserve">
+    <value>Les demandes en attente de votre approbation, et celles que vous avez soumises.</value>
+  </data>
+  <data name="MyApprovalsTab" xml:space="preserve">
+    <value>Mes approbations</value>
+  </data>
+  <data name="MyApprovalsTitle" xml:space="preserve">
+    <value>Mes approbations</value>
+  </data>
+  <data name="MySubmissionsHeader" xml:space="preserve">
+    <value>Mes soumissions en attente</value>
+  </data>
+  <data name="NewAgreementButton" xml:space="preserve">
+    <value>Nouvel accord</value>
+  </data>
+  <data name="NextApprovalLabel" xml:space="preserve">
+    <value>À approuver ensuite</value>
+  </data>
+  <data name="NoAgreements" xml:space="preserve">
+    <value>Aucun accord d'entraide pour l'instant.</value>
+  </data>
+  <data name="NoApprovalYet" xml:space="preserve">
+    <value>Pas encore soumis pour approbation.</value>
+  </data>
+  <data name="NoCandidates" xml:space="preserve">
+    <value>Rien n'attend d'être soumis.</value>
+  </data>
+  <data name="NoChainDefined" xml:space="preserve">
+    <value>Aucune chaîne : ces éléments ne nécessitent pas d'approbation.</value>
+  </data>
+  <data name="NoDelegates" xml:space="preserve">
+    <value>Aucun suppléant.</value>
+  </data>
+  <data name="NoPendingSubmissions" xml:space="preserve">
+    <value>Rien en attente.</value>
+  </data>
+  <data name="NoRequests" xml:space="preserve">
+    <value>Aucune demande.</value>
+  </data>
+  <data name="NothingToApprove" xml:space="preserve">
+    <value>Rien n'attend votre approbation.</value>
+  </data>
+  <data name="OnLeaveOnly" xml:space="preserve">
+    <value>Pendant l'absence</value>
+  </data>
+  <data name="OpenInModuleLink" xml:space="preserve">
+    <value>Ouvrir</value>
+  </data>
+  <data name="OpenRequestLink" xml:space="preserve">
+    <value>Ouvrir</value>
+  </data>
+  <data name="PartnerLabel" xml:space="preserve">
+    <value>Département partenaire</value>
+  </data>
+  <data name="PartnerSignatureOwedNote" xml:space="preserve">
+    <value>La chaîne de votre département approuve et scelle cet accord. Le contreseing du département partenaire via le lien de département n'est pas encore disponible.</value>
+  </data>
+  <data name="PayrollRunsNote" xml:space="preserve">
+    <value>Les traitements de paie auront une chaîne d'approbation lorsque les traitements de paie existeront dans Resgrid.</value>
+  </data>
+  <data name="PendingApprovalsHeader" xml:space="preserve">
+    <value>En attente de votre approbation</value>
+  </data>
+  <data name="PendingInDepartmentHeader" xml:space="preserve">
+    <value>En attente dans le département</value>
+  </data>
+  <data name="PendingSubmittedLabel" xml:space="preserve">
+    <value>En attente</value>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Rejeter</value>
+  </data>
+  <data name="RejectHeading" xml:space="preserve">
+    <value>Rejeter</value>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>Motif</value>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>La demande a été rejetée et le demandeur a été informé.</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="RequestsIntro" xml:space="preserve">
+    <value>Toutes les demandes d'approbation du département.</value>
+  </data>
+  <data name="RequestsTab" xml:space="preserve">
+    <value>Demandes</value>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Examiner</value>
+  </data>
+  <data name="RoleLabel" xml:space="preserve">
+    <value>Rôle</value>
+  </data>
+  <data name="SaveAgreementButton" xml:space="preserve">
+    <value>Enregistrer l'accord</value>
+  </data>
+  <data name="SaveChainButton" xml:space="preserve">
+    <value>Enregistrer la chaîne</value>
+  </data>
+  <data name="SaveDelegateButton" xml:space="preserve">
+    <value>Enregistrer</value>
+  </data>
+  <data name="SealedNote" xml:space="preserve">
+    <value>Approuvé et scellé.</value>
+  </data>
+  <data name="SealingPendingNote" xml:space="preserve">
+    <value>Approuvé. Scellement en attente : le document scellé sera produit dès que le service de scellement sera disponible.</value>
+  </data>
+  <data name="StartsLabel" xml:space="preserve">
+    <value>Début</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="StepApproved" xml:space="preserve">
+    <value>Approuvée</value>
+  </data>
+  <data name="StepColumn" xml:space="preserve">
+    <value>Étape</value>
+  </data>
+  <data name="StepLabelPlaceholder" xml:space="preserve">
+    <value>Nom de l'étape (facultatif)</value>
+  </data>
+  <data name="StepNotYet" xml:space="preserve">
+    <value>Pas encore</value>
+  </data>
+  <data name="StepOrderColumn" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="StepRejected" xml:space="preserve">
+    <value>Rejetée</value>
+  </data>
+  <data name="StepWaiting" xml:space="preserve">
+    <value>En attente</value>
+  </data>
+  <data name="StepsHeading" xml:space="preserve">
+    <value>Étapes</value>
+  </data>
+  <data name="StepsHelp" xml:space="preserve">
+    <value>Les étapes se déroulent dans l'ordre ; celles qui portent le même numéro se déroulent en parallèle. Chaque approbation est signée au niveau 2 et liée au code de contenu.</value>
+  </data>
+  <data name="SubjectColumn" xml:space="preserve">
+    <value>Objet</value>
+  </data>
+  <data name="SubjectGroupOption" xml:space="preserve">
+    <value>Le groupe propre à l'objet</value>
+  </data>
+  <data name="SubjectHeading" xml:space="preserve">
+    <value>Ce qui est approuvé</value>
+  </data>
+  <data name="SubmitForApprovalButton" xml:space="preserve">
+    <value>Soumettre pour approbation</value>
+  </data>
+  <data name="SubmitHeading" xml:space="preserve">
+    <value>Soumettre pour approbation</value>
+  </data>
+  <data name="SubmittedByLine" xml:space="preserve">
+    <value>Soumis par {0} le {1} UTC</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Soumis le</value>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>Soumis pour approbation. Les approbateurs ont été informés.</value>
+  </data>
+  <data name="TermsLabel" xml:space="preserve">
+    <value>Conditions</value>
+  </data>
+  <data name="ThresholdColumn" xml:space="preserve">
+    <value>Uniquement au-dessus de</value>
+  </data>
+  <data name="UseStepColumn" xml:space="preserve">
+    <value>Utiliser</value>
+  </data>
+  <data name="WaitingForMeLabel" xml:space="preserve">
+    <value>En attente de moi</value>
+  </data>
+  <data name="WindowColumn" xml:space="preserve">
+    <value>Quand</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Retirer la demande</value>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>La demande a été retirée.</value>
+  </data>
+  <data name="KindPurchaseRequisitionApproval" xml:space="preserve">
+    <value>Demandes d'achat</value>
+  </data>
+  <data name="KindIncidentPlanApproval" xml:space="preserve">
+    <value>Plans d'action de l'incident (IAP)</value>
+  </data>
+  <data name="KindInvoiceApproval" xml:space="preserve">
+    <value>Factures</value>
+  </data>
+  <data name="KindPayrollRunApproval" xml:space="preserve">
+    <value>Traitements de paie</value>
+  </data>
+  <data name="KindCalOesMarsPackageApproval" xml:space="preserve">
+    <value>Dossiers Cal OES MARS</value>
+  </data>
+  <data name="KindMutualAidAgreementApproval" xml:space="preserve">
+    <value>Accords d'entraide</value>
+  </data>
+  <data name="StatusPending" xml:space="preserve">
+    <value>En attente</value>
+  </data>
+  <data name="StatusApproved" xml:space="preserve">
+    <value>Approuvée</value>
+  </data>
+  <data name="StatusRejected" xml:space="preserve">
+    <value>Rejetée</value>
+  </data>
+  <data name="StatusWithdrawn" xml:space="preserve">
+    <value>Retirée</value>
+  </data>
+  <data name="StatusSuperseded" xml:space="preserve">
+    <value>Remplacée</value>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>Expirée</value>
+  </data>
+  <data name="ApproverRole" xml:space="preserve">
+    <value>Toute personne ayant un rôle</value>
+  </data>
+  <data name="ApproverNamedMember" xml:space="preserve">
+    <value>Un membre désigné</value>
+  </data>
+  <data name="ApproverGroupAdmin" xml:space="preserve">
+    <value>Administrateurs du groupe</value>
+  </data>
+  <data name="ApproverCertifyingOfficial" xml:space="preserve">
+    <value>Responsable de la certification</value>
+  </data>
+  <data name="ApproverDepartmentAdmins" xml:space="preserve">
+    <value>Administrateurs du département</value>
+  </data>
+  <data name="EscalateToDepartmentAdmins" xml:space="preserve">
+    <value>Escalader aux administrateurs du département</value>
+  </data>
+  <data name="EscalateToRole" xml:space="preserve">
+    <value>Escalader à un rôle</value>
+  </data>
+  <data name="EscalateToNamedMember" xml:space="preserve">
+    <value>Escalader à un membre</value>
+  </data>
+  <data name="AgreementStatusDraft" xml:space="preserve">
+    <value>Brouillon</value>
+  </data>
+  <data name="AgreementStatusInApproval" xml:space="preserve">
+    <value>En cours d'approbation</value>
+  </data>
+  <data name="AgreementStatusApproved" xml:space="preserve">
+    <value>Approuvé</value>
+  </data>
+  <data name="AgreementStatusWithdrawn" xml:space="preserve">
+    <value>Retiré</value>
+  </data>
+  <data name="RefusalNone" xml:space="preserve">
+    <value>Terminé.</value>
+  </data>
+  <data name="RefusalInvalidRequest" xml:space="preserve">
+    <value>La demande n'a pas pu être traitée.</value>
+  </data>
+  <data name="RefusalSubjectNotFound" xml:space="preserve">
+    <value>L'élément n'existe plus.</value>
+  </data>
+  <data name="RefusalModuleUnavailable" xml:space="preserve">
+    <value>Ce module ou son module complémentaire n'est pas actif pour votre département.</value>
+  </data>
+  <data name="RefusalNoChain" xml:space="preserve">
+    <value>Votre département n'a pas de chaîne d'approbation pour ces éléments.</value>
+  </data>
+  <data name="RefusalAlreadyPending" xml:space="preserve">
+    <value>Ceci attend déjà une approbation.</value>
+  </data>
+  <data name="RefusalUnchanged" xml:space="preserve">
+    <value>Rien n'a changé depuis l'approbation ou le rejet. Modifiez-le avant de le soumettre à nouveau.</value>
+  </data>
+  <data name="RefusalNotSubmittable" xml:space="preserve">
+    <value>Ceci ne peut pas être soumis dans son état actuel.</value>
+  </data>
+  <data name="RefusalClosed" xml:space="preserve">
+    <value>Cette demande n'est plus en attente.</value>
+  </data>
+  <data name="RefusalSubjectChanged" xml:space="preserve">
+    <value>Ceci a été modifié après sa soumission. Soumettez-le à nouveau.</value>
+  </data>
+  <data name="RefusalNotAnApprover" xml:space="preserve">
+    <value>Vous n'êtes pas approbateur pour cette étape.</value>
+  </data>
+  <data name="RefusalNotYourTurn" xml:space="preserve">
+    <value>Une étape précédente doit d'abord approuver.</value>
+  </data>
+  <data name="RefusalStepUpRequired" xml:space="preserve">
+    <value>Confirmez votre identité (vérification en deux étapes ou clé d'accès) pour approuver.</value>
+  </data>
+  <data name="RefusalPasskeyRequired" xml:space="preserve">
+    <value>Votre département exige une clé d'accès pour cette approbation.</value>
+  </data>
+  <data name="RefusalReasonRequired" xml:space="preserve">
+    <value>Indiquez un motif de rejet.</value>
+  </data>
+  <data name="RefusalNoApprover" xml:space="preserve">
+    <value>Une étape ne désigne personne pouvant l'approuver. Vérifiez les rôles et les membres de la chaîne.</value>
+  </data>
+  <data name="RefusalNotAllowed" xml:space="preserve">
+    <value>Seul le demandeur ou un administrateur du département peut faire cela.</value>
+  </data>
+  <data name="RefusalSignatureFailed" xml:space="preserve">
+    <value>L'approbation n'a pas pu être signée. Réessayez.</value>
+  </data>
+  <data name="RefusalNotRequired" xml:space="preserve">
+    <value>Aucune étape de la chaîne ne s'applique à ce montant : aucune approbation n'est nécessaire.</value>
+  </data>
+</root>

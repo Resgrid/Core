@@ -1,0 +1,1405 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Academy.CategoryDescription" xml:space="preserve">
+    <value>دروس أكاديمية Resgrid (دون ساعات تعليم مستمر).</value>
+  </data>
+  <data name="Academy.CategoryName" xml:space="preserve">
+    <value>التدريب على الأنظمة</value>
+  </data>
+  <data name="AcademyBadge" xml:space="preserve">
+    <value>الأكاديمية</value>
+  </data>
+  <data name="AcademyCompletedTile" xml:space="preserve">
+    <value>أكملتها أنت</value>
+  </data>
+  <data name="AcademyIntro" xml:space="preserve">
+    <value>دروس قصيرة عن كل جزء من Resgrid، مجانية لكل إدارة. يتضمن كل درس اختبارًا سريعًا ويُحتسب في سجلك التدريبي.</value>
+  </data>
+  <data name="AcademyLessonsHeader" xml:space="preserve">
+    <value>الدروس والجولات الإرشادية</value>
+  </data>
+  <data name="AcademyLessonsTile" xml:space="preserve">
+    <value>الدروس المتاحة</value>
+  </data>
+  <data name="AcademySiteLink" xml:space="preserve">
+    <value>افتح academy.resgrid.com</value>
+  </data>
+  <data name="AcademyTitle" xml:space="preserve">
+    <value>أكاديمية Resgrid</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="AddLessonLabel" xml:space="preserve">
+    <value>إضافة درس:</value>
+  </data>
+  <data name="AddModuleButton" xml:space="preserve">
+    <value>إضافة وحدة</value>
+  </data>
+  <data name="AddonNotice" xml:space="preserve">
+    <value>يتطلب تأليف الدورات وإسنادها إضافة نظام إدارة التعلم. أكاديمية Resgrid مجانية للجميع.</value>
+  </data>
+  <data name="AddOwnerButton" xml:space="preserve">
+    <value>إضافة مالك</value>
+  </data>
+  <data name="AiCaptionsNote" xml:space="preserve">
+    <value>ستتوفر الترجمة التلقائية مع Enhanced AI، وحتى ذلك الحين ارفع ملف WebVTT.</value>
+  </data>
+  <data name="AnswerKeyCopy" xml:space="preserve">
+    <value>نسخة مفتاح الإجابات</value>
+  </data>
+  <data name="AnswersHiddenNote" xml:space="preserve">
+    <value>لا تُعرض إجابات هذا التقييم بعد المحاولة.</value>
+  </data>
+  <data name="ApprovalHeader" xml:space="preserve">
+    <value>اعتماد هذا الإصدار</value>
+  </data>
+  <data name="ApprovalRoundFormat" xml:space="preserve">
+    <value>الجولة {0}</value>
+  </data>
+  <data name="ApprovalsHeader" xml:space="preserve">
+    <value>الاعتمادات والتوقيعات</value>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>تم الاعتماد والتوقيع.</value>
+  </data>
+  <data name="ApproveSignButton" xml:space="preserve">
+    <value>اعتماد وتوقيع</value>
+  </data>
+  <data name="ApproveStepUpHelp" xml:space="preserve">
+    <value>تؤكد هويتك مجددًا قبل التوقيع، ويغطي التوقيع هذا الإصدار تحديدًا.</value>
+  </data>
+  <data name="AssessmentHelp" xml:space="preserve">
+    <value>تُسحب الأسئلة وتُصحح على الخادم، ولا يصل مفتاح الإجابات أبدًا إلى المتصفح أو التطبيقات.</value>
+  </data>
+  <data name="AssessmentPassed" xml:space="preserve">
+    <value>لقد اجتزت هذا التقييم.</value>
+  </data>
+  <data name="AssessmentTitle" xml:space="preserve">
+    <value>التقييم</value>
+  </data>
+  <data name="AssignButton" xml:space="preserve">
+    <value>إسناد</value>
+  </data>
+  <data name="AssignedMessage" xml:space="preserve">
+    <value>أُسند إلى {0} أعضاء ({1} لديهم بالفعل، و{2} تعذّر الإسناد إليهم).</value>
+  </data>
+  <data name="AssignHeader" xml:space="preserve">
+    <value>إسناد هذه الدورة</value>
+  </data>
+  <data name="AssignLessonHeader" xml:space="preserve">
+    <value>إسناد الدرس «{0}»</value>
+  </data>
+  <data name="AssignPathButton" xml:space="preserve">
+    <value>إسناد المسار</value>
+  </data>
+  <data name="AssignPathHeader" xml:space="preserve">
+    <value>إسناد المسار الوظيفي «{0}»</value>
+  </data>
+  <data name="AssignToLabel" xml:space="preserve">
+    <value>إسناد إلى</value>
+  </data>
+  <data name="AttemptLimitLabel" xml:space="preserve">
+    <value>المحاولات المسموح بها (0 = غير محدودة)</value>
+  </data>
+  <data name="AttemptsAllowedFormat" xml:space="preserve">
+    <value>عدد المحاولات المسموح بها {0}</value>
+  </data>
+  <data name="AttemptsTile" xml:space="preserve">
+    <value>المحاولات المكتملة</value>
+  </data>
+  <data name="AttemptsUnlimited" xml:space="preserve">
+    <value>محاولات غير محدودة</value>
+  </data>
+  <data name="AttestationLabel" xml:space="preserve">
+    <value>اطلب من المتعلم تأكيد أنه يجيب بنفسه</value>
+  </data>
+  <data name="AttestationText" xml:space="preserve">
+    <value>أُكمل هذا التقييم بنفسي.</value>
+  </data>
+  <data name="AudienceCurrentFormat" xml:space="preserve">
+    <value>توجد {0} قواعد جمهور محفوظة.</value>
+  </data>
+  <data name="AudienceHeader" xml:space="preserve">
+    <value>من يراها في الفهرس</value>
+  </data>
+  <data name="AudienceHelp" xml:space="preserve">
+    <value>لا تختر أحدًا ليراها جميع أفراد الإدارة.</value>
+  </data>
+  <data name="AvailableOfflineLabel" xml:space="preserve">
+    <value>متاح دون اتصال (يمكن لتطبيق Omni الاحتفاظ بنسخة واحدة لكل جهاز)</value>
+  </data>
+  <data name="AverageRatingFormat" xml:space="preserve">
+    <value>متوسط التقييم: {0} من 5</value>
+  </data>
+  <data name="AwaitingGradeBadge" xml:space="preserve">
+    <value>بانتظار التصحيح</value>
+  </data>
+  <data name="BackToAcademy" xml:space="preserve">
+    <value>العودة إلى الأكاديمية</value>
+  </data>
+  <data name="BackToCourse" xml:space="preserve">
+    <value>العودة إلى الدورة</value>
+  </data>
+  <data name="BackToCourseDetail" xml:space="preserve">
+    <value>الدورة</value>
+  </data>
+  <data name="BankLabel" xml:space="preserve">
+    <value>بنك الأسئلة</value>
+  </data>
+  <data name="BanksIntro" xml:space="preserve">
+    <value>مجموعات أسئلة تُسحب عشوائيًا في كل محاولة. البنوك المشتركة متاحة لكل مؤلفي الدورات، والخاصة لمالكها فقط.</value>
+  </data>
+  <data name="BanksTitle" xml:space="preserve">
+    <value>بنوك الأسئلة</value>
+  </data>
+  <data name="BrowseAcademyLink" xml:space="preserve">
+    <value>تصفح أكاديمية Resgrid</value>
+  </data>
+  <data name="BuilderTitle" xml:space="preserve">
+    <value>منشئ الدورة</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="CaptionsFileLabel" xml:space="preserve">
+    <value>ملف WebVTT</value>
+  </data>
+  <data name="CaptionsLabelLabel" xml:space="preserve">
+    <value>تسمية الترجمة المرئية</value>
+  </data>
+  <data name="CaptionsLocaleLabel" xml:space="preserve">
+    <value>لغة الترجمة المرئية</value>
+  </data>
+  <data name="CatalogFieldsHeader" xml:space="preserve">
+    <value>تفاصيل الدورة</value>
+  </data>
+  <data name="CatalogHeader" xml:space="preserve">
+    <value>دورات يمكنك الانضمام إليها</value>
+  </data>
+  <data name="CategoryLabel" xml:space="preserve">
+    <value>فئة التدريب</value>
+  </data>
+  <data name="CeDisclaimer" xml:space="preserve">
+    <value>Resgrid ليس جهة اعتماد للتعليم المستمر: يُسجَّل المزود والرقم كما تدخلهما.</value>
+  </data>
+  <data name="CeNumberLabel" xml:space="preserve">
+    <value>رقم دورة التعليم المستمر</value>
+  </data>
+  <data name="CeProviderLabel" xml:space="preserve">
+    <value>مزود التعليم المستمر</value>
+  </data>
+  <data name="CertificateTemplateLabel" xml:space="preserve">
+    <value>قالب الشهادة</value>
+  </data>
+  <data name="ChangeSummaryLabel" xml:space="preserve">
+    <value>ما الذي تغيّر</value>
+  </data>
+  <data name="ChooseAllHelp" xml:space="preserve">
+    <value>اختر كل ما ينطبق.</value>
+  </data>
+  <data name="ChooseMember" xml:space="preserve">
+    <value>اختر عضوًا…</value>
+  </data>
+  <data name="ChooseOption" xml:space="preserve">
+    <value>اختر…</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>رمز الدورة</value>
+  </data>
+  <data name="CommentLabel" xml:space="preserve">
+    <value>تعليق</value>
+  </data>
+  <data name="CompletedBadge" xml:space="preserve">
+    <value>مكتمل</value>
+  </data>
+  <data name="CompletedColumn" xml:space="preserve">
+    <value>مكتمل</value>
+  </data>
+  <data name="CompletedHeader" xml:space="preserve">
+    <value>المكتملة</value>
+  </data>
+  <data name="CompletedOfFormat" xml:space="preserve">
+    <value>{0} من {1}</value>
+  </data>
+  <data name="ContentHelp" xml:space="preserve">
+    <value>نص منسق (HTML). يُنقّى عند الحفظ، ويُسمح بتضمين YouTube وVimeo ومستندات Google.</value>
+  </data>
+  <data name="ContentLabel" xml:space="preserve">
+    <value>محتوى الدرس</value>
+  </data>
+  <data name="CooldownFormat" xml:space="preserve">
+    <value>انتظر {0} ساعة بين المحاولات</value>
+  </data>
+  <data name="CooldownLabel" xml:space="preserve">
+    <value>الساعات بين المحاولات</value>
+  </data>
+  <data name="CorrectAnswerLabel" xml:space="preserve">
+    <value>الإجابة الصحيحة</value>
+  </data>
+  <data name="CorrectLabel" xml:space="preserve">
+    <value>صحيح</value>
+  </data>
+  <data name="CorrectOrderLabel" xml:space="preserve">
+    <value>الترتيب الصحيح:</value>
+  </data>
+  <data name="CourseColumn" xml:space="preserve">
+    <value>الدورة</value>
+  </data>
+  <data name="CourseCompletedMessage" xml:space="preserve">
+    <value>اكتملت الدورة وهي مسجلة في سجلك التدريبي.</value>
+  </data>
+  <data name="CoursesHeader" xml:space="preserve">
+    <value>الدورات</value>
+  </data>
+  <data name="CreateBankButton" xml:space="preserve">
+    <value>إنشاء بنك</value>
+  </data>
+  <data name="CreateCourseButton" xml:space="preserve">
+    <value>إنشاء دورة</value>
+  </data>
+  <data name="CrewEndedMessage" xml:space="preserve">
+    <value>انتهى هذا العرض الجماعي.</value>
+  </data>
+  <data name="CrewQrAlt" xml:space="preserve">
+    <value>رمز العرض الجماعي</value>
+  </data>
+  <data name="CrewQrRotates" xml:space="preserve">
+    <value>يتغير الرمز كل 30 ثانية، لذا تتوقف صورته عن العمل.</value>
+  </data>
+  <data name="CrewScanConfirm" xml:space="preserve">
+    <value>هل تسجل حضورك لهذا العرض الجماعي؟ يُحتسب الدرس المعروض كمشاهَد، ثم تجيب عن أي اختبار على هاتفك.</value>
+  </data>
+  <data name="CrewScanInstruction" xml:space="preserve">
+    <value>امسح هذا الرمز بهاتفك الخاص لتسجيل حضورك.</value>
+  </data>
+  <data name="CrewViewingTitle" xml:space="preserve">
+    <value>العرض الجماعي</value>
+  </data>
+  <data name="DateLine" xml:space="preserve">
+    <value>التاريخ:</value>
+  </data>
+  <data name="Decision.Approved" xml:space="preserve">
+    <value>معتمد</value>
+  </data>
+  <data name="Decision.Pending" xml:space="preserve">
+    <value>بالانتظار</value>
+  </data>
+  <data name="Decision.Rejected" xml:space="preserve">
+    <value>أُعيد</value>
+  </data>
+  <data name="Decision.Withdrawn" xml:space="preserve">
+    <value>مسحوب</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="DeletedMessage" xml:space="preserve">
+    <value>تم الحذف.</value>
+  </data>
+  <data name="DeleteLessonConfirm" xml:space="preserve">
+    <value>هل تحذف هذا الدرس؟</value>
+  </data>
+  <data name="DeleteModuleConfirm" xml:space="preserve">
+    <value>هل تحذف هذه الوحدة ودروسها؟</value>
+  </data>
+  <data name="DifficultyColumn" xml:space="preserve">
+    <value>الصعوبة (p)</value>
+  </data>
+  <data name="DifficultyHelp" xml:space="preserve">
+    <value>نسبة الإجابات الصحيحة: كلما ارتفعت كان السؤال أسهل.</value>
+  </data>
+  <data name="DiscardButton" xml:space="preserve">
+    <value>تجاهل المسودة</value>
+  </data>
+  <data name="DiscardConfirm" xml:space="preserve">
+    <value>هل تتجاهل هذه المسودة؟ لم تُرسل قط، لذا لن يُحتفظ بشيء.</value>
+  </data>
+  <data name="DiscardedMessage" xml:space="preserve">
+    <value>تم تجاهل المسودة.</value>
+  </data>
+  <data name="DiscriminationColumn" xml:space="preserve">
+    <value>التمييز (D)</value>
+  </data>
+  <data name="DiscriminationHelp" xml:space="preserve">
+    <value>نسبة الصحيح في أعلى 27% من المحاولات مطروحًا منها أدنى 27%: ما دون 0.2 يستحق المراجعة.</value>
+  </data>
+  <data name="DocumentNameLabel" xml:space="preserve">
+    <value>اسم المستند</value>
+  </data>
+  <data name="DocumentUrlLabel" xml:space="preserve">
+    <value>رابط المستند (https)</value>
+  </data>
+  <data name="DrawCountLabel" xml:space="preserve">
+    <value>الأسئلة لكل محاولة (0 = الكل)</value>
+  </data>
+  <data name="DrawTagsLabel" xml:space="preserve">
+    <value>فقط الأسئلة الموسومة بـ</value>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>الاستحقاق</value>
+  </data>
+  <data name="DueDateHelp" xml:space="preserve">
+    <value>اختياري. نهاية ذلك اليوم بالتوقيت المحلي للإدارة.</value>
+  </data>
+  <data name="DueDateLabel" xml:space="preserve">
+    <value>تاريخ الاستحقاق</value>
+  </data>
+  <data name="DueFormat" xml:space="preserve">
+    <value>الاستحقاق {0}</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>تحرير</value>
+  </data>
+  <data name="EditDraftButton" xml:space="preserve">
+    <value>تحرير المسودة</value>
+  </data>
+  <data name="EditQuestionHeader" xml:space="preserve">
+    <value>تحرير السؤال</value>
+  </data>
+  <data name="EndCrewViewingButton" xml:space="preserve">
+    <value>إنهاء العرض</value>
+  </data>
+  <data name="EnrollButton" xml:space="preserve">
+    <value>التسجيل</value>
+  </data>
+  <data name="EnrolledColumn" xml:space="preserve">
+    <value>المسجلون</value>
+  </data>
+  <data name="EnrolledMessage" xml:space="preserve">
+    <value>تم تسجيلك.</value>
+  </data>
+  <data name="EnrollmentsHeader" xml:space="preserve">
+    <value>التسجيلات</value>
+  </data>
+  <data name="EnrollmentStatus.Completed" xml:space="preserve">
+    <value>مكتمل</value>
+  </data>
+  <data name="EnrollmentStatus.InProgress" xml:space="preserve">
+    <value>قيد التقدم</value>
+  </data>
+  <data name="EnrollmentStatus.NotStarted" xml:space="preserve">
+    <value>لم يبدأ</value>
+  </data>
+  <data name="EnrollmentStatus.Withdrawn" xml:space="preserve">
+    <value>مسحوب</value>
+  </data>
+  <data name="Error.AddonRequired" xml:space="preserve">
+    <value>يتطلب ذلك إضافة نظام إدارة التعلم.</value>
+  </data>
+  <data name="Error.AlreadySubmitted" xml:space="preserve">
+    <value>تم إرسال هذا بالفعل.</value>
+  </data>
+  <data name="Error.AttemptLimitReached" xml:space="preserve">
+    <value>استنفدت جميع المحاولات المسموح بها.</value>
+  </data>
+  <data name="Error.CodeExpired" xml:space="preserve">
+    <value>تغيّر هذا الرمز. امسح الرمز الظاهر على الشاشة مجددًا.</value>
+  </data>
+  <data name="Error.CooldownActive" xml:space="preserve">
+    <value>يرجى الانتظار قبل المحاولة مجددًا.</value>
+  </data>
+  <data name="Error.FileTooLarge" xml:space="preserve">
+    <value>الملف كبير جدًا.</value>
+  </data>
+  <data name="Error.InvalidInput" xml:space="preserve">
+    <value>بعض المعلومات مفقودة أو غير صالحة.</value>
+  </data>
+  <data name="Error.LapseWindowEnded" xml:space="preserve">
+    <value>انتهت إضافة نظام إدارة التعلم وانقضت مهلة إكمال هذه الدورة.</value>
+  </data>
+  <data name="Error.LessonLocked" xml:space="preserve">
+    <value>أكمل الدروس السابقة أولًا.</value>
+  </data>
+  <data name="Error.MediaUnavailable" xml:space="preserve">
+    <value>تخزين الفيديو غير متاح حاليًا.</value>
+  </data>
+  <data name="Error.None" xml:space="preserve">
+    <value>تم.</value>
+  </data>
+  <data name="Error.NotAuthorized" xml:space="preserve">
+    <value>ليست لديك صلاحية القيام بذلك.</value>
+  </data>
+  <data name="Error.NotDraft" xml:space="preserve">
+    <value>لا يمكن تغيير إلا المسودة.</value>
+  </data>
+  <data name="Error.NotEntitled" xml:space="preserve">
+    <value>هذا الدرس لوحدة أو إضافة لا تملكها إدارتك.</value>
+  </data>
+  <data name="Error.NotFound" xml:space="preserve">
+    <value>لم يُعثر على العنصر.</value>
+  </data>
+  <data name="Error.RequirementNotMet" xml:space="preserve">
+    <value>هذه الخطوة لم تكتمل بعد.</value>
+  </data>
+  <data name="Error.ResponseRequired" xml:space="preserve">
+    <value>أجب عن المهمة (أو أرفق الملف المطلوب) لإكمال هذا الدرس.</value>
+  </data>
+  <data name="Error.SeatTimeNotMet" xml:space="preserve">
+    <value>اقضِ وقتًا أطول قليلًا في هذا الدرس قبل إكماله.</value>
+  </data>
+  <data name="Error.StaleCopy" xml:space="preserve">
+    <value>غيّر شخص آخر هذا منذ فتحته. أعد التحميل وحاول مجددًا.</value>
+  </data>
+  <data name="Error.TimeExpired" xml:space="preserve">
+    <value>انتهى وقت هذه المحاولة.</value>
+  </data>
+  <data name="Error.UnsupportedFile" xml:space="preserve">
+    <value>نوع الملف هذا غير مقبول.</value>
+  </data>
+  <data name="EveryoneOption" xml:space="preserve">
+    <value>الجميع في الإدارة</value>
+  </data>
+  <data name="ExpiredBadge" xml:space="preserve">
+    <value>انتهى الوقت</value>
+  </data>
+  <data name="ExplanationLabel" xml:space="preserve">
+    <value>الشرح (يظهر بعد المحاولة، وهو الإجابة النموذجية في الإجابات القصيرة)</value>
+  </data>
+  <data name="FailedBadge" xml:space="preserve">
+    <value>غير ناجح</value>
+  </data>
+  <data name="FileColumn" xml:space="preserve">
+    <value>الملف</value>
+  </data>
+  <data name="FileRequestHelp" xml:space="preserve">
+    <value>PDF أو صورة أو نص أو Word أو Excel حتى 10 ميغابايت.</value>
+  </data>
+  <data name="FileRequestLabel" xml:space="preserve">
+    <value>طلب ملف (اختياري)</value>
+  </data>
+  <data name="FingerprintFormat" xml:space="preserve">
+    <value>البصمة {0}</value>
+  </data>
+  <data name="FreeResponseLabel" xml:space="preserve">
+    <value>مهمة إجابة حرة (اختيارية)</value>
+  </data>
+  <data name="GradedMessage" xml:space="preserve">
+    <value>حُفظت الدرجة.</value>
+  </data>
+  <data name="GraderNotesLabel" xml:space="preserve">
+    <value>ملاحظات المصحح</value>
+  </data>
+  <data name="GradingEmpty" xml:space="preserve">
+    <value>لا يوجد ما ينتظر التصحيح.</value>
+  </data>
+  <data name="GradingIntro" xml:space="preserve">
+    <value>إجابات قصيرة بانتظار التصحيح. لا يصحح أحد محاولته الخاصة.</value>
+  </data>
+  <data name="GradingTitle" xml:space="preserve">
+    <value>قائمة التصحيح</value>
+  </data>
+  <data name="GroupsLabel" xml:space="preserve">
+    <value>المجموعات</value>
+  </data>
+  <data name="HostedVideoLabel" xml:space="preserve">
+    <value>فيديو مرفوع</value>
+  </data>
+  <data name="HoursColumn" xml:space="preserve">
+    <value>الساعات</value>
+  </data>
+  <data name="HoursFormat" xml:space="preserve">
+    <value>{0} ساعات</value>
+  </data>
+  <data name="HoursLabel" xml:space="preserve">
+    <value>الساعات المحتسبة</value>
+  </data>
+  <data name="ImageUrlLabel" xml:space="preserve">
+    <value>رابط الصورة (https، اختياري)</value>
+  </data>
+  <data name="IncludedTile" xml:space="preserve">
+    <value>المضمّن</value>
+  </data>
+  <data name="IncorrectLabel" xml:space="preserve">
+    <value>خطأ</value>
+  </data>
+  <data name="InForceFormat" xml:space="preserve">
+    <value>الإصدار {0} ساري المفعول</value>
+  </data>
+  <data name="InProgressBadge" xml:space="preserve">
+    <value>قيد التقدم</value>
+  </data>
+  <data name="InProgressHeader" xml:space="preserve">
+    <value>مسندة وقيد التقدم</value>
+  </data>
+  <data name="IssuesCertificationLabel" xml:space="preserve">
+    <value>الإكمال يصدر أو يجدد</value>
+  </data>
+  <data name="ItemAnalysisFootnote" xml:space="preserve">
+    <value>يحتاج التمييز إلى 10 محاولات مكتملة على الأقل. لا تُحتسب المحاولات المنتظرة للتصحيح.</value>
+  </data>
+  <data name="ItemAnalysisIntro" xml:space="preserve">
+    <value>أداء كل سؤال في المحاولات المكتملة.</value>
+  </data>
+  <data name="ItemAnalysisTitle" xml:space="preserve">
+    <value>تحليل الأسئلة</value>
+  </data>
+  <data name="Kind.Assessment" xml:space="preserve">
+    <value>تقييم</value>
+  </data>
+  <data name="Kind.Blocks" xml:space="preserve">
+    <value>قراءة</value>
+  </data>
+  <data name="Kind.Cmi5" xml:space="preserve">
+    <value>حزمة cmi5</value>
+  </data>
+  <data name="Kind.Document" xml:space="preserve">
+    <value>مستند</value>
+  </data>
+  <data name="Kind.LiveSession" xml:space="preserve">
+    <value>جلسة مباشرة</value>
+  </data>
+  <data name="Kind.ProtocolVersion" xml:space="preserve">
+    <value>بروتوكول</value>
+  </data>
+  <data name="Kind.Scorm" xml:space="preserve">
+    <value>حزمة SCORM</value>
+  </data>
+  <data name="Kind.Survey" xml:space="preserve">
+    <value>تقييم الدورة</value>
+  </data>
+  <data name="Kind.Video" xml:space="preserve">
+    <value>فيديو</value>
+  </data>
+  <data name="LapsedNotice" xml:space="preserve">
+    <value>انتهت إضافة نظام إدارة التعلم: تبقى الدورات والسجلات قابلة للقراءة، وتبقى الدورات المسندة مفتوحة حتى موعد استحقاقها (أو 30 يومًا)، ويكون الفيديو المستضاف للقراءة فقط لمدة 90 يومًا، وتتطلب الدورات أو الإسنادات الجديدة الإضافة مجددًا.</value>
+  </data>
+  <data name="LengthColumn" xml:space="preserve">
+    <value>المدة</value>
+  </data>
+  <data name="LessonBadge" xml:space="preserve">
+    <value>درس</value>
+  </data>
+  <data name="LessonColumn" xml:space="preserve">
+    <value>الدرس</value>
+  </data>
+  <data name="LessonCompletedMessage" xml:space="preserve">
+    <value>اكتمل الدرس.</value>
+  </data>
+  <data name="LessonDoneLabel" xml:space="preserve">
+    <value>لقد أكملت هذا الدرس.</value>
+  </data>
+  <data name="LibraryIntro" xml:space="preserve">
+    <value>دورات إدارتك: التأليف والاعتماد والنشر والإسناد والتقارير.</value>
+  </data>
+  <data name="LibraryTitle" xml:space="preserve">
+    <value>مكتبة الدورات</value>
+  </data>
+  <data name="Lifecycle.AlreadyDecided" xml:space="preserve">
+    <value>حُسمت هذه الخطوة بالفعل أو اعتمدت هذه الجولة مسبقًا.</value>
+  </data>
+  <data name="Lifecycle.ArtifactChanged" xml:space="preserve">
+    <value>تغيّر الإصدار بعد إرساله أو توقيعه؛ أرسله مجددًا.</value>
+  </data>
+  <data name="Lifecycle.ChangeSummaryRequired" xml:space="preserve">
+    <value>صف ما تغيّر قبل النشر.</value>
+  </data>
+  <data name="Lifecycle.DraftExists" xml:space="preserve">
+    <value>توجد مسودة مفتوحة لهذه الدورة بالفعل.</value>
+  </data>
+  <data name="Lifecycle.EffectiveDateInPast" xml:space="preserve">
+    <value>تاريخ السريان في الماضي.</value>
+  </data>
+  <data name="Lifecycle.EmptyContent" xml:space="preserve">
+    <value>أضف درسًا واحدًا على الأقل قبل الإرسال.</value>
+  </data>
+  <data name="Lifecycle.InvalidInput" xml:space="preserve">
+    <value>بعض المعلومات مفقودة أو غير صالحة.</value>
+  </data>
+  <data name="Lifecycle.None" xml:space="preserve">
+    <value>تم.</value>
+  </data>
+  <data name="Lifecycle.NotApproved" xml:space="preserve">
+    <value>لا يمكن نشر إلا إصدار معتمد.</value>
+  </data>
+  <data name="Lifecycle.NotAuthorized" xml:space="preserve">
+    <value>ليست لديك صلاحية القيام بذلك.</value>
+  </data>
+  <data name="Lifecycle.NotDraft" xml:space="preserve">
+    <value>لا يمكن إرسال إلا المسودة.</value>
+  </data>
+  <data name="Lifecycle.NotFound" xml:space="preserve">
+    <value>لم يُعثر على الإصدار.</value>
+  </data>
+  <data name="Lifecycle.NotInReview" xml:space="preserve">
+    <value>هذا الإصدار لا ينتظر الاعتماد.</value>
+  </data>
+  <data name="Lifecycle.NotPublished" xml:space="preserve">
+    <value>لم يُنشر شيء بعد.</value>
+  </data>
+  <data name="Lifecycle.OpenComments" xml:space="preserve">
+    <value>عالج تعليقات المراجعة المفتوحة أولًا.</value>
+  </data>
+  <data name="Lifecycle.PasskeyRequired" xml:space="preserve">
+    <value>تشترط إدارتك مفتاح مرور لهذا التوقيع.</value>
+  </data>
+  <data name="Lifecycle.RetentionProtected" xml:space="preserve">
+    <value>يُحتفظ بالإصدار المُرسل ولا يمكن تجاهله.</value>
+  </data>
+  <data name="Lifecycle.SignatureRequired" xml:space="preserve">
+    <value>أكد هويتك لتوقيع الاعتماد.</value>
+  </data>
+  <data name="Lifecycle.StaleCopy" xml:space="preserve">
+    <value>غيّر شخص آخر هذا منذ فتحته. أعد التحميل وحاول مجددًا.</value>
+  </data>
+  <data name="LockedBadge" xml:space="preserve">
+    <value>مقفل حتى تكتمل الدروس السابقة</value>
+  </data>
+  <data name="MajorPolicyLabel" xml:space="preserve">
+    <value>عند إصدار رئيسي</value>
+  </data>
+  <data name="MajorVersionOption" xml:space="preserve">
+    <value>إصدار رئيسي: اختر ما يحدث لمن أكملوها</value>
+  </data>
+  <data name="MarkCompleteButton" xml:space="preserve">
+    <value>وضع علامة مكتمل</value>
+  </data>
+  <data name="MarkPresentButton" xml:space="preserve">
+    <value>أنا حاضر</value>
+  </data>
+  <data name="MediaNotConfigured" xml:space="preserve">
+    <value>لم يُضبط تخزين الفيديو في هذا التثبيت، لذا لا يمكن رفع مقاطع الفيديو. تظل روابط YouTube وVimeo تعمل.</value>
+  </data>
+  <data name="MediaStatus.Archived" xml:space="preserve">
+    <value>مؤرشف (انتهت الإضافة)</value>
+  </data>
+  <data name="MediaStatus.Failed" xml:space="preserve">
+    <value>تعذرت المعالجة</value>
+  </data>
+  <data name="MediaStatus.Queued" xml:space="preserve">
+    <value>بانتظار المعالجة</value>
+  </data>
+  <data name="MediaStatus.Ready" xml:space="preserve">
+    <value>جاهز</value>
+  </data>
+  <data name="MediaStatus.Transcoding" xml:space="preserve">
+    <value>قيد المعالجة</value>
+  </data>
+  <data name="MediaStatus.Uploading" xml:space="preserve">
+    <value>جارٍ الرفع</value>
+  </data>
+  <data name="MemberColumn" xml:space="preserve">
+    <value>العضو</value>
+  </data>
+  <data name="MembersLabel" xml:space="preserve">
+    <value>الأعضاء</value>
+  </data>
+  <data name="MinimumSeatLabel" xml:space="preserve">
+    <value>الحد الأدنى للوقت في الدرس (بالثواني)</value>
+  </data>
+  <data name="MinorVersionOption" xml:space="preserve">
+    <value>إصدار فرعي: تبقى الإكمالات سارية</value>
+  </data>
+  <data name="MinutesFormat" xml:space="preserve">
+    <value>{0} دقيقة</value>
+  </data>
+  <data name="ModelAnswerLabel" xml:space="preserve">
+    <value>الإجابة النموذجية:</value>
+  </data>
+  <data name="ModuleLabel" xml:space="preserve">
+    <value>الوحدة</value>
+  </data>
+  <data name="ModuleNumberFormat" xml:space="preserve">
+    <value>الوحدة {0}</value>
+  </data>
+  <data name="ModuleTitleLabel" xml:space="preserve">
+    <value>عنوان الوحدة</value>
+  </data>
+  <data name="MoveUpButton" xml:space="preserve">
+    <value>نقل لأعلى</value>
+  </data>
+  <data name="MyCoursesIntro" xml:space="preserve">
+    <value>الدورات المسندة إليك وأكاديمية Resgrid والدورات التي يمكنك الانضمام إليها.</value>
+  </data>
+  <data name="MyCoursesTitle" xml:space="preserve">
+    <value>دوراتي</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="NameLine" xml:space="preserve">
+    <value>الاسم:</value>
+  </data>
+  <data name="NewBankHeader" xml:space="preserve">
+    <value>بنك أسئلة جديد</value>
+  </data>
+  <data name="NewCourseHeader" xml:space="preserve">
+    <value>دورة جديدة</value>
+  </data>
+  <data name="NewLessonFormat" xml:space="preserve">
+    <value>درس جديد: {0}</value>
+  </data>
+  <data name="NewQuestionHeader" xml:space="preserve">
+    <value>سؤال جديد</value>
+  </data>
+  <data name="NewVersionButton" xml:space="preserve">
+    <value>بدء إصدار جديد</value>
+  </data>
+  <data name="NextAttemptFormat" xml:space="preserve">
+    <value>المحاولة التالية بدءًا من {0}.</value>
+  </data>
+  <data name="NextButton" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="NextUpLabel" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="NoBanks" xml:space="preserve">
+    <value>لا توجد بنوك أسئلة بعد.</value>
+  </data>
+  <data name="NoCourses" xml:space="preserve">
+    <value>لا توجد دورات بعد.</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>لا شيء</value>
+  </data>
+  <data name="NoOpenCourses" xml:space="preserve">
+    <value>ليس لديك دورات مفتوحة.</value>
+  </data>
+  <data name="NothingToPlay" xml:space="preserve">
+    <value>لا تحتوي هذه الدورة على دروس لعرضها.</value>
+  </data>
+  <data name="Notify.CourseAssigned" xml:space="preserve">
+    <value>أُسندت إليك الدورة "{0}". افتحها: {1}</value>
+  </data>
+  <data name="Notify.CourseAssigned.Title" xml:space="preserve">
+    <value>دورة جديدة مسندة</value>
+  </data>
+  <data name="Notify.CourseNewVersion" xml:space="preserve">
+    <value>نُشر إصدار رئيسي جديد ({1}) من الدورة "{0}" التي أكملتها.</value>
+  </data>
+  <data name="Notify.CourseNewVersion.Title" xml:space="preserve">
+    <value>تم تحديث الدورة</value>
+  </data>
+  <data name="Notify.CourseReassigned" xml:space="preserve">
+    <value>للدورة "{0}" إصدار رئيسي جديد ({1}) وأُسندت إليك مجددًا.</value>
+  </data>
+  <data name="Notify.CourseReassigned.Title" xml:space="preserve">
+    <value>أُسندت الدورة مجددًا</value>
+  </data>
+  <data name="Notify.InProgressReminder" xml:space="preserve">
+    <value>لم تُكمل الدورة "{0}". تابع من حيث توقفت: {1}</value>
+  </data>
+  <data name="Notify.InProgressReminder.Title" xml:space="preserve">
+    <value>تذكير بالدورة</value>
+  </data>
+  <data name="NotStartedBadge" xml:space="preserve">
+    <value>لم يبدأ</value>
+  </data>
+  <data name="OfflineCapLabel" xml:space="preserve">
+    <value>الحد الأقصى للحجم دون اتصال (ميغابايت)</value>
+  </data>
+  <data name="OfflineExpiryLabel" xml:space="preserve">
+    <value>مدة الاحتفاظ بالنسخة دون اتصال (أيام)</value>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>فتح</value>
+  </data>
+  <data name="OpenDocumentButton" xml:space="preserve">
+    <value>افتح المستند</value>
+  </data>
+  <data name="OptionalBadge" xml:space="preserve">
+    <value>اختياري</value>
+  </data>
+  <data name="OptionCountsColumn" xml:space="preserve">
+    <value>الخيارات المختارة</value>
+  </data>
+  <data name="OptionNumberFormat" xml:space="preserve">
+    <value>الخيار {0}</value>
+  </data>
+  <data name="OptionsHelp" xml:space="preserve">
+    <value>حدد الخيار أو الخيارات الصحيحة. للترتيب اكتبها بالترتيب الصحيح. صح/خطأ يستخدم أول خيارين. الإجابات القصيرة لا تحتاج إلى خيارات.</value>
+  </data>
+  <data name="OptionsLabel" xml:space="preserve">
+    <value>الخيارات</value>
+  </data>
+  <data name="OrderHelp" xml:space="preserve">
+    <value>رتب العناصر بالترتيب الصحيح: اختر الأول ثم الثاني وهكذا.</value>
+  </data>
+  <data name="OutlineLabel" xml:space="preserve">
+    <value>مخطط الدورة</value>
+  </data>
+  <data name="OverdueBadge" xml:space="preserve">
+    <value>متأخر</value>
+  </data>
+  <data name="OverIncludedNote" xml:space="preserve">
+    <value>تجاوز التخزين الكمية المضمنة. لا تُفرض رسوم على ذلك حاليًا، ففكر في إزالة مقاطع الفيديو القديمة.</value>
+  </data>
+  <data name="OverviewLabel" xml:space="preserve">
+    <value>نظرة عامة</value>
+  </data>
+  <data name="OwnersHeader" xml:space="preserve">
+    <value>مالكو الدورة</value>
+  </data>
+  <data name="PassedBadge" xml:space="preserve">
+    <value>ناجح</value>
+  </data>
+  <data name="PassMarkFormat" xml:space="preserve">
+    <value>درجة النجاح {0}%</value>
+  </data>
+  <data name="PassMarkLabel" xml:space="preserve">
+    <value>درجة النجاح</value>
+  </data>
+  <data name="PassRateTile" xml:space="preserve">
+    <value>نسبة النجاح</value>
+  </data>
+  <data name="PathLessonsFormat" xml:space="preserve">
+    <value>{0} دروس · أكملت منها {1}</value>
+  </data>
+  <data name="PathNobodyAssigned" xml:space="preserve">
+    <value>لم يُسند هذا المسار إلى أحد بعد.</value>
+  </data>
+  <data name="PathProgressButton" xml:space="preserve">
+    <value>التقدم ({0} مسندون)</value>
+  </data>
+  <data name="PathProgressIntro" xml:space="preserve">
+    <value>تقدم كل عضو مُسند في دروس المسار.</value>
+  </data>
+  <data name="PlaybackSpeedLabel" xml:space="preserve">
+    <value>سرعة التشغيل</value>
+  </data>
+  <data name="PlayerTitle" xml:space="preserve">
+    <value>الدورة</value>
+  </data>
+  <data name="PointsAwardedFormat" xml:space="preserve">
+    <value>النقاط الممنوحة (من {0})</value>
+  </data>
+  <data name="PointsLabel" xml:space="preserve">
+    <value>النقاط</value>
+  </data>
+  <data name="PointsShort" xml:space="preserve">
+    <value>نقاط</value>
+  </data>
+  <data name="Policy.Nothing" xml:space="preserve">
+    <value>لا شيء: تبقى الإكمالات سارية</value>
+  </data>
+  <data name="Policy.Notify" xml:space="preserve">
+    <value>إبلاغ من أكملوها</value>
+  </data>
+  <data name="Policy.Reassign" xml:space="preserve">
+    <value>إعادة الإسناد لمن أكملوها</value>
+  </data>
+  <data name="PresentHeader" xml:space="preserve">
+    <value>الحاضرون</value>
+  </data>
+  <data name="PresentMessage" xml:space="preserve">
+    <value>سُجّل حضورك. تابع الدرس التالي على هاتفك.</value>
+  </data>
+  <data name="PreTestLabel" xml:space="preserve">
+    <value>اختبار مسبق (اجتيازه يُكمل الدورة)</value>
+  </data>
+  <data name="PreTestNote" xml:space="preserve">
+    <value>اختبار مسبق: اجتيازه يُكمل الدورة بالكامل.</value>
+  </data>
+  <data name="PreviousButton" xml:space="preserve">
+    <value>السابق</value>
+  </data>
+  <data name="PrintHint" xml:space="preserve">
+    <value>استخدم أمر الطباعة في المتصفح لطباعة هذا الاختبار.</value>
+  </data>
+  <data name="PrintKeyButton" xml:space="preserve">
+    <value>مع مفتاح الإجابات</value>
+  </data>
+  <data name="PrintTestButton" xml:space="preserve">
+    <value>اختبار قابل للطباعة</value>
+  </data>
+  <data name="PrivateBadge" xml:space="preserve">
+    <value>خاص</value>
+  </data>
+  <data name="ProgressColumn" xml:space="preserve">
+    <value>التقدم</value>
+  </data>
+  <data name="ProgressHonest" xml:space="preserve">
+    <value>اكتمل {0}% من الدروس المطلوبة</value>
+  </data>
+  <data name="ProgressLabel" xml:space="preserve">
+    <value>التقدم</value>
+  </data>
+  <data name="ProtocolUnavailable" xml:space="preserve">
+    <value>لم يعد هذا الإصدار من البروتوكول متاحًا.</value>
+  </data>
+  <data name="ProtocolVersionFormat" xml:space="preserve">
+    <value>إصدار البروتوكول {0} كما نُشر.</value>
+  </data>
+  <data name="ProtocolVersionHelp" xml:space="preserve">
+    <value>يعرض الدرس هذا الإصدار كما نُشر حتى لو تغيّر البروتوكول لاحقًا.</value>
+  </data>
+  <data name="ProtocolVersionLabel" xml:space="preserve">
+    <value>إصدار البروتوكول</value>
+  </data>
+  <data name="PublishBeforeAssign" xml:space="preserve">
+    <value>انشر إصدارًا قبل إسناد الدورة.</value>
+  </data>
+  <data name="PublishButton" xml:space="preserve">
+    <value>نشر</value>
+  </data>
+  <data name="PublishedColumn" xml:space="preserve">
+    <value>تاريخ النشر</value>
+  </data>
+  <data name="PublishedMessage" xml:space="preserve">
+    <value>نُشر الإصدار.</value>
+  </data>
+  <data name="PublishHeader" xml:space="preserve">
+    <value>نشر هذا الإصدار</value>
+  </data>
+  <data name="PublishHelp" xml:space="preserve">
+    <value>يحتفظ من هم في منتصف الدورة بالإصدار الذي بدؤوه، وينتقل من لم يبدؤوا إلى هذا الإصدار.</value>
+  </data>
+  <data name="QuestionColumn" xml:space="preserve">
+    <value>السؤال</value>
+  </data>
+  <data name="QuestionKind.MultiChoice" xml:space="preserve">
+    <value>اختيار متعدد</value>
+  </data>
+  <data name="QuestionKind.Ordering" xml:space="preserve">
+    <value>ترتيب</value>
+  </data>
+  <data name="QuestionKind.ShortAnswer" xml:space="preserve">
+    <value>إجابة قصيرة (تُصحح يدويًا)</value>
+  </data>
+  <data name="QuestionKind.SingleChoice" xml:space="preserve">
+    <value>اختيار واحد</value>
+  </data>
+  <data name="QuestionKind.TrueFalse" xml:space="preserve">
+    <value>صح أو خطأ</value>
+  </data>
+  <data name="QuestionKindLabel" xml:space="preserve">
+    <value>نوع السؤال</value>
+  </data>
+  <data name="QuestionNumberFormat" xml:space="preserve">
+    <value>السؤال {0} من {1}</value>
+  </data>
+  <data name="QuestionsCountFormat" xml:space="preserve">
+    <value>{0} أسئلة</value>
+  </data>
+  <data name="QuestionTextLabel" xml:space="preserve">
+    <value>السؤال</value>
+  </data>
+  <data name="RandomizeLabel" xml:space="preserve">
+    <value>خلط ترتيب الإجابات</value>
+  </data>
+  <data name="RatingHelp" xml:space="preserve">
+    <value>1 ضعيف و5 ممتاز.</value>
+  </data>
+  <data name="ReassignDaysLabel" xml:space="preserve">
+    <value>أيام الإكمال عند إعادة الإسناد</value>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>إرجاع إلى المسودة</value>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>أُعيد الإصدار إلى المسودة.</value>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>سبب الإرجاع</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>إزالة</value>
+  </data>
+  <data name="RenameButton" xml:space="preserve">
+    <value>إعادة تسمية</value>
+  </data>
+  <data name="RequiredLabel" xml:space="preserve">
+    <value>مطلوب لإكمال الدورة</value>
+  </data>
+  <data name="RequiredWatchLabel" xml:space="preserve">
+    <value>شاهد على الأقل (%)</value>
+  </data>
+  <data name="ResponsesColumn" xml:space="preserve">
+    <value>الإجابات</value>
+  </data>
+  <data name="ResponsesFormat" xml:space="preserve">
+    <value>{0} إجابات مجهولة الهوية</value>
+  </data>
+  <data name="ResultColumn" xml:space="preserve">
+    <value>الحصيلة</value>
+  </data>
+  <data name="ResultTitle" xml:space="preserve">
+    <value>الحصيلة</value>
+  </data>
+  <data name="ResumeAttemptButton" xml:space="preserve">
+    <value>متابعة المحاولة</value>
+  </data>
+  <data name="ResumeButton" xml:space="preserve">
+    <value>متابعة</value>
+  </data>
+  <data name="RetakeButton" xml:space="preserve">
+    <value>حاول مجددًا</value>
+  </data>
+  <data name="RetireButton" xml:space="preserve">
+    <value>إيقاف</value>
+  </data>
+  <data name="RetireConfirm" xml:space="preserve">
+    <value>هل تريد إيقاف هذه الدورة؟ ستخرج من الفهرس، ويمكن للأعضاء المسجلين بالفعل إكمالها.</value>
+  </data>
+  <data name="RetiredBadge" xml:space="preserve">
+    <value>متوقف</value>
+  </data>
+  <data name="RetiredMessage" xml:space="preserve">
+    <value>أُوقفت الدورة.</value>
+  </data>
+  <data name="RetiredQuestionMessage" xml:space="preserve">
+    <value>أُوقف السؤال.</value>
+  </data>
+  <data name="RetireQuestionConfirm" xml:space="preserve">
+    <value>هل توقف هذا السؤال؟ تحتفظ المحاولات التي تضمنته بنسختها.</value>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>مراجعة</value>
+  </data>
+  <data name="ReviewQueueHeader" xml:space="preserve">
+    <value>بانتظار الاعتماد</value>
+  </data>
+  <data name="RightAssign" xml:space="preserve">
+    <value>إسناد</value>
+  </data>
+  <data name="RightEdit" xml:space="preserve">
+    <value>تحرير</value>
+  </data>
+  <data name="RightReport" xml:space="preserve">
+    <value>التقارير</value>
+  </data>
+  <data name="RightsColumn" xml:space="preserve">
+    <value>الصلاحيات</value>
+  </data>
+  <data name="RolePathsHeader" xml:space="preserve">
+    <value>المسارات الوظيفية</value>
+  </data>
+  <data name="RolePathsIntro" xml:space="preserve">
+    <value>قوائم مرتبة من دروس الأكاديمية لدور معين. إسناد مسار يُسند كل درس فيه متاح لإدارتك.</value>
+  </data>
+  <data name="RolesLabel" xml:space="preserve">
+    <value>الأدوار</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="SavedMessage" xml:space="preserve">
+    <value>تم الحفظ.</value>
+  </data>
+  <data name="SaveGradeButton" xml:space="preserve">
+    <value>حفظ الدرجة</value>
+  </data>
+  <data name="SaveLessonButton" xml:space="preserve">
+    <value>حفظ الدرس</value>
+  </data>
+  <data name="ScoreColumn" xml:space="preserve">
+    <value>النتيجة</value>
+  </data>
+  <data name="SeatTimeRequirement" xml:space="preserve">
+    <value>يتطلب هذا الدرس {0} دقيقة على الأقل (لديك {1} دقيقة).</value>
+  </data>
+  <data name="SelfEnrollLabel" xml:space="preserve">
+    <value>يمكن للأعضاء التسجيل بأنفسهم من الفهرس</value>
+  </data>
+  <data name="SharedBadge" xml:space="preserve">
+    <value>مشترك</value>
+  </data>
+  <data name="SharedBankLabel" xml:space="preserve">
+    <value>مشترك مع جميع مؤلفي الدورات</value>
+  </data>
+  <data name="SharingColumn" xml:space="preserve">
+    <value>المشاركة</value>
+  </data>
+  <data name="ShowAnswers.AfterPassing" xml:space="preserve">
+    <value>المفتاح بعد النجاح</value>
+  </data>
+  <data name="ShowAnswers.Always" xml:space="preserve">
+    <value>المفتاح بعد كل محاولة</value>
+  </data>
+  <data name="ShowAnswers.CorrectnessOnly" xml:space="preserve">
+    <value>أي الإجابات كانت صحيحة، دون المفتاح</value>
+  </data>
+  <data name="ShowAnswers.Never" xml:space="preserve">
+    <value>النتيجة فقط</value>
+  </data>
+  <data name="ShowAnswersLabel" xml:space="preserve">
+    <value>عرض الإجابات</value>
+  </data>
+  <data name="Signature.ArtifactChanged" xml:space="preserve">
+    <value>تغيّر الإصدار بعد التوقيع</value>
+  </data>
+  <data name="Signature.SubjectMissing" xml:space="preserve">
+    <value>لم يعد الإصدار موجودًا</value>
+  </data>
+  <data name="Signature.Valid" xml:space="preserve">
+    <value>يطابق هذا الإصدار</value>
+  </data>
+  <data name="Signature.Voided" xml:space="preserve">
+    <value>ملغى</value>
+  </data>
+  <data name="SizeColumn" xml:space="preserve">
+    <value>الحجم</value>
+  </data>
+  <data name="StandardOption" xml:space="preserve">
+    <value>قياسي</value>
+  </data>
+  <data name="StartAssessmentButton" xml:space="preserve">
+    <value>ابدأ التقييم</value>
+  </data>
+  <data name="StartButton" xml:space="preserve">
+    <value>ابدأ</value>
+  </data>
+  <data name="StartCrewViewingButton" xml:space="preserve">
+    <value>شاهدوا معًا (عرض جماعي)</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="StorageIntro" xml:space="preserve">
+    <value>الفيديو المستضاف لإدارتك مقارنة بمساحة 100 غيغابايت المضمنة في إضافة نظام إدارة التعلم.</value>
+  </data>
+  <data name="StorageTitle" xml:space="preserve">
+    <value>تخزين الفيديو</value>
+  </data>
+  <data name="SubmitAttemptButton" xml:space="preserve">
+    <value>إرسال الإجابات</value>
+  </data>
+  <data name="SubmitConfirm" xml:space="preserve">
+    <value>هل تريد إرسال إجاباتك؟ لا يمكنك تغييرها بعد ذلك.</value>
+  </data>
+  <data name="SubmitForApprovalButton" xml:space="preserve">
+    <value>إرسال للاعتماد</value>
+  </data>
+  <data name="SubmitSurveyButton" xml:space="preserve">
+    <value>إرسال الإجابات</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>أُرسل</value>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>أُرسل الإصدار للاعتماد.</value>
+  </data>
+  <data name="SummaryLabel" xml:space="preserve">
+    <value>الملخص</value>
+  </data>
+  <data name="SurveyAnonymous" xml:space="preserve">
+    <value>إجاباتك مجهولة الهوية: لا يرى المسؤولون إلا المجاميع ابتداءً من ثلاث إجابات.</value>
+  </data>
+  <data name="SurveyFormatHelp" xml:space="preserve">
+    <value>سؤال في كل سطر: "rating: نص" أو "text: نص" أو "choice: نص | خيار | خيار".</value>
+  </data>
+  <data name="SurveyQuestionsLabel" xml:space="preserve">
+    <value>أسئلة الاستبيان</value>
+  </data>
+  <data name="SurveyResultsTitle" xml:space="preserve">
+    <value>تقييم الدورة</value>
+  </data>
+  <data name="SurveyThanksMessage" xml:space="preserve">
+    <value>شكرًا، سُجلت إجاباتك دون كشف هويتك.</value>
+  </data>
+  <data name="SurveyTooFew" xml:space="preserve">
+    <value>تظهر النتائج ابتداءً من {0} إجابات حتى لا يمكن ربط أي إجابة بعضو.</value>
+  </data>
+  <data name="TagsLabel" xml:space="preserve">
+    <value>الوسوم</value>
+  </data>
+  <data name="TestedOutBadge" xml:space="preserve">
+    <value>اجتاز الاختبار المسبق</value>
+  </data>
+  <data name="TimeLimitFormat" xml:space="preserve">
+    <value>الحد الزمني {0} دقيقة</value>
+  </data>
+  <data name="TimeLimitLabel" xml:space="preserve">
+    <value>الحد الزمني (دقائق، 0 = بلا حد)</value>
+  </data>
+  <data name="TimeRemainingFormat" xml:space="preserve">
+    <value>تبقى {0} دقيقة</value>
+  </data>
+  <data name="TitleLabel" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="TooFewAttempts" xml:space="preserve">
+    <value>محاولات قليلة جدًا</value>
+  </data>
+  <data name="TranscriptHeader" xml:space="preserve">
+    <value>النص المكتوب</value>
+  </data>
+  <data name="TranscriptLink" xml:space="preserve">
+    <value>السجل التدريبي</value>
+  </data>
+  <data name="UploadButton" xml:space="preserve">
+    <value>رفع</value>
+  </data>
+  <data name="UploadCaptionsButton" xml:space="preserve">
+    <value>رفع الترجمة المرئية</value>
+  </data>
+  <data name="UploadedColumn" xml:space="preserve">
+    <value>تاريخ الرفع</value>
+  </data>
+  <data name="UploadedMessage" xml:space="preserve">
+    <value>تم الرفع. تُعالج مقاطع الفيديو في الخلفية وتُشغّل عند جاهزيتها.</value>
+  </data>
+  <data name="UploadVideoLabel" xml:space="preserve">
+    <value>رفع فيديو</value>
+  </data>
+  <data name="UsedTile" xml:space="preserve">
+    <value>المستخدم</value>
+  </data>
+  <data name="VersionColumn" xml:space="preserve">
+    <value>الإصدار</value>
+  </data>
+  <data name="VersionLabelFormat" xml:space="preserve">
+    <value>الإصدار {0}</value>
+  </data>
+  <data name="VersionSettingsHeader" xml:space="preserve">
+    <value>إعدادات الإصدار</value>
+  </data>
+  <data name="VersionsHeader" xml:space="preserve">
+    <value>الإصدارات</value>
+  </data>
+  <data name="VersionStatus.Approved" xml:space="preserve">
+    <value>معتمد</value>
+  </data>
+  <data name="VersionStatus.Draft" xml:space="preserve">
+    <value>مسودة</value>
+  </data>
+  <data name="VersionStatus.InReview" xml:space="preserve">
+    <value>قيد المراجعة</value>
+  </data>
+  <data name="VersionStatus.Legacy" xml:space="preserve">
+    <value>قديم</value>
+  </data>
+  <data name="VersionStatus.Published" xml:space="preserve">
+    <value>منشور</value>
+  </data>
+  <data name="VersionStatus.Retired" xml:space="preserve">
+    <value>متوقف</value>
+  </data>
+  <data name="VersionStatus.Superseded" xml:space="preserve">
+    <value>مستبدل</value>
+  </data>
+  <data name="VideoHelp" xml:space="preserve">
+    <value>تعمل روابط YouTube وVimeo في كل مكان. أما الفيديو المرفوع فهو ضمن إضافة نظام إدارة التعلم: يُحوَّل إلى HLS ويُبث عبر روابط موقعة.</value>
+  </data>
+  <data name="VideoSource.Embed" xml:space="preserve">
+    <value>YouTube أو Vimeo</value>
+  </data>
+  <data name="VideoSource.Hosted" xml:space="preserve">
+    <value>مرفوع (نظام إدارة التعلم)</value>
+  </data>
+  <data name="VideoSourceLabel" xml:space="preserve">
+    <value>مصدر الفيديو</value>
+  </data>
+  <data name="VideosTile" xml:space="preserve">
+    <value>مقاطع الفيديو</value>
+  </data>
+  <data name="VideoUnavailable" xml:space="preserve">
+    <value>هذا الفيديو غير متاح حاليًا.</value>
+  </data>
+  <data name="VideoUrlLabel" xml:space="preserve">
+    <value>رابط YouTube أو Vimeo</value>
+  </data>
+  <data name="WalkthroughBadge" xml:space="preserve">
+    <value>جولة إرشادية</value>
+  </data>
+  <data name="WatchAgainButton" xml:space="preserve">
+    <value>شاهد مجددًا</value>
+  </data>
+  <data name="WatchRequirement" xml:space="preserve">
+    <value>شاهد {0}% على الأقل (شاهدت {1}%).</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>سحب</value>
+  </data>
+  <data name="WithdrawConfirm" xml:space="preserve">
+    <value>هل تريد سحب هذا العضو من الدورة؟ يُحتفظ بتقدمه.</value>
+  </data>
+  <data name="WithdrawDraftButton" xml:space="preserve">
+    <value>إعادة إلى المسودة</value>
+  </data>
+  <data name="WithdrawnDraftMessage" xml:space="preserve">
+    <value>أصبح الإصدار مسودة مجددًا.</value>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>سُحب العضو من الدورة.</value>
+  </data>
+  <data name="YourAnswerLabel" xml:space="preserve">
+    <value>إجابتك</value>
+  </data>
+  <data name="YourAttemptsHeader" xml:space="preserve">
+    <value>محاولاتك</value>
+  </data>
+  <data name="AidNothingAccepted" xml:space="preserve">
+    <value>لم يتم قبول أي شيء.</value>
+  </data>
+  <data name="AidBankNameFormat" xml:space="preserve">
+    <value>أسئلة مقترحة: {0}</value>
+  </data>
+  <data name="AidBankDescription" xml:space="preserve">
+    <value>أسئلة مقبولة من أدوات الصياغة. راجعها قبل استخدامها في تقييم.</value>
+  </data>
+  <data name="AidQuestionsSaved" xml:space="preserve">
+    <value>تمت إضافة {0} سؤال/أسئلة إلى البنك "{1}".</value>
+  </data>
+  <data name="AidOpenBank" xml:space="preserve">
+    <value>افتح البنك</value>
+  </data>
+  <data name="AidOutlineSaved" xml:space="preserve">
+    <value>تمت إضافة {0} وحدة/وحدات إلى هذه المسودة.</value>
+  </data>
+  <data name="Notify.MicroLearning" xml:space="preserve">
+    <value>سؤال البروتوكول لهذا الأسبوع ({0}) جاهز. أجب عنه من البروتوكولات، إقراراتي، الأسئلة الأسبوعية.</value>
+  </data>
+  <data name="Notify.MicroLearning.Title" xml:space="preserve">
+    <value>سؤال البروتوكول الأسبوعي</value>
+  </data>
+</root>

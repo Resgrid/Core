@@ -230,4 +230,9 @@
   <data name="SelectMember" xml:space="preserve"><value>Välj en medlem</value></data>
   <data name="SelectType" xml:space="preserve"><value>Välj en certifieringstyp</value></data>
   <data name="CertificationNameRequired" xml:space="preserve"><value>Ange ett namn på certifieringen.</value></data>
+  <data name="RenewalHoursLabel" xml:space="preserve"><value>Timmar mot förnyelse</value></data>
+  <data name="RenewalHoursValue" xml:space="preserve"><value>{0} tim tillgodoräknade ({1} tim från utbildningsregistret)</value></data>
+  <data name="UncreditedLedgerHours" xml:space="preserve"><value>{0} tim i kopplade kategorier är ännu inte tillgodoräknade</value></data>
+  <data name="ApplyHistoryLink" xml:space="preserve"><value>Tillgodoräkna historik</value></data>
+  <data name="FromTranscript" xml:space="preserve"><value>Från registret</value></data>
 </root>

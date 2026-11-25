@@ -71,6 +71,8 @@ namespace Resgrid.Services.Records
 		private readonly IInventoryCatalogService _inventory;
 		private readonly IInventoryAuthorizationService _inventoryAuthorization;
 		private readonly IRmsEvidenceArtifactsRepository _evidence;
+		/// <summary>Training T1: training hours come from the learning-record ledger, so this report and the transcript agree.</summary>
+		private readonly ILearningRecordsRepository _learningRecords;
 
 		public RecordsAnalyticsService(RecordsPreventionGate gate, IRecordsAuthorizationService authorization, IRmsOperationalRecordsRepository records, IRmsRecordUnitResponsesRepository units,
 			IRmsRecordParticipantsRepository participants, IRmsRecordGroupScopesRepository scopes, IRmsOperationalRecordDetailsRepository details, IRmsIncidentReportsRepository reports,
@@ -79,8 +81,10 @@ namespace Resgrid.Services.Records
 			IRmsHydrantsRepository hydrants, IRmsHydrantFlowTestsRepository flowTests, IRmsOccupanciesRepository occupancies, IRmsCrrActivitiesRepository crr,
 			IUnitsService unitsService, IDepartmentGroupsService groupsService, IDepartmentsService departmentsService,
 			IFeatureToggleService flags, IChecklistsService checklists, IReadinessAccessService readinessAccess, IWorkOrderReportingService workOrderReporting,
-			IInventoryCatalogService inventory, IInventoryAuthorizationService inventoryAuthorization, IRmsEvidenceArtifactsRepository evidence)
+			IInventoryCatalogService inventory, IInventoryAuthorizationService inventoryAuthorization, IRmsEvidenceArtifactsRepository evidence,
+			ILearningRecordsRepository learningRecords = null)
 		{
+			_learningRecords = learningRecords;
 			_gate = gate; _authorization = authorization; _records = records; _units = units; _participants = participants; _scopes = scopes; _details = details; _reports = reports;
 			_reportUnits = reportUnits; _incidentTypes = incidentTypes; _revisions = revisions; _dueStates = dueStates; _inspections = inspections; _programs = programs; _violations = violations;
 			_permits = permits; _permitTypes = permitTypes; _hydrants = hydrants; _flowTests = flowTests; _occupancies = occupancies; _crr = crr;
@@ -552,7 +556,7 @@ namespace Resgrid.Services.Records
 				HydrantsEnabled = await _gate.IsEnabledAsync(departmentId, RecordsPreventionModule.Hydrants),
 				PermitsEnabled = await _gate.IsEnabledAsync(departmentId, RecordsPreventionModule.Permits)
 			};
-			await SectionAsync(result, "Training", () => { result.Training = TrainingMetrics(data, c); return Task.CompletedTask; });
+			await SectionAsync(result, "Training", async () => { result.Training = await TrainingMetricsAsync(data, c); });
 			await SectionAsync(result, "Response summary", () => { result.Response = ResponseSummary(data, c); return Task.CompletedTask; });
 			if (result.InspectionsEnabled)
 			{
@@ -563,6 +567,44 @@ namespace Resgrid.Services.Records
 			if (result.HydrantsEnabled) await SectionAsync(result, "Hydrants", async () => { result.Hydrants = await HydrantMetricsAsync(c); });
 			if (result.OccupancyEnabled) await SectionAsync(result, "Occupancies", async () => { result.Occupancies = await OccupancyMetricsAsync(c, result.InspectionsEnabled); });
 			return Finish(result, c, data);
+		}
+
+		/// <summary>
+		/// Training hours for the analytics and the RMS-6 accreditation evidence, read from the learning-record ledger (Training
+		/// T1): the finalized training records in the window (visible to the viewer, filtered as asked) select their ledger rows,
+		/// which carry the hours, so a hours report and this section cannot disagree. Without the ledger (tests, no repository)
+		/// the participants are counted as before.
+		/// </summary>
+		private async Task<RecordsTrainingMetrics> TrainingMetricsAsync(Dataset data, Context c)
+		{
+			if (_learningRecords == null)
+				return TrainingMetrics(data, c);
+
+			var training = data.Records.Where(r => string.Equals(r.DefinitionKey, RmsDefinitionKeys.Training, StringComparison.OrdinalIgnoreCase)).ToList();
+			var byRef = training.ToDictionary(r => LearningRecordRules.RecordsRef(r.RmsOperationalRecordId), StringComparer.Ordinal);
+			var ledger = byRef.Count == 0
+				? new List<LearningRecord>()
+				: (await _learningRecords.GetBySourceRefIdsAsync(c.DepartmentId, (int)LearningRecordSourceKinds.TrainingRecord, byRef.Keys)) ?? new List<LearningRecord>();
+			return LedgerTrainingMetrics(training, ledger, r => Month(data.OccurredOn(r), c));
+		}
+
+		/// <summary>
+		/// Training metrics from the ledger rows of the given Records training records: counted (verified) rows only, hours as the
+		/// transcript holds them (one session counted once, R-T2), bucketed by the record's month.
+		/// </summary>
+		public static RecordsTrainingMetrics LedgerTrainingMetrics(IReadOnlyCollection<RmsOperationalRecord> training, IEnumerable<LearningRecord> ledger, Func<RmsOperationalRecord, string> monthOf)
+		{
+			var byRef = (training ?? Array.Empty<RmsOperationalRecord>()).ToDictionary(r => LearningRecordRules.RecordsRef(r.RmsOperationalRecordId), StringComparer.Ordinal);
+			var people = (ledger ?? Enumerable.Empty<LearningRecord>())
+				.Where(l => l != null && l.Counts && l.SourceKind == (int)LearningRecordSourceKinds.TrainingRecord && l.SourceRefId != null && byRef.ContainsKey(l.SourceRefId))
+				.Select(l => (l.UserId, Record: byRef[l.SourceRefId], Hours: (double)l.Hours)).ToList();
+			var members = people.Select(x => x.UserId).Distinct(StringComparer.OrdinalIgnoreCase).Count();
+			var hours = Math.Round(people.Sum(x => x.Hours), 2);
+			return new RecordsTrainingMetrics
+			{
+				Records = byRef.Count, Hours = hours, MembersTrained = members, HoursPerMember = members == 0 ? (double?)null : Math.Round(hours / members, 2),
+				ByMonth = Counts(people.Select(x => (Key: monthOf(x.Record), x.Hours)), x => x.Key, k => k, x => x.Hours, false, StringComparer.Ordinal)
+			};
 		}
 
 		private RecordsTrainingMetrics TrainingMetrics(Dataset data, Context c)

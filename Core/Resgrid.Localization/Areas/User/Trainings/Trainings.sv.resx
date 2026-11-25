@@ -1233,4 +1233,2605 @@
   <data name="ViewedOnValue" xml:space="preserve">
     <value>Visad {0}</value>
   </data>
+  <data name="Doc.Transcript" xml:space="preserve">
+    <value>Utbildningsregister</value>
+  </data>
+  <data name="Doc.Member" xml:space="preserve">
+    <value>Medlem</value>
+  </data>
+  <data name="Doc.Period" xml:space="preserve">
+    <value>Period</value>
+  </data>
+  <data name="Doc.Date" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="Doc.Course" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="Doc.Code" xml:space="preserve">
+    <value>Kod</value>
+  </data>
+  <data name="Doc.Category" xml:space="preserve">
+    <value>Kategori</value>
+  </data>
+  <data name="Doc.Source" xml:space="preserve">
+    <value>Källa</value>
+  </data>
+  <data name="Doc.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Doc.Hours" xml:space="preserve">
+    <value>Timmar</value>
+  </data>
+  <data name="Doc.CeHours" xml:space="preserve">
+    <value>Fortbildningstimmar</value>
+  </data>
+  <data name="Doc.CeProvider" xml:space="preserve">
+    <value>Fortbildningsanordnare</value>
+  </data>
+  <data name="Doc.CeCourseNumber" xml:space="preserve">
+    <value>Fortbildningens kursnummer</value>
+  </data>
+  <data name="Doc.Method" xml:space="preserve">
+    <value>Utbildningsform</value>
+  </data>
+  <data name="Doc.Instructors" xml:space="preserve">
+    <value>Instruktörer</value>
+  </data>
+  <data name="Doc.TotalHours" xml:space="preserve">
+    <value>Totalt antal timmar</value>
+  </data>
+  <data name="Doc.HoursByCategory" xml:space="preserve">
+    <value>Timmar per kategori</value>
+  </data>
+  <data name="Doc.Uncategorized" xml:space="preserve">
+    <value>Utan kategori</value>
+  </data>
+  <data name="Doc.GeneratedOn" xml:space="preserve">
+    <value>Skapad {0} av {1}</value>
+  </data>
+  <data name="Doc.NotCounted" xml:space="preserve">
+    <value>Räknas inte</value>
+  </data>
+  <data name="Doc.CertificateTitle" xml:space="preserve">
+    <value>Kursintyg</value>
+  </data>
+  <data name="Doc.CertifiesThat" xml:space="preserve">
+    <value>Härmed intygas att</value>
+  </data>
+  <data name="Doc.HasCompleted" xml:space="preserve">
+    <value>har genomfört</value>
+  </data>
+  <data name="Doc.CompletedOn" xml:space="preserve">
+    <value>Genomförd</value>
+  </data>
+  <data name="Doc.IssuedBy" xml:space="preserve">
+    <value>Utfärdat av</value>
+  </data>
+  <data name="Doc.VerificationCode" xml:space="preserve">
+    <value>Verifieringskod</value>
+  </data>
+  <data name="Doc.VerifyAt" xml:space="preserve">
+    <value>Verifiera på</value>
+  </data>
+  <data name="Doc.HoursReport" xml:space="preserve">
+    <value>Rapport över utbildningstimmar</value>
+  </data>
+  <data name="Doc.Records" xml:space="preserve">
+    <value>Poster</value>
+  </data>
+  <data name="Doc.Members" xml:space="preserve">
+    <value>Medlemmar</value>
+  </data>
+  <data name="Doc.Target" xml:space="preserve">
+    <value>Mål</value>
+  </data>
+  <data name="Doc.UnresolvedDuplicates" xml:space="preserve">
+    <value>Olösta möjliga dubbletter: {0}</value>
+  </data>
+  <data name="Doc.PendingRecords" xml:space="preserve">
+    <value>Väntande poster: {0}</value>
+  </data>
+  <data name="Doc.NotAccreditor" xml:space="preserve">
+    <value>Utfärdat av organisationen ovan. Resgrid är inte ett ackrediteringsorgan för fortbildning.</value>
+  </data>
+  <data name="Doc.FormerMember" xml:space="preserve">
+    <value>Tidigare medlem</value>
+  </data>
+  <data name="Doc.IsoReport" xml:space="preserve">
+    <value>ISO FSRS-utbildningsrapport</value>
+  </data>
+  <data name="Doc.NccpReport" xml:space="preserve">
+    <value>NREMT NCCP-framsteg</value>
+  </data>
+  <data name="Doc.National" xml:space="preserve">
+    <value>Nationell</value>
+  </data>
+  <data name="Doc.Local" xml:space="preserve">
+    <value>Lokal</value>
+  </data>
+  <data name="Doc.Individual" xml:space="preserve">
+    <value>Individuell</value>
+  </data>
+  <data name="Doc.Cycle" xml:space="preserve">
+    <value>Cykel</value>
+  </data>
+  <data name="Doc.Level" xml:space="preserve">
+    <value>Nivå</value>
+  </data>
+  <data name="LearningSource.CourseCompletion" xml:space="preserve">
+    <value>Genomförd kurs</value>
+  </data>
+  <data name="LearningSource.ClassSession" xml:space="preserve">
+    <value>Lektionstillfälle</value>
+  </data>
+  <data name="LearningSource.TrainingRecord" xml:space="preserve">
+    <value>Övningsprotokoll</value>
+  </data>
+  <data name="LearningSource.ExternalSubmission" xml:space="preserve">
+    <value>Extern utbildning</value>
+  </data>
+  <data name="LearningSource.SkillEvaluation" xml:space="preserve">
+    <value>Färdighetsbedömning</value>
+  </data>
+  <data name="LearningSource.TaskBookSignoff" xml:space="preserve">
+    <value>Signering i uppgiftsbok</value>
+  </data>
+  <data name="LearningSource.ProtocolAcknowledgment" xml:space="preserve">
+    <value>Bekräftad rutin</value>
+  </data>
+  <data name="LearningSource.AcademyLesson" xml:space="preserve">
+    <value>Academy-lektion</value>
+  </data>
+  <data name="LearningSource.ManualCredit" xml:space="preserve">
+    <value>Certifieringstillgodoräknande</value>
+  </data>
+  <data name="LearningSource.Import" xml:space="preserve">
+    <value>Importerad historik</value>
+  </data>
+  <data name="LearningSource.CalendarAttendance" xml:space="preserve">
+    <value>Kalenderhändelse</value>
+  </data>
+  <data name="LearningStatus.Pending" xml:space="preserve">
+    <value>Väntande</value>
+  </data>
+  <data name="LearningStatus.Verified" xml:space="preserve">
+    <value>Verifierad</value>
+  </data>
+  <data name="LearningStatus.Rejected" xml:space="preserve">
+    <value>Avvisad</value>
+  </data>
+  <data name="LearningStatus.Voided" xml:space="preserve">
+    <value>Makulerad</value>
+  </data>
+  <data name="TrainingMethod.Classroom" xml:space="preserve">
+    <value>Lärarledd i sal</value>
+  </data>
+  <data name="TrainingMethod.Online" xml:space="preserve">
+    <value>Onlinekurs</value>
+  </data>
+  <data name="TrainingMethod.DrillField" xml:space="preserve">
+    <value>Övning eller fält</value>
+  </data>
+  <data name="TrainingMethod.Virtual" xml:space="preserve">
+    <value>Virtuell (live)</value>
+  </data>
+  <data name="TrainingMethod.SelfStudy" xml:space="preserve">
+    <value>Självstudier</value>
+  </data>
+  <data name="TrainingMethod.OnTheJob" xml:space="preserve">
+    <value>På arbetsplatsen</value>
+  </data>
+  <data name="TargetPeriod.None" xml:space="preserve">
+    <value>Inget mål</value>
+  </data>
+  <data name="TargetPeriod.PerYear" xml:space="preserve">
+    <value>Per år</value>
+  </data>
+  <data name="TargetPeriod.PerMonth" xml:space="preserve">
+    <value>Per månad</value>
+  </data>
+  <data name="TargetPeriod.PerCycle" xml:space="preserve">
+    <value>Per certifieringscykel</value>
+  </data>
+  <data name="TargetPeriod.Once" xml:space="preserve">
+    <value>En gång</value>
+  </data>
+  <data name="TargetPeriod.FirstYear" xml:space="preserve">
+    <value>Under första året</value>
+  </data>
+  <data name="CategoryKind.Custom" xml:space="preserve">
+    <value>Egen</value>
+  </data>
+  <data name="CategoryKind.IsoFsrs" xml:space="preserve">
+    <value>ISO FSRS</value>
+  </data>
+  <data name="CategoryKind.Nccp" xml:space="preserve">
+    <value>NREMT NCCP</value>
+  </data>
+  <data name="CategoryKind.Osha" xml:space="preserve">
+    <value>OSHA</value>
+  </data>
+  <data name="CategoryKind.State" xml:space="preserve">
+    <value>Delstatskrav</value>
+  </data>
+  <data name="BackfillState.Queued" xml:space="preserve">
+    <value>I kö</value>
+  </data>
+  <data name="BackfillState.Running" xml:space="preserve">
+    <value>Pågår</value>
+  </data>
+  <data name="BackfillState.Completed" xml:space="preserve">
+    <value>Klar</value>
+  </data>
+  <data name="BackfillState.Failed" xml:space="preserve">
+    <value>Misslyckades</value>
+  </data>
+  <data name="BackfillState.Cancelled" xml:space="preserve">
+    <value>Avbruten</value>
+  </data>
+  <data name="RoundingMode.Nearest" xml:space="preserve">
+    <value>Till närmaste steg</value>
+  </data>
+  <data name="RoundingMode.Down" xml:space="preserve">
+    <value>Nedåt</value>
+  </data>
+  <data name="RoundingMode.Up" xml:space="preserve">
+    <value>Uppåt</value>
+  </data>
+  <data name="MatchMethod.None" xml:space="preserve">
+    <value>Ingen matchning</value>
+  </data>
+  <data name="MatchMethod.Email" xml:space="preserve">
+    <value>Matchad via e-post</value>
+  </data>
+  <data name="MatchMethod.MemberId" xml:space="preserve">
+    <value>Matchad via medlems-ID</value>
+  </data>
+  <data name="MatchMethod.ExternalId" xml:space="preserve">
+    <value>Matchad via externt ID</value>
+  </data>
+  <data name="MatchMethod.Name" xml:space="preserve">
+    <value>Matchad via namn</value>
+  </data>
+  <data name="MatchMethod.Manual" xml:space="preserve">
+    <value>Vald av dig</value>
+  </data>
+  <data name="Grouping.Category" xml:space="preserve">
+    <value>Kategori</value>
+  </data>
+  <data name="Grouping.Member" xml:space="preserve">
+    <value>Medlem</value>
+  </data>
+  <data name="Grouping.Month" xml:space="preserve">
+    <value>Månad</value>
+  </data>
+  <data name="learning_record_self_review" xml:space="preserve">
+    <value>Ingen granskar sin egen post. Ett annat befäl måste granska den.</value>
+  </data>
+  <data name="learning_record_not_pending" xml:space="preserve">
+    <value>Posten väntar inte längre på granskning.</value>
+  </data>
+  <data name="learning_record_not_found" xml:space="preserve">
+    <value>Posten hittades inte.</value>
+  </data>
+  <data name="learning_record_hours_invalid" xml:space="preserve">
+    <value>Ange timmar från 0 till 9999.</value>
+  </data>
+  <data name="learning_record_voided" xml:space="preserve">
+    <value>Posten är makulerad.</value>
+  </data>
+  <data name="learning_record_not_duplicate" xml:space="preserve">
+    <value>Posten har ingen olöst möjlig dubblett.</value>
+  </data>
+  <data name="learning_record_category_invalid" xml:space="preserve">
+    <value>Välj en av organisationens kategorier.</value>
+  </data>
+  <data name="learning_record_reason_required" xml:space="preserve">
+    <value>Ange ett skäl.</value>
+  </data>
+  <data name="Rec.TranscriptTab" xml:space="preserve">
+    <value>Utbildningsregister</value>
+  </data>
+  <data name="Rec.RecordsTab" xml:space="preserve">
+    <value>Poster</value>
+  </data>
+  <data name="Rec.OfficerStripLabel" xml:space="preserve">
+    <value>Utbildningsposter</value>
+  </data>
+  <data name="Rec.QueueTab" xml:space="preserve">
+    <value>Kö</value>
+  </data>
+  <data name="Rec.CategoriesTab" xml:space="preserve">
+    <value>Kategorier</value>
+  </data>
+  <data name="Rec.CategorizeTab" xml:space="preserve">
+    <value>Kategorisera</value>
+  </data>
+  <data name="Rec.CreditsTab" xml:space="preserve">
+    <value>Tillgodoräknanden</value>
+  </data>
+  <data name="Rec.BackfillTab" xml:space="preserve">
+    <value>Fyll i historik</value>
+  </data>
+  <data name="Rec.ImportTab" xml:space="preserve">
+    <value>Importera</value>
+  </data>
+  <data name="Rec.HoursTab" xml:space="preserve">
+    <value>Timmar</value>
+  </data>
+  <data name="Rec.SettingsTab" xml:space="preserve">
+    <value>Inställningar</value>
+  </data>
+  <data name="Rec.IsoReportTab" xml:space="preserve">
+    <value>ISO-rapport</value>
+  </data>
+  <data name="Rec.NccpReportTab" xml:space="preserve">
+    <value>NCCP-framsteg</value>
+  </data>
+  <data name="Rec.CertificateTemplatesTab" xml:space="preserve">
+    <value>Intygsmallar</value>
+  </data>
+  <data name="Rec.ActionFailed" xml:space="preserve">
+    <value>Det gick inte. Ladda om sidan och försök igen.</value>
+  </data>
+  <data name="Rec.UnknownSource" xml:space="preserve">
+    <value>Övrigt</value>
+  </data>
+  <data name="Rec.ExportFailed" xml:space="preserve">
+    <value>Exporten kunde inte skapas. Försök igen om en stund.</value>
+  </data>
+  <data name="Rec.ExportPdfButton" xml:space="preserve">
+    <value>PDF-fil</value>
+  </data>
+  <data name="Rec.ExportCsvButton" xml:space="preserve">
+    <value>CSV-fil</value>
+  </data>
+  <data name="Rec.FilterLabel" xml:space="preserve">
+    <value>Filtrera</value>
+  </data>
+  <data name="Rec.FromLabel" xml:space="preserve">
+    <value>Från</value>
+  </data>
+  <data name="Rec.ToLabel" xml:space="preserve">
+    <value>Till</value>
+  </data>
+  <data name="Rec.AllCategories" xml:space="preserve">
+    <value>Alla kategorier</value>
+  </data>
+  <data name="Rec.AllSources" xml:space="preserve">
+    <value>Alla källor</value>
+  </data>
+  <data name="Rec.ClearFilterButton" xml:space="preserve">
+    <value>Rensa</value>
+  </data>
+  <data name="Rec.RemovedLabel" xml:space="preserve">
+    <value>Borttagen</value>
+  </data>
+  <data name="Rec.RemovedCategory" xml:space="preserve">
+    <value>{0} (borttagen)</value>
+  </data>
+  <data name="Rec.TargetValue" xml:space="preserve">
+    <value>{0} tim · {1}</value>
+  </data>
+  <data name="Rec.TargetPerMember" xml:space="preserve">
+    <value>{0} tim per medlem</value>
+  </data>
+  <data name="Rec.CategoryInvalid" xml:space="preserve">
+    <value>Välj en av organisationens kategorier.</value>
+  </data>
+  <data name="Rec.MethodInvalid" xml:space="preserve">
+    <value>Välj en utbildningsform i listan.</value>
+  </data>
+  <data name="Rec.ReviewNoteLabel" xml:space="preserve">
+    <value>Anteckning</value>
+  </data>
+  <data name="Rec.BackfilledLabel" xml:space="preserve">
+    <value>Från historiken</value>
+  </data>
+  <data name="Rec.PossibleDuplicateLabel" xml:space="preserve">
+    <value>Möjlig dubblett</value>
+  </data>
+  <data name="Rec.IncludeFormerLabel" xml:space="preserve">
+    <value>Ta med tidigare medlemmar</value>
+  </data>
+  <data name="Rec.NoHours" xml:space="preserve">
+    <value>Inga timmar under perioden.</value>
+  </data>
+  <data name="Rec.NoCategories" xml:space="preserve">
+    <value>Organisationen har inga utbildningskategorier ännu.</value>
+  </data>
+  <data name="Rec.RecordsWritten" xml:space="preserve">
+    <value>Skrivna poster</value>
+  </data>
+  <data name="Rec.RecordsSkipped" xml:space="preserve">
+    <value>Överhoppade</value>
+  </data>
+  <data name="Rec.CertificationTypeLabel" xml:space="preserve">
+    <value>Certifieringstyp</value>
+  </data>
+  <data name="Rec.MyTranscriptTitle" xml:space="preserve">
+    <value>Mitt utbildningsregister</value>
+  </data>
+  <data name="Rec.MemberTranscriptTitle" xml:space="preserve">
+    <value>Utbildningsregister: {0}</value>
+  </data>
+  <data name="Rec.TranscriptIntro" xml:space="preserve">
+    <value>Varje kurs, övningsprotokoll, kalenderhändelse och externt intyg, med timmar och om de räknas.</value>
+  </data>
+  <data name="Rec.SubmitButton" xml:space="preserve">
+    <value>Skicka in extern utbildning</value>
+  </data>
+  <data name="Rec.ShowAuditButton" xml:space="preserve">
+    <value>Granskningsvy</value>
+  </data>
+  <data name="Rec.HideAuditButton" xml:space="preserve">
+    <value>Dölj granskningsvy</value>
+  </data>
+  <data name="Rec.MemberPickerLabel" xml:space="preserve">
+    <value>Medlem</value>
+  </data>
+  <data name="Rec.OpenTranscriptButton" xml:space="preserve">
+    <value>Öppna registret</value>
+  </data>
+  <data name="Rec.MyTranscriptLink" xml:space="preserve">
+    <value>Mitt register</value>
+  </data>
+  <data name="Rec.FormerMemberNotice" xml:space="preserve">
+    <value>Medlemmen har lämnat organisationen. Registret går fortfarande att läsa vid granskningar.</value>
+  </data>
+  <data name="Rec.RecordsHeader" xml:space="preserve">
+    <value>Utbildningsposter</value>
+  </data>
+  <data name="Rec.NoRecords" xml:space="preserve">
+    <value>Inga poster ännu. Genomförda utbildningar, övningsprotokoll, incheckningar i kalendern och externa intyg visas här.</value>
+  </data>
+  <data name="Rec.NoRecordsFiltered" xml:space="preserve">
+    <value>Inga poster matchar filtret.</value>
+  </data>
+  <data name="Rec.CountedHelp" xml:space="preserve">
+    <value>Bara verifierade poster räknas till timmarna. Väntande, avvisade och makulerade poster visas men räknas inte.</value>
+  </data>
+  <data name="Rec.VoidReasonLabel" xml:space="preserve">
+    <value>Skäl till makulering</value>
+  </data>
+  <data name="Rec.HistoryChainSummary" xml:space="preserve">
+    <value>Historik ({0} versioner)</value>
+  </data>
+  <data name="Rec.CertificateButton" xml:space="preserve">
+    <value>Intyg</value>
+  </data>
+  <data name="Rec.EvidenceButton" xml:space="preserve">
+    <value>Underlag</value>
+  </data>
+  <data name="Rec.VoidButton" xml:space="preserve">
+    <value>Makulera</value>
+  </data>
+  <data name="Rec.VoidConfirmButton" xml:space="preserve">
+    <value>Makulera posten</value>
+  </data>
+  <data name="Rec.SubmitTitle" xml:space="preserve">
+    <value>Skicka in extern utbildning</value>
+  </data>
+  <data name="Rec.SubmitIntro" xml:space="preserve">
+    <value>En kurs du gått utanför organisationen: ett befäl verifierar den innan den räknas.</value>
+  </data>
+  <data name="Rec.SubmissionsDisabledHeader" xml:space="preserve">
+    <value>Inskickning av extern utbildning är avstängd</value>
+  </data>
+  <data name="Rec.SubmissionsDisabledHelp" xml:space="preserve">
+    <value>Din organisation tar inte emot extern utbildning från medlemmar. Be en utbildningsansvarig att registrera den åt dig.</value>
+  </data>
+  <data name="Rec.BackToTranscriptButton" xml:space="preserve">
+    <value>Tillbaka till mitt register</value>
+  </data>
+  <data name="Rec.SubmitHowItWorks" xml:space="preserve">
+    <value>Din inskickning väntar på ett befäl. När den är verifierad räknas den till dina timmar och till varje certifiering som räknar dess kategori.</value>
+  </data>
+  <data name="Rec.SubmitCourseSection" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="Rec.SubmitCeSection" xml:space="preserve">
+    <value>Fortbildning</value>
+  </data>
+  <data name="Rec.SubmitEvidenceSection" xml:space="preserve">
+    <value>Underlag</value>
+  </data>
+  <data name="Rec.EvidenceLabel" xml:space="preserve">
+    <value>Intyg eller bevis på genomförande</value>
+  </data>
+  <data name="Rec.EvidenceHelp" xml:space="preserve">
+    <value>Valfritt. PDF, bild eller Word-dokument, upp till 10 MB.</value>
+  </data>
+  <data name="Rec.NotesLabel" xml:space="preserve">
+    <value>Anteckningar</value>
+  </data>
+  <data name="Rec.SubmitSendButton" xml:space="preserve">
+    <value>Skicka för granskning</value>
+  </data>
+  <data name="Rec.TitleRequired" xml:space="preserve">
+    <value>Ange kursens namn.</value>
+  </data>
+  <data name="Rec.DateRequired" xml:space="preserve">
+    <value>Ange datum för genomförandet.</value>
+  </data>
+  <data name="Rec.DateInFuture" xml:space="preserve">
+    <value>Datumet kan inte ligga i framtiden.</value>
+  </data>
+  <data name="Rec.EvidenceTypeError" xml:space="preserve">
+    <value>Underlaget måste vara en PDF-, JPG-, PNG-, GIF-, DOC- eller DOCX-fil.</value>
+  </data>
+  <data name="Rec.EvidenceSizeError" xml:space="preserve">
+    <value>Underlag får vara högst 10 MB.</value>
+  </data>
+  <data name="Rec.SubmittedMessage" xml:space="preserve">
+    <value>Din externa utbildning har skickats för granskning.</value>
+  </data>
+  <data name="Rec.QueueTitle" xml:space="preserve">
+    <value>Kö med poster</value>
+  </data>
+  <data name="Rec.QueueIntro" xml:space="preserve">
+    <value>Extern utbildning och öppna incheckningar att granska, och möjliga dubbletter att lösa.</value>
+  </data>
+  <data name="Rec.WaitingForReview" xml:space="preserve">
+    <value>Väntar på granskning</value>
+  </data>
+  <data name="Rec.PossibleDuplicatesHeader" xml:space="preserve">
+    <value>Möjliga dubbletter</value>
+  </data>
+  <data name="Rec.PossibleDuplicatesHelp" xml:space="preserve">
+    <value>Poster för samma medlem vars tider överlappar samma dag. Behåll båda om det är olika tillfällen; sammanfoga makulerar denna.</value>
+  </data>
+  <data name="Rec.QueueEmpty" xml:space="preserve">
+    <value>Inget väntar på granskning.</value>
+  </data>
+  <data name="Rec.NoDuplicates" xml:space="preserve">
+    <value>Inga möjliga dubbletter att lösa.</value>
+  </data>
+  <data name="Rec.SubmittedColumn" xml:space="preserve">
+    <value>Inskickad</value>
+  </data>
+  <data name="Rec.SubmittedBy" xml:space="preserve">
+    <value>av {0}</value>
+  </data>
+  <data name="Rec.CheckedInLabel" xml:space="preserve">
+    <value>Incheckad</value>
+  </data>
+  <data name="Rec.OwnRecordNotice" xml:space="preserve">
+    <value>Din egen post: ett annat befäl granskar den.</value>
+  </data>
+  <data name="Rec.VerifyButton" xml:space="preserve">
+    <value>Verifiera</value>
+  </data>
+  <data name="Rec.VerifyConfirmButton" xml:space="preserve">
+    <value>Verifiera posten</value>
+  </data>
+  <data name="Rec.RejectButton" xml:space="preserve">
+    <value>Avvisa</value>
+  </data>
+  <data name="Rec.RejectConfirmButton" xml:space="preserve">
+    <value>Avvisa posten</value>
+  </data>
+  <data name="Rec.OpenCheckInHelp" xml:space="preserve">
+    <value>Ingen utcheckning registrerades: ange närvarotimmarna.</value>
+  </data>
+  <data name="Rec.ThisRecordColumn" xml:space="preserve">
+    <value>Denna post</value>
+  </data>
+  <data name="Rec.OtherRecordColumn" xml:space="preserve">
+    <value>Möjlig dubblett av</value>
+  </data>
+  <data name="Rec.OtherRecordMissing" xml:space="preserve">
+    <value>Den andra posten finns inte längre.</value>
+  </data>
+  <data name="Rec.KeepBothButton" xml:space="preserve">
+    <value>Behåll båda</value>
+  </data>
+  <data name="Rec.MergeButton" xml:space="preserve">
+    <value>Sammanfoga</value>
+  </data>
+  <data name="Rec.MergeConfirm" xml:space="preserve">
+    <value>Sammanfogning makulerar denna post som samma tillfälle som den andra. Fortsätta?</value>
+  </data>
+  <data name="Rec.VerifiedMessage" xml:space="preserve">
+    <value>Posten är verifierad.</value>
+  </data>
+  <data name="Rec.RejectedMessage" xml:space="preserve">
+    <value>Posten är avvisad.</value>
+  </data>
+  <data name="Rec.RejectNoteRequired" xml:space="preserve">
+    <value>Ange ett skäl till medlemmen.</value>
+  </data>
+  <data name="Rec.VoidedMessage" xml:space="preserve">
+    <value>Posten är makulerad.</value>
+  </data>
+  <data name="Rec.VoidReasonRequired" xml:space="preserve">
+    <value>Ange skälet till makuleringen.</value>
+  </data>
+  <data name="Rec.DuplicateResolvedMessage" xml:space="preserve">
+    <value>Den möjliga dubbletten är löst.</value>
+  </data>
+  <data name="Rec.CategoriesTitle" xml:space="preserve">
+    <value>Utbildningskategorier</value>
+  </data>
+  <data name="Rec.CategoriesIntro" xml:space="preserve">
+    <value>Gruppera utbildningstimmar för rapporter, mål och tillgodoräknanden för certifieringar.</value>
+  </data>
+  <data name="Rec.CategoriesHeader" xml:space="preserve">
+    <value>Kategorier</value>
+  </data>
+  <data name="Rec.KindLabel" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="Rec.RetentionLabel" xml:space="preserve">
+    <value>Spara poster (år)</value>
+  </data>
+  <data name="Rec.RetentionHelp" xml:space="preserve">
+    <value>Minsta antal år poster i kategorin sparas efter att en medlem slutat. Tomt använder organisationens standard.</value>
+  </data>
+  <data name="Rec.ExternalCodeLabel" xml:space="preserve">
+    <value>Extern kod</value>
+  </data>
+  <data name="Rec.ExternalCodeHelp" xml:space="preserve">
+    <value>Koden som myndighets- eller tredjepartsexporter använder för kategorin.</value>
+  </data>
+  <data name="Rec.YearsValue" xml:space="preserve">
+    <value>{0} år</value>
+  </data>
+  <data name="Rec.DepartmentDefault" xml:space="preserve">
+    <value>Organisationens standard</value>
+  </data>
+  <data name="Rec.DeleteCategoryConfirm" xml:space="preserve">
+    <value>Ta bort kategorin? Posterna behåller den och visar den som borttagen.</value>
+  </data>
+  <data name="Rec.AddCategoryHeader" xml:space="preserve">
+    <value>Lägg till kategori</value>
+  </data>
+  <data name="Rec.EditCategoryHeader" xml:space="preserve">
+    <value>Redigera kategori</value>
+  </data>
+  <data name="Rec.TargetHoursLabel" xml:space="preserve">
+    <value>Måltimmar</value>
+  </data>
+  <data name="Rec.TargetPeriodLabel" xml:space="preserve">
+    <value>Målperiod</value>
+  </data>
+  <data name="Rec.AppliesToLabel" xml:space="preserve">
+    <value>Målet gäller</value>
+  </data>
+  <data name="Rec.AppliesToPlaceholder" xml:space="preserve">
+    <value>t.ex. per brandman</value>
+  </data>
+  <data name="Rec.SaveCategoryButton" xml:space="preserve">
+    <value>Spara kategori</value>
+  </data>
+  <data name="Rec.TemplatesHeader" xml:space="preserve">
+    <value>Kategorimallar</value>
+  </data>
+  <data name="Rec.TemplatesHelp" xml:space="preserve">
+    <value>Startkategorier för vanliga krav. En mall lägger bara till kategorier som saknas; inget tillämpas automatiskt.</value>
+  </data>
+  <data name="Rec.TargetsNotPoints" xml:space="preserve">
+    <value>Det här är timmål, inte poängvärden.</value>
+  </data>
+  <data name="Rec.TemplateAppliedLabel" xml:space="preserve">
+    <value>Tillämpad</value>
+  </data>
+  <data name="Rec.ApplyTemplateButton" xml:space="preserve">
+    <value>Tillämpa mall</value>
+  </data>
+  <data name="Rec.ApplyTemplateMissingButton" xml:space="preserve">
+    <value>Lägg till saknade kategorier</value>
+  </data>
+  <data name="Rec.CategoryCodeTaken" xml:space="preserve">
+    <value>En annan kategori använder redan koden.</value>
+  </data>
+  <data name="Rec.RetentionRange" xml:space="preserve">
+    <value>Ange 0 till 75 år.</value>
+  </data>
+  <data name="Rec.CategorySavedMessage" xml:space="preserve">
+    <value>Kategorin är sparad.</value>
+  </data>
+  <data name="Rec.CategoryDeletedMessage" xml:space="preserve">
+    <value>Kategorin är borttagen.</value>
+  </data>
+  <data name="Rec.TemplateAppliedMessage" xml:space="preserve">
+    <value>{0} kategorier tillagda.</value>
+  </data>
+  <data name="Rec.CategorizeTitle" xml:space="preserve">
+    <value>Kategorisera historik</value>
+  </data>
+  <data name="Rec.CategorizeIntro" xml:space="preserve">
+    <value>Ge poster utan kategori en kategori i klump, grupperade efter kursnamn och kod.</value>
+  </data>
+  <data name="Rec.UncategorizedGroupsHeader" xml:space="preserve">
+    <value>Poster utan kategori</value>
+  </data>
+  <data name="Rec.NoUncategorized" xml:space="preserve">
+    <value>Alla poster under perioden har en kategori.</value>
+  </data>
+  <data name="Rec.DatesColumn" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="Rec.NoTitle" xml:space="preserve">
+    <value>(inget namn)</value>
+  </data>
+  <data name="Rec.CategorizeButton" xml:space="preserve">
+    <value>Tillämpa</value>
+  </data>
+  <data name="Rec.CategorizeNeedsGroup" xml:space="preserve">
+    <value>Välj en grupp poster att kategorisera.</value>
+  </data>
+  <data name="Rec.CategorizedMessage" xml:space="preserve">
+    <value>{0} poster kategoriserade.</value>
+  </data>
+  <data name="Rec.CreditsTitle" xml:space="preserve">
+    <value>Tillgodoräknanden för certifieringar</value>
+  </data>
+  <data name="Rec.CreditsIntro" xml:space="preserve">
+    <value>Räkna en kategoris timmar mot förnyelsen av en certifiering.</value>
+  </data>
+  <data name="Rec.CreditsReadOnly" xml:space="preserve">
+    <value>Organisationens administratörer och certifieringsansvariga ändrar kopplingarna.</value>
+  </data>
+  <data name="Rec.MappingsHeader" xml:space="preserve">
+    <value>Kopplingar</value>
+  </data>
+  <data name="Rec.NoMappings" xml:space="preserve">
+    <value>Ingen certifiering räknar utbildningstimmar ännu.</value>
+  </data>
+  <data name="Rec.ComponentLabel" xml:space="preserve">
+    <value>Delmoment</value>
+  </data>
+  <data name="Rec.ComponentHelp" xml:space="preserve">
+    <value>Valfritt. Räkna bara denna del av kategorin; tomt räknar allt.</value>
+  </data>
+  <data name="Rec.EveryComponent" xml:space="preserve">
+    <value>Alla</value>
+  </data>
+  <data name="Rec.EnabledLabel" xml:space="preserve">
+    <value>Räknas</value>
+  </data>
+  <data name="Rec.DisabledLabel" xml:space="preserve">
+    <value>Pausad</value>
+  </data>
+  <data name="Rec.EnabledSince" xml:space="preserve">
+    <value>sedan {0}</value>
+  </data>
+  <data name="Rec.EnableButton" xml:space="preserve">
+    <value>Återuppta</value>
+  </data>
+  <data name="Rec.DisableButton" xml:space="preserve">
+    <value>Pausa</value>
+  </data>
+  <data name="Rec.DeleteMappingConfirm" xml:space="preserve">
+    <value>Ta bort kopplingen? Redan skrivna tillgodoräknanden ligger kvar på certifieringarna.</value>
+  </data>
+  <data name="Rec.AddMappingHeader" xml:space="preserve">
+    <value>Lägg till koppling</value>
+  </data>
+  <data name="Rec.EditMappingHeader" xml:space="preserve">
+    <value>Redigera koppling</value>
+  </data>
+  <data name="Rec.MappingNeedsTypesAndCategories" xml:space="preserve">
+    <value>Lägg först till certifieringstyper för personer och utbildningskategorier.</value>
+  </data>
+  <data name="Rec.MappingEnabledHelp" xml:space="preserve">
+    <value>Verifierade poster från och med i dag blir tillgodoräknanden i den certifieringscykel de hör till.</value>
+  </data>
+  <data name="Rec.SaveMappingButton" xml:space="preserve">
+    <value>Spara koppling</value>
+  </data>
+  <data name="Rec.CertificationTypeInvalid" xml:space="preserve">
+    <value>Välj en certifieringstyp för personer.</value>
+  </data>
+  <data name="Rec.MappingExists" xml:space="preserve">
+    <value>Certifieringen räknar redan kategorin.</value>
+  </data>
+  <data name="Rec.MappingSavedMessage" xml:space="preserve">
+    <value>Kopplingen är sparad.</value>
+  </data>
+  <data name="Rec.MappingDeletedMessage" xml:space="preserve">
+    <value>Kopplingen är borttagen.</value>
+  </data>
+  <data name="Rec.ApplyHistoryHeader" xml:space="preserve">
+    <value>Tillgodoräkna historik</value>
+  </data>
+  <data name="Rec.ApplyHistoryHelp" xml:space="preserve">
+    <value>Poster från före en koppling slogs på, och ifylld historik, blir tillgodoräknanden först när du tillämpar dem här.</value>
+  </data>
+  <data name="Rec.ApplyHistoryLink" xml:space="preserve">
+    <value>Tillgodoräkna historik</value>
+  </data>
+  <data name="Rec.ApplyHistoryPreviewHelp" xml:space="preserve">
+    <value>Inget skrivs förrän du tillämpar. Avmarkera poster som inte ska bli tillgodoräknanden.</value>
+  </data>
+  <data name="Rec.ProposedCredits" xml:space="preserve">
+    <value>Föreslagna tillgodoräknanden</value>
+  </data>
+  <data name="Rec.ProposedHours" xml:space="preserve">
+    <value>Föreslagna timmar</value>
+  </data>
+  <data name="Rec.OutsideEveryCycle" xml:space="preserve">
+    <value>Utanför alla cykler</value>
+  </data>
+  <data name="Rec.NothingToApply" xml:space="preserve">
+    <value>Ingen historik väntar på att tillgodoräknas för certifieringen.</value>
+  </data>
+  <data name="Rec.BackToCreditsButton" xml:space="preserve">
+    <value>Tillbaka till tillgodoräknanden</value>
+  </data>
+  <data name="Rec.RequiredHoursValue" xml:space="preserve">
+    <value>{0} tim krävs</value>
+  </data>
+  <data name="Rec.CycleCreditsSummary" xml:space="preserve">
+    <value>Manuella {0} tim · från registret {1} tim · föreslagna {2} tim</value>
+  </data>
+  <data name="Rec.ApplyColumn" xml:space="preserve">
+    <value>Tillämpa</value>
+  </data>
+  <data name="Rec.ExistingCreditsSummary" xml:space="preserve">
+    <value>Tillgodoräknanden i cykeln ({0})</value>
+  </data>
+  <data name="Rec.DerivedCreditLabel" xml:space="preserve">
+    <value>Från registret</value>
+  </data>
+  <data name="Rec.ManualCreditLabel" xml:space="preserve">
+    <value>Manuell</value>
+  </data>
+  <data name="Rec.ApplySelectedButton" xml:space="preserve">
+    <value>Tillämpa valda tillgodoräknanden</value>
+  </data>
+  <data name="Rec.ApplyHistoryNoneSelected" xml:space="preserve">
+    <value>Välj minst en post.</value>
+  </data>
+  <data name="Rec.ApplyHistoryAppliedMessage" xml:space="preserve">
+    <value>{0} tillgodoräknanden skrivna.</value>
+  </data>
+  <data name="Rec.BackfillTitle" xml:space="preserve">
+    <value>Fyll i historik</value>
+  </data>
+  <data name="Rec.BackfillIntro" xml:space="preserve">
+    <value>För in genomförda utbildningar och övningsprotokoll från tiden före registret i medlemmarnas register.</value>
+  </data>
+  <data name="Rec.BackfillHowItWorks" xml:space="preserve">
+    <value>Så fungerar ifyllningen</value>
+  </data>
+  <data name="Rec.BackfillRuleVerified" xml:space="preserve">
+    <value>Ifyllda poster är verifierade och behåller sina ursprungliga datum.</value>
+  </data>
+  <data name="Rec.BackfillRuleNoCredits" xml:space="preserve">
+    <value>De tillgodoräknas aldrig en certifiering av sig själva: använd Tillgodoräkna historik för det.</value>
+  </data>
+  <data name="Rec.BackfillRuleNoCalendar" xml:space="preserve">
+    <value>Incheckningar i kalendern fylls inte i.</value>
+  </data>
+  <data name="Rec.BackfillRuleRerun" xml:space="preserve">
+    <value>Den körs i bakgrunden och kan köras igen utan risk: redan skrivna poster hoppas över.</value>
+  </data>
+  <data name="Rec.BackfillDryRunButton" xml:space="preserve">
+    <value>Räkna bara (provkörning)</value>
+  </data>
+  <data name="Rec.BackfillRunButton" xml:space="preserve">
+    <value>Kör ifyllning</value>
+  </data>
+  <data name="Rec.BackfillRunConfirm" xml:space="preserve">
+    <value>Skriva historikposter för alla medlemmar nu?</value>
+  </data>
+  <data name="Rec.LatestBackfillHeader" xml:space="preserve">
+    <value>Senaste körning</value>
+  </data>
+  <data name="Rec.NoBackfill" xml:space="preserve">
+    <value>Ingen ifyllning har körts ännu.</value>
+  </data>
+  <data name="Rec.CompletionsFound" xml:space="preserve">
+    <value>Hittade genomföranden</value>
+  </data>
+  <data name="Rec.TrainingRecordsFound" xml:space="preserve">
+    <value>Hittade övningsprotokoll</value>
+  </data>
+  <data name="Rec.DryRunLabel" xml:space="preserve">
+    <value>Provkörning</value>
+  </data>
+  <data name="Rec.RequestedLabel" xml:space="preserve">
+    <value>Begärd</value>
+  </data>
+  <data name="Rec.StartedLabel" xml:space="preserve">
+    <value>Startad</value>
+  </data>
+  <data name="Rec.FinishedLabel" xml:space="preserve">
+    <value>Avslutad</value>
+  </data>
+  <data name="Rec.AttemptsLabel" xml:space="preserve">
+    <value>Försök</value>
+  </data>
+  <data name="Rec.ErrorLabel" xml:space="preserve">
+    <value>Fel</value>
+  </data>
+  <data name="Rec.BackfillRunning" xml:space="preserve">
+    <value>Ifyllningen körs i bakgrunden. Ladda om sidan för att se förloppet.</value>
+  </data>
+  <data name="Rec.BackfillQueuedMessage" xml:space="preserve">
+    <value>Ifyllningen är köad.</value>
+  </data>
+  <data name="Rec.BackfillDryRunQueuedMessage" xml:space="preserve">
+    <value>Provkörningen är köad: den räknar bara.</value>
+  </data>
+  <data name="Rec.ImportTitle" xml:space="preserve">
+    <value>Importera utbildningshistorik</value>
+  </data>
+  <data name="Rec.ImportIntro" xml:space="preserve">
+    <value>Hämta genomföranden från ett annat system med en CSV-fil: granska vilken medlem varje rad matchade och importera sedan.</value>
+  </data>
+  <data name="Rec.ImportStepUpload" xml:space="preserve">
+    <value>Ladda upp en fil</value>
+  </data>
+  <data name="Rec.ImportStepReview" xml:space="preserve">
+    <value>Granska matchningar</value>
+  </data>
+  <data name="Rec.ImportStepDone" xml:space="preserve">
+    <value>Klart</value>
+  </data>
+  <data name="Rec.ImportStepTemplate" xml:space="preserve">
+    <value>Hämta mallen</value>
+  </data>
+  <data name="Rec.ImportTemplateHelp" xml:space="preserve">
+    <value>En rad per genomförande: medlem, kurs, datum och timmar, med valfri kategori, fortbildningsfält och certifiering.</value>
+  </data>
+  <data name="Rec.ImportDownloadTemplate" xml:space="preserve">
+    <value>Ladda ner mallen</value>
+  </data>
+  <data name="Rec.ImportFileLabel" xml:space="preserve">
+    <value>CSV-fil</value>
+  </data>
+  <data name="Rec.ImportFileHelp" xml:space="preserve">
+    <value>UTF-8-CSV, upp till {0} MB.</value>
+  </data>
+  <data name="Rec.ImportPreviewButton" xml:space="preserve">
+    <value>Kontrollera filen</value>
+  </data>
+  <data name="Rec.ImportHowItWorks" xml:space="preserve">
+    <value>Så fungerar importen</value>
+  </data>
+  <data name="Rec.ImportRuleMatching" xml:space="preserve">
+    <value>Medlemmar matchas via e-post, sedan medlems-ID, externt ID och namn. Du kan välja medlem för vilken rad som helst.</value>
+  </data>
+  <data name="Rec.ImportRuleFormer" xml:space="preserve">
+    <value>Tidigare medlemmar erbjuds också: historiken kan tillhöra personer som slutat.</value>
+  </data>
+  <data name="Rec.ImportRuleCategories" xml:space="preserve">
+    <value>En kategori som inte finns ännu lämnar raden utan kategori.</value>
+  </data>
+  <data name="Rec.ImportRuleRepeat" xml:space="preserve">
+    <value>Redan importerade rader hoppas över, så samma fil kan importeras igen utan risk.</value>
+  </data>
+  <data name="Rec.ImportRuleVerified" xml:space="preserve">
+    <value>Importerade poster är verifierad historik och tillgodoräknas aldrig en certifiering av sig själva.</value>
+  </data>
+  <data name="Rec.ImportRows" xml:space="preserve">
+    <value>Rader</value>
+  </data>
+  <data name="Rec.ImportMatched" xml:space="preserve">
+    <value>Matchade</value>
+  </data>
+  <data name="Rec.ImportUnmatched" xml:space="preserve">
+    <value>Utan medlem</value>
+  </data>
+  <data name="Rec.ImportImportable" xml:space="preserve">
+    <value>Klara att importera</value>
+  </data>
+  <data name="Rec.ImportIgnoredColumns" xml:space="preserve">
+    <value>Dessa kolumner kändes inte igen och ignoreras: {0}</value>
+  </data>
+  <data name="Rec.ImportReviewHelp" xml:space="preserve">
+    <value>Rader med fel importeras inte. Välj medlem för omatchade rader och kontrollera igen eller importera.</value>
+  </data>
+  <data name="Rec.ImportRowColumn" xml:space="preserve">
+    <value>Rad</value>
+  </data>
+  <data name="Rec.ImportNotesColumn" xml:space="preserve">
+    <value>Anmärkningar</value>
+  </data>
+  <data name="Rec.ImportChangeMember" xml:space="preserve">
+    <value>Ändra</value>
+  </data>
+  <data name="Rec.ImportMemberForRow" xml:space="preserve">
+    <value>Medlem för rad {0}</value>
+  </data>
+  <data name="Rec.ImportChooseMember" xml:space="preserve">
+    <value>Välj en medlem...</value>
+  </data>
+  <data name="Rec.ImportFromFile" xml:space="preserve">
+    <value>I filen</value>
+  </data>
+  <data name="Rec.ImportAlreadyImported" xml:space="preserve">
+    <value>Redan importerad</value>
+  </data>
+  <data name="Rec.ImportRecheckButton" xml:space="preserve">
+    <value>Kontrollera igen</value>
+  </data>
+  <data name="Rec.ImportCommitButton" xml:space="preserve">
+    <value>Importera {0} rader</value>
+  </data>
+  <data name="Rec.ImportConfirm" xml:space="preserve">
+    <value>Importera {0} rader till medlemmarnas register?</value>
+  </data>
+  <data name="Rec.ImportCertificationsCreated" xml:space="preserve">
+    <value>Skapade certifieringar</value>
+  </data>
+  <data name="Rec.ImportCreditsCreated" xml:space="preserve">
+    <value>Skapade tillgodoräknanden</value>
+  </data>
+  <data name="Rec.ImportAnotherButton" xml:space="preserve">
+    <value>Importera en till fil</value>
+  </data>
+  <data name="Rec.ImportDoneMessage" xml:space="preserve">
+    <value>{0} poster importerade.</value>
+  </data>
+  <data name="Rec.ImportFileRequired" xml:space="preserve">
+    <value>Välj en CSV-fil att importera.</value>
+  </data>
+  <data name="Rec.ImportFileTooLarge" xml:space="preserve">
+    <value>Filen är större än {0} MB.</value>
+  </data>
+  <data name="Rec.ImportFileType" xml:space="preserve">
+    <value>Filen måste vara en CSV-fil.</value>
+  </data>
+  <data name="Rec.HoursTitle" xml:space="preserve">
+    <value>Utbildningstimmar</value>
+  </data>
+  <data name="Rec.HoursIntro" xml:space="preserve">
+    <value>Verifierade utbildningstimmar per kategori, medlem eller månad.</value>
+  </data>
+  <data name="Rec.GroupByLabel" xml:space="preserve">
+    <value>Gruppera efter</value>
+  </data>
+  <data name="Rec.OnDutyNowLabel" xml:space="preserve">
+    <value>Bara i tjänst nu</value>
+  </data>
+  <data name="Rec.OpenQueueLink" xml:space="preserve">
+    <value>Öppna kön</value>
+  </data>
+  <data name="Rec.SettingsTitle" xml:space="preserve">
+    <value>Inställningar för utbildningsposter</value>
+  </data>
+  <data name="Rec.SettingsIntro" xml:space="preserve">
+    <value>Incheckningstimmar, inskickad extern utbildning och hur länge poster sparas.</value>
+  </data>
+  <data name="Rec.RoundingSection" xml:space="preserve">
+    <value>Timmar från kalenderincheckningar</value>
+  </data>
+  <data name="Rec.RoundingHelp" xml:space="preserve">
+    <value>Timmar från incheckning till utcheckning på händelser som räknas som utbildning avrundas till detta steg.</value>
+  </data>
+  <data name="Rec.RoundingMinutesLabel" xml:space="preserve">
+    <value>Avrunda till</value>
+  </data>
+  <data name="Rec.RoundingExact" xml:space="preserve">
+    <value>Minuten (ingen avrundning)</value>
+  </data>
+  <data name="Rec.RoundingMinutesValue" xml:space="preserve">
+    <value>{0} minuter</value>
+  </data>
+  <data name="Rec.RoundingModeLabel" xml:space="preserve">
+    <value>Avrundning</value>
+  </data>
+  <data name="Rec.SubmissionsSection" xml:space="preserve">
+    <value>Extern utbildning</value>
+  </data>
+  <data name="Rec.SubmissionsDisabledLabel" xml:space="preserve">
+    <value>Medlemmar får inte skicka in extern utbildning</value>
+  </data>
+  <data name="Rec.SubmissionsDisabledSettingHelp" xml:space="preserve">
+    <value>Befäl kan fortfarande registrera extern utbildning via import eller tillgodoräknande för certifiering.</value>
+  </data>
+  <data name="Rec.RetentionSection" xml:space="preserve">
+    <value>Lagring av poster</value>
+  </data>
+  <data name="Rec.DefaultRetentionLabel" xml:space="preserve">
+    <value>Spara poster efter att en medlem slutat (år)</value>
+  </data>
+  <data name="Rec.DefaultRetentionHelp" xml:space="preserve">
+    <value>Används när en kategori inte anger något. 0 innebär inget minimum.</value>
+  </data>
+  <data name="Rec.SaveSettingsButton" xml:space="preserve">
+    <value>Spara inställningar</value>
+  </data>
+  <data name="Rec.RoundingInvalid" xml:space="preserve">
+    <value>Välj avrundning i listan.</value>
+  </data>
+  <data name="Rec.SettingsSavedMessage" xml:space="preserve">
+    <value>Inställningarna är sparade.</value>
+  </data>
+  <data name="Rec.IsoReportIntro" xml:space="preserve">
+    <value>Varje medlems timmar i ISO FSRS-kategorierna bredvid målen.</value>
+  </data>
+  <data name="Rec.IsoNoCategories" xml:space="preserve">
+    <value>Tillämpa först kategorimallen för ISO FSRS.</value>
+  </data>
+  <data name="Rec.TargetMet" xml:space="preserve">
+    <value>Målet uppnått</value>
+  </data>
+  <data name="Rec.NccpReportIntro" xml:space="preserve">
+    <value>Varje medlems nationella, lokala och individuella timmar i den aktuella certifieringscykeln.</value>
+  </data>
+  <data name="Rec.NccpNoCategories" xml:space="preserve">
+    <value>Tillämpa kategorimallen för NREMT NCCP för att räkna NCCP-timmar.</value>
+  </data>
+  <data name="Rec.NccpNoRows" xml:space="preserve">
+    <value>Ingen medlem har en certifiering på en NREMT-nivå.</value>
+  </data>
+  <data name="Rec.ProgressValue" xml:space="preserve">
+    <value>{0} av {1} tim</value>
+  </data>
+  <data name="Rec.CertificateTemplatesTitle" xml:space="preserve">
+    <value>Intygsmallar</value>
+  </data>
+  <data name="Rec.CertificateTemplatesIntro" xml:space="preserve">
+    <value>Organisationens egen intygslayout. Standardmallen används för alla intyg.</value>
+  </data>
+  <data name="Rec.NoTemplates" xml:space="preserve">
+    <value>Inga mallar ännu: intygen använder standardlayouten.</value>
+  </data>
+  <data name="Rec.UpdatedColumn" xml:space="preserve">
+    <value>Uppdaterad</value>
+  </data>
+  <data name="Rec.DefaultLabel" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="Rec.DeleteTemplateConfirm" xml:space="preserve">
+    <value>Ta bort mallen?</value>
+  </data>
+  <data name="Rec.AddTemplateHeader" xml:space="preserve">
+    <value>Lägg till mall</value>
+  </data>
+  <data name="Rec.EditTemplateHeader" xml:space="preserve">
+    <value>Redigera mall</value>
+  </data>
+  <data name="Rec.DefaultTemplateLabel" xml:space="preserve">
+    <value>Använd för alla intyg</value>
+  </data>
+  <data name="Rec.TemplateBodyLabel" xml:space="preserve">
+    <value>Layout (HTML-kod)</value>
+  </data>
+  <data name="Rec.TemplateBodyHelp" xml:space="preserve">
+    <value>Skript och osäker kod tas bort när du sparar. Platshållare:</value>
+  </data>
+  <data name="Rec.TemplatePreviewHeader" xml:space="preserve">
+    <value>Förhandsvisning</value>
+  </data>
+  <data name="Rec.SaveTemplateButton" xml:space="preserve">
+    <value>Spara mall</value>
+  </data>
+  <data name="Rec.TemplateBodyRequired" xml:space="preserve">
+    <value>Ange layouten.</value>
+  </data>
+  <data name="Rec.TemplateSavedMessage" xml:space="preserve">
+    <value>Mallen är sparad.</value>
+  </data>
+  <data name="Rec.TemplateDeletedMessage" xml:space="preserve">
+    <value>Mallen är borttagen.</value>
+  </data>
+  <data name="Rec.EditorCategoryHelp" xml:space="preserve">
+    <value>Genomföranden av utbildningen hamnar i denna kategori i registret.</value>
+  </data>
+  <data name="Rec.CourseCodeLabel" xml:space="preserve">
+    <value>Kurskod</value>
+  </data>
+  <data name="Rec.CourseCodeHelp" xml:space="preserve">
+    <value>Koden som exporter och registret visar för utbildningen.</value>
+  </data>
+  <data name="Rec.TagsLabel" xml:space="preserve">
+    <value>Taggar</value>
+  </data>
+  <data name="Rec.TagsHelp" xml:space="preserve">
+    <value>Skilj taggar åt med kommatecken.</value>
+  </data>
+  <data name="Rec.ObjectivesLabel" xml:space="preserve">
+    <value>Lärandemål</value>
+  </data>
+  <data name="Verify.Title" xml:space="preserve">
+    <value>Verifiering av intyg</value>
+  </data>
+  <data name="Verify.Valid" xml:space="preserve">
+    <value>Intyget är giltigt.</value>
+  </data>
+  <data name="Verify.NotValid" xml:space="preserve">
+    <value>Intyget är inte längre giltigt.</value>
+  </data>
+  <data name="Verify.Member" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="Verify.Course" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="Verify.CompletedOn" xml:space="preserve">
+    <value>Genomförd</value>
+  </data>
+  <data name="Verify.Department" xml:space="preserve">
+    <value>Utfärdat av</value>
+  </data>
+  <data name="Verify.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Verify.Disclaimer" xml:space="preserve">
+    <value>Intyg utfärdas av organisationen ovan. Resgrid är inte ett ackrediteringsorgan för fortbildning.</value>
+  </data>
+  <data name="Import.File.Invalid" xml:space="preserve">
+    <value>Filen kunde inte läsas som CSV.</value>
+  </data>
+  <data name="Import.File.TooLarge" xml:space="preserve">
+    <value>Filen är större än 5 MB.</value>
+  </data>
+  <data name="Import.File.CourseColumnRequired" xml:space="preserve">
+    <value>Filen behöver en kolumn Course.</value>
+  </data>
+  <data name="Import.File.DateColumnRequired" xml:space="preserve">
+    <value>Filen behöver en datumkolumn (CompletedOn eller Date).</value>
+  </data>
+  <data name="Import.File.MemberColumnRequired" xml:space="preserve">
+    <value>Filen behöver en medlemskolumn: Email, MemberId, MemberExternalId eller MemberName.</value>
+  </data>
+  <data name="Import.File.TooManyRows" xml:space="preserve">
+    <value>Filen har fler än 10 000 rader.</value>
+  </data>
+  <data name="Import.File.HoursColumnRequired" xml:space="preserve">
+    <value>Filen behöver en kolumn Hours.</value>
+  </data>
+  <data name="Import.File.DuplicateColumn" xml:space="preserve">
+    <value>Två kolumner hör till samma fält.</value>
+  </data>
+  <data name="Import.File.Empty" xml:space="preserve">
+    <value>Filen har en rubrikrad men inga data.</value>
+  </data>
+  <data name="Import.Err.CourseRequired" xml:space="preserve">
+    <value>Kurs saknas.</value>
+  </data>
+  <data name="Import.Err.DateRequired" xml:space="preserve">
+    <value>Datum saknas.</value>
+  </data>
+  <data name="Import.Err.DateInvalid" xml:space="preserve">
+    <value>Datumet kunde inte läsas.</value>
+  </data>
+  <data name="Import.Err.HoursInvalid" xml:space="preserve">
+    <value>Timmar saknas eller är inte ett tal mellan 0 och 999.</value>
+  </data>
+  <data name="Import.Err.MemberNotFound" xml:space="preserve">
+    <value>Ingen medlem matchar den här raden. Välj en nedan.</value>
+  </data>
+  <data name="Import.Err.Unreadable" xml:space="preserve">
+    <value>Raden kunde inte läsas.</value>
+  </data>
+  <data name="Import.Err.FutureDate" xml:space="preserve">
+    <value>Datumet ligger i framtiden.</value>
+  </data>
+  <data name="Import.Warn.NameMatch" xml:space="preserve">
+    <value>Matchad endast på namn. Kontrollera medlemmen.</value>
+  </data>
+  <data name="Import.Warn.UnknownCategory" xml:space="preserve">
+    <value>Okänd kategori: posten hamnar under Utan kategori.</value>
+  </data>
+  <data name="Import.Warn.UnknownCertification" xml:space="preserve">
+    <value>Okänd certifieringstyp: ingen certifiering skrivs för den här raden.</value>
+  </data>
+  <data name="Import.Warn.CeHoursInvalid" xml:space="preserve">
+    <value>Fortbildningstimmarna kunde inte läsas och lämnades tomma.</value>
+  </data>
+  <data name="Import.Warn.DuplicateRow" xml:space="preserve">
+    <value>Samma genomförande finns tidigare i filen.</value>
+  </data>
+  <data name="Import.Warn.UnknownMethod" xml:space="preserve">
+    <value>Okänd utbildningsform: lämnas tom.</value>
+  </data>
+  <data name="Import.Warn.CertificationDateInvalid" xml:space="preserve">
+    <value>Ett certifieringsdatum kunde inte läsas.</value>
+  </data>
+  <data name="learning_record_title_required" xml:space="preserve">
+    <value>Ange kursens namn.</value>
+  </data>
+  <data name="learning_record_date_invalid" xml:space="preserve">
+    <value>Ange ett giltigt datum för genomförandet som inte ligger i framtiden.</value>
+  </data>
+  <data name="learning_record_mapping_invalid" xml:space="preserve">
+    <value>Välj en certifieringstyp och en av organisationens kategorier.</value>
+  </data>
+  <data name="learning_record_category_name_required" xml:space="preserve">
+    <value>Ange ett namn på kategorin.</value>
+  </data>
+  <data name="learning_record_file_too_large" xml:space="preserve">
+    <value>Bevisfilen är större än 10 MB.</value>
+  </data>
+  <data name="learning_record_template_invalid" xml:space="preserve">
+    <value>Certifikatmallen behöver ett namn.</value>
+  </data>
+  <data name="ExcludeFromAiLabel" xml:space="preserve">
+    <value>Använd inte för AI-kunskapssvar</value>
+  </data>
+  <data name="ExcludeFromAiHelp" xml:space="preserve">
+    <value>För licensierat material vars licens förbjuder bearbetning: den här utbildningen indexeras aldrig och används aldrig i kunskapssvar.</value>
+  </data>
+  <data name="CoursesTab" xml:space="preserve">
+    <value>Kurser</value>
+  </data>
+  <data name="AcademyTab" xml:space="preserve">
+    <value>Academy</value>
+  </data>
+  <data name="CourseLibraryTab" xml:space="preserve">
+    <value>Kursbibliotek</value>
+  </data>
+  <data name="LearningSource.LmsCourseCompletion" xml:space="preserve">
+    <value>Onlinekurs</value>
+  </data>
+  <data name="LearningSource.BuildingFamiliarization" xml:space="preserve">
+    <value>Objektkännedom</value>
+  </data>
+  <data name="Prg.Tab.Programs" xml:space="preserve">
+    <value>Program</value>
+  </data>
+  <data name="Prg.StripLabel" xml:space="preserve">
+    <value>Utbildningsprogram</value>
+  </data>
+  <data name="Prg.Tab.Home" xml:space="preserve">
+    <value>Översikt</value>
+  </data>
+  <data name="Prg.Tab.Plans" xml:space="preserve">
+    <value>Årsplaner</value>
+  </data>
+  <data name="Prg.Tab.Frameworks" xml:space="preserve">
+    <value>Kompetenser</value>
+  </data>
+  <data name="Prg.Tab.Requests" xml:space="preserve">
+    <value>Utbildningsansökningar</value>
+  </data>
+  <data name="Prg.Tab.Reports" xml:space="preserve">
+    <value>Rapporter</value>
+  </data>
+  <data name="Prg.Tab.Cycles" xml:space="preserve">
+    <value>Certifieringscykler</value>
+  </data>
+  <data name="Prg.Tab.Settings" xml:space="preserve">
+    <value>Inställningar</value>
+  </data>
+  <data name="Prg.HomeTitle" xml:space="preserve">
+    <value>Utbildningsprogram</value>
+  </data>
+  <data name="Prg.HomeIntro" xml:space="preserve">
+    <value>Årliga utbildningsplaner, kompetensramverk, utbildningsansökningar, schemalagda rapporter och certifieringscykler.</value>
+  </data>
+  <data name="Prg.AddonNotice" xml:space="preserve">
+    <value>De här programfunktionerna ingår i LMS-tillägget. Allt här går fortfarande att läsa; nya planer, ansökningar, scheman och ändringar kräver ett aktivt tillägg.</value>
+  </data>
+  <data name="Prg.LapsedNotice" xml:space="preserve">
+    <value>LMS-tillägget är inte aktivt. Allt går fortfarande att läsa och öppna ansökningar kan fortfarande beslutas, dras tillbaka eller slutföras; inget nytt kan skapas förrän tillägget är aktivt igen.</value>
+  </data>
+  <data name="Prg.AddonRequired" xml:space="preserve">
+    <value>Det här kräver ett aktivt LMS-tillägg.</value>
+  </data>
+  <data name="Prg.ActionFailed" xml:space="preserve">
+    <value>Det gick inte att genomföra. Kontrollera värdena och försök igen.</value>
+  </data>
+  <data name="Prg.Saved" xml:space="preserve">
+    <value>Sparat.</value>
+  </data>
+  <data name="Prg.Deleted" xml:space="preserve">
+    <value>Borttaget.</value>
+  </data>
+  <data name="Prg.Open" xml:space="preserve">
+    <value>Öppna</value>
+  </data>
+  <data name="Prg.Edit" xml:space="preserve">
+    <value>Redigera</value>
+  </data>
+  <data name="Prg.Remove" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="Prg.Delete" xml:space="preserve">
+    <value>Radera</value>
+  </data>
+  <data name="Prg.Save" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="Prg.Cancel" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="Prg.Create" xml:space="preserve">
+    <value>Skapa</value>
+  </data>
+  <data name="Prg.Add" xml:space="preserve">
+    <value>Lägg till</value>
+  </data>
+  <data name="Prg.Apply" xml:space="preserve">
+    <value>Tillämpa</value>
+  </data>
+  <data name="Prg.Applied" xml:space="preserve">
+    <value>Tillämpat</value>
+  </data>
+  <data name="Prg.Show" xml:space="preserve">
+    <value>Visa</value>
+  </data>
+  <data name="Prg.All" xml:space="preserve">
+    <value>Alla</value>
+  </data>
+  <data name="Prg.Actions" xml:space="preserve">
+    <value>Åtgärder</value>
+  </data>
+  <data name="Prg.Name" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="Prg.Year" xml:space="preserve">
+    <value>År</value>
+  </data>
+  <data name="Prg.Notes" xml:space="preserve">
+    <value>Anteckningar</value>
+  </data>
+  <data name="Prg.Description" xml:space="preserve">
+    <value>Beskrivning</value>
+  </data>
+  <data name="Prg.Uncategorized" xml:space="preserve">
+    <value>Utan kategori</value>
+  </data>
+  <data name="Prg.NotLicensed" xml:space="preserve">
+    <value>ej licensierad</value>
+  </data>
+  <data name="Prg.MyOpenRequests" xml:space="preserve">
+    <value>Mina öppna ansökningar</value>
+  </data>
+  <data name="Prg.AwaitingMe" xml:space="preserve">
+    <value>Väntar på mitt beslut</value>
+  </data>
+  <data name="Prg.SavedReports" xml:space="preserve">
+    <value>Sparade rapporter</value>
+  </data>
+  <data name="Prg.MyGaps" xml:space="preserve">
+    <value>Mina kompetensluckor</value>
+  </data>
+  <data name="Prg.MyNccpExport" xml:space="preserve">
+    <value>Min NCCP-export</value>
+  </data>
+  <data name="Prg.PlansTitle" xml:space="preserve">
+    <value>Årliga utbildningsplaner</value>
+  </data>
+  <data name="Prg.PlansIntro" xml:space="preserve">
+    <value>Ett års planerade pass och timmar per kategori och månad för hela organisationen, en grupp eller ett skift, jämfört med de timmar som faktiskt har registrerats.</value>
+  </data>
+  <data name="Prg.NewPlan" xml:space="preserve">
+    <value>Ny årsplan</value>
+  </data>
+  <data name="Prg.CreatePlan" xml:space="preserve">
+    <value>Skapa plan</value>
+  </data>
+  <data name="Prg.EditPlan" xml:space="preserve">
+    <value>Planuppgifter</value>
+  </data>
+  <data name="Prg.NoPlans" xml:space="preserve">
+    <value>Inga årsplaner ännu.</value>
+  </data>
+  <data name="Prg.Audience" xml:space="preserve">
+    <value>Omfattar</value>
+  </data>
+  <data name="Prg.Scope.Department" xml:space="preserve">
+    <value>Hela organisationen</value>
+  </data>
+  <data name="Prg.Scope.Group" xml:space="preserve">
+    <value>En grupp</value>
+  </data>
+  <data name="Prg.Scope.Shift" xml:space="preserve">
+    <value>Ett skift</value>
+  </data>
+  <data name="Prg.PlanStatus.Draft" xml:space="preserve">
+    <value>Utkast</value>
+  </data>
+  <data name="Prg.PlanStatus.Adopted" xml:space="preserve">
+    <value>Fastställd</value>
+  </data>
+  <data name="Prg.PlanStatus.Archived" xml:space="preserve">
+    <value>Arkiverad</value>
+  </data>
+  <data name="Prg.AdoptPlan" xml:space="preserve">
+    <value>Fastställ planen</value>
+  </data>
+  <data name="Prg.ArchivePlan" xml:space="preserve">
+    <value>Arkivera planen</value>
+  </data>
+  <data name="Prg.CopyPlan" xml:space="preserve">
+    <value>Kopiera till år</value>
+  </data>
+  <data name="Prg.PlanCopied" xml:space="preserve">
+    <value>Planen kopierades som ett nytt utkast.</value>
+  </data>
+  <data name="Prg.AsReport" xml:space="preserve">
+    <value>Som rapport</value>
+  </data>
+  <data name="Prg.PlanAudience" xml:space="preserve">
+    <value>{0}: {1} aktiva medlemmar</value>
+  </data>
+  <data name="Prg.AtRiskCallout" xml:space="preserve">
+    <value>{0} kategorier väntas inte nå sitt årsmål.</value>
+  </data>
+  <data name="Prg.PlannedVsActual" xml:space="preserve">
+    <value>Planerat mot utfall</value>
+  </data>
+  <data name="Prg.PlannedVsActualHelp" xml:space="preserve">
+    <value>Timmar per medlem i planens målgrupp. Prognosen är de timmar som registrerats hittills plus allt som fortfarande är planerat; en kategori vars prognos ligger under årsmålet är i riskzonen.</value>
+  </data>
+  <data name="Prg.NoPlanRows" xml:space="preserve">
+    <value>Inget är planerat ännu och ingen kategori har något årsmål.</value>
+  </data>
+  <data name="Prg.ByMonth" xml:space="preserve">
+    <value>Per månad (planerat / utfall)</value>
+  </data>
+  <data name="Prg.PlannedSlashActual" xml:space="preserve">
+    <value>planerat / utfall</value>
+  </data>
+  <data name="Prg.PlanShort" xml:space="preserve">
+    <value>planen ensam når inte målet</value>
+  </data>
+  <data name="Prg.ShortBy" xml:space="preserve">
+    <value>Saknas {0} h</value>
+  </data>
+  <data name="Prg.OnTrack" xml:space="preserve">
+    <value>Enligt plan</value>
+  </data>
+  <data name="Prg.AtRisk" xml:space="preserve">
+    <value>I riskzonen</value>
+  </data>
+  <data name="Prg.PlanLines" xml:space="preserve">
+    <value>Planerade pass</value>
+  </data>
+  <data name="Prg.NoPlanLines" xml:space="preserve">
+    <value>Inga pass är planerade ännu.</value>
+  </data>
+  <data name="Prg.AddLine" xml:space="preserve">
+    <value>Planera ett pass</value>
+  </data>
+  <data name="Prg.EditLine" xml:space="preserve">
+    <value>Ändra det planerade passet</value>
+  </data>
+  <data name="Prg.HoursPerSession" xml:space="preserve">
+    <value>Timmar per medlem och pass</value>
+  </data>
+  <data name="Prg.Sessions" xml:space="preserve">
+    <value>Pass</value>
+  </data>
+  <data name="Prg.PlannedDate" xml:space="preserve">
+    <value>Planerat datum (valfritt)</value>
+  </data>
+  <data name="Prg.MakeCalendarItem" xml:space="preserve">
+    <value>Skapa en kalenderhändelse</value>
+  </data>
+  <data name="Prg.OnCalendar" xml:space="preserve">
+    <value>I kalendern</value>
+  </data>
+  <data name="Prg.CalendarCreated" xml:space="preserve">
+    <value>Kalenderhändelsen skapades.</value>
+  </data>
+  <data name="Prg.FrameworksTitle" xml:space="preserve">
+    <value>Kompetensramverk</value>
+  </data>
+  <data name="Prg.FrameworksIntro" xml:space="preserve">
+    <value>De funktionskrav, befattningar och färdigheter som er utbildning syftar till, vad som utgör underlag för vart och ett, och varje medlems luckor.</value>
+  </data>
+  <data name="Prg.YourFrameworks" xml:space="preserve">
+    <value>Era ramverk</value>
+  </data>
+  <data name="Prg.NoFrameworks" xml:space="preserve">
+    <value>Inga kompetensramverk ännu.</value>
+  </data>
+  <data name="Prg.Publisher" xml:space="preserve">
+    <value>Utgivare</value>
+  </data>
+  <data name="Prg.Edition" xml:space="preserve">
+    <value>Utgåva</value>
+  </data>
+  <data name="Prg.Source" xml:space="preserve">
+    <value>Källa</value>
+  </data>
+  <data name="Prg.FrameworkSource.Catalog" xml:space="preserve">
+    <value>Resgrid-katalog</value>
+  </data>
+  <data name="Prg.FrameworkSource.CaseImport" xml:space="preserve">
+    <value>CASE-import</value>
+  </data>
+  <data name="Prg.FrameworkSource.Custom" xml:space="preserve">
+    <value>Eget</value>
+  </data>
+  <data name="Prg.Catalog" xml:space="preserve">
+    <value>Katalog</value>
+  </data>
+  <data name="Prg.CatalogHelp" xml:space="preserve">
+    <value>Resgrid levererar bara ramverkets struktur och offentliga identifierare (befattningskoder, kvalifikationsnivåer, färdighetsnamn), aldrig en standards text. Lägg till kapitel- och JPR-numren för den utgåva ni utbildar efter, eller importera er regions ramverk.</value>
+  </data>
+  <data name="Prg.ItemCount" xml:space="preserve">
+    <value>{0} punkter</value>
+  </data>
+  <data name="Prg.FrameworkApplied" xml:space="preserve">
+    <value>Ramverket lades till.</value>
+  </data>
+  <data name="Prg.ImportCase" xml:space="preserve">
+    <value>Importera ett CASE 1.1-ramverk</value>
+  </data>
+  <data name="Prg.ImportCaseHelp" xml:space="preserve">
+    <value>Ladda upp JSON-paketet (CFDocument, CFItems och CFAssociations) som en region eller en högskola publicerar. Om samma dokument importeras igen uppdateras det.</value>
+  </data>
+  <data name="Prg.CaseFile" xml:space="preserve">
+    <value>CASE JSON-fil</value>
+  </data>
+  <data name="Prg.Import" xml:space="preserve">
+    <value>Importera</value>
+  </data>
+  <data name="Prg.CaseImported" xml:space="preserve">
+    <value>Importerat: {0} tillagda, {1} ändrade, {2} borttagna.</value>
+  </data>
+  <data name="Prg.NewFramework" xml:space="preserve">
+    <value>Nytt eget ramverk</value>
+  </data>
+  <data name="Prg.EditFramework" xml:space="preserve">
+    <value>Ramverksuppgifter</value>
+  </data>
+  <data name="Prg.EvidenceMaxAge" xml:space="preserve">
+    <value>Underlag räknas som aktuellt i (månader)</value>
+  </data>
+  <data name="Prg.EvidenceMaxAgeHelp" xml:space="preserve">
+    <value>Äldre underlag visas som föråldrat i luckrapporten. 0 betyder att underlag aldrig blir föråldrat.</value>
+  </data>
+  <data name="Prg.NoItems" xml:space="preserve">
+    <value>Ramverket har inga punkter ännu.</value>
+  </data>
+  <data name="Prg.TaggedOn" xml:space="preserve">
+    <value>Styrks av</value>
+  </data>
+  <data name="Prg.TagOn" xml:space="preserve">
+    <value>Tagga</value>
+  </data>
+  <data name="Prg.Tagged" xml:space="preserve">
+    <value>Taggat.</value>
+  </data>
+  <data name="Prg.Untag" xml:space="preserve">
+    <value>Ta bort tagg</value>
+  </data>
+  <data name="Prg.Untagged" xml:space="preserve">
+    <value>Taggen togs bort.</value>
+  </data>
+  <data name="Prg.AddItem" xml:space="preserve">
+    <value>Lägg till en punkt</value>
+  </data>
+  <data name="Prg.AddItemHelp" xml:space="preserve">
+    <value>Använd kravets offentliga identifierare (till exempel ett JPR-nummer) och en egen kort etikett. Klistra inte in standardens text.</value>
+  </data>
+  <data name="Prg.Parent" xml:space="preserve">
+    <value>Under</value>
+  </data>
+  <data name="Prg.ShortLabel" xml:space="preserve">
+    <value>Kort etikett</value>
+  </data>
+  <data name="Prg.ItemType" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="Prg.Subject.Course" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="Prg.Subject.Training" xml:space="preserve">
+    <value>Utbildning</value>
+  </data>
+  <data name="Prg.Subject.SkillSheet" xml:space="preserve">
+    <value>Färdighetsblad</value>
+  </data>
+  <data name="Prg.Subject.TaskBookTask" xml:space="preserve">
+    <value>Uppgift i uppgiftsbok</value>
+  </data>
+  <data name="Prg.Subject.Category" xml:space="preserve">
+    <value>Kategori</value>
+  </data>
+  <data name="Prg.Subject.CertificationType" xml:space="preserve">
+    <value>Certifiering</value>
+  </data>
+  <data name="Prg.GapReport" xml:space="preserve">
+    <value>Luckrapport</value>
+  </data>
+  <data name="Prg.GapIntro" xml:space="preserve">
+    <value>För varje punkt i ett ramverk: det senaste underlaget och hur gammalt det är, eller att det saknas.</value>
+  </data>
+  <data name="Prg.Framework" xml:space="preserve">
+    <value>Ramverk</value>
+  </data>
+  <data name="Prg.Evidence.Current" xml:space="preserve">
+    <value>Aktuellt</value>
+  </data>
+  <data name="Prg.Evidence.Aged" xml:space="preserve">
+    <value>Föråldrat</value>
+  </data>
+  <data name="Prg.Evidence.None" xml:space="preserve">
+    <value>Inget underlag</value>
+  </data>
+  <data name="Prg.Evidence.NotTagged" xml:space="preserve">
+    <value>Inte taggat</value>
+  </data>
+  <data name="Prg.RequestsTitle" xml:space="preserve">
+    <value>Utbildningsansökningar</value>
+  </data>
+  <data name="Prg.RequestsIntro" xml:space="preserve">
+    <value>Ansök om att gå en extern kurs och ange kostnaden; din närmaste chef och en utbildningsansvarig godkänner den, och när du har gått kursen förs den in i ditt utbildningsregister för verifiering.</value>
+  </data>
+  <data name="Prg.MyRequests" xml:space="preserve">
+    <value>Mina ansökningar</value>
+  </data>
+  <data name="Prg.NoRequests" xml:space="preserve">
+    <value>Inga utbildningsansökningar.</value>
+  </data>
+  <data name="Prg.NewRequest" xml:space="preserve">
+    <value>Ansök om en extern kurs</value>
+  </data>
+  <data name="Prg.ClassTitle" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="Prg.Provider" xml:space="preserve">
+    <value>Anordnare</value>
+  </data>
+  <data name="Prg.Location" xml:space="preserve">
+    <value>Plats</value>
+  </data>
+  <data name="Prg.StartsOn" xml:space="preserve">
+    <value>Börjar</value>
+  </data>
+  <data name="Prg.EndsOn" xml:space="preserve">
+    <value>Slutar</value>
+  </data>
+  <data name="Prg.CostTuition" xml:space="preserve">
+    <value>Kursavgift</value>
+  </data>
+  <data name="Prg.CostTravel" xml:space="preserve">
+    <value>Resor</value>
+  </data>
+  <data name="Prg.CostOther" xml:space="preserve">
+    <value>Övriga kostnader</value>
+  </data>
+  <data name="Prg.ActualCost" xml:space="preserve">
+    <value>Faktisk kostnad</value>
+  </data>
+  <data name="Prg.Justification" xml:space="preserve">
+    <value>Varför den här kursen</value>
+  </data>
+  <data name="Prg.SubmitRequest" xml:space="preserve">
+    <value>Skicka ansökan</value>
+  </data>
+  <data name="Prg.RequestSubmitted" xml:space="preserve">
+    <value>Din ansökan har skickats.</value>
+  </data>
+  <data name="Prg.RequestApproved" xml:space="preserve">
+    <value>Ansökan godkändes.</value>
+  </data>
+  <data name="Prg.RequestRejected" xml:space="preserve">
+    <value>Ansökan avslogs.</value>
+  </data>
+  <data name="Prg.RequestWithdrawn" xml:space="preserve">
+    <value>Ansökan drogs tillbaka.</value>
+  </data>
+  <data name="Prg.RequestCancelled" xml:space="preserve">
+    <value>Ansökan avbröts.</value>
+  </data>
+  <data name="Prg.RequestCompleted" xml:space="preserve">
+    <value>Registrerat. Kursen finns i utbildningsregistret och väntar på att verifieras av en utbildningsansvarig.</value>
+  </data>
+  <data name="Prg.RequestStatus.Submitted" xml:space="preserve">
+    <value>Inskickad</value>
+  </data>
+  <data name="Prg.RequestStatus.Approved" xml:space="preserve">
+    <value>Godkänd</value>
+  </data>
+  <data name="Prg.RequestStatus.Rejected" xml:space="preserve">
+    <value>Avslagen</value>
+  </data>
+  <data name="Prg.RequestStatus.Withdrawn" xml:space="preserve">
+    <value>Tillbakadragen</value>
+  </data>
+  <data name="Prg.RequestStatus.Completed" xml:space="preserve">
+    <value>Slutförd</value>
+  </data>
+  <data name="Prg.RequestStatus.Cancelled" xml:space="preserve">
+    <value>Avbruten</value>
+  </data>
+  <data name="Prg.Step" xml:space="preserve">
+    <value>Steg</value>
+  </data>
+  <data name="Prg.Step.Supervisor" xml:space="preserve">
+    <value>Godkännande av närmaste chef</value>
+  </data>
+  <data name="Prg.Step.TrainingOfficer" xml:space="preserve">
+    <value>Godkännande av utbildningsansvarig</value>
+  </data>
+  <data name="Prg.Decision.Approved" xml:space="preserve">
+    <value>Godkänd</value>
+  </data>
+  <data name="Prg.Decision.Rejected" xml:space="preserve">
+    <value>Avslagen</value>
+  </data>
+  <data name="Prg.Waiting" xml:space="preserve">
+    <value>Väntar</value>
+  </data>
+  <data name="Prg.Decide" xml:space="preserve">
+    <value>Besluta</value>
+  </data>
+  <data name="Prg.DecisionNote" xml:space="preserve">
+    <value>Anteckning (krävs vid avslag)</value>
+  </data>
+  <data name="Prg.Approve" xml:space="preserve">
+    <value>Godkänn</value>
+  </data>
+  <data name="Prg.Reject" xml:space="preserve">
+    <value>Avslå</value>
+  </data>
+  <data name="Prg.Withdraw" xml:space="preserve">
+    <value>Dra tillbaka</value>
+  </data>
+  <data name="Prg.CancelRequest" xml:space="preserve">
+    <value>Avbryt ansökan</value>
+  </data>
+  <data name="Prg.CompleteRequest" xml:space="preserve">
+    <value>Jag har gått kursen</value>
+  </data>
+  <data name="Prg.CompleteRequestHelp" xml:space="preserve">
+    <value>Registrera kursen som genomförd. Den förs in i ditt utbildningsregister som en extern inlämning som en utbildningsansvarig verifierar; bifoga ditt intyg som underlag.</value>
+  </data>
+  <data name="Prg.CompletedOn" xml:space="preserve">
+    <value>Genomförd den</value>
+  </data>
+  <data name="Prg.Evidence" xml:space="preserve">
+    <value>Intyg eller underlag</value>
+  </data>
+  <data name="Prg.SubmissionWritten" xml:space="preserve">
+    <value>Kursen finns i utbildningsregistret som en extern inlämning.</value>
+  </data>
+  <data name="Prg.OpenTranscript" xml:space="preserve">
+    <value>Öppna utbildningsregistret</value>
+  </data>
+  <data name="Prg.AllRequestsYear" xml:space="preserve">
+    <value>Alla ansökningar {0}</value>
+  </data>
+  <data name="Prg.ReportsTitle" xml:space="preserve">
+    <value>Utbildningsrapporter</value>
+  </data>
+  <data name="Prg.ReportsIntro" xml:space="preserve">
+    <value>Katalogen över utbildningsrapporter, sparade rapporter i mappar och rapporter som skickas enligt schema.</value>
+  </data>
+  <data name="Prg.Tier.Free" xml:space="preserve">
+    <value>Gratis</value>
+  </data>
+  <data name="Prg.Tier.Lms" xml:space="preserve">
+    <value>LMS</value>
+  </data>
+  <data name="Prg.RunReport" xml:space="preserve">
+    <value>Kör</value>
+  </data>
+  <data name="Prg.NoSavedReports" xml:space="preserve">
+    <value>Inga sparade rapporter ännu. Kör en rapport och spara den för att behålla inställningarna eller skicka den enligt schema.</value>
+  </data>
+  <data name="Prg.NoFolder" xml:space="preserve">
+    <value>Inte i någon mapp</value>
+  </data>
+  <data name="Prg.EmptyFolder" xml:space="preserve">
+    <value>Mappen är tom.</value>
+  </data>
+  <data name="Prg.NewFolder" xml:space="preserve">
+    <value>Ny mapp</value>
+  </data>
+  <data name="Prg.DeleteFolder" xml:space="preserve">
+    <value>Radera mappen</value>
+  </data>
+  <data name="Prg.Folder" xml:space="preserve">
+    <value>Mapp</value>
+  </data>
+  <data name="Prg.Schedule" xml:space="preserve">
+    <value>Schema</value>
+  </data>
+  <data name="Prg.NextRun" xml:space="preserve">
+    <value>nästa</value>
+  </data>
+  <data name="Prg.LastRun" xml:space="preserve">
+    <value>Senast skickad</value>
+  </data>
+  <data name="Prg.Frequency.None" xml:space="preserve">
+    <value>Inte schemalagd</value>
+  </data>
+  <data name="Prg.Frequency.Daily" xml:space="preserve">
+    <value>Dagligen</value>
+  </data>
+  <data name="Prg.Frequency.Weekly" xml:space="preserve">
+    <value>Varje vecka</value>
+  </data>
+  <data name="Prg.Frequency.Monthly" xml:space="preserve">
+    <value>Varje månad</value>
+  </data>
+  <data name="Prg.RunStatus.Sent" xml:space="preserve">
+    <value>Skickad</value>
+  </data>
+  <data name="Prg.RunStatus.Failed" xml:space="preserve">
+    <value>Misslyckades</value>
+  </data>
+  <data name="Prg.RunStatus.Skipped" xml:space="preserve">
+    <value>Överhoppad</value>
+  </data>
+  <data name="Prg.Period" xml:space="preserve">
+    <value>Period</value>
+  </data>
+  <data name="Prg.Period.MonthToDate" xml:space="preserve">
+    <value>Denna månad hittills</value>
+  </data>
+  <data name="Prg.Period.LastMonth" xml:space="preserve">
+    <value>Förra månaden</value>
+  </data>
+  <data name="Prg.Period.QuarterToDate" xml:space="preserve">
+    <value>Detta kvartal hittills</value>
+  </data>
+  <data name="Prg.Period.YearToDate" xml:space="preserve">
+    <value>I år hittills</value>
+  </data>
+  <data name="Prg.Period.Last12Months" xml:space="preserve">
+    <value>Senaste 12 månaderna</value>
+  </data>
+  <data name="Prg.Period.LastYear" xml:space="preserve">
+    <value>Förra året</value>
+  </data>
+  <data name="Prg.Period.Custom" xml:space="preserve">
+    <value>Från och till datum</value>
+  </data>
+  <data name="Prg.From" xml:space="preserve">
+    <value>Från</value>
+  </data>
+  <data name="Prg.To" xml:space="preserve">
+    <value>Till</value>
+  </data>
+  <data name="Prg.GroupBy" xml:space="preserve">
+    <value>Gruppera efter</value>
+  </data>
+  <data name="Prg.GroupBy.Category" xml:space="preserve">
+    <value>Kategori</value>
+  </data>
+  <data name="Prg.GroupBy.Member" xml:space="preserve">
+    <value>Medlem</value>
+  </data>
+  <data name="Prg.GroupBy.Month" xml:space="preserve">
+    <value>Månad</value>
+  </data>
+  <data name="Prg.GroupBy.Course" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="Prg.GroupBy.Year" xml:space="preserve">
+    <value>År</value>
+  </data>
+  <data name="Prg.Plan" xml:space="preserve">
+    <value>Plan</value>
+  </data>
+  <data name="Prg.WithinDays" xml:space="preserve">
+    <value>Går ut inom (dagar)</value>
+  </data>
+  <data name="Prg.IncludeFormer" xml:space="preserve">
+    <value>Ta med tidigare medlemmar</value>
+  </data>
+  <data name="Prg.NoRows" xml:space="preserve">
+    <value>Inget att visa för de här inställningarna.</value>
+  </data>
+  <data name="Prg.SaveReport" xml:space="preserve">
+    <value>Spara rapporten</value>
+  </data>
+  <data name="Prg.EditSchedule" xml:space="preserve">
+    <value>Sparad rapport och schema</value>
+  </data>
+  <data name="Prg.ReportSaved" xml:space="preserve">
+    <value>Rapporten sparades.</value>
+  </data>
+  <data name="Prg.Format" xml:space="preserve">
+    <value>Bilaga</value>
+  </data>
+  <data name="Prg.DayOfWeek" xml:space="preserve">
+    <value>Veckodag (varje vecka)</value>
+  </data>
+  <data name="Prg.DayOfMonth" xml:space="preserve">
+    <value>Dag i månaden (varje månad)</value>
+  </data>
+  <data name="Prg.HourLocal" xml:space="preserve">
+    <value>Timme (organisationens tid)</value>
+  </data>
+  <data name="Prg.Recipients" xml:space="preserve">
+    <value>Mottagare</value>
+  </data>
+  <data name="Prg.RecipientsHelp" xml:space="preserve">
+    <value>Medlemmar som hanterar utbildningsposter och organisationens administratörer kan få utbildningsrapporter; en medlem kan också få sin egen individuella rapport. Medlemmar som har slutat eller är inaktiverade hoppas över.</value>
+  </data>
+  <data name="Prg.RunHistory" xml:space="preserve">
+    <value>Senaste körningar</value>
+  </data>
+  <data name="Prg.Report.Hours" xml:space="preserve">
+    <value>Utbildningstimmar</value>
+  </data>
+  <data name="Prg.Report.HoursHelp" xml:space="preserve">
+    <value>Timmar per kategori, medlem eller månad för en period.</value>
+  </data>
+  <data name="Prg.Report.Iso" xml:space="preserve">
+    <value>ISO-utbildningsrapport</value>
+  </data>
+  <data name="Prg.Report.IsoHelp" xml:space="preserve">
+    <value>Varje medlems timmar i utbildningskategorierna i ISO FSRS för en period.</value>
+  </data>
+  <data name="Prg.Report.Nccp" xml:space="preserve">
+    <value>NREMT NCCP-framsteg</value>
+  </data>
+  <data name="Prg.Report.NccpHelp" xml:space="preserve">
+    <value>Nationella, lokala och individuella timmar i varje medlems aktuella omcertifieringscykel jämfört med nivåns mål.</value>
+  </data>
+  <data name="Prg.Report.NccpMember" xml:space="preserve">
+    <value>NCCP-export för en medlem</value>
+  </data>
+  <data name="Prg.Report.NccpMemberHelp" xml:space="preserve">
+    <value>Varje verifierad post i en medlems NCCP-kategorier under den aktuella cykeln, med CE-anordnare och kursnummer, klar för medlemmens egen omcertifiering.</value>
+  </data>
+  <data name="Prg.Report.Plan" xml:space="preserve">
+    <value>Årsplan mot utfall</value>
+  </data>
+  <data name="Prg.Report.PlanHelp" xml:space="preserve">
+    <value>En årsplans planerade och faktiska timmar per kategori, prognosen och eventuellt underskott mot målen.</value>
+  </data>
+  <data name="Prg.Report.Gaps" xml:space="preserve">
+    <value>Kompetensluckor</value>
+  </data>
+  <data name="Prg.Report.GapsHelp" xml:space="preserve">
+    <value>En medlems underlag per punkt i ett kompetensramverk, hur gammalt det är, eller att det saknas.</value>
+  </data>
+  <data name="Prg.Report.Costs" xml:space="preserve">
+    <value>Kostnader för utbildningsansökningar</value>
+  </data>
+  <data name="Prg.Report.CostsHelp" xml:space="preserve">
+    <value>Beviljade och väntande kostnader för utbildningsansökningar per medlem, kurs eller år.</value>
+  </data>
+  <data name="Prg.Report.CertExceptions" xml:space="preserve">
+    <value>Certifieringsavvikelser</value>
+  </data>
+  <data name="Prg.Report.CertExceptionsHelp" xml:space="preserve">
+    <value>Utgångna, snart utgående, avstängda, återkallade och overifierade certifieringar för aktiva medlemmar.</value>
+  </data>
+  <data name="Prg.Col.Member" xml:space="preserve">
+    <value>Medlem</value>
+  </data>
+  <data name="Prg.Col.Members" xml:space="preserve">
+    <value>Medlemmar</value>
+  </data>
+  <data name="Prg.Col.Month" xml:space="preserve">
+    <value>Månad</value>
+  </data>
+  <data name="Prg.Col.Category" xml:space="preserve">
+    <value>Kategori</value>
+  </data>
+  <data name="Prg.Col.Records" xml:space="preserve">
+    <value>Poster</value>
+  </data>
+  <data name="Prg.Col.Hours" xml:space="preserve">
+    <value>Timmar</value>
+  </data>
+  <data name="Prg.Col.CeHours" xml:space="preserve">
+    <value>CE-timmar</value>
+  </data>
+  <data name="Prg.Col.Target" xml:space="preserve">
+    <value>Mål</value>
+  </data>
+  <data name="Prg.Col.Certification" xml:space="preserve">
+    <value>Certifiering</value>
+  </data>
+  <data name="Prg.Col.CycleStart" xml:space="preserve">
+    <value>Cykelstart</value>
+  </data>
+  <data name="Prg.Col.CycleEnd" xml:space="preserve">
+    <value>Cykelslut</value>
+  </data>
+  <data name="Prg.Col.NccpNational" xml:space="preserve">
+    <value>Nationellt</value>
+  </data>
+  <data name="Prg.Col.NccpLocal" xml:space="preserve">
+    <value>Lokalt</value>
+  </data>
+  <data name="Prg.Col.NccpIndividual" xml:space="preserve">
+    <value>Individuellt</value>
+  </data>
+  <data name="Prg.Col.Component" xml:space="preserve">
+    <value>Komponent</value>
+  </data>
+  <data name="Prg.Col.Date" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="Prg.Col.Title" xml:space="preserve">
+    <value>Titel</value>
+  </data>
+  <data name="Prg.Col.CeProvider" xml:space="preserve">
+    <value>CE-anordnare</value>
+  </data>
+  <data name="Prg.Col.CeCourseNumber" xml:space="preserve">
+    <value>CE-kursnummer</value>
+  </data>
+  <data name="Prg.Col.CourseCode" xml:space="preserve">
+    <value>Kurskod</value>
+  </data>
+  <data name="Prg.Col.PlannedYear" xml:space="preserve">
+    <value>Planerat (år)</value>
+  </data>
+  <data name="Prg.Col.ActualToDate" xml:space="preserve">
+    <value>Utfall hittills</value>
+  </data>
+  <data name="Prg.Col.Forecast" xml:space="preserve">
+    <value>Prognos</value>
+  </data>
+  <data name="Prg.Col.RunRate" xml:space="preserve">
+    <value>I nuvarande takt</value>
+  </data>
+  <data name="Prg.Col.Shortfall" xml:space="preserve">
+    <value>Underskott</value>
+  </data>
+  <data name="Prg.Col.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Prg.Col.Code" xml:space="preserve">
+    <value>Kod</value>
+  </data>
+  <data name="Prg.Col.Competency" xml:space="preserve">
+    <value>Kompetens</value>
+  </data>
+  <data name="Prg.Col.EvidenceDate" xml:space="preserve">
+    <value>Underlagets datum</value>
+  </data>
+  <data name="Prg.Col.AgeDays" xml:space="preserve">
+    <value>Ålder (dagar)</value>
+  </data>
+  <data name="Prg.Col.Evidence" xml:space="preserve">
+    <value>Underlag</value>
+  </data>
+  <data name="Prg.Col.Course" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="Prg.Col.Year" xml:space="preserve">
+    <value>År</value>
+  </data>
+  <data name="Prg.Col.Requests" xml:space="preserve">
+    <value>Ansökningar</value>
+  </data>
+  <data name="Prg.Col.Committed" xml:space="preserve">
+    <value>Beviljat</value>
+  </data>
+  <data name="Prg.Col.Pending" xml:space="preserve">
+    <value>Väntande</value>
+  </data>
+  <data name="Prg.Col.Cost" xml:space="preserve">
+    <value>Kostnad</value>
+  </data>
+  <data name="Prg.Col.Expires" xml:space="preserve">
+    <value>Går ut</value>
+  </data>
+  <data name="Prg.Col.Days" xml:space="preserve">
+    <value>Dagar</value>
+  </data>
+  <data name="Prg.Cert.Expired" xml:space="preserve">
+    <value>Utgången</value>
+  </data>
+  <data name="Prg.Cert.Expiring" xml:space="preserve">
+    <value>Går snart ut</value>
+  </data>
+  <data name="Prg.Cert.Suspended" xml:space="preserve">
+    <value>Avstängd</value>
+  </data>
+  <data name="Prg.Cert.Revoked" xml:space="preserve">
+    <value>Återkallad</value>
+  </data>
+  <data name="Prg.Cert.Pending" xml:space="preserve">
+    <value>Väntar på verifiering</value>
+  </data>
+  <data name="Prg.Footer.TotalHours" xml:space="preserve">
+    <value>Totalt: {0} timmar i {1} poster.</value>
+  </data>
+  <data name="Prg.Footer.Target" xml:space="preserve">
+    <value>mål {0} h ({1})</value>
+  </data>
+  <data name="Prg.Footer.Audience" xml:space="preserve">
+    <value>{0} aktiva medlemmar i planens målgrupp.</value>
+  </data>
+  <data name="Prg.Footer.Gaps" xml:space="preserve">
+    <value>Aktuella: {0}. Föråldrade: {1}. Utan underlag: {2}.</value>
+  </data>
+  <data name="Prg.Footer.Costs" xml:space="preserve">
+    <value>Beviljat: {0}. Väntande: {1}. Valuta: {2}.</value>
+  </data>
+  <data name="Prg.Problem.NccpCategories" xml:space="preserve">
+    <value>Tillämpa NREMT NCCP-kategorierna först (Utbildningar &gt; Poster &gt; Kategorier).</value>
+  </data>
+  <data name="Prg.Problem.NeedsMember" xml:space="preserve">
+    <value>Välj en medlem.</value>
+  </data>
+  <data name="Prg.Problem.NeedsPlan" xml:space="preserve">
+    <value>Välj en årsplan.</value>
+  </data>
+  <data name="Prg.Problem.NeedsFramework" xml:space="preserve">
+    <value>Välj ett kompetensramverk.</value>
+  </data>
+  <data name="Prg.CyclesTitle" xml:space="preserve">
+    <value>Certifieringscykler</value>
+  </data>
+  <data name="Prg.CyclesIntro" xml:space="preserve">
+    <value>Starta nästa certifieringscykel automatiskt när förnyelsetimmarna är uppnådda, och avisera chefer, administratörer eller namngivna medlemmar när en cykel slutförs, förnyas, närmar sig utgångsdatum eller går ut.</value>
+  </data>
+  <data name="Prg.NoCertificationTypes" xml:space="preserve">
+    <value>Det finns inga certifieringstyper för personer ännu.</value>
+  </data>
+  <data name="Prg.RenewalHours" xml:space="preserve">
+    <value>Förnyelse kräver {0} timmar</value>
+  </data>
+  <data name="Prg.NoRenewalHours" xml:space="preserve">
+    <value>Inga förnyelsetimmar angivna</value>
+  </data>
+  <data name="Prg.ValidityMonths" xml:space="preserve">
+    <value>giltig {0} månader</value>
+  </data>
+  <data name="Prg.AutoRenew" xml:space="preserve">
+    <value>Nästa cykel</value>
+  </data>
+  <data name="Prg.AutoRenew.Off" xml:space="preserve">
+    <value>Inte automatiskt</value>
+  </data>
+  <data name="Prg.AutoRenew.OnCompletion" xml:space="preserve">
+    <value>Startar när förnyelsetimmarna är uppnådda</value>
+  </data>
+  <data name="Prg.AutoRenew.OnExpiry" xml:space="preserve">
+    <value>Startar vid utgångsdatum om förnyelsetimmarna har uppnåtts</value>
+  </data>
+  <data name="Prg.AlertLeadDays" xml:space="preserve">
+    <value>Avisera antal dagar före utgångsdatum</value>
+  </data>
+  <data name="Prg.AlertOnCompletion" xml:space="preserve">
+    <value>Avisera när förnyelsetimmarna är uppnådda</value>
+  </data>
+  <data name="Prg.AlertOnRenewal" xml:space="preserve">
+    <value>Avisera när en cykel startar</value>
+  </data>
+  <data name="Prg.AlertOnExpired" xml:space="preserve">
+    <value>Avisera vid utgång</value>
+  </data>
+  <data name="Prg.NotifySupervisors" xml:space="preserve">
+    <value>Meddela medlemmens chefer</value>
+  </data>
+  <data name="Prg.NotifyAdmins" xml:space="preserve">
+    <value>Meddela organisationens administratörer</value>
+  </data>
+  <data name="Prg.NamedRecipients" xml:space="preserve">
+    <value>Meddela även</value>
+  </data>
+  <data name="Prg.RemoveRule" xml:space="preserve">
+    <value>Ta bort regeln</value>
+  </data>
+  <data name="Prg.SettingsTitle" xml:space="preserve">
+    <value>Programinställningar</value>
+  </data>
+  <data name="Prg.SettingsIntro" xml:space="preserve">
+    <value>Hur utbildningsansökningar godkänns, och tillgodoräknande av objektkännedom från Journaler.</value>
+  </data>
+  <data name="Prg.Set.RequestSupervisorApproval" xml:space="preserve">
+    <value>Medlemmens närmaste chef godkänner utbildningsansökningar</value>
+  </data>
+  <data name="Prg.Set.RequestTrainingOfficerApproval" xml:space="preserve">
+    <value>En utbildningsansvarig godkänner utbildningsansökningar</value>
+  </data>
+  <data name="Prg.Set.RequestApprovalHelp" xml:space="preserve">
+    <value>Om båda är på beslutar närmaste chef först. Om båda är av godkänns ansökningar direkt när de skickas in.</value>
+  </data>
+  <data name="Prg.Set.RequestCurrency" xml:space="preserve">
+    <value>Valuta (ISO-kod)</value>
+  </data>
+  <data name="Prg.Set.Familiarization" xml:space="preserve">
+    <value>Objektkännedom</value>
+  </data>
+  <data name="Prg.Set.FamiliarizationHelp" xml:space="preserve">
+    <value>Slutförda objektstillsyner och granskningar av insatsplaner i Journaler förs in i utbildningsregistret för den som utförde dem, i den kategori du väljer (till exempel ISO-kategorin för insatsplanering).</value>
+  </data>
+  <data name="Prg.Set.FamiliarizationEnabled" xml:space="preserve">
+    <value>Tillgodoräkna objektkännedom</value>
+  </data>
+  <data name="Prg.Set.FamiliarizationCategory" xml:space="preserve">
+    <value>Kategori</value>
+  </data>
+  <data name="Prg.Set.FamiliarizationMinutes" xml:space="preserve">
+    <value>Minuter per besök när start- och sluttid saknas</value>
+  </data>
+  <data name="Prg.Set.FromInspections" xml:space="preserve">
+    <value>Från objektstillsyner</value>
+  </data>
+  <data name="Prg.Set.FromPreplanReviews" xml:space="preserve">
+    <value>Från granskningar av insatsplaner</value>
+  </data>
+  <data name="Prg.Notify.RequestTitle" xml:space="preserve">
+    <value>Utbildningsansökan</value>
+  </data>
+  <data name="Prg.Notify.RequestWaiting" xml:space="preserve">
+    <value>{0} ansöker om att gå {1} ({2} {3}). Godkänn eller avslå ansökan under Utbildningar &gt; Program &gt; Utbildningsansökningar.</value>
+  </data>
+  <data name="Prg.Notify.RequestApproved" xml:space="preserve">
+    <value>Din utbildningsansökan för {0} har godkänts.</value>
+  </data>
+  <data name="Prg.Notify.RequestRejected" xml:space="preserve">
+    <value>Din utbildningsansökan för {0} har avslagits. Se ansökan för skälet.</value>
+  </data>
+  <data name="Prg.Notify.RequestCancelled" xml:space="preserve">
+    <value>Din godkända utbildningsansökan för {0} har avbrutits.</value>
+  </data>
+  <data name="Prg.Notify.CertTitle" xml:space="preserve">
+    <value>Certifiering</value>
+  </data>
+  <data name="Prg.Notify.CertCompleted" xml:space="preserve">
+    <value>{0} har uppnått förnyelsetimmarna för {1} (cykeln slutar {2}).</value>
+  </data>
+  <data name="Prg.Notify.CertRenewed" xml:space="preserve">
+    <value>Certifieringen {1} för {0} har startat en ny cykel (giltig till {2}).</value>
+  </data>
+  <data name="Prg.Notify.CertExpiring" xml:space="preserve">
+    <value>Certifieringen {1} för {0} går ut {2}.</value>
+  </data>
+  <data name="Prg.Notify.CertExpired" xml:space="preserve">
+    <value>Certifieringen {1} för {0} gick ut {2}.</value>
+  </data>
+  <data name="lms_program_age_invalid" xml:space="preserve">
+    <value>Ange mellan 0 och 240 månader.</value>
+  </data>
+  <data name="lms_program_auto_renew_needs_hours" xml:space="preserve">
+    <value>Automatisk förnyelse kräver förnyelsetimmar och en giltighetstid i månader på certifieringstypen.</value>
+  </data>
+  <data name="lms_program_calendar_failed" xml:space="preserve">
+    <value>Kalenderhändelsen kunde inte skapas.</value>
+  </data>
+  <data name="lms_program_case_empty" xml:space="preserve">
+    <value>Välj en CASE JSON-fil.</value>
+  </data>
+  <data name="lms_program_case_no_document" xml:space="preserve">
+    <value>Filen har inget CFDocument med en identifierare och en titel.</value>
+  </data>
+  <data name="lms_program_case_too_large" xml:space="preserve">
+    <value>Filen är större än 10 MB.</value>
+  </data>
+  <data name="lms_program_case_too_many_items" xml:space="preserve">
+    <value>Filen har fler än 5 000 punkter.</value>
+  </data>
+  <data name="lms_program_case_unreadable" xml:space="preserve">
+    <value>Filen är inte läsbar CASE JSON.</value>
+  </data>
+  <data name="lms_program_category_invalid" xml:space="preserve">
+    <value>Välj en kategori i din organisation.</value>
+  </data>
+  <data name="lms_program_cost_invalid" xml:space="preserve">
+    <value>Kostnaderna måste vara mellan 0 och 1 000 000.</value>
+  </data>
+  <data name="lms_program_date_invalid" xml:space="preserve">
+    <value>Ange ett datum som inte ligger i framtiden.</value>
+  </data>
+  <data name="lms_program_date_outside_month" xml:space="preserve">
+    <value>Det planerade datumet måste ligga inom planens år och den valda månaden.</value>
+  </data>
+  <data name="lms_program_dates_invalid" xml:space="preserve">
+    <value>Kursen kan inte sluta innan den börjar.</value>
+  </data>
+  <data name="lms_program_familiarization_category_required" xml:space="preserve">
+    <value>Välj den kategori som objektkännedom tillgodoräknas i.</value>
+  </data>
+  <data name="lms_program_folder_not_found" xml:space="preserve">
+    <value>Mappen finns inte längre.</value>
+  </data>
+  <data name="lms_program_framework_not_found" xml:space="preserve">
+    <value>Ramverket finns inte längre.</value>
+  </data>
+  <data name="lms_program_hours_invalid" xml:space="preserve">
+    <value>Ange timmar mellan 0 och 1 000.</value>
+  </data>
+  <data name="lms_program_label_required" xml:space="preserve">
+    <value>Ange en kod eller en etikett.</value>
+  </data>
+  <data name="lms_program_member_required" xml:space="preserve">
+    <value>Välj den medlem som rapporten gäller.</value>
+  </data>
+  <data name="lms_program_month_invalid" xml:space="preserve">
+    <value>Välj en månad.</value>
+  </data>
+  <data name="lms_program_name_required" xml:space="preserve">
+    <value>Ange ett namn.</value>
+  </data>
+  <data name="lms_program_not_allowed" xml:space="preserve">
+    <value>Du har inte behörighet att göra det.</value>
+  </data>
+  <data name="lms_program_not_found" xml:space="preserve">
+    <value>Hittades inte.</value>
+  </data>
+  <data name="lms_program_parent_invalid" xml:space="preserve">
+    <value>En punkt kan inte ligga under sig själv eller under någon av sina egna underpunkter.</value>
+  </data>
+  <data name="lms_program_plan_not_found" xml:space="preserve">
+    <value>Planen finns inte längre.</value>
+  </data>
+  <data name="lms_program_reason_required" xml:space="preserve">
+    <value>Ange ett skäl till att ansökan avslås.</value>
+  </data>
+  <data name="lms_program_recipient_invalid" xml:space="preserve">
+    <value>En mottagare är inte en aktiv medlem som får ta emot utbildningsrapporter.</value>
+  </data>
+  <data name="lms_program_recipients_required" xml:space="preserve">
+    <value>Välj minst en mottagare för en schemalagd rapport.</value>
+  </data>
+  <data name="lms_program_report_not_found" xml:space="preserve">
+    <value>Rapporten finns inte.</value>
+  </data>
+  <data name="lms_program_request_changed" xml:space="preserve">
+    <value>Någon annan hann hantera ansökan först. Läs in den igen.</value>
+  </data>
+  <data name="lms_program_request_not_approved" xml:space="preserve">
+    <value>Endast en godkänd ansökan kan slutföras.</value>
+  </data>
+  <data name="lms_program_request_not_found" xml:space="preserve">
+    <value>Ansökan finns inte längre.</value>
+  </data>
+  <data name="lms_program_request_not_open" xml:space="preserve">
+    <value>Ansökan väntar inte längre på beslut.</value>
+  </data>
+  <data name="lms_program_rule_invalid" xml:space="preserve">
+    <value>Välj ett giltigt förnyelsealternativ.</value>
+  </data>
+  <data name="lms_program_rule_not_found" xml:space="preserve">
+    <value>Regeln finns inte längre.</value>
+  </data>
+  <data name="lms_program_schedule_invalid" xml:space="preserve">
+    <value>Kontrollera schemat: dag i månaden 1 till 28, timme 0 till 23.</value>
+  </data>
+  <data name="lms_program_scope_invalid" xml:space="preserve">
+    <value>Välj en grupp eller ett skift i din organisation.</value>
+  </data>
+  <data name="lms_program_sessions_invalid" xml:space="preserve">
+    <value>Ange mellan 1 och 100 pass.</value>
+  </data>
+  <data name="lms_program_status_invalid" xml:space="preserve">
+    <value>Statusen är inte giltig.</value>
+  </data>
+  <data name="lms_program_subject_invalid" xml:space="preserve">
+    <value>Välj en kurs, utbildning, kategori eller certifiering i din organisation.</value>
+  </data>
+  <data name="lms_program_title_required" xml:space="preserve">
+    <value>Ange en titel.</value>
+  </data>
+  <data name="lms_program_too_many_recipients" xml:space="preserve">
+    <value>För många mottagare.</value>
+  </data>
+  <data name="lms_program_type_invalid" xml:space="preserve">
+    <value>Välj en certifieringstyp för personer.</value>
+  </data>
+  <data name="lms_program_year_invalid" xml:space="preserve">
+    <value>Ange ett år mellan 2000 och 2100.</value>
+  </data>
+  <data name="RequirementsTab" xml:space="preserve">
+    <value>Krav</value>
+  </data>
+  <data name="Prg.Report.Matrix" xml:space="preserve">
+    <value>Efterlevnadsmatris</value>
+  </data>
+  <data name="Prg.Report.MatrixHelp" xml:space="preserve">
+    <value>Varje aktiv medlem mot varje gällande utbildningskrav: uppfyllt, förfaller senare, i riskzonen, försenat, undantaget, ledig eller utan licens. Grupperat per medlem eller per krav.</value>
+  </data>
+  <data name="Prg.GroupBy.Requirement" xml:space="preserve">
+    <value>Krav</value>
+  </data>
+  <data name="Prg.Col.Requirement" xml:space="preserve">
+    <value>Krav</value>
+  </data>
+  <data name="Prg.Col.Due" xml:space="preserve">
+    <value>Förfaller</value>
+  </data>
+  <data name="Prg.Col.LastCompleted" xml:space="preserve">
+    <value>Senast slutförd</value>
+  </data>
+  <data name="Prg.Col.Progress" xml:space="preserve">
+    <value>Framsteg</value>
+  </data>
+  <data name="Prg.Footer.MatrixPaused" xml:space="preserve">
+    <value>LMS-tillägget är inte aktivt: kraven är pausade och inget blir försenat.</value>
+  </data>
+  <data name="Cls.Tab.Classes" xml:space="preserve">
+    <value>Lektioner</value>
+  </data>
+  <data name="Cls.OpenClassSession" xml:space="preserve">
+    <value>Öppna lektionen</value>
+  </data>
+  <data name="Cls.Report.Roster" xml:space="preserve">
+    <value>Deltagarlistor</value>
+  </data>
+  <data name="Cls.Report.RosterHelp" xml:space="preserve">
+    <value>Signerade lektioner: datum, innehåll, lärare och behörigheter, deltagare och befattningar.</value>
+  </data>
+  <data name="Cls.Report.Enrollment" xml:space="preserve">
+    <value>Lektionsanmälningar</value>
+  </data>
+  <data name="Cls.Report.EnrollmentHelp" xml:space="preserve">
+    <value>Per lektion: kapacitet, anmälda, väntelista, väntande, närvarande, frånvarande och oanmälda.</value>
+  </data>
+  <data name="Cls.Report.Exceptions" xml:space="preserve">
+    <value>Avvikelser i lektionsanmälan</value>
+  </data>
+  <data name="Cls.Report.ExceptionsHelp" xml:space="preserve">
+    <value>Uteblivna, medlemmar på väntelista eller som väntar på godkännande, inaktiva på listor och anmälda i tjänst.</value>
+  </data>
+  <data name="Cls.Report.Series" xml:space="preserve">
+    <value>Närvaro i lektionsserier</value>
+  </data>
+  <data name="Cls.Report.SeriesHelp" xml:space="preserve">
+    <value>Varje medlems närvaro vid en återkommande lektions tillfällen.</value>
+  </data>
+  <data name="Cls.Report.Costs" xml:space="preserve">
+    <value>Lektionskostnader</value>
+  </data>
+  <data name="Cls.Report.CostsHelp" xml:space="preserve">
+    <value>Lektionskostnader per kurs, medlem eller år, bredvid utbildningsansökningarna.</value>
+  </data>
+  <data name="Cls.Report.Instructors" xml:space="preserve">
+    <value>Lärartimmar</value>
+  </data>
+  <data name="Cls.Report.InstructorsHelp" xml:space="preserve">
+    <value>Vem som ledde vilka lektioner och undervisade timmar.</value>
+  </data>
+  <data name="Skl.Tab.Skills" xml:space="preserve">
+    <value>Färdigheter</value>
+  </data>
+  <data name="Skl.Report.PassFail" xml:space="preserve">
+    <value>Färdighetsbedömningar: godkänt/underkänt</value>
+  </data>
+  <data name="Skl.Report.PassFailHelp" xml:space="preserve">
+    <value>Slutförda bedömningar per blad eller medlem: godkända, underkända, andel godkända, kritiska fel och medelpoäng.</value>
+  </data>
+  <data name="Skl.Report.Ratings" xml:space="preserve">
+    <value>Färdighetsbedömningar: värden per fråga</value>
+  </data>
+  <data name="Skl.Report.RatingsHelp" xml:space="preserve">
+    <value>Skalsvar per blad, fråga och månad: antal, medelvärde, lägsta och högsta.</value>
+  </data>
+  <data name="Skl.GroupBy.Sheet" xml:space="preserve">
+    <value>Färdighetsblad</value>
+  </data>
+  <data name="Skl.GroupBy.Member" xml:space="preserve">
+    <value>Medlem</value>
+  </data>
+  <data name="Skl.Col.Sheet" xml:space="preserve">
+    <value>Färdighetsblad</value>
+  </data>
+  <data name="Skl.Col.Member" xml:space="preserve">
+    <value>Medlem</value>
+  </data>
+  <data name="Skl.Col.Step" xml:space="preserve">
+    <value>Fråga</value>
+  </data>
+  <data name="Skl.Col.Month" xml:space="preserve">
+    <value>Månad</value>
+  </data>
+  <data name="Skl.Col.Evaluations" xml:space="preserve">
+    <value>Bedömningar</value>
+  </data>
+  <data name="Skl.Col.Passed" xml:space="preserve">
+    <value>Godkända</value>
+  </data>
+  <data name="Skl.Col.Failed" xml:space="preserve">
+    <value>Underkända</value>
+  </data>
+  <data name="Skl.Col.PassRate" xml:space="preserve">
+    <value>Andel godkända</value>
+  </data>
+  <data name="Skl.Col.Critical" xml:space="preserve">
+    <value>Kritiska fel</value>
+  </data>
+  <data name="Skl.Col.AverageScore" xml:space="preserve">
+    <value>Medelpoäng</value>
+  </data>
+  <data name="Skl.Col.Ratings" xml:space="preserve">
+    <value>Antal värden</value>
+  </data>
+  <data name="Skl.Col.AverageRating" xml:space="preserve">
+    <value>Medelvärde</value>
+  </data>
+  <data name="Skl.Col.Lowest" xml:space="preserve">
+    <value>Lägsta</value>
+  </data>
+  <data name="Skl.Col.Highest" xml:space="preserve">
+    <value>Högsta</value>
+  </data>
 </root>

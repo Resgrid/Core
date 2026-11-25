@@ -175,4 +175,35 @@
   <data name="SecurityNoticeWhere" xml:space="preserve"><value>Πού: {0}</value></data>
   <data name="SecurityNoticeNotYou" xml:space="preserve"><value>Αν δεν ήσασταν εσείς, επαναφέρετε τώρα τον κωδικό πρόσβασής σας στο {0}, έπειτα συνδεθείτε και ελέγξτε τις μεθόδους σύνδεσής σας. Το Resgrid δεν ζητά ποτέ κωδικό ή κωδικό πρόσβασης μέσω email.</value></data>
   <data name="SecurityNoticeFooter" xml:space="preserve"><value>Αυτή είναι μια αυτόματη ειδοποίηση ασφαλείας για τον λογαριασμό σας Resgrid.</value></data>
+  <data name="SigningLinkEmailSubject" xml:space="preserve">
+    <value>{0}: ένα έγγραφο για υπογραφή</value>
+  </data>
+  <data name="SigningLinkEmailBody" xml:space="preserve">
+    <value>Γεια σας {0},
+
+Η υπηρεσία {1} σας ζητά να ελέγξετε και να υπογράψετε το "{2}".
+
+Ανοίξτε αυτόν τον σύνδεσμο για να υπογράψετε:
+{3}
+
+Ο σύνδεσμος χρησιμοποιείται μία φορά και λήγει στις {4}. Πριν υπογράψετε θα επιβεβαιώσετε έναν κωδικό μίας χρήσης.
+
+Αν δεν περιμένατε αυτό το μήνυμα, μπορείτε να το αγνοήσετε.</value>
+  </data>
+  <data name="SigningLinkSmsBody" xml:space="preserve">
+    <value>Η υπηρεσία {0} σας ζητά να υπογράψετε το "{1}": {2}</value>
+  </data>
+  <data name="SigningCodeEmailSubject" xml:space="preserve">
+    <value>{0}: ο κωδικός υπογραφής σας</value>
+  </data>
+  <data name="SigningCodeEmailBody" xml:space="preserve">
+    <value>Γεια σας {0},
+
+Ο κωδικός σας για την υπογραφή του εγγράφου από {3} είναι {1}. Λήγει σε {2} λεπτά.
+
+Αν δεν ζητήσατε αυτόν τον κωδικό, μπορείτε να αγνοήσετε το μήνυμα.</value>
+  </data>
+  <data name="SigningCodeSmsBody" xml:space="preserve">
+    <value>Ο κωδικός υπογραφής σας για {2} είναι {0}. Λήγει σε {1} λεπτά.</value>
+  </data>
 </root>

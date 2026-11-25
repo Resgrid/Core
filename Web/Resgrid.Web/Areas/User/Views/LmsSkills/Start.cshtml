@@ -1,0 +1,75 @@
+@using Resgrid.Web.Areas.User.Models.LmsSkills
+@model LmsSkillStartView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsSkills.LmsSkills> localizer
+@*
+    Start an evaluation: a sheet the member may evaluate on and the member (or a crew) to evaluate, with an optional call or deployment as
+    evidence; or a task-book task for its trainee.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Skl.StartEvaluation"];
+    ViewData["Title"] = localizer["Skl.StartEvaluation"].Value;
+    ViewData["Subtitle"] = localizer["Skl.StartIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    <form asp-controller="LmsSkills" asp-action="Start" asp-route-area="User" method="post" class="ibox">
+        @Html.AntiForgeryToken()
+        <div class="ibox-content">
+            @if (Model.TaskBook != null)
+            {
+                <input type="hidden" name="taskBookId" value="@Model.TaskBook.LmsTaskBookId" />
+                <input type="hidden" name="taskKey" value="@Model.Task.Key" />
+                <p><strong>@Model.TaskBook.PositionCode - @Model.TaskBook.Name</strong></p>
+                <p>@localizer["Skl.Task"]: @(Model.Task.Number ?? Model.Task.Key) @Model.Task.Title</p>
+                <p>@localizer["Skl.Trainee"]: @Model.NameOf(Model.TaskBook.UserId)</p>
+                @if (Model.Task.RequiresIncident)
+                {
+                    <div class="alert alert-info" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["Skl.IncidentRequired"]</div>
+                }
+            }
+            else
+            {
+                @if (Model.Sheets.Count == 0)
+                {
+                    <p class="text-muted">@localizer["Skl.NoSheetsToEvaluate"]</p>
+                }
+                <div class="form-group">
+                    <label for="sheetId">@localizer["Skl.Sheet"]</label>
+                    <select id="sheetId" name="sheetId" class="form-control" required>
+                        @foreach (var sheet in Model.Sheets)
+                        {
+                            <option value="@sheet.LmsSkillSheetId" selected="@(Model.SheetId == sheet.LmsSkillSheetId)">@sheet.Title @(string.IsNullOrWhiteSpace(sheet.Code) ? string.Empty : "(" + sheet.Code + ")")</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="memberUserIds">@localizer["Skl.MembersToEvaluate"]</label>
+                    <select id="memberUserIds" name="memberUserIds" class="form-control" multiple size="8" required>
+                        @foreach (var member in Model.Members)
+                        {
+                            <option value="@member.Key">@member.Value</option>
+                        }
+                    </select>
+                    <span class="help-block">@localizer["Skl.MembersHelp"]</span>
+                </div>
+            }
+            <div class="row">
+                <div class="col-sm-4 form-group"><label for="callId">@localizer["Skl.Field.CallId"]</label><input id="callId" name="callId" type="number" min="1" class="form-control" /></div>
+                <div class="col-sm-4 form-group"><label for="deploymentId">@localizer["Skl.Field.DeploymentId"]</label><input id="deploymentId" name="deploymentId" type="number" min="1" class="form-control" /></div>
+                <div class="col-sm-4 form-group"><label for="location">@localizer["Skl.Field.Location"]</label><input id="location" name="location" maxlength="250" class="form-control" /></div>
+            </div>
+            <button type="submit" class="btn btn-primary" disabled="@(!Model.CanAuthor || (Model.TaskBook == null && Model.Sheets.Count == 0))"><i class="fa fa-play" aria-hidden="true"></i> @localizer["Skl.StartEvaluation"]</button>
+        </div>
+    </form>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

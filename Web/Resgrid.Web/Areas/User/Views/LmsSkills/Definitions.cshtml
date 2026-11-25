@@ -1,0 +1,79 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsSkills
+@model LmsTaskBookDefinitionsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsSkills.LmsSkills> localizer
+@*
+    Task book definitions (managers): the department's own position task books and the Resgrid starters (wildland with NWCG position codes
+    and task numbers only, officer and driver/operator task names, OSHA operator re-evaluation, NCCP skills verification, field training).
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Skl.DefinitionsTitle"];
+    ViewData["Title"] = localizer["Skl.DefinitionsTitle"].Value;
+    ViewData["Subtitle"] = localizer["Skl.DefinitionsIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    @if (Model.CanAuthor)
+    {
+        <div class="rgw-heading-actions m-b-md">
+            <a class="btn btn-primary" asp-controller="LmsSkills" asp-action="Definition" asp-route-area="User"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["Skl.NewDefinition"]</a>
+        </div>
+    }
+
+    @if (Model.Definitions.Count == 0)
+    {
+        <p class="text-muted">@localizer["Skl.NoDefinitions"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead><tr><th>@localizer["Skl.Position"]</th><th>@localizer["Skl.Family"]</th><th>@localizer["Skl.Tasks"]</th><th>@localizer["Skl.Field.ValidityMonths"]</th><th class="rgw-row-actions">@localizer["Skl.Actions"]</th></tr></thead>
+                <tbody>
+                    @foreach (var definition in Model.Definitions)
+                    {
+                        <tr>
+                            <td>@definition.PositionCode<span class="rgw-sub">@definition.Name</span></td>
+                            <td>@localizer["Skl.Family." + (LmsTaskBookFamilies)definition.Family]</td>
+                            <td>@LmsSkillRules.ParseTasks(definition.TasksJson).Count</td>
+                            <td>@definition.ValidityMonths</td>
+                            <td class="rgw-row-actions"><a class="btn btn-white btn-xs" asp-controller="LmsSkills" asp-action="Definition" asp-route-area="User" asp-route-id="@definition.LmsTaskBookDefinitionId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["Skl.Edit"]</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <h3 class="m-t-lg"><i class="fa fa-clone" aria-hidden="true"></i> @localizer["Skl.TaskBookTemplates"]</h3>
+    <p class="text-muted">@localizer["Skl.TaskBookTemplatesIntro"]</p>
+    <div class="rgw-card-grid">
+        @foreach (var template in Model.Templates)
+        {
+            <div class="rgw-card">
+                <h4><i class="fa fa-book" aria-hidden="true"></i> @template.PositionCode - @template.Name</h4>
+                <p class="rgw-card-meta">@localizer["Skl.Family." + template.Family] · @template.Tasks.Count @localizer["Skl.Tasks"]</p>
+                <p>@template.Description</p>
+                @if (Model.CanAuthor)
+                {
+                    <form asp-controller="LmsSkills" asp-action="UseTaskBookTemplate" asp-route-area="User" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="key" value="@template.Key" />
+                        <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-copy" aria-hidden="true"></i> @localizer["Skl.UseTemplate"]</button>
+                    </form>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

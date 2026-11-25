@@ -2667,4 +2667,19 @@
   <data name="ShiftOverSignupHelp" xml:space="preserve">
     <value>Members can sign up for a group even when all its role slots (required and optional) are taken. They still need one of the group's roles.</value>
   </data>
+  <data name="DocumentNumberKindProtocol" xml:space="preserve">
+    <value>Protocols</value>
+  </data>
+  <data name="RunCardConditionProtocolOutcome" xml:space="preserve">
+    <value>A protocol determinant on the call</value>
+  </data>
+  <data name="RunCardDeterminantEquals" xml:space="preserve">
+    <value>equals</value>
+  </data>
+  <data name="RunCardDeterminantStartsWith" xml:space="preserve">
+    <value>starts with</value>
+  </data>
+  <data name="RunCardDeterminantValue" xml:space="preserve">
+    <value>Determinant (e.g. 09-E)</value>
+  </data>
 </root>

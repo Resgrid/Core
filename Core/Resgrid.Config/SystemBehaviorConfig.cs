@@ -213,6 +213,12 @@ namespace Resgrid.Config
 		public static string AcademyUrl = "https://academy.resgrid.com/";
 
 		/// <summary>
+		/// Where Academy lesson videos and caption tracks are served from (A2). Blank uses <see cref="AcademyUrl"/>; an air-gapped install
+		/// points it at a bundled media pack laid out like the lesson manifests' relative paths. Changing it re-links the seeded lessons.
+		/// </summary>
+		public static string AcademyMediaUrl = "";
+
+		/// <summary>
 		/// Contact Us Url
 		/// </summary>
 		public static string ContactUsUrl = "https://resgrid.com/contact";

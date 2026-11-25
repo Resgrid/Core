@@ -1233,4 +1233,2605 @@
   <data name="ViewedOnValue" xml:space="preserve">
     <value>Переглянуто {0}</value>
   </data>
+  <data name="Doc.Transcript" xml:space="preserve">
+    <value>Журнал навчання</value>
+  </data>
+  <data name="Doc.Member" xml:space="preserve">
+    <value>Учасник</value>
+  </data>
+  <data name="Doc.Period" xml:space="preserve">
+    <value>Період</value>
+  </data>
+  <data name="Doc.Date" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="Doc.Course" xml:space="preserve">
+    <value>Курс</value>
+  </data>
+  <data name="Doc.Code" xml:space="preserve">
+    <value>Код</value>
+  </data>
+  <data name="Doc.Category" xml:space="preserve">
+    <value>Категорія</value>
+  </data>
+  <data name="Doc.Source" xml:space="preserve">
+    <value>Джерело</value>
+  </data>
+  <data name="Doc.Status" xml:space="preserve">
+    <value>Стан</value>
+  </data>
+  <data name="Doc.Hours" xml:space="preserve">
+    <value>Години</value>
+  </data>
+  <data name="Doc.CeHours" xml:space="preserve">
+    <value>Години підвищення кваліфікації</value>
+  </data>
+  <data name="Doc.CeProvider" xml:space="preserve">
+    <value>Організатор підвищення кваліфікації</value>
+  </data>
+  <data name="Doc.CeCourseNumber" xml:space="preserve">
+    <value>Номер курсу підвищення кваліфікації</value>
+  </data>
+  <data name="Doc.Method" xml:space="preserve">
+    <value>Форма навчання</value>
+  </data>
+  <data name="Doc.Instructors" xml:space="preserve">
+    <value>Інструктори</value>
+  </data>
+  <data name="Doc.TotalHours" xml:space="preserve">
+    <value>Усього годин</value>
+  </data>
+  <data name="Doc.HoursByCategory" xml:space="preserve">
+    <value>Години за категоріями</value>
+  </data>
+  <data name="Doc.Uncategorized" xml:space="preserve">
+    <value>Без категорії</value>
+  </data>
+  <data name="Doc.GeneratedOn" xml:space="preserve">
+    <value>Створено {0}, автор: {1}</value>
+  </data>
+  <data name="Doc.NotCounted" xml:space="preserve">
+    <value>Не зараховано</value>
+  </data>
+  <data name="Doc.CertificateTitle" xml:space="preserve">
+    <value>Свідоцтво про проходження</value>
+  </data>
+  <data name="Doc.CertifiesThat" xml:space="preserve">
+    <value>Цим засвідчується, що</value>
+  </data>
+  <data name="Doc.HasCompleted" xml:space="preserve">
+    <value>пройшов(-ла)</value>
+  </data>
+  <data name="Doc.CompletedOn" xml:space="preserve">
+    <value>Дата проходження</value>
+  </data>
+  <data name="Doc.IssuedBy" xml:space="preserve">
+    <value>Видано</value>
+  </data>
+  <data name="Doc.VerificationCode" xml:space="preserve">
+    <value>Код перевірки</value>
+  </data>
+  <data name="Doc.VerifyAt" xml:space="preserve">
+    <value>Перевірити за адресою</value>
+  </data>
+  <data name="Doc.HoursReport" xml:space="preserve">
+    <value>Звіт про години навчання</value>
+  </data>
+  <data name="Doc.Records" xml:space="preserve">
+    <value>Записи</value>
+  </data>
+  <data name="Doc.Members" xml:space="preserve">
+    <value>Учасники</value>
+  </data>
+  <data name="Doc.Target" xml:space="preserve">
+    <value>Ціль</value>
+  </data>
+  <data name="Doc.UnresolvedDuplicates" xml:space="preserve">
+    <value>Нерозглянуті можливі дублікати: {0}</value>
+  </data>
+  <data name="Doc.PendingRecords" xml:space="preserve">
+    <value>Записи, що очікують: {0}</value>
+  </data>
+  <data name="Doc.NotAccreditor" xml:space="preserve">
+    <value>Видано зазначеним вище підрозділом. Resgrid не є органом акредитації підвищення кваліфікації.</value>
+  </data>
+  <data name="Doc.FormerMember" xml:space="preserve">
+    <value>Колишній учасник</value>
+  </data>
+  <data name="Doc.IsoReport" xml:space="preserve">
+    <value>Звіт про навчання ISO FSRS</value>
+  </data>
+  <data name="Doc.NccpReport" xml:space="preserve">
+    <value>Прогрес NREMT NCCP</value>
+  </data>
+  <data name="Doc.National" xml:space="preserve">
+    <value>Національний</value>
+  </data>
+  <data name="Doc.Local" xml:space="preserve">
+    <value>Місцевий</value>
+  </data>
+  <data name="Doc.Individual" xml:space="preserve">
+    <value>Індивідуальний</value>
+  </data>
+  <data name="Doc.Cycle" xml:space="preserve">
+    <value>Цикл</value>
+  </data>
+  <data name="Doc.Level" xml:space="preserve">
+    <value>Рівень</value>
+  </data>
+  <data name="LearningSource.CourseCompletion" xml:space="preserve">
+    <value>Пройдений курс</value>
+  </data>
+  <data name="LearningSource.ClassSession" xml:space="preserve">
+    <value>Заняття</value>
+  </data>
+  <data name="LearningSource.TrainingRecord" xml:space="preserve">
+    <value>Протокол навчання</value>
+  </data>
+  <data name="LearningSource.ExternalSubmission" xml:space="preserve">
+    <value>Зовнішнє навчання</value>
+  </data>
+  <data name="LearningSource.SkillEvaluation" xml:space="preserve">
+    <value>Оцінювання навичок</value>
+  </data>
+  <data name="LearningSource.TaskBookSignoff" xml:space="preserve">
+    <value>Підпис у книзі завдань</value>
+  </data>
+  <data name="LearningSource.ProtocolAcknowledgment" xml:space="preserve">
+    <value>Ознайомлення з протоколом</value>
+  </data>
+  <data name="LearningSource.AcademyLesson" xml:space="preserve">
+    <value>Урок Academy</value>
+  </data>
+  <data name="LearningSource.ManualCredit" xml:space="preserve">
+    <value>Залік сертифікації</value>
+  </data>
+  <data name="LearningSource.Import" xml:space="preserve">
+    <value>Імпортована історія</value>
+  </data>
+  <data name="LearningSource.CalendarAttendance" xml:space="preserve">
+    <value>Подія календаря</value>
+  </data>
+  <data name="LearningStatus.Pending" xml:space="preserve">
+    <value>Очікує</value>
+  </data>
+  <data name="LearningStatus.Verified" xml:space="preserve">
+    <value>Підтверджено</value>
+  </data>
+  <data name="LearningStatus.Rejected" xml:space="preserve">
+    <value>Відхилено</value>
+  </data>
+  <data name="LearningStatus.Voided" xml:space="preserve">
+    <value>Анульовано</value>
+  </data>
+  <data name="TrainingMethod.Classroom" xml:space="preserve">
+    <value>Аудиторно</value>
+  </data>
+  <data name="TrainingMethod.Online" xml:space="preserve">
+    <value>Онлайн-курс</value>
+  </data>
+  <data name="TrainingMethod.DrillField" xml:space="preserve">
+    <value>Навчання або полігон</value>
+  </data>
+  <data name="TrainingMethod.Virtual" xml:space="preserve">
+    <value>Віртуально (наживо)</value>
+  </data>
+  <data name="TrainingMethod.SelfStudy" xml:space="preserve">
+    <value>Самостійно</value>
+  </data>
+  <data name="TrainingMethod.OnTheJob" xml:space="preserve">
+    <value>На робочому місці</value>
+  </data>
+  <data name="TargetPeriod.None" xml:space="preserve">
+    <value>Без цілі</value>
+  </data>
+  <data name="TargetPeriod.PerYear" xml:space="preserve">
+    <value>На рік</value>
+  </data>
+  <data name="TargetPeriod.PerMonth" xml:space="preserve">
+    <value>На місяць</value>
+  </data>
+  <data name="TargetPeriod.PerCycle" xml:space="preserve">
+    <value>На цикл сертифікації</value>
+  </data>
+  <data name="TargetPeriod.Once" xml:space="preserve">
+    <value>Одноразово</value>
+  </data>
+  <data name="TargetPeriod.FirstYear" xml:space="preserve">
+    <value>Протягом першого року</value>
+  </data>
+  <data name="CategoryKind.Custom" xml:space="preserve">
+    <value>Власна</value>
+  </data>
+  <data name="CategoryKind.IsoFsrs" xml:space="preserve">
+    <value>ISO FSRS</value>
+  </data>
+  <data name="CategoryKind.Nccp" xml:space="preserve">
+    <value>NREMT NCCP</value>
+  </data>
+  <data name="CategoryKind.Osha" xml:space="preserve">
+    <value>OSHA</value>
+  </data>
+  <data name="CategoryKind.State" xml:space="preserve">
+    <value>Вимога штату</value>
+  </data>
+  <data name="BackfillState.Queued" xml:space="preserve">
+    <value>У черзі</value>
+  </data>
+  <data name="BackfillState.Running" xml:space="preserve">
+    <value>Виконується</value>
+  </data>
+  <data name="BackfillState.Completed" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="BackfillState.Failed" xml:space="preserve">
+    <value>Помилка</value>
+  </data>
+  <data name="BackfillState.Cancelled" xml:space="preserve">
+    <value>Скасовано</value>
+  </data>
+  <data name="RoundingMode.Nearest" xml:space="preserve">
+    <value>До найближчого кроку</value>
+  </data>
+  <data name="RoundingMode.Down" xml:space="preserve">
+    <value>Униз</value>
+  </data>
+  <data name="RoundingMode.Up" xml:space="preserve">
+    <value>Угору</value>
+  </data>
+  <data name="MatchMethod.None" xml:space="preserve">
+    <value>Немає збігу</value>
+  </data>
+  <data name="MatchMethod.Email" xml:space="preserve">
+    <value>Знайдено за ел. поштою</value>
+  </data>
+  <data name="MatchMethod.MemberId" xml:space="preserve">
+    <value>Знайдено за номером учасника</value>
+  </data>
+  <data name="MatchMethod.ExternalId" xml:space="preserve">
+    <value>Знайдено за зовнішнім ID</value>
+  </data>
+  <data name="MatchMethod.Name" xml:space="preserve">
+    <value>Знайдено за ім'ям</value>
+  </data>
+  <data name="MatchMethod.Manual" xml:space="preserve">
+    <value>Вибрано вами</value>
+  </data>
+  <data name="Grouping.Category" xml:space="preserve">
+    <value>Категорія</value>
+  </data>
+  <data name="Grouping.Member" xml:space="preserve">
+    <value>Учасник</value>
+  </data>
+  <data name="Grouping.Month" xml:space="preserve">
+    <value>Місяць</value>
+  </data>
+  <data name="learning_record_self_review" xml:space="preserve">
+    <value>Ніхто не перевіряє власний запис. Його має перевірити інший керівник.</value>
+  </data>
+  <data name="learning_record_not_pending" xml:space="preserve">
+    <value>Цей запис більше не очікує перевірки.</value>
+  </data>
+  <data name="learning_record_not_found" xml:space="preserve">
+    <value>Запис не знайдено.</value>
+  </data>
+  <data name="learning_record_hours_invalid" xml:space="preserve">
+    <value>Введіть години від 0 до 9999.</value>
+  </data>
+  <data name="learning_record_voided" xml:space="preserve">
+    <value>Цей запис анульовано.</value>
+  </data>
+  <data name="learning_record_not_duplicate" xml:space="preserve">
+    <value>Цей запис не має нерозглянутого можливого дубліката.</value>
+  </data>
+  <data name="learning_record_category_invalid" xml:space="preserve">
+    <value>Виберіть одну з категорій підрозділу.</value>
+  </data>
+  <data name="learning_record_reason_required" xml:space="preserve">
+    <value>Вкажіть причину.</value>
+  </data>
+  <data name="Rec.TranscriptTab" xml:space="preserve">
+    <value>Журнал навчання</value>
+  </data>
+  <data name="Rec.RecordsTab" xml:space="preserve">
+    <value>Записи</value>
+  </data>
+  <data name="Rec.OfficerStripLabel" xml:space="preserve">
+    <value>Записи навчання</value>
+  </data>
+  <data name="Rec.QueueTab" xml:space="preserve">
+    <value>Черга</value>
+  </data>
+  <data name="Rec.CategoriesTab" xml:space="preserve">
+    <value>Категорії</value>
+  </data>
+  <data name="Rec.CategorizeTab" xml:space="preserve">
+    <value>Призначити категорії</value>
+  </data>
+  <data name="Rec.CreditsTab" xml:space="preserve">
+    <value>Заліки</value>
+  </data>
+  <data name="Rec.BackfillTab" xml:space="preserve">
+    <value>Перенесення історії</value>
+  </data>
+  <data name="Rec.ImportTab" xml:space="preserve">
+    <value>Імпорт</value>
+  </data>
+  <data name="Rec.HoursTab" xml:space="preserve">
+    <value>Години</value>
+  </data>
+  <data name="Rec.SettingsTab" xml:space="preserve">
+    <value>Налаштування</value>
+  </data>
+  <data name="Rec.IsoReportTab" xml:space="preserve">
+    <value>Звіт ISO</value>
+  </data>
+  <data name="Rec.NccpReportTab" xml:space="preserve">
+    <value>Прогрес NCCP</value>
+  </data>
+  <data name="Rec.CertificateTemplatesTab" xml:space="preserve">
+    <value>Шаблони свідоцтв</value>
+  </data>
+  <data name="Rec.ActionFailed" xml:space="preserve">
+    <value>Не вдалося. Оновіть сторінку й спробуйте ще раз.</value>
+  </data>
+  <data name="Rec.UnknownSource" xml:space="preserve">
+    <value>Інше</value>
+  </data>
+  <data name="Rec.ExportFailed" xml:space="preserve">
+    <value>Не вдалося створити експорт. Спробуйте ще раз за мить.</value>
+  </data>
+  <data name="Rec.ExportPdfButton" xml:space="preserve">
+    <value>Файл PDF</value>
+  </data>
+  <data name="Rec.ExportCsvButton" xml:space="preserve">
+    <value>Файл CSV</value>
+  </data>
+  <data name="Rec.FilterLabel" xml:space="preserve">
+    <value>Фільтр</value>
+  </data>
+  <data name="Rec.FromLabel" xml:space="preserve">
+    <value>З</value>
+  </data>
+  <data name="Rec.ToLabel" xml:space="preserve">
+    <value>По</value>
+  </data>
+  <data name="Rec.AllCategories" xml:space="preserve">
+    <value>Усі категорії</value>
+  </data>
+  <data name="Rec.AllSources" xml:space="preserve">
+    <value>Усі джерела</value>
+  </data>
+  <data name="Rec.ClearFilterButton" xml:space="preserve">
+    <value>Очистити</value>
+  </data>
+  <data name="Rec.RemovedLabel" xml:space="preserve">
+    <value>Вилучено</value>
+  </data>
+  <data name="Rec.RemovedCategory" xml:space="preserve">
+    <value>{0} (вилучено)</value>
+  </data>
+  <data name="Rec.TargetValue" xml:space="preserve">
+    <value>{0} год · {1}</value>
+  </data>
+  <data name="Rec.TargetPerMember" xml:space="preserve">
+    <value>{0} год на учасника</value>
+  </data>
+  <data name="Rec.CategoryInvalid" xml:space="preserve">
+    <value>Виберіть одну з категорій підрозділу.</value>
+  </data>
+  <data name="Rec.MethodInvalid" xml:space="preserve">
+    <value>Виберіть форму навчання зі списку.</value>
+  </data>
+  <data name="Rec.ReviewNoteLabel" xml:space="preserve">
+    <value>Примітка</value>
+  </data>
+  <data name="Rec.BackfilledLabel" xml:space="preserve">
+    <value>З історії</value>
+  </data>
+  <data name="Rec.PossibleDuplicateLabel" xml:space="preserve">
+    <value>Можливий дублікат</value>
+  </data>
+  <data name="Rec.IncludeFormerLabel" xml:space="preserve">
+    <value>Включити колишніх учасників</value>
+  </data>
+  <data name="Rec.NoHours" xml:space="preserve">
+    <value>За цей період годин немає.</value>
+  </data>
+  <data name="Rec.NoCategories" xml:space="preserve">
+    <value>У підрозділу ще немає категорій навчання.</value>
+  </data>
+  <data name="Rec.RecordsWritten" xml:space="preserve">
+    <value>Записано</value>
+  </data>
+  <data name="Rec.RecordsSkipped" xml:space="preserve">
+    <value>Пропущено</value>
+  </data>
+  <data name="Rec.CertificationTypeLabel" xml:space="preserve">
+    <value>Тип сертифікації</value>
+  </data>
+  <data name="Rec.MyTranscriptTitle" xml:space="preserve">
+    <value>Мій журнал навчання</value>
+  </data>
+  <data name="Rec.MemberTranscriptTitle" xml:space="preserve">
+    <value>Журнал навчання: {0}</value>
+  </data>
+  <data name="Rec.TranscriptIntro" xml:space="preserve">
+    <value>Кожен курс, протокол навчання, подія календаря та зовнішнє свідоцтво з годинами й позначкою, чи зараховано.</value>
+  </data>
+  <data name="Rec.SubmitButton" xml:space="preserve">
+    <value>Подати зовнішнє навчання</value>
+  </data>
+  <data name="Rec.ShowAuditButton" xml:space="preserve">
+    <value>Режим аудиту</value>
+  </data>
+  <data name="Rec.HideAuditButton" xml:space="preserve">
+    <value>Сховати режим аудиту</value>
+  </data>
+  <data name="Rec.MemberPickerLabel" xml:space="preserve">
+    <value>Учасник</value>
+  </data>
+  <data name="Rec.OpenTranscriptButton" xml:space="preserve">
+    <value>Відкрити журнал</value>
+  </data>
+  <data name="Rec.MyTranscriptLink" xml:space="preserve">
+    <value>Мій журнал</value>
+  </data>
+  <data name="Rec.FormerMemberNotice" xml:space="preserve">
+    <value>Цей учасник залишив підрозділ. Його журнал і далі доступний для перевірок.</value>
+  </data>
+  <data name="Rec.RecordsHeader" xml:space="preserve">
+    <value>Записи навчання</value>
+  </data>
+  <data name="Rec.NoRecords" xml:space="preserve">
+    <value>Записів ще немає. Тут з'являються пройдені навчання, протоколи навчання, відмітки з календаря та зовнішні свідоцтва.</value>
+  </data>
+  <data name="Rec.NoRecordsFiltered" xml:space="preserve">
+    <value>Жоден запис не відповідає фільтру.</value>
+  </data>
+  <data name="Rec.CountedHelp" xml:space="preserve">
+    <value>До годин зараховуються лише підтверджені записи. Ті, що очікують, відхилені й анульовані показано, але не зараховано.</value>
+  </data>
+  <data name="Rec.VoidReasonLabel" xml:space="preserve">
+    <value>Причина анулювання</value>
+  </data>
+  <data name="Rec.HistoryChainSummary" xml:space="preserve">
+    <value>Історія (версій: {0})</value>
+  </data>
+  <data name="Rec.CertificateButton" xml:space="preserve">
+    <value>Свідоцтво</value>
+  </data>
+  <data name="Rec.EvidenceButton" xml:space="preserve">
+    <value>Підтвердження</value>
+  </data>
+  <data name="Rec.VoidButton" xml:space="preserve">
+    <value>Анулювати</value>
+  </data>
+  <data name="Rec.VoidConfirmButton" xml:space="preserve">
+    <value>Анулювати запис</value>
+  </data>
+  <data name="Rec.SubmitTitle" xml:space="preserve">
+    <value>Подати зовнішнє навчання</value>
+  </data>
+  <data name="Rec.SubmitIntro" xml:space="preserve">
+    <value>Курс, пройдений поза підрозділом: керівник підтверджує його, перш ніж він буде зарахований.</value>
+  </data>
+  <data name="Rec.SubmissionsDisabledHeader" xml:space="preserve">
+    <value>Подання зовнішнього навчання вимкнено</value>
+  </data>
+  <data name="Rec.SubmissionsDisabledHelp" xml:space="preserve">
+    <value>Ваш підрозділ не приймає зовнішнє навчання від учасників. Попросіть відповідального за навчання внести його за вас.</value>
+  </data>
+  <data name="Rec.BackToTranscriptButton" xml:space="preserve">
+    <value>Назад до мого журналу</value>
+  </data>
+  <data name="Rec.SubmitHowItWorks" xml:space="preserve">
+    <value>Ваше подання чекає на керівника. Після підтвердження воно зараховується до ваших годин і до кожної сертифікації, що враховує його категорію.</value>
+  </data>
+  <data name="Rec.SubmitCourseSection" xml:space="preserve">
+    <value>Курс</value>
+  </data>
+  <data name="Rec.SubmitCeSection" xml:space="preserve">
+    <value>Підвищення кваліфікації</value>
+  </data>
+  <data name="Rec.SubmitEvidenceSection" xml:space="preserve">
+    <value>Підтвердження</value>
+  </data>
+  <data name="Rec.EvidenceLabel" xml:space="preserve">
+    <value>Свідоцтво або доказ проходження</value>
+  </data>
+  <data name="Rec.EvidenceHelp" xml:space="preserve">
+    <value>Необов'язково. PDF, зображення або документ Word, до 10 МБ.</value>
+  </data>
+  <data name="Rec.NotesLabel" xml:space="preserve">
+    <value>Нотатки</value>
+  </data>
+  <data name="Rec.SubmitSendButton" xml:space="preserve">
+    <value>Надіслати на перевірку</value>
+  </data>
+  <data name="Rec.TitleRequired" xml:space="preserve">
+    <value>Введіть назву курсу.</value>
+  </data>
+  <data name="Rec.DateRequired" xml:space="preserve">
+    <value>Введіть дату проходження.</value>
+  </data>
+  <data name="Rec.DateInFuture" xml:space="preserve">
+    <value>Дата проходження не може бути в майбутньому.</value>
+  </data>
+  <data name="Rec.EvidenceTypeError" xml:space="preserve">
+    <value>Підтвердження має бути файлом PDF, JPG, PNG, GIF, DOC або DOCX.</value>
+  </data>
+  <data name="Rec.EvidenceSizeError" xml:space="preserve">
+    <value>Файли підтвердження обмежено 10 МБ.</value>
+  </data>
+  <data name="Rec.SubmittedMessage" xml:space="preserve">
+    <value>Ваше зовнішнє навчання надіслано на перевірку.</value>
+  </data>
+  <data name="Rec.QueueTitle" xml:space="preserve">
+    <value>Черга записів</value>
+  </data>
+  <data name="Rec.QueueIntro" xml:space="preserve">
+    <value>Зовнішнє навчання та відкриті відмітки для перевірки, а також можливі дублікати для розгляду.</value>
+  </data>
+  <data name="Rec.WaitingForReview" xml:space="preserve">
+    <value>Очікує перевірки</value>
+  </data>
+  <data name="Rec.PossibleDuplicatesHeader" xml:space="preserve">
+    <value>Можливі дублікати</value>
+  </data>
+  <data name="Rec.PossibleDuplicatesHelp" xml:space="preserve">
+    <value>Записи одного учасника, час яких перетинається в той самий день. Залиште обидва, якщо це різні заняття; об'єднання анулює цей запис.</value>
+  </data>
+  <data name="Rec.QueueEmpty" xml:space="preserve">
+    <value>Нічого не очікує перевірки.</value>
+  </data>
+  <data name="Rec.NoDuplicates" xml:space="preserve">
+    <value>Немає можливих дублікатів для розгляду.</value>
+  </data>
+  <data name="Rec.SubmittedColumn" xml:space="preserve">
+    <value>Подано</value>
+  </data>
+  <data name="Rec.SubmittedBy" xml:space="preserve">
+    <value>автор: {0}</value>
+  </data>
+  <data name="Rec.CheckedInLabel" xml:space="preserve">
+    <value>Відмітка прибуття</value>
+  </data>
+  <data name="Rec.OwnRecordNotice" xml:space="preserve">
+    <value>Ваш власний запис: його перевіряє інший керівник.</value>
+  </data>
+  <data name="Rec.VerifyButton" xml:space="preserve">
+    <value>Підтвердити</value>
+  </data>
+  <data name="Rec.VerifyConfirmButton" xml:space="preserve">
+    <value>Підтвердити запис</value>
+  </data>
+  <data name="Rec.RejectButton" xml:space="preserve">
+    <value>Відхилити</value>
+  </data>
+  <data name="Rec.RejectConfirmButton" xml:space="preserve">
+    <value>Відхилити запис</value>
+  </data>
+  <data name="Rec.OpenCheckInHelp" xml:space="preserve">
+    <value>Відмітку вибуття не зроблено: введіть години присутності.</value>
+  </data>
+  <data name="Rec.ThisRecordColumn" xml:space="preserve">
+    <value>Цей запис</value>
+  </data>
+  <data name="Rec.OtherRecordColumn" xml:space="preserve">
+    <value>Можливий дублікат запису</value>
+  </data>
+  <data name="Rec.OtherRecordMissing" xml:space="preserve">
+    <value>Інший запис більше недоступний.</value>
+  </data>
+  <data name="Rec.KeepBothButton" xml:space="preserve">
+    <value>Залишити обидва</value>
+  </data>
+  <data name="Rec.MergeButton" xml:space="preserve">
+    <value>Об'єднати</value>
+  </data>
+  <data name="Rec.MergeConfirm" xml:space="preserve">
+    <value>Об'єднання анулює цей запис як те саме заняття, що й інший. Продовжити?</value>
+  </data>
+  <data name="Rec.VerifiedMessage" xml:space="preserve">
+    <value>Запис підтверджено.</value>
+  </data>
+  <data name="Rec.RejectedMessage" xml:space="preserve">
+    <value>Запис відхилено.</value>
+  </data>
+  <data name="Rec.RejectNoteRequired" xml:space="preserve">
+    <value>Вкажіть причину для учасника.</value>
+  </data>
+  <data name="Rec.VoidedMessage" xml:space="preserve">
+    <value>Запис анульовано.</value>
+  </data>
+  <data name="Rec.VoidReasonRequired" xml:space="preserve">
+    <value>Вкажіть причину анулювання запису.</value>
+  </data>
+  <data name="Rec.DuplicateResolvedMessage" xml:space="preserve">
+    <value>Можливий дублікат розглянуто.</value>
+  </data>
+  <data name="Rec.CategoriesTitle" xml:space="preserve">
+    <value>Категорії навчання</value>
+  </data>
+  <data name="Rec.CategoriesIntro" xml:space="preserve">
+    <value>Групуйте години навчання для звітів, цілей і заліків сертифікації.</value>
+  </data>
+  <data name="Rec.CategoriesHeader" xml:space="preserve">
+    <value>Категорії</value>
+  </data>
+  <data name="Rec.KindLabel" xml:space="preserve">
+    <value>Вид</value>
+  </data>
+  <data name="Rec.RetentionLabel" xml:space="preserve">
+    <value>Зберігати записи (років)</value>
+  </data>
+  <data name="Rec.RetentionHelp" xml:space="preserve">
+    <value>Мінімальна кількість років зберігання записів цієї категорії після вибуття учасника. Порожнє — значення підрозділу.</value>
+  </data>
+  <data name="Rec.ExternalCodeLabel" xml:space="preserve">
+    <value>Зовнішній код</value>
+  </data>
+  <data name="Rec.ExternalCodeHelp" xml:space="preserve">
+    <value>Код, який використовують державні чи сторонні експорти для цієї категорії.</value>
+  </data>
+  <data name="Rec.YearsValue" xml:space="preserve">
+    <value>Років: {0}</value>
+  </data>
+  <data name="Rec.DepartmentDefault" xml:space="preserve">
+    <value>Значення підрозділу</value>
+  </data>
+  <data name="Rec.DeleteCategoryConfirm" xml:space="preserve">
+    <value>Вилучити цю категорію? Записи збережуть її й покажуть як вилучену.</value>
+  </data>
+  <data name="Rec.AddCategoryHeader" xml:space="preserve">
+    <value>Додати категорію</value>
+  </data>
+  <data name="Rec.EditCategoryHeader" xml:space="preserve">
+    <value>Редагувати категорію</value>
+  </data>
+  <data name="Rec.TargetHoursLabel" xml:space="preserve">
+    <value>Цільові години</value>
+  </data>
+  <data name="Rec.TargetPeriodLabel" xml:space="preserve">
+    <value>Період цілі</value>
+  </data>
+  <data name="Rec.AppliesToLabel" xml:space="preserve">
+    <value>Ціль стосується</value>
+  </data>
+  <data name="Rec.AppliesToPlaceholder" xml:space="preserve">
+    <value>напр. на пожежника</value>
+  </data>
+  <data name="Rec.SaveCategoryButton" xml:space="preserve">
+    <value>Зберегти категорію</value>
+  </data>
+  <data name="Rec.TemplatesHeader" xml:space="preserve">
+    <value>Шаблони категорій</value>
+  </data>
+  <data name="Rec.TemplatesHelp" xml:space="preserve">
+    <value>Початкові категорії для поширених вимог. Шаблон додає лише відсутні категорії; нічого не застосовується автоматично.</value>
+  </data>
+  <data name="Rec.TargetsNotPoints" xml:space="preserve">
+    <value>Це цілі в годинах, а не бали.</value>
+  </data>
+  <data name="Rec.TemplateAppliedLabel" xml:space="preserve">
+    <value>Застосовано</value>
+  </data>
+  <data name="Rec.ApplyTemplateButton" xml:space="preserve">
+    <value>Застосувати шаблон</value>
+  </data>
+  <data name="Rec.ApplyTemplateMissingButton" xml:space="preserve">
+    <value>Додати відсутні категорії</value>
+  </data>
+  <data name="Rec.CategoryCodeTaken" xml:space="preserve">
+    <value>Інша категорія вже використовує цей код.</value>
+  </data>
+  <data name="Rec.RetentionRange" xml:space="preserve">
+    <value>Введіть від 0 до 75 років.</value>
+  </data>
+  <data name="Rec.CategorySavedMessage" xml:space="preserve">
+    <value>Категорію збережено.</value>
+  </data>
+  <data name="Rec.CategoryDeletedMessage" xml:space="preserve">
+    <value>Категорію вилучено.</value>
+  </data>
+  <data name="Rec.TemplateAppliedMessage" xml:space="preserve">
+    <value>Додано категорій: {0}.</value>
+  </data>
+  <data name="Rec.CategorizeTitle" xml:space="preserve">
+    <value>Призначити категорії історії</value>
+  </data>
+  <data name="Rec.CategorizeIntro" xml:space="preserve">
+    <value>Призначте категорію записам без категорії гуртом, згрупованим за назвою й кодом курсу.</value>
+  </data>
+  <data name="Rec.UncategorizedGroupsHeader" xml:space="preserve">
+    <value>Записи без категорії</value>
+  </data>
+  <data name="Rec.NoUncategorized" xml:space="preserve">
+    <value>Кожен запис за цей період має категорію.</value>
+  </data>
+  <data name="Rec.DatesColumn" xml:space="preserve">
+    <value>Дати</value>
+  </data>
+  <data name="Rec.NoTitle" xml:space="preserve">
+    <value>(без назви)</value>
+  </data>
+  <data name="Rec.CategorizeButton" xml:space="preserve">
+    <value>Застосувати</value>
+  </data>
+  <data name="Rec.CategorizeNeedsGroup" xml:space="preserve">
+    <value>Виберіть групу записів для призначення категорії.</value>
+  </data>
+  <data name="Rec.CategorizedMessage" xml:space="preserve">
+    <value>Категорію призначено записам: {0}.</value>
+  </data>
+  <data name="Rec.CreditsTitle" xml:space="preserve">
+    <value>Заліки сертифікації</value>
+  </data>
+  <data name="Rec.CreditsIntro" xml:space="preserve">
+    <value>Зараховуйте години категорії до поновлення сертифікації.</value>
+  </data>
+  <data name="Rec.CreditsReadOnly" xml:space="preserve">
+    <value>Зв'язки заліків змінюють адміністратори підрозділу та менеджери сертифікацій.</value>
+  </data>
+  <data name="Rec.MappingsHeader" xml:space="preserve">
+    <value>Зв'язки заліків</value>
+  </data>
+  <data name="Rec.NoMappings" xml:space="preserve">
+    <value>Жодна сертифікація ще не зараховує години навчання.</value>
+  </data>
+  <data name="Rec.ComponentLabel" xml:space="preserve">
+    <value>Складова</value>
+  </data>
+  <data name="Rec.ComponentHelp" xml:space="preserve">
+    <value>Необов'язково. Зараховувати лише цю частину категорії; порожнє зараховує всю.</value>
+  </data>
+  <data name="Rec.EveryComponent" xml:space="preserve">
+    <value>Усі</value>
+  </data>
+  <data name="Rec.EnabledLabel" xml:space="preserve">
+    <value>Зараховується</value>
+  </data>
+  <data name="Rec.DisabledLabel" xml:space="preserve">
+    <value>Призупинено</value>
+  </data>
+  <data name="Rec.EnabledSince" xml:space="preserve">
+    <value>з {0}</value>
+  </data>
+  <data name="Rec.EnableButton" xml:space="preserve">
+    <value>Відновити</value>
+  </data>
+  <data name="Rec.DisableButton" xml:space="preserve">
+    <value>Призупинити</value>
+  </data>
+  <data name="Rec.DeleteMappingConfirm" xml:space="preserve">
+    <value>Видалити цей зв'язок? Уже записані заліки залишаться в сертифікаціях.</value>
+  </data>
+  <data name="Rec.AddMappingHeader" xml:space="preserve">
+    <value>Додати зв'язок</value>
+  </data>
+  <data name="Rec.EditMappingHeader" xml:space="preserve">
+    <value>Редагувати зв'язок</value>
+  </data>
+  <data name="Rec.MappingNeedsTypesAndCategories" xml:space="preserve">
+    <value>Спершу додайте типи сертифікації осіб і категорії навчання.</value>
+  </data>
+  <data name="Rec.MappingEnabledHelp" xml:space="preserve">
+    <value>Підтверджені записи, пройдені від сьогодні, стають заліками в циклі сертифікації, до якого вони належать.</value>
+  </data>
+  <data name="Rec.SaveMappingButton" xml:space="preserve">
+    <value>Зберегти зв'язок</value>
+  </data>
+  <data name="Rec.CertificationTypeInvalid" xml:space="preserve">
+    <value>Виберіть тип сертифікації осіб.</value>
+  </data>
+  <data name="Rec.MappingExists" xml:space="preserve">
+    <value>Ця сертифікація вже зараховує цю категорію.</value>
+  </data>
+  <data name="Rec.MappingSavedMessage" xml:space="preserve">
+    <value>Зв'язок збережено.</value>
+  </data>
+  <data name="Rec.MappingDeletedMessage" xml:space="preserve">
+    <value>Зв'язок видалено.</value>
+  </data>
+  <data name="Rec.ApplyHistoryHeader" xml:space="preserve">
+    <value>Зарахувати історію до сертифікації</value>
+  </data>
+  <data name="Rec.ApplyHistoryHelp" xml:space="preserve">
+    <value>Записи до ввімкнення зв'язку та перенесена історія стають заліками лише тоді, коли ви застосуєте їх тут.</value>
+  </data>
+  <data name="Rec.ApplyHistoryLink" xml:space="preserve">
+    <value>Зарахувати історію до сертифікації</value>
+  </data>
+  <data name="Rec.ApplyHistoryPreviewHelp" xml:space="preserve">
+    <value>Нічого не записується, доки ви не застосуєте. Зніміть позначку із записів, які не мають стати заліком.</value>
+  </data>
+  <data name="Rec.ProposedCredits" xml:space="preserve">
+    <value>Запропоновані заліки</value>
+  </data>
+  <data name="Rec.ProposedHours" xml:space="preserve">
+    <value>Запропоновані години</value>
+  </data>
+  <data name="Rec.OutsideEveryCycle" xml:space="preserve">
+    <value>Поза всіма циклами</value>
+  </data>
+  <data name="Rec.NothingToApply" xml:space="preserve">
+    <value>Для цієї сертифікації немає історії, що очікує зарахування.</value>
+  </data>
+  <data name="Rec.BackToCreditsButton" xml:space="preserve">
+    <value>Назад до заліків</value>
+  </data>
+  <data name="Rec.RequiredHoursValue" xml:space="preserve">
+    <value>потрібно {0} год</value>
+  </data>
+  <data name="Rec.CycleCreditsSummary" xml:space="preserve">
+    <value>Ручні заліки {0} год · з журналу {1} год · запропоновано {2} год</value>
+  </data>
+  <data name="Rec.ApplyColumn" xml:space="preserve">
+    <value>Застосувати</value>
+  </data>
+  <data name="Rec.ExistingCreditsSummary" xml:space="preserve">
+    <value>Заліки в цьому циклі ({0})</value>
+  </data>
+  <data name="Rec.DerivedCreditLabel" xml:space="preserve">
+    <value>З журналу</value>
+  </data>
+  <data name="Rec.ManualCreditLabel" xml:space="preserve">
+    <value>Ручний</value>
+  </data>
+  <data name="Rec.ApplySelectedButton" xml:space="preserve">
+    <value>Застосувати вибрані заліки</value>
+  </data>
+  <data name="Rec.ApplyHistoryNoneSelected" xml:space="preserve">
+    <value>Виберіть принаймні один запис.</value>
+  </data>
+  <data name="Rec.ApplyHistoryAppliedMessage" xml:space="preserve">
+    <value>Записано заліків: {0}.</value>
+  </data>
+  <data name="Rec.BackfillTitle" xml:space="preserve">
+    <value>Перенесення історії</value>
+  </data>
+  <data name="Rec.BackfillIntro" xml:space="preserve">
+    <value>Перенесіть до журналів учасників пройдені навчання й протоколи навчання з часу до появи журналу.</value>
+  </data>
+  <data name="Rec.BackfillHowItWorks" xml:space="preserve">
+    <value>Як працює перенесення</value>
+  </data>
+  <data name="Rec.BackfillRuleVerified" xml:space="preserve">
+    <value>Перенесені записи підтверджені й зберігають первісні дати.</value>
+  </data>
+  <data name="Rec.BackfillRuleNoCredits" xml:space="preserve">
+    <value>Вони ніколи самі не зараховуються до сертифікації: для цього скористайтеся «Зарахувати історію до сертифікації».</value>
+  </data>
+  <data name="Rec.BackfillRuleNoCalendar" xml:space="preserve">
+    <value>Відмітки з календаря не переносяться.</value>
+  </data>
+  <data name="Rec.BackfillRuleRerun" xml:space="preserve">
+    <value>Працює у фоні й може безпечно запускатися повторно: наявні записи пропускаються.</value>
+  </data>
+  <data name="Rec.BackfillDryRunButton" xml:space="preserve">
+    <value>Лише підрахувати (пробний запуск)</value>
+  </data>
+  <data name="Rec.BackfillRunButton" xml:space="preserve">
+    <value>Запустити перенесення</value>
+  </data>
+  <data name="Rec.BackfillRunConfirm" xml:space="preserve">
+    <value>Записати зараз історичні записи для всіх учасників?</value>
+  </data>
+  <data name="Rec.LatestBackfillHeader" xml:space="preserve">
+    <value>Останній запуск</value>
+  </data>
+  <data name="Rec.NoBackfill" xml:space="preserve">
+    <value>Перенесення ще не запускалося.</value>
+  </data>
+  <data name="Rec.CompletionsFound" xml:space="preserve">
+    <value>Знайдено проходжень</value>
+  </data>
+  <data name="Rec.TrainingRecordsFound" xml:space="preserve">
+    <value>Знайдено протоколів навчання</value>
+  </data>
+  <data name="Rec.DryRunLabel" xml:space="preserve">
+    <value>Пробний запуск</value>
+  </data>
+  <data name="Rec.RequestedLabel" xml:space="preserve">
+    <value>Запитано</value>
+  </data>
+  <data name="Rec.StartedLabel" xml:space="preserve">
+    <value>Розпочато</value>
+  </data>
+  <data name="Rec.FinishedLabel" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="Rec.AttemptsLabel" xml:space="preserve">
+    <value>Спроби</value>
+  </data>
+  <data name="Rec.ErrorLabel" xml:space="preserve">
+    <value>Помилка</value>
+  </data>
+  <data name="Rec.BackfillRunning" xml:space="preserve">
+    <value>Перенесення виконується у фоні. Оновіть сторінку, щоб побачити поступ.</value>
+  </data>
+  <data name="Rec.BackfillQueuedMessage" xml:space="preserve">
+    <value>Перенесення поставлено в чергу.</value>
+  </data>
+  <data name="Rec.BackfillDryRunQueuedMessage" xml:space="preserve">
+    <value>Пробний запуск поставлено в чергу: він лише рахує.</value>
+  </data>
+  <data name="Rec.ImportTitle" xml:space="preserve">
+    <value>Імпорт історії навчання</value>
+  </data>
+  <data name="Rec.ImportIntro" xml:space="preserve">
+    <value>Перенесіть проходження з іншої системи файлом CSV: перевірте, якому учаснику відповідає кожен рядок, і імпортуйте.</value>
+  </data>
+  <data name="Rec.ImportStepUpload" xml:space="preserve">
+    <value>Завантажити файл</value>
+  </data>
+  <data name="Rec.ImportStepReview" xml:space="preserve">
+    <value>Перевірити збіги</value>
+  </data>
+  <data name="Rec.ImportStepDone" xml:space="preserve">
+    <value>Готово</value>
+  </data>
+  <data name="Rec.ImportStepTemplate" xml:space="preserve">
+    <value>Отримати шаблон</value>
+  </data>
+  <data name="Rec.ImportTemplateHelp" xml:space="preserve">
+    <value>Один рядок на проходження: учасник, курс, дата й години, а також необов'язкові категорія, поля підвищення кваліфікації та сертифікація.</value>
+  </data>
+  <data name="Rec.ImportDownloadTemplate" xml:space="preserve">
+    <value>Завантажити шаблон</value>
+  </data>
+  <data name="Rec.ImportFileLabel" xml:space="preserve">
+    <value>Файл CSV</value>
+  </data>
+  <data name="Rec.ImportFileHelp" xml:space="preserve">
+    <value>CSV у кодуванні UTF-8, до {0} МБ.</value>
+  </data>
+  <data name="Rec.ImportPreviewButton" xml:space="preserve">
+    <value>Перевірити файл</value>
+  </data>
+  <data name="Rec.ImportHowItWorks" xml:space="preserve">
+    <value>Як працює імпорт</value>
+  </data>
+  <data name="Rec.ImportRuleMatching" xml:space="preserve">
+    <value>Учасників шукають за ел. поштою, потім за номером учасника, зовнішнім ID та ім'ям. Ви можете вибрати учасника для будь-якого рядка.</value>
+  </data>
+  <data name="Rec.ImportRuleFormer" xml:space="preserve">
+    <value>Пропонуються й колишні учасники: історія може належати тим, хто пішов.</value>
+  </data>
+  <data name="Rec.ImportRuleCategories" xml:space="preserve">
+    <value>Категорія, якої ще немає, залишає рядок без категорії.</value>
+  </data>
+  <data name="Rec.ImportRuleRepeat" xml:space="preserve">
+    <value>Уже імпортовані рядки пропускаються, тож той самий файл можна безпечно імпортувати знову.</value>
+  </data>
+  <data name="Rec.ImportRuleVerified" xml:space="preserve">
+    <value>Імпортовані записи — це підтверджена історія, і вони ніколи самі не зараховуються до сертифікації.</value>
+  </data>
+  <data name="Rec.ImportRows" xml:space="preserve">
+    <value>Рядки</value>
+  </data>
+  <data name="Rec.ImportMatched" xml:space="preserve">
+    <value>Знайдено</value>
+  </data>
+  <data name="Rec.ImportUnmatched" xml:space="preserve">
+    <value>Без учасника</value>
+  </data>
+  <data name="Rec.ImportImportable" xml:space="preserve">
+    <value>Готові до імпорту</value>
+  </data>
+  <data name="Rec.ImportIgnoredColumns" xml:space="preserve">
+    <value>Ці стовпці не розпізнано, їх пропущено: {0}</value>
+  </data>
+  <data name="Rec.ImportReviewHelp" xml:space="preserve">
+    <value>Рядки з помилками не імпортуються. Виберіть учасника для рядків без збігу, потім перевірте ще раз або імпортуйте.</value>
+  </data>
+  <data name="Rec.ImportRowColumn" xml:space="preserve">
+    <value>Рядок</value>
+  </data>
+  <data name="Rec.ImportNotesColumn" xml:space="preserve">
+    <value>Зауваження</value>
+  </data>
+  <data name="Rec.ImportChangeMember" xml:space="preserve">
+    <value>Змінити</value>
+  </data>
+  <data name="Rec.ImportMemberForRow" xml:space="preserve">
+    <value>Учасник для рядка {0}</value>
+  </data>
+  <data name="Rec.ImportChooseMember" xml:space="preserve">
+    <value>Виберіть учасника...</value>
+  </data>
+  <data name="Rec.ImportFromFile" xml:space="preserve">
+    <value>У файлі</value>
+  </data>
+  <data name="Rec.ImportAlreadyImported" xml:space="preserve">
+    <value>Уже імпортовано</value>
+  </data>
+  <data name="Rec.ImportRecheckButton" xml:space="preserve">
+    <value>Перевірити ще раз</value>
+  </data>
+  <data name="Rec.ImportCommitButton" xml:space="preserve">
+    <value>Імпортувати рядки: {0}</value>
+  </data>
+  <data name="Rec.ImportConfirm" xml:space="preserve">
+    <value>Імпортувати рядки ({0}) до журналів учасників?</value>
+  </data>
+  <data name="Rec.ImportCertificationsCreated" xml:space="preserve">
+    <value>Створено сертифікацій</value>
+  </data>
+  <data name="Rec.ImportCreditsCreated" xml:space="preserve">
+    <value>Створено заліків</value>
+  </data>
+  <data name="Rec.ImportAnotherButton" xml:space="preserve">
+    <value>Імпортувати інший файл</value>
+  </data>
+  <data name="Rec.ImportDoneMessage" xml:space="preserve">
+    <value>Імпортовано записів: {0}.</value>
+  </data>
+  <data name="Rec.ImportFileRequired" xml:space="preserve">
+    <value>Виберіть файл CSV для імпорту.</value>
+  </data>
+  <data name="Rec.ImportFileTooLarge" xml:space="preserve">
+    <value>Файл більший за {0} МБ.</value>
+  </data>
+  <data name="Rec.ImportFileType" xml:space="preserve">
+    <value>Файл має бути у форматі CSV.</value>
+  </data>
+  <data name="Rec.HoursTitle" xml:space="preserve">
+    <value>Години навчання</value>
+  </data>
+  <data name="Rec.HoursIntro" xml:space="preserve">
+    <value>Підтверджені години навчання за категорією, учасником або місяцем.</value>
+  </data>
+  <data name="Rec.GroupByLabel" xml:space="preserve">
+    <value>Групувати за</value>
+  </data>
+  <data name="Rec.OnDutyNowLabel" xml:space="preserve">
+    <value>Лише ті, хто зараз на чергуванні</value>
+  </data>
+  <data name="Rec.OpenQueueLink" xml:space="preserve">
+    <value>Відкрити чергу</value>
+  </data>
+  <data name="Rec.SettingsTitle" xml:space="preserve">
+    <value>Налаштування записів навчання</value>
+  </data>
+  <data name="Rec.SettingsIntro" xml:space="preserve">
+    <value>Години відміток, подання зовнішнього навчання та строк зберігання записів.</value>
+  </data>
+  <data name="Rec.RoundingSection" xml:space="preserve">
+    <value>Години відміток календаря</value>
+  </data>
+  <data name="Rec.RoundingHelp" xml:space="preserve">
+    <value>Години від прибуття до вибуття на подіях, що зараховуються як навчання, округлюються до цього кроку.</value>
+  </data>
+  <data name="Rec.RoundingMinutesLabel" xml:space="preserve">
+    <value>Округлювати до</value>
+  </data>
+  <data name="Rec.RoundingExact" xml:space="preserve">
+    <value>Хвилини (без округлення)</value>
+  </data>
+  <data name="Rec.RoundingMinutesValue" xml:space="preserve">
+    <value>{0} хв</value>
+  </data>
+  <data name="Rec.RoundingModeLabel" xml:space="preserve">
+    <value>Округлення</value>
+  </data>
+  <data name="Rec.SubmissionsSection" xml:space="preserve">
+    <value>Зовнішнє навчання</value>
+  </data>
+  <data name="Rec.SubmissionsDisabledLabel" xml:space="preserve">
+    <value>Учасники не можуть подавати зовнішнє навчання</value>
+  </data>
+  <data name="Rec.SubmissionsDisabledSettingHelp" xml:space="preserve">
+    <value>Керівники все одно можуть внести зовнішнє навчання через імпорт або залік сертифікації.</value>
+  </data>
+  <data name="Rec.RetentionSection" xml:space="preserve">
+    <value>Зберігання записів</value>
+  </data>
+  <data name="Rec.DefaultRetentionLabel" xml:space="preserve">
+    <value>Зберігати записи після вибуття учасника (років)</value>
+  </data>
+  <data name="Rec.DefaultRetentionHelp" xml:space="preserve">
+    <value>Використовується, коли категорія не задає власного. 0 — без мінімуму.</value>
+  </data>
+  <data name="Rec.SaveSettingsButton" xml:space="preserve">
+    <value>Зберегти налаштування</value>
+  </data>
+  <data name="Rec.RoundingInvalid" xml:space="preserve">
+    <value>Виберіть округлення зі списку.</value>
+  </data>
+  <data name="Rec.SettingsSavedMessage" xml:space="preserve">
+    <value>Налаштування збережено.</value>
+  </data>
+  <data name="Rec.IsoReportIntro" xml:space="preserve">
+    <value>Години кожного учасника в категоріях ISO FSRS поруч із цілями.</value>
+  </data>
+  <data name="Rec.IsoNoCategories" xml:space="preserve">
+    <value>Спершу застосуйте шаблон категорій ISO FSRS.</value>
+  </data>
+  <data name="Rec.TargetMet" xml:space="preserve">
+    <value>Ціль досягнуто</value>
+  </data>
+  <data name="Rec.NccpReportIntro" xml:space="preserve">
+    <value>Національні, місцеві та індивідуальні години кожного учасника в поточному циклі сертифікації.</value>
+  </data>
+  <data name="Rec.NccpNoCategories" xml:space="preserve">
+    <value>Застосуйте шаблон категорій NREMT NCCP, щоб рахувати години NCCP.</value>
+  </data>
+  <data name="Rec.NccpNoRows" xml:space="preserve">
+    <value>Жоден учасник не має сертифікації рівня NREMT.</value>
+  </data>
+  <data name="Rec.ProgressValue" xml:space="preserve">
+    <value>{0} з {1} год</value>
+  </data>
+  <data name="Rec.CertificateTemplatesTitle" xml:space="preserve">
+    <value>Шаблони свідоцтв</value>
+  </data>
+  <data name="Rec.CertificateTemplatesIntro" xml:space="preserve">
+    <value>Власний макет свідоцтв вашого підрозділу. Шаблон за замовчуванням використовується для кожного свідоцтва.</value>
+  </data>
+  <data name="Rec.NoTemplates" xml:space="preserve">
+    <value>Шаблонів ще немає: свідоцтва мають стандартний макет.</value>
+  </data>
+  <data name="Rec.UpdatedColumn" xml:space="preserve">
+    <value>Оновлено</value>
+  </data>
+  <data name="Rec.DefaultLabel" xml:space="preserve">
+    <value>За замовчуванням</value>
+  </data>
+  <data name="Rec.DeleteTemplateConfirm" xml:space="preserve">
+    <value>Видалити цей шаблон?</value>
+  </data>
+  <data name="Rec.AddTemplateHeader" xml:space="preserve">
+    <value>Додати шаблон</value>
+  </data>
+  <data name="Rec.EditTemplateHeader" xml:space="preserve">
+    <value>Редагувати шаблон</value>
+  </data>
+  <data name="Rec.DefaultTemplateLabel" xml:space="preserve">
+    <value>Використовувати для кожного свідоцтва</value>
+  </data>
+  <data name="Rec.TemplateBodyLabel" xml:space="preserve">
+    <value>Макет (HTML)</value>
+  </data>
+  <data name="Rec.TemplateBodyHelp" xml:space="preserve">
+    <value>Скрипти й небезпечна розмітка вилучаються під час збереження. Заповнювачі:</value>
+  </data>
+  <data name="Rec.TemplatePreviewHeader" xml:space="preserve">
+    <value>Попередній перегляд</value>
+  </data>
+  <data name="Rec.SaveTemplateButton" xml:space="preserve">
+    <value>Зберегти шаблон</value>
+  </data>
+  <data name="Rec.TemplateBodyRequired" xml:space="preserve">
+    <value>Введіть макет.</value>
+  </data>
+  <data name="Rec.TemplateSavedMessage" xml:space="preserve">
+    <value>Шаблон збережено.</value>
+  </data>
+  <data name="Rec.TemplateDeletedMessage" xml:space="preserve">
+    <value>Шаблон видалено.</value>
+  </data>
+  <data name="Rec.EditorCategoryHelp" xml:space="preserve">
+    <value>Проходження цього навчання потрапляють у журналі до цієї категорії.</value>
+  </data>
+  <data name="Rec.CourseCodeLabel" xml:space="preserve">
+    <value>Код курсу</value>
+  </data>
+  <data name="Rec.CourseCodeHelp" xml:space="preserve">
+    <value>Код, який показують експорти та журнал для цього навчання.</value>
+  </data>
+  <data name="Rec.TagsLabel" xml:space="preserve">
+    <value>Теги</value>
+  </data>
+  <data name="Rec.TagsHelp" xml:space="preserve">
+    <value>Розділяйте теги комами.</value>
+  </data>
+  <data name="Rec.ObjectivesLabel" xml:space="preserve">
+    <value>Навчальні цілі</value>
+  </data>
+  <data name="Verify.Title" xml:space="preserve">
+    <value>Перевірка свідоцтва</value>
+  </data>
+  <data name="Verify.Valid" xml:space="preserve">
+    <value>Це свідоцтво чинне.</value>
+  </data>
+  <data name="Verify.NotValid" xml:space="preserve">
+    <value>Це свідоцтво більше не чинне.</value>
+  </data>
+  <data name="Verify.Member" xml:space="preserve">
+    <value>Ім'я</value>
+  </data>
+  <data name="Verify.Course" xml:space="preserve">
+    <value>Курс</value>
+  </data>
+  <data name="Verify.CompletedOn" xml:space="preserve">
+    <value>Дата проходження</value>
+  </data>
+  <data name="Verify.Department" xml:space="preserve">
+    <value>Видано</value>
+  </data>
+  <data name="Verify.Status" xml:space="preserve">
+    <value>Стан</value>
+  </data>
+  <data name="Verify.Disclaimer" xml:space="preserve">
+    <value>Свідоцтва видає зазначений вище підрозділ. Resgrid не є органом акредитації підвищення кваліфікації.</value>
+  </data>
+  <data name="Import.File.Invalid" xml:space="preserve">
+    <value>Не вдалося прочитати файл як CSV.</value>
+  </data>
+  <data name="Import.File.TooLarge" xml:space="preserve">
+    <value>Файл більший за 5 МБ.</value>
+  </data>
+  <data name="Import.File.CourseColumnRequired" xml:space="preserve">
+    <value>У файлі має бути стовпець Course.</value>
+  </data>
+  <data name="Import.File.DateColumnRequired" xml:space="preserve">
+    <value>У файлі має бути стовпець дати (CompletedOn або Date).</value>
+  </data>
+  <data name="Import.File.MemberColumnRequired" xml:space="preserve">
+    <value>У файлі має бути стовпець учасника: Email, MemberId, MemberExternalId або MemberName.</value>
+  </data>
+  <data name="Import.File.TooManyRows" xml:space="preserve">
+    <value>У файлі понад 10 000 рядків.</value>
+  </data>
+  <data name="Import.File.HoursColumnRequired" xml:space="preserve">
+    <value>У файлі має бути стовпець Hours.</value>
+  </data>
+  <data name="Import.File.DuplicateColumn" xml:space="preserve">
+    <value>Два стовпці відповідають одному полю.</value>
+  </data>
+  <data name="Import.File.Empty" xml:space="preserve">
+    <value>У файлі є рядок заголовків, але немає даних.</value>
+  </data>
+  <data name="Import.Err.CourseRequired" xml:space="preserve">
+    <value>Не вказано курс.</value>
+  </data>
+  <data name="Import.Err.DateRequired" xml:space="preserve">
+    <value>Не вказано дату.</value>
+  </data>
+  <data name="Import.Err.DateInvalid" xml:space="preserve">
+    <value>Не вдалося прочитати дату.</value>
+  </data>
+  <data name="Import.Err.HoursInvalid" xml:space="preserve">
+    <value>Години не вказано або це не число від 0 до 999.</value>
+  </data>
+  <data name="Import.Err.MemberNotFound" xml:space="preserve">
+    <value>Жоден учасник не відповідає цьому рядку. Виберіть його нижче.</value>
+  </data>
+  <data name="Import.Err.Unreadable" xml:space="preserve">
+    <value>Не вдалося прочитати рядок.</value>
+  </data>
+  <data name="Import.Err.FutureDate" xml:space="preserve">
+    <value>Дата в майбутньому.</value>
+  </data>
+  <data name="Import.Warn.NameMatch" xml:space="preserve">
+    <value>Зіставлено лише за ім'ям. Перевірте учасника.</value>
+  </data>
+  <data name="Import.Warn.UnknownCategory" xml:space="preserve">
+    <value>Невідома категорія: запис потрапить до розділу «Без категорії».</value>
+  </data>
+  <data name="Import.Warn.UnknownCertification" xml:space="preserve">
+    <value>Невідомий тип сертифікації: для цього рядка сертифікацію не буде записано.</value>
+  </data>
+  <data name="Import.Warn.CeHoursInvalid" xml:space="preserve">
+    <value>Не вдалося прочитати години підвищення кваліфікації, їх залишено порожніми.</value>
+  </data>
+  <data name="Import.Warn.DuplicateRow" xml:space="preserve">
+    <value>Таке саме проходження вже є вище у файлі.</value>
+  </data>
+  <data name="Import.Warn.UnknownMethod" xml:space="preserve">
+    <value>Невідома форма навчання: залишено порожньою.</value>
+  </data>
+  <data name="Import.Warn.CertificationDateInvalid" xml:space="preserve">
+    <value>Не вдалося прочитати дату сертифікації.</value>
+  </data>
+  <data name="learning_record_title_required" xml:space="preserve">
+    <value>Введіть назву курсу.</value>
+  </data>
+  <data name="learning_record_date_invalid" xml:space="preserve">
+    <value>Введіть дійсну дату проходження, яка не в майбутньому.</value>
+  </data>
+  <data name="learning_record_mapping_invalid" xml:space="preserve">
+    <value>Виберіть тип сертифікації та одну з категорій підрозділу.</value>
+  </data>
+  <data name="learning_record_category_name_required" xml:space="preserve">
+    <value>Введіть назву категорії.</value>
+  </data>
+  <data name="learning_record_file_too_large" xml:space="preserve">
+    <value>Файл підтвердження перевищує 10 МБ.</value>
+  </data>
+  <data name="learning_record_template_invalid" xml:space="preserve">
+    <value>Шаблон сертифіката потребує назви.</value>
+  </data>
+  <data name="ExcludeFromAiLabel" xml:space="preserve">
+    <value>Не використовувати для відповідей знань ШІ</value>
+  </data>
+  <data name="ExcludeFromAiHelp" xml:space="preserve">
+    <value>Для ліцензованих матеріалів, ліцензія яких забороняє обробку: це навчання ніколи не індексується й не використовується у відповідях знань.</value>
+  </data>
+  <data name="CoursesTab" xml:space="preserve">
+    <value>Курси</value>
+  </data>
+  <data name="AcademyTab" xml:space="preserve">
+    <value>Академія</value>
+  </data>
+  <data name="CourseLibraryTab" xml:space="preserve">
+    <value>Бібліотека курсів</value>
+  </data>
+  <data name="LearningSource.LmsCourseCompletion" xml:space="preserve">
+    <value>Онлайн-курс</value>
+  </data>
+  <data name="LearningSource.BuildingFamiliarization" xml:space="preserve">
+    <value>Ознайомлення з об’єктами</value>
+  </data>
+  <data name="Prg.Tab.Programs" xml:space="preserve">
+    <value>Програми</value>
+  </data>
+  <data name="Prg.StripLabel" xml:space="preserve">
+    <value>Навчальні програми</value>
+  </data>
+  <data name="Prg.Tab.Home" xml:space="preserve">
+    <value>Огляд</value>
+  </data>
+  <data name="Prg.Tab.Plans" xml:space="preserve">
+    <value>Річні плани</value>
+  </data>
+  <data name="Prg.Tab.Frameworks" xml:space="preserve">
+    <value>Компетенції</value>
+  </data>
+  <data name="Prg.Tab.Requests" xml:space="preserve">
+    <value>Заявки на навчання</value>
+  </data>
+  <data name="Prg.Tab.Reports" xml:space="preserve">
+    <value>Звіти</value>
+  </data>
+  <data name="Prg.Tab.Cycles" xml:space="preserve">
+    <value>Цикли сертифікації</value>
+  </data>
+  <data name="Prg.Tab.Settings" xml:space="preserve">
+    <value>Налаштування</value>
+  </data>
+  <data name="Prg.HomeTitle" xml:space="preserve">
+    <value>Навчальні програми</value>
+  </data>
+  <data name="Prg.HomeIntro" xml:space="preserve">
+    <value>Річні плани навчання, рамки компетенцій, заявки на навчання, звіти за розкладом і цикли сертифікації.</value>
+  </data>
+  <data name="Prg.AddonNotice" xml:space="preserve">
+    <value>Ці функції програм входять до доповнення LMS. Усе тут залишається доступним для перегляду; для нових планів, заявок, розкладів і змін потрібне активне доповнення.</value>
+  </data>
+  <data name="Prg.LapsedNotice" xml:space="preserve">
+    <value>Доповнення LMS неактивне. Усе залишається доступним для перегляду, а щодо відкритих заявок і далі можна ухвалити рішення, відкликати чи завершити їх; нічого нового створити не можна, доки доповнення знову не стане активним.</value>
+  </data>
+  <data name="Prg.AddonRequired" xml:space="preserve">
+    <value>Для цього потрібне активне доповнення LMS.</value>
+  </data>
+  <data name="Prg.ActionFailed" xml:space="preserve">
+    <value>Не вдалося виконати дію. Перевірте значення та спробуйте ще раз.</value>
+  </data>
+  <data name="Prg.Saved" xml:space="preserve">
+    <value>Збережено.</value>
+  </data>
+  <data name="Prg.Deleted" xml:space="preserve">
+    <value>Вилучено.</value>
+  </data>
+  <data name="Prg.Open" xml:space="preserve">
+    <value>Відкрити</value>
+  </data>
+  <data name="Prg.Edit" xml:space="preserve">
+    <value>Редагувати</value>
+  </data>
+  <data name="Prg.Remove" xml:space="preserve">
+    <value>Вилучити</value>
+  </data>
+  <data name="Prg.Delete" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="Prg.Save" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="Prg.Cancel" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="Prg.Create" xml:space="preserve">
+    <value>Створити</value>
+  </data>
+  <data name="Prg.Add" xml:space="preserve">
+    <value>Додати</value>
+  </data>
+  <data name="Prg.Apply" xml:space="preserve">
+    <value>Застосувати</value>
+  </data>
+  <data name="Prg.Applied" xml:space="preserve">
+    <value>Застосовано</value>
+  </data>
+  <data name="Prg.Show" xml:space="preserve">
+    <value>Показати</value>
+  </data>
+  <data name="Prg.All" xml:space="preserve">
+    <value>Усі</value>
+  </data>
+  <data name="Prg.Actions" xml:space="preserve">
+    <value>Дії</value>
+  </data>
+  <data name="Prg.Name" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="Prg.Year" xml:space="preserve">
+    <value>Рік</value>
+  </data>
+  <data name="Prg.Notes" xml:space="preserve">
+    <value>Примітки</value>
+  </data>
+  <data name="Prg.Description" xml:space="preserve">
+    <value>Опис</value>
+  </data>
+  <data name="Prg.Uncategorized" xml:space="preserve">
+    <value>Без категорії</value>
+  </data>
+  <data name="Prg.NotLicensed" xml:space="preserve">
+    <value>без ліцензії</value>
+  </data>
+  <data name="Prg.MyOpenRequests" xml:space="preserve">
+    <value>Мої відкриті заявки</value>
+  </data>
+  <data name="Prg.AwaitingMe" xml:space="preserve">
+    <value>Очікують мого рішення</value>
+  </data>
+  <data name="Prg.SavedReports" xml:space="preserve">
+    <value>Збережені звіти</value>
+  </data>
+  <data name="Prg.MyGaps" xml:space="preserve">
+    <value>Мої прогалини в компетенціях</value>
+  </data>
+  <data name="Prg.MyNccpExport" xml:space="preserve">
+    <value>Мій експорт NCCP</value>
+  </data>
+  <data name="Prg.PlansTitle" xml:space="preserve">
+    <value>Річні плани навчання</value>
+  </data>
+  <data name="Prg.PlansIntro" xml:space="preserve">
+    <value>Рік запланованих занять і годин за категоріями та місяцями для всього підрозділу, групи або зміни в порівнянні з фактично зареєстрованими годинами.</value>
+  </data>
+  <data name="Prg.NewPlan" xml:space="preserve">
+    <value>Новий річний план</value>
+  </data>
+  <data name="Prg.CreatePlan" xml:space="preserve">
+    <value>Створити план</value>
+  </data>
+  <data name="Prg.EditPlan" xml:space="preserve">
+    <value>Відомості про план</value>
+  </data>
+  <data name="Prg.NoPlans" xml:space="preserve">
+    <value>Річних планів ще немає.</value>
+  </data>
+  <data name="Prg.Audience" xml:space="preserve">
+    <value>Охоплює</value>
+  </data>
+  <data name="Prg.Scope.Department" xml:space="preserve">
+    <value>Увесь підрозділ</value>
+  </data>
+  <data name="Prg.Scope.Group" xml:space="preserve">
+    <value>Групу</value>
+  </data>
+  <data name="Prg.Scope.Shift" xml:space="preserve">
+    <value>Зміну</value>
+  </data>
+  <data name="Prg.PlanStatus.Draft" xml:space="preserve">
+    <value>Чернетка</value>
+  </data>
+  <data name="Prg.PlanStatus.Adopted" xml:space="preserve">
+    <value>Затверджено</value>
+  </data>
+  <data name="Prg.PlanStatus.Archived" xml:space="preserve">
+    <value>Архівовано</value>
+  </data>
+  <data name="Prg.AdoptPlan" xml:space="preserve">
+    <value>Затвердити план</value>
+  </data>
+  <data name="Prg.ArchivePlan" xml:space="preserve">
+    <value>Архівувати план</value>
+  </data>
+  <data name="Prg.CopyPlan" xml:space="preserve">
+    <value>Копіювати на рік</value>
+  </data>
+  <data name="Prg.PlanCopied" xml:space="preserve">
+    <value>План скопійовано як нову чернетку.</value>
+  </data>
+  <data name="Prg.AsReport" xml:space="preserve">
+    <value>Як звіт</value>
+  </data>
+  <data name="Prg.PlanAudience" xml:space="preserve">
+    <value>{0}: активних учасників — {1}</value>
+  </data>
+  <data name="Prg.AtRiskCallout" xml:space="preserve">
+    <value>Кількість категорій, які за прогнозом не досягнуть річної цілі: {0}.</value>
+  </data>
+  <data name="Prg.PlannedVsActual" xml:space="preserve">
+    <value>План і факт</value>
+  </data>
+  <data name="Prg.PlannedVsActualHelp" xml:space="preserve">
+    <value>Години на одного учасника, охопленого планом. Прогноз — це години, зареєстровані досі, плюс усе, що ще заплановано; категорія, прогноз якої нижчий за річну ціль, перебуває під загрозою.</value>
+  </data>
+  <data name="Prg.NoPlanRows" xml:space="preserve">
+    <value>Ще нічого не заплановано, і жодна категорія не має річної цілі.</value>
+  </data>
+  <data name="Prg.ByMonth" xml:space="preserve">
+    <value>За місяцями (план / факт)</value>
+  </data>
+  <data name="Prg.PlannedSlashActual" xml:space="preserve">
+    <value>план / факт</value>
+  </data>
+  <data name="Prg.PlanShort" xml:space="preserve">
+    <value>самого плану недостатньо для досягнення цілі</value>
+  </data>
+  <data name="Prg.ShortBy" xml:space="preserve">
+    <value>Бракує {0} год</value>
+  </data>
+  <data name="Prg.OnTrack" xml:space="preserve">
+    <value>За планом</value>
+  </data>
+  <data name="Prg.AtRisk" xml:space="preserve">
+    <value>Під загрозою</value>
+  </data>
+  <data name="Prg.PlanLines" xml:space="preserve">
+    <value>Заплановані заняття</value>
+  </data>
+  <data name="Prg.NoPlanLines" xml:space="preserve">
+    <value>Ще не заплановано жодного заняття.</value>
+  </data>
+  <data name="Prg.AddLine" xml:space="preserve">
+    <value>Запланувати заняття</value>
+  </data>
+  <data name="Prg.EditLine" xml:space="preserve">
+    <value>Змінити заплановане заняття</value>
+  </data>
+  <data name="Prg.HoursPerSession" xml:space="preserve">
+    <value>Годин на учасника за одне заняття</value>
+  </data>
+  <data name="Prg.Sessions" xml:space="preserve">
+    <value>Кількість занять</value>
+  </data>
+  <data name="Prg.PlannedDate" xml:space="preserve">
+    <value>Запланована дата (необов'язково)</value>
+  </data>
+  <data name="Prg.MakeCalendarItem" xml:space="preserve">
+    <value>Створити подію в календарі</value>
+  </data>
+  <data name="Prg.OnCalendar" xml:space="preserve">
+    <value>У календарі</value>
+  </data>
+  <data name="Prg.CalendarCreated" xml:space="preserve">
+    <value>Подію в календарі створено.</value>
+  </data>
+  <data name="Prg.FrameworksTitle" xml:space="preserve">
+    <value>Рамки компетенцій</value>
+  </data>
+  <data name="Prg.FrameworksIntro" xml:space="preserve">
+    <value>Вимоги до виконання посадових обов’язків, посади й навички, на які спрямоване ваше навчання, підтвердження для кожної з них і прогалини кожного учасника.</value>
+  </data>
+  <data name="Prg.YourFrameworks" xml:space="preserve">
+    <value>Ваші рамки</value>
+  </data>
+  <data name="Prg.NoFrameworks" xml:space="preserve">
+    <value>Рамок компетенцій ще немає.</value>
+  </data>
+  <data name="Prg.Publisher" xml:space="preserve">
+    <value>Видавець</value>
+  </data>
+  <data name="Prg.Edition" xml:space="preserve">
+    <value>Редакція</value>
+  </data>
+  <data name="Prg.Source" xml:space="preserve">
+    <value>Джерело</value>
+  </data>
+  <data name="Prg.FrameworkSource.Catalog" xml:space="preserve">
+    <value>Каталог Resgrid</value>
+  </data>
+  <data name="Prg.FrameworkSource.CaseImport" xml:space="preserve">
+    <value>Імпорт CASE</value>
+  </data>
+  <data name="Prg.FrameworkSource.Custom" xml:space="preserve">
+    <value>Власна</value>
+  </data>
+  <data name="Prg.Catalog" xml:space="preserve">
+    <value>Каталог</value>
+  </data>
+  <data name="Prg.CatalogHelp" xml:space="preserve">
+    <value>Resgrid надає лише структуру рамок і загальнодоступні ідентифікатори (коди посад, рівні кваліфікації, назви навичок), але ніколи не текст стандарту. Додайте номери розділів і JPR редакції, за якою ви навчаєте, або імпортуйте рамку свого регіону.</value>
+  </data>
+  <data name="Prg.ItemCount" xml:space="preserve">
+    <value>Елементів: {0}</value>
+  </data>
+  <data name="Prg.FrameworkApplied" xml:space="preserve">
+    <value>Рамку додано.</value>
+  </data>
+  <data name="Prg.ImportCase" xml:space="preserve">
+    <value>Імпортувати рамку CASE 1.1</value>
+  </data>
+  <data name="Prg.ImportCaseHelp" xml:space="preserve">
+    <value>Завантажте пакет JSON (CFDocument, CFItems і CFAssociations), який публікує регіональний орган або навчальний заклад. Повторний імпорт того самого документа оновлює його.</value>
+  </data>
+  <data name="Prg.CaseFile" xml:space="preserve">
+    <value>Файл CASE JSON</value>
+  </data>
+  <data name="Prg.Import" xml:space="preserve">
+    <value>Імпортувати</value>
+  </data>
+  <data name="Prg.CaseImported" xml:space="preserve">
+    <value>Імпортовано: додано {0}, змінено {1}, вилучено {2}.</value>
+  </data>
+  <data name="Prg.NewFramework" xml:space="preserve">
+    <value>Нова власна рамка</value>
+  </data>
+  <data name="Prg.EditFramework" xml:space="preserve">
+    <value>Відомості про рамку</value>
+  </data>
+  <data name="Prg.EvidenceMaxAge" xml:space="preserve">
+    <value>Підтвердження вважається актуальним протягом (місяців)</value>
+  </data>
+  <data name="Prg.EvidenceMaxAgeHelp" xml:space="preserve">
+    <value>Старіші підтвердження у звіті про прогалини позначаються як застарілі. 0 означає, що підтвердження ніколи не застарівають.</value>
+  </data>
+  <data name="Prg.NoItems" xml:space="preserve">
+    <value>У цій рамці ще немає елементів.</value>
+  </data>
+  <data name="Prg.TaggedOn" xml:space="preserve">
+    <value>Підтверджується</value>
+  </data>
+  <data name="Prg.TagOn" xml:space="preserve">
+    <value>Позначити</value>
+  </data>
+  <data name="Prg.Tagged" xml:space="preserve">
+    <value>Позначено.</value>
+  </data>
+  <data name="Prg.Untag" xml:space="preserve">
+    <value>Зняти позначку</value>
+  </data>
+  <data name="Prg.Untagged" xml:space="preserve">
+    <value>Позначку знято.</value>
+  </data>
+  <data name="Prg.AddItem" xml:space="preserve">
+    <value>Додати елемент</value>
+  </data>
+  <data name="Prg.AddItemHelp" xml:space="preserve">
+    <value>Використовуйте загальнодоступний ідентифікатор вимоги (наприклад, номер JPR) і власну коротку мітку. Не вставляйте текст стандарту.</value>
+  </data>
+  <data name="Prg.Parent" xml:space="preserve">
+    <value>Батьківський елемент</value>
+  </data>
+  <data name="Prg.ShortLabel" xml:space="preserve">
+    <value>Коротка мітка</value>
+  </data>
+  <data name="Prg.ItemType" xml:space="preserve">
+    <value>Вид</value>
+  </data>
+  <data name="Prg.Subject.Course" xml:space="preserve">
+    <value>Курс</value>
+  </data>
+  <data name="Prg.Subject.Training" xml:space="preserve">
+    <value>Навчання</value>
+  </data>
+  <data name="Prg.Subject.SkillSheet" xml:space="preserve">
+    <value>Аркуш навичок</value>
+  </data>
+  <data name="Prg.Subject.TaskBookTask" xml:space="preserve">
+    <value>Завдання з книги завдань</value>
+  </data>
+  <data name="Prg.Subject.Category" xml:space="preserve">
+    <value>Категорія</value>
+  </data>
+  <data name="Prg.Subject.CertificationType" xml:space="preserve">
+    <value>Сертифікат</value>
+  </data>
+  <data name="Prg.GapReport" xml:space="preserve">
+    <value>Звіт про прогалини</value>
+  </data>
+  <data name="Prg.GapIntro" xml:space="preserve">
+    <value>Для кожного елемента рамки: найновіше підтвердження та його вік або позначка, що його немає.</value>
+  </data>
+  <data name="Prg.Framework" xml:space="preserve">
+    <value>Рамка</value>
+  </data>
+  <data name="Prg.Evidence.Current" xml:space="preserve">
+    <value>Актуальне</value>
+  </data>
+  <data name="Prg.Evidence.Aged" xml:space="preserve">
+    <value>Застаріле</value>
+  </data>
+  <data name="Prg.Evidence.None" xml:space="preserve">
+    <value>Немає підтвердження</value>
+  </data>
+  <data name="Prg.Evidence.NotTagged" xml:space="preserve">
+    <value>Не позначено</value>
+  </data>
+  <data name="Prg.RequestsTitle" xml:space="preserve">
+    <value>Заявки на навчання</value>
+  </data>
+  <data name="Prg.RequestsIntro" xml:space="preserve">
+    <value>Подайте заявку на зовнішній курс із зазначенням вартості; її погоджують ваш керівник і відповідальний за навчання, а після проходження курс потрапляє до вашого журналу навчання для перевірки.</value>
+  </data>
+  <data name="Prg.MyRequests" xml:space="preserve">
+    <value>Мої заявки</value>
+  </data>
+  <data name="Prg.NoRequests" xml:space="preserve">
+    <value>Заявок на навчання немає.</value>
+  </data>
+  <data name="Prg.NewRequest" xml:space="preserve">
+    <value>Заявка на зовнішній курс</value>
+  </data>
+  <data name="Prg.ClassTitle" xml:space="preserve">
+    <value>Курс</value>
+  </data>
+  <data name="Prg.Provider" xml:space="preserve">
+    <value>Організатор</value>
+  </data>
+  <data name="Prg.Location" xml:space="preserve">
+    <value>Місце</value>
+  </data>
+  <data name="Prg.StartsOn" xml:space="preserve">
+    <value>Початок</value>
+  </data>
+  <data name="Prg.EndsOn" xml:space="preserve">
+    <value>Завершення</value>
+  </data>
+  <data name="Prg.CostTuition" xml:space="preserve">
+    <value>Плата за навчання</value>
+  </data>
+  <data name="Prg.CostTravel" xml:space="preserve">
+    <value>Проїзд</value>
+  </data>
+  <data name="Prg.CostOther" xml:space="preserve">
+    <value>Інші витрати</value>
+  </data>
+  <data name="Prg.ActualCost" xml:space="preserve">
+    <value>Фактична вартість</value>
+  </data>
+  <data name="Prg.Justification" xml:space="preserve">
+    <value>Чому саме цей курс</value>
+  </data>
+  <data name="Prg.SubmitRequest" xml:space="preserve">
+    <value>Подати заявку</value>
+  </data>
+  <data name="Prg.RequestSubmitted" xml:space="preserve">
+    <value>Вашу заявку подано.</value>
+  </data>
+  <data name="Prg.RequestApproved" xml:space="preserve">
+    <value>Заявку погоджено.</value>
+  </data>
+  <data name="Prg.RequestRejected" xml:space="preserve">
+    <value>Заявку відхилено.</value>
+  </data>
+  <data name="Prg.RequestWithdrawn" xml:space="preserve">
+    <value>Заявку відкликано.</value>
+  </data>
+  <data name="Prg.RequestCancelled" xml:space="preserve">
+    <value>Заявку скасовано.</value>
+  </data>
+  <data name="Prg.RequestCompleted" xml:space="preserve">
+    <value>Зареєстровано. Курс додано до журналу навчання, і він очікує перевірки відповідальним за навчання.</value>
+  </data>
+  <data name="Prg.RequestStatus.Submitted" xml:space="preserve">
+    <value>Подано</value>
+  </data>
+  <data name="Prg.RequestStatus.Approved" xml:space="preserve">
+    <value>Погоджено</value>
+  </data>
+  <data name="Prg.RequestStatus.Rejected" xml:space="preserve">
+    <value>Відхилено</value>
+  </data>
+  <data name="Prg.RequestStatus.Withdrawn" xml:space="preserve">
+    <value>Відкликано</value>
+  </data>
+  <data name="Prg.RequestStatus.Completed" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="Prg.RequestStatus.Cancelled" xml:space="preserve">
+    <value>Скасовано</value>
+  </data>
+  <data name="Prg.Step" xml:space="preserve">
+    <value>Етап</value>
+  </data>
+  <data name="Prg.Step.Supervisor" xml:space="preserve">
+    <value>Погодження керівника</value>
+  </data>
+  <data name="Prg.Step.TrainingOfficer" xml:space="preserve">
+    <value>Погодження відповідального за навчання</value>
+  </data>
+  <data name="Prg.Decision.Approved" xml:space="preserve">
+    <value>Погоджено</value>
+  </data>
+  <data name="Prg.Decision.Rejected" xml:space="preserve">
+    <value>Відхилено</value>
+  </data>
+  <data name="Prg.Waiting" xml:space="preserve">
+    <value>Очікує</value>
+  </data>
+  <data name="Prg.Decide" xml:space="preserve">
+    <value>Ухвалити рішення</value>
+  </data>
+  <data name="Prg.DecisionNote" xml:space="preserve">
+    <value>Примітка (обов'язкова для відхилення)</value>
+  </data>
+  <data name="Prg.Approve" xml:space="preserve">
+    <value>Погодити</value>
+  </data>
+  <data name="Prg.Reject" xml:space="preserve">
+    <value>Відхилити</value>
+  </data>
+  <data name="Prg.Withdraw" xml:space="preserve">
+    <value>Відкликати</value>
+  </data>
+  <data name="Prg.CancelRequest" xml:space="preserve">
+    <value>Скасувати заявку</value>
+  </data>
+  <data name="Prg.CompleteRequest" xml:space="preserve">
+    <value>Курс пройдено</value>
+  </data>
+  <data name="Prg.CompleteRequestHelp" xml:space="preserve">
+    <value>Зареєструйте курс як пройдений. Він потрапить до вашого журналу навчання як зовнішнє подання, яке перевіряє відповідальний за навчання; додайте свідоцтво як підтвердження.</value>
+  </data>
+  <data name="Prg.CompletedOn" xml:space="preserve">
+    <value>Дата проходження</value>
+  </data>
+  <data name="Prg.Evidence" xml:space="preserve">
+    <value>Свідоцтво або підтвердження</value>
+  </data>
+  <data name="Prg.SubmissionWritten" xml:space="preserve">
+    <value>Курс додано до журналу навчання як зовнішнє подання.</value>
+  </data>
+  <data name="Prg.OpenTranscript" xml:space="preserve">
+    <value>Відкрити журнал навчання</value>
+  </data>
+  <data name="Prg.AllRequestsYear" xml:space="preserve">
+    <value>Усі заявки за {0} рік</value>
+  </data>
+  <data name="Prg.ReportsTitle" xml:space="preserve">
+    <value>Звіти з навчання</value>
+  </data>
+  <data name="Prg.ReportsIntro" xml:space="preserve">
+    <value>Каталог звітів з навчання, збережені звіти в папках і звіти, що надсилаються за розкладом.</value>
+  </data>
+  <data name="Prg.Tier.Free" xml:space="preserve">
+    <value>Безкоштовно</value>
+  </data>
+  <data name="Prg.Tier.Lms" xml:space="preserve">
+    <value>LMS</value>
+  </data>
+  <data name="Prg.RunReport" xml:space="preserve">
+    <value>Запустити</value>
+  </data>
+  <data name="Prg.NoSavedReports" xml:space="preserve">
+    <value>Збережених звітів ще немає. Запустіть звіт і збережіть його, щоб зберегти налаштування або надсилати його за розкладом.</value>
+  </data>
+  <data name="Prg.NoFolder" xml:space="preserve">
+    <value>Поза папками</value>
+  </data>
+  <data name="Prg.EmptyFolder" xml:space="preserve">
+    <value>Ця папка порожня.</value>
+  </data>
+  <data name="Prg.NewFolder" xml:space="preserve">
+    <value>Нова папка</value>
+  </data>
+  <data name="Prg.DeleteFolder" xml:space="preserve">
+    <value>Видалити папку</value>
+  </data>
+  <data name="Prg.Folder" xml:space="preserve">
+    <value>Папка</value>
+  </data>
+  <data name="Prg.Schedule" xml:space="preserve">
+    <value>Розклад</value>
+  </data>
+  <data name="Prg.NextRun" xml:space="preserve">
+    <value>наступне надсилання</value>
+  </data>
+  <data name="Prg.LastRun" xml:space="preserve">
+    <value>Востаннє надіслано</value>
+  </data>
+  <data name="Prg.Frequency.None" xml:space="preserve">
+    <value>Без розкладу</value>
+  </data>
+  <data name="Prg.Frequency.Daily" xml:space="preserve">
+    <value>Щодня</value>
+  </data>
+  <data name="Prg.Frequency.Weekly" xml:space="preserve">
+    <value>Щотижня</value>
+  </data>
+  <data name="Prg.Frequency.Monthly" xml:space="preserve">
+    <value>Щомісяця</value>
+  </data>
+  <data name="Prg.RunStatus.Sent" xml:space="preserve">
+    <value>Надіслано</value>
+  </data>
+  <data name="Prg.RunStatus.Failed" xml:space="preserve">
+    <value>Помилка</value>
+  </data>
+  <data name="Prg.RunStatus.Skipped" xml:space="preserve">
+    <value>Пропущено</value>
+  </data>
+  <data name="Prg.Period" xml:space="preserve">
+    <value>Період</value>
+  </data>
+  <data name="Prg.Period.MonthToDate" xml:space="preserve">
+    <value>Поточний місяць до сьогодні</value>
+  </data>
+  <data name="Prg.Period.LastMonth" xml:space="preserve">
+    <value>Минулий місяць</value>
+  </data>
+  <data name="Prg.Period.QuarterToDate" xml:space="preserve">
+    <value>Поточний квартал до сьогодні</value>
+  </data>
+  <data name="Prg.Period.YearToDate" xml:space="preserve">
+    <value>Поточний рік до сьогодні</value>
+  </data>
+  <data name="Prg.Period.Last12Months" xml:space="preserve">
+    <value>Останні 12 місяців</value>
+  </data>
+  <data name="Prg.Period.LastYear" xml:space="preserve">
+    <value>Минулий рік</value>
+  </data>
+  <data name="Prg.Period.Custom" xml:space="preserve">
+    <value>Від дати до дати</value>
+  </data>
+  <data name="Prg.From" xml:space="preserve">
+    <value>Від</value>
+  </data>
+  <data name="Prg.To" xml:space="preserve">
+    <value>До</value>
+  </data>
+  <data name="Prg.GroupBy" xml:space="preserve">
+    <value>Групувати за</value>
+  </data>
+  <data name="Prg.GroupBy.Category" xml:space="preserve">
+    <value>Категорія</value>
+  </data>
+  <data name="Prg.GroupBy.Member" xml:space="preserve">
+    <value>Учасник</value>
+  </data>
+  <data name="Prg.GroupBy.Month" xml:space="preserve">
+    <value>Місяць</value>
+  </data>
+  <data name="Prg.GroupBy.Course" xml:space="preserve">
+    <value>Курс</value>
+  </data>
+  <data name="Prg.GroupBy.Year" xml:space="preserve">
+    <value>Рік</value>
+  </data>
+  <data name="Prg.Plan" xml:space="preserve">
+    <value>План</value>
+  </data>
+  <data name="Prg.WithinDays" xml:space="preserve">
+    <value>Спливає протягом (днів)</value>
+  </data>
+  <data name="Prg.IncludeFormer" xml:space="preserve">
+    <value>Включити колишніх учасників</value>
+  </data>
+  <data name="Prg.NoRows" xml:space="preserve">
+    <value>Немає даних для цих налаштувань.</value>
+  </data>
+  <data name="Prg.SaveReport" xml:space="preserve">
+    <value>Зберегти цей звіт</value>
+  </data>
+  <data name="Prg.EditSchedule" xml:space="preserve">
+    <value>Збережений звіт і розклад</value>
+  </data>
+  <data name="Prg.ReportSaved" xml:space="preserve">
+    <value>Звіт збережено.</value>
+  </data>
+  <data name="Prg.Format" xml:space="preserve">
+    <value>Вкладення</value>
+  </data>
+  <data name="Prg.DayOfWeek" xml:space="preserve">
+    <value>День тижня (щотижня)</value>
+  </data>
+  <data name="Prg.DayOfMonth" xml:space="preserve">
+    <value>День місяця (щомісяця)</value>
+  </data>
+  <data name="Prg.HourLocal" xml:space="preserve">
+    <value>Година (час підрозділу)</value>
+  </data>
+  <data name="Prg.Recipients" xml:space="preserve">
+    <value>Одержувачі</value>
+  </data>
+  <data name="Prg.RecipientsHelp" xml:space="preserve">
+    <value>Звіти з навчання можуть отримувати учасники, які ведуть записи навчання, та адміністратори підрозділу; учасник також може отримувати власний індивідуальний звіт. Учасників, які вибули або вимкнені, пропускають.</value>
+  </data>
+  <data name="Prg.RunHistory" xml:space="preserve">
+    <value>Останні запуски</value>
+  </data>
+  <data name="Prg.Report.Hours" xml:space="preserve">
+    <value>Години навчання</value>
+  </data>
+  <data name="Prg.Report.HoursHelp" xml:space="preserve">
+    <value>Години за категорією, учасником або місяцем за період.</value>
+  </data>
+  <data name="Prg.Report.Iso" xml:space="preserve">
+    <value>Звіт з навчання ISO</value>
+  </data>
+  <data name="Prg.Report.IsoHelp" xml:space="preserve">
+    <value>Години кожного учасника в категоріях навчання ISO FSRS за період.</value>
+  </data>
+  <data name="Prg.Report.Nccp" xml:space="preserve">
+    <value>Прогрес NREMT NCCP</value>
+  </data>
+  <data name="Prg.Report.NccpHelp" xml:space="preserve">
+    <value>Національні, місцеві та індивідуальні години поточного циклу ресертифікації кожного учасника порівняно з цілями рівня.</value>
+  </data>
+  <data name="Prg.Report.NccpMember" xml:space="preserve">
+    <value>Експорт NCCP для учасника</value>
+  </data>
+  <data name="Prg.Report.NccpMemberHelp" xml:space="preserve">
+    <value>Кожен підтверджений запис у категоріях NCCP учасника в його поточному циклі з організатором CE і номерами курсів, готовий для його власної ресертифікації.</value>
+  </data>
+  <data name="Prg.Report.Plan" xml:space="preserve">
+    <value>Річний план і факт</value>
+  </data>
+  <data name="Prg.Report.PlanHelp" xml:space="preserve">
+    <value>Заплановані й фактичні години річного плану за категоріями, прогноз і будь-яке відставання від цілей.</value>
+  </data>
+  <data name="Prg.Report.Gaps" xml:space="preserve">
+    <value>Прогалини в компетенціях</value>
+  </data>
+  <data name="Prg.Report.GapsHelp" xml:space="preserve">
+    <value>Підтвердження учасника для кожного елемента рамки компетенцій, їхній вік або їх відсутність.</value>
+  </data>
+  <data name="Prg.Report.Costs" xml:space="preserve">
+    <value>Витрати за заявками на навчання</value>
+  </data>
+  <data name="Prg.Report.CostsHelp" xml:space="preserve">
+    <value>Погоджені та очікувані витрати за заявками на навчання за учасником, курсом або роком.</value>
+  </data>
+  <data name="Prg.Report.CertExceptions" xml:space="preserve">
+    <value>Проблеми із сертифікатами</value>
+  </data>
+  <data name="Prg.Report.CertExceptionsHelp" xml:space="preserve">
+    <value>Прострочені, ті, що спливають, призупинені, анульовані та непідтверджені сертифікати активних учасників.</value>
+  </data>
+  <data name="Prg.Col.Member" xml:space="preserve">
+    <value>Учасник</value>
+  </data>
+  <data name="Prg.Col.Members" xml:space="preserve">
+    <value>Учасники</value>
+  </data>
+  <data name="Prg.Col.Month" xml:space="preserve">
+    <value>Місяць</value>
+  </data>
+  <data name="Prg.Col.Category" xml:space="preserve">
+    <value>Категорія</value>
+  </data>
+  <data name="Prg.Col.Records" xml:space="preserve">
+    <value>Записи</value>
+  </data>
+  <data name="Prg.Col.Hours" xml:space="preserve">
+    <value>Години</value>
+  </data>
+  <data name="Prg.Col.CeHours" xml:space="preserve">
+    <value>Години CE</value>
+  </data>
+  <data name="Prg.Col.Target" xml:space="preserve">
+    <value>Ціль</value>
+  </data>
+  <data name="Prg.Col.Certification" xml:space="preserve">
+    <value>Сертифікат</value>
+  </data>
+  <data name="Prg.Col.CycleStart" xml:space="preserve">
+    <value>Початок циклу</value>
+  </data>
+  <data name="Prg.Col.CycleEnd" xml:space="preserve">
+    <value>Кінець циклу</value>
+  </data>
+  <data name="Prg.Col.NccpNational" xml:space="preserve">
+    <value>Національні</value>
+  </data>
+  <data name="Prg.Col.NccpLocal" xml:space="preserve">
+    <value>Місцеві</value>
+  </data>
+  <data name="Prg.Col.NccpIndividual" xml:space="preserve">
+    <value>Індивідуальні</value>
+  </data>
+  <data name="Prg.Col.Component" xml:space="preserve">
+    <value>Складова</value>
+  </data>
+  <data name="Prg.Col.Date" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="Prg.Col.Title" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="Prg.Col.CeProvider" xml:space="preserve">
+    <value>Організатор CE</value>
+  </data>
+  <data name="Prg.Col.CeCourseNumber" xml:space="preserve">
+    <value>Номер курсу CE</value>
+  </data>
+  <data name="Prg.Col.CourseCode" xml:space="preserve">
+    <value>Код курсу</value>
+  </data>
+  <data name="Prg.Col.PlannedYear" xml:space="preserve">
+    <value>Заплановано (рік)</value>
+  </data>
+  <data name="Prg.Col.ActualToDate" xml:space="preserve">
+    <value>Фактично досі</value>
+  </data>
+  <data name="Prg.Col.Forecast" xml:space="preserve">
+    <value>Прогноз</value>
+  </data>
+  <data name="Prg.Col.RunRate" xml:space="preserve">
+    <value>За поточного темпу</value>
+  </data>
+  <data name="Prg.Col.Shortfall" xml:space="preserve">
+    <value>Відставання</value>
+  </data>
+  <data name="Prg.Col.Status" xml:space="preserve">
+    <value>Стан</value>
+  </data>
+  <data name="Prg.Col.Code" xml:space="preserve">
+    <value>Код</value>
+  </data>
+  <data name="Prg.Col.Competency" xml:space="preserve">
+    <value>Компетенція</value>
+  </data>
+  <data name="Prg.Col.EvidenceDate" xml:space="preserve">
+    <value>Дата підтвердження</value>
+  </data>
+  <data name="Prg.Col.AgeDays" xml:space="preserve">
+    <value>Вік (днів)</value>
+  </data>
+  <data name="Prg.Col.Evidence" xml:space="preserve">
+    <value>Підтвердження</value>
+  </data>
+  <data name="Prg.Col.Course" xml:space="preserve">
+    <value>Курс</value>
+  </data>
+  <data name="Prg.Col.Year" xml:space="preserve">
+    <value>Рік</value>
+  </data>
+  <data name="Prg.Col.Requests" xml:space="preserve">
+    <value>Заявки</value>
+  </data>
+  <data name="Prg.Col.Committed" xml:space="preserve">
+    <value>Погоджено</value>
+  </data>
+  <data name="Prg.Col.Pending" xml:space="preserve">
+    <value>Очікує</value>
+  </data>
+  <data name="Prg.Col.Cost" xml:space="preserve">
+    <value>Вартість</value>
+  </data>
+  <data name="Prg.Col.Expires" xml:space="preserve">
+    <value>Спливає</value>
+  </data>
+  <data name="Prg.Col.Days" xml:space="preserve">
+    <value>Дні</value>
+  </data>
+  <data name="Prg.Cert.Expired" xml:space="preserve">
+    <value>Прострочено</value>
+  </data>
+  <data name="Prg.Cert.Expiring" xml:space="preserve">
+    <value>Спливає</value>
+  </data>
+  <data name="Prg.Cert.Suspended" xml:space="preserve">
+    <value>Призупинено</value>
+  </data>
+  <data name="Prg.Cert.Revoked" xml:space="preserve">
+    <value>Анульовано</value>
+  </data>
+  <data name="Prg.Cert.Pending" xml:space="preserve">
+    <value>Очікує перевірки</value>
+  </data>
+  <data name="Prg.Footer.TotalHours" xml:space="preserve">
+    <value>Усього: {0} год, записів: {1}.</value>
+  </data>
+  <data name="Prg.Footer.Target" xml:space="preserve">
+    <value>ціль {0} год ({1})</value>
+  </data>
+  <data name="Prg.Footer.Audience" xml:space="preserve">
+    <value>Активних учасників, охоплених планом: {0}.</value>
+  </data>
+  <data name="Prg.Footer.Gaps" xml:space="preserve">
+    <value>Актуальні: {0}. Застарілі: {1}. Без підтвердження: {2}.</value>
+  </data>
+  <data name="Prg.Footer.Costs" xml:space="preserve">
+    <value>Погоджено: {0}. Очікує: {1}. Валюта: {2}.</value>
+  </data>
+  <data name="Prg.Problem.NccpCategories" xml:space="preserve">
+    <value>Спочатку застосуйте категорії NREMT NCCP (Навчання &gt; Записи &gt; Категорії).</value>
+  </data>
+  <data name="Prg.Problem.NeedsMember" xml:space="preserve">
+    <value>Виберіть учасника.</value>
+  </data>
+  <data name="Prg.Problem.NeedsPlan" xml:space="preserve">
+    <value>Виберіть річний план.</value>
+  </data>
+  <data name="Prg.Problem.NeedsFramework" xml:space="preserve">
+    <value>Виберіть рамку компетенцій.</value>
+  </data>
+  <data name="Prg.CyclesTitle" xml:space="preserve">
+    <value>Цикли сертифікації</value>
+  </data>
+  <data name="Prg.CyclesIntro" xml:space="preserve">
+    <value>Автоматично починайте наступний цикл сертифікації, щойно набрано години для поновлення, і сповіщайте керівників, адміністраторів або вказаних учасників, коли цикл завершується, поновлюється, наближається до закінчення строку дії або спливає.</value>
+  </data>
+  <data name="Prg.NoCertificationTypes" xml:space="preserve">
+    <value>Типів сертифікатів для людей ще немає.</value>
+  </data>
+  <data name="Prg.RenewalHours" xml:space="preserve">
+    <value>Для поновлення потрібно {0} год</value>
+  </data>
+  <data name="Prg.NoRenewalHours" xml:space="preserve">
+    <value>Години для поновлення не задано</value>
+  </data>
+  <data name="Prg.ValidityMonths" xml:space="preserve">
+    <value>дійсний {0} міс.</value>
+  </data>
+  <data name="Prg.AutoRenew" xml:space="preserve">
+    <value>Наступний цикл</value>
+  </data>
+  <data name="Prg.AutoRenew.Off" xml:space="preserve">
+    <value>Не автоматично</value>
+  </data>
+  <data name="Prg.AutoRenew.OnCompletion" xml:space="preserve">
+    <value>Починається, щойно набрано години для поновлення</value>
+  </data>
+  <data name="Prg.AutoRenew.OnExpiry" xml:space="preserve">
+    <value>Починається після закінчення строку дії, якщо години для поновлення набрано</value>
+  </data>
+  <data name="Prg.AlertLeadDays" xml:space="preserve">
+    <value>За скільки днів до закінчення строку сповіщати</value>
+  </data>
+  <data name="Prg.AlertOnCompletion" xml:space="preserve">
+    <value>Сповіщати, коли набрано години для поновлення</value>
+  </data>
+  <data name="Prg.AlertOnRenewal" xml:space="preserve">
+    <value>Сповіщати, коли починається цикл</value>
+  </data>
+  <data name="Prg.AlertOnExpired" xml:space="preserve">
+    <value>Сповіщати про закінчення строку дії</value>
+  </data>
+  <data name="Prg.NotifySupervisors" xml:space="preserve">
+    <value>Повідомляти керівників учасника</value>
+  </data>
+  <data name="Prg.NotifyAdmins" xml:space="preserve">
+    <value>Повідомляти адміністраторів підрозділу</value>
+  </data>
+  <data name="Prg.NamedRecipients" xml:space="preserve">
+    <value>Також повідомляти</value>
+  </data>
+  <data name="Prg.RemoveRule" xml:space="preserve">
+    <value>Вилучити правило</value>
+  </data>
+  <data name="Prg.SettingsTitle" xml:space="preserve">
+    <value>Налаштування програм</value>
+  </data>
+  <data name="Prg.SettingsIntro" xml:space="preserve">
+    <value>Як погоджуються заявки на навчання та як зараховується ознайомлення з об’єктами з модуля Записи.</value>
+  </data>
+  <data name="Prg.Set.RequestSupervisorApproval" xml:space="preserve">
+    <value>Керівник учасника погоджує заявки на навчання</value>
+  </data>
+  <data name="Prg.Set.RequestTrainingOfficerApproval" xml:space="preserve">
+    <value>Відповідальний за навчання погоджує заявки на навчання</value>
+  </data>
+  <data name="Prg.Set.RequestApprovalHelp" xml:space="preserve">
+    <value>Якщо ввімкнено обидва параметри, першим рішення ухвалює керівник. Якщо обидва вимкнено, заявки погоджуються одразу після подання.</value>
+  </data>
+  <data name="Prg.Set.RequestCurrency" xml:space="preserve">
+    <value>Валюта (код ISO)</value>
+  </data>
+  <data name="Prg.Set.Familiarization" xml:space="preserve">
+    <value>Ознайомлення з об’єктами</value>
+  </data>
+  <data name="Prg.Set.FamiliarizationHelp" xml:space="preserve">
+    <value>Завершені перевірки об’єктів і перегляди планів реагування в модулі Записи потрапляють до журналу навчання того, хто їх виконав, у вибраній вами категорії (наприклад, категорія ISO з планування реагування на пожежі).</value>
+  </data>
+  <data name="Prg.Set.FamiliarizationEnabled" xml:space="preserve">
+    <value>Зараховувати ознайомлення з об’єктами</value>
+  </data>
+  <data name="Prg.Set.FamiliarizationCategory" xml:space="preserve">
+    <value>Категорія</value>
+  </data>
+  <data name="Prg.Set.FamiliarizationMinutes" xml:space="preserve">
+    <value>Хвилин за відвідування, якщо не вказано час початку й завершення</value>
+  </data>
+  <data name="Prg.Set.FromInspections" xml:space="preserve">
+    <value>З перевірок об’єктів</value>
+  </data>
+  <data name="Prg.Set.FromPreplanReviews" xml:space="preserve">
+    <value>З переглядів планів реагування</value>
+  </data>
+  <data name="Prg.Notify.RequestTitle" xml:space="preserve">
+    <value>Заявка на навчання</value>
+  </data>
+  <data name="Prg.Notify.RequestWaiting" xml:space="preserve">
+    <value>{0} просить дозволу пройти курс {1} ({2} {3}). Погодьте або відхиліть заявку в розділі Навчання &gt; Програми &gt; Заявки на навчання.</value>
+  </data>
+  <data name="Prg.Notify.RequestApproved" xml:space="preserve">
+    <value>Вашу заявку на навчання щодо {0} погоджено.</value>
+  </data>
+  <data name="Prg.Notify.RequestRejected" xml:space="preserve">
+    <value>Вашу заявку на навчання щодо {0} відхилено. Причину вказано в заявці.</value>
+  </data>
+  <data name="Prg.Notify.RequestCancelled" xml:space="preserve">
+    <value>Вашу погоджену заявку на навчання щодо {0} скасовано.</value>
+  </data>
+  <data name="Prg.Notify.CertTitle" xml:space="preserve">
+    <value>Сертифікація</value>
+  </data>
+  <data name="Prg.Notify.CertCompleted" xml:space="preserve">
+    <value>{0}: набрано години для поновлення {1} (цикл завершується {2}).</value>
+  </data>
+  <data name="Prg.Notify.CertRenewed" xml:space="preserve">
+    <value>{0}: для сертифіката {1} розпочато новий цикл (дійсний до {2}).</value>
+  </data>
+  <data name="Prg.Notify.CertExpiring" xml:space="preserve">
+    <value>{0}: строк дії сертифіката {1} спливає {2}.</value>
+  </data>
+  <data name="Prg.Notify.CertExpired" xml:space="preserve">
+    <value>{0}: строк дії сертифіката {1} сплив {2}.</value>
+  </data>
+  <data name="lms_program_age_invalid" xml:space="preserve">
+    <value>Введіть від 0 до 240 місяців.</value>
+  </data>
+  <data name="lms_program_auto_renew_needs_hours" xml:space="preserve">
+    <value>Для автоматичного поновлення в типі сертифіката потрібно задати години для поновлення та строк дії в місяцях.</value>
+  </data>
+  <data name="lms_program_calendar_failed" xml:space="preserve">
+    <value>Не вдалося створити подію в календарі.</value>
+  </data>
+  <data name="lms_program_case_empty" xml:space="preserve">
+    <value>Виберіть файл CASE JSON.</value>
+  </data>
+  <data name="lms_program_case_no_document" xml:space="preserve">
+    <value>Файл не містить CFDocument з ідентифікатором і назвою.</value>
+  </data>
+  <data name="lms_program_case_too_large" xml:space="preserve">
+    <value>Файл перевищує 10 МБ.</value>
+  </data>
+  <data name="lms_program_case_too_many_items" xml:space="preserve">
+    <value>Файл містить понад 5 000 елементів.</value>
+  </data>
+  <data name="lms_program_case_unreadable" xml:space="preserve">
+    <value>Файл не є читабельним CASE JSON.</value>
+  </data>
+  <data name="lms_program_category_invalid" xml:space="preserve">
+    <value>Виберіть категорію свого підрозділу.</value>
+  </data>
+  <data name="lms_program_cost_invalid" xml:space="preserve">
+    <value>Витрати мають бути від 0 до 1 000 000.</value>
+  </data>
+  <data name="lms_program_date_invalid" xml:space="preserve">
+    <value>Введіть дату, яка не припадає на майбутнє.</value>
+  </data>
+  <data name="lms_program_date_outside_month" xml:space="preserve">
+    <value>Запланована дата має припадати на рік плану та вибраний місяць.</value>
+  </data>
+  <data name="lms_program_dates_invalid" xml:space="preserve">
+    <value>Курс не може завершитися раніше, ніж почнеться.</value>
+  </data>
+  <data name="lms_program_familiarization_category_required" xml:space="preserve">
+    <value>Виберіть категорію, до якої зараховується ознайомлення з об’єктами.</value>
+  </data>
+  <data name="lms_program_folder_not_found" xml:space="preserve">
+    <value>Цієї папки більше не існує.</value>
+  </data>
+  <data name="lms_program_framework_not_found" xml:space="preserve">
+    <value>Цієї рамки більше не існує.</value>
+  </data>
+  <data name="lms_program_hours_invalid" xml:space="preserve">
+    <value>Введіть кількість годин від 0 до 1 000.</value>
+  </data>
+  <data name="lms_program_label_required" xml:space="preserve">
+    <value>Введіть код або мітку.</value>
+  </data>
+  <data name="lms_program_member_required" xml:space="preserve">
+    <value>Виберіть учасника, якого стосується цей звіт.</value>
+  </data>
+  <data name="lms_program_month_invalid" xml:space="preserve">
+    <value>Виберіть місяць.</value>
+  </data>
+  <data name="lms_program_name_required" xml:space="preserve">
+    <value>Введіть назву.</value>
+  </data>
+  <data name="lms_program_not_allowed" xml:space="preserve">
+    <value>Вам не дозволено це робити.</value>
+  </data>
+  <data name="lms_program_not_found" xml:space="preserve">
+    <value>Не знайдено.</value>
+  </data>
+  <data name="lms_program_parent_invalid" xml:space="preserve">
+    <value>Елемент не може бути підпорядкований самому собі або одному зі своїх вкладених елементів.</value>
+  </data>
+  <data name="lms_program_plan_not_found" xml:space="preserve">
+    <value>Цього плану більше не існує.</value>
+  </data>
+  <data name="lms_program_reason_required" xml:space="preserve">
+    <value>Введіть причину відхилення заявки.</value>
+  </data>
+  <data name="lms_program_recipient_invalid" xml:space="preserve">
+    <value>Один з одержувачів не є активним учасником, який може отримувати звіти з навчання.</value>
+  </data>
+  <data name="lms_program_recipients_required" xml:space="preserve">
+    <value>Виберіть принаймні одного одержувача для звіту за розкладом.</value>
+  </data>
+  <data name="lms_program_report_not_found" xml:space="preserve">
+    <value>Такого звіту не існує.</value>
+  </data>
+  <data name="lms_program_request_changed" xml:space="preserve">
+    <value>Хтось інший уже обробив цю заявку. Завантажте її повторно.</value>
+  </data>
+  <data name="lms_program_request_not_approved" xml:space="preserve">
+    <value>Завершити можна лише погоджену заявку.</value>
+  </data>
+  <data name="lms_program_request_not_found" xml:space="preserve">
+    <value>Цієї заявки більше не існує.</value>
+  </data>
+  <data name="lms_program_request_not_open" xml:space="preserve">
+    <value>Ця заявка вже не очікує рішення.</value>
+  </data>
+  <data name="lms_program_rule_invalid" xml:space="preserve">
+    <value>Виберіть дійсний варіант поновлення.</value>
+  </data>
+  <data name="lms_program_rule_not_found" xml:space="preserve">
+    <value>Цього правила більше не існує.</value>
+  </data>
+  <data name="lms_program_schedule_invalid" xml:space="preserve">
+    <value>Перевірте розклад: день місяця від 1 до 28, година від 0 до 23.</value>
+  </data>
+  <data name="lms_program_scope_invalid" xml:space="preserve">
+    <value>Виберіть групу або зміну свого підрозділу.</value>
+  </data>
+  <data name="lms_program_sessions_invalid" xml:space="preserve">
+    <value>Введіть від 1 до 100 занять.</value>
+  </data>
+  <data name="lms_program_status_invalid" xml:space="preserve">
+    <value>Цей стан недійсний.</value>
+  </data>
+  <data name="lms_program_subject_invalid" xml:space="preserve">
+    <value>Виберіть курс, навчання, категорію або сертифікат свого підрозділу.</value>
+  </data>
+  <data name="lms_program_title_required" xml:space="preserve">
+    <value>Введіть назву.</value>
+  </data>
+  <data name="lms_program_too_many_recipients" xml:space="preserve">
+    <value>Забагато одержувачів.</value>
+  </data>
+  <data name="lms_program_type_invalid" xml:space="preserve">
+    <value>Виберіть тип сертифіката для людей.</value>
+  </data>
+  <data name="lms_program_year_invalid" xml:space="preserve">
+    <value>Введіть рік від 2000 до 2100.</value>
+  </data>
+  <data name="RequirementsTab" xml:space="preserve">
+    <value>Вимоги</value>
+  </data>
+  <data name="Prg.Report.Matrix" xml:space="preserve">
+    <value>Матриця відповідності</value>
+  </data>
+  <data name="Prg.Report.MatrixHelp" xml:space="preserve">
+    <value>Кожен активний учасник щодо кожної чинної вимоги з навчання: відповідає, термін пізніше, під ризиком, прострочено, звільнено, у відпустці або без ліцензії. Групування за учасником або за вимогою.</value>
+  </data>
+  <data name="Prg.GroupBy.Requirement" xml:space="preserve">
+    <value>Вимога</value>
+  </data>
+  <data name="Prg.Col.Requirement" xml:space="preserve">
+    <value>Вимога</value>
+  </data>
+  <data name="Prg.Col.Due" xml:space="preserve">
+    <value>Термін</value>
+  </data>
+  <data name="Prg.Col.LastCompleted" xml:space="preserve">
+    <value>Востаннє завершено</value>
+  </data>
+  <data name="Prg.Col.Progress" xml:space="preserve">
+    <value>Прогрес</value>
+  </data>
+  <data name="Prg.Footer.MatrixPaused" xml:space="preserve">
+    <value>Доповнення LMS неактивне: вимоги призупинено, і ніщо не стає простроченим.</value>
+  </data>
+  <data name="Cls.Tab.Classes" xml:space="preserve">
+    <value>Заняття</value>
+  </data>
+  <data name="Cls.OpenClassSession" xml:space="preserve">
+    <value>Відкрити заняття</value>
+  </data>
+  <data name="Cls.Report.Roster" xml:space="preserve">
+    <value>Списки учасників занять</value>
+  </data>
+  <data name="Cls.Report.RosterHelp" xml:space="preserve">
+    <value>Підписані заняття: дати, зміст, інструктори та кваліфікації, учасники та посади.</value>
+  </data>
+  <data name="Cls.Report.Enrollment" xml:space="preserve">
+    <value>Записи на заняття</value>
+  </data>
+  <data name="Cls.Report.EnrollmentHelp" xml:space="preserve">
+    <value>За заняттям: місткість, записані, у черзі, очікують, присутні, відсутні та без запису.</value>
+  </data>
+  <data name="Cls.Report.Exceptions" xml:space="preserve">
+    <value>Винятки записів на заняття</value>
+  </data>
+  <data name="Cls.Report.ExceptionsHelp" xml:space="preserve">
+    <value>Неявки, учасники в черзі чи на схваленні, неактивні у списках і записані, що на зміні.</value>
+  </data>
+  <data name="Cls.Report.Series" xml:space="preserve">
+    <value>Відвідуваність серій занять</value>
+  </data>
+  <data name="Cls.Report.SeriesHelp" xml:space="preserve">
+    <value>Відвідуваність кожного учасника на заняттях повторюваної серії.</value>
+  </data>
+  <data name="Cls.Report.Costs" xml:space="preserve">
+    <value>Витрати на заняття</value>
+  </data>
+  <data name="Cls.Report.CostsHelp" xml:space="preserve">
+    <value>Витрати на заняття за курсом, учасником або роком поряд із заявками на навчання.</value>
+  </data>
+  <data name="Cls.Report.Instructors" xml:space="preserve">
+    <value>Години інструкторів</value>
+  </data>
+  <data name="Cls.Report.InstructorsHelp" xml:space="preserve">
+    <value>Хто які заняття провів і скільки годин.</value>
+  </data>
+  <data name="Skl.Tab.Skills" xml:space="preserve">
+    <value>Навички</value>
+  </data>
+  <data name="Skl.Report.PassFail" xml:space="preserve">
+    <value>Оцінювання навичок: зараховано/не зараховано</value>
+  </data>
+  <data name="Skl.Report.PassFailHelp" xml:space="preserve">
+    <value>Завершені оцінювання за листом або учасником: зараховано, не зараховано, частка, критичні помилки та середній бал.</value>
+  </data>
+  <data name="Skl.Report.Ratings" xml:space="preserve">
+    <value>Оцінювання навичок: оцінки за питаннями</value>
+  </data>
+  <data name="Skl.Report.RatingsHelp" xml:space="preserve">
+    <value>Відповіді за шкалою за листом, питанням і місяцем: кількість, середнє, найменше й найбільше.</value>
+  </data>
+  <data name="Skl.GroupBy.Sheet" xml:space="preserve">
+    <value>Лист навичок</value>
+  </data>
+  <data name="Skl.GroupBy.Member" xml:space="preserve">
+    <value>Учасник</value>
+  </data>
+  <data name="Skl.Col.Sheet" xml:space="preserve">
+    <value>Лист навичок</value>
+  </data>
+  <data name="Skl.Col.Member" xml:space="preserve">
+    <value>Учасник</value>
+  </data>
+  <data name="Skl.Col.Step" xml:space="preserve">
+    <value>Питання</value>
+  </data>
+  <data name="Skl.Col.Month" xml:space="preserve">
+    <value>Місяць</value>
+  </data>
+  <data name="Skl.Col.Evaluations" xml:space="preserve">
+    <value>Оцінювання</value>
+  </data>
+  <data name="Skl.Col.Passed" xml:space="preserve">
+    <value>Зараховано</value>
+  </data>
+  <data name="Skl.Col.Failed" xml:space="preserve">
+    <value>Не зараховано</value>
+  </data>
+  <data name="Skl.Col.PassRate" xml:space="preserve">
+    <value>Частка зарахувань</value>
+  </data>
+  <data name="Skl.Col.Critical" xml:space="preserve">
+    <value>Критичні помилки</value>
+  </data>
+  <data name="Skl.Col.AverageScore" xml:space="preserve">
+    <value>Середній бал</value>
+  </data>
+  <data name="Skl.Col.Ratings" xml:space="preserve">
+    <value>Кількість оцінок</value>
+  </data>
+  <data name="Skl.Col.AverageRating" xml:space="preserve">
+    <value>Середня оцінка</value>
+  </data>
+  <data name="Skl.Col.Lowest" xml:space="preserve">
+    <value>Найменша</value>
+  </data>
+  <data name="Skl.Col.Highest" xml:space="preserve">
+    <value>Найбільша</value>
+  </data>
 </root>

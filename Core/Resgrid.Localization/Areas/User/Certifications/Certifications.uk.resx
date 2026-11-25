@@ -230,4 +230,9 @@
   <data name="SelectMember" xml:space="preserve"><value>Виберіть учасника</value></data>
   <data name="SelectType" xml:space="preserve"><value>Виберіть тип сертифікації</value></data>
   <data name="CertificationNameRequired" xml:space="preserve"><value>Введіть назву сертифікації.</value></data>
+  <data name="RenewalHoursLabel" xml:space="preserve"><value>Години для поновлення</value></data>
+  <data name="RenewalHoursValue" xml:space="preserve"><value>Зараховано {0} год ({1} год з журналу навчання)</value></data>
+  <data name="UncreditedLedgerHours" xml:space="preserve"><value>{0} год у пов'язаних категоріях ще не зараховано</value></data>
+  <data name="ApplyHistoryLink" xml:space="preserve"><value>Зарахувати історію до сертифікації</value></data>
+  <data name="FromTranscript" xml:space="preserve"><value>З журналу</value></data>
 </root>

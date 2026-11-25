@@ -1,0 +1,70 @@
+@using Resgrid.Web.Areas.User.Models
+@using Resgrid.Web.Areas.User.Models.Wellness
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.Wellness> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.MemberHealth> healthLocalizer
+@*
+    Page heading shared by the wellness screens (module-workspace.css): title, breadcrumb under Personnel, a one line description,
+    the page's actions, and the wellness sections in a strip underneath (Shared/_ModuleTabs).
+
+    ViewData["Section"]  Mine, Health, Report, Clearances, Osha, Flags or Settings: the highlighted section (Health, Clearances and Osha are WL1)
+    ViewData["Title"]    heading and last crumb
+    ViewData["Subtitle"] optional description
+    ViewData["WellnessAccess"]  set by WellnessController: decides which sections show
+    ViewData["Message"] / ViewData["Error"]  a one-time notice from the last action
+*@
+@{
+    var personnelTitle = await departmentTerms.NameAsync(DepartmentTerms.Personnel, localizer["PersonnelLink"].Value);
+    var section = ViewData["Section"] as string;
+    var title = ViewData["Title"] as string ?? localizer["MyExposuresTitle"].Value;
+    var subtitle = ViewData["Subtitle"] as string;
+    var access = ViewData["WellnessAccess"] as WellnessAccessView ?? new WellnessAccessView();
+    var message = ViewData["Message"] as string;
+    var error = ViewData["Error"] as string;
+
+    var sections = new ModuleTabsView { Label = localizer["WellnessModuleLabel"].Value };
+    sections.Tabs.Add(new ModuleTab(localizer["MyExposuresTab"].Value, "fa-heartbeat", "Wellness", "Index", section == "Mine"));
+    sections.Tabs.Add(new ModuleTab(healthLocalizer["HealthRecordsTab"].Value, "fa-medkit", "MemberHealth", "Index", section == "Health"));
+    if (access.IsOfficer)
+    {
+        sections.Tabs.Add(new ModuleTab(localizer["ReportTab"].Value, "fa-users", "Wellness", "Report", section == "Report"));
+    }
+    if (access.IsHealthOfficer)
+    {
+        sections.Tabs.Add(new ModuleTab(healthLocalizer["ClearancesTab"].Value, "fa-stethoscope", "MemberHealth", "Clearances", section == "Clearances"));
+        sections.Tabs.Add(new ModuleTab(healthLocalizer["OshaTab"].Value, "fa-table", "MemberHealth", "Osha", section == "Osha"));
+    }
+    if (access.IsOfficer || access.IsAdmin)
+    {
+        sections.Tabs.Add(new ModuleTab(localizer["FlagCallTab"].Value, "fa-flag", "Wellness", "FlagCall", section == "Flags"));
+    }
+    if (access.IsAdmin)
+    {
+        sections.Tabs.Add(new ModuleTab(localizer["SettingsTab"].Value, "fa-cog", "Wellness", "Settings", section == "Settings"));
+    }
+}
+<div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">
+    <div class="col-sm-12">
+        <h2>@title</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@localizer["HomeLink"]</a></li>
+            <li><a asp-controller="Personnel" asp-action="Index" asp-route-area="User">@personnelTitle</a></li>
+            <li class="active"><strong>@title</strong></li>
+        </ol>
+        @if (!string.IsNullOrEmpty(subtitle))
+        {
+            <small class="text-muted">@subtitle</small>
+        }
+    </div>
+    @await Html.PartialAsync("_WorkspaceHeaderActions")
+    <div class="col-sm-12 rgw-module-navigation">
+        @await Html.PartialAsync("_ModuleTabs", sections)
+    </div>
+</div>
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="alert alert-success m-t-sm" role="status"><i class="fa fa-check" aria-hidden="true"></i> @message</div>
+}
+@if (!string.IsNullOrEmpty(error))
+{
+    <div class="alert alert-danger m-t-sm" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @error</div>
+}

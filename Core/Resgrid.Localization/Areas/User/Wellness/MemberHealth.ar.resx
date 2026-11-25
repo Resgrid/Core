@@ -1,0 +1,862 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HealthRecordsTab" xml:space="preserve">
+    <value>السجلات الصحية</value>
+  </data>
+  <data name="ClearancesTab" xml:space="preserve">
+    <value>الإجازة الطبية</value>
+  </data>
+  <data name="OshaTab" xml:space="preserve">
+    <value>سجل OSHA</value>
+  </data>
+  <data name="HealthRecordsTitle" xml:space="preserve">
+    <value>السجلات الصحية</value>
+  </data>
+  <data name="HealthRecordsIntro" xml:space="preserve">
+    <value>حالات التعرض والإصابات وحالة الخدمة والإجازة الطبية الخاصة بك. لا يراها إلا أنت ومسؤولو الصحة في إدارتك.</value>
+  </data>
+  <data name="ReportExposureButton" xml:space="preserve">
+    <value>الإبلاغ عن تعرض</value>
+  </data>
+  <data name="ReportInjuryButton" xml:space="preserve">
+    <value>الإبلاغ عن إصابة</value>
+  </data>
+  <data name="DutyStatusLabel" xml:space="preserve">
+    <value>حالة الخدمة</value>
+  </data>
+  <data name="ExpectedReturnLabel" xml:space="preserve">
+    <value>العودة المتوقعة</value>
+  </data>
+  <data name="ClearanceStatusLabel" xml:space="preserve">
+    <value>الإجازة الطبية</value>
+  </data>
+  <data name="NoClearance" xml:space="preserve">
+    <value>لا يوجد سجل</value>
+  </data>
+  <data name="ValidUntilLabel" xml:space="preserve">
+    <value>التقييم التالي</value>
+  </data>
+  <data name="OpenCasesLabel" xml:space="preserve">
+    <value>حالات تعرض مفتوحة</value>
+  </data>
+  <data name="OpenInjuriesLabel" xml:space="preserve">
+    <value>إصابات مفتوحة</value>
+  </data>
+  <data name="OpenCasesHeader" xml:space="preserve">
+    <value>حالات التعرض المفتوحة (الضابط المعيّن)</value>
+  </data>
+  <data name="NoOpenCases" xml:space="preserve">
+    <value>لا توجد حالة تعرض مفتوحة.</value>
+  </data>
+  <data name="MemberColumn" xml:space="preserve">
+    <value>العضو</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>العضو</value>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="RouteColumn" xml:space="preserve">
+    <value>طريقة التعرض</value>
+  </data>
+  <data name="StageColumn" xml:space="preserve">
+    <value>المرحلة</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>فتح</value>
+  </data>
+  <data name="NotificationOverdue" xml:space="preserve">
+    <value>الرد متأخر</value>
+  </data>
+  <data name="OpenInjuriesHeader" xml:space="preserve">
+    <value>الإصابات المفتوحة</value>
+  </data>
+  <data name="NoOpenInjuries" xml:space="preserve">
+    <value>لا توجد إصابة مفتوحة.</value>
+  </data>
+  <data name="CaseNumberColumn" xml:space="preserve">
+    <value>رقم الحالة</value>
+  </data>
+  <data name="MyCasesHeader" xml:space="preserve">
+    <value>حالات التعرض الخاصة بي</value>
+  </data>
+  <data name="NoCasesSelf" xml:space="preserve">
+    <value>ليست لديك حالة تعرض. أبلغ هنا عن تعرض لمسببات أمراض منقولة بالدم أو لمرض معدٍ، أو من قيد تعرض.</value>
+  </data>
+  <data name="MyInjuriesHeader" xml:space="preserve">
+    <value>إصاباتي</value>
+  </data>
+  <data name="NoInjuriesSelf" xml:space="preserve">
+    <value>لا توجد لديك إصابة مسجلة.</value>
+  </data>
+  <data name="StateColumn" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="DutyBoardHeader" xml:space="preserve">
+    <value>لوحة حالة الخدمة</value>
+  </data>
+  <data name="DutyBoardHelp" xml:space="preserve">
+    <value>الأعضاء في خدمة مقيدة أو خارج الخدمة أو غير مُجازين بالكامل. تعرض الحالة فقط، دون السبب أبدًا.</value>
+  </data>
+  <data name="NoDutyBoard" xml:space="preserve">
+    <value>جميع من تشرف عليهم في الخدمة الكاملة ومُجازون.</value>
+  </data>
+  <data name="SinceLabel" xml:space="preserve">
+    <value>منذ</value>
+  </data>
+  <data name="PrivacyNote" xml:space="preserve">
+    <value>هذه السجلات مقيدة: يراها أنت والضابط المعيّن ومسؤولو العافية. يرى مسؤولو الإدارة والمشرفون حالة الخدمة فقط، دون التفاصيل الطبية أبدًا. لا تُفهرس للبحث ولا يستخدمها الذكاء الاصطناعي أبدًا.</value>
+  </data>
+  <data name="Duty.FullDuty" xml:space="preserve">
+    <value>خدمة كاملة</value>
+  </data>
+  <data name="Duty.RestrictedDuty" xml:space="preserve">
+    <value>خدمة مقيدة</value>
+  </data>
+  <data name="Duty.OffDuty" xml:space="preserve">
+    <value>خارج الخدمة</value>
+  </data>
+  <data name="Clearance.Cleared" xml:space="preserve">
+    <value>مُجاز</value>
+  </data>
+  <data name="Clearance.ClearedWithRestrictions" xml:space="preserve">
+    <value>مُجاز مع قيود</value>
+  </data>
+  <data name="Clearance.NotCleared" xml:space="preserve">
+    <value>غير مُجاز</value>
+  </data>
+  <data name="InjuryState.Open" xml:space="preserve">
+    <value>مفتوحة</value>
+  </data>
+  <data name="InjuryState.Cleared" xml:space="preserve">
+    <value>عاد إلى الخدمة</value>
+  </data>
+  <data name="InjuryState.Voided" xml:space="preserve">
+    <value>سُجلت خطأً</value>
+  </data>
+  <data name="Stage.Reported" xml:space="preserve">
+    <value>تم الإبلاغ</value>
+  </data>
+  <data name="Stage.SourceFollowUpRequested" xml:space="preserve">
+    <value>طُلبت متابعة المصدر</value>
+  </data>
+  <data name="Stage.NotificationRequested" xml:space="preserve">
+    <value>طُلب الإخطار (رايان وايت)</value>
+  </data>
+  <data name="Stage.NotificationReceived" xml:space="preserve">
+    <value>وصل الرد على الإخطار</value>
+  </data>
+  <data name="Stage.FollowUp" xml:space="preserve">
+    <value>المتابعة بعد التعرض</value>
+  </data>
+  <data name="Stage.Closed" xml:space="preserve">
+    <value>مغلقة</value>
+  </data>
+  <data name="Stage.Withdrawn" xml:space="preserve">
+    <value>سُجلت خطأً</value>
+  </data>
+  <data name="Route.Percutaneous" xml:space="preserve">
+    <value>وخز إبرة أو أداة حادة</value>
+  </data>
+  <data name="Route.MucousMembrane" xml:space="preserve">
+    <value>رذاذ على العينين أو الأنف أو الفم</value>
+  </data>
+  <data name="Route.NonIntactSkin" xml:space="preserve">
+    <value>ملامسة جلد مجروح</value>
+  </data>
+  <data name="Route.Airborne" xml:space="preserve">
+    <value>مرض معدٍ ينتقل عبر الهواء</value>
+  </data>
+  <data name="Route.Other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="CaseTitle" xml:space="preserve">
+    <value>حالة تعرض</value>
+  </data>
+  <data name="CaseIntro" xml:space="preserve">
+    <value>تعرض لمسببات أمراض منقولة بالدم أو لمرض معدٍ، من الإبلاغ حتى الإغلاق. ينقله الضابط المعيّن من مرحلة إلى أخرى.</value>
+  </data>
+  <data name="ProtectedWithheldNotice" xml:space="preserve">
+    <value>بعض التفاصيل محمية ومحجوبة دون منح للبيانات المحمية.</value>
+  </data>
+  <data name="NotificationOverdueHelp" xml:space="preserve">
+    <value>لم ترد المنشأة الطبية على طلب الإخطار خلال 48 ساعة. تابع مع المنشأة، أو ابدأ المتابعة بعد التعرض على أي حال.</value>
+  </data>
+  <data name="CaseFactsHeader" xml:space="preserve">
+    <value>التعرض</value>
+  </data>
+  <data name="OccurredLabel" xml:space="preserve">
+    <value>وقت الحدوث</value>
+  </data>
+  <data name="CallLabel" xml:space="preserve">
+    <value>البلاغ</value>
+  </data>
+  <data name="ReportedLabel" xml:space="preserve">
+    <value>تاريخ الإبلاغ</value>
+  </data>
+  <data name="SourceFacilityLabel" xml:space="preserve">
+    <value>المنشأة الطبية المستقبلة</value>
+  </data>
+  <data name="NotificationDueLabel" xml:space="preserve">
+    <value>موعد الرد</value>
+  </data>
+  <data name="NoPatientIdentityNote" xml:space="preserve">
+    <value>لا تُدخل أبدًا اسم المريض المصدر أو رقم سجله. تشير الحالة إلى البلاغ، والمنشأة المستقبلة تحدد المصدر منه.</value>
+  </data>
+  <data name="BbpTrainingHeader" xml:space="preserve">
+    <value>التدريب على مسببات الأمراض المنقولة بالدم</value>
+  </data>
+  <data name="ExpiresLabel" xml:space="preserve">
+    <value>ينتهي</value>
+  </data>
+  <data name="Bbp.NotTracked" xml:space="preserve">
+    <value>لا تتابعه الإدارة</value>
+  </data>
+  <data name="Bbp.Current" xml:space="preserve">
+    <value>سارٍ</value>
+  </data>
+  <data name="Bbp.ExpiringSoon" xml:space="preserve">
+    <value>ينتهي قريبًا</value>
+  </data>
+  <data name="Bbp.Expired" xml:space="preserve">
+    <value>منتهي</value>
+  </data>
+  <data name="Bbp.None" xml:space="preserve">
+    <value>لا يوجد سجل</value>
+  </data>
+  <data name="RecordInjuryButton" xml:space="preserve">
+    <value>تسجيل كإصابة</value>
+  </data>
+  <data name="RecordInjuryHelp" xml:space="preserve">
+    <value>وخز الإبرة أو الإصابة بأداة حادة الملوثة بالدم حالة خصوصية واجبة التسجيل لدى OSHA. سجّلها كإصابة لتظهر في سجل OSHA دون اسم العضو.</value>
+  </data>
+  <data name="NextStepHeader" xml:space="preserve">
+    <value>الخطوة التالية</value>
+  </data>
+  <data name="NextStepHelp" xml:space="preserve">
+    <value>سجّل وقت حدوث الخطوة وأي ملاحظات، ثم اختر الخطوة. المنشأة المستقبلة مطلوبة عند طلب متابعة المصدر.</value>
+  </data>
+  <data name="StepDateLabel" xml:space="preserve">
+    <value>الوقت (فارغ = الآن)</value>
+  </data>
+  <data name="StepNotesLabel" xml:space="preserve">
+    <value>ملاحظات هذه الخطوة</value>
+  </data>
+  <data name="ProtectedFieldHelp" xml:space="preserve">
+    <value>محمي: لا يقرؤه إلا العضو والمسؤولون.</value>
+  </data>
+  <data name="MoveToFormat" xml:space="preserve">
+    <value>الانتقال إلى: {0}</value>
+  </data>
+  <data name="NotesHeader" xml:space="preserve">
+    <value>ملاحظات محمية</value>
+  </data>
+  <data name="SourceFollowUpNotesLabel" xml:space="preserve">
+    <value>متابعة المصدر</value>
+  </data>
+  <data name="NotificationResponseLabel" xml:space="preserve">
+    <value>الرد على الإخطار</value>
+  </data>
+  <data name="MedicalNotesLabel" xml:space="preserve">
+    <value>ملاحظات الفحوص والعلاج</value>
+  </data>
+  <data name="ClosureNotesLabel" xml:space="preserve">
+    <value>ملاحظات الإغلاق</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="WithheldValue" xml:space="preserve">
+    <value>محجوب (محمي)</value>
+  </data>
+  <data name="FollowUpsHeader" xml:space="preserve">
+    <value>مهام المتابعة بعد التعرض</value>
+  </data>
+  <data name="NoFollowUps" xml:space="preserve">
+    <value>لا توجد مهمة متابعة بعد.</value>
+  </data>
+  <data name="FollowUpColumn" xml:space="preserve">
+    <value>المهمة</value>
+  </data>
+  <data name="AssigneeColumn" xml:space="preserve">
+    <value>مُسندة إلى</value>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>الاستحقاق</value>
+  </data>
+  <data name="CompleteButton" xml:space="preserve">
+    <value>تم</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="AddFollowUpButton" xml:space="preserve">
+    <value>إضافة مهمة</value>
+  </data>
+  <data name="FollowUpPrivacyHelp" xml:space="preserve">
+    <value>تذكر المهمة نوعها فقط، دون أي نتيجة؛ وتُسند إلى العضو أو إلى ضابط معيّن.</value>
+  </data>
+  <data name="FollowUpKind.baseline_testing" xml:space="preserve">
+    <value>فحص أساسي</value>
+  </data>
+  <data name="FollowUpKind.prophylaxis_review" xml:space="preserve">
+    <value>مراجعة العلاج الوقائي</value>
+  </data>
+  <data name="FollowUpKind.six_week_test" xml:space="preserve">
+    <value>فحص الأسبوع السادس</value>
+  </data>
+  <data name="FollowUpKind.three_month_test" xml:space="preserve">
+    <value>فحص الشهر الثالث</value>
+  </data>
+  <data name="FollowUpKind.six_month_test" xml:space="preserve">
+    <value>فحص الشهر السادس</value>
+  </data>
+  <data name="FollowUpKind.counselling" xml:space="preserve">
+    <value>إرشاد</value>
+  </data>
+  <data name="FollowUpKind.other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="FollowUpState.Open" xml:space="preserve">
+    <value>مفتوحة</value>
+  </data>
+  <data name="FollowUpState.Acknowledged" xml:space="preserve">
+    <value>تم الإقرار</value>
+  </data>
+  <data name="FollowUpState.Completed" xml:space="preserve">
+    <value>منجزة</value>
+  </data>
+  <data name="FollowUpState.Cancelled" xml:space="preserve">
+    <value>ملغاة</value>
+  </data>
+  <data name="ReportExposureTitle" xml:space="preserve">
+    <value>الإبلاغ عن تعرض</value>
+  </data>
+  <data name="ReportExposureIntro" xml:space="preserve">
+    <value>تعرض لمسببات أمراض منقولة بالدم أو لمرض معدٍ. يُبلَّغ الضابط المعيّن فورًا ويتولى الأمر من هنا.</value>
+  </data>
+  <data name="ExistingEntryLabel" xml:space="preserve">
+    <value>من أحد قيود التعرض الخاصة بك</value>
+  </data>
+  <data name="ExistingEntryHelp" xml:space="preserve">
+    <value>اختر قيدًا سجلته من قبل، أو اتركه لقيد جديد.</value>
+  </data>
+  <data name="NewEntryOption" xml:space="preserve">
+    <value>تعرض جديد</value>
+  </data>
+  <data name="NoCallOption" xml:space="preserve">
+    <value>بدون بلاغ</value>
+  </data>
+  <data name="NarrativeLabel" xml:space="preserve">
+    <value>ما الذي حدث</value>
+  </data>
+  <data name="PpeWornLabel" xml:space="preserve">
+    <value>معدات الحماية المستخدمة</value>
+  </data>
+  <data name="SubmitReportButton" xml:space="preserve">
+    <value>إرسال البلاغ</value>
+  </data>
+  <data name="ReportInjuryTitle" xml:space="preserve">
+    <value>الإبلاغ عن إصابة</value>
+  </data>
+  <data name="InjuryTitle" xml:space="preserve">
+    <value>إصابة</value>
+  </data>
+  <data name="InjuryIntro" xml:space="preserve">
+    <value>ما حدث، وحالة الخدمة بتواريخها، والقيود، والإجازة بالعودة إلى الخدمة. يرى المشرفون حالة الخدمة فقط.</value>
+  </data>
+  <data name="ReturnedOnLabel" xml:space="preserve">
+    <value>العودة إلى الخدمة الكاملة</value>
+  </data>
+  <data name="LinkedCaseLabel" xml:space="preserve">
+    <value>فتح حالة التعرض التي نشأت منها هذه الإصابة</value>
+  </data>
+  <data name="WhatHappenedHeader" xml:space="preserve">
+    <value>ما الذي حدث</value>
+  </data>
+  <data name="LocationLabel" xml:space="preserve">
+    <value>مكان الحدوث</value>
+  </data>
+  <data name="JobTitleLabel" xml:space="preserve">
+    <value>المسمى الوظيفي</value>
+  </data>
+  <data name="DescriptionLabel" xml:space="preserve">
+    <value>ما كان العضو يفعله وما حدث</value>
+  </data>
+  <data name="InjuryDetailsLabel" xml:space="preserve">
+    <value>الإصابة وجزء الجسم وما سببها</value>
+  </data>
+  <data name="TreatmentLabel" xml:space="preserve">
+    <value>الطبيب والمنشأة والعلاج</value>
+  </data>
+  <data name="OshaHeader" xml:space="preserve">
+    <value>تصنيف OSHA</value>
+  </data>
+  <data name="OshaHelp" xml:space="preserve">
+    <value>تُدرج الحالة واجبة التسجيل في سجل OSHA 300 للسنة ويُعد لها تقرير 301. تُحسب الأيام من سجل حالة الخدمة.</value>
+  </data>
+  <data name="OshaTypeLabel" xml:space="preserve">
+    <value>نوع الإصابة أو المرض</value>
+  </data>
+  <data name="DiedOnLabel" xml:space="preserve">
+    <value>تاريخ الوفاة</value>
+  </data>
+  <data name="RecordableLabel" xml:space="preserve">
+    <value>حالة واجبة التسجيل لدى OSHA</value>
+  </data>
+  <data name="PrivacyCaseLabel" xml:space="preserve">
+    <value>حالة خصوصية</value>
+  </data>
+  <data name="PrivacyCaseHelp" xml:space="preserve">
+    <value>يُحجب الاسم من سجل 300 (29 CFR 1904.29(b)).</value>
+  </data>
+  <data name="EmergencyRoomLabel" xml:space="preserve">
+    <value>عولج في قسم الطوارئ</value>
+  </data>
+  <data name="HospitalizedLabel" xml:space="preserve">
+    <value>أُدخل المستشفى ليلة</value>
+  </data>
+  <data name="OshaOfficerOnlyNote" xml:space="preserve">
+    <value>يراجع مسؤولو الصحة في إدارتك البلاغ ويكملون تصنيف OSHA.</value>
+  </data>
+  <data name="DutyHistoryHeader" xml:space="preserve">
+    <value>سجل حالة الخدمة</value>
+  </data>
+  <data name="RestrictionsLabel" xml:space="preserve">
+    <value>القيود</value>
+  </data>
+  <data name="NoPeriods" xml:space="preserve">
+    <value>خدمة كاملة طوال الوقت.</value>
+  </data>
+  <data name="FromColumn" xml:space="preserve">
+    <value>من</value>
+  </data>
+  <data name="ToColumn" xml:space="preserve">
+    <value>حتى</value>
+  </data>
+  <data name="OngoingLabel" xml:space="preserve">
+    <value>مستمر</value>
+  </data>
+  <data name="SetDutyStatusHeader" xml:space="preserve">
+    <value>خدمة مقيدة أو خارج الخدمة</value>
+  </data>
+  <data name="RestrictionsHelp" xml:space="preserve">
+    <value>محمي. يرى المشرفون فقط أن العضو في خدمة مقيدة.</value>
+  </data>
+  <data name="SetDutyStatusButton" xml:space="preserve">
+    <value>تعيين حالة الخدمة</value>
+  </data>
+  <data name="ReturnHeader" xml:space="preserve">
+    <value>العودة إلى الخدمة</value>
+  </data>
+  <data name="ReturnHelp" xml:space="preserve">
+    <value>الإجازة بالعودة إلى الخدمة الكاملة تُنهي فترات الخدمة الخاصة بالإصابة.</value>
+  </data>
+  <data name="ClearanceNotesLabel" xml:space="preserve">
+    <value>ملاحظات الإجازة</value>
+  </data>
+  <data name="ClearReturnButton" xml:space="preserve">
+    <value>الإجازة للخدمة الكاملة</value>
+  </data>
+  <data name="VoidInjuryButton" xml:space="preserve">
+    <value>سُجلت خطأً</value>
+  </data>
+  <data name="VoidInjuryHelp" xml:space="preserve">
+    <value>يُحتفظ بالسجل طوال مدة الاحتفاظ ويُزال من سجل OSHA.</value>
+  </data>
+  <data name="ClearancesTitle" xml:space="preserve">
+    <value>الإجازة الطبية (NFPA 1582)</value>
+  </data>
+  <data name="ClearancesIntro" xml:space="preserve">
+    <value>التقييمات الطبية المهنية مع حالة القيود. يرى المسؤولون والتوزيع الحالة؛ تفاصيل القيود محمية.</value>
+  </data>
+  <data name="ClearanceTypeMissingNote" xml:space="preserve">
+    <value>حدد نوع شهادة للإجازة الطبية في إعدادات العافية (من قالب "Medical Clearance (NFPA 1582)") لتسجيل كل تقييم كشهادة أيضًا.</value>
+  </data>
+  <data name="CurrentClearancesHeader" xml:space="preserve">
+    <value>الإجازة الحالية لكل عضو</value>
+  </data>
+  <data name="NoClearances" xml:space="preserve">
+    <value>لم تُسجل إجازة بعد.</value>
+  </data>
+  <data name="EvaluatedOnLabel" xml:space="preserve">
+    <value>تاريخ التقييم</value>
+  </data>
+  <data name="HistoryButton" xml:space="preserve">
+    <value>السجل</value>
+  </data>
+  <data name="RecordClearanceHeader" xml:space="preserve">
+    <value>تسجيل تقييم</value>
+  </data>
+  <data name="RestrictionDetailLabel" xml:space="preserve">
+    <value>القيود وأسبابها</value>
+  </data>
+  <data name="ClearanceDetailHelp" xml:space="preserve">
+    <value>محمي (ADP). يرى المسؤولون والتوزيع فقط: مُجاز، أو مُجاز مع قيود، أو غير مُجاز.</value>
+  </data>
+  <data name="RecordClearanceButton" xml:space="preserve">
+    <value>تسجيل التقييم</value>
+  </data>
+  <data name="HistoryHeaderFormat" xml:space="preserve">
+    <value>سجل الإجازات: {0}</value>
+  </data>
+  <data name="VoidedLabel" xml:space="preserve">
+    <value>مُلغى</value>
+  </data>
+  <data name="VoidButton" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="HealthSettingsHeader" xml:space="preserve">
+    <value>حالات التعرض والإصابات والإجازة الطبية</value>
+  </data>
+  <data name="DesignatedOfficerRoleLabel" xml:space="preserve">
+    <value>دور الضابط المعيّن</value>
+  </data>
+  <data name="DesignatedOfficerRoleHelp" xml:space="preserve">
+    <value>يتلقى أعضاء هذا الدور بلاغات التعرض لمسببات الأمراض المنقولة بالدم والأمراض المعدية (رايان وايت الجزء G) ويديرون الحالات.</value>
+  </data>
+  <data name="SameAsWellnessOfficerOption" xml:space="preserve">
+    <value>دور مسؤول العافية</value>
+  </data>
+  <data name="BbpTrainingTypeLabel" xml:space="preserve">
+    <value>شهادة التدريب على مسببات الأمراض المنقولة بالدم</value>
+  </data>
+  <data name="BbpTrainingTypeHelp" xml:space="preserve">
+    <value>تعرض كل حالة تعرض الوضع الحالي للعضو في هذا التدريب السنوي (OSHA 1910.1030).</value>
+  </data>
+  <data name="ClearanceTypeLabel" xml:space="preserve">
+    <value>شهادة الإجازة الطبية</value>
+  </data>
+  <data name="ClearanceTypeHelp" xml:space="preserve">
+    <value>يُسجَّل كل تقييم NFPA 1582 أيضًا كشهادة من هذا النوع؛ ويؤدي "غير مُجاز" إلى تعليقها.</value>
+  </data>
+  <data name="InjuryRetentionYearsLabel" xml:space="preserve">
+    <value>الاحتفاظ بسجلات الإصابات (بالسنوات)</value>
+  </data>
+  <data name="InjuryRetentionYearsHelp" xml:space="preserve">
+    <value>بعد نهاية سنة الإصابة: 5 على الأقل (OSHA 1904.33). تتبع حالات التعرض والإجازات مدة الاحتفاظ بسجلات التعرض البالغة 30 سنة.</value>
+  </data>
+  <data name="OshaTitle" xml:space="preserve">
+    <value>OSHA 300 و301</value>
+  </data>
+  <data name="OshaIntro" xml:space="preserve">
+    <value>سجل السنة للإصابات واجبة التسجيل وتقارير الحوادث، مبني من سجلات الإصابات. تظهر حالات الخصوصية دون اسم.</value>
+  </data>
+  <data name="ShowButton" xml:space="preserve">
+    <value>عرض</value>
+  </data>
+  <data name="Export300Csv" xml:space="preserve">
+    <value>سجل 300 (CSV)</value>
+  </data>
+  <data name="Export300Pdf" xml:space="preserve">
+    <value>سجل 300 (PDF)</value>
+  </data>
+  <data name="Export301Csv" xml:space="preserve">
+    <value>تقارير 301 (CSV)</value>
+  </data>
+  <data name="Export301Pdf" xml:space="preserve">
+    <value>تقارير 301 (PDF)</value>
+  </data>
+  <data name="NoCasesOnLog" xml:space="preserve">
+    <value>لا توجد حالة واجبة التسجيل هذه السنة.</value>
+  </data>
+  <data name="PrivacyMaskNote" xml:space="preserve">
+    <value>تظهر حالة الخصوصية بعبارة "حالة خصوصية" بدل الاسم، هنا وفي كل تصدير لسجل 300.</value>
+  </data>
+  <data name="OutcomeColumn" xml:space="preserve">
+    <value>النتيجة</value>
+  </data>
+  <data name="Outcome.Death" xml:space="preserve">
+    <value>وفاة</value>
+  </data>
+  <data name="Outcome.DaysAwayFromWork" xml:space="preserve">
+    <value>أيام غياب عن العمل</value>
+  </data>
+  <data name="Outcome.JobTransferOrRestriction" xml:space="preserve">
+    <value>نقل وظيفي أو تقييد</value>
+  </data>
+  <data name="Outcome.OtherRecordable" xml:space="preserve">
+    <value>حالة أخرى واجبة التسجيل</value>
+  </data>
+  <data name="Osha.LogTitle" xml:space="preserve">
+    <value>سجل الإصابات والأمراض المرتبطة بالعمل (بصيغة نموذج OSHA 300)</value>
+  </data>
+  <data name="Osha.ReportTitle" xml:space="preserve">
+    <value>تقرير حادث إصابة أو مرض (بصيغة نموذج OSHA 301)</value>
+  </data>
+  <data name="Osha.Establishment" xml:space="preserve">
+    <value>المنشأة</value>
+  </data>
+  <data name="Osha.Year" xml:space="preserve">
+    <value>السنة</value>
+  </data>
+  <data name="Osha.CaseNumber" xml:space="preserve">
+    <value>رقم الحالة</value>
+  </data>
+  <data name="Osha.EmployeeName" xml:space="preserve">
+    <value>اسم الموظف</value>
+  </data>
+  <data name="Osha.JobTitle" xml:space="preserve">
+    <value>المسمى الوظيفي</value>
+  </data>
+  <data name="Osha.DateOfInjury" xml:space="preserve">
+    <value>تاريخ الإصابة أو بدء المرض</value>
+  </data>
+  <data name="Osha.Where" xml:space="preserve">
+    <value>مكان وقوع الحادث</value>
+  </data>
+  <data name="Osha.Description" xml:space="preserve">
+    <value>الإصابة أو المرض وأجزاء الجسم المتأثرة والجسم أو المادة المسببة</value>
+  </data>
+  <data name="Osha.Death" xml:space="preserve">
+    <value>وفاة</value>
+  </data>
+  <data name="Osha.DaysAwayCase" xml:space="preserve">
+    <value>أيام غياب عن العمل</value>
+  </data>
+  <data name="Osha.RestrictedCase" xml:space="preserve">
+    <value>نقل وظيفي أو تقييد</value>
+  </data>
+  <data name="Osha.OtherRecordable" xml:space="preserve">
+    <value>حالة أخرى واجبة التسجيل</value>
+  </data>
+  <data name="Osha.DaysAway" xml:space="preserve">
+    <value>الغياب عن العمل (أيام)</value>
+  </data>
+  <data name="Osha.DaysRestricted" xml:space="preserve">
+    <value>في نقل وظيفي أو تقييد (أيام)</value>
+  </data>
+  <data name="Osha.Type.Injury" xml:space="preserve">
+    <value>إصابة</value>
+  </data>
+  <data name="Osha.Type.SkinDisorder" xml:space="preserve">
+    <value>اضطراب جلدي</value>
+  </data>
+  <data name="Osha.Type.RespiratoryCondition" xml:space="preserve">
+    <value>حالة تنفسية</value>
+  </data>
+  <data name="Osha.Type.Poisoning" xml:space="preserve">
+    <value>تسمم</value>
+  </data>
+  <data name="Osha.Type.HearingLoss" xml:space="preserve">
+    <value>فقدان السمع</value>
+  </data>
+  <data name="Osha.Type.AllOtherIllnesses" xml:space="preserve">
+    <value>جميع الأمراض الأخرى</value>
+  </data>
+  <data name="Osha.Totals" xml:space="preserve">
+    <value>المجاميع</value>
+  </data>
+  <data name="Osha.TimeOfEvent" xml:space="preserve">
+    <value>وقت الحادث</value>
+  </data>
+  <data name="Osha.WhatHappened" xml:space="preserve">
+    <value>ماذا كان الموظف يفعل، وما الذي حدث؟</value>
+  </data>
+  <data name="Osha.InjuryDetails" xml:space="preserve">
+    <value>ما الإصابة أو المرض، وما الذي أضر بالموظف؟</value>
+  </data>
+  <data name="Osha.Treatment" xml:space="preserve">
+    <value>الطبيب والمنشأة والعلاج</value>
+  </data>
+  <data name="Osha.EmergencyRoom" xml:space="preserve">
+    <value>عولج في قسم الطوارئ</value>
+  </data>
+  <data name="Osha.Hospitalized" xml:space="preserve">
+    <value>أُدخل المستشفى ليلة كمريض مقيم</value>
+  </data>
+  <data name="Osha.DateOfDeath" xml:space="preserve">
+    <value>تاريخ الوفاة</value>
+  </data>
+  <data name="Osha.PrivacyCase" xml:space="preserve">
+    <value>حالة خصوصية</value>
+  </data>
+  <data name="Osha.PrivacyCaseName" xml:space="preserve">
+    <value>حالة خصوصية</value>
+  </data>
+  <data name="Osha.EmployeeDetailsNote" xml:space="preserve">
+    <value>يُستكمل عنوان الموظف وتاريخ ميلاده وتاريخ تعيينه وجنسه من ملف الموظفين.</value>
+  </data>
+  <data name="Osha.Withheld" xml:space="preserve">
+    <value>محجوب (محمي)</value>
+  </data>
+  <data name="Osha.Yes" xml:space="preserve">
+    <value>نعم</value>
+  </data>
+  <data name="Osha.No" xml:space="preserve">
+    <value>لا</value>
+  </data>
+  <data name="Osha.Retention" xml:space="preserve">
+    <value>احتفظ بهذه السجلات خمس سنوات بعد نهاية السنة التي تغطيها (29 CFR 1904.33).</value>
+  </data>
+  <data name="Osha.Generated" xml:space="preserve">
+    <value>أُنشئ في {0}</value>
+  </data>
+  <data name="Msg.ExposureReported" xml:space="preserve">
+    <value>تم الإبلاغ عن التعرض وإخطار الضابط المعيّن.</value>
+  </data>
+  <data name="Msg.CaseMoved" xml:space="preserve">
+    <value>انتقلت الحالة إلى خطوتها التالية.</value>
+  </data>
+  <data name="Msg.Saved" xml:space="preserve">
+    <value>تم الحفظ.</value>
+  </data>
+  <data name="Msg.FollowUpAdded" xml:space="preserve">
+    <value>أُضيفت مهمة المتابعة.</value>
+  </data>
+  <data name="Msg.FollowUpCompleted" xml:space="preserve">
+    <value>أُنجزت مهمة المتابعة.</value>
+  </data>
+  <data name="Msg.FollowUpCancelled" xml:space="preserve">
+    <value>أُلغيت مهمة المتابعة.</value>
+  </data>
+  <data name="Msg.InjuryReported" xml:space="preserve">
+    <value>تم الإبلاغ عن الإصابة.</value>
+  </data>
+  <data name="Msg.DutyStatusSaved" xml:space="preserve">
+    <value>تم تعيين حالة الخدمة.</value>
+  </data>
+  <data name="Msg.ReturnedToDuty" xml:space="preserve">
+    <value>العضو مُجاز للخدمة الكاملة.</value>
+  </data>
+  <data name="Msg.InjuryVoided" xml:space="preserve">
+    <value>تم وسم الإصابة بأنها سُجلت خطأً.</value>
+  </data>
+  <data name="Msg.ClearanceRecorded" xml:space="preserve">
+    <value>تم تسجيل التقييم.</value>
+  </data>
+  <data name="Msg.ClearanceVoided" xml:space="preserve">
+    <value>تم إلغاء التقييم.</value>
+  </data>
+  <data name="Error.Generic" xml:space="preserve">
+    <value>تعذر الحفظ. راجع النموذج وحاول مرة أخرى.</value>
+  </data>
+  <data name="Error.NotAllowed" xml:space="preserve">
+    <value>ليست لديك صلاحية للقيام بذلك.</value>
+  </data>
+  <data name="Error.ExportFailed" xml:space="preserve">
+    <value>تعذر إنشاء التصدير. حاول لاحقًا.</value>
+  </data>
+  <data name="Error.date_invalid" xml:space="preserve">
+    <value>أدخل تاريخًا صالحًا (ليس في المستقبل).</value>
+  </data>
+  <data name="Error.member_not_found" xml:space="preserve">
+    <value>هذا العضو ليس عضوًا حاليًا في الإدارة.</value>
+  </data>
+  <data name="Error.route_required" xml:space="preserve">
+    <value>اختر طريقة تعرض العضو.</value>
+  </data>
+  <data name="Error.entry_not_bloodborne" xml:space="preserve">
+    <value>لا يمكن فتح حالة إلا من قيد تعرض مؤكد لمسببات أمراض منقولة بالدم (أو أخرى).</value>
+  </data>
+  <data name="Error.case_exists" xml:space="preserve">
+    <value>لهذا القيد حالة مفتوحة بالفعل.</value>
+  </data>
+  <data name="Error.call_not_found" xml:space="preserve">
+    <value>لم يُعثر على هذا البلاغ في هذه الإدارة.</value>
+  </data>
+  <data name="Error.case_changed" xml:space="preserve">
+    <value>غيّر شخص آخر هذه الحالة. أعد تحميلها وحاول مرة أخرى.</value>
+  </data>
+  <data name="Error.stage_not_allowed" xml:space="preserve">
+    <value>لا يمكن نقل الحالة إلى تلك الخطوة من موضعها الحالي.</value>
+  </data>
+  <data name="Error.facility_required" xml:space="preserve">
+    <value>أدخل المنشأة الطبية المستقبلة لطلب متابعة المصدر.</value>
+  </data>
+  <data name="Error.follow_ups_open" xml:space="preserve">
+    <value>أنجز مهام المتابعة المفتوحة أو ألغها قبل إغلاق الحالة.</value>
+  </data>
+  <data name="Error.case_closed" xml:space="preserve">
+    <value>هذه الحالة مغلقة.</value>
+  </data>
+  <data name="Error.follow_up_assignee_invalid" xml:space="preserve">
+    <value>تُسند المهمة إلى العضو المعرّض أو إلى ضابط معيّن.</value>
+  </data>
+  <data name="Error.duty_status_required" xml:space="preserve">
+    <value>اختر خدمة مقيدة أو خارج الخدمة.</value>
+  </data>
+  <data name="Error.return_date_invalid" xml:space="preserve">
+    <value>يجب أن تكون العودة المتوقعة بعد تاريخ البدء.</value>
+  </data>
+  <data name="Error.date_before_current_status" xml:space="preserve">
+    <value>هذا التاريخ يسبق بدء حالة الخدمة الحالية.</value>
+  </data>
+  <data name="Error.injury_not_open" xml:space="preserve">
+    <value>لا يمكن الإجازة للخدمة إلا لإصابة مفتوحة.</value>
+  </data>
+  <data name="Error.clearance_status_required" xml:space="preserve">
+    <value>اختر حالة الإجازة.</value>
+  </data>
+  <data name="Error.valid_until_invalid" xml:space="preserve">
+    <value>يجب أن يكون التقييم التالي بعد تاريخ التقييم.</value>
+  </data>
+  <data name="Error.injury_changed" xml:space="preserve">
+    <value>غيّر شخص آخر هذه الإصابة. أعد تحميلها وحاول مرة أخرى.</value>
+  </data>
+  <data name="Error.protected_write_refused" xml:space="preserve">
+    <value>تعذر حفظ التفاصيل المحمية حاليًا. حاول لاحقًا.</value>
+  </data>
+</root>

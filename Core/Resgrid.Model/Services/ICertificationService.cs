@@ -67,6 +67,15 @@ namespace Resgrid.Model.Services
 		Task<PersonnelCertification> RenewCertificationAsync(int certificationId, int departmentId, DateTime? newExpiresOn, string newNumber, string userId, CancellationToken cancellationToken = default);
 		/// <summary>Soft delete with audit; credits stay for history.</summary>
 		Task<bool> SoftDeleteCertificationAsync(int certificationId, int departmentId, string userId, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// Expires a live record because an outside rule requires it (e.g. an overdue refresher, T3): status Expired with the reason, and the
+		/// expiry moved back to <paramref name="onDate"/> when it was later or missing, so the role grace runs from today. Audits Before/After
+		/// and raises CertificationExpiredEvent. Returns null when the record is not live (nothing to expire).
+		/// </summary>
+		Task<PersonnelCertification> ExpireCertificationByRuleAsync(int certificationId, int departmentId, DateTime onDate, string reason, string userId, CancellationToken cancellationToken = default);
+		/// <summary>Puts a record back to the status and expiry it held before a rule changed it (the rule's undo). Audits Before/After; raises trigger 91.</summary>
+		Task<PersonnelCertification> RestoreCertificationStateAsync(int certificationId, int departmentId, PersonnelCertificationStatuses status, DateTime? expiresOn, string reason,
+			string userId, CancellationToken cancellationToken = default);
 
 		// ---- Credits (plan D1.4) ----------------------------------------------------------------------------------
 

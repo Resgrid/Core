@@ -1,0 +1,70 @@
+@using Resgrid.Web.Areas.User.Models.LmsPrograms
+@model LmsProgramSettingsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@* Trainings → Programs → Settings (setting 144): training request approval and currency; building-familiarization credit from Records. *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Prg.SettingsTitle"];
+    ViewData["Title"] = localizer["Prg.SettingsTitle"].Value;
+    ViewData["Subtitle"] = localizer["Prg.SettingsIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var s = Model.Settings;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    <form method="post" asp-controller="LmsPrograms" asp-action="Settings" asp-route-area="User">
+        @Html.AntiForgeryToken()
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-paper-plane-o" aria-hidden="true"></i> @localizer["Prg.RequestsTitle"]</h5></div>
+            <div class="ibox-content">
+                <div class="checkbox"><label for="RequestSupervisorApproval"><input id="RequestSupervisorApproval" type="checkbox" name="requestSupervisorApproval" value="true" checked="@s.RequestSupervisorApproval" /> @localizer["Prg.Set.RequestSupervisorApproval"]</label></div>
+                <div class="checkbox"><label for="RequestTrainingOfficerApproval"><input id="RequestTrainingOfficerApproval" type="checkbox" name="requestTrainingOfficerApproval" value="true" checked="@s.RequestTrainingOfficerApproval" /> @localizer["Prg.Set.RequestTrainingOfficerApproval"]</label></div>
+                <p class="help-block">@localizer["Prg.Set.RequestApprovalHelp"]</p>
+                <div class="form-group">
+                    <label for="RequestCurrency">@localizer["Prg.Set.RequestCurrency"]</label>
+                    <input id="RequestCurrency" name="requestCurrency" class="form-control" maxlength="3" style="max-width:8em" value="@s.RequestCurrency" />
+                </div>
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-building-o" aria-hidden="true"></i> @localizer["Prg.Set.Familiarization"]</h5></div>
+            <div class="ibox-content">
+                <p class="help-block">@localizer["Prg.Set.FamiliarizationHelp"]</p>
+                <div class="checkbox"><label for="FamiliarizationEnabled"><input id="FamiliarizationEnabled" type="checkbox" name="familiarizationEnabled" value="true" checked="@s.FamiliarizationEnabled" /> @localizer["Prg.Set.FamiliarizationEnabled"]</label></div>
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="FamiliarizationCategoryId">@localizer["Prg.Set.FamiliarizationCategory"]</label>
+                        <select id="FamiliarizationCategoryId" name="familiarizationCategoryId" class="form-control">
+                            <option value="0">—</option>
+                            @foreach (var category in Model.Categories.Where(c => !c.IsDeleted).OrderBy(c => c.SortOrder).ThenBy(c => c.Name))
+                            {
+                                <option value="@category.TrainingCategoryId" selected="@(s.FamiliarizationCategoryId == category.TrainingCategoryId)">@category.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="FamiliarizationMinutes">@localizer["Prg.Set.FamiliarizationMinutes"]</label>
+                        <input id="FamiliarizationMinutes" name="familiarizationMinutes" type="number" min="5" max="1440" class="form-control" value="@s.FamiliarizationMinutes" />
+                    </div>
+                </div>
+                <div class="checkbox"><label for="FamiliarizationFromInspections"><input id="FamiliarizationFromInspections" type="checkbox" name="familiarizationFromInspections" value="true" checked="@s.FamiliarizationFromInspections" /> @localizer["Prg.Set.FromInspections"]</label></div>
+                <div class="checkbox"><label for="FamiliarizationFromPreplanReviews"><input id="FamiliarizationFromPreplanReviews" type="checkbox" name="familiarizationFromPreplanReviews" value="true" checked="@s.FamiliarizationFromPreplanReviews" /> @localizer["Prg.Set.FromPreplanReviews"]</label></div>
+            </div>
+        </div>
+
+        @if (Model.CanAuthor)
+        {
+            <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Prg.Save"]</button>
+        }
+    </form>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

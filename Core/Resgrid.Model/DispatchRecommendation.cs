@@ -108,6 +108,27 @@ namespace Resgrid.Model
 		public bool Reevaluate { get; set; }
 
 		/// <summary>
+		/// Protocols P4: the determinants in force on the call (its protocols' case outcomes), read by ProtocolOutcome conditions. Null
+		/// means "not supplied": for a saved call the service reads them from the call's protocols.
+		/// </summary>
+		public List<CallProtocolDeterminant> ProtocolDeterminants { get; set; }
+
+		/// <summary>Protocols P4 trigger facts: the call's nature and notes (keyword triggers).</summary>
+		public string Nature { get; set; }
+
+		/// <summary>Protocols P4 trigger facts: the call's notes.</summary>
+		public string Notes { get; set; }
+
+		/// <summary>Protocols P4 trigger facts: the POI the call's location was picked from (POI type triggers).</summary>
+		public int? LocationPoiId { get; set; }
+
+		/// <summary>Protocols P4 trigger facts: Call.CallSource (intake classification triggers).</summary>
+		public int? CallSource { get; set; }
+
+		/// <summary>Protocols P4 trigger facts: the call's logged time (schedules and trigger windows); null for now.</summary>
+		public DateTime? LoggedOnUtc { get; set; }
+
+		/// <summary>
 		/// Conditional run cards: the outcome node the dispatcher saw on the New Call preview, posted with the form. Used
 		/// instead of a fresh walk when it is an outcome of the matched card's level; ignored otherwise.
 		/// </summary>
@@ -137,6 +158,13 @@ namespace Resgrid.Model
 				CallTypeId = call.CallTypeId,
 				Latitude = location?.Latitude,
 				Longitude = location?.Longitude,
+				// Protocols P4: determinants on the call (null when its protocols were not loaded) and the trigger facts.
+				ProtocolDeterminants = call.Protocols == null ? null : CallProtocolDeterminant.From(call.Protocols),
+				Nature = call.NatureOfCall,
+				Notes = call.Notes,
+				LocationPoiId = call.LocationPoiId,
+				CallSource = call.CallSource,
+				LoggedOnUtc = call.LoggedOn > DateTime.MinValue.AddDays(1) ? call.LoggedOn : (DateTime?)null,
 				TargetAlarmLevel = targetLevel,
 				// A unit released (stood down) from the call neither covers a requirement nor is kept from being recommended again.
 				AlreadyDispatchedUnitIds = CallDispatchUnitReleases.ActiveUnitIds(call.UnitDispatches).ToList(),

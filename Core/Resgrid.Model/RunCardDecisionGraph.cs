@@ -56,8 +56,30 @@ namespace Resgrid.Model
 
 				if (node.NodeKind == (int)RunCardDecisionNodeKinds.Condition)
 				{
-					if (node.ConditionType != (int)RunCardConditionTypes.ArrivesBefore && node.ConditionType != (int)RunCardConditionTypes.AvailableWithin)
+					if (node.ConditionType != (int)RunCardConditionTypes.ArrivesBefore && node.ConditionType != (int)RunCardConditionTypes.AvailableWithin
+						&& node.ConditionType != (int)RunCardConditionTypes.ProtocolOutcome)
 						errors.Add($"{name}: choose what the condition tests.");
+
+					if (node.ConditionType == (int)RunCardConditionTypes.ProtocolOutcome)
+					{
+						// Protocols P4: compares the determinant on the call, not resources; no time, subject or reference.
+						var parameters = RunCardProtocolOutcomeParameters.Parse(node.ParametersJson);
+						if (parameters == null || !ProtocolDecisionGraphs.IsValidDeterminant(parameters.Value)
+							|| (parameters.Match != (int)RunCardProtocolOutcomeMatches.Equals && parameters.Match != (int)RunCardProtocolOutcomeMatches.StartsWith))
+							errors.Add($"{name}: enter the determinant (or the start of it) the condition compares.");
+
+						if (string.IsNullOrWhiteSpace(node.YesNodeKey) || string.IsNullOrWhiteSpace(node.NoNodeKey))
+							errors.Add($"{name}: a condition needs both a Yes and a No branch.");
+						else
+						{
+							if (!byKey.ContainsKey(node.YesNodeKey))
+								errors.Add($"{name}: its Yes branch points to a node that does not exist.");
+							if (!byKey.ContainsKey(node.NoNodeKey))
+								errors.Add($"{name}: its No branch points to a node that does not exist.");
+						}
+
+						continue;
+					}
 
 					if (string.IsNullOrWhiteSpace(node.YesNodeKey) || string.IsNullOrWhiteSpace(node.NoNodeKey))
 						errors.Add($"{name}: a condition needs both a Yes and a No branch.");

@@ -1,0 +1,216 @@
+{
+  "schema": 1,
+  "id": "16-business",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Business",
+  "minutes": 8.9,
+  "walkthrough": false,
+  "audience": [
+    "business"
+  ],
+  "visibility": [
+    "module:BusinessOperations",
+    "addon:BusinessOperations"
+  ],
+  "pages": [
+    "Invoicing",
+    "Bids",
+    "Contracts",
+    "Contacts",
+    "RateSchedules",
+    "Workforce",
+    "CalOesMars"
+  ],
+  "adminAssist": {
+    "areas": [
+      "business"
+    ],
+    "capabilities": [
+      "invoices",
+      "contracts",
+      "cal-oes-mars",
+      "workforce",
+      "bids",
+      "rate-schedules",
+      "new-invoice"
+    ]
+  },
+  "media": {
+    "video": "media/16-business.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/16-business.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Connect service activity to costs and billing",
+    "ar": "اربط نشاط الخدمة بالتكاليف والفوترة",
+    "de": "Leistungen mit Kosten und Abrechnung verbinden",
+    "el": "Συνδέστε τη δραστηριότητα υπηρεσίας με κόστος και χρεώσεις",
+    "es": "Conectar la actividad del servicio con costes y facturación",
+    "fr": "Relier l’activité de service aux coûts et à la facturation",
+    "it": "Collegare l’attività di servizio a costi e fatturazione",
+    "pl": "Łącz działania usługowe z kosztami i fakturowaniem",
+    "sv": "Koppla verksamheten till kostnader och fakturering",
+    "uk": "Пов’яжіть діяльність служби з витратами й рахунками"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "What does the business module connect?",
+        "ar": "ماذا تربط وحدة الأعمال؟",
+        "de": "Was verbindet das Geschäftsmodul?",
+        "el": "Τι συνδέει η επιχειρησιακή ενότητα;",
+        "es": "¿Qué conecta el módulo de negocio?",
+        "fr": "Que relie le module de gestion ?",
+        "it": "Che cosa collega il modulo gestionale?",
+        "pl": "Co łączy moduł biznesowy?",
+        "sv": "Vad kopplar affärsmodulen ihop?",
+        "uk": "Що поєднує бізнес-модуль?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Radios to repeaters",
+            "ar": "أجهزة اللاسلكي بالمكررات",
+            "de": "Funkgeräte mit Relaisstationen",
+            "el": "Ασυρμάτους με αναμεταδότες",
+            "es": "Radios con repetidores",
+            "fr": "Les radios aux relais",
+            "it": "Radio e ripetitori",
+            "pl": "Radiotelefony z przemiennikami",
+            "sv": "Radio med repeatrar",
+            "uk": "Рації з ретрансляторами"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "The service you provide to its costs and billing",
+            "ar": "الخدمة التي تقدمها بتكاليفها وفوترتها",
+            "de": "Die erbrachten Leistungen mit Kosten und Abrechnung",
+            "el": "Την υπηρεσία που παρέχετε με το κόστος και τη χρέωσή της",
+            "es": "El servicio que presta con sus costes y facturación",
+            "fr": "Le service rendu à ses coûts et à sa facturation",
+            "it": "Il servizio fornito ai suoi costi e alla fatturazione",
+            "pl": "Świadczone usługi z ich kosztami i fakturowaniem",
+            "sv": "Tjänsten ni utför med dess kostnader och fakturering",
+            "uk": "Надані послуги з їхніми витратами та рахунками"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Units to GPS devices",
+            "ar": "الوحدات بأجهزة GPS",
+            "de": "Einheiten mit GPS-Geräten",
+            "el": "Μονάδες με συσκευές GPS",
+            "es": "Unidades con dispositivos GPS",
+            "fr": "Les unités aux balises GPS",
+            "it": "Mezzi e dispositivi GPS",
+            "pl": "Jednostki z urządzeniami GPS",
+            "sv": "Enheter med GPS-enheter",
+            "uk": "Підрозділи з GPS-пристроями"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "What does an invoice record?",
+        "ar": "ماذا تسجل الفاتورة؟",
+        "de": "Was hält eine Rechnung fest?",
+        "el": "Τι καταγράφει ένα τιμολόγιο;",
+        "es": "¿Qué registra una factura?",
+        "fr": "Que consigne une facture ?",
+        "it": "Che cosa registra una fattura?",
+        "pl": "Co rejestruje faktura?",
+        "sv": "Vad registrerar en faktura?",
+        "uk": "Що фіксує рахунок?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "A member's training",
+            "ar": "تدريب العضو",
+            "de": "Die Schulungen eines Mitglieds",
+            "el": "Την εκπαίδευση ενός μέλους",
+            "es": "La formación de un miembro",
+            "fr": "La formation d’un membre",
+            "it": "La formazione di un membro",
+            "pl": "Szkolenia członka",
+            "sv": "En medlems utbildning",
+            "uk": "Навчання учасника"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "A unit's location",
+            "ar": "موقع الوحدة",
+            "de": "Den Standort einer Einheit",
+            "el": "Τη θέση μιας μονάδας",
+            "es": "La ubicación de una unidad",
+            "fr": "La position d’une unité",
+            "it": "La posizione di un mezzo",
+            "pl": "Lokalizację jednostki",
+            "sv": "En enhets position",
+            "uk": "Місцезнаходження підрозділу"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "What was provided and what is owed",
+            "ar": "ما قُدّم وما هو مستحق",
+            "de": "Was geleistet wurde und was geschuldet wird",
+            "el": "Τι παρασχέθηκε και τι οφείλεται",
+            "es": "Lo que se prestó y lo que se debe",
+            "fr": "Ce qui a été fourni et ce qui est dû",
+            "it": "Che cosa è stato fornito e quanto è dovuto",
+            "pl": "Co wykonano i ile się należy",
+            "sv": "Vad som tillhandahållits och vad som är skuldigt",
+            "uk": "Що надано і скільки належить сплатити"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "f",
+      "text": {
+        "en": "Billing in Resgrid has nothing to do with the work recorded on calls.",
+        "ar": "لا علاقة للفوترة في Resgrid بالعمل المسجل في البلاغات.",
+        "de": "Die Abrechnung in Resgrid hat nichts mit der bei Einsätzen erfassten Arbeit zu tun.",
+        "el": "Η χρέωση στο Resgrid δεν σχετίζεται με την εργασία που καταγράφεται στις κλήσεις.",
+        "es": "La facturación de Resgrid no tiene relación con el trabajo registrado en las llamadas.",
+        "fr": "La facturation dans Resgrid n’a aucun lien avec le travail consigné sur les interventions.",
+        "it": "La fatturazione in Resgrid non ha nulla a che fare con il lavoro registrato sulle chiamate.",
+        "pl": "Fakturowanie w Resgrid nie ma związku z pracą zapisaną przy zgłoszeniach.",
+        "sv": "Fakturering i Resgrid har inget med arbetet som registreras på larm att göra.",
+        "uk": "Рахунки в Resgrid ніяк не пов’язані з роботою, зафіксованою у викликах."
+      }
+    }
+  ]
+}

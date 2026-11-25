@@ -1,0 +1,144 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Courses
+@model AcademyModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["AcademyTitle"];
+    ViewData["Section"] = "Academy";
+    ViewData["Title"] = localizer["AcademyTitle"].Value;
+    ViewData["Subtitle"] = localizer["AcademyIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var assignLesson = Model.AssignLessonId == null ? null : Model.Catalog.Lessons.FirstOrDefault(l => l.Definition.LessonId == Model.AssignLessonId);
+    var assignPath = Model.AssignPathKey == null ? null : Model.Catalog.Paths.FirstOrDefault(p => p.Path.Key == Model.AssignPathKey);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label"><i class="fa fa-play-circle" aria-hidden="true"></i> @localizer["AcademyLessonsTile"]</div>
+            <div class="rgw-stat-value">@Model.Catalog.Lessons.Count</div>
+        </div>
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label"><i class="fa fa-check-circle text-navy" aria-hidden="true"></i> @localizer["AcademyCompletedTile"]</div>
+            <div class="rgw-stat-value">@Model.Catalog.Lessons.Count(l => l.Completed)</div>
+        </div>
+    </div>
+
+    @if (Model.Catalog.CanAssign && (assignLesson != null || assignPath != null))
+    {
+        <div class="ibox float-e-margins" id="assign">
+            <div class="ibox-title"><h5><i class="fa fa-user-plus" aria-hidden="true"></i> @(assignPath != null ? string.Format(localizer["AssignPathHeader"].Value, Model.Text("Path." + assignPath.Path.Key)) : string.Format(localizer["AssignLessonHeader"].Value, Model.Text(assignLesson.Definition.LessonId + ".Title")))</h5></div>
+            <div class="ibox-content">
+                <form method="post" asp-controller="Courses" asp-action="AcademyAssign" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="lessonId" value="@(assignLesson?.Definition.LessonId)" />
+                    <input type="hidden" name="pathKey" value="@(assignPath?.Path.Key)" />
+                    @await Html.PartialAsync("_WhoPicker", Model.Who)
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["AssignButton"]</button>
+                    <a class="btn btn-white" asp-controller="Courses" asp-action="Academy" asp-route-area="User">@localizer["CancelButton"]</a>
+                </form>
+            </div>
+        </div>
+    }
+
+    <h3>@localizer["RolePathsHeader"]</h3>
+    <p class="text-muted">@localizer["RolePathsIntro"]</p>
+    <div class="rgw-card-grid m-b-md">
+        @foreach (var path in Model.Catalog.Paths)
+        {
+            <div class="rgw-card">
+                <h4>@Model.Text("Path." + path.Path.Key)</h4>
+                <div class="rgw-card-meta">@Model.Text("Path." + path.Path.Key + ".Audience")</div>
+                <div class="rgw-card-meta">@string.Format(localizer["PathLessonsFormat"].Value, path.Lessons.Count, path.CompletedByMe)</div>
+                <ol class="small m-b-xs">
+                    @foreach (var lesson in path.Lessons)
+                    {
+                        <li>@if (lesson.Completed) {<i class="fa fa-check text-navy" aria-hidden="true"></i><span class="sr-only">@localizer["CompletedBadge"]</span>} @Model.Text(lesson.Definition.LessonId + ".Title")</li>
+                    }
+                </ol>
+                @if (Model.Catalog.CanAssign)
+                {
+                    <div class="rgw-card-action">
+                        <a class="btn btn-white btn-xs" asp-controller="Courses" asp-action="Academy" asp-route-area="User" asp-route-path="@path.Path.Key" asp-fragment="assign"><i class="fa fa-user-plus" aria-hidden="true"></i> @localizer["AssignPathButton"]</a>
+                        @if (path.AssignedMembers > 0)
+                        {
+                            <a class="btn btn-white btn-xs" asp-controller="Courses" asp-action="AcademyPath" asp-route-area="User" asp-route-id="@path.Path.Key"><i class="fa fa-bar-chart" aria-hidden="true"></i> @string.Format(localizer["PathProgressButton"].Value, path.AssignedMembers)</a>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <h3>@localizer["AcademyLessonsHeader"]</h3>
+    <div class="table-responsive">
+        <table class="table table-striped rgw-table">
+            <thead>
+                <tr>
+                    <th>@localizer["LessonColumn"]</th>
+                    <th>@localizer["LengthColumn"]</th>
+                    <th>@localizer["HoursColumn"]</th>
+                    <th>@localizer["StatusColumn"]</th>
+                    <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var lesson in Model.Catalog.Lessons)
+                {
+                    <tr>
+                        <td>
+                            @Model.Text(lesson.Definition.LessonId + ".Title")
+                            <span class="rgw-sub">@(lesson.Definition.Lesson.IsWalkthrough ? localizer["WalkthroughBadge"] : localizer["LessonBadge"])</span>
+                        </td>
+                        <td>@string.Format(localizer["MinutesFormat"].Value, lesson.Definition.Lesson.Minutes.ToString("0.#"))</td>
+                        <td>@lesson.Definition.Hours.ToString("0.##")</td>
+                        <td>
+                            @if (lesson.Completed)
+                            {
+                                <span class="label label-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["CompletedBadge"]</span>
+                            }
+                            else if (lesson.MyEnrollment != null && lesson.MyEnrollment.IsOpen)
+                            {
+                                <span class="label label-warning"><i class="fa fa-hourglass-half" aria-hidden="true"></i> @localizer["InProgressBadge"]</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">@localizer["NotStartedBadge"]</span>
+                            }
+                        </td>
+                        <td class="rgw-row-actions">
+                            @if (lesson.MyEnrollment != null && lesson.MyEnrollment.IsOpen)
+                            {
+                                <a class="btn btn-primary btn-xs" asp-controller="Courses" asp-action="Play" asp-route-area="User" asp-route-id="@lesson.MyEnrollment.LmsEnrollmentId"><i class="fa fa-play" aria-hidden="true"></i> @localizer["ResumeButton"]</a>
+                            }
+                            else
+                            {
+                                <form method="post" asp-controller="Courses" asp-action="Enroll" asp-route-area="User" class="inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="courseId" value="@lesson.Course.LmsCourseId" />
+                                    <button type="submit" class="btn btn-primary btn-xs"><i class="fa fa-play" aria-hidden="true"></i> @(lesson.Completed ? localizer["WatchAgainButton"] : localizer["StartButton"])</button>
+                                </form>
+                            }
+                            @if (Model.Catalog.CanAssign)
+                            {
+                                <a class="btn btn-white btn-xs" asp-controller="Courses" asp-action="Academy" asp-route-area="User" asp-route-assign="@lesson.Definition.LessonId" asp-fragment="assign"><i class="fa fa-user-plus" aria-hidden="true"></i> @localizer["AssignButton"]</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (Model.AcademyHome != null)
+    {
+        <p class="text-muted small"><i class="fa fa-external-link" aria-hidden="true"></i> <a href="@Model.AcademyHome" target="_blank" rel="noopener">@localizer["AcademySiteLink"]</a></p>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

@@ -2768,4 +2768,301 @@
   <data name="AuditLogTypeTrainingAssignmentExtended" xml:space="preserve"><value>Attribution de formation prolongée</value></data>
   <data name="AuditLogTypeTrainingAssignmentExempted" xml:space="preserve"><value>Exemption d'attribution de formation modifiée</value></data>
   <data name="AuditLogTypeMemberLeavePeriodChanged" xml:space="preserve"><value>Période de congé du membre modifiée</value></data>
+  <data name="PermAuthorProtocolsLabel" xml:space="preserve">
+    <value>Rédiger des protocoles</value>
+  </data>
+  <data name="PermAuthorProtocolsNote" xml:space="preserve">
+    <value>Créer des protocoles, modifier leurs détails, déclencheurs et questions, et rédiger et soumettre des brouillons. Les administrateurs du département le peuvent toujours.</value>
+  </data>
+  <data name="PermApproveProtocolsLabel" xml:space="preserve">
+    <value>Approuver et publier des protocoles</value>
+  </data>
+  <data name="PermApproveProtocolsNote" xml:space="preserve">
+    <value>Approuver des versions de protocoles (chaque approbation est signée avec une vérification d'identité), les publier ou les planifier, enregistrer des révisions, abroger et supprimer des protocoles. Les administrateurs du département le peuvent toujours.</value>
+  </data>
+  <data name="PermManageProtocolAcknowledgmentsLabel" xml:space="preserve">
+    <value>Gérer les accusés de lecture des protocoles</value>
+  </data>
+  <data name="PermManageProtocolAcknowledgmentsNote" xml:space="preserve">
+    <value>Attribuer des lectures avec signature, accorder des exemptions et voir qui a accusé lecture. Les administrateurs du département le peuvent toujours.</value>
+  </data>
+  <data name="AuditLogTypeSignatureRecorded" xml:space="preserve">
+    <value>Signature enregistrée</value>
+  </data>
+  <data name="AuditLogTypeSignatureVoided" xml:space="preserve">
+    <value>Signature annulée</value>
+  </data>
+  <data name="AuditLogTypeProtocolVersionSubmitted" xml:space="preserve">
+    <value>Version de protocole soumise</value>
+  </data>
+  <data name="AuditLogTypeProtocolVersionWithdrawn" xml:space="preserve">
+    <value>Version de protocole retirée</value>
+  </data>
+  <data name="AuditLogTypeProtocolVersionApproved" xml:space="preserve">
+    <value>Version de protocole approuvée</value>
+  </data>
+  <data name="AuditLogTypeProtocolVersionRejected" xml:space="preserve">
+    <value>Version de protocole rejetée</value>
+  </data>
+  <data name="AuditLogTypeProtocolVersionPublished" xml:space="preserve">
+    <value>Version de protocole publiée</value>
+  </data>
+  <data name="AuditLogTypeProtocolVersionScheduled" xml:space="preserve">
+    <value>Version de protocole planifiée</value>
+  </data>
+  <data name="AuditLogTypeProtocolRetired" xml:space="preserve">
+    <value>Protocole abrogé</value>
+  </data>
+  <data name="AuditLogTypeProtocolReviewRecorded" xml:space="preserve">
+    <value>Révision de protocole enregistrée</value>
+  </data>
+  <data name="AuditLogTypeProtocolsImported" xml:space="preserve">
+    <value>Protocoles importés</value>
+  </data>
+  <data name="AuditLogTypeProtocolCategoryChanged" xml:space="preserve">
+    <value>Catégorie de protocole modifiée</value>
+  </data>
+  <data name="AuditLogTypeProtocolLibrarySettingsChanged" xml:space="preserve">
+    <value>Paramètres de la bibliothèque de protocoles modifiés</value>
+  </data>
+  <data name="PermManageCoursesLabel" xml:space="preserve">
+    <value>Gérer les cours</value>
+  </data>
+  <data name="PermManageCoursesNote" xml:space="preserve">
+    <value>Créer des cours et des banques de questions, téléverser des vidéos de cours, soumettre et publier des versions de cours, attribuer des cours et consulter leurs résultats. L’approbation d’une version de cours exige aussi cette autorisation et est signée avec une vérification d’identité. Les administrateurs du service le peuvent toujours.</value>
+  </data>
+  <data name="PermGradeAssessmentsLabel" xml:space="preserve">
+    <value>Noter les évaluations</value>
+  </data>
+  <data name="PermGradeAssessmentsNote" xml:space="preserve">
+    <value>Noter les réponses libres en attente dans la file de correction et consulter l’analyse des questions. Personne ne peut noter sa propre tentative. Les administrateurs du service le peuvent toujours.</value>
+  </data>
+  <data name="AuditLogTypeLmsCourseCreated" xml:space="preserve">
+    <value>Cours créé</value>
+  </data>
+  <data name="AuditLogTypeLmsCourseChanged" xml:space="preserve">
+    <value>Cours modifié</value>
+  </data>
+  <data name="AuditLogTypeLmsCourseVersionSubmitted" xml:space="preserve">
+    <value>Version de cours soumise</value>
+  </data>
+  <data name="AuditLogTypeLmsCourseVersionWithdrawn" xml:space="preserve">
+    <value>Version de cours retirée</value>
+  </data>
+  <data name="AuditLogTypeLmsCourseVersionApproved" xml:space="preserve">
+    <value>Version de cours approuvée</value>
+  </data>
+  <data name="AuditLogTypeLmsCourseVersionRejected" xml:space="preserve">
+    <value>Version de cours refusée</value>
+  </data>
+  <data name="AuditLogTypeLmsCourseVersionPublished" xml:space="preserve">
+    <value>Version de cours publiée</value>
+  </data>
+  <data name="AuditLogTypeLmsCourseRetired" xml:space="preserve">
+    <value>Cours retiré</value>
+  </data>
+  <data name="AuditLogTypeLmsCourseAssigned" xml:space="preserve">
+    <value>Cours attribué</value>
+  </data>
+  <data name="AuditLogTypeLmsEnrollmentWithdrawn" xml:space="preserve">
+    <value>Inscription au cours retirée</value>
+  </data>
+  <data name="AuditLogTypeLmsQuestionBankChanged" xml:space="preserve">
+    <value>Banque de questions modifiée</value>
+  </data>
+  <data name="AuditLogTypeLmsAttemptGraded" xml:space="preserve">
+    <value>Tentative d’évaluation notée</value>
+  </data>
+  <data name="AuditLogTypeLmsMediaUploaded" xml:space="preserve">
+    <value>Vidéo de cours téléversée</value>
+  </data>
+  <data name="AuditLogTypeLmsCrewViewingStarted" xml:space="preserve">
+    <value>Visionnage en équipe démarré</value>
+  </data>
+  <data name="AuditLogTypeAcademyPathAssigned" xml:space="preserve">
+    <value>Parcours de rôle Academy attribué</value>
+  </data>
+  <data name="AuditLogTypeProtocolContentConverted" xml:space="preserve">
+    <value>Contenu du protocole converti en blocs</value>
+  </data>
+  <data name="AuditLogTypeProtocolTranslationSaved" xml:space="preserve">
+    <value>Traduction de protocole enregistrée</value>
+  </data>
+  <data name="AuditLogTypeProtocolTranslationApproved" xml:space="preserve">
+    <value>Traduction de protocole approuvée</value>
+  </data>
+  <data name="AuditLogTypeProtocolTranslationWithdrawn" xml:space="preserve">
+    <value>Traduction de protocole retirée</value>
+  </data>
+  <data name="AuditLogTypeProtocolBookExported" xml:space="preserve">
+    <value>Livret de protocoles exporté</value>
+  </data>
+  <data name="AuditLogTypeLmsTrainingPlanChanged" xml:space="preserve">
+    <value>Plan annuel de formation modifié</value>
+  </data>
+  <data name="AuditLogTypeLmsCompetencyFrameworkChanged" xml:space="preserve">
+    <value>Référentiel de compétences modifié</value>
+  </data>
+  <data name="AuditLogTypeLmsCompetencyFrameworkImported" xml:space="preserve">
+    <value>Référentiel de compétences importé</value>
+  </data>
+  <data name="AuditLogTypeLmsTrainingRequestSubmitted" xml:space="preserve">
+    <value>Demande de formation envoyée</value>
+  </data>
+  <data name="AuditLogTypeLmsTrainingRequestDecided" xml:space="preserve">
+    <value>Demande de formation tranchée</value>
+  </data>
+  <data name="AuditLogTypeLmsTrainingRequestCompleted" xml:space="preserve">
+    <value>Demande de formation terminée</value>
+  </data>
+  <data name="AuditLogTypeLmsReportDefinitionChanged" xml:space="preserve">
+    <value>Rapport de formation enregistré modifié</value>
+  </data>
+  <data name="AuditLogTypeLmsCertificationCycleRuleChanged" xml:space="preserve">
+    <value>Règle de cycle de certification modifiée</value>
+  </data>
+  <data name="AuditLogTypeLmsCertificationCycleAutoRenewed" xml:space="preserve">
+    <value>Cycle de certification renouvelé automatiquement</value>
+  </data>
+  <data name="AuditLogTypeLmsProgramSettingsChanged" xml:space="preserve">
+    <value>Paramètres du programme de formation modifiés</value>
+  </data>
+  <data name="AuditLogTypeLearningRequirementCreated" xml:space="preserve">
+    <value>Exigence de formation créée</value>
+  </data>
+  <data name="AuditLogTypeLearningRequirementChanged" xml:space="preserve">
+    <value>Exigence de formation modifiée</value>
+  </data>
+  <data name="AuditLogTypeLearningRequirementDeleted" xml:space="preserve">
+    <value>Exigence de formation supprimée</value>
+  </data>
+  <data name="AuditLogTypeLearningRequirementMemberChanged" xml:space="preserve">
+    <value>Exigence de formation : exemption ou prolongation</value>
+  </data>
+  <data name="AuditLogTypeLearningRequirementSettingsChanged" xml:space="preserve">
+    <value>Paramètres des exigences de formation modifiés</value>
+  </data>
+  <data name="AuditLogTypeLearningRequirementEnforced" xml:space="preserve">
+    <value>Exigence de formation appliquée</value>
+  </data>
+  <data name="AuditLogTypeLearningRequirementEnforcementUndone" xml:space="preserve">
+    <value>Application d'une exigence de formation annulée</value>
+  </data>
+  <data name="AuditLogTypeLearningRequirementEnforcementRefused" xml:space="preserve">
+    <value>Application d'une exigence de formation refusée</value>
+  </data>
+  <data name="AuditLogTypeLmsPathChanged" xml:space="preserve">
+    <value>Parcours d'apprentissage modifié</value>
+  </data>
+  <data name="AuditLogTypeLmsPathAssigned" xml:space="preserve">
+    <value>Parcours d'apprentissage attribué</value>
+  </data>
+  <data name="AuditLogTypeLmsPathCompleted" xml:space="preserve">
+    <value>Parcours d'apprentissage terminé</value>
+  </data>
+  <data name="AuditLogTypeApprovalChainChanged" xml:space="preserve">
+    <value>Chaîne d'approbation modifiée</value>
+  </data>
+  <data name="AuditLogTypeApprovalDelegateChanged" xml:space="preserve">
+    <value>Suppléant d'approbation modifié</value>
+  </data>
+  <data name="AuditLogTypeApprovalSubmitted" xml:space="preserve">
+    <value>Soumis pour approbation</value>
+  </data>
+  <data name="AuditLogTypeApprovalGranted" xml:space="preserve">
+    <value>Approbation accordée</value>
+  </data>
+  <data name="AuditLogTypeApprovalRejected" xml:space="preserve">
+    <value>Approbation rejetée</value>
+  </data>
+  <data name="AuditLogTypeApprovalWithdrawn" xml:space="preserve">
+    <value>Demande d'approbation retirée</value>
+  </data>
+  <data name="AuditLogTypeApprovalEscalated" xml:space="preserve">
+    <value>Approbation escaladée</value>
+  </data>
+  <data name="AuditLogTypeApprovalSuperseded" xml:space="preserve">
+    <value>Approbation remplacée</value>
+  </data>
+  <data name="AuditLogTypeMutualAidAgreementChanged" xml:space="preserve">
+    <value>Accord d'entraide modifié</value>
+  </data>
+  <data name="AuditLogTypeProtocolLearningSettingsChanged" xml:space="preserve">
+    <value>Paramètres d'apprentissage du protocole modifiés</value>
+  </data>
+  <data name="AuditLogTypeLmsClassSessionChanged" xml:space="preserve">
+    <value>Session de formation modifiée</value>
+  </data>
+  <data name="AuditLogTypeLmsClassSessionCancelled" xml:space="preserve">
+    <value>Session de formation annulée</value>
+  </data>
+  <data name="AuditLogTypeLmsClassSessionDeleted" xml:space="preserve">
+    <value>Session de formation supprimée</value>
+  </data>
+  <data name="AuditLogTypeLmsClassRosterChanged" xml:space="preserve">
+    <value>Inscriptions modifiées</value>
+  </data>
+  <data name="AuditLogTypeLmsClassAttendanceChanged" xml:space="preserve">
+    <value>Présence modifiée</value>
+  </data>
+  <data name="AuditLogTypeLmsClassSignedOff" xml:space="preserve">
+    <value>Session signée</value>
+  </data>
+  <data name="AuditLogTypeLmsClassRosterPurged" xml:space="preserve">
+    <value>Feuille de présence purgée</value>
+  </data>
+  <data name="AuditLogTypeLmsLessonPlanChanged" xml:space="preserve">
+    <value>Plan de cours modifié</value>
+  </data>
+  <data name="AuditLogTypeLmsLessonPlanSubmitted" xml:space="preserve">
+    <value>Plan de cours soumis</value>
+  </data>
+  <data name="AuditLogTypeLmsLessonPlanDecided" xml:space="preserve">
+    <value>Plan de cours approuvé ou refusé</value>
+  </data>
+  <data name="AuditLogTypeLmsLessonPlanPublished" xml:space="preserve">
+    <value>Plan de cours publié</value>
+  </data>
+  <data name="AuditLogTypeLmsTrainingResourceChanged" xml:space="preserve">
+    <value>Ressource de formation modifiée</value>
+  </data>
+  <data name="AuditLogTypeLmsSkillSheetChanged" xml:space="preserve">
+    <value>Fiche de compétences modifiée</value>
+  </data>
+  <data name="AuditLogTypeLmsSkillSheetPublished" xml:space="preserve">
+    <value>Fiche de compétences publiée</value>
+  </data>
+  <data name="AuditLogTypeLmsSkillEvaluationStarted" xml:space="preserve">
+    <value>Évaluation de compétences commencée</value>
+  </data>
+  <data name="AuditLogTypeLmsSkillEvaluationSubmitted" xml:space="preserve">
+    <value>Évaluation de compétences soumise</value>
+  </data>
+  <data name="AuditLogTypeLmsSkillEvaluationCompleted" xml:space="preserve">
+    <value>Évaluation de compétences terminée</value>
+  </data>
+  <data name="AuditLogTypeLmsSkillEvaluationSplit" xml:space="preserve">
+    <value>Membre séparé de l'évaluation</value>
+  </data>
+  <data name="AuditLogTypeLmsSkillEvaluationVoided" xml:space="preserve">
+    <value>Évaluation de compétences annulée</value>
+  </data>
+  <data name="AuditLogTypeLmsTaskBookDefinitionChanged" xml:space="preserve">
+    <value>Modèle de livret modifié</value>
+  </data>
+  <data name="AuditLogTypeLmsTaskBookInitiated" xml:space="preserve">
+    <value>Livret de tâches ouvert</value>
+  </data>
+  <data name="AuditLogTypeLmsTaskBookCertificationRequested" xml:space="preserve">
+    <value>Certification du livret demandée</value>
+  </data>
+  <data name="AuditLogTypeLmsTaskBookCertified" xml:space="preserve">
+    <value>Livret de tâches certifié</value>
+  </data>
+  <data name="AuditLogTypeLmsTaskBookClosed" xml:space="preserve">
+    <value>Livret de tâches clôturé</value>
+  </data>
+  <data name="AuditLogTypeLmsSkillSettingsChanged" xml:space="preserve">
+    <value>Paramètres des avis de compétences modifiés</value>
+  </data>
 </root>

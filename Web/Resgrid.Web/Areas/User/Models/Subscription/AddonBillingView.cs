@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Resgrid.Model;
+using Resgrid.Model.Billing;
 
 namespace Resgrid.Web.Areas.User.Models.Subscription
 {
@@ -34,6 +35,9 @@ namespace Resgrid.Web.Areas.User.Models.Subscription
 		/// <summary>How many times the page has refreshed itself while waiting for a completed checkout to reconcile.</summary>
 		public int Attempt { get; init; }
 
+		/// <summary>The pack quantity section of a pack add-on (the LMS); null for a flat add-on.</summary>
+		public AddonPackView Packs { get; set; }
+
 		public List<string> Notices { get; } = new List<string>();
 		public List<string> Notes { get; } = new List<string>();
 		public List<AddonSideNote> SideNotes { get; } = new List<AddonSideNote>();
@@ -46,6 +50,9 @@ namespace Resgrid.Web.Areas.User.Models.Subscription
 
 		public bool CanBuy => IsOwner && Offered && Status != null && Status.CheckoutAvailable && !Status.Active && !AwaitingActivation;
 
+		/// <summary>The managing member may change the pack quantity of a running pack add-on.</summary>
+		public bool CanChangePacks => IsOwner && Packs != null && Status != null && Status.Active && !Status.Cancelled;
+
 		public bool CanCancel => IsOwner && Status != null && Status.CanCancel && !Status.Cancelled;
 	}
 
@@ -55,6 +62,47 @@ namespace Resgrid.Web.Areas.User.Models.Subscription
 		public const string Cancelled = "cancelled";
 		public const string RenewalCancelled = "renewal-cancelled";
 		public const string RenewalFailed = "renewal-failed";
+		/// <summary>Packs were added and invoiced at once (prorated).</summary>
+		public const string PacksAdded = "packs-added";
+		/// <summary>A pack decrease was scheduled for the next billing date.</summary>
+		public const string PacksScheduled = "packs-scheduled";
+		/// <summary>The pack change could not be made.</summary>
+		public const string PacksFailed = "packs-failed";
+		/// <summary>A decrease would leave fewer seats than LMS-enabled members.</summary>
+		public const string PacksBelowSeats = "packs-below-seats";
+
+		/// <summary>The outcomes a billing page shows; anything else in the query string is ignored.</summary>
+		public static bool IsKnown(string result) => result is Complete or Cancelled or RenewalCancelled or RenewalFailed or PacksAdded or PacksScheduled or PacksFailed or PacksBelowSeats;
+	}
+
+	/// <summary>
+	/// The pack quantity section of a pack add-on's billing page: packs in force (and scheduled), seats in use, the graduated tiers
+	/// and next month's price. Prices come from the same <see cref="PackPriceSchedule"/> the Billing API's graduated price mirrors.
+	/// </summary>
+	public sealed class AddonPackView
+	{
+		public PackPriceSchedule Schedule { get; init; }
+		public string CurrencySymbol { get; init; }
+
+		/// <summary>Packs in force now (0 before the first purchase).</summary>
+		public int Packs { get; init; }
+
+		/// <summary>Packs from the next billing date when a decrease is scheduled.</summary>
+		public int? ScheduledPacks { get; init; }
+
+		/// <summary>LMS-enabled active members; a decrease never goes below the packs that seat them.</summary>
+		public int EnabledSeats { get; init; }
+		public int MinimumPacks { get; init; }
+
+		/// <summary>The quantity the page proposes: the packs in force, or the packs that seat the enabled members for a first purchase.</summary>
+		public int ProposedPacks { get; init; }
+
+		public DateTime? NextBillingUtc { get; init; }
+
+		public int PurchasedSeats => Schedule == null ? 0 : Schedule.SeatsFor(Packs);
+		public int BillingPacks => ScheduledPacks ?? Packs;
+		public decimal CurrentMonthly => Schedule?.MonthlyTotal(Packs) ?? 0m;
+		public decimal NextMonthly => Schedule?.MonthlyTotal(BillingPacks) ?? 0m;
 	}
 
 	/// <summary>The four Billing API add-on statuses share one shape; this is it, so the page is written once.</summary>
@@ -96,6 +144,13 @@ namespace Resgrid.Web.Areas.User.Models.Subscription
 		public static AddonBillingStatusView From(DedicatedNumberBillingStatus s) => s == null ? null : new AddonBillingStatusView
 		{
 			Provider = s.Provider, Currency = s.Currency, Amount = s.MonthlyAmount, CheckoutAvailable = s.CheckoutAvailable, Active = s.Active,
+			CanCancel = s.CanCancel, Cancelled = s.Cancelled, PaidThroughUtc = s.PaidThroughUtc
+		};
+
+		/// <summary>The LMS is sold only with a paid base plan (§25.4a item 9): without one, checkout is not offered.</summary>
+		public static AddonBillingStatusView From(LmsBillingStatus s) => s == null ? null : new AddonBillingStatusView
+		{
+			Provider = s.Provider, Currency = s.Currency, Amount = s.MonthlyAmount, CheckoutAvailable = s.CheckoutAvailable && s.HasEntityPlan, Active = s.Active,
 			CanCancel = s.CanCancel, Cancelled = s.Cancelled, PaidThroughUtc = s.PaidThroughUtc
 		};
 	}

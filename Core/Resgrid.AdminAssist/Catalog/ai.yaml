@@ -142,6 +142,130 @@
       "RuleIds": [],
       "Prominence": "Detail",
       "DocsPath": "/web-app/destinations/#ai-destination-advice"
+    },
+    {
+      "Id": "ai-knowledge",
+      "AreaId": "ai",
+      "LabelKey": "Feature.ai-knowledge",
+      "PurposeKey": "FeaturePurpose.ai-knowledge",
+      "ValueKey": "FeatureValue.ai-knowledge",
+      "ExampleKey": "FeatureExample.ai-knowledge",
+      "AdoptionKey": "FeatureSetup.ai-knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "EnhancedAi"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Ai.Knowledge"
+        }
+      ],
+      "SettingIds": [
+        "setting.KnowledgeSettings"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/knowledge-answers/"
+    },
+    {
+      "Id": "ai-authoring-aids",
+      "AreaId": "ai",
+      "LabelKey": "Feature.ai-authoring-aids",
+      "PurposeKey": "FeaturePurpose.ai-authoring-aids",
+      "ValueKey": "FeatureValue.ai-authoring-aids",
+      "ExampleKey": "FeatureExample.ai-authoring-aids",
+      "AdoptionKey": "FeatureSetup.ai-authoring-aids",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Trainings",
+        "Action": "New"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "EnhancedAi"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Ai.Knowledge"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/trainings/drafting-aids/"
+    },
+    {
+      "Id": "ai-call-answers",
+      "AreaId": "ai",
+      "LabelKey": "Feature.ai-call-answers",
+      "PurposeKey": "FeaturePurpose.ai-call-answers",
+      "ValueKey": "FeatureValue.ai-call-answers",
+      "ExampleKey": "FeatureExample.ai-call-answers",
+      "AdoptionKey": "FeatureSetup.ai-call-answers",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Dispatch",
+        "Action": "Dashboard"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "EnhancedAi"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Ai.Knowledge"
+        }
+      ],
+      "SettingIds": [
+        "setting.KnowledgeSettings"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/knowledge-answers/"
+    },
+    {
+      "Id": "ai-tutor",
+      "AreaId": "ai",
+      "LabelKey": "Feature.ai-tutor",
+      "PurposeKey": "FeaturePurpose.ai-tutor",
+      "ValueKey": "FeatureValue.ai-tutor",
+      "ExampleKey": "FeatureExample.ai-tutor",
+      "AdoptionKey": "FeatureSetup.ai-tutor",
+      "ReleaseStatus": "planned",
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "EnhancedAi"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Ai.Knowledge"
+        },
+        {
+          "Kind": "addon",
+          "Id": "Lms"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Training.Lms"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/knowledge-answers/"
     }
   ],
   "Rules": [],
@@ -190,6 +314,50 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-11-19T00:00:00Z"
+    },
+    {
+      "Id": "ai-knowledge",
+      "Locale": "en",
+      "TitleKey": "Feature.ai-knowledge",
+      "Body": "Knowledge answers Members ask a question and get an answer taken only from your department's published protocols and training and the Resgrid Academy, each part linked to its source. Members find what your protocols say in seconds, and the people who write them see the questions the content does not answer. A member asks which protective equipment the hazmat guideline requires and gets the answer with a link to that section of the version in force. Needs the Enhanced AI add-on with knowledge answers turned on for your department. Publish your protocols and start your trainings; members then use Ask on the protocol library, a protocol, a training or a call. Training officers see unanswered questions under Knowledge gaps.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "ai-knowledge",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "ai-authoring-aids",
+      "Locale": "en",
+      "TitleKey": "Feature.ai-authoring-aids",
+      "Body": "Drafting aids Draft quiz questions, course outlines and change summaries from the department's own content for authors to review. Authors start from a grounded draft instead of a blank page, and nothing is saved until they accept it. A training officer drafts five quiz questions from the new SCBA training and keeps three. Turn on knowledge answers with Enhanced AI; the aids then appear in the training editor and the course builder. Every number in a draft must appear in the content, content marked no AI is never sent, and departments using Advanced Data Protection do not get drafts.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "ai-authoring-aids",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "ai-call-answers",
+      "Locale": "en",
+      "TitleKey": "Feature.ai-call-answers",
+      "Body": "Ask about a call Members ask a question on View Call and get an answer taken only from the protocol versions the call cites and its type, priority, determinant and location type, each part linked to its section. Crews and dispatchers find what the call's protocols say for this call in seconds, and patient or caller details are never sent. On a structure fire at a school, a lieutenant asks where crews stage and gets the answer from the cited section of the school protocol. Turn on knowledge answers with Enhanced AI and attach protocols to calls; Ask about this call then appears on View Call's protocols tab. Only the call's type, priority, determinant and location type are used, never the caller, the address, notes or patient details, and departments using Advanced Data Protection get the matching sections without generated text.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "ai-call-answers",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "ai-tutor",
+      "Locale": "en",
+      "TitleKey": "Feature.ai-tutor",
+      "Body": "Tutor and scenario practice Learners ask questions about the course they are taking, and members practise on a short scenario written from a protocol, with their own answers scored against that protocol. Members check their understanding between drills, and every answer and score points back to the exact section, without anything being recorded on their transcript. A new EMT practises the cardiac arrest protocol: a short scenario, three questions, and feedback that quotes the steps the protocol lists. Turn on knowledge answers with Enhanced AI and the LMS add-on; Ask this course appears in the course player and Practice on each protocol. Scores and feedback only use numbers written in the protocol, practice never creates a training record, and departments using Advanced Data Protection do not get practice.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "ai-tutor",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
     }
   ]
 }

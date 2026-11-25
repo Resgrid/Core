@@ -716,4 +716,13 @@
   <data name="HelpFieldScheduleName" xml:space="preserve"><value>Affiché dans la liste des échéances : rendez-le reconnaissable d'un coup d'œil.</value></data>
   <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>Le temps dont dispose l'équipe pour terminer la vérification après son ouverture. Passé ce délai, elle est manquée.</value></data>
   <data name="HelpFieldAssignment" xml:space="preserve"><value>Le routage automatique envoie la vérification au détenteur de la cible. Choisissez une personne, un rôle, un groupe ou un engin pour l'outrepasser.</value></data>
+  <data name="The witness signs at L2 (a fresh step-up or a passkey), bound to the content of the completion" xml:space="preserve">
+    <value>Le témoin signe en L2 (nouvelle vérification d'identité ou clé d'accès) ; sa signature est liée au contenu de la réalisation</value>
+  </data>
+  <data name="WitnessSignatureRequired" xml:space="preserve">
+    <value>Cette liste de contrôle doit être attestée par la signature d'un témoin. Ouvrez l'exécution et signez comme témoin.</value>
+  </data>
+  <data name="WitnessSignatureRefused" xml:space="preserve">
+    <value>La signature du témoin n'a pas été enregistrée ; la liste de contrôle attend donc toujours son témoin.</value>
+  </data>
 </root>

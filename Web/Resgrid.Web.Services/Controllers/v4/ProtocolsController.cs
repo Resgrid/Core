@@ -12,16 +12,20 @@ using Resgrid.Web.Services.Helpers;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
+using Resgrid.Model.Security;
 using Resgrid.Web.Helpers;
 using Resgrid.Web.Services.Models.v4.Protocols;
 using System.Collections.Generic;
+using Resgrid.Framework;
 using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
 	/// <summary>
-	/// The options for Protocols in the Resgrid system: the department's protocols, matching them to a call, and writing them
-	/// (create, update in place, disable). Attachment bytes leave only through <see cref="GetFile"/>.
+	/// The options for Protocols in the Resgrid system: the department's protocols, matching them to a call, writing them
+	/// (create, update in place, disable) and, from P1, their versions and lifecycle (draft, submit, approve with an L2
+	/// signature, publish, review). Every read applies the protocol read rule (R-P4): the older apps' endpoints return only
+	/// published protocols in the caller's audience. Attachment bytes leave only through <see cref="GetFile"/>.
 	/// </summary>
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
@@ -33,19 +37,35 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IAuthorizationService _authorizationService;
 		private readonly ICallsService _callsService;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IProtocolAccessService _protocolAccess;
+		private readonly IProtocolLibraryService _library;
+		private readonly ISignatureService _signatures;
+		private readonly IMfaEvidenceService _evidence;
+		private readonly IMfaPolicyService _mfaPolicy;
 
-		public ProtocolsController(IProtocolsService protocolsService, IAuthorizationService authorizationService = null, ICallsService callsService = null, IEventAggregator eventAggregator = null)
+		public ProtocolsController(IProtocolsService protocolsService, IAuthorizationService authorizationService = null, ICallsService callsService = null, IEventAggregator eventAggregator = null,
+			IProtocolAccessService protocolAccess = null, IProtocolLibraryService library = null, ISignatureService signatures = null, IMfaEvidenceService evidence = null,
+			IMfaPolicyService mfaPolicy = null)
 		{
 			_protocolsService = protocolsService;
 			_authorizationService = authorizationService;
 			_callsService = callsService;
 			_eventAggregator = eventAggregator;
+			_protocolAccess = protocolAccess;
+			_library = library;
+			_signatures = signatures;
+			_evidence = evidence;
+			_mfaPolicy = mfaPolicy;
 		}
 		#endregion Members and Constructors
 
+		private async Task<ProtocolReader> ReaderAsync() =>
+			_protocolAccess == null ? ProtocolReader.Nobody(DepartmentId) : await _protocolAccess.GetReaderAsync(DepartmentId, UserId);
+
 		/// <summary>
-		/// Gets the department's enabled protocols (disabled and deleted ones are left out). No attachment bytes: a file comes
-		/// from <see cref="GetFile"/>.
+		/// Gets the department's protocols the caller may read: enabled and published, in the caller's audience (or Dispatch
+		/// protocols for dispatchers). Drafts, disabled, retired and deleted protocols are left out. No attachment bytes: a file
+		/// comes from <see cref="GetFile"/>.
 		/// </summary>
 		[HttpGet("GetAllProtocols")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -55,13 +75,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var result = new GetAllProtocolsResult();
 			result.Data = new List<ProtocolResultData>();
 
-			var protocols = await _protocolsService.GetProtocolSummariesForDepartmentAsync(DepartmentId, true);
+			var reader = await ReaderAsync();
+			var protocols = _protocolAccess == null
+				? new List<DispatchProtocol>()
+				: await _protocolAccess.FilterReadableAsync(reader, await _protocolsService.GetProtocolSummariesForDepartmentAsync(DepartmentId, true));
+			var versions = await CurrentVersionsAsync(protocols);
 
 			if (protocols != null && protocols.Any())
 			{
 				foreach (var p in protocols)
 				{
-					result.Data.Add(ConvertProtocolData(p));
+					result.Data.Add(ConvertProtocolData(p, versions.TryGetValue(p.DispatchProtocolId, out var v) ? v : null));
 				}
 
 				result.PageSize = result.Data.Count;
@@ -79,8 +103,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
-		/// Gets a single protocol by id. A deleted protocol is still returned inside its department: calls that cite it keep
-		/// showing it.
+		/// Gets a single protocol by id when the caller may read it. A deleted protocol is still returned inside its department
+		/// (calls that cite it keep showing it); a draft or an out-of-audience protocol is a 404 for members.
 		/// </summary>
 		[HttpGet("GetProtocol")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -98,7 +122,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (protocol.DepartmentId != DepartmentId)
 				return Unauthorized();
 
-			result.Data = ConvertProtocolData(protocol);
+			if (_protocolAccess == null || !await _protocolAccess.CanReadAsync(await ReaderAsync(), protocol))
+				return NotFound();
+
+			var versions = await CurrentVersionsAsync(new List<DispatchProtocol> { protocol });
+			result.Data = ConvertProtocolData(protocol, versions.TryGetValue(protocol.DispatchProtocolId, out var v) ? v : null);
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;
 
@@ -106,7 +134,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
-		/// Gets a protocol attachment by its id: the one endpoint the bytes leave through. Unknown, or another department's, is a 404.
+		/// Gets a protocol attachment by its id: the one endpoint the bytes leave through. Unknown, another department's, or of a
+		/// protocol the caller may not read, is a 404.
 		/// </summary>
 		/// <param name="protocolAttachmentId">ID of the protocol attachment</param>
 		[HttpGet("GetFile")]
@@ -121,21 +150,28 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (attachment == null || attachment.Data == null)
 				return NotFound();
 
+			var protocol = await _protocolsService.GetProtocolHeaderByIdAsync(attachment.DispatchProtocolId);
+			if (_protocolAccess == null || !await _protocolAccess.CanReadAsync(await ReaderAsync(), protocol))
+				return NotFound();
+
 			return File(attachment.Data, string.IsNullOrWhiteSpace(attachment.FileType) ? "application/octet-stream" : attachment.FileType, attachment.FileName);
 		}
 
 		/// <summary>
-		/// Every enabled protocol evaluated for a call: the matcher the web call forms use (D18). Pass the call's priority id and
-		/// its type (by id, or by name), and optionally the call's logged time in UTC (now when left out) or an existing call's id,
-		/// whose logged time is then used and whose protocols are left out.
+		/// Every enabled, published Dispatch or Procedure protocol evaluated for a call: the matcher the web call forms use
+		/// (D18). Pass the call's priority id and its type (by id, or by name), and optionally the call's logged time in UTC (now
+		/// when left out) or an existing call's id, whose logged time is then used and whose protocols are left out.
 		/// </summary>
 		[HttpGet("GetProtocolsForCall")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Protocol_View)]
-		public async Task<ActionResult<GetProtocolsForCallResult>> GetProtocolsForCall(int priority, int? callTypeId = null, string type = null, DateTime? loggedOnUtc = null, int? callId = null)
+		public async Task<ActionResult<GetProtocolsForCallResult>> GetProtocolsForCall(int priority, int? callTypeId = null, string type = null, DateTime? loggedOnUtc = null, int? callId = null,
+			string nature = null, double? latitude = null, double? longitude = null, int? locationPoiId = null)
 		{
 			var at = loggedOnUtc.HasValue ? (DateTime?)DateTime.SpecifyKind(loggedOnUtc.Value.Kind == DateTimeKind.Local ? loggedOnUtc.Value.ToUniversalTime() : loggedOnUtc.Value, DateTimeKind.Utc) : null;
 			var onCall = new HashSet<int>();
+			// Protocols P4 (optional, Omni): the facts the shared trigger engine reads besides priority, type and time.
+			var details = new DispatchTriggerCallInput { Nature = nature, Latitude = latitude, Longitude = longitude, LocationPoiId = locationPoiId };
 
 			if (callId.HasValue && callId.Value > 0 && _callsService != null && _authorizationService != null && await _authorizationService.CanUserViewCallAsync(UserId, callId.Value))
 			{
@@ -144,10 +180,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					at = call.LoggedOn;
 					onCall = new HashSet<int>((await _callsService.GetCallProtocolsByCallIdAsync(call.CallId) ?? new List<CallProtocol>()).Select(x => x.DispatchProtocolId));
+					var stored = DispatchTriggerCallInput.FromCall(call);
+					details = new DispatchTriggerCallInput
+					{
+						Nature = string.IsNullOrWhiteSpace(nature) ? stored.Nature : nature,
+						Notes = stored.Notes,
+						GeoLocationData = latitude.HasValue && longitude.HasValue ? null : stored.GeoLocationData,
+						Latitude = latitude,
+						Longitude = longitude,
+						LocationPoiId = locationPoiId ?? stored.LocationPoiId,
+						CallSource = stored.CallSource
+					};
 				}
 			}
 
-			var context = await _protocolsService.BuildCallContextAsync(DepartmentId, priority, callTypeId, type, at);
+			details.LoggedOnUtc = at;
+			var context = await _protocolsService.BuildCallContextWithFactsAsync(DepartmentId, priority, callTypeId, type, details);
 			var matches = await _protocolsService.GetProtocolsForCallAsync(DepartmentId, context);
 
 			var result = new GetProtocolsForCallResult();
@@ -173,7 +221,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(result);
 		}
 
-		/// <summary>Creates a protocol with its triggers, questions and answers.</summary>
+		/// <summary>
+		/// Creates a protocol with its triggers, questions and answers. From P1 it is a draft: its text is the first draft's
+		/// content, and nothing is in force until a version is approved and published.
+		/// </summary>
 		[HttpPost("SaveProtocol")]
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -183,6 +234,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (input == null)
 				return BadRequest();
+
+			if (_library == null)
+				return StatusCode(StatusCodes.Status503ServiceUnavailable);
 
 			var protocol = await BuildAsync(input, null, true);
 			var errors = ProtocolRules.Validate(protocol);
@@ -198,15 +252,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			protocol.UpdatedOn = DateTime.UtcNow;
 			protocol.UpdatedByUserId = UserId;
 
-			var saved = await _protocolsService.SaveProtocolAsync(protocol, cancellationToken);
-			Audit(AuditLogTypes.ProtocolCreated, null, saved);
+			var created = await _library.CreateAsync(new ProtocolCreateRequest { DepartmentId = DepartmentId, Protocol = protocol, ContentHtml = input.ProtocolText, UserId = UserId }, cancellationToken);
+			if (!created.Succeeded)
+				return BadRequest(Refused(new List<string> { created.Error.ToString() }));
 
-			return Ok(Saved(saved));
+			return Ok(Saved(await _protocolsService.GetProtocolByIdAsync(created.Protocol.DispatchProtocolId) ?? created.Protocol));
 		}
 
 		/// <summary>
 		/// Updates a protocol in place: its triggers, questions and answers are matched by id (changed, added or removed), so ids
-		/// stay stable. An id that is not one of this protocol's rows is refused (400).
+		/// stay stable. An id that is not one of this protocol's rows is refused (400). The text goes to the open draft (P1); the
+		/// text in force changes only when a version is published.
 		/// </summary>
 		[HttpPost("UpdateProtocol")]
 		[Consumes(MediaTypeNames.Application.Json)]
@@ -247,6 +303,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (wasDisabled != saved.IsDisabled)
 				Audit(saved.IsDisabled ? AuditLogTypes.ProtocolDisabled : AuditLogTypes.ProtocolEnabled, before, saved);
 
+			// The text is the draft's (an older client sending the same text it read changes nothing in force).
+			if (_library != null && input.ProtocolText != null && !string.Equals(StringHelpers.SanitizeHtmlForStorage(input.ProtocolText), current.ProtocolText, StringComparison.Ordinal))
+			{
+				var reader = await ReaderAsync();
+				var draft = await _library.GetOpenDraftAsync(DepartmentId, current.DispatchProtocolId);
+				if (draft == null || draft.Status == (int)ProtocolVersionStatuses.Draft)
+					await _library.SaveDraftAsync(reader, current.DispatchProtocolId, new ProtocolDraftInput
+					{
+						ContentHtml = input.ProtocolText,
+						ChangeSummary = draft?.ChangeSummary,
+						RequiresAcknowledgment = draft?.RequiresAcknowledgment ?? ProtocolKindRules.AcknowledgmentByDefault(current.Kind),
+						Locale = draft?.Locale,
+						ExpectedRowVersion = draft?.RowVersion ?? 0
+					}, cancellationToken);
+			}
+
 			return Ok(Saved(saved));
 		}
 
@@ -279,6 +351,328 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(Saved(await _protocolsService.GetProtocolByIdAsync(saved.DispatchProtocolId) ?? saved));
 		}
 
+		#region Versions and lifecycle (P1)
+
+		/// <summary>The protocol's versions the caller may read (no content): members see published history, authors and approvers every version.</summary>
+		[HttpGet("GetVersions")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize(Policy = ResgridResources.Protocol_View)]
+		public async Task<ActionResult<GetProtocolVersionsResult>> GetVersions(int protocolId)
+		{
+			if (_library == null || _protocolAccess == null)
+				return NotFound();
+
+			var reader = await ReaderAsync();
+			var protocol = await _protocolsService.GetProtocolHeaderByIdAsync(protocolId);
+			if (protocol == null || protocol.DepartmentId != DepartmentId || !await _protocolAccess.CanReadAsync(reader, protocol))
+				return NotFound();
+
+			var audience = await _library.GetAudienceAsync(DepartmentId, protocolId);
+			var result = new GetProtocolVersionsResult();
+			foreach (var version in await _library.GetVersionsAsync(DepartmentId, protocolId))
+				if (ProtocolAccessRules.CanReadVersion(reader, protocol, audience, version))
+					result.Data.Add(Version(version, false));
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>The call is the caller's to view, is in the department and cites exactly this version.</summary>
+		private async Task<bool> IsCitedByViewableCallAsync(int? callId, ProtocolVersion version)
+		{
+			if (!callId.HasValue || callId.Value <= 0 || version == null || _callsService == null || _authorizationService == null)
+				return false;
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId.Value))
+				return false;
+			var call = await _callsService.GetCallByIdAsync(callId.Value);
+			if (call == null || call.DepartmentId != DepartmentId)
+				return false;
+			return ProtocolAccessRules.IsCitedByCall(version, await _callsService.GetCallProtocolsByCallIdAsync(call.CallId));
+		}
+
+		/// <summary>
+		/// One version with its sanitized content and approval steps, when the caller may read it. With <paramref name="callId"/>, a version the
+		/// call cites (a legacy version from before versions existed, or an older one) is readable by anyone who may view the call, as the call
+		/// page shows it (P1, R-P2); without it, the library's own rules apply.
+		/// </summary>
+		[HttpGet("GetVersion")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize(Policy = ResgridResources.Protocol_View)]
+		public async Task<ActionResult<GetProtocolVersionResult>> GetVersion(int protocolVersionId, int? callId = null)
+		{
+			if (_library == null || _protocolAccess == null)
+				return NotFound();
+
+			var version = await _library.GetVersionAsync(DepartmentId, protocolVersionId);
+			var protocol = version == null ? null : await _protocolsService.GetProtocolHeaderByIdAsync(version.DispatchProtocolId);
+			var reader = await ReaderAsync();
+			if (protocol == null || protocol.DepartmentId != DepartmentId || !reader.IsCurrentMember)
+				return NotFound();
+			if (!ProtocolAccessRules.CanReadVersion(reader, protocol, await _library.GetAudienceAsync(DepartmentId, protocol.DispatchProtocolId), version) &&
+				!await IsCitedByViewableCallAsync(callId, version))
+				return NotFound();
+
+			var data = Version(version, true);
+			if (reader.IsManager)
+				data.Approvals = (await _library.GetApprovalsAsync(DepartmentId, version.ProtocolVersionId)).Select(Approval).ToList();
+
+			var result = new GetProtocolVersionResult { Data = data, PageSize = 1, Status = ResponseHelper.Success };
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Saves the open draft's content (creating a draft from the version in force when there is none). A save against an
+		/// older copy than the stored one is refused with Error "StaleCopy" and who saved it when.
+		/// </summary>
+		[HttpPost("SaveDraft")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status409Conflict)]
+		[Authorize(Policy = ResgridResources.Protocol_Update)]
+		public async Task<ActionResult<ProtocolLifecycleActionResult>> SaveDraft([FromBody] SaveProtocolDraftInput input, CancellationToken cancellationToken)
+		{
+			if (input == null || input.ProtocolId <= 0 || _library == null)
+				return BadRequest();
+
+			var outcome = await _library.SaveDraftAsync(await ReaderAsync(), input.ProtocolId, new ProtocolDraftInput
+			{
+				ContentHtml = input.ContentHtml,
+				ContentJson = string.IsNullOrWhiteSpace(input.ContentJson) ? null : input.ContentJson,
+				ChangeSummary = input.ChangeSummary,
+				RequiresAcknowledgment = input.RequiresAcknowledgment,
+				Locale = input.Locale,
+				ExpectedRowVersion = input.ExpectedRowVersion
+			}, cancellationToken);
+
+			return Lifecycle(outcome);
+		}
+
+		/// <summary>Submits a draft for review (its approval steps open). Comment: the change summary.</summary>
+		[HttpPost("SubmitVersion")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[Authorize(Policy = ResgridResources.Protocol_Update)]
+		public async Task<ActionResult<ProtocolLifecycleActionResult>> SubmitVersion([FromBody] ProtocolVersionActionInput input, CancellationToken cancellationToken)
+		{
+			if (input == null || _library == null)
+				return BadRequest();
+			return Lifecycle(await _library.SubmitAsync(await ReaderAsync(), input.ProtocolVersionId, input.Comment, cancellationToken));
+		}
+
+		/// <summary>
+		/// Approves the caller's step with an L2 signature bound to the version's content hash. The API session must have
+		/// completed a step-up within the step-up window (MFA step-up endpoints); without it the answer is Error
+		/// "SignatureRequired". Passkey-bound signing is web-only in this release.
+		/// </summary>
+		[HttpPost("ApproveVersion")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[Authorize(Policy = ResgridResources.Protocol_Approve)]
+		public async Task<ActionResult<ProtocolLifecycleActionResult>> ApproveVersion([FromBody] ProtocolVersionActionInput input, CancellationToken cancellationToken)
+		{
+			if (input == null || _library == null)
+				return BadRequest();
+			return Lifecycle(await _library.ApproveAsync(await ReaderAsync(), input.ProtocolVersionId, input.Comment, await ProofAsync(cancellationToken), null, cancellationToken));
+		}
+
+		/// <summary>Rejects the version back to draft; the comment is required.</summary>
+		[HttpPost("RejectVersion")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[Authorize(Policy = ResgridResources.Protocol_Approve)]
+		public async Task<ActionResult<ProtocolLifecycleActionResult>> RejectVersion([FromBody] ProtocolVersionActionInput input, CancellationToken cancellationToken)
+		{
+			if (input == null || _library == null)
+				return BadRequest();
+			return Lifecycle(await _library.RejectAsync(await ReaderAsync(), input.ProtocolVersionId, input.Comment, cancellationToken));
+		}
+
+		/// <summary>Publishes an approved version now, or schedules it for EffectiveOnUtc. The change summary is required.</summary>
+		[HttpPost("PublishVersion")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[Authorize(Policy = ResgridResources.Protocol_Approve)]
+		public async Task<ActionResult<ProtocolLifecycleActionResult>> PublishVersion([FromBody] PublishProtocolVersionInput input, CancellationToken cancellationToken)
+		{
+			if (input == null || _library == null)
+				return BadRequest();
+			return Lifecycle(await _library.PublishAsync(await ReaderAsync(), input.ProtocolVersionId, input.Major, input.ChangeSummary,
+				Utc(input.EffectiveOnUtc), Utc(input.ExpiresOnUtc), cancellationToken));
+		}
+
+		/// <summary>"Reviewed, no change": an L2-signed stamp on the version in force that resets the next review date.</summary>
+		[HttpPost("RecordReview")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[Authorize(Policy = ResgridResources.Protocol_View)]
+		public async Task<ActionResult<ProtocolLifecycleActionResult>> RecordReview([FromBody] RecordProtocolReviewInput input, CancellationToken cancellationToken)
+		{
+			if (input == null || _library == null)
+				return BadRequest();
+			return Lifecycle(await _library.RecordReviewAsync(await ReaderAsync(), input.ProtocolId, await ProofAsync(cancellationToken), null, cancellationToken));
+		}
+
+		/// <summary>The versions waiting for approval; CanDecide marks the steps the caller may decide.</summary>
+		[HttpGet("GetReviewQueue")]
+		[Authorize(Policy = ResgridResources.Protocol_View)]
+		public async Task<ActionResult<GetProtocolReviewQueueResult>> GetReviewQueue()
+		{
+			var result = new GetProtocolReviewQueueResult();
+			if (_library != null)
+			{
+				foreach (var item in await _library.GetReviewQueueAsync(await ReaderAsync()))
+				{
+					result.Data.Add(new ProtocolReviewQueueItemData
+					{
+						ProtocolId = item.Protocol.DispatchProtocolId.ToString(),
+						Code = item.Protocol.Code,
+						Name = item.Protocol.Name,
+						ProtocolVersionId = item.Version.ProtocolVersionId.ToString(),
+						SubmittedOn = item.Version.SubmittedOn,
+						SubmittedByUserId = item.Version.SubmittedByUserId,
+						StepOrder = item.Step?.StepOrder ?? 0,
+						StepsTotal = item.StepsTotal,
+						CanDecide = item.CanDecide,
+						OpenComments = item.OpenComments
+					});
+				}
+			}
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>The signatures on a version (approvals and review stamps), each checked against the content as stored now.</summary>
+		[HttpGet("GetVersionSignatures")]
+		[Authorize(Policy = ResgridResources.Protocol_View)]
+		public async Task<ActionResult<GetProtocolSignaturesResult>> GetVersionSignatures(int protocolVersionId)
+		{
+			if (_library == null || _signatures == null || _protocolAccess == null)
+				return NotFound();
+
+			var version = await _library.GetVersionAsync(DepartmentId, protocolVersionId);
+			var protocol = version == null ? null : await _protocolsService.GetProtocolHeaderByIdAsync(version.DispatchProtocolId);
+			if (protocol == null || !ProtocolAccessRules.CanReadVersion(await ReaderAsync(), protocol, await _library.GetAudienceAsync(DepartmentId, protocol.DispatchProtocolId), version))
+				return NotFound();
+
+			var result = new GetProtocolSignaturesResult();
+			foreach (var kind in new[] { SignatureSubjectKinds.ProtocolVersion, SignatureSubjectKinds.ProtocolReview })
+			{
+				foreach (var check in await _signatures.GetVerifiedForSubjectAsync(DepartmentId, kind, protocolVersionId.ToString()))
+				{
+					result.Data.Add(new ProtocolSignatureResultData
+					{
+						SignatureRecordId = check.Record.SignatureRecordId,
+						SignerUserId = check.Record.SignerUserId,
+						SignerName = check.Record.SignerNameSnapshot,
+						Intent = check.Record.Intent,
+						Level = check.Record.Level,
+						Method = check.Record.Method,
+						StatementText = check.Record.StatementText,
+						ArtifactSha256 = check.Record.ArtifactSha256,
+						SignedOn = check.Record.SignedOn,
+						Verification = (int)check.State
+					});
+				}
+			}
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>The API session's step-up proof, from server-side evidence only (never the request body).</summary>
+		private Task<SignatureProof> ProofAsync(CancellationToken cancellationToken) =>
+			ApiSignatureProof.BuildAsync(HttpContext, UserId, DepartmentId, _evidence, _mfaPolicy, cancellationToken);
+
+		private ActionResult<ProtocolLifecycleActionResult> Lifecycle(Model.Services.ProtocolLifecycleResult outcome)
+		{
+			var result = new ProtocolLifecycleActionResult
+			{
+				Data = outcome.Version == null ? null : Version(outcome.Version, false),
+				Error = outcome.Succeeded ? null : outcome.Error.ToString(),
+				ConflictUserId = outcome.ConflictUserId,
+				ConflictOn = outcome.ConflictOn,
+				SignatureRecordId = outcome.Signature?.SignatureRecordId,
+				PageSize = outcome.Version == null ? 0 : 1,
+				Status = outcome.Succeeded ? ResponseHelper.Success : ResponseHelper.Failure
+			};
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			switch (outcome.Error)
+			{
+				case ProtocolLifecycleErrors.None:
+					return Ok(result);
+				case ProtocolLifecycleErrors.NotFound:
+					return NotFound(result);
+				case ProtocolLifecycleErrors.NotAuthorized:
+					return StatusCode(StatusCodes.Status403Forbidden, result);
+				case ProtocolLifecycleErrors.StaleCopy:
+				case ProtocolLifecycleErrors.AlreadyDecided:
+				case ProtocolLifecycleErrors.DraftExists:
+					return Conflict(result);
+				case ProtocolLifecycleErrors.SignatureRequired:
+				case ProtocolLifecycleErrors.PasskeyRequired:
+					return StatusCode(StatusCodes.Status403Forbidden, result);
+				default:
+					return BadRequest(result);
+			}
+		}
+
+		private static ProtocolVersionResultData Version(ProtocolVersion version, bool withContent) => new ProtocolVersionResultData
+		{
+			ProtocolVersionId = version.ProtocolVersionId.ToString(),
+			ProtocolId = version.DispatchProtocolId.ToString(),
+			Label = version.Label,
+			Status = version.Status,
+			EffectiveOn = version.EffectiveOn,
+			ExpiresOn = version.ExpiresOn,
+			ContentHash = version.ContentHash,
+			// P3: a block version keeps its block anchors and tables (the structured allow-list); P1 html is sanitized as before.
+			ContentHtml = withContent ? ProtocolContentDocument.SanitizeForOutput(version.ContentHtml) : null,
+			ContentJson = withContent ? version.ContentJson : null,
+			ChangeSummary = version.ChangeSummary,
+			RequiresAcknowledgment = version.RequiresAcknowledgment,
+			Locale = version.Locale,
+			CreatedOn = version.CreatedOn,
+			SubmittedOn = version.SubmittedOn,
+			ApprovedOn = version.ApprovedOn,
+			PublishedOn = version.PublishedOn,
+			RowVersion = version.RowVersion
+		};
+
+		private static ProtocolApprovalResultData Approval(ProtocolVersionApproval a) => new ProtocolApprovalResultData
+		{
+			Round = a.Round,
+			StepOrder = a.StepOrder,
+			ApproverUserId = a.ApproverUserId,
+			ApproverRoleId = a.ApproverRoleId,
+			Decision = a.Decision,
+			DecidedByUserId = a.DecidedByUserId,
+			DecidedOn = a.DecidedOn,
+			Comment = a.Comment,
+			SignatureRecordId = a.SignatureRecordId
+		};
+
+		/// <summary>The versions in force of the listed protocols (headers), one query.</summary>
+		private async Task<Dictionary<int, ProtocolVersion>> CurrentVersionsAsync(IEnumerable<DispatchProtocol> protocols)
+		{
+			var map = new Dictionary<int, ProtocolVersion>();
+			var list = (protocols ?? Enumerable.Empty<DispatchProtocol>()).Where(p => p?.CurrentVersionId != null).ToList();
+			if (_library == null || list.Count == 0)
+				return map;
+
+			var wanted = list.Select(p => p.CurrentVersionId.Value).ToHashSet();
+			foreach (var version in (await _library.GetDepartmentVersionHeadersAsync(DepartmentId)).Where(v => wanted.Contains(v.ProtocolVersionId)))
+				map[version.DispatchProtocolId] = version;
+			return map;
+		}
+
+		#endregion Versions and lifecycle (P1)
+
 		private async Task<DispatchProtocol> BuildAsync(ProtocolInput input, DispatchProtocol current, bool isNew)
 		{
 			var types = _callsService == null ? new List<CallType>() : await _callsService.GetCallTypesForDepartmentAsync(DepartmentId) ?? new List<CallType>();
@@ -291,6 +685,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				ProtocolText = input.ProtocolText,
 				MinimumWeight = input.MinimumWeight,
 				IsDisabled = input.IsDisabled,
+				Kind = current?.Kind ?? (int)ProtocolKinds.Dispatch,
 				Triggers = (input.Triggers ?? new List<ProtocolTriggerInput>()).Where(x => x != null).Select(t =>
 				{
 					var needsType = t.Type == (int)ProtocolTriggerTypes.CallType || t.Type == (int)ProtocolTriggerTypes.CallPriortyAndType;
@@ -406,7 +801,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}).ToList();
 		}
 
-		public static ProtocolResultData ConvertProtocolData(DispatchProtocol dp)
+		public static ProtocolResultData ConvertProtocolData(DispatchProtocol dp) => ConvertProtocolData(dp, null);
+
+		public static ProtocolResultData ConvertProtocolData(DispatchProtocol dp, ProtocolVersion current)
 		{
 			var protocol = new ProtocolResultData();
 			protocol.ProtocolId = dp.DispatchProtocolId.ToString();
@@ -415,6 +812,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			protocol.Code = dp.Code;
 			protocol.IsDisabled = dp.IsDisabled;
 			protocol.Description = dp.Description;
+			// The text in force (the published version's); a protocol never published has none.
 			protocol.ProtocolText = dp.ProtocolText;
 			protocol.CreatedOn = dp.CreatedOn;
 			protocol.CreatedByUserId = dp.CreatedByUserId;
@@ -422,6 +820,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			protocol.MinimumWeight = dp.MinimumWeight;
 			protocol.UpdatedByUserId = dp.UpdatedByUserId;
 			protocol.State = (int)dp.State;
+			protocol.Kind = dp.Kind;
+			protocol.Status = dp.Status;
+			protocol.CurrentVersionId = dp.CurrentVersionId?.ToString();
+			protocol.VersionLabel = current?.Label;
+			protocol.EffectiveOn = current?.EffectiveOn;
+			protocol.RequiresAcknowledgment = current?.RequiresAcknowledgment ?? false;
+			protocol.Number = dp.Number;
+			protocol.Tags = dp.Tags;
+			protocol.CategoryId = dp.CategoryId;
+			protocol.OwnerUserId = dp.OwnerUserId;
+			protocol.NextReviewOn = dp.NextReviewOn;
+			protocol.ExcludeFromAi = dp.ExcludeFromAi;
 			protocol.Triggers = new List<ProtocolTriggerResult>();
 			protocol.Attachments = new List<ProtocolTriggerAttachmentResult>();
 			protocol.Questions = ConvertQuestions(dp);

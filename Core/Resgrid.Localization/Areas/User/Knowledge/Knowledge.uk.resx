@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllFilter" xml:space="preserve">
+    <value>Усі</value>
+  </data>
+  <data name="AskButton" xml:space="preserve">
+    <value>Запитати</value>
+  </data>
+  <data name="AskHeader" xml:space="preserve">
+    <value>Запитайте знання вашого підрозділу</value>
+  </data>
+  <data name="AskHeaderCall" xml:space="preserve">
+    <value>Запитайте про протокол цього виклику</value>
+  </data>
+  <data name="AskHeaderProtocol" xml:space="preserve">
+    <value>Запитайте про цей протокол</value>
+  </data>
+  <data name="AskHeaderTraining" xml:space="preserve">
+    <value>Запитайте про це навчання</value>
+  </data>
+  <data name="AskHelp" xml:space="preserve">
+    <value>Відповіді беруться лише з опублікованих протоколів і навчань вашого підрозділу та Resgrid Academy, і кожна відповідь посилається на свої джерела. Перевірте джерело, перш ніж діяти.</value>
+  </data>
+  <data name="Asking" xml:space="preserve">
+    <value>Пошук у протоколах і навчаннях вашого підрозділу...</value>
+  </data>
+  <data name="AskLabel" xml:space="preserve">
+    <value>Ваше запитання</value>
+  </data>
+  <data name="AskPlaceholder" xml:space="preserve">
+    <value>Поставте запитання про ваші протоколи чи навчання</value>
+  </data>
+  <data name="BudgetNotice" xml:space="preserve">
+    <value>Ваш підрозділ використав місячний ліміт ШІ. Ці джерела відповідають вашому запитанню.</value>
+  </data>
+  <data name="BusyNotice" xml:space="preserve">
+    <value>Відповіді зараз зайняті. Спробуйте ще раз за мить. Ці джерела відповідають вашому запитанню.</value>
+  </data>
+  <data name="ColumnActions" xml:space="preserve">
+    <value>Дії</value>
+  </data>
+  <data name="ColumnAsked" xml:space="preserve">
+    <value>Поставлено</value>
+  </data>
+  <data name="ColumnNearest" xml:space="preserve">
+    <value>Найближчі джерела</value>
+  </data>
+  <data name="ColumnQuestion" xml:space="preserve">
+    <value>Запитання</value>
+  </data>
+  <data name="ColumnReason" xml:space="preserve">
+    <value>Причина</value>
+  </data>
+  <data name="ConflictLabel" xml:space="preserve">
+    <value>Ці джерела суперечать одне одному</value>
+  </data>
+  <data name="CorpusHeader" xml:space="preserve">
+    <value>Джерела</value>
+  </data>
+  <data name="CorpusHelp" xml:space="preserve">
+    <value>Опубліковані протоколи та розпочаті навчання завжди включаються, окрім елементів, позначених як заборонені для ШІ. Чернетки, тести, виписки та записи навчання ніколи не використовуються.</value>
+  </data>
+  <data name="DismissButton" xml:space="preserve">
+    <value>Відхилити</value>
+  </data>
+  <data name="DismissedTile" xml:space="preserve">
+    <value>Відхилені</value>
+  </data>
+  <data name="DoseNotice" xml:space="preserve">
+    <value>Дози наведено точно так, як їх записано в джерелі. Нічого не обчислювалося. Перевірте джерело та ваш інструмент дозування.</value>
+  </data>
+  <data name="DosingToolLink" xml:space="preserve">
+    <value>Відкрити інструмент дозування підрозділу</value>
+  </data>
+  <data name="DosingToolUrlHelp" xml:space="preserve">
+    <value>Посилання https на інструмент дозування вашого підрозділу. Відповіді, що цитують дозу, посилаються на нього. Resgrid ніколи не обчислює дозу.</value>
+  </data>
+  <data name="DosingToolUrlLabel" xml:space="preserve">
+    <value>Посилання на інструмент дозування</value>
+  </data>
+  <data name="DraftFailed" xml:space="preserve">
+    <value>Не вдалося відкрити чернетку для цього протоколу.</value>
+  </data>
+  <data name="DraftProtocolButton" xml:space="preserve">
+    <value>Чернетка зміни протоколу</value>
+  </data>
+  <data name="EffectiveLabel" xml:space="preserve">
+    <value>чинний з {0}</value>
+  </data>
+  <data name="ErrorNotice" xml:space="preserve">
+    <value>Щось пішло не так. Спробуйте ще раз.</value>
+  </data>
+  <data name="FeedbackGap" xml:space="preserve">
+    <value>Дякуємо. Запитання додано до звіту про прогалини в знаннях.</value>
+  </data>
+  <data name="FeedbackThanks" xml:space="preserve">
+    <value>Дякуємо за відгук.</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Фільтрувати</value>
+  </data>
+  <data name="GapsIntro" xml:space="preserve">
+    <value>Запитання, на які ваші протоколи й навчання не відповіли, та відповіді, позначені членами як некорисні. Перетворіть прогалину на чернетку зміни протоколу чи нове навчання.</value>
+  </data>
+  <data name="GapsLink" xml:space="preserve">
+    <value>Прогалини в знаннях</value>
+  </data>
+  <data name="GapsTab" xml:space="preserve">
+    <value>Прогалини в знаннях</value>
+  </data>
+  <data name="GapsTitle" xml:space="preserve">
+    <value>Прогалини в знаннях</value>
+  </data>
+  <data name="GapSuggestionBody" xml:space="preserve">
+    <value>Прогалина в знаннях: члени запитали «{0}», і протоколи на це не відповіли.</value>
+  </data>
+  <data name="GapTrainingNoQuestion" xml:space="preserve">
+    <value>Прогалина в знаннях (запитання не збережено)</value>
+  </data>
+  <data name="GapUpdated" xml:space="preserve">
+    <value>Прогалину оновлено.</value>
+  </data>
+  <data name="Helpful" xml:space="preserve">
+    <value>Корисно</value>
+  </data>
+  <data name="IncludeDocumentsHelp" xml:space="preserve">
+    <value>Документи стають джерелами відповідей. Документи лише для адміністраторів використовуються лише для адміністраторів. Не використовуються, поки ввімкнено Advanced Data Protection.</value>
+  </data>
+  <data name="IncludeDocumentsLabel" xml:space="preserve">
+    <value>Включити модуль «Документи»</value>
+  </data>
+  <data name="IndexHeader" xml:space="preserve">
+    <value>Індекс</value>
+  </data>
+  <data name="IndexNotBuilt" xml:space="preserve">
+    <value>Індекс ще не створено. Він створюється у фоновому режимі після першого запитання.</value>
+  </data>
+  <data name="IndexStatus" xml:space="preserve">
+    <value>Проіндексовано розділів: {0}, з векторами: {1}. Останнє оновлення {2}.</value>
+  </data>
+  <data name="IndexWarning" xml:space="preserve">
+    <value>Деякі елементи не вдалося проіндексувати або служба векторів була недоступна; наступний прохід повторить спробу.</value>
+  </data>
+  <data name="InvalidUrl" xml:space="preserve">
+    <value>Введіть посилання https.</value>
+  </data>
+  <data name="KeptLocalNotice" xml:space="preserve">
+    <value>Ваш підрозділ використовує Advanced Data Protection, тож ваше запитання залишається в Resgrid. Ці джерела йому відповідають.</value>
+  </data>
+  <data name="KeptLocalStatus" xml:space="preserve">
+    <value>Ваш підрозділ використовує Advanced Data Protection: ваше запитання залишається в Resgrid, і ви отримуєте відповідні джерела.</value>
+  </data>
+  <data name="KeywordOnlyNotice" xml:space="preserve">
+    <value>Служба пошуку не відповіла вчасно, тож джерела знайдено лише за ключовими словами.</value>
+  </data>
+  <data name="KindAcademy" xml:space="preserve">
+    <value>Resgrid Academy</value>
+  </data>
+  <data name="KindCourse" xml:space="preserve">
+    <value>Курс</value>
+  </data>
+  <data name="KindDocument" xml:space="preserve">
+    <value>Документ</value>
+  </data>
+  <data name="KindProtocol" xml:space="preserve">
+    <value>Протокол</value>
+  </data>
+  <data name="KindProtocolFile" xml:space="preserve">
+    <value>Файл протоколу</value>
+  </data>
+  <data name="KindTraining" xml:space="preserve">
+    <value>Навчання</value>
+  </data>
+  <data name="KindTrainingFile" xml:space="preserve">
+    <value>Файл навчання</value>
+  </data>
+  <data name="KnowledgeHeader" xml:space="preserve">
+    <value>Знання</value>
+  </data>
+  <data name="MatchedNotice" xml:space="preserve">
+    <value>Ці джерела відповідають вашому запитанню.</value>
+  </data>
+  <data name="NearestLabel" xml:space="preserve">
+    <value>Найближчі елементи</value>
+  </data>
+  <data name="NewTrainingButton" xml:space="preserve">
+    <value>Нове навчання</value>
+  </data>
+  <data name="NextPage" xml:space="preserve">
+    <value>Наступна</value>
+  </data>
+  <data name="NoGaps" xml:space="preserve">
+    <value>Тут немає прогалин у знаннях.</value>
+  </data>
+  <data name="NoNearest" xml:space="preserve">
+    <value>Не знайдено</value>
+  </data>
+  <data name="NoRole" xml:space="preserve">
+    <value>Без ролі</value>
+  </data>
+  <data name="NotCovered" xml:space="preserve">
+    <value>Протоколи та навчання вашого підрозділу цього не охоплюють.</value>
+  </data>
+  <data name="NoteLabel" xml:space="preserve">
+    <value>Примітка</value>
+  </data>
+  <data name="NotHelpful" xml:space="preserve">
+    <value>Некорисно</value>
+  </data>
+  <data name="OpenSource" xml:space="preserve">
+    <value>Відкрити</value>
+  </data>
+  <data name="OpenTile" xml:space="preserve">
+    <value>Відкриті</value>
+  </data>
+  <data name="PreviousPage" xml:space="preserve">
+    <value>Попередня</value>
+  </data>
+  <data name="ProtocolsCrumb" xml:space="preserve">
+    <value>Протоколи</value>
+  </data>
+  <data name="QuestionNotKept" xml:space="preserve">
+    <value>Запитання не збережено (Advanced Data Protection)</value>
+  </data>
+  <data name="QuestionRequired" xml:space="preserve">
+    <value>Спочатку введіть запитання.</value>
+  </data>
+  <data name="ReasonNotCovered" xml:space="preserve">
+    <value>Не охоплено</value>
+  </data>
+  <data name="ReasonThumbsDown" xml:space="preserve">
+    <value>Позначено як некорисне</value>
+  </data>
+  <data name="RebuildButton" xml:space="preserve">
+    <value>Перебудувати індекс</value>
+  </data>
+  <data name="RebuildQueued" xml:space="preserve">
+    <value>Індекс буде перебудовано у фоновому режимі протягом кількох хвилин.</value>
+  </data>
+  <data name="ReopenButton" xml:space="preserve">
+    <value>Відкрити знову</value>
+  </data>
+  <data name="ResolveButton" xml:space="preserve">
+    <value>Вирішити</value>
+  </data>
+  <data name="ResolvedTile" xml:space="preserve">
+    <value>Вирішені</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Що можуть використовувати відповіді знань підрозділу.</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Налаштування знань збережено.</value>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>Налаштування</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Налаштування знань</value>
+  </data>
+  <data name="SourcesLabel" xml:space="preserve">
+    <value>Джерела</value>
+  </data>
+  <data name="StaleCopyNotice" xml:space="preserve">
+    <value>Ваша офлайн-копія процитованого елемента старша за процитовану версію.</value>
+  </data>
+  <data name="StatusFilterLabel" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="SurfaceApi" xml:space="preserve">
+    <value>Мобільний застосунок</value>
+  </data>
+  <data name="SurfaceAssistant" xml:space="preserve">
+    <value>Асистент</value>
+  </data>
+  <data name="SurfaceCall" xml:space="preserve">
+    <value>Виклик</value>
+  </data>
+  <data name="SurfaceLibrary" xml:space="preserve">
+    <value>Бібліотека протоколів</value>
+  </data>
+  <data name="SurfaceProtocol" xml:space="preserve">
+    <value>Сторінка протоколу</value>
+  </data>
+  <data name="SurfaceTraining" xml:space="preserve">
+    <value>Сторінка навчання</value>
+  </data>
+  <data name="UnavailableNotice" xml:space="preserve">
+    <value>Відповіді зараз недоступні. Спробуйте ще раз за кілька хвилин.</value>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>версія {0}</value>
+  </data>
+  <data name="SurfaceHelp" xml:space="preserve">
+    <value>Пошук у довідці</value>
+  </data>
+  <data name="SurfaceCourse" xml:space="preserve">
+    <value>Курс</value>
+  </data>
+  <data name="AskHeaderCallWide" xml:space="preserve">
+    <value>Запитайте про цей виклик</value>
+  </data>
+  <data name="AskHelpCallWide" xml:space="preserve">
+    <value>Відповіді беруться лише з протоколів, на які посилається цей виклик, та з його типу, пріоритету, детермінанти й типу місця. Дані пацієнта й абонента ніколи не використовуються.</value>
+  </data>
+  <data name="AskHeaderCourse" xml:space="preserve">
+    <value>Запитайте цей курс</value>
+  </data>
+  <data name="AskHelpCourse" xml:space="preserve">
+    <value>Відповіді беруться лише з версії цього курсу, яку ви проходите, і кожна частина посилається на свій урок.</value>
+  </data>
+  <data name="CallContextNotice" xml:space="preserve">
+    <value>Відповідь для цього виклику: його протоколи, тип, пріоритет, детермінанта й тип місця.</value>
+  </data>
+  <data name="PracticeHeader" xml:space="preserve">
+    <value>Практика</value>
+  </data>
+  <data name="PracticeHelp" xml:space="preserve">
+    <value>Практикуйтеся на короткому сценарії, написаному з чинної версії цього протоколу. Ваші відповіді оцінюються лише за протоколом, і нічого не записується до вашого навчального журналу.</value>
+  </data>
+  <data name="PracticeStart" xml:space="preserve">
+    <value>Почати сценарій</value>
+  </data>
+  <data name="PracticeStarting" xml:space="preserve">
+    <value>Пишемо сценарій…</value>
+  </data>
+  <data name="PracticeScenarioLabel" xml:space="preserve">
+    <value>Сценарій</value>
+  </data>
+  <data name="PracticeAnswerLabel" xml:space="preserve">
+    <value>Ваша відповідь</value>
+  </data>
+  <data name="PracticeSubmit" xml:space="preserve">
+    <value>Оцінити мої відповіді</value>
+  </data>
+  <data name="PracticeScoring" xml:space="preserve">
+    <value>Оцінюємо ваші відповіді…</value>
+  </data>
+  <data name="PracticeAgain" xml:space="preserve">
+    <value>Інший сценарій</value>
+  </data>
+  <data name="PracticeScoreFormat" xml:space="preserve">
+    <value>Результат: {0} з {1}</value>
+  </data>
+  <data name="PracticeItemScoreFormat" xml:space="preserve">
+    <value>{0} з {1}</value>
+  </data>
+  <data name="PracticeNotScored" xml:space="preserve">
+    <value>Цю відповідь не вдалося оцінити.</value>
+  </data>
+  <data name="PracticeExcluded" xml:space="preserve">
+    <value>Цей протокол не використовується з ШІ.</value>
+  </data>
+  <data name="PracticeKeptLocal" xml:space="preserve">
+    <value>Розширений захист даних зберігає вміст цього підрозділу локально, тому практика недоступна.</value>
+  </data>
+  <data name="PracticeNoContent" xml:space="preserve">
+    <value>У цьому протоколі замало тексту для практики.</value>
+  </data>
+  <data name="PracticeRefused" xml:space="preserve">
+    <value>Не вдалося перевірити сценарій за протоколом. Спробуйте ще раз.</value>
+  </data>
+  <data name="PracticeStale" xml:space="preserve">
+    <value>Протокол змінився відтоді, як написано цей сценарій. Почніть новий.</value>
+  </data>
+  <data name="PracticeAnswerRequired" xml:space="preserve">
+    <value>Дайте відповідь хоча б на одне запитання.</value>
+  </data>
+  <data name="PracticeOnlyNotice" xml:space="preserve">
+    <value>Лише практика: нічого не записується до вашого навчального журналу.</value>
+  </data>
+</root>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Resgrid.Config;
 using Resgrid.Model;
+using Resgrid.Model.Billing;
 
 namespace Resgrid.Web.Areas.User.Models.Subscription
 {
@@ -27,11 +28,27 @@ namespace Resgrid.Web.Areas.User.Models.Subscription
 		/// <summary>Operator toggle that decides whether the add-on is offered to a department; null when it is always offered.</summary>
 		public string FeatureFlag { get; init; }
 		public AddonBillingPeriod Period { get; init; }
-		/// <summary>Priced per 10-user pack rather than per department.</summary>
+		/// <summary>Priced per 10-user pack rather than per department (the legacy Push-To-Talk item on the base subscription).</summary>
 		public bool PerUserPack { get; init; }
 		public int FeatureCount { get; init; }
+		/// <summary>For a pack add-on the price of the first pack (the first tier); otherwise the flat price.</summary>
 		public Func<decimal> StripeAmount { get; init; }
 		public Func<decimal> PaddleAmount { get; init; }
+
+		/// <summary>
+		/// A pack add-on (R-L10, one billing path for the LMS and Workforce Pro): the department buys a quantity of packs, priced on
+		/// a graduated schedule; null for a flat add-on. The argument is true for Paddle (EUR), false for Stripe (USD).
+		/// </summary>
+		public Func<bool, PackPriceSchedule> PackPricing { get; init; }
+
+		/// <summary>The add-on is bought as a quantity of packs with graduated tiers.</summary>
+		public bool IsPackAddon => PackPricing != null;
+
+		/// <summary>The pack schedule the cluster's provider bills, or null for a flat add-on.</summary>
+		public PackPriceSchedule Schedule => PackPricing?.Invoke(AddonCatalog.UsesPaddle);
+
+		/// <summary>Members per pack (0 for a flat add-on).</summary>
+		public int PackSize => Schedule?.PackSize ?? 0;
 
 		public string TitleKey => Key + "Title";
 		public string TaglineKey => Key + "Tagline";
@@ -77,6 +94,14 @@ namespace Resgrid.Web.Areas.User.Models.Subscription
 				// Sold only with an active paid entity plan (the Billing API refuses checkout otherwise; the billing page says why).
 				Type = PlanAddonTypes.DedicatedNumber, Key = "DedicatedNumber", Icon = "fa-phone", Slug = "dedicated-number", FeatureFlag = FeatureFlagKeys.IntakeDedicatedNumber,
 				Period = AddonBillingPeriod.Monthly, FeatureCount = 5, StripeAmount = () => DedicatedNumberAddonConfig.StripeMonthlyAmount, PaddleAmount = () => DedicatedNumberAddonConfig.PaddleMonthlyAmount
+			},
+			new AddonDefinition
+			{
+				// A pack add-on (protocols-training-knowledge-plan §17.4): 25-member packs, graduated, monthly only, no trial; sold only
+				// with a paid base plan (the card rule below; §25.4a item 9). The card price is the first pack's.
+				Type = PlanAddonTypes.Lms, Key = "Lms", Icon = "fa-graduation-cap", Slug = "lms", FeatureFlag = FeatureFlagKeys.TrainingLms,
+				Period = AddonBillingPeriod.Monthly, FeatureCount = 5, StripeAmount = () => LmsAddonConfig.StripeFirstTierPackAmount,
+				PaddleAmount = () => LmsAddonConfig.PaddleFirstTierPackAmount, PackPricing = paddle => LmsPackPricing.ForProvider(paddle)
 			},
 			new AddonDefinition
 			{

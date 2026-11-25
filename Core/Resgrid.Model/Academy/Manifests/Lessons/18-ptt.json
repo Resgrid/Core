@@ -1,0 +1,201 @@
+{
+  "schema": 1,
+  "id": "18-ptt",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Push-to-talk",
+  "minutes": 1.9,
+  "walkthrough": false,
+  "audience": [],
+  "visibility": [
+    "addon:PTT"
+  ],
+  "pages": [
+    "Voice"
+  ],
+  "adminAssist": {
+    "areas": [
+      "ptt"
+    ],
+    "capabilities": [
+      "voice"
+    ]
+  },
+  "media": {
+    "video": "media/18-ptt.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/18-ptt.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Set up voice channels for team coordination",
+    "ar": "أعد قنوات صوتية لتنسيق الفرق",
+    "de": "Sprachkanäle für die Teamkoordination einrichten",
+    "el": "Ρυθμίστε φωνητικά κανάλια για τον συντονισμό ομάδων",
+    "es": "Configurar canales de voz para coordinar equipos",
+    "fr": "Configurer des canaux vocaux pour coordonner les équipes",
+    "it": "Configurare canali vocali per coordinare le squadre",
+    "pl": "Skonfiguruj kanały głosowe do koordynacji zespołów",
+    "sv": "Sätt upp röstkanaler för samordning i teamet",
+    "uk": "Налаштуйте голосові канали для координації команд"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "What is push-to-talk used for?",
+        "ar": "فيمَ تُستخدم ميزة الضغط للتحدث؟",
+        "de": "Wofür wird Push-to-Talk verwendet?",
+        "el": "Σε τι χρησιμοποιείται το push-to-talk;",
+        "es": "¿Para qué se usa pulsar para hablar?",
+        "fr": "À quoi sert le push-to-talk ?",
+        "it": "A che cosa serve il push-to-talk?",
+        "pl": "Do czego służy funkcja push-to-talk?",
+        "sv": "Vad används tryck-för-att-tala till?",
+        "uk": "Для чого використовують push-to-talk?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Talking to a team over voice channels from the app",
+            "ar": "التحدث مع فريق عبر القنوات الصوتية من التطبيق",
+            "de": "Über Sprachkanäle in der App mit einem Team sprechen",
+            "el": "Συνομιλία με ομάδα μέσω φωνητικών καναλιών από την εφαρμογή",
+            "es": "Hablar con un equipo por canales de voz desde la aplicación",
+            "fr": "Parler à une équipe sur des canaux vocaux depuis l’application",
+            "it": "Parlare con una squadra sui canali vocali dall’app",
+            "pl": "Rozmowa z zespołem przez kanały głosowe w aplikacji",
+            "sv": "Prata med ett team via röstkanaler i appen",
+            "uk": "Розмова з командою голосовими каналами із застосунку"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Sending invoices",
+            "ar": "إرسال الفواتير",
+            "de": "Rechnungen versenden",
+            "el": "Αποστολή τιμολογίων",
+            "es": "Enviar facturas",
+            "fr": "Envoyer des factures",
+            "it": "Inviare fatture",
+            "pl": "Wysyłanie faktur",
+            "sv": "Skicka fakturor",
+            "uk": "Надсилання рахунків"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Printing reports",
+            "ar": "طباعة التقارير",
+            "de": "Berichte drucken",
+            "el": "Εκτύπωση αναφορών",
+            "es": "Imprimir informes",
+            "fr": "Imprimer des rapports",
+            "it": "Stampare report",
+            "pl": "Drukowanie raportów",
+            "sv": "Skriva ut rapporter",
+            "uk": "Друк звітів"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "How should voice channels be organized?",
+        "ar": "كيف يجب تنظيم القنوات الصوتية؟",
+        "de": "Wie sollten Sprachkanäle organisiert sein?",
+        "el": "Πώς πρέπει να οργανώνονται τα φωνητικά κανάλια;",
+        "es": "¿Cómo deben organizarse los canales de voz?",
+        "fr": "Comment organiser les canaux vocaux ?",
+        "it": "Come vanno organizzati i canali vocali?",
+        "pl": "Jak należy organizować kanały głosowe?",
+        "sv": "Hur bör röstkanaler organiseras?",
+        "uk": "Як слід організувати голосові канали?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "One channel for every member",
+            "ar": "قناة لكل عضو",
+            "de": "Ein Kanal pro Mitglied",
+            "el": "Ένα κανάλι για κάθε μέλος",
+            "es": "Un canal por miembro",
+            "fr": "Un canal par membre",
+            "it": "Un canale per ogni membro",
+            "pl": "Jeden kanał na członka",
+            "sv": "En kanal per medlem",
+            "uk": "Один канал на кожного учасника"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "No channels at all",
+            "ar": "بلا قنوات إطلاقًا",
+            "de": "Gar keine Kanäle",
+            "el": "Καθόλου κανάλια",
+            "es": "Ningún canal",
+            "fr": "Aucun canal",
+            "it": "Nessun canale",
+            "pl": "Bez kanałów",
+            "sv": "Inga kanaler alls",
+            "uk": "Зовсім без каналів"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "By team or purpose so the right people hear each other",
+            "ar": "حسب الفريق أو الغرض ليسمع الأشخاص المناسبون بعضهم",
+            "de": "Nach Team oder Zweck, damit sich die richtigen Personen hören",
+            "el": "Ανά ομάδα ή σκοπό ώστε να ακούγονται τα σωστά άτομα",
+            "es": "Por equipo o finalidad para que se oigan las personas adecuadas",
+            "fr": "Par équipe ou par usage pour que les bonnes personnes s’entendent",
+            "it": "Per squadra o scopo, così le persone giuste si sentono",
+            "pl": "Według zespołu lub celu, aby właściwe osoby się słyszały",
+            "sv": "Efter team eller syfte så att rätt personer hör varandra",
+            "uk": "За командою чи призначенням, щоб потрібні люди чули одне одного"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "f",
+      "text": {
+        "en": "Push-to-talk requires a separate radio for every member.",
+        "ar": "تتطلب ميزة الضغط للتحدث جهاز لاسلكي منفصلًا لكل عضو.",
+        "de": "Push-to-Talk erfordert für jedes Mitglied ein eigenes Funkgerät.",
+        "el": "Το push-to-talk απαιτεί ξεχωριστό ασύρματο για κάθε μέλος.",
+        "es": "Pulsar para hablar requiere una radio aparte para cada miembro.",
+        "fr": "Le push-to-talk exige une radio distincte pour chaque membre.",
+        "it": "Il push-to-talk richiede una radio separata per ogni membro.",
+        "pl": "Push-to-talk wymaga osobnego radiotelefonu dla każdego członka.",
+        "sv": "Tryck-för-att-tala kräver en egen radio för varje medlem.",
+        "uk": "Push-to-talk потребує окремої рації для кожного учасника."
+      }
+    }
+  ]
+}

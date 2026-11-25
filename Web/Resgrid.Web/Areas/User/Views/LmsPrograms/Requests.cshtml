@@ -1,0 +1,165 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsPrograms
+@model LmsRequestsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    Training requests (§13a.2): the member's own requests and a new one, the requests waiting for the viewer's decision, and for
+    officers every request of the year with its cost totals per member.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Prg.RequestsTitle"];
+    ViewData["Title"] = localizer["Prg.RequestsTitle"].Value;
+    ViewData["Subtitle"] = localizer["Prg.RequestsIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var culture = CultureInfo.CurrentCulture;
+    string Money(decimal value) => value.ToString("N2", culture);
+}
+
+@functions {
+    private static string StatusCss(int status) => status switch
+    {
+        (int)LmsTrainingRequestStatuses.Approved => "label-primary",
+        (int)LmsTrainingRequestStatuses.Completed => "label-success",
+        (int)LmsTrainingRequestStatuses.Rejected => "label-danger",
+        (int)LmsTrainingRequestStatuses.Submitted => "label-warning",
+        _ => "label-default"
+    };
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    @if (Model.AwaitingMe.Count > 0)
+    {
+        <h3><i class="fa fa-gavel" aria-hidden="true"></i> @localizer["Prg.AwaitingMe"]</h3>
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead><tr><th>@localizer["Prg.Col.Member"]</th><th>@localizer["Prg.Col.Title"]</th><th>@localizer["Prg.Col.Cost"]</th><th>@localizer["Prg.Step"]</th><th class="rgw-row-actions">@localizer["Prg.Actions"]</th></tr></thead>
+                <tbody>
+                    @foreach (var request in Model.AwaitingMe)
+                    {
+                        <tr>
+                            <td>@Model.NameOf(request.UserId)</td>
+                            <td>@request.Title<span class="rgw-sub">@request.Provider</span></td>
+                            <td>@Money(request.RequestedCost) @request.Currency</td>
+                            <td>@(request.CurrentStep.HasValue ? localizer["Prg.Step." + (LmsTrainingRequestSteps)request.CurrentStep.Value].Value : string.Empty)</td>
+                            <td class="rgw-row-actions"><a class="btn btn-primary btn-xs" asp-controller="LmsPrograms" asp-action="ViewRequest" asp-route-area="User" asp-route-id="@request.LmsTrainingRequestId"><i class="fa fa-gavel" aria-hidden="true"></i> @localizer["Prg.Decide"]</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <h3>@localizer["Prg.MyRequests"]</h3>
+    @if (Model.Mine.Count == 0)
+    {
+        <p class="text-muted">@localizer["Prg.NoRequests"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead><tr><th>@localizer["Prg.Col.Title"]</th><th>@localizer["Prg.Col.Date"]</th><th>@localizer["Prg.Col.Cost"]</th><th>@localizer["Prg.Col.Status"]</th><th class="rgw-row-actions">@localizer["Prg.Actions"]</th></tr></thead>
+                <tbody>
+                    @foreach (var request in Model.Mine)
+                    {
+                        <tr>
+                            <td>@request.Title<span class="rgw-sub">@request.Provider</span></td>
+                            <td>@(request.StartsOn?.ToString("d", culture))</td>
+                            <td>@Money(request.RequestedCost) @request.Currency</td>
+                            <td><span class="label @StatusCss(request.Status)">@localizer["Prg.RequestStatus." + (LmsTrainingRequestStatuses)request.Status]</span></td>
+                            <td class="rgw-row-actions"><a class="btn btn-white btn-xs" asp-controller="LmsPrograms" asp-action="ViewRequest" asp-route-area="User" asp-route-id="@request.LmsTrainingRequestId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["Prg.Open"]</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (Model.CanAuthor)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-paper-plane-o" aria-hidden="true"></i> @localizer["Prg.NewRequest"]</h5></div>
+            <div class="ibox-content">
+                <form method="post" asp-controller="LmsPrograms" asp-action="SubmitRequest" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <div class="rgw-grid">
+                        <div class="form-group"><label for="rq-title">@localizer["Prg.ClassTitle"]</label><input id="rq-title" name="Title" class="form-control" maxlength="250" required /></div>
+                        <div class="form-group"><label for="rq-provider">@localizer["Prg.Provider"]</label><input id="rq-provider" name="Provider" class="form-control" maxlength="250" /></div>
+                        <div class="form-group"><label for="rq-location">@localizer["Prg.Location"]</label><input id="rq-location" name="Location" class="form-control" maxlength="250" /></div>
+                        <div class="form-group"><label for="rq-code">@localizer["Prg.Col.CourseCode"]</label><input id="rq-code" name="CourseCode" class="form-control" maxlength="100" /></div>
+                        <div class="form-group"><label for="rq-start">@localizer["Prg.StartsOn"]</label><input id="rq-start" name="StartsOn" type="date" class="form-control" /></div>
+                        <div class="form-group"><label for="rq-end">@localizer["Prg.EndsOn"]</label><input id="rq-end" name="EndsOn" type="date" class="form-control" /></div>
+                        <div class="form-group"><label for="rq-hours">@localizer["Prg.Col.Hours"]</label><input id="rq-hours" name="Hours" type="number" step="0.25" min="0" max="1000" class="form-control" value="0" /></div>
+                        <div class="form-group">
+                            <label for="rq-category">@localizer["Prg.Col.Category"]</label>
+                            <select id="rq-category" name="CategoryId" class="form-control">
+                                <option value="">@localizer["Prg.Uncategorized"]</option>
+                                @foreach (var category in Model.Categories.Where(c => !c.IsDeleted).OrderBy(c => c.SortOrder).ThenBy(c => c.Name))
+                                {
+                                    <option value="@category.TrainingCategoryId">@category.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group"><label for="rq-tuition">@localizer["Prg.CostTuition"] (@Model.Currency)</label><input id="rq-tuition" name="CostTuition" type="number" step="0.01" min="0" class="form-control" value="0" /></div>
+                        <div class="form-group"><label for="rq-travel">@localizer["Prg.CostTravel"] (@Model.Currency)</label><input id="rq-travel" name="CostTravel" type="number" step="0.01" min="0" class="form-control" value="0" /></div>
+                        <div class="form-group"><label for="rq-other">@localizer["Prg.CostOther"] (@Model.Currency)</label><input id="rq-other" name="CostOther" type="number" step="0.01" min="0" class="form-control" value="0" /></div>
+                    </div>
+                    <div class="form-group"><label for="rq-why">@localizer["Prg.Justification"]</label><textarea id="rq-why" name="Justification" class="form-control" rows="3" maxlength="4000"></textarea></div>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> @localizer["Prg.SubmitRequest"]</button>
+                </form>
+            </div>
+        </div>
+    }
+
+    @if (Model.IsOfficer)
+    {
+        <h3>@string.Format(culture, localizer["Prg.AllRequestsYear"].Value, Model.Year)</h3>
+        <div class="rgw-toolbar m-b-sm">
+            <a class="btn btn-white btn-sm" asp-controller="LmsPrograms" asp-action="Requests" asp-route-area="User" asp-route-year="@(Model.Year - 1)"><i class="fa fa-chevron-left" aria-hidden="true"></i> @(Model.Year - 1)</a>
+            <a class="btn btn-white btn-sm" asp-controller="LmsPrograms" asp-action="Requests" asp-route-area="User" asp-route-year="@(Model.Year + 1)">@(Model.Year + 1) <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+            <a class="btn btn-white btn-sm" asp-controller="LmsPrograms" asp-action="Report" asp-route-area="User" asp-route-key="training-request-costs" asp-route-run="true"><i class="fa fa-table" aria-hidden="true"></i> @localizer["Prg.Report.Costs"]</a>
+        </div>
+        @if (Model.Costs != null)
+        {
+            <div class="rgw-stat-tiles m-b-sm">
+                <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Prg.Col.Committed"]</div><div class="rgw-stat-value">@Money(Model.Costs.Committed) @Model.Costs.Currency</div></div>
+                <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Prg.Col.Pending"]</div><div class="rgw-stat-value">@Money(Model.Costs.Pending) @Model.Costs.Currency</div></div>
+            </div>
+        }
+        @if (Model.All.Count == 0)
+        {
+            <p class="text-muted">@localizer["Prg.NoRequests"]</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table rgw-table">
+                    <thead><tr><th>@localizer["Prg.Col.Member"]</th><th>@localizer["Prg.Col.Title"]</th><th>@localizer["Prg.Col.Cost"]</th><th>@localizer["Prg.Col.Status"]</th><th class="rgw-row-actions">@localizer["Prg.Actions"]</th></tr></thead>
+                    <tbody>
+                        @foreach (var request in Model.All)
+                        {
+                            <tr>
+                                <td>@Model.NameOf(request.UserId)</td>
+                                <td>@request.Title<span class="rgw-sub">@request.Provider</span></td>
+                                <td>@Money(request.EffectiveCost) @request.Currency</td>
+                                <td><span class="label @StatusCss(request.Status)">@localizer["Prg.RequestStatus." + (LmsTrainingRequestStatuses)request.Status]</span></td>
+                                <td class="rgw-row-actions"><a class="btn btn-white btn-xs" asp-controller="LmsPrograms" asp-action="ViewRequest" asp-route-area="User" asp-route-id="@request.LmsTrainingRequestId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["Prg.Open"]</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

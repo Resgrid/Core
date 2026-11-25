@@ -20,6 +20,19 @@
     error = addonLocalizer["BillingCheckoutFailed"].Value,
     completeUrl = pageUrl + "?result=" + AddonBillingResults.Complete,
     pending = Model.AwaitingActivation,
-    attempt = Model.Attempt
+    attempt = Model.Attempt,
+    // Pack add-ons (the LMS): the price of a quantity is asked from the page's PreviewPacks action before anything changes.
+    packs = Model.Packs == null ? null : new
+    {
+        previewUrl = Url.Action("PreviewPacks", null, new { Area = "User" }),
+        symbol = Model.Packs.CurrencySymbol,
+        first = addonLocalizer["PackPreviewFirst"].Value,
+        increase = addonLocalizer["PackPreviewIncrease"].Value,
+        decrease = addonLocalizer["PackPreviewDecrease"].Value,
+        same = addonLocalizer["PackPreviewSame"].Value,
+        belowSeats = addonLocalizer["PackRefusedBelowSeats"].Value,
+        range = addonLocalizer["PackRefusedRange"].Value,
+        failed = addonLocalizer["PackPreviewFailed"].Value
+    }
 }, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
 <script src="~/js/app/internal/subscription/addon-billing.js" asp-append-version="true"></script>

@@ -586,6 +586,16 @@ namespace Resgrid.Services
 			bindings.AddRange(Resgrid.Model.IncidentLogistics.IncidentBackOfficeProtectedFields.All().GroupBy(f => f.Table).Select(table =>
 				AdpTableBinding.Direct(table.Key, Resgrid.Model.IncidentLogistics.IncidentBackOfficeTables.All.First(t => t.Table == table.Key).Key, false, "DepartmentId",
 					table.Select(f => Text(table.Key, f.Column)).ToArray()) with { ProtectedMarkerColumn = "IsProtected" }));
+			// Member wellness WL0 (ADP catalog 37, M0376): the health facts of an exposure entry and the screening plan. The member,
+			// call, category, dates and statuses stay plaintext (§25.4 item 4c).
+			bindings.AddRange(Resgrid.Model.WellnessProtectedFields.All().GroupBy(f => f.Table).Select(table =>
+				AdpTableBinding.Direct(table.Key, table.Key == "RmsResponderExposures" ? "RmsResponderExposureId" : "RmsResponderScreeningFlagId", false, "DepartmentId",
+					table.Select(f => Text(table.Key, f.Column)).ToArray()) with { ProtectedMarkerColumn = "IsProtected" }));
+			// Member wellness WL1 (ADP catalog 38, M0394-M0396): exposure case notes, injury details and the clearance restriction detail.
+			// Member, call, dates, stage, duty and clearance status stay plaintext (§25.4 item 4c).
+			bindings.AddRange(Resgrid.Model.MemberHealthProtectedFields.All().GroupBy(f => f.Table).Select(table =>
+				AdpTableBinding.Direct(table.Key, Resgrid.Model.MemberHealthProtectedFields.KeyColumn(table.Key), false, "DepartmentId",
+					table.Select(f => Text(table.Key, f.Column)).ToArray()) with { ProtectedMarkerColumn = "IsProtected" }));
 			bindings.AddRange(Resgrid.Model.WorkOrders.WorkOrderTables.All.Values.Where(Resgrid.Model.WorkOrders.WorkOrderTables.ProtectedContent.Contains).Select(table =>
 				AdpTableBinding.Direct(table, "Id", false, "DepartmentId", table == "WorkOrderFiles" ? new[] { Text(table, "Content"), Binary(table, "Data") } : new[] { Text(table, Resgrid.Model.WorkOrders.WorkOrderTables.SealedColumn(table)) }) with { ProtectedMarkerColumn = "IsProtected" }));
 			// Inventory transactions use their stable GUID public Id for field AAD, independently of the bigint EntryId ledger key.

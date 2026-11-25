@@ -177,7 +177,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			protocol.CallProtocolId = row.CallProtocolId.ToString();
 			protocol.Source = row.Source;
+			protocol.ProtocolVersionId = row.ProtocolVersionId?.ToString();
+			protocol.ContentHash = row.ContentHash;
 			protocol.Score = row.Score;
+			protocol.Determinant = row.Determinant;
+			protocol.OverrideReason = row.OverrideReason;
+			protocol.Case = CallProtocolCase.Parse(row.CaseJson);
 
 			if (!string.IsNullOrWhiteSpace(row.AnswersJson))
 			{
@@ -226,6 +231,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 				trigger.CallType = t.CallType;
 				trigger.CallTypeId = t.CallTypeId;
 				trigger.Geofence = t.Geofence;
+				trigger.GeofenceGroupId = t.GeofenceGroupId;
+				trigger.DaysOfWeek = t.DaysOfWeek;
+				trigger.StartMinute = t.StartMinute;
+				trigger.EndMinute = t.EndMinute;
+				trigger.Keywords = t.Keywords;
+				trigger.PoiTypeId = t.PoiTypeId;
+				trigger.CallSources = t.CallSources;
 
 				protocol.Triggers.Add(trigger);
 			}

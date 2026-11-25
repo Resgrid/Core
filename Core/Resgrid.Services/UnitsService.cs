@@ -50,6 +50,7 @@ namespace Resgrid.Services
 		private readonly INovuProvider _novuProvider;
 		private readonly Lazy<IDepartmentsService> _departmentsService;
 		private readonly ITypeIconsRepository _typeIconsRepository;
+		private readonly IContentAudienceChangeQueue _audienceChanges;
 
 		// Lazy: the awaiting-resources check needs the calls and dispatch graph, which itself depends on this service.
 		private readonly Lazy<IOutstandingRequirementsService> _outstandingRequirementsService;
@@ -74,8 +75,9 @@ namespace Resgrid.Services
 			Lazy<IDepartmentsService> departmentsService = null, ITypeIconsRepository typeIconsRepository = null,
 			Lazy<IOutstandingRequirementsService> outstandingRequirementsService = null,
 			IUnitNavigationStateService unitNavigationStateService = null, IUnitOfWork unitOfWork = null,
-			Lazy<ITransportDestinationCheckService> transportDestinationCheckService = null)
+			Lazy<ITransportDestinationCheckService> transportDestinationCheckService = null, IContentAudienceChangeQueue audienceChanges = null)
 		{
+			_audienceChanges = audienceChanges;
 			_transportDestinationCheckService = transportDestinationCheckService;
 			_unitOfWork = unitOfWork;
 			_unitNavigationStateService = unitNavigationStateService;
@@ -1266,7 +1268,13 @@ namespace Resgrid.Services
 
 		public async Task<UnitActiveRole> SaveActiveRoleAsync(UnitActiveRole role, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _unitActiveRolesRepository.SaveOrUpdateAsync(role, cancellationToken, true);
+			var saved = await _unitActiveRolesRepository.SaveOrUpdateAsync(role, cancellationToken, true);
+
+			// A member now rides a unit: worker 83 re-evaluates their unit-type training (and protocol) audiences.
+			if (_audienceChanges != null && saved != null && !string.IsNullOrWhiteSpace(saved.UserId))
+				await _audienceChanges.EnqueueAsync(saved.DepartmentId, saved.UserId, ContentAudienceChangeSources.Unit, cancellationToken);
+
+			return saved;
 		}
 
 		public async Task<bool> DeleteActiveRolesForUnitAsync(int unitId, CancellationToken cancellationToken = default(CancellationToken))

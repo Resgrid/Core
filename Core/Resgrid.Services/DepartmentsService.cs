@@ -48,14 +48,16 @@ namespace Resgrid.Services
 
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
 		private readonly IEmailMarketingService _emailMarketingService;
+		private readonly IContentAudienceChangeQueue _audienceChanges;
 
 		public DepartmentsService(IDepartmentsRepository departmentRepository, IDepartmentMembersRepository departmentMembersRepository,
 			ISubscriptionsService subscriptionsService, IDepartmentCallEmailsRepository departmentCallEmailsRepository,
 			IDepartmentCallPruningRepository departmentCallPruningRepository, ICacheProvider cacheProvider, IUsersService usersService,
 			IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileRepository, ILimitsService limitsService,
 			IEventAggregator eventAggregator, IIdentityRepository identityRepository, IDepartmentCallPruningRepository departmentCallPruningDapperRepository, Lazy<ISearchProjectionService> searchProjections = null,
-			IEmailMarketingService emailMarketingService = null)
+			IEmailMarketingService emailMarketingService = null, IContentAudienceChangeQueue audienceChanges = null)
 		{
+			_audienceChanges = audienceChanges;
 			_emailMarketingService = emailMarketingService;
 			_departmentRepository = departmentRepository;
 			_departmentMembersRepository = departmentMembersRepository;
@@ -285,6 +287,7 @@ namespace Resgrid.Services
 			dm.IsAdmin = false;
 
 			var saved = await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
+			await QueueMembershipChangeAsync(saved, cancellationToken);
 			_eventAggregator.SendMessage<AuditEvent>(new AuditEvent
 			{
 				DepartmentId = departmentId,
@@ -334,6 +337,7 @@ namespace Resgrid.Services
 			await _limitsService.InvalidateDepartmentsEntityLimitsCache(departmentId);
 
 			var saved = await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
+			await QueueMembershipChangeAsync(saved, cancellationToken);
 
 			// A lookup for this user/department pair may already have been cached as "not a member",
 			// and the department's user list does not have the new name on it yet.
@@ -372,6 +376,7 @@ namespace Resgrid.Services
 				// records it before and after) so a later reactivation cannot bring it back silently.
 				member.IsAdmin = false;
 				await _departmentMembersRepository.SaveOrUpdateAsync(member, cancellationToken);
+				await QueueMembershipChangeAsync(member, cancellationToken);
 				if (_searchProjections != null) await _searchProjections.Value.RemoveAsync(departmentId, SearchEntityTypes.Personnel, userIdToDelete, cancellationToken);
 
 				var member2 = await _departmentMembersRepository.GetDepartmentMemberByDepartmentIdAndUserIdAsync(departmentId, userIdToDelete);
@@ -422,6 +427,7 @@ namespace Resgrid.Services
 				dm.IsDefault = false;
 
 				var saved = await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
+				await QueueMembershipChangeAsync(saved, cancellationToken);
 				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
 				{
 					DepartmentId = d.DepartmentId
@@ -499,6 +505,7 @@ namespace Resgrid.Services
 				dm.IsActive = true;
 
 				var saved = await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
+				await QueueMembershipChangeAsync(saved, cancellationToken);
 				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent()
 				{
 					DepartmentId = departmentId
@@ -524,6 +531,7 @@ namespace Resgrid.Services
 				return current;
 
 			var saved = await _departmentMembersRepository.SaveOrUpdateAsync(member, cancellationToken);
+			await QueueMembershipChangeAsync(saved, cancellationToken);
 			InvalidateDepartmentUsersInCache(member.DepartmentId);
 
 			if (effects.RaiseDomainEvents)
@@ -807,6 +815,7 @@ namespace Resgrid.Services
 
 			var saved = await _departmentMembersRepository.SaveOrUpdateAsync(departmentMember, cancellationToken);
 			await ProjectMembershipAsync(saved, cancellationToken);
+			await QueueMembershipChangeAsync(saved, cancellationToken);
 
 			InvalidateDepartmentMemberInCache(departmentMember.UserId, departmentMember.DepartmentId);
 			InvalidateDepartmentUserInCache(departmentMember.UserId, departmentMember.User);
@@ -894,6 +903,14 @@ namespace Resgrid.Services
 		/// the personnel list and the rebuild sweep. A live membership is re-projected so un-hiding or re-enabling a
 		/// member does not wait for the next rebuild.
 		/// </summary>
+		/// <summary>Joining, leaving, hiding or disabling a member: worker 83 re-evaluates their dynamic training (and protocol) audiences.</summary>
+		private Task QueueMembershipChangeAsync(DepartmentMember member, CancellationToken cancellationToken)
+		{
+			return _audienceChanges == null || member == null || member.DepartmentId <= 0 || string.IsNullOrWhiteSpace(member.UserId)
+				? Task.CompletedTask
+				: _audienceChanges.EnqueueAsync(member.DepartmentId, member.UserId, ContentAudienceChangeSources.Membership, cancellationToken);
+		}
+
 		private async Task ProjectMembershipAsync(DepartmentMember saved, CancellationToken cancellationToken)
 		{
 			if (_searchProjections == null || saved == null || saved.DepartmentId <= 0 || string.IsNullOrWhiteSpace(saved.UserId))

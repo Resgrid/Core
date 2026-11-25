@@ -250,4 +250,376 @@
   <data name="ProtocolsLabel" xml:space="preserve">
     <value>Πρωτόκολλα</value>
   </data>
+  <data name="LibraryTab" xml:space="preserve">
+    <value>Βιβλιοθήκη</value>
+  </data>
+  <data name="LibraryIntro" xml:space="preserve">
+    <value>Πρωτόκολλα διαχείρισης: οι προκαθορισμένες ερωτήσεις και οδηγίες που ενεργοποιούν ο τύπος και η προτεραιότητα της κλήσης.</value>
+  </data>
+  <data name="LibraryHeader" xml:space="preserve">
+    <value>Βιβλιοθήκη πρωτοκόλλων</value>
+  </data>
+  <data name="KpiTotal" xml:space="preserve">
+    <value>Πρωτόκολλα</value>
+  </data>
+  <data name="KpiDisabled" xml:space="preserve">
+    <value>Απενεργοποιημένα</value>
+  </data>
+  <data name="KpiUsedOnCalls" xml:space="preserve">
+    <value>Χρήση σε κλήσεις (30 ημέρες)</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Αναζήτηση πρωτοκόλλων</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Όνομα ή κωδικός</value>
+  </data>
+  <data name="StatusAll" xml:space="preserve">
+    <value>Όλες οι καταστάσεις</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Φιλτράρισμα</value>
+  </data>
+  <data name="ClearFilterButton" xml:space="preserve">
+    <value>Καθαρισμός</value>
+  </data>
+  <data name="NoProtocolsYet" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη πρωτόκολλα.</value>
+  </data>
+  <data name="NoProtocolsMatch" xml:space="preserve">
+    <value>Κανένα πρωτόκολλο δεν ταιριάζει με το φίλτρο.</value>
+  </data>
+  <data name="QuestionsCount" xml:space="preserve">
+    <value>{0} ερωτήσεις</value>
+  </data>
+  <data name="NoTriggers" xml:space="preserve">
+    <value>Χωρίς εναύσματα (μόνο χειροκίνητη επιλογή)</value>
+  </data>
+  <data name="MoreTriggers" xml:space="preserve">
+    <value>και {0} ακόμη</value>
+  </data>
+  <data name="UsedOnCallsColumn" xml:space="preserve">
+    <value>Κλήσεις (30 ημέρες)</value>
+  </data>
+  <data name="LastUpdatedColumn" xml:space="preserve">
+    <value>Τελευταία ενημέρωση</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="EnableButton" xml:space="preserve">
+    <value>Ενεργοποίηση</value>
+  </data>
+  <data name="DisableButton" xml:space="preserve">
+    <value>Απενεργοποίηση</value>
+  </data>
+  <data name="DeleteProtocolConfirm" xml:space="preserve">
+    <value>Το πρωτόκολλο αφαιρείται από τη βιβλιοθήκη και τις νέες κλήσεις· οι κλήσεις που το χρησιμοποίησαν συνεχίζουν να το εμφανίζουν. Διαγραφή του πρωτοκόλλου</value>
+  </data>
+  <data name="DeletedLabel" xml:space="preserve">
+    <value>Διαγραμμένο</value>
+  </data>
+  <data name="DeletedProtocolNotice" xml:space="preserve">
+    <value>Αυτό το πρωτόκολλο διαγράφηκε. Διατηρείται επειδή αναφέρεται σε κλήσεις· δεν προτείνεται ούτε επισυνάπτεται.</value>
+  </data>
+  <data name="DisabledProtocolNotice" xml:space="preserve">
+    <value>Αυτό το πρωτόκολλο είναι απενεργοποιημένο: δεν προτείνεται ούτε επισυνάπτεται σε κλήσεις. Ενεργοποιήστε το για να το χρησιμοποιήσετε ξανά.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Λεπτομέρειες</value>
+  </data>
+  <data name="TriggerMatchesColumn" xml:space="preserve">
+    <value>Ταιριάζει με</value>
+  </data>
+  <data name="NoTriggersHelp" xml:space="preserve">
+    <value>Χωρίς εναύσματα: το πρωτόκολλο δεν προτείνεται ποτέ, αλλά μπορεί να προστεθεί σε μια κλήση χειροκίνητα.</value>
+  </data>
+  <data name="NoQuestionsHelp" xml:space="preserve">
+    <value>Χωρίς ερωτήσεις: όταν ταιριάζει ένα έναυσμα, το πρωτόκολλο εφαρμόζεται αμέσως.</value>
+  </data>
+  <data name="MinimumWeightHelp" xml:space="preserve">
+    <value>Όταν ταιριάζει ένα έναυσμα, το πρωτόκολλο εφαρμόζεται μόλις τα βάρη των απαντήσεων αθροίζουν τουλάχιστον {0}.</value>
+  </data>
+  <data name="DownloadButton" xml:space="preserve">
+    <value>Λήψη</value>
+  </data>
+  <data name="NoAttachments" xml:space="preserve">
+    <value>Χωρίς συνημμένα.</value>
+  </data>
+  <data name="NoProtocolText" xml:space="preserve">
+    <value>Χωρίς κείμενο πρωτοκόλλου.</value>
+  </data>
+  <data name="ProtocolSavedMessage" xml:space="preserve">
+    <value>Το πρωτόκολλο αποθηκεύτηκε.</value>
+  </data>
+  <data name="ProtocolDisabledMessage" xml:space="preserve">
+    <value>Το πρωτόκολλο απενεργοποιήθηκε.</value>
+  </data>
+  <data name="ProtocolEnabledMessage" xml:space="preserve">
+    <value>Το πρωτόκολλο ενεργοποιήθηκε.</value>
+  </data>
+  <data name="EditProtocolHeader" xml:space="preserve">
+    <value>Επεξεργασία πρωτοκόλλου</value>
+  </data>
+  <data name="EditorIntroNew" xml:space="preserve">
+    <value>Δώστε όνομα στο πρωτόκολλο, γράψτε το περιεχόμενο και προσθέστε τα εναύσματα που το προτείνουν και τις ερωτήσεις που κρίνουν αν εφαρμόζεται.</value>
+  </data>
+  <data name="BasicsHeader" xml:space="preserve">
+    <value>Βασικά στοιχεία</value>
+  </data>
+  <data name="CodeHelp" xml:space="preserve">
+    <value>Έως {0} γράμματα, ψηφία, κενά και . _ / - (για παράδειγμα 09-E-01 ή SOG-204).</value>
+  </data>
+  <data name="MinimumWeightEditorHelp" xml:space="preserve">
+    <value>Το συνολικό βάρος απαντήσεων που χρειάζεται ένα προτεινόμενο πρωτόκολλο για να εφαρμοστεί. Με 0 εφαρμόζεται όποιες κι αν είναι οι απαντήσεις.</value>
+  </data>
+  <data name="DisabledCheckbox" xml:space="preserve">
+    <value>Απενεργοποιημένο</value>
+  </data>
+  <data name="DisabledCheckboxHelp" xml:space="preserve">
+    <value>Ένα απενεργοποιημένο πρωτόκολλο μένει στη βιβλιοθήκη αλλά δεν προτείνεται ούτε επισυνάπτεται σε κλήσεις.</value>
+  </data>
+  <data name="ContentHeader" xml:space="preserve">
+    <value>Περιεχόμενο</value>
+  </data>
+  <data name="DescriptionHelp" xml:space="preserve">
+    <value>Μια σύντομη περίληψη, έως {0} χαρακτήρες κειμένου.</value>
+  </data>
+  <data name="TriggerTimeZoneHelp" xml:space="preserve">
+    <value>Οι ώρες έναρξης και λήξης είναι στη ζώνη ώρας του τμήματος ({0}).</value>
+  </data>
+  <data name="TriggerLabel" xml:space="preserve">
+    <value>Έναυσμα</value>
+  </data>
+  <data name="RemoveTriggerButton" xml:space="preserve">
+    <value>Αφαίρεση εναύσματος</value>
+  </data>
+  <data name="NoTypeOption" xml:space="preserve">
+    <value>Χωρίς τύπο</value>
+  </data>
+  <data name="LegacyTypeHelp" xml:space="preserve">
+    <value>Αυτό το έναυσμα αναφέρει τον τύπο κλήσης «{0}», που δεν υπάρχει πια. Επιλέξτε τύπο κλήσης για να συνεχίσει να ταιριάζει.</value>
+  </data>
+  <data name="RemovedNamed" xml:space="preserve">
+    <value>{0} (καταργήθηκε)</value>
+  </data>
+  <data name="RemovedPriority" xml:space="preserve">
+    <value>Προτεραιότητα που καταργήθηκε</value>
+  </data>
+  <data name="RemoveQuestionButton" xml:space="preserve">
+    <value>Αφαίρεση ερώτησης</value>
+  </data>
+  <data name="AddAnswerButton" xml:space="preserve">
+    <value>Προσθήκη απάντησης</value>
+  </data>
+  <data name="RemoveAnswerButton" xml:space="preserve">
+    <value>Αφαίρεση απάντησης</value>
+  </data>
+  <data name="RemoveOnSaveColumn" xml:space="preserve">
+    <value>Αφαίρεση κατά την αποθήκευση</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Αφαίρεση</value>
+  </data>
+  <data name="AddFilesLabel" xml:space="preserve">
+    <value>Προσθήκη αρχείων</value>
+  </data>
+  <data name="AttachmentsLimitsHelp" xml:space="preserve">
+    <value>Έως {0} αρχεία ανά αποθήκευση, {1} MB το καθένα και {2} MB συνολικά: εικόνες, PDF, έγγραφα Office, κείμενο και βίντεο.</value>
+  </data>
+  <data name="AttachmentsReselectHelp" xml:space="preserve">
+    <value>Αν η αποθήκευση αποτύχει, επιλέξτε ξανά τα αρχεία: το πρόγραμμα περιήγησης δεν τα κρατά.</value>
+  </data>
+  <data name="SaveProtocolButton" xml:space="preserve">
+    <value>Αποθήκευση πρωτοκόλλου</value>
+  </data>
+  <data name="TriggerSummaryPriority" xml:space="preserve">
+    <value>Προτεραιότητα: {0}</value>
+  </data>
+  <data name="TriggerSummaryType" xml:space="preserve">
+    <value>Τύπος: {0}</value>
+  </data>
+  <data name="TriggerSummaryPriorityAndType" xml:space="preserve">
+    <value>{0} · προτεραιότητα {1}</value>
+  </data>
+  <data name="ReasonMatched" xml:space="preserve">
+    <value>Ταιριάζει: {0}</value>
+  </data>
+  <data name="ErrorProtocolMissing" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η ανάγνωση του πρωτοκόλλου.</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>Το όνομα του πρωτοκόλλου είναι υποχρεωτικό.</value>
+  </data>
+  <data name="ErrorNameTooLong" xml:space="preserve">
+    <value>Το όνομα μπορεί να έχει έως 100 χαρακτήρες.</value>
+  </data>
+  <data name="ErrorCodeRequired" xml:space="preserve">
+    <value>Ο κωδικός του πρωτοκόλλου είναι υποχρεωτικός.</value>
+  </data>
+  <data name="ErrorCodeInvalid" xml:space="preserve">
+    <value>Ο κωδικός μπορεί να έχει έως 16 γράμματα, ψηφία, κενά και τους χαρακτήρες . _ / -.</value>
+  </data>
+  <data name="ErrorDescriptionTooLong" xml:space="preserve">
+    <value>Η περιγραφή μπορεί να έχει έως 500 χαρακτήρες κειμένου.</value>
+  </data>
+  <data name="ErrorMinimumWeightRange" xml:space="preserve">
+    <value>Το ελάχιστο βάρος πρέπει να είναι μεταξύ 0 και 1000.</value>
+  </data>
+  <data name="ErrorTriggerType" xml:space="preserve">
+    <value>Ένα έναυσμα έχει άγνωστο τύπο.</value>
+  </data>
+  <data name="ErrorTriggerWindow" xml:space="preserve">
+    <value>Ένα έναυσμα λήγει πριν ξεκινήσει.</value>
+  </data>
+  <data name="ErrorTriggerPriority" xml:space="preserve">
+    <value>Ένα έναυσμα προτεραιότητας χρειάζεται μία από τις προτεραιότητες κλήσεων του τμήματος.</value>
+  </data>
+  <data name="ErrorTriggerCallType" xml:space="preserve">
+    <value>Ένα έναυσμα τύπου αναφέρει τύπο κλήσης που δεν ανήκει στο τμήμα.</value>
+  </data>
+  <data name="ErrorTriggerDate" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η ανάγνωση της ώρας έναρξης ή λήξης ενός εναύσματος.</value>
+  </data>
+  <data name="ErrorQuestionText" xml:space="preserve">
+    <value>Κάθε ερώτηση χρειάζεται κείμενο.</value>
+  </data>
+  <data name="ErrorQuestionAnswers" xml:space="preserve">
+    <value>Κάθε ερώτηση χρειάζεται τουλάχιστον μία απάντηση.</value>
+  </data>
+  <data name="ErrorAnswerText" xml:space="preserve">
+    <value>Κάθε απάντηση χρειάζεται κείμενο.</value>
+  </data>
+  <data name="ErrorTooManyFiles" xml:space="preserve">
+    <value>Προσθέστε έως {0} αρχεία κάθε φορά.</value>
+  </data>
+  <data name="ErrorTooManyAttachments" xml:space="preserve">
+    <value>Ένα πρωτόκολλο μπορεί να έχει έως {0} συνημμένα.</value>
+  </data>
+  <data name="ErrorUploadTooLarge" xml:space="preserve">
+    <value>Τα αρχεία συνολικά πρέπει να είναι μικρότερα από {0} MB.</value>
+  </data>
+  <data name="ErrorFileType" xml:space="preserve">
+    <value>Δεν είναι δυνατή η επισύναψη αρχείων τύπου ({0}).</value>
+  </data>
+  <data name="ErrorFileTooLarge" xml:space="preserve">
+    <value>Το {0} είναι πολύ μεγάλο: κάθε αρχείο πρέπει να είναι μικρότερο από {1} MB.</value>
+  </data>
+  <data name="ErrorForeignRows" xml:space="preserve">
+    <value>Η αλλαγή αναφέρει εναύσματα, ερωτήσεις ή απαντήσεις που δεν ανήκουν σε αυτό το πρωτόκολλο.</value>
+  </data>
+  <data name="TriggersRenamedType" xml:space="preserve">
+    <value>{0} εναύσματα πρωτοκόλλων χρησιμοποιούν αυτόν τον τύπο κλήσης· συνεχίζουν να ταιριάζουν και δείχνουν το νέο όνομα: {1}.</value>
+  </data>
+  <data name="TriggersDeletedType" xml:space="preserve">
+    <value>{0} εναύσματα πρωτοκόλλων χρησιμοποιούσαν τον τύπο κλήσης που διαγράφηκε και δεν ταιριάζουν μέχρι να αλλάξουν: {1}.</value>
+  </data>
+  <data name="TriggersRemovedPriority" xml:space="preserve">
+    <value>{0} εναύσματα πρωτοκόλλων χρησιμοποιούσαν την προτεραιότητα που καταργήθηκε και δεν ταιριάζουν μέχρι να αλλάξουν: {1}.</value>
+  </data>
+  <data name="NoProtocolsOnCall" xml:space="preserve">
+    <value>Δεν υπάρχουν πρωτόκολλα σε αυτήν την κλήση.</value>
+  </data>
+  <data name="SourceTrigger" xml:space="preserve">
+    <value>Προτάθηκε από έναυσμα</value>
+  </data>
+  <data name="SourceManual" xml:space="preserve">
+    <value>Προστέθηκε χειροκίνητα</value>
+  </data>
+  <data name="SourceUnknown" xml:space="preserve">
+    <value>Επισυνάφθηκε πριν από την καταγραφή απαντήσεων</value>
+  </data>
+  <data name="RemovedFromCallLabel" xml:space="preserve">
+    <value>Αφαιρέθηκε</value>
+  </data>
+  <data name="RemovedByOn" xml:space="preserve">
+    <value>Αφαιρέθηκε από {0} στις {1}.</value>
+  </data>
+  <data name="RemovalReasonLabel" xml:space="preserve">
+    <value>Αιτία</value>
+  </data>
+  <data name="ScoreLabel" xml:space="preserve">
+    <value>Βαθμολογία</value>
+  </data>
+  <data name="ScoreOfMinimum" xml:space="preserve">
+    <value>{0} από ελάχιστο {1}</value>
+  </data>
+  <data name="PanelScore" xml:space="preserve">
+    <value>Βαθμολογία {0} από ελάχιστο {1}</value>
+  </data>
+  <data name="QuestionsPassed" xml:space="preserve">
+    <value>Εφαρμόζεται</value>
+  </data>
+  <data name="QuestionsIncomplete" xml:space="preserve">
+    <value>Δεν απαντήθηκαν όλες οι ερωτήσεις</value>
+  </data>
+  <data name="QuestionsBelowMinimum" xml:space="preserve">
+    <value>Κάτω από το ελάχιστο</value>
+  </data>
+  <data name="NotAnswered" xml:space="preserve">
+    <value>Αναπάντητη</value>
+  </data>
+  <data name="NoAnswersRecorded" xml:space="preserve">
+    <value>Δεν καταγράφηκαν απαντήσεις για αυτό το πρωτόκολλο.</value>
+  </data>
+  <data name="AttachedByOn" xml:space="preserve">
+    <value>Επισυνάφθηκε από {0} στις {1}.</value>
+  </data>
+  <data name="TextAsDispatched" xml:space="preserve">
+    <value>Κείμενο όπως διαβιβάστηκε</value>
+  </data>
+  <data name="ChangedSinceDispatch" xml:space="preserve">
+    <value>Άλλαξε μετά τη διαβίβαση</value>
+  </data>
+  <data name="NoSnapshotRecorded" xml:space="preserve">
+    <value>Επισυνάφθηκε πριν από την καταγραφή του κειμένου όπως διαβιβάστηκε.</value>
+  </data>
+  <data name="CurrentTextLink" xml:space="preserve">
+    <value>Τρέχον κείμενο</value>
+  </data>
+  <data name="RemoveFromCallButton" xml:space="preserve">
+    <value>Αφαίρεση από την κλήση</value>
+  </data>
+  <data name="RemovalReasonPlaceholder" xml:space="preserve">
+    <value>Γιατί δεν εφαρμόζεται</value>
+  </data>
+  <data name="CallProtocolRemovedMessage" xml:space="preserve">
+    <value>Το πρωτόκολλο αφαιρέθηκε από την κλήση. Παραμένει στο αρχείο μαζί με την αιτία.</value>
+  </data>
+  <data name="RemovalReasonRequired" xml:space="preserve">
+    <value>Δώστε αιτία για να αφαιρέσετε ένα πρωτόκολλο από την κλήση.</value>
+  </data>
+  <data name="PanelIntro" xml:space="preserve">
+    <value>Πρωτόκολλα που προτείνουν ο τύπος και η προτεραιότητα της κλήσης, με το έναυσμα που ταίριαξε. Απαντήστε στις ερωτήσεις κάθε πρωτοκόλλου· μπορείτε και να προσθέσετε ένα χειροκίνητα.</value>
+  </data>
+  <data name="PanelNoSuggestions" xml:space="preserve">
+    <value>Κανένα πρωτόκολλο δεν ταιριάζει με τον τύπο και την προτεραιότητα αυτής της κλήσης.</value>
+  </data>
+  <data name="PanelAddByHand" xml:space="preserve">
+    <value>Χειροκίνητη προσθήκη πρωτοκόλλου</value>
+  </data>
+  <data name="PanelAddButton" xml:space="preserve">
+    <value>Προσθήκη</value>
+  </data>
+  <data name="PanelAnswerToContinue" xml:space="preserve">
+    <value>Απαντήστε σε όλες τις ερωτήσεις για να δείτε αν εφαρμόζεται αυτό το πρωτόκολλο.</value>
+  </data>
+  <data name="PanelApplies" xml:space="preserve">
+    <value>Εφαρμόζεται</value>
+  </data>
+  <data name="PanelDoesNotApply" xml:space="preserve">
+    <value>Δεν εφαρμόζεται</value>
+  </data>
+  <data name="PanelQuestionOf" xml:space="preserve">
+    <value>Ερώτηση {0} από {1}</value>
+  </data>
+  <data name="PanelBack" xml:space="preserve">
+    <value>Πίσω</value>
+  </data>
+  <data name="PanelNext" xml:space="preserve">
+    <value>Επόμενο</value>
+  </data>
+  <data name="PanelChoose" xml:space="preserve">
+    <value>Επιλέξτε πρωτόκολλο…</value>
+  </data>
 </root>

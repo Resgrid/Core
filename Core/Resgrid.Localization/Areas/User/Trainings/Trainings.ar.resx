@@ -393,4 +393,844 @@
   <data name="AnswerTextColumn" xml:space="preserve">
     <value>نص الإجابة</value>
   </data>
+  <data name="AddLeaveHeader" xml:space="preserve">
+    <value>إضافة إجازة</value>
+  </data>
+  <data name="AllowSelfEnrollLabel" xml:space="preserve">
+    <value>يمكن للأعضاء التسجيل بأنفسهم</value>
+  </data>
+  <data name="ArchiveButton" xml:space="preserve">
+    <value>أرشفة</value>
+  </data>
+  <data name="ArchiveConfirm" xml:space="preserve">
+    <value>أرشفة {0}؟ لن يراه الأعضاء بعد الآن، وتبقى سجلاته ويمكن استعادته.</value>
+  </data>
+  <data name="ArchivedLabel" xml:space="preserve">
+    <value>مؤرشف</value>
+  </data>
+  <data name="ArchivedNotice" xml:space="preserve">
+    <value>هذا التدريب مؤرشف: لا يراه الأعضاء وتبقى سجلاته محفوظة.</value>
+  </data>
+  <data name="AssignOnlyNotice" xml:space="preserve">
+    <value>يمكنك تغيير المكلفين. يحرر المؤلفون المحتوى والاختبار.</value>
+  </data>
+  <data name="AssignedColumn" xml:space="preserve">
+    <value>المكلفون</value>
+  </data>
+  <data name="AssignedCountMessage" xml:space="preserve">
+    <value>تم تكليف {0} عضو، و{1} مكلف بالفعل.</value>
+  </data>
+  <data name="AssignedSummary" xml:space="preserve">
+    <value>{0} مكلف، {1} أكمل.</value>
+  </data>
+  <data name="AssigneeNotRemovedError" xml:space="preserve">
+    <value>تعذرت إزالة ذلك العضو.</value>
+  </data>
+  <data name="AssigneeRemovedMessage" xml:space="preserve">
+    <value>تمت إزالة العضو من التدريب.</value>
+  </data>
+  <data name="AssigneesHeader" xml:space="preserve">
+    <value>المكلفون</value>
+  </data>
+  <data name="AssignmentSection" xml:space="preserve">
+    <value>المكلفون</value>
+  </data>
+  <data name="AttachmentNotRemovedError" xml:space="preserve">
+    <value>تعذرت إزالة ذلك المرفق.</value>
+  </data>
+  <data name="AttachmentRemovedMessage" xml:space="preserve">
+    <value>تمت إزالة المرفق.</value>
+  </data>
+  <data name="AttachmentSizeError" xml:space="preserve">
+    <value>يجب أن يكون المرفق أصغر من 30 ميغابايت.</value>
+  </data>
+  <data name="AttachmentTypeError" xml:space="preserve">
+    <value>لا يمكن إرفاق نوع الملف ({0}).</value>
+  </data>
+  <data name="AttachmentsHelp" xml:space="preserve">
+    <value>صور وPDF ومستندات Office ونصوص ومقاطع فيديو حتى 30 ميغابايت.</value>
+  </data>
+  <data name="AttemptColumn" xml:space="preserve">
+    <value>المحاولة</value>
+  </data>
+  <data name="AttemptHistoryHeader" xml:space="preserve">
+    <value>سجل المحاولات</value>
+  </data>
+  <data name="AttemptHistoryHelp" xml:space="preserve">
+    <value>كل محاولة مُرسلة مصححة وفق الاختبار كما كان حينها. تظهر فقط لمن يكلّف بهذا التدريب ويتابع تقاريره.</value>
+  </data>
+  <data name="AttemptLimitHelp" xml:space="preserve">
+    <value>اتركه فارغًا لمحاولات غير محدودة.</value>
+  </data>
+  <data name="AttemptLimitLabel" xml:space="preserve">
+    <value>حد المحاولات</value>
+  </data>
+  <data name="AttemptLimitRange" xml:space="preserve">
+    <value>أدخل رقمًا من {0} إلى {1}.</value>
+  </data>
+  <data name="AttemptsLeftValue" xml:space="preserve">
+    <value>متبقٍ {0} محاولة</value>
+  </data>
+  <data name="AttemptsValue" xml:space="preserve">
+    <value>{0} محاولة</value>
+  </data>
+  <data name="BackToTrainingButton" xml:space="preserve">
+    <value>العودة إلى التدريب</value>
+  </data>
+  <data name="CatalogHeader" xml:space="preserve">
+    <value>التدريبات المفتوحة</value>
+  </data>
+  <data name="CatalogHelp" xml:space="preserve">
+    <value>مواد مرجعية متاحة لجميع الأعضاء. سجّل لتتبع التدريب الخاص بك.</value>
+  </data>
+  <data name="CategoryIdHelp" xml:space="preserve">
+    <value>اختياري. ستتوفر الفئات مع السجل التدريبي، وحتى ذلك الحين هذا رقم فقط.</value>
+  </data>
+  <data name="CategoryIdLabel" xml:space="preserve">
+    <value>رقم الفئة</value>
+  </data>
+  <data name="CeCourseNumberLabel" xml:space="preserve">
+    <value>رقم الدورة</value>
+  </data>
+  <data name="CeHoursLabel" xml:space="preserve">
+    <value>ساعات التعليم المستمر</value>
+  </data>
+  <data name="CeProviderLabel" xml:space="preserve">
+    <value>مقدم التعليم المستمر</value>
+  </data>
+  <data name="CertificationColumn" xml:space="preserve">
+    <value>الشهادة</value>
+  </data>
+  <data name="CertificationCurrent" xml:space="preserve">
+    <value>سارية</value>
+  </data>
+  <data name="CertificationDaysLeft" xml:space="preserve">
+    <value>متبقٍ {0} يوم</value>
+  </data>
+  <data name="CertificationExpired" xml:space="preserve">
+    <value>منتهية</value>
+  </data>
+  <data name="CertificationPinError" xml:space="preserve">
+    <value>تعذر تثبيت تلك الشهادة.</value>
+  </data>
+  <data name="CertificationPinnedMessage" xml:space="preserve">
+    <value>تم تثبيت الشهادة في تدريبي.</value>
+  </data>
+  <data name="CertificationTypesLabel" xml:space="preserve">
+    <value>حاملو الشهادات</value>
+  </data>
+  <data name="CertificationUnpinnedMessage" xml:space="preserve">
+    <value>لم تعد الشهادة مثبتة.</value>
+  </data>
+  <data name="CertificationsDueHeader" xml:space="preserve">
+    <value>الشهادات المستحقة</value>
+  </data>
+  <data name="CertificationsDueHelp" xml:space="preserve">
+    <value>شهاداتك التي ستنتهي قريبًا أو انتهت، والشهادات المثبتة.</value>
+  </data>
+  <data name="ClearExemptionButton" xml:space="preserve">
+    <value>إنهاء الإعفاء</value>
+  </data>
+  <data name="ClosedLabel" xml:space="preserve">
+    <value>مغلق أمام مكلفين جدد</value>
+  </data>
+  <data name="ClosedToNewAssigneesHelp" xml:space="preserve">
+    <value>لا يُكلَّف أحد آخر بالتعديل أو تغيّر العضوية أو التسجيل (إحاطة لمرة واحدة).</value>
+  </data>
+  <data name="ClosedToNewAssigneesLabel" xml:space="preserve">
+    <value>مغلق أمام مكلفين جدد</value>
+  </data>
+  <data name="ClosedToNewAssigneesMessage" xml:space="preserve">
+    <value>التدريب مغلق أمام مكلفين جدد، لذا لم تتم إضافة أحد.</value>
+  </data>
+  <data name="CompletedOnValue" xml:space="preserve">
+    <value>اكتمل في {0}</value>
+  </data>
+  <data name="CompletionHistoryHeader" xml:space="preserve">
+    <value>الإكمالات السابقة</value>
+  </data>
+  <data name="ContentSection" xml:space="preserve">
+    <value>المحتوى</value>
+  </data>
+  <data name="ContinueTrainingButton" xml:space="preserve">
+    <value>متابعة</value>
+  </data>
+  <data name="CopyButton" xml:space="preserve">
+    <value>نسخ</value>
+  </data>
+  <data name="CopyNameFormat" xml:space="preserve">
+    <value>{0} (نسخة)</value>
+  </data>
+  <data name="CreditSection" xml:space="preserve">
+    <value>الساعات والتعليم المستمر</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>حذف {0}؟ لا يمكن التراجع عن ذلك.</value>
+  </data>
+  <data name="DeleteHasCompletionsError" xml:space="preserve">
+    <value>أكمل أعضاء هذا التدريب لذا لا يمكن حذفه. قم بأرشفته بدلًا من ذلك وستبقى سجلاته.</value>
+  </data>
+  <data name="DeleteLeaveConfirm" xml:space="preserve">
+    <value>حذف هذه الإجازة؟ ستعود المواعيد كما كانت.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="DueDateHelp" xml:space="preserve">
+    <value>يستحق بنهاية ذلك اليوم. ومن يُكلف بعده يحصل على 30 يومًا.</value>
+  </data>
+  <data name="DueDateRequired" xml:space="preserve">
+    <value>اختر تاريخ الاستحقاق.</value>
+  </data>
+  <data name="DueDaysLabel" xml:space="preserve">
+    <value>أيام الإكمال</value>
+  </data>
+  <data name="DueDaysRange" xml:space="preserve">
+    <value>أدخل من 1 إلى 3650 يومًا.</value>
+  </data>
+  <data name="DueModeFixed" xml:space="preserve">
+    <value>في تاريخ محدد</value>
+  </data>
+  <data name="DueModeLabel" xml:space="preserve">
+    <value>موعد الاستحقاق</value>
+  </data>
+  <data name="DueModeNone" xml:space="preserve">
+    <value>بلا موعد</value>
+  </data>
+  <data name="DueModeRelative" xml:space="preserve">
+    <value>أيام بعد كل تكليف</value>
+  </data>
+  <data name="DueOnLabel" xml:space="preserve">
+    <value>يستحق</value>
+  </data>
+  <data name="DueSoonHeader" xml:space="preserve">
+    <value>مستحقة قريبًا</value>
+  </data>
+  <data name="DynamicNotice" xml:space="preserve">
+    <value>هذا التكليف ديناميكي: يُكلَّف تلقائيًا من ينضم إلى هذه المجموعات أو الأدوار أو المناوبات أو الشهادات أو أنواع الوحدات، ويُسحب من يغادر قبل فتحه.</value>
+  </data>
+  <data name="EmbedsHelp" xml:space="preserve">
+    <value>يُحتفظ بالفيديوهات والمستندات المضمنة من YouTube وVimeo وGoogle Docs وSheets وMicrosoft Stream وTeams، وتُزال الإطارات الأخرى.</value>
+  </data>
+  <data name="EnrollButton" xml:space="preserve">
+    <value>التسجيل</value>
+  </data>
+  <data name="EnrollError" xml:space="preserve">
+    <value>لا يمكنك التسجيل في ذلك التدريب.</value>
+  </data>
+  <data name="EnrollHelp" xml:space="preserve">
+    <value>سجّل لتتبع هذا التدريب مع موعد استحقاقه وتذكيراته.</value>
+  </data>
+  <data name="EnrolledMessage" xml:space="preserve">
+    <value>تم تسجيلك في هذا التدريب.</value>
+  </data>
+  <data name="ExemptButton" xml:space="preserve">
+    <value>إعفاء</value>
+  </data>
+  <data name="ExemptError" xml:space="preserve">
+    <value>تعذر حفظ الإعفاء (السبب مطلوب).</value>
+  </data>
+  <data name="ExemptNotice" xml:space="preserve">
+    <value>أنت معفى من هذا التدريب.</value>
+  </data>
+  <data name="ExemptUntilLabel" xml:space="preserve">
+    <value>حتى (اختياري)</value>
+  </data>
+  <data name="ExemptedMessage" xml:space="preserve">
+    <value>تم إعفاء العضو.</value>
+  </data>
+  <data name="ExemptionClearedMessage" xml:space="preserve">
+    <value>انتهى الإعفاء.</value>
+  </data>
+  <data name="ExpiresColumn" xml:space="preserve">
+    <value>تنتهي</value>
+  </data>
+  <data name="ExtendButton" xml:space="preserve">
+    <value>تمديد</value>
+  </data>
+  <data name="ExtendError" xml:space="preserve">
+    <value>أدخل تاريخًا مستقبليًا وسببًا للتمديد.</value>
+  </data>
+  <data name="ExtendedLabel" xml:space="preserve">
+    <value>ممدد</value>
+  </data>
+  <data name="ExtendedMessage" xml:space="preserve">
+    <value>تم تمديد موعد الاستحقاق.</value>
+  </data>
+  <data name="FalseLabel" xml:space="preserve">
+    <value>خطأ</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>تصفية</value>
+  </data>
+  <data name="FlagCommentLabel" xml:space="preserve">
+    <value>ما الخطأ؟</value>
+  </data>
+  <data name="FlagNotResolvedError" xml:space="preserve">
+    <value>تعذر حل ذلك البلاغ.</value>
+  </data>
+  <data name="FlagQuestionButton" xml:space="preserve">
+    <value>إبلاغ</value>
+  </data>
+  <data name="FlagQuestionHeader" xml:space="preserve">
+    <value>الإبلاغ عن سؤال</value>
+  </data>
+  <data name="FlagQuestionHelp" xml:space="preserve">
+    <value>إذا بدا سؤال خاطئًا فأبلغ مؤلف التدريب.</value>
+  </data>
+  <data name="FlagResolvedMessage" xml:space="preserve">
+    <value>تم حل البلاغ.</value>
+  </data>
+  <data name="FlaggedByColumn" xml:space="preserve">
+    <value>أبلغ عنه</value>
+  </data>
+  <data name="FormerMemberLabel" xml:space="preserve">
+    <value>عضو سابق</value>
+  </data>
+  <data name="HideFormerMembersButton" xml:space="preserve">
+    <value>إخفاء الأعضاء السابقين</value>
+  </data>
+  <data name="HistoryReasonColumn" xml:space="preserve">
+    <value>السبب</value>
+  </data>
+  <data name="HistoryReasonMaterialEdit" xml:space="preserve">
+    <value>تغيير جوهري</value>
+  </data>
+  <data name="HistoryReasonRepeat" xml:space="preserve">
+    <value>تكرار</value>
+  </data>
+  <data name="HistoryReasonReset" xml:space="preserve">
+    <value>إعادة تعيين</value>
+  </data>
+  <data name="HoursColumn" xml:space="preserve">
+    <value>الساعات</value>
+  </data>
+  <data name="HoursLabel" xml:space="preserve">
+    <value>ساعات التدريب</value>
+  </data>
+  <data name="HoursRange" xml:space="preserve">
+    <value>الساعات من 0 إلى 9999.</value>
+  </data>
+  <data name="HoursValue" xml:space="preserve">
+    <value>{0} س</value>
+  </data>
+  <data name="InProgressHeader" xml:space="preserve">
+    <value>قيد التنفيذ</value>
+  </data>
+  <data name="InactiveMembersHelp" xml:space="preserve">
+    <value>لا يُكلّف الأعضاء المحذوفون أو المعطلون أو المخفيون أبدًا، وستعرف من تم تخطيه ولماذا.</value>
+  </data>
+  <data name="KpiCompletion" xml:space="preserve">
+    <value>نسبة الإكمال</value>
+  </data>
+  <data name="KpiDueThisWeek" xml:space="preserve">
+    <value>مستحقة هذا الأسبوع</value>
+  </data>
+  <data name="KpiOverdue" xml:space="preserve">
+    <value>متأخرة</value>
+  </data>
+  <data name="LastScoreValue" xml:space="preserve">
+    <value>آخر نتيجة {0}%</value>
+  </data>
+  <data name="LeadDaysInvalid" xml:space="preserve">
+    <value>أيام التذكير أعداد صحيحة من 1 إلى {0} مفصولة بفواصل.</value>
+  </data>
+  <data name="LeaveDatesInvalid" xml:space="preserve">
+    <value>أدخل اليوم الأول والأخير، ولا يمكن أن يسبق الأخير الأول.</value>
+  </data>
+  <data name="LeaveDeletedMessage" xml:space="preserve">
+    <value>تم حذف الإجازة.</value>
+  </data>
+  <data name="LeaveEndLabel" xml:space="preserve">
+    <value>اليوم الأخير</value>
+  </data>
+  <data name="LeaveIntro" xml:space="preserve">
+    <value>أثناء الإجازة تتوقف مواعيد التدريب وتذكيراته، ثم تؤجل بمدة الإجازة.</value>
+  </data>
+  <data name="LeaveKindLabel" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="LeaveKindLightDuty" xml:space="preserve">
+    <value>مهام خفيفة</value>
+  </data>
+  <data name="LeaveKindMedical" xml:space="preserve">
+    <value>طبية</value>
+  </data>
+  <data name="LeaveKindMilitary" xml:space="preserve">
+    <value>عسكرية</value>
+  </data>
+  <data name="LeaveKindOther" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="LeaveKindParental" xml:space="preserve">
+    <value>والدية</value>
+  </data>
+  <data name="LeaveMemberRequired" xml:space="preserve">
+    <value>اختر عضوًا يمكنك تكليفه بالتدريب.</value>
+  </data>
+  <data name="LeaveNotSavedError" xml:space="preserve">
+    <value>تعذر حفظ الإجازة.</value>
+  </data>
+  <data name="LeaveNoteLabel" xml:space="preserve">
+    <value>ملاحظة</value>
+  </data>
+  <data name="LeavePeriodsHeader" xml:space="preserve">
+    <value>فترات الإجازة</value>
+  </data>
+  <data name="LeaveSavedMessage" xml:space="preserve">
+    <value>تم حفظ الإجازة.</value>
+  </data>
+  <data name="LeaveStartLabel" xml:space="preserve">
+    <value>اليوم الأول</value>
+  </data>
+  <data name="LeaveTab" xml:space="preserve">
+    <value>الإجازات</value>
+  </data>
+  <data name="MakeDynamicLabel" xml:space="preserve">
+    <value>اجعل هذا التكليف ديناميكيًا (يتحدث مع تغير العضويات)</value>
+  </data>
+  <data name="ManageIntro" xml:space="preserve">
+    <value>التدريبات التي تنشئها أو تكلّف بها أو تتابع تقاريرها.</value>
+  </data>
+  <data name="ManageTrainingsTab" xml:space="preserve">
+    <value>إدارة التدريبات</value>
+  </data>
+  <data name="MaterialChangeHeader" xml:space="preserve">
+    <value>تغير الاختبار أو درجة النجاح</value>
+  </data>
+  <data name="MaterialChangeHelp" xml:space="preserve">
+    <value>أكمل {0} عضو هذا التدريب بالفعل. هل هذا تغيير جوهري؟</value>
+  </data>
+  <data name="MaterialChangeNo" xml:space="preserve">
+    <value>غير جوهري: تبقى النتائج كما هي</value>
+  </data>
+  <data name="MaterialChangeRequired" xml:space="preserve">
+    <value>حدد ما إذا كان تغيير الاختبار جوهريًا قبل الحفظ.</value>
+  </data>
+  <data name="MaterialChangeYes" xml:space="preserve">
+    <value>جوهري: أعد تكليف من أكملوه</value>
+  </data>
+  <data name="MaterialReassignedMessage" xml:space="preserve">
+    <value>أعيد تكليف {0} عضو.</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>العضو</value>
+  </data>
+  <data name="MemberNotResetError" xml:space="preserve">
+    <value>تعذرت إعادة تعيين ذلك العضو.</value>
+  </data>
+  <data name="MemberResetMessage" xml:space="preserve">
+    <value>تمت إعادة تعيين العضو.</value>
+  </data>
+  <data name="MinimumScoreRange" xml:space="preserve">
+    <value>درجة النجاح من 0 إلى 100.</value>
+  </data>
+  <data name="MyTrainingIntro" xml:space="preserve">
+    <value>تدريباتك المكلف بها وما يستحق قريبًا والشهادات التي تحتاج إلى متابعة.</value>
+  </data>
+  <data name="MyTrainingTab" xml:space="preserve">
+    <value>تدريبي</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>أدخل اسمًا.</value>
+  </data>
+  <data name="NewAssignmentHelp" xml:space="preserve">
+    <value>تبقى المجموعات والأدوار والمناوبات والشهادات وأنواع الوحدات محدثة: يُكلف المنضمون لاحقًا تلقائيًا.</value>
+  </data>
+  <data name="NewDueDateLabel" xml:space="preserve">
+    <value>موعد جديد</value>
+  </data>
+  <data name="NewTrainingIntro" xml:space="preserve">
+    <value>اكتب التدريب وأضف اختبارًا اختياريًا ثم اختر المستهدفين وموعد الاستحقاق.</value>
+  </data>
+  <data name="NextActionHeader" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="NoAssigneesError" xml:space="preserve">
+    <value>اختر المستهدفين أو اجعل التدريب مفتوحًا لجميع الأعضاء.</value>
+  </data>
+  <data name="NoAttachments" xml:space="preserve">
+    <value>لا توجد مرفقات.</value>
+  </data>
+  <data name="NoAttempts" xml:space="preserve">
+    <value>لا توجد محاولات بعد.</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>بلا انتهاء</value>
+  </data>
+  <data name="NoLeavePeriods" xml:space="preserve">
+    <value>لا توجد إجازات مسجلة.</value>
+  </data>
+  <data name="NoTrainingsHeader" xml:space="preserve">
+    <value>لا توجد تدريبات لعرضها</value>
+  </data>
+  <data name="NotAssignedNotice" xml:space="preserve">
+    <value>هذا التدريب غير مكلف به.</value>
+  </data>
+  <data name="NotStartedHeader" xml:space="preserve">
+    <value>لم تبدأ</value>
+  </data>
+  <data name="NothingAssignedHeader" xml:space="preserve">
+    <value>لا يوجد شيء مكلف به</value>
+  </data>
+  <data name="NothingAssignedHelp" xml:space="preserve">
+    <value>تظهر هنا التدريبات التي يكلفك بها قسمك.</value>
+  </data>
+  <data name="OnLeaveNotice" xml:space="preserve">
+    <value>أنت في إجازة: تتوقف المواعيد والتذكيرات مؤقتًا وتؤجل بمدة الإجازة.</value>
+  </data>
+  <data name="OneQuestionPerPageLabel" xml:space="preserve">
+    <value>عرض سؤال واحد في كل مرة</value>
+  </data>
+  <data name="OpenFlagsHeader" xml:space="preserve">
+    <value>الأسئلة المبلغ عنها</value>
+  </data>
+  <data name="OpenLabel" xml:space="preserve">
+    <value>مفتوح للجميع</value>
+  </data>
+  <data name="OpenTrainingButton" xml:space="preserve">
+    <value>فتح التدريب</value>
+  </data>
+  <data name="OverdueHeader" xml:space="preserve">
+    <value>متأخرة</value>
+  </data>
+  <data name="OverdueRepeatDaysHelp" xml:space="preserve">
+    <value>الفراغ يرسله مرة واحدة.</value>
+  </data>
+  <data name="OverdueRepeatDaysLabel" xml:space="preserve">
+    <value>تكرار إشعار التأخر كل (أيام)</value>
+  </data>
+  <data name="OverdueRepeatRange" xml:space="preserve">
+    <value>أدخل رقمًا من {0} إلى {1}.</value>
+  </data>
+  <data name="PinButton" xml:space="preserve">
+    <value>تثبيت</value>
+  </data>
+  <data name="PinnedLabel" xml:space="preserve">
+    <value>مثبتة</value>
+  </data>
+  <data name="PreviewAudienceButton" xml:space="preserve">
+    <value>معاينة من ستتم إضافته</value>
+  </data>
+  <data name="PreviewHeader" xml:space="preserve">
+    <value>معاينة</value>
+  </data>
+  <data name="PreviewQuizButton" xml:space="preserve">
+    <value>معاينة الاختبار</value>
+  </data>
+  <data name="PreviewSummary" xml:space="preserve">
+    <value>ستتم إضافة {0} عضو؛ {1} مكلف بالفعل.</value>
+  </data>
+  <data name="ProgressHeader" xml:space="preserve">
+    <value>تقدمك</value>
+  </data>
+  <data name="QuestionCountValue" xml:space="preserve">
+    <value>{0} سؤال</value>
+  </data>
+  <data name="QuestionFlaggedMessage" xml:space="preserve">
+    <value>شكرًا: تم إبلاغ مؤلف التدريب.</value>
+  </data>
+  <data name="QuestionNotFlaggedError" xml:space="preserve">
+    <value>تعذر الإبلاغ عن ذلك السؤال.</value>
+  </data>
+  <data name="QuestionNumberLabel" xml:space="preserve">
+    <value>السؤال {0}</value>
+  </data>
+  <data name="QuestionOfValue" xml:space="preserve">
+    <value>السؤال {0} من {1}</value>
+  </data>
+  <data name="QuestionTypeLabel" xml:space="preserve">
+    <value>نوع السؤال</value>
+  </data>
+  <data name="QuestionTypeMulti" xml:space="preserve">
+    <value>اختيار متعدد (كل الخيارات الصحيحة)</value>
+  </data>
+  <data name="QuestionTypeSingle" xml:space="preserve">
+    <value>اختيار واحد</value>
+  </data>
+  <data name="QuestionTypeTrueFalse" xml:space="preserve">
+    <value>صح أم خطأ</value>
+  </data>
+  <data name="QuizAlreadyPassedMessage" xml:space="preserve">
+    <value>لقد اجتزت هذا الاختبار بالفعل.</value>
+  </data>
+  <data name="QuizAttemptLimitError" xml:space="preserve">
+    <value>لقد استنفدت جميع المحاولات المسموح بها.</value>
+  </data>
+  <data name="QuizFailedHeader" xml:space="preserve">
+    <value>غير ناجح</value>
+  </data>
+  <data name="QuizFailedValue" xml:space="preserve">
+    <value>لم يجتز الاختبار: {0}% (درجة النجاح {1}%)</value>
+  </data>
+  <data name="QuizIntro" xml:space="preserve">
+    <value>{0} سؤال. درجة النجاح {1}%.</value>
+  </data>
+  <data name="QuizNotAvailableError" xml:space="preserve">
+    <value>هذا الاختبار غير متاح.</value>
+  </data>
+  <data name="QuizNotTakenValue" xml:space="preserve">
+    <value>لم يُؤدَّ الاختبار بعد (درجة النجاح {0}%)</value>
+  </data>
+  <data name="QuizPassedHeader" xml:space="preserve">
+    <value>ناجح</value>
+  </data>
+  <data name="QuizPassedValue" xml:space="preserve">
+    <value>تم اجتياز الاختبار: {0}%</value>
+  </data>
+  <data name="QuizPreviewNotice" xml:space="preserve">
+    <value>معاينة: أنت غير مكلف لذا لن يُرسل شيء.</value>
+  </data>
+  <data name="QuizProblemMinimumScoreRange" xml:space="preserve">
+    <value>درجة النجاح من 0 إلى 100.</value>
+  </data>
+  <data name="QuizProblemQuestionAnswerKey" xml:space="preserve">
+    <value>حدد الإجابة الصحيحة: واحدة للاختيار الواحد وصح/خطأ، وواحدة على الأقل للاختيار المتعدد.</value>
+  </data>
+  <data name="QuizProblemQuestionOptions" xml:space="preserve">
+    <value>يحتاج كل سؤال إلى إجابتين على الأقل (26 كحد أقصى).</value>
+  </data>
+  <data name="QuizProblemQuestionText" xml:space="preserve">
+    <value>يحتاج كل سؤال إلى نص.</value>
+  </data>
+  <data name="QuizProblemQuestionType" xml:space="preserve">
+    <value>سؤال من نوع غير معروف.</value>
+  </data>
+  <data name="QuizProblemTooManyQuestions" xml:space="preserve">
+    <value>يحتوي الاختبار على 100 سؤال كحد أقصى.</value>
+  </data>
+  <data name="QuizProblemTrueFalseOptions" xml:space="preserve">
+    <value>سؤال صح/خطأ له إجابتان بالضبط.</value>
+  </data>
+  <data name="QuizResultHeader" xml:space="preserve">
+    <value>نتيجة الاختبار</value>
+  </data>
+  <data name="QuizRevisionColumn" xml:space="preserve">
+    <value>إصدار الاختبار</value>
+  </data>
+  <data name="QuizScoreValue" xml:space="preserve">
+    <value>النتيجة {0}%: {1} من {2} صحيحة. درجة النجاح {3}%.</value>
+  </data>
+  <data name="QuizSection" xml:space="preserve">
+    <value>الاختبار</value>
+  </data>
+  <data name="ReadButton" xml:space="preserve">
+    <value>قراءة</value>
+  </data>
+  <data name="ReasonLabel" xml:space="preserve">
+    <value>السبب</value>
+  </data>
+  <data name="RecentCompletionsHeader" xml:space="preserve">
+    <value>أُكملت مؤخرًا</value>
+  </data>
+  <data name="RelativeDueValue" xml:space="preserve">
+    <value>بعد {0} يوم من التكليف</value>
+  </data>
+  <data name="ReminderLeadDaysHelp" xml:space="preserve">
+    <value>مفصولة بفواصل، مثل 7,1. الفراغ يذكّر قبل يوم واحد.</value>
+  </data>
+  <data name="ReminderLeadDaysLabel" xml:space="preserve">
+    <value>التذكير قبل الاستحقاق (أيام)</value>
+  </data>
+  <data name="ReminderMessageHelp" xml:space="preserve">
+    <value>اختياري، حتى 500 حرف، يضاف إلى إشعارات التدريب الجديد والتذكير والتأخر.</value>
+  </data>
+  <data name="ReminderMessageLabel" xml:space="preserve">
+    <value>رسالة تضاف إلى الإشعارات</value>
+  </data>
+  <data name="RemindersSection" xml:space="preserve">
+    <value>التذكيرات</value>
+  </data>
+  <data name="RemoveAssigneeButton" xml:space="preserve">
+    <value>إزالة</value>
+  </data>
+  <data name="RemoveAssigneeConfirm" xml:space="preserve">
+    <value>إزالة هذا العضو من التدريب؟ يُحتفظ بالإكمال.</value>
+  </data>
+  <data name="RemoveAttachmentConfirm" xml:space="preserve">
+    <value>إزالة هذا المرفق؟</value>
+  </data>
+  <data name="RemoveQuestionButton" xml:space="preserve">
+    <value>إزالة السؤال</value>
+  </data>
+  <data name="RemovedQuestionLabel" xml:space="preserve">
+    <value>(تمت إزالة السؤال)</value>
+  </data>
+  <data name="RepeatMonthsHelp" xml:space="preserve">
+    <value>اختياري. كل فترة يُعاد التكليف بموعد جديد وتبقى الإكمالات السابقة مسجلة.</value>
+  </data>
+  <data name="RepeatMonthsLabel" xml:space="preserve">
+    <value>التكرار كل (أشهر)</value>
+  </data>
+  <data name="RepeatMonthsRange" xml:space="preserve">
+    <value>أدخل رقمًا من {0} إلى {1}.</value>
+  </data>
+  <data name="RepeatsEveryValue" xml:space="preserve">
+    <value>كل {0} شهر</value>
+  </data>
+  <data name="ResetConfirm" xml:space="preserve">
+    <value>إعادة تعيين هذا العضو؟ ينتقل الإكمال إلى السجل ويبدأ من جديد.</value>
+  </data>
+  <data name="ResolveFlagButton" xml:space="preserve">
+    <value>حل</value>
+  </data>
+  <data name="RestoreButton" xml:space="preserve">
+    <value>استعادة</value>
+  </data>
+  <data name="RetakeQuizButton" xml:space="preserve">
+    <value>إعادة الاختبار</value>
+  </data>
+  <data name="SaveLeaveButton" xml:space="preserve">
+    <value>حفظ الإجازة</value>
+  </data>
+  <data name="ScheduleSection" xml:space="preserve">
+    <value>الجدول والإتاحة</value>
+  </data>
+  <data name="ScheduledLabel" xml:space="preserve">
+    <value>يبدأ</value>
+  </data>
+  <data name="ScheduledNotice" xml:space="preserve">
+    <value>يبدأ هذا التدريب في {0}، ويراه المكلفون من حينها.</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>بحث</value>
+  </data>
+  <data name="SelectAllThatApply" xml:space="preserve">
+    <value>اختر كل الإجابات الصحيحة.</value>
+  </data>
+  <data name="SelectPlaceholder" xml:space="preserve">
+    <value>اختر...</value>
+  </data>
+  <data name="SelfEnrolledLabel" xml:space="preserve">
+    <value>تسجيل ذاتي</value>
+  </data>
+  <data name="SendOverdueNoticesLabel" xml:space="preserve">
+    <value>إرسال إشعار تأخر إلى العضو ومنشئ التدريب</value>
+  </data>
+  <data name="ShiftsLabel" xml:space="preserve">
+    <value>أعضاء المناوبات</value>
+  </data>
+  <data name="ShowFormerMembersButton" xml:space="preserve">
+    <value>عرض الأعضاء السابقين</value>
+  </data>
+  <data name="SkipReasonDeleted" xml:space="preserve">
+    <value>أزيل من القسم</value>
+  </data>
+  <data name="SkipReasonDisabled" xml:space="preserve">
+    <value>معطل</value>
+  </data>
+  <data name="SkipReasonHidden" xml:space="preserve">
+    <value>مخفي</value>
+  </data>
+  <data name="SkipReasonNotActivated" xml:space="preserve">
+    <value>مستورد ولم يُفعّل بعد</value>
+  </data>
+  <data name="SkipReasonNotInDepartment" xml:space="preserve">
+    <value>ليس عضوًا في هذا القسم</value>
+  </data>
+  <data name="SkipReasonOutOfScope" xml:space="preserve">
+    <value>خارج المجموعة التي تديرها</value>
+  </data>
+  <data name="SkippedMembersIntro" xml:space="preserve">
+    <value>لم يُكلّف:</value>
+  </data>
+  <data name="StartsOnHelp" xml:space="preserve">
+    <value>اختياري. حتى ذلك الحين لا يرى المكلفون التدريب ولا يُرسل أي إشعار.</value>
+  </data>
+  <data name="StartsOnInvalid" xml:space="preserve">
+    <value>أدخل تاريخ ووقت بدء صالحين.</value>
+  </data>
+  <data name="StartsOnLabel" xml:space="preserve">
+    <value>يبدأ في</value>
+  </data>
+  <data name="StateComplete" xml:space="preserve">
+    <value>مكتمل</value>
+  </data>
+  <data name="StateExempt" xml:space="preserve">
+    <value>معفى</value>
+  </data>
+  <data name="StateFailed" xml:space="preserve">
+    <value>لم يجتز الاختبار</value>
+  </data>
+  <data name="StateInProgress" xml:space="preserve">
+    <value>قيد التنفيذ</value>
+  </data>
+  <data name="StateNotStarted" xml:space="preserve">
+    <value>لم يبدأ</value>
+  </data>
+  <data name="StateOnLeave" xml:space="preserve">
+    <value>في إجازة</value>
+  </data>
+  <data name="StateOverdue" xml:space="preserve">
+    <value>متأخر</value>
+  </data>
+  <data name="StateRemoved" xml:space="preserve">
+    <value>أزيل</value>
+  </data>
+  <data name="StateScheduled" xml:space="preserve">
+    <value>مجدول</value>
+  </data>
+  <data name="StaticNotice" xml:space="preserve">
+    <value>يحتفظ هذا التدريب بقائمة ثابتة من المكلفين، وتُضاف الاختيارات أدناه إليها.</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>النشطة</value>
+  </data>
+  <data name="StatusAll" xml:space="preserve">
+    <value>الكل</value>
+  </data>
+  <data name="StatusArchived" xml:space="preserve">
+    <value>المؤرشفة</value>
+  </data>
+  <data name="StatusFilterLabel" xml:space="preserve">
+    <value>عرض</value>
+  </data>
+  <data name="StatusScheduled" xml:space="preserve">
+    <value>المجدولة</value>
+  </data>
+  <data name="SubmitQuizConfirm" xml:space="preserve">
+    <value>إرسال إجاباتك؟</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>أُرسلت</value>
+  </data>
+  <data name="TextTooLong" xml:space="preserve">
+    <value>النص أطول من {0} حرفًا.</value>
+  </data>
+  <data name="TrainingArchivedMessage" xml:space="preserve">
+    <value>تمت أرشفة التدريب.</value>
+  </data>
+  <data name="TrainingCopiedMessage" xml:space="preserve">
+    <value>تم إنشاء نسخة. راجعها واختر المستهدفين.</value>
+  </data>
+  <data name="TrainingDeletedMessage" xml:space="preserve">
+    <value>تم حذف التدريب.</value>
+  </data>
+  <data name="TrainingNotArchivedError" xml:space="preserve">
+    <value>تعذرت أرشفة ذلك التدريب.</value>
+  </data>
+  <data name="TrainingNotRestoredError" xml:space="preserve">
+    <value>تعذرت استعادة ذلك التدريب.</value>
+  </data>
+  <data name="TrainingRestoredMessage" xml:space="preserve">
+    <value>تمت استعادة التدريب.</value>
+  </data>
+  <data name="TrainingSavedMessage" xml:space="preserve">
+    <value>تم حفظ التدريب.</value>
+  </data>
+  <data name="TrueLabel" xml:space="preserve">
+    <value>صح</value>
+  </data>
+  <data name="UnitTypesLabel" xml:space="preserve">
+    <value>أطقم أنواع الوحدات</value>
+  </data>
+  <data name="UnpinButton" xml:space="preserve">
+    <value>إلغاء التثبيت</value>
+  </data>
+  <data name="ViewedLabel" xml:space="preserve">
+    <value>تمت المشاهدة</value>
+  </data>
+  <data name="ViewedOnValue" xml:space="preserve">
+    <value>تمت المشاهدة في {0}</value>
+  </data>
 </root>

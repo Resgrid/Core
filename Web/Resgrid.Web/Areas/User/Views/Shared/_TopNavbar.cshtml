@@ -133,6 +133,21 @@
             <li class="btn dropdown" id="menu-help">
                 <a href="#" data-toggle="dropdown" class="dropdown-toggle" title="@commonLocalizer["Help"]" aria-label="@commonLocalizer["Help"]"><span class="text">@commonLocalizer["Help"]</span><i class="fa fa-question-circle rg-topbar-help-icon" aria-hidden="true"></i>&nbsp;<b class="caret"></b></a>
                 <ul class="dropdown-menu">
+                    @{
+                        // Academy A0: the lesson for the module on screen (a page can name a closer one with ViewData["AcademyLesson"]).
+                        var academyHome = Resgrid.Model.Academy.AcademyCatalog.HomeUrl(Resgrid.Config.SystemBehaviorConfig.AcademyUrl);
+                        var academyLesson = academyHome == null ? null : Resgrid.Model.Academy.AcademyCatalog.ForPage(
+                            ViewContext.RouteData.Values["controller"] as string, ViewData["AcademyLesson"] as string);
+                    }
+                    @if (academyLesson != null)
+                    {
+                        <li><a href="@Resgrid.Model.Academy.AcademyCatalog.LessonUrl(Resgrid.Config.SystemBehaviorConfig.AcademyUrl, academyLesson)" target="_blank" rel="noopener" data-academy-lesson="@academyLesson.Id"><i class="fa fa-graduation-cap" aria-hidden="true"></i> @string.Format(commonLocalizer["AcademyLearnThisPage"].Value, academyLesson.Minutes.ToString("0.#", System.Globalization.CultureInfo.CurrentCulture))</a></li>
+                    }
+                    @if (academyHome != null)
+                    {
+                        <li><a href="@academyHome" target="_blank" rel="noopener"><i class="fa fa-play-circle" aria-hidden="true"></i> @commonLocalizer["ResgridAcademy"]</a></li>
+                        <li role="separator" class="divider"></li>
+                    }
                     <li><a href="@Resgrid.Config.SystemBehaviorConfig.HelpAndSupportUrl" target="_blank">@commonLocalizer["HelpAndSupport"]</a></li>
                     @*<li><a href="https://resgrid.wistia.com/projects/9irn4g1q8c" target="_blank">@commonLocalizer["Videos"]</a></li>*@
                     <li><a href="@Resgrid.Config.SystemBehaviorConfig.BlogUrl" target="_blank">@commonLocalizer["Blog"]</a></li>

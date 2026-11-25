@@ -868,53 +868,7 @@
                                             </div>
                                         </div>
                                         <div class="tab-pane" id="tab-8">
-                                            <table class="table table-striped">
-                                                <thead>
-                                                    <tr>
-                                                        <th>@commonLocalizer["Code"]</th>
-                                                        <th>@commonLocalizer["Name"]</th>
-                                                        <th>@commonLocalizer["Text"]</th>
-                                                        <th>@commonLocalizer["Attachments"]</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach (var callProtocol in Model.Call.Protocols)
-                                                    {
-                                                        var protocol = Model.Protocols.FirstOrDefault(x => x.DispatchProtocolId == callProtocol.DispatchProtocolId);
-
-                                                        if (protocol != null)
-                                                        {
-                                                            <tr>
-                                                                <td>
-                                                                    <span>@protocol.Code</span>
-                                                                </td>
-                                                                <td>
-                                                                    <span>@protocol.Name</span>
-                                                                </td>
-                                                                <td>
-                                                                    <a data-toggle="modal" data-target="#protocolTextWindow" data-protocolId="@protocol.DispatchProtocolId">@localizer["ViewText"]</a>
-                                                                </td>
-                                                                <td>
-                                                                    @if (protocol.Attachments != null && protocol.Attachments.Any())
-                                                                    {
-                                                                        foreach (var attachment in protocol.Attachments)
-                                                                        {
-                                                                            <dl>
-                                                                                <dt>@attachment.FileName</dt>
-                                                                                <dd> <a asp-controller="Protocols" asp-action="GetProtocolAttachment" asp-route-area="User" asp-route-protocolAttachmentId="@attachment.DispatchProtocolAttachmentId">@commonLocalizer["View"]</a></dd>
-                                                                            </dl>
-                                                                        }
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <span>@localizer["NoAttachments"]</span>
-                                                                    }
-                                                                </td>
-                                                            </tr>
-                                                        }
-                                                    }
-                                                </tbody>
-                                            </table>
+                                            @await Html.PartialAsync("_CallProtocols", Model)
                                         </div>
                                         <div class="tab-pane" id="tab-9">
                                             <h4>@localizer["CallsLinkedFromThisHeader"]</h4>

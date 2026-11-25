@@ -1002,6 +1002,45 @@
   <data name="W.trainings.mine.OverdueSince" xml:space="preserve">
     <value>Termin minął {0}</value>
   </data>
+  <data name="W.trainings.bulletin.Title" xml:space="preserve">
+    <value>Tablica szkoleń</value>
+  </data>
+  <data name="W.trainings.bulletin.Description" xml:space="preserve">
+    <value>Nowości szkoleniowe dla Ciebie: ostatnie przydziały i nowo opublikowane szkolenia otwarte dla wszystkich członków.</value>
+  </data>
+  <data name="W.trainings.bulletin.Setting.days" xml:space="preserve">
+    <value>Liczba dni wstecz</value>
+  </data>
+  <data name="W.trainings.bulletin.Setting.maxItems" xml:space="preserve">
+    <value>Maksymalna liczba szkoleń</value>
+  </data>
+  <data name="W.trainings.bulletin.Empty" xml:space="preserve">
+    <value>Brak nowych szkoleń.</value>
+  </data>
+  <data name="W.trainings.bulletin.NewAssignedCount" xml:space="preserve">
+    <value>Nowe dla Ciebie: {0}</value>
+  </data>
+  <data name="W.trainings.bulletin.Training" xml:space="preserve">
+    <value>Szkolenie</value>
+  </data>
+  <data name="W.trainings.bulletin.Assigned" xml:space="preserve">
+    <value>Przydzielone Tobie</value>
+  </data>
+  <data name="W.trainings.bulletin.Catalog" xml:space="preserve">
+    <value>Otwarte dla wszystkich członków</value>
+  </data>
+  <data name="W.trainings.bulletin.CanEnrol" xml:space="preserve">
+    <value>Otwarte dla wszystkich, możesz się zapisać</value>
+  </data>
+  <data name="W.trainings.bulletin.Due" xml:space="preserve">
+    <value>Termin {0}</value>
+  </data>
+  <data name="W.trainings.bulletin.OverdueSince" xml:space="preserve">
+    <value>Termin minął {0}</value>
+  </data>
+  <data name="W.trainings.bulletin.Published" xml:space="preserve">
+    <value>Opublikowano {0}</value>
+  </data>
   <data name="W.documents.recent.OpenDocuments" xml:space="preserve">
     <value>Otwórz dokumenty</value>
   </data>

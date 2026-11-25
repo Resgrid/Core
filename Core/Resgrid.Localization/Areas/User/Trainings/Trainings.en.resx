@@ -393,4 +393,844 @@
   <data name="AnswerTextColumn" xml:space="preserve">
     <value>Answer Text</value>
   </data>
+  <data name="AddLeaveHeader" xml:space="preserve">
+    <value>Add leave</value>
+  </data>
+  <data name="AllowSelfEnrollLabel" xml:space="preserve">
+    <value>Members may enrol themselves to be tracked</value>
+  </data>
+  <data name="ArchiveButton" xml:space="preserve">
+    <value>Archive</value>
+  </data>
+  <data name="ArchiveConfirm" xml:space="preserve">
+    <value>Archive {0}? Members will no longer see it; its records are kept and it can be restored.</value>
+  </data>
+  <data name="ArchivedLabel" xml:space="preserve">
+    <value>Archived</value>
+  </data>
+  <data name="ArchivedNotice" xml:space="preserve">
+    <value>This training is archived: members no longer see it, and its records are kept.</value>
+  </data>
+  <data name="AssignOnlyNotice" xml:space="preserve">
+    <value>You may change who is assigned. The content and quiz are edited by the training's authors.</value>
+  </data>
+  <data name="AssignedColumn" xml:space="preserve">
+    <value>Assigned</value>
+  </data>
+  <data name="AssignedCountMessage" xml:space="preserve">
+    <value>{0} member(s) assigned, {1} already assigned.</value>
+  </data>
+  <data name="AssignedSummary" xml:space="preserve">
+    <value>{0} assigned, {1} completed.</value>
+  </data>
+  <data name="AssigneeNotRemovedError" xml:space="preserve">
+    <value>That member could not be removed.</value>
+  </data>
+  <data name="AssigneeRemovedMessage" xml:space="preserve">
+    <value>The member is removed from the training.</value>
+  </data>
+  <data name="AssigneesHeader" xml:space="preserve">
+    <value>Assignees</value>
+  </data>
+  <data name="AssignmentSection" xml:space="preserve">
+    <value>Who is assigned</value>
+  </data>
+  <data name="AttachmentNotRemovedError" xml:space="preserve">
+    <value>That attachment could not be removed.</value>
+  </data>
+  <data name="AttachmentRemovedMessage" xml:space="preserve">
+    <value>The attachment is removed.</value>
+  </data>
+  <data name="AttachmentSizeError" xml:space="preserve">
+    <value>An attachment must be smaller than 30 MB.</value>
+  </data>
+  <data name="AttachmentTypeError" xml:space="preserve">
+    <value>File type ({0}) cannot be attached.</value>
+  </data>
+  <data name="AttachmentsHelp" xml:space="preserve">
+    <value>Images, PDF, Office documents, text and video files up to 30 MB.</value>
+  </data>
+  <data name="AttemptColumn" xml:space="preserve">
+    <value>Attempt</value>
+  </data>
+  <data name="AttemptHistoryHeader" xml:space="preserve">
+    <value>Attempt history</value>
+  </data>
+  <data name="AttemptHistoryHelp" xml:space="preserve">
+    <value>Every submitted attempt, scored against the quiz as it was then. Shown only to whoever assigns and reports on this training.</value>
+  </data>
+  <data name="AttemptLimitHelp" xml:space="preserve">
+    <value>Leave empty for unlimited attempts.</value>
+  </data>
+  <data name="AttemptLimitLabel" xml:space="preserve">
+    <value>Attempt limit</value>
+  </data>
+  <data name="AttemptLimitRange" xml:space="preserve">
+    <value>Enter a number from {0} to {1}.</value>
+  </data>
+  <data name="AttemptsLeftValue" xml:space="preserve">
+    <value>{0} attempt(s) left</value>
+  </data>
+  <data name="AttemptsValue" xml:space="preserve">
+    <value>{0} attempt(s)</value>
+  </data>
+  <data name="BackToTrainingButton" xml:space="preserve">
+    <value>Back to the training</value>
+  </data>
+  <data name="CatalogHeader" xml:space="preserve">
+    <value>Open trainings</value>
+  </data>
+  <data name="CatalogHelp" xml:space="preserve">
+    <value>Reference material open to every member. Enrol to have a training tracked for you.</value>
+  </data>
+  <data name="CategoryIdHelp" xml:space="preserve">
+    <value>Optional. Training categories arrive with the transcript; until then this is a plain number.</value>
+  </data>
+  <data name="CategoryIdLabel" xml:space="preserve">
+    <value>Category number</value>
+  </data>
+  <data name="CeCourseNumberLabel" xml:space="preserve">
+    <value>CE course number</value>
+  </data>
+  <data name="CeHoursLabel" xml:space="preserve">
+    <value>CE hours</value>
+  </data>
+  <data name="CeProviderLabel" xml:space="preserve">
+    <value>CE provider</value>
+  </data>
+  <data name="CertificationColumn" xml:space="preserve">
+    <value>Certification</value>
+  </data>
+  <data name="CertificationCurrent" xml:space="preserve">
+    <value>Current</value>
+  </data>
+  <data name="CertificationDaysLeft" xml:space="preserve">
+    <value>{0} day(s) left</value>
+  </data>
+  <data name="CertificationExpired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="CertificationPinError" xml:space="preserve">
+    <value>That certification could not be pinned.</value>
+  </data>
+  <data name="CertificationPinnedMessage" xml:space="preserve">
+    <value>The certification is pinned to My Training.</value>
+  </data>
+  <data name="CertificationTypesLabel" xml:space="preserve">
+    <value>Holders of certifications</value>
+  </data>
+  <data name="CertificationUnpinnedMessage" xml:space="preserve">
+    <value>The certification is no longer pinned.</value>
+  </data>
+  <data name="CertificationsDueHeader" xml:space="preserve">
+    <value>Certifications due</value>
+  </data>
+  <data name="CertificationsDueHelp" xml:space="preserve">
+    <value>Your certifications that expire soon or have expired, and any you pinned.</value>
+  </data>
+  <data name="ClearExemptionButton" xml:space="preserve">
+    <value>End exemption</value>
+  </data>
+  <data name="ClosedLabel" xml:space="preserve">
+    <value>Closed to new assignees</value>
+  </data>
+  <data name="ClosedToNewAssigneesHelp" xml:space="preserve">
+    <value>No one else is assigned, by an edit, membership changes or enrolment (a one-off briefing).</value>
+  </data>
+  <data name="ClosedToNewAssigneesLabel" xml:space="preserve">
+    <value>Closed to new assignees</value>
+  </data>
+  <data name="ClosedToNewAssigneesMessage" xml:space="preserve">
+    <value>The training is closed to new assignees, so nobody was added.</value>
+  </data>
+  <data name="CompletedOnValue" xml:space="preserve">
+    <value>Completed {0}</value>
+  </data>
+  <data name="CompletionHistoryHeader" xml:space="preserve">
+    <value>Earlier completions</value>
+  </data>
+  <data name="ContentSection" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="ContinueTrainingButton" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="CopyButton" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="CopyNameFormat" xml:space="preserve">
+    <value>{0} (copy)</value>
+  </data>
+  <data name="CreditSection" xml:space="preserve">
+    <value>Hours and continuing education</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Delete {0}? This cannot be undone.</value>
+  </data>
+  <data name="DeleteHasCompletionsError" xml:space="preserve">
+    <value>Members have completed this training, so it cannot be deleted. Archive it instead: its records are kept.</value>
+  </data>
+  <data name="DeleteLeaveConfirm" xml:space="preserve">
+    <value>Delete this leave period? Due dates move back.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="DueDateHelp" xml:space="preserve">
+    <value>Due by the end of that day. Members assigned after it has passed get 30 days.</value>
+  </data>
+  <data name="DueDateRequired" xml:space="preserve">
+    <value>Choose the due date.</value>
+  </data>
+  <data name="DueDaysLabel" xml:space="preserve">
+    <value>Days to complete</value>
+  </data>
+  <data name="DueDaysRange" xml:space="preserve">
+    <value>Enter between 1 and 3650 days.</value>
+  </data>
+  <data name="DueModeFixed" xml:space="preserve">
+    <value>On a date</value>
+  </data>
+  <data name="DueModeLabel" xml:space="preserve">
+    <value>Due date</value>
+  </data>
+  <data name="DueModeNone" xml:space="preserve">
+    <value>No due date</value>
+  </data>
+  <data name="DueModeRelative" xml:space="preserve">
+    <value>Days after each assignment</value>
+  </data>
+  <data name="DueOnLabel" xml:space="preserve">
+    <value>Due</value>
+  </data>
+  <data name="DueSoonHeader" xml:space="preserve">
+    <value>Due soon</value>
+  </data>
+  <data name="DynamicNotice" xml:space="preserve">
+    <value>This assignment is dynamic: members who join these groups, roles, shifts, certifications or unit types are assigned automatically, and members who leave before opening it are withdrawn.</value>
+  </data>
+  <data name="EmbedsHelp" xml:space="preserve">
+    <value>Video and document embeds from YouTube, Vimeo, Google Docs and Sheets, and Microsoft Stream and Teams are kept; other embedded frames are removed.</value>
+  </data>
+  <data name="EnrollButton" xml:space="preserve">
+    <value>Enrol</value>
+  </data>
+  <data name="EnrollError" xml:space="preserve">
+    <value>You cannot enrol in that training.</value>
+  </data>
+  <data name="EnrollHelp" xml:space="preserve">
+    <value>Enrol to have this training tracked for you, with its due date and reminders.</value>
+  </data>
+  <data name="EnrolledMessage" xml:space="preserve">
+    <value>You are enrolled in this training.</value>
+  </data>
+  <data name="ExemptButton" xml:space="preserve">
+    <value>Exempt</value>
+  </data>
+  <data name="ExemptError" xml:space="preserve">
+    <value>The exemption could not be saved (a reason is required).</value>
+  </data>
+  <data name="ExemptNotice" xml:space="preserve">
+    <value>You are exempt from this training.</value>
+  </data>
+  <data name="ExemptUntilLabel" xml:space="preserve">
+    <value>Until (optional)</value>
+  </data>
+  <data name="ExemptedMessage" xml:space="preserve">
+    <value>The member is exempt.</value>
+  </data>
+  <data name="ExemptionClearedMessage" xml:space="preserve">
+    <value>The exemption has ended.</value>
+  </data>
+  <data name="ExpiresColumn" xml:space="preserve">
+    <value>Expires</value>
+  </data>
+  <data name="ExtendButton" xml:space="preserve">
+    <value>Extend</value>
+  </data>
+  <data name="ExtendError" xml:space="preserve">
+    <value>Enter a future date and a reason to extend.</value>
+  </data>
+  <data name="ExtendedLabel" xml:space="preserve">
+    <value>Extended</value>
+  </data>
+  <data name="ExtendedMessage" xml:space="preserve">
+    <value>The due date is extended.</value>
+  </data>
+  <data name="FalseLabel" xml:space="preserve">
+    <value>False</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="FlagCommentLabel" xml:space="preserve">
+    <value>What looks wrong?</value>
+  </data>
+  <data name="FlagNotResolvedError" xml:space="preserve">
+    <value>That flag could not be resolved.</value>
+  </data>
+  <data name="FlagQuestionButton" xml:space="preserve">
+    <value>Flag question</value>
+  </data>
+  <data name="FlagQuestionHeader" xml:space="preserve">
+    <value>Flag a question</value>
+  </data>
+  <data name="FlagQuestionHelp" xml:space="preserve">
+    <value>If a question looks wrong, tell the training's author.</value>
+  </data>
+  <data name="FlagResolvedMessage" xml:space="preserve">
+    <value>The flag is resolved.</value>
+  </data>
+  <data name="FlaggedByColumn" xml:space="preserve">
+    <value>Flagged by</value>
+  </data>
+  <data name="FormerMemberLabel" xml:space="preserve">
+    <value>Former member</value>
+  </data>
+  <data name="HideFormerMembersButton" xml:space="preserve">
+    <value>Hide former members</value>
+  </data>
+  <data name="HistoryReasonColumn" xml:space="preserve">
+    <value>Why</value>
+  </data>
+  <data name="HistoryReasonMaterialEdit" xml:space="preserve">
+    <value>Material change</value>
+  </data>
+  <data name="HistoryReasonRepeat" xml:space="preserve">
+    <value>Repeat</value>
+  </data>
+  <data name="HistoryReasonReset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="HoursColumn" xml:space="preserve">
+    <value>Hours</value>
+  </data>
+  <data name="HoursLabel" xml:space="preserve">
+    <value>Training hours</value>
+  </data>
+  <data name="HoursRange" xml:space="preserve">
+    <value>Hours are from 0 to 9999.</value>
+  </data>
+  <data name="HoursValue" xml:space="preserve">
+    <value>{0} h</value>
+  </data>
+  <data name="InProgressHeader" xml:space="preserve">
+    <value>In progress</value>
+  </data>
+  <data name="InactiveMembersHelp" xml:space="preserve">
+    <value>Deleted, disabled and hidden members are never assigned; you are told who was skipped and why.</value>
+  </data>
+  <data name="KpiCompletion" xml:space="preserve">
+    <value>Completion</value>
+  </data>
+  <data name="KpiDueThisWeek" xml:space="preserve">
+    <value>Due this week</value>
+  </data>
+  <data name="KpiOverdue" xml:space="preserve">
+    <value>Overdue</value>
+  </data>
+  <data name="LastScoreValue" xml:space="preserve">
+    <value>Last score {0}%</value>
+  </data>
+  <data name="LeadDaysInvalid" xml:space="preserve">
+    <value>Reminder days are whole numbers from 1 to {0}, separated by commas.</value>
+  </data>
+  <data name="LeaveDatesInvalid" xml:space="preserve">
+    <value>Enter a first and last day; the last day cannot be before the first.</value>
+  </data>
+  <data name="LeaveDeletedMessage" xml:space="preserve">
+    <value>The leave is deleted.</value>
+  </data>
+  <data name="LeaveEndLabel" xml:space="preserve">
+    <value>Last day</value>
+  </data>
+  <data name="LeaveIntro" xml:space="preserve">
+    <value>While a leave period runs, a member's training due dates and reminders pause; afterwards they move on by the length of the leave.</value>
+  </data>
+  <data name="LeaveKindLabel" xml:space="preserve">
+    <value>Kind</value>
+  </data>
+  <data name="LeaveKindLightDuty" xml:space="preserve">
+    <value>Light duty</value>
+  </data>
+  <data name="LeaveKindMedical" xml:space="preserve">
+    <value>Medical</value>
+  </data>
+  <data name="LeaveKindMilitary" xml:space="preserve">
+    <value>Military</value>
+  </data>
+  <data name="LeaveKindOther" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="LeaveKindParental" xml:space="preserve">
+    <value>Parental</value>
+  </data>
+  <data name="LeaveMemberRequired" xml:space="preserve">
+    <value>Choose a member you may assign training to.</value>
+  </data>
+  <data name="LeaveNotSavedError" xml:space="preserve">
+    <value>The leave could not be saved.</value>
+  </data>
+  <data name="LeaveNoteLabel" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="LeavePeriodsHeader" xml:space="preserve">
+    <value>Leave periods</value>
+  </data>
+  <data name="LeaveSavedMessage" xml:space="preserve">
+    <value>The leave is saved.</value>
+  </data>
+  <data name="LeaveStartLabel" xml:space="preserve">
+    <value>First day</value>
+  </data>
+  <data name="LeaveTab" xml:space="preserve">
+    <value>Leave of Absence</value>
+  </data>
+  <data name="MakeDynamicLabel" xml:space="preserve">
+    <value>Make this assignment dynamic (keep it current as memberships change)</value>
+  </data>
+  <data name="ManageIntro" xml:space="preserve">
+    <value>Trainings you author, assign or report on.</value>
+  </data>
+  <data name="ManageTrainingsTab" xml:space="preserve">
+    <value>Manage Trainings</value>
+  </data>
+  <data name="MaterialChangeHeader" xml:space="preserve">
+    <value>The quiz or pass mark changed</value>
+  </data>
+  <data name="MaterialChangeHelp" xml:space="preserve">
+    <value>{0} member(s) already completed this training. Is this a material change?</value>
+  </data>
+  <data name="MaterialChangeNo" xml:space="preserve">
+    <value>Not material: completed results stand</value>
+  </data>
+  <data name="MaterialChangeRequired" xml:space="preserve">
+    <value>Choose whether the quiz change is material before saving.</value>
+  </data>
+  <data name="MaterialChangeYes" xml:space="preserve">
+    <value>Material: assign it again to members who completed it</value>
+  </data>
+  <data name="MaterialReassignedMessage" xml:space="preserve">
+    <value>{0} member(s) were assigned again.</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Member</value>
+  </data>
+  <data name="MemberNotResetError" xml:space="preserve">
+    <value>That member could not be reset.</value>
+  </data>
+  <data name="MemberResetMessage" xml:space="preserve">
+    <value>The member is reset.</value>
+  </data>
+  <data name="MinimumScoreRange" xml:space="preserve">
+    <value>The pass mark is from 0 to 100.</value>
+  </data>
+  <data name="MyTrainingIntro" xml:space="preserve">
+    <value>Your assigned trainings, what is due next, and the certifications that need attention.</value>
+  </data>
+  <data name="MyTrainingTab" xml:space="preserve">
+    <value>My Training</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Enter a name.</value>
+  </data>
+  <data name="NewAssignmentHelp" xml:space="preserve">
+    <value>Groups, roles, shifts, certifications and unit types stay current: members who join later are assigned automatically.</value>
+  </data>
+  <data name="NewDueDateLabel" xml:space="preserve">
+    <value>New due date</value>
+  </data>
+  <data name="NewTrainingIntro" xml:space="preserve">
+    <value>Write the training, add an optional quiz, then choose who it is for and when it is due.</value>
+  </data>
+  <data name="NextActionHeader" xml:space="preserve">
+    <value>Next up</value>
+  </data>
+  <data name="NoAssigneesError" xml:space="preserve">
+    <value>Choose who the training is for, or make it open to all members.</value>
+  </data>
+  <data name="NoAttachments" xml:space="preserve">
+    <value>No attachments.</value>
+  </data>
+  <data name="NoAttempts" xml:space="preserve">
+    <value>No attempts yet.</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>No expiry</value>
+  </data>
+  <data name="NoLeavePeriods" xml:space="preserve">
+    <value>No leave entered.</value>
+  </data>
+  <data name="NoTrainingsHeader" xml:space="preserve">
+    <value>No trainings to show</value>
+  </data>
+  <data name="NotAssignedNotice" xml:space="preserve">
+    <value>This training is not assigned to you.</value>
+  </data>
+  <data name="NotStartedHeader" xml:space="preserve">
+    <value>Not started</value>
+  </data>
+  <data name="NothingAssignedHeader" xml:space="preserve">
+    <value>Nothing is assigned to you</value>
+  </data>
+  <data name="NothingAssignedHelp" xml:space="preserve">
+    <value>Trainings your department assigns to you appear here.</value>
+  </data>
+  <data name="OnLeaveNotice" xml:space="preserve">
+    <value>You are on leave: due dates and reminders are paused and move on by the length of your leave.</value>
+  </data>
+  <data name="OneQuestionPerPageLabel" xml:space="preserve">
+    <value>Show one question at a time</value>
+  </data>
+  <data name="OpenFlagsHeader" xml:space="preserve">
+    <value>Flagged questions</value>
+  </data>
+  <data name="OpenLabel" xml:space="preserve">
+    <value>Open to all members</value>
+  </data>
+  <data name="OpenTrainingButton" xml:space="preserve">
+    <value>Open training</value>
+  </data>
+  <data name="OverdueHeader" xml:space="preserve">
+    <value>Overdue</value>
+  </data>
+  <data name="OverdueRepeatDaysHelp" xml:space="preserve">
+    <value>Empty sends it once.</value>
+  </data>
+  <data name="OverdueRepeatDaysLabel" xml:space="preserve">
+    <value>Repeat overdue notice every (days)</value>
+  </data>
+  <data name="OverdueRepeatRange" xml:space="preserve">
+    <value>Enter a number from {0} to {1}.</value>
+  </data>
+  <data name="PinButton" xml:space="preserve">
+    <value>Pin</value>
+  </data>
+  <data name="PinnedLabel" xml:space="preserve">
+    <value>Pinned</value>
+  </data>
+  <data name="PreviewAudienceButton" xml:space="preserve">
+    <value>Preview who would be added</value>
+  </data>
+  <data name="PreviewHeader" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="PreviewQuizButton" xml:space="preserve">
+    <value>Preview quiz</value>
+  </data>
+  <data name="PreviewSummary" xml:space="preserve">
+    <value>{0} member(s) would be added; {1} already assigned.</value>
+  </data>
+  <data name="ProgressHeader" xml:space="preserve">
+    <value>Your progress</value>
+  </data>
+  <data name="QuestionCountValue" xml:space="preserve">
+    <value>{0} question(s)</value>
+  </data>
+  <data name="QuestionFlaggedMessage" xml:space="preserve">
+    <value>Thank you: the training's author has been told.</value>
+  </data>
+  <data name="QuestionNotFlaggedError" xml:space="preserve">
+    <value>That question could not be flagged.</value>
+  </data>
+  <data name="QuestionNumberLabel" xml:space="preserve">
+    <value>Question {0}</value>
+  </data>
+  <data name="QuestionOfValue" xml:space="preserve">
+    <value>Question {0} of {1}</value>
+  </data>
+  <data name="QuestionTypeLabel" xml:space="preserve">
+    <value>Question type</value>
+  </data>
+  <data name="QuestionTypeMulti" xml:space="preserve">
+    <value>Multiple choice (all correct options)</value>
+  </data>
+  <data name="QuestionTypeSingle" xml:space="preserve">
+    <value>Single choice</value>
+  </data>
+  <data name="QuestionTypeTrueFalse" xml:space="preserve">
+    <value>True or false</value>
+  </data>
+  <data name="QuizAlreadyPassedMessage" xml:space="preserve">
+    <value>You have already passed this quiz.</value>
+  </data>
+  <data name="QuizAttemptLimitError" xml:space="preserve">
+    <value>You have used all the attempts allowed for this quiz.</value>
+  </data>
+  <data name="QuizFailedHeader" xml:space="preserve">
+    <value>Not passed</value>
+  </data>
+  <data name="QuizFailedValue" xml:space="preserve">
+    <value>Quiz failed: {0}% (pass mark {1}%)</value>
+  </data>
+  <data name="QuizIntro" xml:space="preserve">
+    <value>{0} question(s). The pass mark is {1}%.</value>
+  </data>
+  <data name="QuizNotAvailableError" xml:space="preserve">
+    <value>This quiz is not available.</value>
+  </data>
+  <data name="QuizNotTakenValue" xml:space="preserve">
+    <value>Quiz not taken yet (pass mark {0}%)</value>
+  </data>
+  <data name="QuizPassedHeader" xml:space="preserve">
+    <value>Passed</value>
+  </data>
+  <data name="QuizPassedValue" xml:space="preserve">
+    <value>Quiz passed: {0}%</value>
+  </data>
+  <data name="QuizPreviewNotice" xml:space="preserve">
+    <value>Preview: you are not assigned, so nothing is submitted.</value>
+  </data>
+  <data name="QuizProblemMinimumScoreRange" xml:space="preserve">
+    <value>The pass mark is from 0 to 100.</value>
+  </data>
+  <data name="QuizProblemQuestionAnswerKey" xml:space="preserve">
+    <value>Mark the correct answer: one for single choice and true or false, at least one for multiple choice.</value>
+  </data>
+  <data name="QuizProblemQuestionOptions" xml:space="preserve">
+    <value>Every question needs at least two answers (at most 26).</value>
+  </data>
+  <data name="QuizProblemQuestionText" xml:space="preserve">
+    <value>Every question needs its text.</value>
+  </data>
+  <data name="QuizProblemQuestionType" xml:space="preserve">
+    <value>A question has an unknown type.</value>
+  </data>
+  <data name="QuizProblemTooManyQuestions" xml:space="preserve">
+    <value>A quiz has at most 100 questions.</value>
+  </data>
+  <data name="QuizProblemTrueFalseOptions" xml:space="preserve">
+    <value>A true or false question has exactly two answers.</value>
+  </data>
+  <data name="QuizResultHeader" xml:space="preserve">
+    <value>Quiz result</value>
+  </data>
+  <data name="QuizRevisionColumn" xml:space="preserve">
+    <value>Quiz version</value>
+  </data>
+  <data name="QuizScoreValue" xml:space="preserve">
+    <value>Score {0}%: {1} of {2} correct. Pass mark {3}%.</value>
+  </data>
+  <data name="QuizSection" xml:space="preserve">
+    <value>Quiz</value>
+  </data>
+  <data name="ReadButton" xml:space="preserve">
+    <value>Read</value>
+  </data>
+  <data name="ReasonLabel" xml:space="preserve">
+    <value>Reason</value>
+  </data>
+  <data name="RecentCompletionsHeader" xml:space="preserve">
+    <value>Recently completed</value>
+  </data>
+  <data name="RelativeDueValue" xml:space="preserve">
+    <value>{0} days after assignment</value>
+  </data>
+  <data name="ReminderLeadDaysHelp" xml:space="preserve">
+    <value>Comma separated, for example 7,1. Empty reminds one day before.</value>
+  </data>
+  <data name="ReminderLeadDaysLabel" xml:space="preserve">
+    <value>Remind before due (days)</value>
+  </data>
+  <data name="ReminderMessageHelp" xml:space="preserve">
+    <value>Optional, up to 500 characters, added to the new-training, reminder and overdue notices.</value>
+  </data>
+  <data name="ReminderMessageLabel" xml:space="preserve">
+    <value>Message added to notices</value>
+  </data>
+  <data name="RemindersSection" xml:space="preserve">
+    <value>Reminders</value>
+  </data>
+  <data name="RemoveAssigneeButton" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="RemoveAssigneeConfirm" xml:space="preserve">
+    <value>Remove this member from the training? A completion is kept.</value>
+  </data>
+  <data name="RemoveAttachmentConfirm" xml:space="preserve">
+    <value>Remove this attachment?</value>
+  </data>
+  <data name="RemoveQuestionButton" xml:space="preserve">
+    <value>Remove question</value>
+  </data>
+  <data name="RemovedQuestionLabel" xml:space="preserve">
+    <value>(question removed)</value>
+  </data>
+  <data name="RepeatMonthsHelp" xml:space="preserve">
+    <value>Optional. Each interval assigns it again with a fresh due date; earlier completions stay on record.</value>
+  </data>
+  <data name="RepeatMonthsLabel" xml:space="preserve">
+    <value>Repeat every (months)</value>
+  </data>
+  <data name="RepeatMonthsRange" xml:space="preserve">
+    <value>Enter a number from {0} to {1}.</value>
+  </data>
+  <data name="RepeatsEveryValue" xml:space="preserve">
+    <value>Every {0} month(s)</value>
+  </data>
+  <data name="ResetConfirm" xml:space="preserve">
+    <value>Reset this member? A completion moves to the history and they start again.</value>
+  </data>
+  <data name="ResolveFlagButton" xml:space="preserve">
+    <value>Resolve</value>
+  </data>
+  <data name="RestoreButton" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="RetakeQuizButton" xml:space="preserve">
+    <value>Retake quiz</value>
+  </data>
+  <data name="SaveLeaveButton" xml:space="preserve">
+    <value>Save leave</value>
+  </data>
+  <data name="ScheduleSection" xml:space="preserve">
+    <value>Schedule and availability</value>
+  </data>
+  <data name="ScheduledLabel" xml:space="preserve">
+    <value>Starts</value>
+  </data>
+  <data name="ScheduledNotice" xml:space="preserve">
+    <value>This training starts {0}. Its assignees see it from then on.</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SelectAllThatApply" xml:space="preserve">
+    <value>Select every correct answer.</value>
+  </data>
+  <data name="SelectPlaceholder" xml:space="preserve">
+    <value>Select...</value>
+  </data>
+  <data name="SelfEnrolledLabel" xml:space="preserve">
+    <value>Self-enrolled</value>
+  </data>
+  <data name="SendOverdueNoticesLabel" xml:space="preserve">
+    <value>Send an overdue notice to the member and the training's creator</value>
+  </data>
+  <data name="ShiftsLabel" xml:space="preserve">
+    <value>Members of shifts</value>
+  </data>
+  <data name="ShowFormerMembersButton" xml:space="preserve">
+    <value>Show former members</value>
+  </data>
+  <data name="SkipReasonDeleted" xml:space="preserve">
+    <value>removed from the department</value>
+  </data>
+  <data name="SkipReasonDisabled" xml:space="preserve">
+    <value>disabled</value>
+  </data>
+  <data name="SkipReasonHidden" xml:space="preserve">
+    <value>hidden</value>
+  </data>
+  <data name="SkipReasonNotActivated" xml:space="preserve">
+    <value>imported but not activated yet</value>
+  </data>
+  <data name="SkipReasonNotInDepartment" xml:space="preserve">
+    <value>not a member of this department</value>
+  </data>
+  <data name="SkipReasonOutOfScope" xml:space="preserve">
+    <value>outside the group you administer</value>
+  </data>
+  <data name="SkippedMembersIntro" xml:space="preserve">
+    <value>Not assigned:</value>
+  </data>
+  <data name="StartsOnHelp" xml:space="preserve">
+    <value>Optional. Until then assignees do not see the training and nobody is notified.</value>
+  </data>
+  <data name="StartsOnInvalid" xml:space="preserve">
+    <value>Enter a valid start date and time.</value>
+  </data>
+  <data name="StartsOnLabel" xml:space="preserve">
+    <value>Starts on</value>
+  </data>
+  <data name="StateComplete" xml:space="preserve">
+    <value>Complete</value>
+  </data>
+  <data name="StateExempt" xml:space="preserve">
+    <value>Exempt</value>
+  </data>
+  <data name="StateFailed" xml:space="preserve">
+    <value>Quiz failed</value>
+  </data>
+  <data name="StateInProgress" xml:space="preserve">
+    <value>In progress</value>
+  </data>
+  <data name="StateNotStarted" xml:space="preserve">
+    <value>Not started</value>
+  </data>
+  <data name="StateOnLeave" xml:space="preserve">
+    <value>On leave</value>
+  </data>
+  <data name="StateOverdue" xml:space="preserve">
+    <value>Overdue</value>
+  </data>
+  <data name="StateRemoved" xml:space="preserve">
+    <value>Removed</value>
+  </data>
+  <data name="StateScheduled" xml:space="preserve">
+    <value>Scheduled</value>
+  </data>
+  <data name="StaticNotice" xml:space="preserve">
+    <value>This training keeps a fixed list of assignees. Picks below are added to it.</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="StatusAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="StatusArchived" xml:space="preserve">
+    <value>Archived</value>
+  </data>
+  <data name="StatusFilterLabel" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="StatusScheduled" xml:space="preserve">
+    <value>Scheduled</value>
+  </data>
+  <data name="SubmitQuizConfirm" xml:space="preserve">
+    <value>Submit your answers?</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Submitted</value>
+  </data>
+  <data name="TextTooLong" xml:space="preserve">
+    <value>Text is longer than {0} characters.</value>
+  </data>
+  <data name="TrainingArchivedMessage" xml:space="preserve">
+    <value>The training is archived.</value>
+  </data>
+  <data name="TrainingCopiedMessage" xml:space="preserve">
+    <value>A copy was made. Review it and choose who it is for.</value>
+  </data>
+  <data name="TrainingDeletedMessage" xml:space="preserve">
+    <value>The training is deleted.</value>
+  </data>
+  <data name="TrainingNotArchivedError" xml:space="preserve">
+    <value>That training could not be archived.</value>
+  </data>
+  <data name="TrainingNotRestoredError" xml:space="preserve">
+    <value>That training could not be restored.</value>
+  </data>
+  <data name="TrainingRestoredMessage" xml:space="preserve">
+    <value>The training is restored.</value>
+  </data>
+  <data name="TrainingSavedMessage" xml:space="preserve">
+    <value>The training is saved.</value>
+  </data>
+  <data name="TrueLabel" xml:space="preserve">
+    <value>True</value>
+  </data>
+  <data name="UnitTypesLabel" xml:space="preserve">
+    <value>Crews of unit types</value>
+  </data>
+  <data name="UnpinButton" xml:space="preserve">
+    <value>Unpin</value>
+  </data>
+  <data name="ViewedLabel" xml:space="preserve">
+    <value>Viewed</value>
+  </data>
+  <data name="ViewedOnValue" xml:space="preserve">
+    <value>Viewed {0}</value>
+  </data>
 </root>

@@ -1002,6 +1002,45 @@
   <data name="W.trainings.mine.OverdueSince" xml:space="preserve">
     <value>Термін минув {0}</value>
   </data>
+  <data name="W.trainings.bulletin.Title" xml:space="preserve">
+    <value>Дошка навчання</value>
+  </data>
+  <data name="W.trainings.bulletin.Description" xml:space="preserve">
+    <value>Нове в навчанні для вас: нещодавні призначення та щойно опубліковані навчання, відкриті для всіх членів.</value>
+  </data>
+  <data name="W.trainings.bulletin.Setting.days" xml:space="preserve">
+    <value>Днів назад</value>
+  </data>
+  <data name="W.trainings.bulletin.Setting.maxItems" xml:space="preserve">
+    <value>Максимальна кількість навчань</value>
+  </data>
+  <data name="W.trainings.bulletin.Empty" xml:space="preserve">
+    <value>Нового навчання немає.</value>
+  </data>
+  <data name="W.trainings.bulletin.NewAssignedCount" xml:space="preserve">
+    <value>{0} нових для вас</value>
+  </data>
+  <data name="W.trainings.bulletin.Training" xml:space="preserve">
+    <value>Навчання</value>
+  </data>
+  <data name="W.trainings.bulletin.Assigned" xml:space="preserve">
+    <value>Призначено вам</value>
+  </data>
+  <data name="W.trainings.bulletin.Catalog" xml:space="preserve">
+    <value>Відкрито для всіх членів</value>
+  </data>
+  <data name="W.trainings.bulletin.CanEnrol" xml:space="preserve">
+    <value>Відкрито для всіх, можна записатися</value>
+  </data>
+  <data name="W.trainings.bulletin.Due" xml:space="preserve">
+    <value>Термін {0}</value>
+  </data>
+  <data name="W.trainings.bulletin.OverdueSince" xml:space="preserve">
+    <value>Термін минув {0}</value>
+  </data>
+  <data name="W.trainings.bulletin.Published" xml:space="preserve">
+    <value>Опубліковано {0}</value>
+  </data>
   <data name="W.documents.recent.OpenDocuments" xml:space="preserve">
     <value>Відкрити документи</value>
   </data>

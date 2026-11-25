@@ -840,4 +840,10 @@
   <data name="ToggleMenu" xml:space="preserve">
     <value>Visa eller dölj menyn</value>
   </data>
+  <data name="ResgridAcademy" xml:space="preserve">
+    <value>Resgrid-akademin</value>
+  </data>
+  <data name="AcademyLearnThisPage" xml:space="preserve">
+    <value>Lektion om den här sidan ({0} min)</value>
+  </data>
 </root>

@@ -1,0 +1,189 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingManageModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@{
+    var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Trainings, localizer["TrainingsHeader"].Value);
+    ViewBag.Title = "Resgrid | " + localizer["ManageTrainingsTab"];
+    ViewData["Section"] = "Manage";
+    ViewData["Title"] = localizer["ManageTrainingsTab"].Value;
+    ViewData["Subtitle"] = localizer["ManageIntro"].Value;
+    ViewData["Scope"] = Model.Scope;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a class="btn btn-success" asp-controller="Trainings" asp-action="New" asp-route-area="User"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddTrainingIndexButton"]</a>
+    </text>;
+    ViewData["HeaderActions"] = Model.Scope != null && Model.Scope.CanCreate ? headerActions : null;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label"><i class="fa fa-exclamation-circle text-danger" aria-hidden="true"></i> @localizer["KpiOverdue"]</div>
+            <div class="rgw-stat-value">@Model.Summary.Overdue</div>
+        </div>
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label"><i class="fa fa-hourglass-half text-warning" aria-hidden="true"></i> @localizer["KpiDueThisWeek"]</div>
+            <div class="rgw-stat-value">@Model.Summary.DueThisWeek</div>
+        </div>
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label"><i class="fa fa-check-circle text-navy" aria-hidden="true"></i> @localizer["KpiCompletion"]</div>
+            <div class="rgw-stat-value">@Model.Summary.CompletionPercent.ToString("0.#")%</div>
+        </div>
+    </div>
+
+    <form method="get" asp-controller="Trainings" asp-action="Manage" asp-route-area="User" class="rgw-filter m-t-sm" role="search">
+        <div class="rgw-grid">
+            <div class="form-group">
+                <label for="status">@localizer["StatusFilterLabel"]</label>
+                <select id="status" name="status" class="form-control">
+                    <option value="active" selected="@(Model.Status == "active")">@localizer["StatusActive"]</option>
+                    <option value="scheduled" selected="@(Model.Status == "scheduled")">@localizer["StatusScheduled"]</option>
+                    <option value="archived" selected="@(Model.Status == "archived")">@localizer["StatusArchived"]</option>
+                    <option value="all" selected="@(Model.Status == "all")">@localizer["StatusAll"]</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="search">@localizer["SearchLabel"]</label>
+                <input id="search" name="search" type="search" class="form-control" value="@Model.Search" />
+            </div>
+        </div>
+        <div class="rgw-filter-actions">
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-filter" aria-hidden="true"></i> @localizer["FilterButton"]</button>
+        </div>
+    </form>
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            @if (Model.Rows.Count == 0)
+            {
+                <div class="text-center m-t-lg m-b-lg">
+                    <i class="fa fa-book fa-3x text-muted" aria-hidden="true"></i>
+                    <h4 class="m-t-sm">@localizer["NoTrainingsHeader"]</h4>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["NameColumn"]</th>
+                                <th>@localizer["DueDateColumn"]</th>
+                                <th>@localizer["AssignedColumn"]</th>
+                                <th>@localizer["CompletedColumn"]</th>
+                                <th class="rgw-row-actions">@localizer["ActionColumn"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in Model.Rows)
+                            {
+                                var t = row.Training;
+                                <tr>
+                                    <td>
+                                        <a asp-controller="Trainings" asp-action="View" asp-route-area="User" asp-route-trainingId="@t.TrainingId">@t.Name</a>
+                                        <small class="rgw-sub text-muted">
+                                            @if (t.IsArchived)
+                                            {
+                                                <span><i class="fa fa-archive" aria-hidden="true"></i> @localizer["ArchivedLabel"]</span>
+                                            }
+                                            @if (row.IsScheduled)
+                                            {
+                                                <span><i class="fa fa-clock-o" aria-hidden="true"></i> @localizer["ScheduledLabel"] @TrainingStatePresentation.LocalDateTime(t.StartsOn, Model.Department)</span>
+                                            }
+                                            @if (t.ClosedToNewAssignees)
+                                            {
+                                                <span><i class="fa fa-lock" aria-hidden="true"></i> @localizer["ClosedLabel"]</span>
+                                            }
+                                            @if (t.OpenToAllMembers)
+                                            {
+                                                <span><i class="fa fa-globe" aria-hidden="true"></i> @localizer["OpenLabel"]</span>
+                                            }
+                                            @if (t.RepeatMonths.HasValue)
+                                            {
+                                                <span><i class="fa fa-repeat" aria-hidden="true"></i> @string.Format(localizer["RepeatsEveryValue"].Value, t.RepeatMonths.Value)</span>
+                                            }
+                                            @if (t.HasQuiz)
+                                            {
+                                                <span><i class="fa fa-question-circle" aria-hidden="true"></i> @string.Format(localizer["QuestionCountValue"].Value, t.QuestionCount ?? 0)</span>
+                                            }
+                                        </small>
+                                    </td>
+                                    <td>
+                                        @if (t.DueDays.HasValue)
+                                        {
+                                            @string.Format(localizer["RelativeDueValue"].Value, t.DueDays.Value)
+                                        }
+                                        else if (t.ToBeCompletedBy.HasValue)
+                                        {
+                                            @t.ToBeCompletedBy.Value.ToShortDateString()
+                                        }
+                                        else
+                                        {
+                                            @localizer["NoDueDate"]
+                                        }
+                                    </td>
+                                    <td>@row.Assigned</td>
+                                    <td>@row.Complete</td>
+                                    <td class="rgw-row-actions">
+                                        @if (row.CanAuthor || row.CanAssign)
+                                        {
+                                            <a class="btn btn-xs btn-info" asp-controller="Trainings" asp-action="Edit" asp-route-area="User" asp-route-trainingId="@t.TrainingId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["EditButton"]</a>
+                                        }
+                                        @if (row.CanAssign)
+                                        {
+                                            <a class="btn btn-xs btn-primary" asp-controller="Trainings" asp-action="Report" asp-route-area="User" asp-route-trainingId="@t.TrainingId"><i class="fa fa-bar-chart" aria-hidden="true"></i> @localizer["ReportButton"]</a>
+                                        }
+                                        @if (row.CanAuthor && Model.Scope.CanCreate)
+                                        {
+                                            <form method="post" asp-controller="Trainings" asp-action="Copy" asp-route-area="User" asp-route-trainingId="@t.TrainingId">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-xs btn-default"><i class="fa fa-files-o" aria-hidden="true"></i> @localizer["CopyButton"]</button>
+                                            </form>
+                                        }
+                                        @if (row.CanDelete)
+                                        {
+                                            if (t.IsArchived)
+                                            {
+                                                <form method="post" asp-controller="Trainings" asp-action="Restore" asp-route-area="User" asp-route-trainingId="@t.TrainingId">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-xs btn-default"><i class="fa fa-undo" aria-hidden="true"></i> @localizer["RestoreButton"]</button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <form method="post" asp-controller="Trainings" asp-action="Archive" asp-route-area="User" asp-route-trainingId="@t.TrainingId">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-xs btn-warning" data-confirm="@string.Format(localizer["ArchiveConfirm"].Value, t.Name)"><i class="fa fa-archive" aria-hidden="true"></i> @localizer["ArchiveButton"]</button>
+                                                </form>
+                                            }
+                                            if (row.MayDeleteOutright)
+                                            {
+                                                <form method="post" asp-controller="Trainings" asp-action="DeleteTraining" asp-route-area="User" asp-route-trainingId="@t.TrainingId">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-xs btn-danger" data-confirm="@string.Format(localizer["DeleteConfirm"].Value, t.Name)"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["DeleteButton"]</button>
+                                                </form>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/training/resgrid.training.index.js" asp-append-version="true"></script>
+}

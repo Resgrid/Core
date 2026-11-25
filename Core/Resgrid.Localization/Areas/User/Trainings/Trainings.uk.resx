@@ -393,4 +393,844 @@
   <data name="AnswerTextColumn" xml:space="preserve">
     <value>Текст відповіді</value>
   </data>
+  <data name="AddLeaveHeader" xml:space="preserve">
+    <value>Додати відсутність</value>
+  </data>
+  <data name="AllowSelfEnrollLabel" xml:space="preserve">
+    <value>Учасники можуть записатися самостійно</value>
+  </data>
+  <data name="ArchiveButton" xml:space="preserve">
+    <value>Архівувати</value>
+  </data>
+  <data name="ArchiveConfirm" xml:space="preserve">
+    <value>Архівувати {0}? Учасники більше не бачитимуть його; записи збережуться, його можна відновити.</value>
+  </data>
+  <data name="ArchivedLabel" xml:space="preserve">
+    <value>В архіві</value>
+  </data>
+  <data name="ArchivedNotice" xml:space="preserve">
+    <value>Це навчання в архіві: учасники його не бачать, записи збережено.</value>
+  </data>
+  <data name="AssignOnlyNotice" xml:space="preserve">
+    <value>Ви можете змінювати призначення. Зміст і тест редагують автори навчання.</value>
+  </data>
+  <data name="AssignedColumn" xml:space="preserve">
+    <value>Призначено</value>
+  </data>
+  <data name="AssignedCountMessage" xml:space="preserve">
+    <value>Призначено: {0}, уже призначено раніше: {1}.</value>
+  </data>
+  <data name="AssignedSummary" xml:space="preserve">
+    <value>Призначено: {0}, завершили: {1}.</value>
+  </data>
+  <data name="AssigneeNotRemovedError" xml:space="preserve">
+    <value>Не вдалося вилучити учасника.</value>
+  </data>
+  <data name="AssigneeRemovedMessage" xml:space="preserve">
+    <value>Учасника вилучено з навчання.</value>
+  </data>
+  <data name="AssigneesHeader" xml:space="preserve">
+    <value>Учасники</value>
+  </data>
+  <data name="AssignmentSection" xml:space="preserve">
+    <value>Кому призначено</value>
+  </data>
+  <data name="AttachmentNotRemovedError" xml:space="preserve">
+    <value>Не вдалося вилучити вкладення.</value>
+  </data>
+  <data name="AttachmentRemovedMessage" xml:space="preserve">
+    <value>Вкладення вилучено.</value>
+  </data>
+  <data name="AttachmentSizeError" xml:space="preserve">
+    <value>Вкладення має бути менше 30 МБ.</value>
+  </data>
+  <data name="AttachmentTypeError" xml:space="preserve">
+    <value>Тип файлу ({0}) не можна вкласти.</value>
+  </data>
+  <data name="AttachmentsHelp" xml:space="preserve">
+    <value>Зображення, PDF, документи Office, текстові та відеофайли до 30 МБ.</value>
+  </data>
+  <data name="AttemptColumn" xml:space="preserve">
+    <value>Спроба</value>
+  </data>
+  <data name="AttemptHistoryHeader" xml:space="preserve">
+    <value>Історія спроб</value>
+  </data>
+  <data name="AttemptHistoryHelp" xml:space="preserve">
+    <value>Кожна надіслана спроба, оцінена за тодішньою версією тесту. Бачать лише ті, хто призначає навчання й переглядає звіти.</value>
+  </data>
+  <data name="AttemptLimitHelp" xml:space="preserve">
+    <value>Залиште порожнім для необмеженої кількості спроб.</value>
+  </data>
+  <data name="AttemptLimitLabel" xml:space="preserve">
+    <value>Ліміт спроб</value>
+  </data>
+  <data name="AttemptLimitRange" xml:space="preserve">
+    <value>Введіть число від {0} до {1}.</value>
+  </data>
+  <data name="AttemptsLeftValue" xml:space="preserve">
+    <value>Залишилось спроб: {0}</value>
+  </data>
+  <data name="AttemptsValue" xml:space="preserve">
+    <value>Спроб: {0}</value>
+  </data>
+  <data name="BackToTrainingButton" xml:space="preserve">
+    <value>Назад до навчання</value>
+  </data>
+  <data name="CatalogHeader" xml:space="preserve">
+    <value>Відкрите навчання</value>
+  </data>
+  <data name="CatalogHelp" xml:space="preserve">
+    <value>Довідкові матеріали, відкриті для всіх учасників. Запишіться, щоб відстежувати своє навчання.</value>
+  </data>
+  <data name="CategoryIdHelp" xml:space="preserve">
+    <value>Необов'язково. Категорії з'являться разом із журналом навчання; доти це просто число.</value>
+  </data>
+  <data name="CategoryIdLabel" xml:space="preserve">
+    <value>Номер категорії</value>
+  </data>
+  <data name="CeCourseNumberLabel" xml:space="preserve">
+    <value>Номер курсу</value>
+  </data>
+  <data name="CeHoursLabel" xml:space="preserve">
+    <value>Години підвищення кваліфікації</value>
+  </data>
+  <data name="CeProviderLabel" xml:space="preserve">
+    <value>Постачальник підвищення кваліфікації</value>
+  </data>
+  <data name="CertificationColumn" xml:space="preserve">
+    <value>Сертифікат</value>
+  </data>
+  <data name="CertificationCurrent" xml:space="preserve">
+    <value>Чинний</value>
+  </data>
+  <data name="CertificationDaysLeft" xml:space="preserve">
+    <value>Залишилось днів: {0}</value>
+  </data>
+  <data name="CertificationExpired" xml:space="preserve">
+    <value>Прострочено</value>
+  </data>
+  <data name="CertificationPinError" xml:space="preserve">
+    <value>Не вдалося закріпити цей сертифікат.</value>
+  </data>
+  <data name="CertificationPinnedMessage" xml:space="preserve">
+    <value>Сертифікат закріплено в розділі «Моє навчання».</value>
+  </data>
+  <data name="CertificationTypesLabel" xml:space="preserve">
+    <value>Власники сертифікатів</value>
+  </data>
+  <data name="CertificationUnpinnedMessage" xml:space="preserve">
+    <value>Сертифікат відкріплено.</value>
+  </data>
+  <data name="CertificationsDueHeader" xml:space="preserve">
+    <value>Сертифікати до поновлення</value>
+  </data>
+  <data name="CertificationsDueHelp" xml:space="preserve">
+    <value>Ваші сертифікати, термін яких скоро спливає або вже сплив, і закріплені.</value>
+  </data>
+  <data name="ClearExemptionButton" xml:space="preserve">
+    <value>Скасувати звільнення</value>
+  </data>
+  <data name="ClosedLabel" xml:space="preserve">
+    <value>Закрито для нових учасників</value>
+  </data>
+  <data name="ClosedToNewAssigneesHelp" xml:space="preserve">
+    <value>Більше нікого не буде призначено — ні редагуванням, ні зміною членства, ні записом (одноразовий інструктаж).</value>
+  </data>
+  <data name="ClosedToNewAssigneesLabel" xml:space="preserve">
+    <value>Закрито для нових учасників</value>
+  </data>
+  <data name="ClosedToNewAssigneesMessage" xml:space="preserve">
+    <value>Навчання закрите для нових учасників, тому нікого не додано.</value>
+  </data>
+  <data name="CompletedOnValue" xml:space="preserve">
+    <value>Завершено {0}</value>
+  </data>
+  <data name="CompletionHistoryHeader" xml:space="preserve">
+    <value>Попередні завершення</value>
+  </data>
+  <data name="ContentSection" xml:space="preserve">
+    <value>Зміст</value>
+  </data>
+  <data name="ContinueTrainingButton" xml:space="preserve">
+    <value>Продовжити</value>
+  </data>
+  <data name="CopyButton" xml:space="preserve">
+    <value>Копіювати</value>
+  </data>
+  <data name="CopyNameFormat" xml:space="preserve">
+    <value>{0} (копія)</value>
+  </data>
+  <data name="CreditSection" xml:space="preserve">
+    <value>Години та підвищення кваліфікації</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Видалити {0}? Цю дію не можна скасувати.</value>
+  </data>
+  <data name="DeleteHasCompletionsError" xml:space="preserve">
+    <value>Учасники вже завершили це навчання, тому його не можна видалити. Заархівуйте його — записи збережуться.</value>
+  </data>
+  <data name="DeleteLeaveConfirm" xml:space="preserve">
+    <value>Видалити цю відсутність? Терміни повернуться.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Подробиці</value>
+  </data>
+  <data name="DueDateHelp" xml:space="preserve">
+    <value>Термін — кінець цього дня. Ті, кого призначено пізніше, отримують 30 днів.</value>
+  </data>
+  <data name="DueDateRequired" xml:space="preserve">
+    <value>Виберіть дату терміну.</value>
+  </data>
+  <data name="DueDaysLabel" xml:space="preserve">
+    <value>Днів на виконання</value>
+  </data>
+  <data name="DueDaysRange" xml:space="preserve">
+    <value>Введіть від 1 до 3650 днів.</value>
+  </data>
+  <data name="DueModeFixed" xml:space="preserve">
+    <value>У визначену дату</value>
+  </data>
+  <data name="DueModeLabel" xml:space="preserve">
+    <value>Термін</value>
+  </data>
+  <data name="DueModeNone" xml:space="preserve">
+    <value>Без терміну</value>
+  </data>
+  <data name="DueModeRelative" xml:space="preserve">
+    <value>Днів після кожного призначення</value>
+  </data>
+  <data name="DueOnLabel" xml:space="preserve">
+    <value>Термін</value>
+  </data>
+  <data name="DueSoonHeader" xml:space="preserve">
+    <value>Термін скоро</value>
+  </data>
+  <data name="DynamicNotice" xml:space="preserve">
+    <value>Це призначення динамічне: ті, хто приєднується до цих груп, ролей, змін, сертифікатів чи типів підрозділів, призначаються автоматично, а ті, хто вийде до відкриття, вилучаються.</value>
+  </data>
+  <data name="EmbedsHelp" xml:space="preserve">
+    <value>Вбудовані відео й документи з YouTube, Vimeo, Google Docs і Sheets, Microsoft Stream і Teams зберігаються; інші вбудовані фрейми вилучаються.</value>
+  </data>
+  <data name="EnrollButton" xml:space="preserve">
+    <value>Записатися</value>
+  </data>
+  <data name="EnrollError" xml:space="preserve">
+    <value>Ви не можете записатися на це навчання.</value>
+  </data>
+  <data name="EnrollHelp" xml:space="preserve">
+    <value>Запишіться, щоб відстежувати це навчання з терміном і нагадуваннями.</value>
+  </data>
+  <data name="EnrolledMessage" xml:space="preserve">
+    <value>Вас записано на це навчання.</value>
+  </data>
+  <data name="ExemptButton" xml:space="preserve">
+    <value>Звільнити</value>
+  </data>
+  <data name="ExemptError" xml:space="preserve">
+    <value>Не вдалося зберегти звільнення (потрібна причина).</value>
+  </data>
+  <data name="ExemptNotice" xml:space="preserve">
+    <value>Вас звільнено від цього навчання.</value>
+  </data>
+  <data name="ExemptUntilLabel" xml:space="preserve">
+    <value>До (необов'язково)</value>
+  </data>
+  <data name="ExemptedMessage" xml:space="preserve">
+    <value>Учасника звільнено.</value>
+  </data>
+  <data name="ExemptionClearedMessage" xml:space="preserve">
+    <value>Звільнення скасовано.</value>
+  </data>
+  <data name="ExpiresColumn" xml:space="preserve">
+    <value>Спливає</value>
+  </data>
+  <data name="ExtendButton" xml:space="preserve">
+    <value>Продовжити термін</value>
+  </data>
+  <data name="ExtendError" xml:space="preserve">
+    <value>Введіть майбутню дату й причину.</value>
+  </data>
+  <data name="ExtendedLabel" xml:space="preserve">
+    <value>Продовжено</value>
+  </data>
+  <data name="ExtendedMessage" xml:space="preserve">
+    <value>Термін продовжено.</value>
+  </data>
+  <data name="FalseLabel" xml:space="preserve">
+    <value>Неправда</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Фільтрувати</value>
+  </data>
+  <data name="FlagCommentLabel" xml:space="preserve">
+    <value>Що здається хибним?</value>
+  </data>
+  <data name="FlagNotResolvedError" xml:space="preserve">
+    <value>Не вдалося вирішити позначку.</value>
+  </data>
+  <data name="FlagQuestionButton" xml:space="preserve">
+    <value>Позначити питання</value>
+  </data>
+  <data name="FlagQuestionHeader" xml:space="preserve">
+    <value>Позначити питання</value>
+  </data>
+  <data name="FlagQuestionHelp" xml:space="preserve">
+    <value>Якщо питання здається хибним, повідомте автора.</value>
+  </data>
+  <data name="FlagResolvedMessage" xml:space="preserve">
+    <value>Позначку вирішено.</value>
+  </data>
+  <data name="FlaggedByColumn" xml:space="preserve">
+    <value>Позначив</value>
+  </data>
+  <data name="FormerMemberLabel" xml:space="preserve">
+    <value>Колишній учасник</value>
+  </data>
+  <data name="HideFormerMembersButton" xml:space="preserve">
+    <value>Приховати колишніх учасників</value>
+  </data>
+  <data name="HistoryReasonColumn" xml:space="preserve">
+    <value>Причина</value>
+  </data>
+  <data name="HistoryReasonMaterialEdit" xml:space="preserve">
+    <value>Суттєва зміна</value>
+  </data>
+  <data name="HistoryReasonRepeat" xml:space="preserve">
+    <value>Повторення</value>
+  </data>
+  <data name="HistoryReasonReset" xml:space="preserve">
+    <value>Скинуто</value>
+  </data>
+  <data name="HoursColumn" xml:space="preserve">
+    <value>Години</value>
+  </data>
+  <data name="HoursLabel" xml:space="preserve">
+    <value>Години навчання</value>
+  </data>
+  <data name="HoursRange" xml:space="preserve">
+    <value>Години від 0 до 9999.</value>
+  </data>
+  <data name="HoursValue" xml:space="preserve">
+    <value>{0} год</value>
+  </data>
+  <data name="InProgressHeader" xml:space="preserve">
+    <value>У процесі</value>
+  </data>
+  <data name="InactiveMembersHelp" xml:space="preserve">
+    <value>Видалених, вимкнених і прихованих учасників ніколи не призначають; ви побачите, кого пропущено і чому.</value>
+  </data>
+  <data name="KpiCompletion" xml:space="preserve">
+    <value>Завершення</value>
+  </data>
+  <data name="KpiDueThisWeek" xml:space="preserve">
+    <value>Термін цього тижня</value>
+  </data>
+  <data name="KpiOverdue" xml:space="preserve">
+    <value>Прострочено</value>
+  </data>
+  <data name="LastScoreValue" xml:space="preserve">
+    <value>Останній результат {0}%</value>
+  </data>
+  <data name="LeadDaysInvalid" xml:space="preserve">
+    <value>Дні нагадувань — цілі числа від 1 до {0}, через кому.</value>
+  </data>
+  <data name="LeaveDatesInvalid" xml:space="preserve">
+    <value>Введіть перший і останній день; останній не може бути раніше першого.</value>
+  </data>
+  <data name="LeaveDeletedMessage" xml:space="preserve">
+    <value>Відсутність видалено.</value>
+  </data>
+  <data name="LeaveEndLabel" xml:space="preserve">
+    <value>Останній день</value>
+  </data>
+  <data name="LeaveIntro" xml:space="preserve">
+    <value>Під час відсутності терміни й нагадування призупиняються, а потім зсуваються на її тривалість.</value>
+  </data>
+  <data name="LeaveKindLabel" xml:space="preserve">
+    <value>Вид</value>
+  </data>
+  <data name="LeaveKindLightDuty" xml:space="preserve">
+    <value>Легкі обов'язки</value>
+  </data>
+  <data name="LeaveKindMedical" xml:space="preserve">
+    <value>Медична</value>
+  </data>
+  <data name="LeaveKindMilitary" xml:space="preserve">
+    <value>Військова</value>
+  </data>
+  <data name="LeaveKindOther" xml:space="preserve">
+    <value>Інше</value>
+  </data>
+  <data name="LeaveKindParental" xml:space="preserve">
+    <value>Батьківська</value>
+  </data>
+  <data name="LeaveMemberRequired" xml:space="preserve">
+    <value>Виберіть учасника, якому ви можете призначати навчання.</value>
+  </data>
+  <data name="LeaveNotSavedError" xml:space="preserve">
+    <value>Не вдалося зберегти відсутність.</value>
+  </data>
+  <data name="LeaveNoteLabel" xml:space="preserve">
+    <value>Примітка</value>
+  </data>
+  <data name="LeavePeriodsHeader" xml:space="preserve">
+    <value>Періоди відсутності</value>
+  </data>
+  <data name="LeaveSavedMessage" xml:space="preserve">
+    <value>Відсутність збережено.</value>
+  </data>
+  <data name="LeaveStartLabel" xml:space="preserve">
+    <value>Перший день</value>
+  </data>
+  <data name="LeaveTab" xml:space="preserve">
+    <value>Відсутності</value>
+  </data>
+  <data name="MakeDynamicLabel" xml:space="preserve">
+    <value>Зробити призначення динамічним (оновлювати за змін членства)</value>
+  </data>
+  <data name="ManageIntro" xml:space="preserve">
+    <value>Навчання, яке ви створюєте, призначаєте або переглядаєте у звітах.</value>
+  </data>
+  <data name="ManageTrainingsTab" xml:space="preserve">
+    <value>Керування навчанням</value>
+  </data>
+  <data name="MaterialChangeHeader" xml:space="preserve">
+    <value>Тест або прохідний бал змінено</value>
+  </data>
+  <data name="MaterialChangeHelp" xml:space="preserve">
+    <value>Це навчання вже завершили {0} учасн. Чи це суттєва зміна?</value>
+  </data>
+  <data name="MaterialChangeNo" xml:space="preserve">
+    <value>Несуттєва: результати залишаються чинними</value>
+  </data>
+  <data name="MaterialChangeRequired" xml:space="preserve">
+    <value>Перед збереженням укажіть, чи суттєва зміна тесту.</value>
+  </data>
+  <data name="MaterialChangeYes" xml:space="preserve">
+    <value>Суттєва: призначити знову тим, хто завершив</value>
+  </data>
+  <data name="MaterialReassignedMessage" xml:space="preserve">
+    <value>Повторно призначено {0} учасн.</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Учасник</value>
+  </data>
+  <data name="MemberNotResetError" xml:space="preserve">
+    <value>Не вдалося скинути учасника.</value>
+  </data>
+  <data name="MemberResetMessage" xml:space="preserve">
+    <value>Учасника скинуто.</value>
+  </data>
+  <data name="MinimumScoreRange" xml:space="preserve">
+    <value>Прохідний бал — від 0 до 100.</value>
+  </data>
+  <data name="MyTrainingIntro" xml:space="preserve">
+    <value>Призначене вам навчання, найближчі терміни та сертифікати, що потребують уваги.</value>
+  </data>
+  <data name="MyTrainingTab" xml:space="preserve">
+    <value>Моє навчання</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Введіть назву.</value>
+  </data>
+  <data name="NewAssignmentHelp" xml:space="preserve">
+    <value>Групи, ролі, зміни, сертифікати й типи підрозділів залишаються актуальними: ті, хто приєднається пізніше, призначаються автоматично.</value>
+  </data>
+  <data name="NewDueDateLabel" xml:space="preserve">
+    <value>Новий термін</value>
+  </data>
+  <data name="NewTrainingIntro" xml:space="preserve">
+    <value>Створіть навчання, за потреби додайте тест, а потім виберіть учасників і термін.</value>
+  </data>
+  <data name="NextActionHeader" xml:space="preserve">
+    <value>Далі</value>
+  </data>
+  <data name="NoAssigneesError" xml:space="preserve">
+    <value>Виберіть учасників або відкрийте навчання для всіх.</value>
+  </data>
+  <data name="NoAttachments" xml:space="preserve">
+    <value>Вкладень немає.</value>
+  </data>
+  <data name="NoAttempts" xml:space="preserve">
+    <value>Спроб ще немає.</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>Без терміну</value>
+  </data>
+  <data name="NoLeavePeriods" xml:space="preserve">
+    <value>Відсутностей не внесено.</value>
+  </data>
+  <data name="NoTrainingsHeader" xml:space="preserve">
+    <value>Немає навчання для показу</value>
+  </data>
+  <data name="NotAssignedNotice" xml:space="preserve">
+    <value>Це навчання вам не призначено.</value>
+  </data>
+  <data name="NotStartedHeader" xml:space="preserve">
+    <value>Не розпочато</value>
+  </data>
+  <data name="NothingAssignedHeader" xml:space="preserve">
+    <value>Вам нічого не призначено</value>
+  </data>
+  <data name="NothingAssignedHelp" xml:space="preserve">
+    <value>Тут з'являтиметься навчання, яке призначить ваш підрозділ.</value>
+  </data>
+  <data name="OnLeaveNotice" xml:space="preserve">
+    <value>Ви відсутні: терміни й нагадування призупинено, їх буде зсунуто на тривалість відсутності.</value>
+  </data>
+  <data name="OneQuestionPerPageLabel" xml:space="preserve">
+    <value>Показувати по одному питанню</value>
+  </data>
+  <data name="OpenFlagsHeader" xml:space="preserve">
+    <value>Позначені питання</value>
+  </data>
+  <data name="OpenLabel" xml:space="preserve">
+    <value>Відкрито для всіх</value>
+  </data>
+  <data name="OpenTrainingButton" xml:space="preserve">
+    <value>Відкрити навчання</value>
+  </data>
+  <data name="OverdueHeader" xml:space="preserve">
+    <value>Прострочено</value>
+  </data>
+  <data name="OverdueRepeatDaysHelp" xml:space="preserve">
+    <value>Порожнє — надсилається один раз.</value>
+  </data>
+  <data name="OverdueRepeatDaysLabel" xml:space="preserve">
+    <value>Повторювати сповіщення кожні (днів)</value>
+  </data>
+  <data name="OverdueRepeatRange" xml:space="preserve">
+    <value>Введіть число від {0} до {1}.</value>
+  </data>
+  <data name="PinButton" xml:space="preserve">
+    <value>Закріпити</value>
+  </data>
+  <data name="PinnedLabel" xml:space="preserve">
+    <value>Закріплено</value>
+  </data>
+  <data name="PreviewAudienceButton" xml:space="preserve">
+    <value>Переглянути, кого буде додано</value>
+  </data>
+  <data name="PreviewHeader" xml:space="preserve">
+    <value>Попередній перегляд</value>
+  </data>
+  <data name="PreviewQuizButton" xml:space="preserve">
+    <value>Переглянути тест</value>
+  </data>
+  <data name="PreviewSummary" xml:space="preserve">
+    <value>Буде додано: {0}; уже призначено: {1}.</value>
+  </data>
+  <data name="ProgressHeader" xml:space="preserve">
+    <value>Ваш прогрес</value>
+  </data>
+  <data name="QuestionCountValue" xml:space="preserve">
+    <value>Питань: {0}</value>
+  </data>
+  <data name="QuestionFlaggedMessage" xml:space="preserve">
+    <value>Дякуємо: автора навчання повідомлено.</value>
+  </data>
+  <data name="QuestionNotFlaggedError" xml:space="preserve">
+    <value>Не вдалося позначити питання.</value>
+  </data>
+  <data name="QuestionNumberLabel" xml:space="preserve">
+    <value>Питання {0}</value>
+  </data>
+  <data name="QuestionOfValue" xml:space="preserve">
+    <value>Питання {0} з {1}</value>
+  </data>
+  <data name="QuestionTypeLabel" xml:space="preserve">
+    <value>Тип питання</value>
+  </data>
+  <data name="QuestionTypeMulti" xml:space="preserve">
+    <value>Кілька варіантів (усі правильні)</value>
+  </data>
+  <data name="QuestionTypeSingle" xml:space="preserve">
+    <value>Один варіант</value>
+  </data>
+  <data name="QuestionTypeTrueFalse" xml:space="preserve">
+    <value>Правда чи неправда</value>
+  </data>
+  <data name="QuizAlreadyPassedMessage" xml:space="preserve">
+    <value>Ви вже склали цей тест.</value>
+  </data>
+  <data name="QuizAttemptLimitError" xml:space="preserve">
+    <value>Ви використали всі дозволені спроби.</value>
+  </data>
+  <data name="QuizFailedHeader" xml:space="preserve">
+    <value>Не складено</value>
+  </data>
+  <data name="QuizFailedValue" xml:space="preserve">
+    <value>Тест не складено: {0}% (прохідний {1}%)</value>
+  </data>
+  <data name="QuizIntro" xml:space="preserve">
+    <value>Питань: {0}. Прохідний бал — {1}%.</value>
+  </data>
+  <data name="QuizNotAvailableError" xml:space="preserve">
+    <value>Цей тест недоступний.</value>
+  </data>
+  <data name="QuizNotTakenValue" xml:space="preserve">
+    <value>Тест ще не пройдено (прохідний {0}%)</value>
+  </data>
+  <data name="QuizPassedHeader" xml:space="preserve">
+    <value>Складено</value>
+  </data>
+  <data name="QuizPassedValue" xml:space="preserve">
+    <value>Тест складено: {0}%</value>
+  </data>
+  <data name="QuizPreviewNotice" xml:space="preserve">
+    <value>Попередній перегляд: вас не призначено, тож нічого не надсилається.</value>
+  </data>
+  <data name="QuizProblemMinimumScoreRange" xml:space="preserve">
+    <value>Прохідний бал — від 0 до 100.</value>
+  </data>
+  <data name="QuizProblemQuestionAnswerKey" xml:space="preserve">
+    <value>Позначте правильну відповідь: одну для одного варіанта й правда/неправда, щонайменше одну для кількох варіантів.</value>
+  </data>
+  <data name="QuizProblemQuestionOptions" xml:space="preserve">
+    <value>Кожне питання має містити щонайменше дві відповіді (не більше 26).</value>
+  </data>
+  <data name="QuizProblemQuestionText" xml:space="preserve">
+    <value>Кожне питання має містити текст.</value>
+  </data>
+  <data name="QuizProblemQuestionType" xml:space="preserve">
+    <value>Питання має невідомий тип.</value>
+  </data>
+  <data name="QuizProblemTooManyQuestions" xml:space="preserve">
+    <value>Тест містить не більше 100 питань.</value>
+  </data>
+  <data name="QuizProblemTrueFalseOptions" xml:space="preserve">
+    <value>Питання правда/неправда має рівно дві відповіді.</value>
+  </data>
+  <data name="QuizResultHeader" xml:space="preserve">
+    <value>Результат тесту</value>
+  </data>
+  <data name="QuizRevisionColumn" xml:space="preserve">
+    <value>Версія тесту</value>
+  </data>
+  <data name="QuizScoreValue" xml:space="preserve">
+    <value>Результат {0}%: {1} з {2} правильно. Прохідний {3}%.</value>
+  </data>
+  <data name="QuizSection" xml:space="preserve">
+    <value>Тест</value>
+  </data>
+  <data name="ReadButton" xml:space="preserve">
+    <value>Читати</value>
+  </data>
+  <data name="ReasonLabel" xml:space="preserve">
+    <value>Причина</value>
+  </data>
+  <data name="RecentCompletionsHeader" xml:space="preserve">
+    <value>Нещодавно завершено</value>
+  </data>
+  <data name="RelativeDueValue" xml:space="preserve">
+    <value>{0} днів після призначення</value>
+  </data>
+  <data name="ReminderLeadDaysHelp" xml:space="preserve">
+    <value>Через кому, наприклад 7,1. Порожнє — нагадування за день.</value>
+  </data>
+  <data name="ReminderLeadDaysLabel" xml:space="preserve">
+    <value>Нагадати до терміну (днів)</value>
+  </data>
+  <data name="ReminderMessageHelp" xml:space="preserve">
+    <value>Необов'язково, до 500 символів, додається до сповіщень про нове навчання, нагадувань і прострочення.</value>
+  </data>
+  <data name="ReminderMessageLabel" xml:space="preserve">
+    <value>Текст, що додається до сповіщень</value>
+  </data>
+  <data name="RemindersSection" xml:space="preserve">
+    <value>Нагадування</value>
+  </data>
+  <data name="RemoveAssigneeButton" xml:space="preserve">
+    <value>Вилучити</value>
+  </data>
+  <data name="RemoveAssigneeConfirm" xml:space="preserve">
+    <value>Вилучити учасника з навчання? Завершення збережеться.</value>
+  </data>
+  <data name="RemoveAttachmentConfirm" xml:space="preserve">
+    <value>Вилучити це вкладення?</value>
+  </data>
+  <data name="RemoveQuestionButton" xml:space="preserve">
+    <value>Вилучити питання</value>
+  </data>
+  <data name="RemovedQuestionLabel" xml:space="preserve">
+    <value>(питання вилучено)</value>
+  </data>
+  <data name="RepeatMonthsHelp" xml:space="preserve">
+    <value>Необов'язково. Кожен інтервал призначає навчання знову з новим терміном; попередні завершення зберігаються.</value>
+  </data>
+  <data name="RepeatMonthsLabel" xml:space="preserve">
+    <value>Повторювати кожні (місяців)</value>
+  </data>
+  <data name="RepeatMonthsRange" xml:space="preserve">
+    <value>Введіть число від {0} до {1}.</value>
+  </data>
+  <data name="RepeatsEveryValue" xml:space="preserve">
+    <value>Кожні {0} міс.</value>
+  </data>
+  <data name="ResetConfirm" xml:space="preserve">
+    <value>Скинути учасника? Завершення перейде в історію, і він почне знову.</value>
+  </data>
+  <data name="ResolveFlagButton" xml:space="preserve">
+    <value>Вирішити</value>
+  </data>
+  <data name="RestoreButton" xml:space="preserve">
+    <value>Відновити</value>
+  </data>
+  <data name="RetakeQuizButton" xml:space="preserve">
+    <value>Пройти тест знову</value>
+  </data>
+  <data name="SaveLeaveButton" xml:space="preserve">
+    <value>Зберегти відсутність</value>
+  </data>
+  <data name="ScheduleSection" xml:space="preserve">
+    <value>Розклад і доступність</value>
+  </data>
+  <data name="ScheduledLabel" xml:space="preserve">
+    <value>Починається</value>
+  </data>
+  <data name="ScheduledNotice" xml:space="preserve">
+    <value>Навчання починається {0}. Відтоді його бачитимуть учасники.</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Пошук</value>
+  </data>
+  <data name="SelectAllThatApply" xml:space="preserve">
+    <value>Виберіть усі правильні відповіді.</value>
+  </data>
+  <data name="SelectPlaceholder" xml:space="preserve">
+    <value>Виберіть...</value>
+  </data>
+  <data name="SelfEnrolledLabel" xml:space="preserve">
+    <value>Записався сам</value>
+  </data>
+  <data name="SendOverdueNoticesLabel" xml:space="preserve">
+    <value>Надсилати сповіщення про прострочення учаснику й автору</value>
+  </data>
+  <data name="ShiftsLabel" xml:space="preserve">
+    <value>Учасники змін</value>
+  </data>
+  <data name="ShowFormerMembersButton" xml:space="preserve">
+    <value>Показати колишніх учасників</value>
+  </data>
+  <data name="SkipReasonDeleted" xml:space="preserve">
+    <value>вилучений з підрозділу</value>
+  </data>
+  <data name="SkipReasonDisabled" xml:space="preserve">
+    <value>вимкнений</value>
+  </data>
+  <data name="SkipReasonHidden" xml:space="preserve">
+    <value>прихований</value>
+  </data>
+  <data name="SkipReasonNotActivated" xml:space="preserve">
+    <value>імпортований, але ще не активований</value>
+  </data>
+  <data name="SkipReasonNotInDepartment" xml:space="preserve">
+    <value>не є учасником цього підрозділу</value>
+  </data>
+  <data name="SkipReasonOutOfScope" xml:space="preserve">
+    <value>поза групою, якою ви керуєте</value>
+  </data>
+  <data name="SkippedMembersIntro" xml:space="preserve">
+    <value>Не призначено:</value>
+  </data>
+  <data name="StartsOnHelp" xml:space="preserve">
+    <value>Необов'язково. До цього часу учасники не бачать навчання і ніхто не отримує сповіщень.</value>
+  </data>
+  <data name="StartsOnInvalid" xml:space="preserve">
+    <value>Введіть правильні дату й час початку.</value>
+  </data>
+  <data name="StartsOnLabel" xml:space="preserve">
+    <value>Початок</value>
+  </data>
+  <data name="StateComplete" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="StateExempt" xml:space="preserve">
+    <value>Звільнено</value>
+  </data>
+  <data name="StateFailed" xml:space="preserve">
+    <value>Тест не складено</value>
+  </data>
+  <data name="StateInProgress" xml:space="preserve">
+    <value>У процесі</value>
+  </data>
+  <data name="StateNotStarted" xml:space="preserve">
+    <value>Не розпочато</value>
+  </data>
+  <data name="StateOnLeave" xml:space="preserve">
+    <value>Відсутній</value>
+  </data>
+  <data name="StateOverdue" xml:space="preserve">
+    <value>Прострочено</value>
+  </data>
+  <data name="StateRemoved" xml:space="preserve">
+    <value>Вилучено</value>
+  </data>
+  <data name="StateScheduled" xml:space="preserve">
+    <value>Заплановано</value>
+  </data>
+  <data name="StaticNotice" xml:space="preserve">
+    <value>Це навчання має фіксований список учасників. Вибрані нижче буде додано.</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>Активні</value>
+  </data>
+  <data name="StatusAll" xml:space="preserve">
+    <value>Усі</value>
+  </data>
+  <data name="StatusArchived" xml:space="preserve">
+    <value>Архівні</value>
+  </data>
+  <data name="StatusFilterLabel" xml:space="preserve">
+    <value>Показати</value>
+  </data>
+  <data name="StatusScheduled" xml:space="preserve">
+    <value>Заплановані</value>
+  </data>
+  <data name="SubmitQuizConfirm" xml:space="preserve">
+    <value>Надіслати відповіді?</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Надіслано</value>
+  </data>
+  <data name="TextTooLong" xml:space="preserve">
+    <value>Текст довший за {0} символів.</value>
+  </data>
+  <data name="TrainingArchivedMessage" xml:space="preserve">
+    <value>Навчання заархівовано.</value>
+  </data>
+  <data name="TrainingCopiedMessage" xml:space="preserve">
+    <value>Створено копію. Перевірте її та виберіть учасників.</value>
+  </data>
+  <data name="TrainingDeletedMessage" xml:space="preserve">
+    <value>Навчання видалено.</value>
+  </data>
+  <data name="TrainingNotArchivedError" xml:space="preserve">
+    <value>Не вдалося заархівувати навчання.</value>
+  </data>
+  <data name="TrainingNotRestoredError" xml:space="preserve">
+    <value>Не вдалося відновити навчання.</value>
+  </data>
+  <data name="TrainingRestoredMessage" xml:space="preserve">
+    <value>Навчання відновлено.</value>
+  </data>
+  <data name="TrainingSavedMessage" xml:space="preserve">
+    <value>Навчання збережено.</value>
+  </data>
+  <data name="TrueLabel" xml:space="preserve">
+    <value>Правда</value>
+  </data>
+  <data name="UnitTypesLabel" xml:space="preserve">
+    <value>Екіпажі типів підрозділів</value>
+  </data>
+  <data name="UnpinButton" xml:space="preserve">
+    <value>Відкріпити</value>
+  </data>
+  <data name="ViewedLabel" xml:space="preserve">
+    <value>Переглянуто</value>
+  </data>
+  <data name="ViewedOnValue" xml:space="preserve">
+    <value>Переглянуто {0}</value>
+  </data>
 </root>

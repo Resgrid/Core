@@ -393,4 +393,844 @@
   <data name="AnswerTextColumn" xml:space="preserve">
     <value>Κείμενο Απάντησης</value>
   </data>
+  <data name="AddLeaveHeader" xml:space="preserve">
+    <value>Προσθήκη άδειας</value>
+  </data>
+  <data name="AllowSelfEnrollLabel" xml:space="preserve">
+    <value>Τα μέλη μπορούν να εγγραφούν μόνα τους</value>
+  </data>
+  <data name="ArchiveButton" xml:space="preserve">
+    <value>Αρχειοθέτηση</value>
+  </data>
+  <data name="ArchiveConfirm" xml:space="preserve">
+    <value>Αρχειοθέτηση του {0}; Τα μέλη δεν θα το βλέπουν πλέον· τα αρχεία διατηρούνται και μπορεί να επανέλθει.</value>
+  </data>
+  <data name="ArchivedLabel" xml:space="preserve">
+    <value>Αρχειοθετημένη</value>
+  </data>
+  <data name="ArchivedNotice" xml:space="preserve">
+    <value>Η εκπαίδευση είναι αρχειοθετημένη: τα μέλη δεν τη βλέπουν και τα αρχεία διατηρούνται.</value>
+  </data>
+  <data name="AssignOnlyNotice" xml:space="preserve">
+    <value>Μπορείτε να αλλάξετε τις αναθέσεις. Το περιεχόμενο και το κουίζ τα επεξεργάζονται οι συντάκτες.</value>
+  </data>
+  <data name="AssignedColumn" xml:space="preserve">
+    <value>Ανατέθηκαν</value>
+  </data>
+  <data name="AssignedCountMessage" xml:space="preserve">
+    <value>Ανατέθηκε σε {0} μέλη, {1} είχαν ήδη ανατεθεί.</value>
+  </data>
+  <data name="AssignedSummary" xml:space="preserve">
+    <value>{0} ανατέθηκαν, {1} ολοκλήρωσαν.</value>
+  </data>
+  <data name="AssigneeNotRemovedError" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αφαίρεση.</value>
+  </data>
+  <data name="AssigneeRemovedMessage" xml:space="preserve">
+    <value>Το μέλος αφαιρέθηκε.</value>
+  </data>
+  <data name="AssigneesHeader" xml:space="preserve">
+    <value>Συμμετέχοντες</value>
+  </data>
+  <data name="AssignmentSection" xml:space="preserve">
+    <value>Σε ποιους ανατίθεται</value>
+  </data>
+  <data name="AttachmentNotRemovedError" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αφαίρεση.</value>
+  </data>
+  <data name="AttachmentRemovedMessage" xml:space="preserve">
+    <value>Το συνημμένο αφαιρέθηκε.</value>
+  </data>
+  <data name="AttachmentSizeError" xml:space="preserve">
+    <value>Το συνημμένο πρέπει να είναι μικρότερο από 30 MB.</value>
+  </data>
+  <data name="AttachmentTypeError" xml:space="preserve">
+    <value>Ο τύπος αρχείου ({0}) δεν επιτρέπεται.</value>
+  </data>
+  <data name="AttachmentsHelp" xml:space="preserve">
+    <value>Εικόνες, PDF, έγγραφα Office, κείμενα και βίντεο έως 30 MB.</value>
+  </data>
+  <data name="AttemptColumn" xml:space="preserve">
+    <value>Προσπάθεια</value>
+  </data>
+  <data name="AttemptHistoryHeader" xml:space="preserve">
+    <value>Ιστορικό προσπαθειών</value>
+  </data>
+  <data name="AttemptHistoryHelp" xml:space="preserve">
+    <value>Κάθε υποβληθείσα προσπάθεια, βαθμολογημένη με το κουίζ όπως ήταν τότε. Εμφανίζεται μόνο σε όσους αναθέτουν και παρακολουθούν.</value>
+  </data>
+  <data name="AttemptLimitHelp" xml:space="preserve">
+    <value>Αφήστε κενό για απεριόριστες προσπάθειες.</value>
+  </data>
+  <data name="AttemptLimitLabel" xml:space="preserve">
+    <value>Όριο προσπαθειών</value>
+  </data>
+  <data name="AttemptLimitRange" xml:space="preserve">
+    <value>Εισαγάγετε αριθμό από {0} έως {1}.</value>
+  </data>
+  <data name="AttemptsLeftValue" xml:space="preserve">
+    <value>Απομένουν {0} προσπάθειες</value>
+  </data>
+  <data name="AttemptsValue" xml:space="preserve">
+    <value>{0} προσπάθειες</value>
+  </data>
+  <data name="BackToTrainingButton" xml:space="preserve">
+    <value>Επιστροφή στην εκπαίδευση</value>
+  </data>
+  <data name="CatalogHeader" xml:space="preserve">
+    <value>Ανοιχτές εκπαιδεύσεις</value>
+  </data>
+  <data name="CatalogHelp" xml:space="preserve">
+    <value>Υλικό αναφοράς ανοιχτό σε όλα τα μέλη. Εγγραφείτε για να καταγράφεται η πρόοδός σας.</value>
+  </data>
+  <data name="CategoryIdHelp" xml:space="preserve">
+    <value>Προαιρετικό. Οι κατηγορίες θα έρθουν με το μητρώο εκπαίδευσης· ως τότε είναι απλός αριθμός.</value>
+  </data>
+  <data name="CategoryIdLabel" xml:space="preserve">
+    <value>Αριθμός κατηγορίας</value>
+  </data>
+  <data name="CeCourseNumberLabel" xml:space="preserve">
+    <value>Αριθμός μαθήματος</value>
+  </data>
+  <data name="CeHoursLabel" xml:space="preserve">
+    <value>Ώρες συνεχιζόμενης εκπαίδευσης</value>
+  </data>
+  <data name="CeProviderLabel" xml:space="preserve">
+    <value>Πάροχος συνεχιζόμενης εκπαίδευσης</value>
+  </data>
+  <data name="CertificationColumn" xml:space="preserve">
+    <value>Πιστοποίηση</value>
+  </data>
+  <data name="CertificationCurrent" xml:space="preserve">
+    <value>Σε ισχύ</value>
+  </data>
+  <data name="CertificationDaysLeft" xml:space="preserve">
+    <value>Απομένουν {0} ημέρες</value>
+  </data>
+  <data name="CertificationExpired" xml:space="preserve">
+    <value>Έληξε</value>
+  </data>
+  <data name="CertificationPinError" xml:space="preserve">
+    <value>Δεν ήταν δυνατό να καρφιτσωθεί η πιστοποίηση.</value>
+  </data>
+  <data name="CertificationPinnedMessage" xml:space="preserve">
+    <value>Η πιστοποίηση καρφιτσώθηκε στην Εκπαίδευσή μου.</value>
+  </data>
+  <data name="CertificationTypesLabel" xml:space="preserve">
+    <value>Κάτοχοι πιστοποιήσεων</value>
+  </data>
+  <data name="CertificationUnpinnedMessage" xml:space="preserve">
+    <value>Η πιστοποίηση δεν είναι πλέον καρφιτσωμένη.</value>
+  </data>
+  <data name="CertificationsDueHeader" xml:space="preserve">
+    <value>Πιστοποιήσεις προς ανανέωση</value>
+  </data>
+  <data name="CertificationsDueHelp" xml:space="preserve">
+    <value>Οι πιστοποιήσεις σας που λήγουν σύντομα ή έχουν λήξει και όσες καρφιτσώσατε.</value>
+  </data>
+  <data name="ClearExemptionButton" xml:space="preserve">
+    <value>Λήξη απαλλαγής</value>
+  </data>
+  <data name="ClosedLabel" xml:space="preserve">
+    <value>Κλειστή σε νέους</value>
+  </data>
+  <data name="ClosedToNewAssigneesHelp" xml:space="preserve">
+    <value>Δεν ανατίθεται σε κανέναν άλλο, ούτε με επεξεργασία, αλλαγές μελών ή εγγραφή (εφάπαξ ενημέρωση).</value>
+  </data>
+  <data name="ClosedToNewAssigneesLabel" xml:space="preserve">
+    <value>Κλειστή σε νέες αναθέσεις</value>
+  </data>
+  <data name="ClosedToNewAssigneesMessage" xml:space="preserve">
+    <value>Η εκπαίδευση είναι κλειστή σε νέους, οπότε δεν προστέθηκε κανείς.</value>
+  </data>
+  <data name="CompletedOnValue" xml:space="preserve">
+    <value>Ολοκληρώθηκε {0}</value>
+  </data>
+  <data name="CompletionHistoryHeader" xml:space="preserve">
+    <value>Προηγούμενες ολοκληρώσεις</value>
+  </data>
+  <data name="ContentSection" xml:space="preserve">
+    <value>Περιεχόμενο</value>
+  </data>
+  <data name="ContinueTrainingButton" xml:space="preserve">
+    <value>Συνέχεια</value>
+  </data>
+  <data name="CopyButton" xml:space="preserve">
+    <value>Αντιγραφή</value>
+  </data>
+  <data name="CopyNameFormat" xml:space="preserve">
+    <value>{0} (αντίγραφο)</value>
+  </data>
+  <data name="CreditSection" xml:space="preserve">
+    <value>Ώρες και συνεχιζόμενη εκπαίδευση</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Διαγραφή του {0}; Δεν μπορεί να αναιρεθεί.</value>
+  </data>
+  <data name="DeleteHasCompletionsError" xml:space="preserve">
+    <value>Μέλη έχουν ολοκληρώσει την εκπαίδευση, οπότε δεν διαγράφεται. Αρχειοθετήστε την· τα αρχεία διατηρούνται.</value>
+  </data>
+  <data name="DeleteLeaveConfirm" xml:space="preserve">
+    <value>Διαγραφή της άδειας; Οι προθεσμίες επιστρέφουν.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Λεπτομέρειες</value>
+  </data>
+  <data name="DueDateHelp" xml:space="preserve">
+    <value>Λήγει στο τέλος εκείνης της ημέρας. Όσοι ανατεθούν μετά παίρνουν 30 ημέρες.</value>
+  </data>
+  <data name="DueDateRequired" xml:space="preserve">
+    <value>Επιλέξτε ημερομηνία λήξης.</value>
+  </data>
+  <data name="DueDaysLabel" xml:space="preserve">
+    <value>Ημέρες ολοκλήρωσης</value>
+  </data>
+  <data name="DueDaysRange" xml:space="preserve">
+    <value>Εισαγάγετε 1 έως 3650 ημέρες.</value>
+  </data>
+  <data name="DueModeFixed" xml:space="preserve">
+    <value>Σε ημερομηνία</value>
+  </data>
+  <data name="DueModeLabel" xml:space="preserve">
+    <value>Προθεσμία</value>
+  </data>
+  <data name="DueModeNone" xml:space="preserve">
+    <value>Χωρίς προθεσμία</value>
+  </data>
+  <data name="DueModeRelative" xml:space="preserve">
+    <value>Ημέρες μετά από κάθε ανάθεση</value>
+  </data>
+  <data name="DueOnLabel" xml:space="preserve">
+    <value>Λήξη</value>
+  </data>
+  <data name="DueSoonHeader" xml:space="preserve">
+    <value>Λήγουν σύντομα</value>
+  </data>
+  <data name="DynamicNotice" xml:space="preserve">
+    <value>Η ανάθεση είναι δυναμική: όσοι εντάσσονται σε αυτές τις ομάδες, ρόλους, βάρδιες, πιστοποιήσεις ή τύπους οχημάτων ανατίθενται αυτόματα και όσοι αποχωρούν πριν την ανοίξουν αφαιρούνται.</value>
+  </data>
+  <data name="EmbedsHelp" xml:space="preserve">
+    <value>Οι ενσωματώσεις από YouTube, Vimeo, Google Docs και Sheets, Microsoft Stream και Teams διατηρούνται· άλλα ενσωματωμένα πλαίσια αφαιρούνται.</value>
+  </data>
+  <data name="EnrollButton" xml:space="preserve">
+    <value>Εγγραφή</value>
+  </data>
+  <data name="EnrollError" xml:space="preserve">
+    <value>Δεν μπορείτε να εγγραφείτε σε αυτή την εκπαίδευση.</value>
+  </data>
+  <data name="EnrollHelp" xml:space="preserve">
+    <value>Εγγραφείτε για να καταγράφεται αυτή η εκπαίδευση με προθεσμία και υπενθυμίσεις.</value>
+  </data>
+  <data name="EnrolledMessage" xml:space="preserve">
+    <value>Εγγραφήκατε σε αυτή την εκπαίδευση.</value>
+  </data>
+  <data name="ExemptButton" xml:space="preserve">
+    <value>Απαλλαγή</value>
+  </data>
+  <data name="ExemptError" xml:space="preserve">
+    <value>Δεν αποθηκεύτηκε η απαλλαγή (απαιτείται αιτία).</value>
+  </data>
+  <data name="ExemptNotice" xml:space="preserve">
+    <value>Έχετε απαλλαγεί από την εκπαίδευση.</value>
+  </data>
+  <data name="ExemptUntilLabel" xml:space="preserve">
+    <value>Έως (προαιρετικό)</value>
+  </data>
+  <data name="ExemptedMessage" xml:space="preserve">
+    <value>Το μέλος απαλλάχθηκε.</value>
+  </data>
+  <data name="ExemptionClearedMessage" xml:space="preserve">
+    <value>Η απαλλαγή έληξε.</value>
+  </data>
+  <data name="ExpiresColumn" xml:space="preserve">
+    <value>Λήγει</value>
+  </data>
+  <data name="ExtendButton" xml:space="preserve">
+    <value>Παράταση</value>
+  </data>
+  <data name="ExtendError" xml:space="preserve">
+    <value>Εισαγάγετε μελλοντική ημερομηνία και αιτία.</value>
+  </data>
+  <data name="ExtendedLabel" xml:space="preserve">
+    <value>Παρατάθηκε</value>
+  </data>
+  <data name="ExtendedMessage" xml:space="preserve">
+    <value>Η προθεσμία παρατάθηκε.</value>
+  </data>
+  <data name="FalseLabel" xml:space="preserve">
+    <value>Λάθος</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Φιλτράρισμα</value>
+  </data>
+  <data name="FlagCommentLabel" xml:space="preserve">
+    <value>Τι φαίνεται λάθος;</value>
+  </data>
+  <data name="FlagNotResolvedError" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η επίλυση.</value>
+  </data>
+  <data name="FlagQuestionButton" xml:space="preserve">
+    <value>Επισήμανση</value>
+  </data>
+  <data name="FlagQuestionHeader" xml:space="preserve">
+    <value>Επισήμανση ερώτησης</value>
+  </data>
+  <data name="FlagQuestionHelp" xml:space="preserve">
+    <value>Αν μια ερώτηση φαίνεται λάθος, ενημερώστε τον συντάκτη.</value>
+  </data>
+  <data name="FlagResolvedMessage" xml:space="preserve">
+    <value>Η επισήμανση επιλύθηκε.</value>
+  </data>
+  <data name="FlaggedByColumn" xml:space="preserve">
+    <value>Επισημάνθηκε από</value>
+  </data>
+  <data name="FormerMemberLabel" xml:space="preserve">
+    <value>Πρώην μέλος</value>
+  </data>
+  <data name="HideFormerMembersButton" xml:space="preserve">
+    <value>Απόκρυψη πρώην μελών</value>
+  </data>
+  <data name="HistoryReasonColumn" xml:space="preserve">
+    <value>Αιτία</value>
+  </data>
+  <data name="HistoryReasonMaterialEdit" xml:space="preserve">
+    <value>Ουσιαστική αλλαγή</value>
+  </data>
+  <data name="HistoryReasonRepeat" xml:space="preserve">
+    <value>Επανάληψη</value>
+  </data>
+  <data name="HistoryReasonReset" xml:space="preserve">
+    <value>Επαναφορά</value>
+  </data>
+  <data name="HoursColumn" xml:space="preserve">
+    <value>Ώρες</value>
+  </data>
+  <data name="HoursLabel" xml:space="preserve">
+    <value>Ώρες εκπαίδευσης</value>
+  </data>
+  <data name="HoursRange" xml:space="preserve">
+    <value>Οι ώρες είναι από 0 έως 9999.</value>
+  </data>
+  <data name="HoursValue" xml:space="preserve">
+    <value>{0} ώρ.</value>
+  </data>
+  <data name="InProgressHeader" xml:space="preserve">
+    <value>Σε εξέλιξη</value>
+  </data>
+  <data name="InactiveMembersHelp" xml:space="preserve">
+    <value>Διαγραμμένα, απενεργοποιημένα και κρυφά μέλη δεν ανατίθενται ποτέ· θα δείτε ποιοι παραλείφθηκαν και γιατί.</value>
+  </data>
+  <data name="KpiCompletion" xml:space="preserve">
+    <value>Ολοκλήρωση</value>
+  </data>
+  <data name="KpiDueThisWeek" xml:space="preserve">
+    <value>Λήγουν αυτή την εβδομάδα</value>
+  </data>
+  <data name="KpiOverdue" xml:space="preserve">
+    <value>Εκπρόθεσμες</value>
+  </data>
+  <data name="LastScoreValue" xml:space="preserve">
+    <value>Τελευταία βαθμολογία {0}%</value>
+  </data>
+  <data name="LeadDaysInvalid" xml:space="preserve">
+    <value>Οι ημέρες υπενθύμισης είναι ακέραιοι από 1 έως {0}, χωρισμένοι με κόμμα.</value>
+  </data>
+  <data name="LeaveDatesInvalid" xml:space="preserve">
+    <value>Εισαγάγετε πρώτη και τελευταία ημέρα· η τελευταία δεν μπορεί να προηγείται.</value>
+  </data>
+  <data name="LeaveDeletedMessage" xml:space="preserve">
+    <value>Η άδεια διαγράφηκε.</value>
+  </data>
+  <data name="LeaveEndLabel" xml:space="preserve">
+    <value>Τελευταία ημέρα</value>
+  </data>
+  <data name="LeaveIntro" xml:space="preserve">
+    <value>Κατά την άδεια οι προθεσμίες και οι υπενθυμίσεις παγώνουν· μετά μετατίθενται κατά τη διάρκειά της.</value>
+  </data>
+  <data name="LeaveKindLabel" xml:space="preserve">
+    <value>Είδος</value>
+  </data>
+  <data name="LeaveKindLightDuty" xml:space="preserve">
+    <value>Ελαφριά καθήκοντα</value>
+  </data>
+  <data name="LeaveKindMedical" xml:space="preserve">
+    <value>Ιατρική</value>
+  </data>
+  <data name="LeaveKindMilitary" xml:space="preserve">
+    <value>Στρατιωτική</value>
+  </data>
+  <data name="LeaveKindOther" xml:space="preserve">
+    <value>Άλλο</value>
+  </data>
+  <data name="LeaveKindParental" xml:space="preserve">
+    <value>Γονική</value>
+  </data>
+  <data name="LeaveMemberRequired" xml:space="preserve">
+    <value>Επιλέξτε μέλος στο οποίο μπορείτε να αναθέτετε.</value>
+  </data>
+  <data name="LeaveNotSavedError" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση.</value>
+  </data>
+  <data name="LeaveNoteLabel" xml:space="preserve">
+    <value>Σημείωση</value>
+  </data>
+  <data name="LeavePeriodsHeader" xml:space="preserve">
+    <value>Περίοδοι άδειας</value>
+  </data>
+  <data name="LeaveSavedMessage" xml:space="preserve">
+    <value>Η άδεια αποθηκεύτηκε.</value>
+  </data>
+  <data name="LeaveStartLabel" xml:space="preserve">
+    <value>Πρώτη ημέρα</value>
+  </data>
+  <data name="LeaveTab" xml:space="preserve">
+    <value>Άδειες απουσίας</value>
+  </data>
+  <data name="MakeDynamicLabel" xml:space="preserve">
+    <value>Δυναμική ανάθεση (ενημερώνεται με τις αλλαγές μελών)</value>
+  </data>
+  <data name="ManageIntro" xml:space="preserve">
+    <value>Εκπαιδεύσεις που συντάσσετε, αναθέτετε ή παρακολουθείτε.</value>
+  </data>
+  <data name="ManageTrainingsTab" xml:space="preserve">
+    <value>Διαχείριση εκπαιδεύσεων</value>
+  </data>
+  <data name="MaterialChangeHeader" xml:space="preserve">
+    <value>Άλλαξε το κουίζ ή το όριο επιτυχίας</value>
+  </data>
+  <data name="MaterialChangeHelp" xml:space="preserve">
+    <value>{0} μέλη έχουν ήδη ολοκληρώσει την εκπαίδευση. Είναι ουσιαστική αλλαγή;</value>
+  </data>
+  <data name="MaterialChangeNo" xml:space="preserve">
+    <value>Μη ουσιαστική: τα αποτελέσματα ισχύουν</value>
+  </data>
+  <data name="MaterialChangeRequired" xml:space="preserve">
+    <value>Επιλέξτε αν η αλλαγή του κουίζ είναι ουσιαστική πριν την αποθήκευση.</value>
+  </data>
+  <data name="MaterialChangeYes" xml:space="preserve">
+    <value>Ουσιαστική: νέα ανάθεση σε όσους την ολοκλήρωσαν</value>
+  </data>
+  <data name="MaterialReassignedMessage" xml:space="preserve">
+    <value>Έγινε νέα ανάθεση σε {0} μέλη.</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Μέλος</value>
+  </data>
+  <data name="MemberNotResetError" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η επαναφορά.</value>
+  </data>
+  <data name="MemberResetMessage" xml:space="preserve">
+    <value>Το μέλος επαναφέρθηκε.</value>
+  </data>
+  <data name="MinimumScoreRange" xml:space="preserve">
+    <value>Το όριο επιτυχίας είναι από 0 έως 100.</value>
+  </data>
+  <data name="MyTrainingIntro" xml:space="preserve">
+    <value>Οι εκπαιδεύσεις που σας έχουν ανατεθεί, τι λήγει σύντομα και οι πιστοποιήσεις που χρειάζονται προσοχή.</value>
+  </data>
+  <data name="MyTrainingTab" xml:space="preserve">
+    <value>Η εκπαίδευσή μου</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Εισαγάγετε όνομα.</value>
+  </data>
+  <data name="NewAssignmentHelp" xml:space="preserve">
+    <value>Ομάδες, ρόλοι, βάρδιες, πιστοποιήσεις και τύποι οχημάτων μένουν ενημερωμένοι: όσοι εντάσσονται αργότερα ανατίθενται αυτόματα.</value>
+  </data>
+  <data name="NewDueDateLabel" xml:space="preserve">
+    <value>Νέα προθεσμία</value>
+  </data>
+  <data name="NewTrainingIntro" xml:space="preserve">
+    <value>Γράψτε την εκπαίδευση, προσθέστε προαιρετικά ένα κουίζ και επιλέξτε σε ποιους απευθύνεται και πότε λήγει.</value>
+  </data>
+  <data name="NextActionHeader" xml:space="preserve">
+    <value>Επόμενο</value>
+  </data>
+  <data name="NoAssigneesError" xml:space="preserve">
+    <value>Επιλέξτε σε ποιους απευθύνεται ή ανοίξτε την σε όλα τα μέλη.</value>
+  </data>
+  <data name="NoAttachments" xml:space="preserve">
+    <value>Χωρίς συνημμένα.</value>
+  </data>
+  <data name="NoAttempts" xml:space="preserve">
+    <value>Δεν υπάρχουν προσπάθειες.</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>Χωρίς λήξη</value>
+  </data>
+  <data name="NoLeavePeriods" xml:space="preserve">
+    <value>Δεν έχουν καταχωριστεί άδειες.</value>
+  </data>
+  <data name="NoTrainingsHeader" xml:space="preserve">
+    <value>Δεν υπάρχουν εκπαιδεύσεις</value>
+  </data>
+  <data name="NotAssignedNotice" xml:space="preserve">
+    <value>Η εκπαίδευση δεν σας έχει ανατεθεί.</value>
+  </data>
+  <data name="NotStartedHeader" xml:space="preserve">
+    <value>Δεν έχουν ξεκινήσει</value>
+  </data>
+  <data name="NothingAssignedHeader" xml:space="preserve">
+    <value>Δεν σας έχει ανατεθεί τίποτα</value>
+  </data>
+  <data name="NothingAssignedHelp" xml:space="preserve">
+    <value>Εδώ εμφανίζονται οι εκπαιδεύσεις που σας αναθέτει η υπηρεσία σας.</value>
+  </data>
+  <data name="OnLeaveNotice" xml:space="preserve">
+    <value>Είστε σε άδεια: οι προθεσμίες και οι υπενθυμίσεις παγώνουν και μετατίθενται κατά τη διάρκεια της άδειας.</value>
+  </data>
+  <data name="OneQuestionPerPageLabel" xml:space="preserve">
+    <value>Μία ερώτηση κάθε φορά</value>
+  </data>
+  <data name="OpenFlagsHeader" xml:space="preserve">
+    <value>Επισημασμένες ερωτήσεις</value>
+  </data>
+  <data name="OpenLabel" xml:space="preserve">
+    <value>Ανοιχτή σε όλους</value>
+  </data>
+  <data name="OpenTrainingButton" xml:space="preserve">
+    <value>Άνοιγμα εκπαίδευσης</value>
+  </data>
+  <data name="OverdueHeader" xml:space="preserve">
+    <value>Εκπρόθεσμες</value>
+  </data>
+  <data name="OverdueRepeatDaysHelp" xml:space="preserve">
+    <value>Κενό: αποστέλλεται μία φορά.</value>
+  </data>
+  <data name="OverdueRepeatDaysLabel" xml:space="preserve">
+    <value>Επανάληψη ειδοποίησης κάθε (ημέρες)</value>
+  </data>
+  <data name="OverdueRepeatRange" xml:space="preserve">
+    <value>Εισαγάγετε αριθμό από {0} έως {1}.</value>
+  </data>
+  <data name="PinButton" xml:space="preserve">
+    <value>Καρφίτσωμα</value>
+  </data>
+  <data name="PinnedLabel" xml:space="preserve">
+    <value>Καρφιτσωμένη</value>
+  </data>
+  <data name="PreviewAudienceButton" xml:space="preserve">
+    <value>Προεπισκόπηση προσθηκών</value>
+  </data>
+  <data name="PreviewHeader" xml:space="preserve">
+    <value>Προεπισκόπηση</value>
+  </data>
+  <data name="PreviewQuizButton" xml:space="preserve">
+    <value>Προεπισκόπηση κουίζ</value>
+  </data>
+  <data name="PreviewSummary" xml:space="preserve">
+    <value>Θα προστεθούν {0} μέλη· {1} έχουν ήδη ανατεθεί.</value>
+  </data>
+  <data name="ProgressHeader" xml:space="preserve">
+    <value>Η πρόοδός σας</value>
+  </data>
+  <data name="QuestionCountValue" xml:space="preserve">
+    <value>{0} ερωτήσεις</value>
+  </data>
+  <data name="QuestionFlaggedMessage" xml:space="preserve">
+    <value>Ευχαριστούμε: ο συντάκτης ενημερώθηκε.</value>
+  </data>
+  <data name="QuestionNotFlaggedError" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η επισήμανση.</value>
+  </data>
+  <data name="QuestionNumberLabel" xml:space="preserve">
+    <value>Ερώτηση {0}</value>
+  </data>
+  <data name="QuestionOfValue" xml:space="preserve">
+    <value>Ερώτηση {0} από {1}</value>
+  </data>
+  <data name="QuestionTypeLabel" xml:space="preserve">
+    <value>Τύπος ερώτησης</value>
+  </data>
+  <data name="QuestionTypeMulti" xml:space="preserve">
+    <value>Πολλαπλή επιλογή (όλες οι σωστές)</value>
+  </data>
+  <data name="QuestionTypeSingle" xml:space="preserve">
+    <value>Μία επιλογή</value>
+  </data>
+  <data name="QuestionTypeTrueFalse" xml:space="preserve">
+    <value>Σωστό ή λάθος</value>
+  </data>
+  <data name="QuizAlreadyPassedMessage" xml:space="preserve">
+    <value>Έχετε ήδη περάσει αυτό το κουίζ.</value>
+  </data>
+  <data name="QuizAttemptLimitError" xml:space="preserve">
+    <value>Εξαντλήσατε τις επιτρεπόμενες προσπάθειες.</value>
+  </data>
+  <data name="QuizFailedHeader" xml:space="preserve">
+    <value>Αποτυχία</value>
+  </data>
+  <data name="QuizFailedValue" xml:space="preserve">
+    <value>Αποτυχία: {0}% (όριο {1}%)</value>
+  </data>
+  <data name="QuizIntro" xml:space="preserve">
+    <value>{0} ερωτήσεις. Όριο επιτυχίας {1}%.</value>
+  </data>
+  <data name="QuizNotAvailableError" xml:space="preserve">
+    <value>Το κουίζ δεν είναι διαθέσιμο.</value>
+  </data>
+  <data name="QuizNotTakenValue" xml:space="preserve">
+    <value>Το κουίζ δεν έχει γίνει (όριο {0}%)</value>
+  </data>
+  <data name="QuizPassedHeader" xml:space="preserve">
+    <value>Επιτυχία</value>
+  </data>
+  <data name="QuizPassedValue" xml:space="preserve">
+    <value>Επιτυχία στο κουίζ: {0}%</value>
+  </data>
+  <data name="QuizPreviewNotice" xml:space="preserve">
+    <value>Προεπισκόπηση: δεν σας έχει ανατεθεί, οπότε δεν υποβάλλεται τίποτα.</value>
+  </data>
+  <data name="QuizProblemMinimumScoreRange" xml:space="preserve">
+    <value>Το όριο επιτυχίας είναι από 0 έως 100.</value>
+  </data>
+  <data name="QuizProblemQuestionAnswerKey" xml:space="preserve">
+    <value>Σημειώστε τη σωστή απάντηση: μία για μονή επιλογή και σωστό/λάθος, τουλάχιστον μία για πολλαπλή.</value>
+  </data>
+  <data name="QuizProblemQuestionOptions" xml:space="preserve">
+    <value>Κάθε ερώτηση χρειάζεται τουλάχιστον δύο απαντήσεις (έως 26).</value>
+  </data>
+  <data name="QuizProblemQuestionText" xml:space="preserve">
+    <value>Κάθε ερώτηση χρειάζεται κείμενο.</value>
+  </data>
+  <data name="QuizProblemQuestionType" xml:space="preserve">
+    <value>Μια ερώτηση έχει άγνωστο τύπο.</value>
+  </data>
+  <data name="QuizProblemTooManyQuestions" xml:space="preserve">
+    <value>Ένα κουίζ έχει έως 100 ερωτήσεις.</value>
+  </data>
+  <data name="QuizProblemTrueFalseOptions" xml:space="preserve">
+    <value>Μια ερώτηση σωστό/λάθος έχει ακριβώς δύο απαντήσεις.</value>
+  </data>
+  <data name="QuizResultHeader" xml:space="preserve">
+    <value>Αποτέλεσμα κουίζ</value>
+  </data>
+  <data name="QuizRevisionColumn" xml:space="preserve">
+    <value>Έκδοση κουίζ</value>
+  </data>
+  <data name="QuizScoreValue" xml:space="preserve">
+    <value>Βαθμολογία {0}%: {1} από {2} σωστές. Όριο {3}%.</value>
+  </data>
+  <data name="QuizSection" xml:space="preserve">
+    <value>Κουίζ</value>
+  </data>
+  <data name="ReadButton" xml:space="preserve">
+    <value>Ανάγνωση</value>
+  </data>
+  <data name="ReasonLabel" xml:space="preserve">
+    <value>Αιτία</value>
+  </data>
+  <data name="RecentCompletionsHeader" xml:space="preserve">
+    <value>Ολοκληρώθηκαν πρόσφατα</value>
+  </data>
+  <data name="RelativeDueValue" xml:space="preserve">
+    <value>{0} ημέρες μετά την ανάθεση</value>
+  </data>
+  <data name="ReminderLeadDaysHelp" xml:space="preserve">
+    <value>Χωρισμένα με κόμμα, π.χ. 7,1. Κενό: υπενθύμιση μία ημέρα πριν.</value>
+  </data>
+  <data name="ReminderLeadDaysLabel" xml:space="preserve">
+    <value>Υπενθύμιση πριν τη λήξη (ημέρες)</value>
+  </data>
+  <data name="ReminderMessageHelp" xml:space="preserve">
+    <value>Προαιρετικό, έως 500 χαρακτήρες, προστίθεται στις ειδοποιήσεις νέας εκπαίδευσης, υπενθύμισης και καθυστέρησης.</value>
+  </data>
+  <data name="ReminderMessageLabel" xml:space="preserve">
+    <value>Μήνυμα στις ειδοποιήσεις</value>
+  </data>
+  <data name="RemindersSection" xml:space="preserve">
+    <value>Υπενθυμίσεις</value>
+  </data>
+  <data name="RemoveAssigneeButton" xml:space="preserve">
+    <value>Αφαίρεση</value>
+  </data>
+  <data name="RemoveAssigneeConfirm" xml:space="preserve">
+    <value>Αφαίρεση του μέλους; Η ολοκλήρωση διατηρείται.</value>
+  </data>
+  <data name="RemoveAttachmentConfirm" xml:space="preserve">
+    <value>Αφαίρεση του συνημμένου;</value>
+  </data>
+  <data name="RemoveQuestionButton" xml:space="preserve">
+    <value>Αφαίρεση ερώτησης</value>
+  </data>
+  <data name="RemovedQuestionLabel" xml:space="preserve">
+    <value>(η ερώτηση αφαιρέθηκε)</value>
+  </data>
+  <data name="RepeatMonthsHelp" xml:space="preserve">
+    <value>Προαιρετικό. Κάθε διάστημα την αναθέτει ξανά με νέα προθεσμία· οι προηγούμενες ολοκληρώσεις διατηρούνται.</value>
+  </data>
+  <data name="RepeatMonthsLabel" xml:space="preserve">
+    <value>Επανάληψη κάθε (μήνες)</value>
+  </data>
+  <data name="RepeatMonthsRange" xml:space="preserve">
+    <value>Εισαγάγετε αριθμό από {0} έως {1}.</value>
+  </data>
+  <data name="RepeatsEveryValue" xml:space="preserve">
+    <value>Κάθε {0} μήνες</value>
+  </data>
+  <data name="ResetConfirm" xml:space="preserve">
+    <value>Επαναφορά του μέλους; Η ολοκλήρωση πάει στο ιστορικό και ξεκινά ξανά.</value>
+  </data>
+  <data name="ResolveFlagButton" xml:space="preserve">
+    <value>Επίλυση</value>
+  </data>
+  <data name="RestoreButton" xml:space="preserve">
+    <value>Επαναφορά</value>
+  </data>
+  <data name="RetakeQuizButton" xml:space="preserve">
+    <value>Επανάληψη κουίζ</value>
+  </data>
+  <data name="SaveLeaveButton" xml:space="preserve">
+    <value>Αποθήκευση άδειας</value>
+  </data>
+  <data name="ScheduleSection" xml:space="preserve">
+    <value>Χρονοδιάγραμμα και διαθεσιμότητα</value>
+  </data>
+  <data name="ScheduledLabel" xml:space="preserve">
+    <value>Ξεκινά</value>
+  </data>
+  <data name="ScheduledNotice" xml:space="preserve">
+    <value>Η εκπαίδευση ξεκινά στις {0}. Από τότε θα τη βλέπουν οι συμμετέχοντες.</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Αναζήτηση</value>
+  </data>
+  <data name="SelectAllThatApply" xml:space="preserve">
+    <value>Επιλέξτε όλες τις σωστές απαντήσεις.</value>
+  </data>
+  <data name="SelectPlaceholder" xml:space="preserve">
+    <value>Επιλογή...</value>
+  </data>
+  <data name="SelfEnrolledLabel" xml:space="preserve">
+    <value>Αυτοεγγραφή</value>
+  </data>
+  <data name="SendOverdueNoticesLabel" xml:space="preserve">
+    <value>Αποστολή ειδοποίησης καθυστέρησης στο μέλος και τον δημιουργό</value>
+  </data>
+  <data name="ShiftsLabel" xml:space="preserve">
+    <value>Μέλη βαρδιών</value>
+  </data>
+  <data name="ShowFormerMembersButton" xml:space="preserve">
+    <value>Εμφάνιση πρώην μελών</value>
+  </data>
+  <data name="SkipReasonDeleted" xml:space="preserve">
+    <value>αφαιρέθηκε από την υπηρεσία</value>
+  </data>
+  <data name="SkipReasonDisabled" xml:space="preserve">
+    <value>απενεργοποιημένος</value>
+  </data>
+  <data name="SkipReasonHidden" xml:space="preserve">
+    <value>κρυφός</value>
+  </data>
+  <data name="SkipReasonNotActivated" xml:space="preserve">
+    <value>εισήχθη αλλά δεν ενεργοποιήθηκε</value>
+  </data>
+  <data name="SkipReasonNotInDepartment" xml:space="preserve">
+    <value>δεν είναι μέλος της υπηρεσίας</value>
+  </data>
+  <data name="SkipReasonOutOfScope" xml:space="preserve">
+    <value>εκτός της ομάδας που διαχειρίζεστε</value>
+  </data>
+  <data name="SkippedMembersIntro" xml:space="preserve">
+    <value>Δεν ανατέθηκαν:</value>
+  </data>
+  <data name="StartsOnHelp" xml:space="preserve">
+    <value>Προαιρετικό. Ως τότε οι συμμετέχοντες δεν τη βλέπουν και κανείς δεν ειδοποιείται.</value>
+  </data>
+  <data name="StartsOnInvalid" xml:space="preserve">
+    <value>Εισαγάγετε έγκυρη ημερομηνία και ώρα έναρξης.</value>
+  </data>
+  <data name="StartsOnLabel" xml:space="preserve">
+    <value>Ξεκινά στις</value>
+  </data>
+  <data name="StateComplete" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+  </data>
+  <data name="StateExempt" xml:space="preserve">
+    <value>Απαλλαγή</value>
+  </data>
+  <data name="StateFailed" xml:space="preserve">
+    <value>Αποτυχία στο κουίζ</value>
+  </data>
+  <data name="StateInProgress" xml:space="preserve">
+    <value>Σε εξέλιξη</value>
+  </data>
+  <data name="StateNotStarted" xml:space="preserve">
+    <value>Δεν ξεκίνησε</value>
+  </data>
+  <data name="StateOnLeave" xml:space="preserve">
+    <value>Σε άδεια</value>
+  </data>
+  <data name="StateOverdue" xml:space="preserve">
+    <value>Εκπρόθεσμη</value>
+  </data>
+  <data name="StateRemoved" xml:space="preserve">
+    <value>Αφαιρέθηκε</value>
+  </data>
+  <data name="StateScheduled" xml:space="preserve">
+    <value>Προγραμματισμένη</value>
+  </data>
+  <data name="StaticNotice" xml:space="preserve">
+    <value>Η εκπαίδευση έχει σταθερή λίστα. Οι επιλογές παρακάτω προστίθενται.</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>Ενεργές</value>
+  </data>
+  <data name="StatusAll" xml:space="preserve">
+    <value>Όλες</value>
+  </data>
+  <data name="StatusArchived" xml:space="preserve">
+    <value>Αρχειοθετημένες</value>
+  </data>
+  <data name="StatusFilterLabel" xml:space="preserve">
+    <value>Εμφάνιση</value>
+  </data>
+  <data name="StatusScheduled" xml:space="preserve">
+    <value>Προγραμματισμένες</value>
+  </data>
+  <data name="SubmitQuizConfirm" xml:space="preserve">
+    <value>Υποβολή των απαντήσεων;</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Υποβλήθηκε</value>
+  </data>
+  <data name="TextTooLong" xml:space="preserve">
+    <value>Το κείμενο υπερβαίνει τους {0} χαρακτήρες.</value>
+  </data>
+  <data name="TrainingArchivedMessage" xml:space="preserve">
+    <value>Η εκπαίδευση αρχειοθετήθηκε.</value>
+  </data>
+  <data name="TrainingCopiedMessage" xml:space="preserve">
+    <value>Δημιουργήθηκε αντίγραφο. Ελέγξτε το και επιλέξτε σε ποιους απευθύνεται.</value>
+  </data>
+  <data name="TrainingDeletedMessage" xml:space="preserve">
+    <value>Η εκπαίδευση διαγράφηκε.</value>
+  </data>
+  <data name="TrainingNotArchivedError" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αρχειοθέτηση.</value>
+  </data>
+  <data name="TrainingNotRestoredError" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η επαναφορά.</value>
+  </data>
+  <data name="TrainingRestoredMessage" xml:space="preserve">
+    <value>Η εκπαίδευση επανήλθε.</value>
+  </data>
+  <data name="TrainingSavedMessage" xml:space="preserve">
+    <value>Η εκπαίδευση αποθηκεύτηκε.</value>
+  </data>
+  <data name="TrueLabel" xml:space="preserve">
+    <value>Σωστό</value>
+  </data>
+  <data name="UnitTypesLabel" xml:space="preserve">
+    <value>Πληρώματα τύπων οχημάτων</value>
+  </data>
+  <data name="UnpinButton" xml:space="preserve">
+    <value>Ξεκαρφίτσωμα</value>
+  </data>
+  <data name="ViewedLabel" xml:space="preserve">
+    <value>Προβλήθηκε</value>
+  </data>
+  <data name="ViewedOnValue" xml:space="preserve">
+    <value>Προβλήθηκε {0}</value>
+  </data>
 </root>

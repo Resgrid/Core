@@ -414,4 +414,10 @@
   <data name="ToggleMenu" xml:space="preserve">
     <value>إظهار القائمة أو إخفاؤها</value>
   </data>
+  <data name="ResgridAcademy" xml:space="preserve">
+    <value>أكاديمية Resgrid</value>
+  </data>
+  <data name="AcademyLearnThisPage" xml:space="preserve">
+    <value>درس عن هذه الصفحة ({0} دقيقة)</value>
+  </data>
 </root>

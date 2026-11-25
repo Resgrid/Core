@@ -3243,6 +3243,12 @@
   <data xml:space="preserve" name="Permission.CreateTraining">
     <value>Tworzenie szkolenia</value>
   </data>
+  <data xml:space="preserve" name="Permission.AssignTraining">
+    <value>Przydzielanie szkoleń</value>
+  </data>
+  <data xml:space="preserve" name="Permission.DeleteTraining">
+    <value>Usuwanie szkoleń</value>
+  </data>
   <data xml:space="preserve" name="Permission.CreateWorkflow">
     <value>Tworzenie przepływu pracy</value>
   </data>
@@ -3487,7 +3493,13 @@
     <value>Umożliwia tworzenie, edytowanie i usuwanie zmian i zmian roboczych oraz zarządzanie rejestracjami dla każdej grupy. Administratorzy grup zawsze zarządzają rejestracjami we własnych grupach. Członkowie zapisujący się — w wersji internetowej, w aplikacjach lub przez chatbota — muszą przestrzegać zasad zmiany (bez minionych dni, zmiany z przydziałem wymagają przydziału, zmiany grupowe wymagają grupy członka). Wszyscy nadal mogą przeglądać zmiany. Bez zapisanej zasady zmiany mogą modyfikować tylko administratorzy działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateTraining">
-    <value>Umożliwia tworzenie, edytowanie i usuwanie szkoleń oraz resetowanie postępów członków w szkoleniach. Wszyscy nadal mogą przeglądać i odbywać szkolenia. Bez zapisanej zasady mogą to robić tylko administratorzy działu.</value>
+    <value>Pozwala tworzyć szkolenia oraz przygotowywać ich treść i quiz, łącznie z kluczem odpowiedzi. Przydzielanie i raporty (Przydzielanie szkoleń) oraz archiwizacja lub usuwanie (Usuwanie szkoleń) to osobne reguły, które do czasu zapisania podążają za tą. Wszyscy nadal mogą przeglądać i ukończyć szkolenia przydzielone im lub dla nich otwarte. Bez zapisanej reguły mogą to robić tylko administratorzy jednostki.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AssignTraining">
+    <value>Pozwala przydzielać szkolenia członkom, ustalać terminy, przedłużenia i zwolnienia, resetować postępy członków oraz czytać raport szkolenia i historię podejść. Administratorzy grup działają tylko wobec członków własnej grupy. Do czasu zapisania obowiązuje reguła Tworzenie szkoleń.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.DeleteTraining">
+    <value>Pozwala archiwizować, przywracać i usuwać szkolenia. Szkolenie, które ktoś ukończył, jest archiwizowane zamiast usuwane, aby jego ukończenia pozostały w ewidencji. Do czasu zapisania obowiązuje reguła Tworzenie szkoleń.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateWorkflow">
     <value>Umożliwia tworzenie, edytowanie i usuwanie przepływów pracy, podgląd ich warunków, odczyt konfiguracji kroków w aplikacjach i API oraz wyświetlanie wygenerowanych wyników przebiegów przepływów pracy. Bez zapisanej zasady przepływy pracy mogą zmieniać tylko administratorzy działu, ale każdy członek może otworzyć stronę Przepływy pracy i czytać definicje; zapisanie opcji Administratorzy działu ukrywa też przepływy pracy przed wszystkimi innymi. Kroki wysyłające eksport z modułu Rekordy wymagają też uprawnień Eksportowanie rekordów i Zarządzanie zestawieniami raportów. Plany bezpłatne mają ograniczoną liczbę przepływów pracy.</value>
@@ -8267,5 +8279,23 @@
   </data>
   <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
     <value>Używane, gdy Twój format e-maili to "Labeled fields". Wpisz etykietę, którą Twój CAD umieszcza przed każdą wartością. Oddziel warianty znakiem |.</value>
+  </data>
+  <data name="Feature.protocol-edit" xml:space="preserve">
+    <value>Edycja protokołów</value>
+  </data>
+  <data name="FeaturePurpose.protocol-edit" xml:space="preserve">
+    <value>Zmieniaj na miejscu treść, wyzwalacze i pytania protokołu; zgłoszenia zachowują tekst z chwili zadysponowania.</value>
+  </data>
+  <data name="Feature.protocol-disable" xml:space="preserve">
+    <value>Wyłączanie protokołów</value>
+  </data>
+  <data name="FeaturePurpose.protocol-disable" xml:space="preserve">
+    <value>Przestań proponować i dołączać protokół bez jego usuwania.</value>
+  </data>
+  <data name="Feature.call-protocol-removal" xml:space="preserve">
+    <value>Usuwanie protokołu ze zgłoszenia</value>
+  </data>
+  <data name="FeaturePurpose.call-protocol-removal" xml:space="preserve">
+    <value>Usuń ze zgłoszenia błędnie dołączony protokół, podając powód; zapis go zachowuje, oznaczony jako usunięty.</value>
   </data>
 </root>

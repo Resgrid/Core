@@ -345,9 +345,23 @@ Default: No permission row: department admins only; no group lock. Source: Permi
 <a id="permission-createtraining"></a>
 ## Create Training
 
-Create Training. Allows creating, editing and deleting trainings and resetting members' training progress. Everyone can still view and complete trainings. With no saved rule only department administrators may.
+Create Training. Who can create trainings and author their content and quiz (the edit page shows the answer key). Assigning and reporting (Assign Training) and archiving or deleting (Delete Training) are separate rules that follow this one until they are saved. Everyone can still view and complete the trainings assigned or open to them. With no saved rule only department administrators may.
 
-Default: No permission row: department admins create, edit and delete trainings; everyone can view. Source: PermissionTypes.CreateTraining.
+Default: No permission row: department admins create and author trainings; everyone can view the trainings assigned or open to them; Assign Training and Delete Training follow this row. Source: PermissionTypes.CreateTraining.
+
+<a id="permission-assigntraining"></a>
+## Assign Training
+
+Assign Training. Who can assign trainings to members, set due dates, extensions and exemptions, and read the training report and attempt history. Group admins act only on their own group's members. Until it is saved it follows Create Training.
+
+Default: No permission row: follows the Create Training row (department admins only when neither is saved). Source: PermissionTypes.AssignTraining.
+
+<a id="permission-deletetraining"></a>
+## Delete Training
+
+Delete Training. Who can archive, restore and delete trainings. A training someone completed is archived instead of deleted, so its completions stay on the record. Until it is saved it follows Create Training.
+
+Default: No permission row: follows the Create Training row (department admins only when neither is saved). Source: PermissionTypes.DeleteTraining.
 
 <a id="permission-createdocument"></a>
 ## Create Document
@@ -3078,6 +3092,21 @@ New Note Post a department note. Members find the current procedure, preplan or 
 ## New Protocol
 
 New Protocol Create a dispatch protocol. Members find the current procedure, preplan or phone number when they need it instead of searching email. A department uploads its standard operating procedures, adds hospital and mutual-aid contacts and creates a medical dispatch protocol. Gather the documents and contacts members need most, and decide who keeps them current.
+
+<a id="protocol-edit"></a>
+## Edit Protocols
+
+Edit Protocols Change a protocol's content, triggers and questions in place; calls keep the text they were dispatched with. Triggers, questions and answers keep their ids when edited, and each call shows the text as dispatched, marked when the protocol has changed since.
+
+<a id="protocol-disable"></a>
+## Disable Protocols
+
+Disable Protocols Stop suggesting and attaching a protocol without deleting it. A disabled protocol stays in the library, leaves the apps' lists and offline reference data, and is refused when a call form or app tries to attach it.
+
+<a id="call-protocol-removal"></a>
+## Remove a Protocol from a Call
+
+Remove a Protocol from a Call Take a mis-attached protocol off a call with a reason; the record keeps it, marked removed. On View Call, open the Protocols tab and use Remove from call; the removal is written to the department's audit log.
 
 <a id="forms"></a>
 ## Forms

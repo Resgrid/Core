@@ -28,6 +28,7 @@ namespace Resgrid.Services
 		private readonly IPersonnelCertificationRepository _personnelCertificationRepository;
 		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
+		private readonly IContentAudienceChangeQueue _audienceChanges;
 		private readonly IPersonnelRoleCertificationRequirementRepository _requirements;
 		private readonly IDepartmentCertificationSettingsRepository _settings;
 		private readonly IPersonnelCertificationCreditsRepository _credits;
@@ -64,8 +65,10 @@ namespace Resgrid.Services
 			Lazy<ICommunicationService> communication,
 			Lazy<IProtectedReadService> protectedRead = null,
 			IProtectedGrantContext grant = null,
-			Lazy<ISearchProjectionService> searchProjections = null)
+			Lazy<ISearchProjectionService> searchProjections = null,
+			IContentAudienceChangeQueue audienceChanges = null)
 		{
+			_audienceChanges = audienceChanges;
 			_grant = grant;
 			_departmentCertificationTypeRepository = departmentCertificationTypeRepository;
 			_personnelCertificationRepository = personnelCertificationRepository;
@@ -241,7 +244,16 @@ namespace Resgrid.Services
 			// CertificationAddedEvent triggers workflows (87); an import never fires them (wizard plan section 11.2).
 			if (!isExistingRow && effects.RaiseDomainEvents)
 				_eventAggregator.SendMessage(new CertificationAddedEvent { DepartmentId = saved.DepartmentId, Certification = saved, TypeCode = type?.Code, TypeName = type?.Type });
+			await QueueAudienceChangeAsync(saved.DepartmentId, saved.UserId, cancellationToken);
 			return saved;
+		}
+
+		/// <summary>A certification record changed: worker 83 re-evaluates the holder's certification-type training audiences.</summary>
+		private Task QueueAudienceChangeAsync(int departmentId, string userId, CancellationToken cancellationToken)
+		{
+			return _audienceChanges == null || string.IsNullOrWhiteSpace(userId)
+				? Task.CompletedTask
+				: _audienceChanges.EnqueueAsync(departmentId, userId, ContentAudienceChangeSources.Certification, cancellationToken);
 		}
 
 		public async Task<PersonnelCertification> GetCertificationByIdAsync(int certificationId)
@@ -413,6 +425,7 @@ namespace Resgrid.Services
 			var saved = await _personnelCertificationRepository.SaveOrUpdateAsync(record, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.CertificationStatusChanged, before, Snapshot(saved));
 			_eventAggregator.SendMessage(new CertificationStatusChangedEvent { DepartmentId = departmentId, Certification = saved, TypeCode = type?.Code, TypeName = type?.Type, OldStatus = oldStatus, NewStatus = saved.Status, Reason = record.StatusReason, ChangedByUserId = userId });
+			await QueueAudienceChangeAsync(departmentId, saved.UserId, cancellationToken);
 			return saved;
 		}
 
@@ -436,6 +449,7 @@ namespace Resgrid.Services
 			var saved = await _personnelCertificationRepository.SaveOrUpdateAsync(record, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.CertificationVerified, before, Snapshot(saved));
 			_eventAggregator.SendMessage(new CertificationStatusChangedEvent { DepartmentId = departmentId, Certification = saved, TypeCode = type?.Code, TypeName = type?.Type, OldStatus = oldStatus, NewStatus = saved.Status, Reason = "verified", ChangedByUserId = userId });
+			await QueueAudienceChangeAsync(departmentId, saved.UserId, cancellationToken);
 			return saved;
 		}
 
@@ -470,6 +484,7 @@ namespace Resgrid.Services
 			var saved = await _personnelCertificationRepository.SaveOrUpdateAsync(record, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.CertificationUpdated, before, Snapshot(saved));
 			_eventAggregator.SendMessage(new CertificationRenewedEvent { DepartmentId = departmentId, Certification = saved, TypeCode = type?.Code, TypeName = type?.Type, PreviousExpiresOn = previous });
+			await QueueAudienceChangeAsync(departmentId, saved.UserId, cancellationToken);
 			return saved;
 		}
 
@@ -494,6 +509,7 @@ namespace Resgrid.Services
 			await _personnelCertificationRepository.SaveOrUpdateAsync(record, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.CertificationRemoved, before, Snapshot(record));
 			_eventAggregator.SendMessage(new CertificationRemovedEvent { DepartmentId = departmentId, Certification = record, TypeCode = type?.Code, TypeName = type?.Type, RemovedByUserId = userId });
+			await QueueAudienceChangeAsync(departmentId, record.UserId, cancellationToken);
 			return true;
 		}
 

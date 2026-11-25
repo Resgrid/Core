@@ -1286,6 +1286,18 @@
   <data name="PermCreateTrainingNote" xml:space="preserve">
     <value>Ta opcja określa, kto może tworzyć szkolenia. Domyślnie szkolenia mogą tworzyć tylko administratorzy działu.</value>
   </data>
+  <data name="PermAssignTrainingLabel" xml:space="preserve">
+    <value>Kto może przydzielać szkolenia i przeglądać raporty</value>
+  </data>
+  <data name="PermAssignTrainingNote" xml:space="preserve">
+    <value>Ta opcja określa, kto może przydzielać szkolenia członkom, ustalać terminy, przedłużenia i zwolnienia oraz czytać raport szkolenia i historię podejść. Administratorzy grup działają tylko wobec członków własnej grupy. Dopóki nie zapiszesz tu reguły, obowiązuje ustawienie Tworzenie szkoleń.</value>
+  </data>
+  <data name="PermDeleteTrainingLabel" xml:space="preserve">
+    <value>Kto może archiwizować i usuwać szkolenia</value>
+  </data>
+  <data name="PermDeleteTrainingNote" xml:space="preserve">
+    <value>Ta opcja określa, kto może archiwizować, przywracać i usuwać szkolenia. Szkolenie, które ktoś ukończył, jest archiwizowane, nigdy usuwane. Dopóki nie zapiszesz tu reguły, obowiązuje ustawienie Tworzenie szkoleń.</value>
+  </data>
   <data name="PermCreateDocumentLabel" xml:space="preserve">
     <value>Kto może dodawać dokumenty</value>
   </data>
@@ -2742,4 +2754,18 @@
   <data name="AuditLogTypeRecurringCallOccurrenceCreated" xml:space="preserve"><value>Utworzono wystąpienie zgłoszenia cyklicznego</value></data>
   <data name="AuditLogTypeRecurringCallAlertAcknowledged" xml:space="preserve"><value>Potwierdzono alert zgłoszenia cyklicznego</value></data>
   <data name="AuditLogTypeRecurringCallAlertDismissed" xml:space="preserve"><value>Odrzucono alert zgłoszenia cyklicznego</value></data>
+  <data name="AuditLogTypeProtocolCreated" xml:space="preserve"><value>Utworzono protokół</value></data>
+  <data name="AuditLogTypeProtocolUpdated" xml:space="preserve"><value>Zaktualizowano protokół</value></data>
+  <data name="AuditLogTypeProtocolDisabled" xml:space="preserve"><value>Wyłączono protokół</value></data>
+  <data name="AuditLogTypeProtocolEnabled" xml:space="preserve"><value>Włączono protokół</value></data>
+  <data name="AuditLogTypeProtocolDeleted" xml:space="preserve"><value>Usunięto protokół</value></data>
+  <data name="AuditLogTypeCallProtocolRemoved" xml:space="preserve"><value>Usunięto protokół ze zgłoszenia</value></data>
+  <data name="AuditLogTypeTrainingArchived" xml:space="preserve"><value>Szkolenie zarchiwizowane</value></data>
+  <data name="AuditLogTypeTrainingRestored" xml:space="preserve"><value>Szkolenie przywrócone</value></data>
+  <data name="AuditLogTypeTrainingDeleted" xml:space="preserve"><value>Szkolenie usunięte</value></data>
+  <data name="AuditLogTypeTrainingCopied" xml:space="preserve"><value>Szkolenie skopiowane</value></data>
+  <data name="AuditLogTypeTrainingAssigneeRemoved" xml:space="preserve"><value>Usunięto uczestnika szkolenia</value></data>
+  <data name="AuditLogTypeTrainingAssignmentExtended" xml:space="preserve"><value>Przedłużono przydział szkolenia</value></data>
+  <data name="AuditLogTypeTrainingAssignmentExempted" xml:space="preserve"><value>Zmieniono zwolnienie z przydziału szkolenia</value></data>
+  <data name="AuditLogTypeMemberLeavePeriodChanged" xml:space="preserve"><value>Zmieniono okres nieobecności członka</value></data>
 </root>

@@ -168,9 +168,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("Reference")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_View)]
-		public async Task<ActionResult<SyncReferenceResult>> Reference(bool bypassCache = false)
+		public async Task<ActionResult<SyncReferenceResult>> Reference()
 		{
-			var data = await _syncService.GetReferenceDataAsync(DepartmentId, bypassCache);
+			// No bypassCache from the client (D21): any member with Command View could force the full rebuild on demand. The
+			// cache is dropped by the changes that matter (protocol save, disable, delete) and otherwise lives five minutes.
+			var data = await _syncService.GetReferenceDataAsync(DepartmentId);
 
 			// PII gate: the reference snapshot is cached department-scoped and caller-agnostic, so mobile numbers are
 			// redacted here per-caller (NOT inside the cached build, which would let the first caller's permission

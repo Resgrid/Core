@@ -9,6 +9,7 @@ const widgets: WidgetRegistry = {
   'shifts.approvals': lazy(() => import('./ShiftApprovalsWidget')),
   'shifts.coverage': lazy(() => import('./ShiftCoverageWidget')),
   'trainings.mine': lazy(() => import('./TrainingsMineWidget')),
+  'trainings.bulletin': lazy(() => import('./TrainingsBulletinWidget')),
   'documents.recent': lazy(() => import('./DocumentsRecentWidget')),
   'notes.board': lazy(() => import('./NotesBoardWidget')),
   'contacts.preplans': lazy(() => import('./ContactsPreplansWidget')),

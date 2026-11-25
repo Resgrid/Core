@@ -1,0 +1,168 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Calls.ViewCallView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> protocolsLocalizer
+@*
+    View Call's protocols: each protocol on the call with how it came there (trigger or picked by hand), the answers and
+    score recorded when it was attached, the text as dispatched (and whether the protocol has changed since), its
+    attachments, and, for members who may edit the call, Remove with a reason. A removed protocol stays, marked.
+*@
+@{
+    var rows = (Model.Call?.Protocols ?? new List<CallProtocol>()).OrderBy(x => x.RemovedOn.HasValue).ThenBy(x => x.CallProtocolId).ToList();
+
+    CallProtocolAnswers Answers(CallProtocol row)
+    {
+        if (string.IsNullOrWhiteSpace(row.AnswersJson)) return null;
+        try { return Newtonsoft.Json.JsonConvert.DeserializeObject<CallProtocolAnswers>(row.AnswersJson); }
+        catch (Newtonsoft.Json.JsonException) { return null; }
+    }
+}
+@if (!string.IsNullOrEmpty(Model.CallProtocolMessage))
+{
+    <div class="alert @(Model.CallProtocolMessage == "Removed" ? "alert-success" : "alert-warning") m-t-sm" role="status" data-protocol-message="true">
+        @(Model.CallProtocolMessage == "Removed" ? protocolsLocalizer["CallProtocolRemovedMessage"] : protocolsLocalizer["RemovalReasonRequired"])
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () { if (window.jQuery) { jQuery('a[href="#tab-8"]').tab('show'); } });
+    </script>
+}
+@if (rows.Count == 0)
+{
+    <p class="text-muted m-t-sm">@protocolsLocalizer["NoProtocolsOnCall"]</p>
+}
+@foreach (var row in rows)
+{
+    var protocol = Model.Protocols?.FirstOrDefault(x => x.DispatchProtocolId == row.DispatchProtocolId);
+    if (protocol == null)
+    {
+        continue;
+    }
+
+    var answers = Answers(row);
+    DispatchProtocolSnapshot snapshot = null;
+    if (!string.IsNullOrEmpty(row.ContentHash))
+    {
+        Model.ProtocolSnapshots.TryGetValue(row.DispatchProtocolId + ":" + row.ContentHash, out snapshot);
+    }
+    var changedSince = !string.IsNullOrEmpty(row.ContentHash) && ProtocolContentHash.Compute(protocol.ProtocolText) != row.ContentHash;
+
+    <div class="panel @(row.RemovedOn.HasValue ? "panel-default" : "panel-info") m-t-sm">
+        <div class="panel-heading rgw-builder-heading">
+            <span class="rgw-builder-title"><span class="rgw-mono">@(protocol.Code)</span> @protocol.Name</span>
+            <span class="rgw-builder-actions">
+                @if (row.Source == (int)CallProtocolSources.Trigger)
+                {
+                    <span class="label label-primary"><i class="fa fa-bolt" aria-hidden="true"></i> @protocolsLocalizer["SourceTrigger"]</span>
+                }
+                else if (row.Source == (int)CallProtocolSources.Manual)
+                {
+                    <span class="label label-info"><i class="fa fa-hand-pointer-o" aria-hidden="true"></i> @protocolsLocalizer["SourceManual"]</span>
+                }
+                else
+                {
+                    <span class="label"><i class="fa fa-history" aria-hidden="true"></i> @protocolsLocalizer["SourceUnknown"]</span>
+                }
+                @if (row.RemovedOn.HasValue)
+                {
+                    <span class="label label-danger"><i class="fa fa-ban" aria-hidden="true"></i> @protocolsLocalizer["RemovedFromCallLabel"]</span>
+                }
+                @if (protocol.IsDeleted)
+                {
+                    <span class="label label-warning"><i class="fa fa-archive" aria-hidden="true"></i> @protocolsLocalizer["DeletedLabel"]</span>
+                }
+            </span>
+        </div>
+        <div class="panel-body">
+            @if (row.RemovedOn.HasValue)
+            {
+                <p class="text-danger">
+                    <i class="fa fa-ban" aria-hidden="true"></i>
+                    @string.Format(protocolsLocalizer["RemovedByOn"].Value, await UserHelper.GetFullNameForUser(row.RemovedByUserId), row.RemovedOn.Value.TimeConverterToString(Model.Department))
+                    <br /><strong>@protocolsLocalizer["RemovalReasonLabel"]:</strong> @row.RemovedReason
+                </p>
+            }
+
+            @if (answers != null)
+            {
+                <p>
+                    <strong>@protocolsLocalizer["ScoreLabel"]:</strong> @string.Format(protocolsLocalizer["ScoreOfMinimum"].Value, answers.Score, answers.MinimumWeight)
+                    @if (answers.Passed)
+                    {
+                        <span class="label label-primary"><i class="fa fa-check" aria-hidden="true"></i> @protocolsLocalizer["QuestionsPassed"]</span>
+                    }
+                    else if (!answers.Complete)
+                    {
+                        <span class="label label-warning"><i class="fa fa-exclamation" aria-hidden="true"></i> @protocolsLocalizer["QuestionsIncomplete"]</span>
+                    }
+                    else
+                    {
+                        <span class="label label-warning"><i class="fa fa-arrow-down" aria-hidden="true"></i> @protocolsLocalizer["QuestionsBelowMinimum"]</span>
+                    }
+                </p>
+                <dl class="rgw-review">
+                    @foreach (var answer in answers.Answers)
+                    {
+                        <div class="rgw-review-row">
+                            <dt>@answer.Question</dt>
+                            <dd>@(answer.AnswerId.HasValue ? answer.Answer : protocolsLocalizer["NotAnswered"].Value) <span class="text-muted">(@protocolsLocalizer["WeightColumn"]: @answer.Weight)</span></dd>
+                        </div>
+                    }
+                </dl>
+            }
+            else if (protocol.Questions != null && protocol.Questions.Count > 0)
+            {
+                <p class="text-muted">@protocolsLocalizer["NoAnswersRecorded"]</p>
+            }
+
+            @if (row.AttachedOn.HasValue)
+            {
+                <p class="text-muted small">@string.Format(protocolsLocalizer["AttachedByOn"].Value, await UserHelper.GetFullNameForUser(row.AttachedByUserId), row.AttachedOn.Value.TimeConverterToString(Model.Department))</p>
+            }
+
+            @if (snapshot != null)
+            {
+                <details>
+                    <summary>
+                        <i class="fa fa-file-text-o" aria-hidden="true"></i> @protocolsLocalizer["TextAsDispatched"]
+                        @if (changedSince)
+                        {
+                            <span class="label label-warning"><i class="fa fa-pencil" aria-hidden="true"></i> @protocolsLocalizer["ChangedSinceDispatch"]</span>
+                        }
+                    </summary>
+                    <div class="m-t-sm">@Html.SanitizedHtml(snapshot.ProtocolText)</div>
+                </details>
+            }
+            else
+            {
+                <p class="text-muted small">@protocolsLocalizer["NoSnapshotRecorded"]</p>
+            }
+            <p class="m-t-sm">
+                <a href="#" data-toggle="modal" data-target="#protocolTextWindow" data-protocolId="@protocol.DispatchProtocolId"><i class="fa fa-eye" aria-hidden="true"></i> @protocolsLocalizer["CurrentTextLink"]</a>
+            </p>
+
+            @if (protocol.Attachments != null && protocol.Attachments.Any())
+            {
+                <ul class="list-unstyled">
+                    @foreach (var attachment in protocol.Attachments)
+                    {
+                        <li><a asp-controller="Protocols" asp-action="GetProtocolAttachment" asp-route-area="User" asp-route-protocolAttachmentId="@attachment.DispatchProtocolAttachmentId"><i class="fa fa-download" aria-hidden="true"></i> @attachment.FileName</a></li>
+                    }
+                </ul>
+            }
+
+            @if (Model.CanRemoveProtocols && !row.RemovedOn.HasValue)
+            {
+                <details class="m-t-sm">
+                    <summary class="text-danger"><i class="fa fa-ban" aria-hidden="true"></i> @protocolsLocalizer["RemoveFromCallButton"]</summary>
+                    <form method="post" class="form-inline m-t-sm" asp-controller="Dispatch" asp-action="RemoveCallProtocol" asp-route-area="User">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="callId" value="@Model.Call.CallId" />
+                        <input type="hidden" name="callProtocolId" value="@row.CallProtocolId" />
+                        <label class="sr-only" for="removeReason-@row.CallProtocolId">@protocolsLocalizer["RemovalReasonLabel"]</label>
+                        <input class="form-control" id="removeReason-@row.CallProtocolId" name="reason" maxlength="@ProtocolRules.RemovalReasonMaxLength" required placeholder="@protocolsLocalizer["RemovalReasonPlaceholder"]" style="min-width: 260px;" />
+                        <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-ban" aria-hidden="true"></i> @protocolsLocalizer["RemoveFromCallButton"]</button>
+                    </form>
+                </details>
+            }
+        </div>
+    </div>
+}

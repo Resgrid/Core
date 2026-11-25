@@ -1,144 +1,278 @@
-
-@using Resgrid.Model.Helpers
-@model Resgrid.Web.Areas.User.Models.Training.TrainingReportView
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingReportView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    The officer's report (assign-and-report right). Per-assignee state with extension, exemption, removal and reset; the
+    attempt history and open question flags are performance records (R-T12) and show only here.
+*@
 @{
-	ViewBag.Title = "Resgrid | " + localizer["TrainingReportHeader"];
-	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    var training = Model.Report.Training;
+    ViewBag.Title = "Resgrid | " + localizer["TrainingReportHeader"];
+    ViewData["Title"] = localizer["TrainingReportHeader"].Value;
+    ViewData["Subtitle"] = training.Name;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a class="btn btn-default" asp-controller="Trainings" asp-action="View" asp-route-area="User" asp-route-trainingId="@training.TrainingId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["ViewTrainingButton"]</a>
+        <a class="btn btn-info" asp-controller="Trainings" asp-action="Edit" asp-route-area="User" asp-route-trainingId="@training.TrainingId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["EditButton"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
+    var now = DateTime.UtcNow;
 }
-@section Styles
-{
 
-}
+@await Html.PartialAsync("_Shell")
 
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-check-circle" aria-hidden="true"></i> @localizer["KpiCompletion"]</div><div class="rgw-stat-value">@Model.Report.CompletionPercent.ToString("0.#")%</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-users" aria-hidden="true"></i> @localizer["CompleteLabel"]</div><div class="rgw-stat-value">@Model.Report.CompleteCount</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> @localizer["KpiOverdue"]</div><div class="rgw-stat-value">@Model.Report.OverdueCount</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["StateExempt"]</div><div class="rgw-stat-value">@Model.Report.ExemptCount</div></div>
+    </div>
 
-<div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
-		<h2>@localizer["TrainingReportHeader"]</h2>
-		<ol class="breadcrumb">
-			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@localizer["HomeLink"]</a>
-			</li>
-			<li>
-				<a asp-controller="Trainings" asp-action="Index" asp-route-area="User">@localizer["TrainingsLink"]</a>
-			</li>
-			<li class="active">
-				<strong>@localizer["TrainingReportHeader"]</strong>
-			</li>
-		</ol>
-	</div>
+    <div class="rgw-toolbar m-t-sm">
+        @if (Model.ShowFormer)
+        {
+            <a class="btn btn-default btn-sm" asp-controller="Trainings" asp-action="Report" asp-route-area="User" asp-route-trainingId="@training.TrainingId"><i class="fa fa-user-times" aria-hidden="true"></i> @localizer["HideFormerMembersButton"]</a>
+        }
+        else
+        {
+            <a class="btn btn-default btn-sm" asp-controller="Trainings" asp-action="Report" asp-route-area="User" asp-route-trainingId="@training.TrainingId" asp-route-showFormer="true"><i class="fa fa-user-times" aria-hidden="true"></i> @localizer["ShowFormerMembersButton"]</a>
+        }
+    </div>
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-users" aria-hidden="true"></i> @localizer["AssigneesHeader"]</h5></div>
+        <div class="ibox-content">
+            <div class="table-responsive">
+                <table class="table table-striped rgw-table">
+                    <thead>
+                        <tr>
+                            <th>@localizer["NameColumn"]</th>
+                            <th>@localizer["StatusLabel"]</th>
+                            <th>@localizer["DueDateColumn"]</th>
+                            <th>@localizer["ViewedColumn"]</th>
+                            <th>@localizer["CompletedColumn"]</th>
+                            @if (Model.HasQuiz)
+                            {
+                                <th>@localizer["ScoreColumn"]</th>
+                            }
+                            <th class="rgw-row-actions">@localizer["ActionColumn"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in Model.VisibleRows)
+                        {
+                            var a = row.Assignment;
+                            var complete = TrainingStatePresentation.IsComplete(row);
+                            <tr>
+                                <td>
+                                    @row.Name
+                                    <small class="rgw-sub text-muted">
+                                        @if (!string.IsNullOrEmpty(row.GroupName))
+                                        {
+                                            <span><i class="fa fa-sitemap" aria-hidden="true"></i> @row.GroupName</span>
+                                        }
+                                        @if (!row.IsActiveMember)
+                                        {
+                                            <span><i class="fa fa-user-times" aria-hidden="true"></i> @localizer["FormerMemberLabel"]</span>
+                                        }
+                                        @if (a.ExtendedOn.HasValue)
+                                        {
+                                            <span title="@a.ExtensionReason"><i class="fa fa-calendar-plus-o" aria-hidden="true"></i> @localizer["ExtendedLabel"]: @a.ExtensionReason</span>
+                                        }
+                                        @if (a.IsExemptOn(now))
+                                        {
+                                            <span><i class="fa fa-ban" aria-hidden="true"></i> @localizer["StateExempt"]: @a.ExemptReason @(a.ExemptUntil.HasValue ? "(" + TrainingStatePresentation.LocalDate(a.ExemptUntil, Model.Department) + ")" : null)</span>
+                                        }
+                                        @if (a.AssignmentSource == (int)TrainingAssignmentSources.SelfEnrolled)
+                                        {
+                                            <span><i class="fa fa-user-plus" aria-hidden="true"></i> @localizer["SelfEnrolledLabel"]</span>
+                                        }
+                                    </small>
+                                </td>
+                                <td>@await Html.PartialAsync("_StatePill", row.State)</td>
+                                <td>@(TrainingStatePresentation.LocalDate(row.DueUtc, Model.Department) ?? localizer["NoDueDate"].Value)</td>
+                                <td>@(a.Viewed ? TrainingStatePresentation.LocalDate(a.ViewedOn, Model.Department) ?? localizer["ViewedLabel"].Value : localizer["NotViewed"].Value)</td>
+                                <td>
+                                    @* T-D12: Complete only when the member's state is Complete, whatever the quiz. *@
+                                    @if (complete)
+                                    {
+                                        <span><i class="fa fa-check" aria-hidden="true"></i> @(TrainingStatePresentation.LocalDate(a.CompletedOn, Model.Department) ?? localizer["CompleteLabel"].Value)</span>
+                                    }
+                                    else
+                                    {
+                                        @localizer["NotCompleted"]
+                                    }
+                                </td>
+                                @if (Model.HasQuiz)
+                                {
+                                    <td>
+                                        @if (a.Passed.HasValue)
+                                        {
+                                            <span>@a.Score.ToString("0.##")% · @(a.Passed == true ? localizer["PassLabel"] : localizer["FailedLabel"])</span>
+                                        }
+                                        else
+                                        {
+                                            @localizer["NoScore"]
+                                        }
+                                        <small class="rgw-sub text-muted">@string.Format(localizer["AttemptsValue"].Value, row.AttemptCount)</small>
+                                    </td>
+                                }
+                                <td class="rgw-row-actions">
+                                    @if (row.State != TrainingAssignmentStates.Removed)
+                                    {
+                                        if (!a.Complete)
+                                        {
+                                            <details class="training-row-action">
+                                                <summary class="btn btn-xs btn-default"><i class="fa fa-calendar-plus-o" aria-hidden="true"></i> @localizer["ExtendButton"]</summary>
+                                                <form method="post" asp-controller="Trainings" asp-action="Extend" asp-route-area="User" asp-route-trainingId="@training.TrainingId" class="m-t-xs">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="userId" value="@row.UserId" />
+                                                    <label>@localizer["NewDueDateLabel"] <input type="date" name="newDueDate" class="form-control input-sm" required /></label>
+                                                    <label>@localizer["ReasonLabel"] <input type="text" name="reason" class="form-control input-sm" maxlength="500" required /></label>
+                                                    <button type="submit" class="btn btn-xs btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ExtendButton"]</button>
+                                                </form>
+                                            </details>
+                                            if (a.IsExemptOn(now))
+                                            {
+                                                <form method="post" asp-controller="Trainings" asp-action="ClearExemption" asp-route-area="User" asp-route-trainingId="@training.TrainingId">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="userId" value="@row.UserId" />
+                                                    <button type="submit" class="btn btn-xs btn-default"><i class="fa fa-undo" aria-hidden="true"></i> @localizer["ClearExemptionButton"]</button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <details class="training-row-action">
+                                                    <summary class="btn btn-xs btn-default"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["ExemptButton"]</summary>
+                                                    <form method="post" asp-controller="Trainings" asp-action="Exempt" asp-route-area="User" asp-route-trainingId="@training.TrainingId" class="m-t-xs">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="userId" value="@row.UserId" />
+                                                        <label>@localizer["ReasonLabel"] <input type="text" name="reason" class="form-control input-sm" maxlength="500" required /></label>
+                                                        <label>@localizer["ExemptUntilLabel"] <input type="date" name="until" class="form-control input-sm" /></label>
+                                                        <button type="submit" class="btn btn-xs btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ExemptButton"]</button>
+                                                    </form>
+                                                </details>
+                                            }
+                                        }
+                                        <form method="post" asp-controller="Trainings" asp-action="ResetUserTraining" asp-route-area="User" asp-route-trainingId="@training.TrainingId">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="userId" value="@row.UserId" />
+                                            <button type="submit" class="btn btn-xs btn-warning" data-confirm="@localizer["ResetConfirm"]"><i class="fa fa-refresh" aria-hidden="true"></i> @localizer["ResetUserButton"]</button>
+                                        </form>
+                                        <form method="post" asp-controller="Trainings" asp-action="RemoveAssignee" asp-route-area="User" asp-route-trainingId="@training.TrainingId">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="userId" value="@row.UserId" />
+                                            <button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["RemoveAssigneeConfirm"]"><i class="fa fa-user-times" aria-hidden="true"></i> @localizer["RemoveAssigneeButton"]</button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Report.Flags.Count > 0)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-flag" aria-hidden="true"></i> @localizer["OpenFlagsHeader"]</h5></div>
+            <div class="ibox-content">
+                <table class="table table-striped rgw-table">
+                    <thead><tr><th>@localizer["QuestionColumn"]</th><th>@localizer["FlagCommentLabel"]</th><th>@localizer["FlaggedByColumn"]</th><th class="rgw-row-actions">@localizer["ActionColumn"]</th></tr></thead>
+                    <tbody>
+                        @foreach (var flag in Model.Report.Flags)
+                        {
+                            <tr>
+                                <td>@(Model.QuestionTexts.TryGetValue(flag.TrainingQuestionId, out var text) ? text : localizer["RemovedQuestionLabel"].Value)</td>
+                                <td>@flag.Comment</td>
+                                <td>@Model.NameOf(flag.UserId) <small class="rgw-sub text-muted">@TrainingStatePresentation.LocalDate(flag.CreatedOn, Model.Department)</small></td>
+                                <td class="rgw-row-actions">
+                                    <form method="post" asp-controller="Trainings" asp-action="ResolveFlag" asp-route-area="User" asp-route-trainingId="@training.TrainingId" asp-route-trainingQuestionFlagId="@flag.TrainingQuestionFlagId">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-xs btn-default"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ResolveFlagButton"]</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+    @if (Model.HasQuiz)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-history" aria-hidden="true"></i> @localizer["AttemptHistoryHeader"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted">@localizer["AttemptHistoryHelp"]</p>
+                @if (Model.Report.Attempts.Count == 0)
+                {
+                    <p class="text-muted">@localizer["NoAttempts"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead><tr><th>@localizer["NameColumn"]</th><th>@localizer["AttemptColumn"]</th><th>@localizer["SubmittedColumn"]</th><th>@localizer["ScoreColumn"]</th><th>@localizer["ResultColumn"]</th><th>@localizer["QuizRevisionColumn"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var attempt in Model.Report.Attempts)
+                                {
+                                    <tr>
+                                        <td>@Model.NameOf(attempt.UserId)</td>
+                                        <td>@attempt.AttemptNumber</td>
+                                        <td>@TrainingStatePresentation.LocalDateTime(attempt.SubmittedOn, Model.Department)</td>
+                                        <td>@attempt.Score.ToString("0.##")% (@attempt.CorrectCount/@attempt.QuestionCount)</td>
+                                        <td>@(attempt.Passed ? localizer["PassLabel"] : localizer["FailedLabel"])</td>
+                                        <td><span class="rgw-mono">@(attempt.QuizRevisionHash?.Length > 8 ? attempt.QuizRevisionHash.Substring(0, 8) : attempt.QuizRevisionHash)</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    @if (Model.Report.History.Count > 0)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-archive" aria-hidden="true"></i> @localizer["CompletionHistoryHeader"]</h5></div>
+            <div class="ibox-content">
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead><tr><th>@localizer["NameColumn"]</th><th>@localizer["CompletedColumn"]</th><th>@localizer["ScoreColumn"]</th><th>@localizer["HistoryReasonColumn"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var history in Model.Report.History)
+                            {
+                                <tr>
+                                    <td>@Model.NameOf(history.UserId)</td>
+                                    <td>@TrainingStatePresentation.LocalDate(history.CompletedOn, Model.Department)</td>
+                                    <td>@history.Score.ToString("0.##")</td>
+                                    <td>@localizer["HistoryReason" + (TrainingCompletionHistoryReasons)history.Reason]</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
-<div class="row">
-	<div class="col-xs-12">
-		<div class="wrapper wrapper-content">
-			<div class="ibox float-e-margins">
-				<div class="ibox-content">
-					<div class="table-responsive">
-						<table class="table table-striped">
-							<thead>
-								<tr>
-									<th>
-										@localizer["NameColumn"]
-									</th>
-									<th>
-										@localizer["GroupColumn"]
-									</th>
-									<th>
-										@localizer["ViewedColumn"]
-									</th>
-									<th>
-										@localizer["CompletedColumn"]
-									</th>
-									<th>
-										@localizer["ScoreColumn"]
-									</th>
-									<th>
-										@localizer["ResultColumn"]
-									</th>
-									<th>
-
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach (var u in Model.Training.Users)
-								{
-									<tr>
-										<td>@(await UserHelper.GetFullNameForUser(u.UserId))</td>
-										<td>
-											@if (Model.UserGroups.ContainsKey(u.UserId))
-											{
-												<span>@Model.UserGroups[u.UserId]</span>
-											}
-										</td>
-										<td>
-											@if (u.Viewed)
-											{
-												<span>@u.ViewedOn.Value.TimeConverterToString(Model.Department)</span>
-											}
-											else
-											{
-												<span>@localizer["NotViewed"]</span>
-											}
-										</td>
-										<td>
-											@if (u.Complete)
-											{
-												<span>@u.CompletedOn.Value.TimeConverterToString(Model.Department)</span>
-											}
-											else
-											{
-												<span>@localizer["NotCompleted"]</span>
-											}
-										</td>
-										<td>
-											@if (u.Complete && Model.Training.Questions != null && Model.Training.Questions.Count > 0)
-											{
-												<span>@u.Score</span>
-											}
-											else
-											{
-												<span>@localizer["NoScore"]</span>
-											}
-										</td>
-										<td>
-											@if (u.Complete && Model.Training.Questions != null && Model.Training.Questions.Count > 0)
-											{
-												if (@u.Score >= Model.Training.MinimumScore)
-												{
-													<span class='label label-success'>@localizer["PassLabel"]</span>
-												}
-												else
-												{
-													<span class='label label-danger'>@localizer["FailedLabel"]</span>
-												}
-											}
-											else if (u.Viewed && Model.Training.Questions == null || Model.Training.Questions.Count <= 0)
-											{
-												<span>@localizer["CompleteLabel"]</span>
-											}
-											else
-											{
-												<span>@localizer["PendingLabel"]</span>
-											}
-										</td>
-										<td>
-											<form method="post" action="@Url.Action("ResetUserTraining", "Trainings", new {Area ="User", trainingId = Model.Training.TrainingId, userId = u.UserId})" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-primary btn-xs">@localizer["ResetUserButton"]</button></form>
-										</td>
-									</tr>
-								}
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
-
-@section Scripts
-{
-
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <style>
+        .training-row-action { display: inline-block; vertical-align: top; }
+        .training-row-action[open] form { display: block; min-width: 220px; white-space: normal; }
+        .training-row-action summary { list-style: none; }
+    </style>
 }

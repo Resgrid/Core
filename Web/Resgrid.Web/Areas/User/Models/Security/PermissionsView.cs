@@ -15,6 +15,12 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		public int CreateTraining { get; set; }
 		public IEnumerable<SelectListItem> CreateTrainingPermissions { get; set; }
 
+		public int AssignTraining { get; set; }
+		public IEnumerable<SelectListItem> AssignTrainingPermissions { get; set; }
+
+		public int DeleteTraining { get; set; }
+		public IEnumerable<SelectListItem> DeleteTrainingPermissions { get; set; }
+
 		public int CreateDocument { get; set; }
 		public IEnumerable<SelectListItem> CreateDocumentPermissions { get; set; }
 

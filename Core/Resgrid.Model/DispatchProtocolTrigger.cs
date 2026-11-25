@@ -28,8 +28,19 @@ namespace Resgrid.Model
 
 		public int? Priority { get; set; }
 
+		/// <summary>
+		/// The call type's name, kept for display. Matching uses <see cref="CallTypeId"/>; a trigger with neither (null id and
+		/// no name) is the "no type" trigger, which matches a call that has no type.
+		/// </summary>
 		public string CallType { get; set; }
 
+		/// <summary>
+		/// The call type the trigger matches (M0336). Null with a blank <see cref="CallType"/> means "no type"; null with a name
+		/// is a trigger written before M0336 whose type no longer exists, matched by name as before.
+		/// </summary>
+		public int? CallTypeId { get; set; }
+
+		/// <summary>Stored but not evaluated: geofence triggers are planned (P4) as "inside station or group geofence X".</summary>
 		public string Geofence { get; set; }
 
 		[NotMapped]

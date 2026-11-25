@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Invoicing;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Search;
@@ -53,6 +54,7 @@ namespace Resgrid.Services.Search
 		private readonly IPoiTypesRepository _poiTypes;
 		private readonly IRmsOccupanciesRepository _occupancies;
 		private readonly IRmsOccupancyHazardsRepository _occupancyHazards;
+		private readonly IDepartmentsRepository _departmentRows;
 
 		// One scope serves one request or one worker sweep; these keep a department rebuild from re-reading the same group,
 		// category or custom-field definition for every row.
@@ -77,8 +79,9 @@ namespace Resgrid.Services.Search
 			IUdfFieldRepository udfFields = null, IUdfFieldValueRepository udfValues = null, ICallsRepository calls = null,
 			IUnitsRepository units = null, IContactsRepository contacts = null, IUserProfilesRepository profiles = null,
 			IDepartmentMembersRepository members = null, IPoiTypesRepository poiTypes = null,
-			IRmsOccupanciesRepository occupancies = null, IRmsOccupancyHazardsRepository occupancyHazards = null)
+			IRmsOccupanciesRepository occupancies = null, IRmsOccupancyHazardsRepository occupancyHazards = null, IDepartmentsRepository departmentRows = null)
 		{
+			_departmentRows = departmentRows;
 			_occupancies = occupancies;
 			_occupancyHazards = occupancyHazards;
 			_projections = projections ?? throw new ArgumentNullException(nameof(projections));
@@ -769,8 +772,14 @@ namespace Resgrid.Services.Search
 			p.Title = Cap(name, TitleMax);
 			p.Summary = Cap(Strip(Safe(training.Description)), SummaryMax);
 			p.SearchText = Cap(Join(" ", Strip(Safe(training.Description)), Strip(Safe(training.TrainingText))), SearchTextMax);
-			p.Status = training.ToBeCompletedBy.HasValue ? "Due " + training.ToBeCompletedBy.Value.ToString("yyyy-MM-dd") : null;
-			p.IsActive = !training.ToBeCompletedBy.HasValue || training.ToBeCompletedBy.Value >= DateTime.UtcNow.Date;
+			p.Status = training.IsArchived ? "Archived" : training.ToBeCompletedBy.HasValue ? "Due " + training.ToBeCompletedBy.Value.ToString("yyyy-MM-dd") : null;
+			// ToBeCompletedBy is the department-local date the officer picked; it is due at the end of that local day (T-D19).
+			Department department = null;
+			if (training.ToBeCompletedBy.HasValue && _departmentRows != null)
+			{
+				try { department = await _departmentRows.GetByIdAsync(training.DepartmentId); } catch (Exception ex) { Logging.LogException(ex); }
+			}
+			p.IsActive = !training.IsArchived && !TrainingDueDates.IsOverdue(TrainingDueDates.FixedDueUtc(training, department), DateTime.UtcNow);
 			p.OccurredOn = training.CreatedOn == default ? DateTime.UtcNow : training.CreatedOn;
 			p.Url = $"/User/Trainings/View?trainingId={training.TrainingId}";
 			p.MetadataJson = Json(new Dictionary<string, string> { ["ToBeCompletedBy"] = training.ToBeCompletedBy?.ToString("o") });

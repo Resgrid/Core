@@ -415,6 +415,10 @@
   <data name="PermAddCallDataNote" xml:space="preserve"><value>Esta opción determina quién puede agregar datos a las llamadas. Por defecto, todos pueden agregar datos.</value></data>
   <data name="PermCreateTrainingLabel" xml:space="preserve"><value>Quién puede Crear Entrenamientos</value></data>
   <data name="PermCreateTrainingNote" xml:space="preserve"><value>Esta opción determina quién puede crear entrenamientos. Por defecto, solo los administradores del departamento.</value></data>
+  <data name="PermAssignTrainingLabel" xml:space="preserve"><value>Quién puede asignar capacitaciones y ver informes</value></data>
+  <data name="PermAssignTrainingNote" xml:space="preserve"><value>Esta opción determina quién puede asignar capacitaciones a los miembros, fijar fechas de vencimiento, prórrogas y exenciones, y leer el informe de la capacitación y el historial de intentos. Los administradores de grupo solo actúan sobre los miembros de su propio grupo. Hasta que guarde una regla aquí, sigue a Crear capacitaciones.</value></data>
+  <data name="PermDeleteTrainingLabel" xml:space="preserve"><value>Quién puede archivar y eliminar capacitaciones</value></data>
+  <data name="PermDeleteTrainingNote" xml:space="preserve"><value>Esta opción determina quién puede archivar, restaurar y eliminar capacitaciones. Una capacitación que alguien completó se archiva, nunca se elimina. Hasta que guarde una regla aquí, sigue a Crear capacitaciones.</value></data>
   <data name="PermCreateDocumentLabel" xml:space="preserve"><value>Quién puede Agregar Documentos</value></data>
   <data name="PermCreateDocumentNote" xml:space="preserve"><value>Esta opción determina quién puede agregar documentos. Por defecto, todos pueden agregar documentos.</value></data>
   <data name="PermCreateCalendarEntryLabel" xml:space="preserve"><value>Quién puede Crear Entradas de Calendario</value></data>
@@ -1360,6 +1364,20 @@
   <data name="AuditLogTypeRecurringCallOccurrenceCreated" xml:space="preserve"><value>Ocurrencia de llamada recurrente creada</value></data>
   <data name="AuditLogTypeRecurringCallAlertAcknowledged" xml:space="preserve"><value>Aviso de llamada recurrente confirmado</value></data>
   <data name="AuditLogTypeRecurringCallAlertDismissed" xml:space="preserve"><value>Aviso de llamada recurrente descartado</value></data>
+  <data name="AuditLogTypeProtocolCreated" xml:space="preserve"><value>Protocolo creado</value></data>
+  <data name="AuditLogTypeProtocolUpdated" xml:space="preserve"><value>Protocolo actualizado</value></data>
+  <data name="AuditLogTypeProtocolDisabled" xml:space="preserve"><value>Protocolo desactivado</value></data>
+  <data name="AuditLogTypeProtocolEnabled" xml:space="preserve"><value>Protocolo activado</value></data>
+  <data name="AuditLogTypeProtocolDeleted" xml:space="preserve"><value>Protocolo eliminado</value></data>
+  <data name="AuditLogTypeCallProtocolRemoved" xml:space="preserve"><value>Protocolo quitado de la llamada</value></data>
+  <data name="AuditLogTypeTrainingArchived" xml:space="preserve"><value>Capacitación archivada</value></data>
+  <data name="AuditLogTypeTrainingRestored" xml:space="preserve"><value>Capacitación restaurada</value></data>
+  <data name="AuditLogTypeTrainingDeleted" xml:space="preserve"><value>Capacitación eliminada</value></data>
+  <data name="AuditLogTypeTrainingCopied" xml:space="preserve"><value>Capacitación copiada</value></data>
+  <data name="AuditLogTypeTrainingAssigneeRemoved" xml:space="preserve"><value>Asignado de capacitación eliminado</value></data>
+  <data name="AuditLogTypeTrainingAssignmentExtended" xml:space="preserve"><value>Asignación de capacitación prorrogada</value></data>
+  <data name="AuditLogTypeTrainingAssignmentExempted" xml:space="preserve"><value>Exención de asignación de capacitación modificada</value></data>
+  <data name="AuditLogTypeMemberLeavePeriodChanged" xml:space="preserve"><value>Período de licencia del miembro modificado</value></data>
 </root>
 
 

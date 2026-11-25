@@ -250,4 +250,376 @@
   <data name="ProtocolsLabel" xml:space="preserve">
     <value>Protocols</value>
   </data>
+  <data name="LibraryTab" xml:space="preserve">
+    <value>Library</value>
+  </data>
+  <data name="LibraryIntro" xml:space="preserve">
+    <value>Dispatch protocols: the scripted questions and instructions a call's type and priority bring up.</value>
+  </data>
+  <data name="LibraryHeader" xml:space="preserve">
+    <value>Protocol library</value>
+  </data>
+  <data name="KpiTotal" xml:space="preserve">
+    <value>Protocols</value>
+  </data>
+  <data name="KpiDisabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="KpiUsedOnCalls" xml:space="preserve">
+    <value>Used on calls (30 days)</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Search protocols</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Name or code</value>
+  </data>
+  <data name="StatusAll" xml:space="preserve">
+    <value>All statuses</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="ClearFilterButton" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="NoProtocolsYet" xml:space="preserve">
+    <value>No protocols yet.</value>
+  </data>
+  <data name="NoProtocolsMatch" xml:space="preserve">
+    <value>No protocols match the filter.</value>
+  </data>
+  <data name="QuestionsCount" xml:space="preserve">
+    <value>{0} questions</value>
+  </data>
+  <data name="NoTriggers" xml:space="preserve">
+    <value>No triggers (picked by hand only)</value>
+  </data>
+  <data name="MoreTriggers" xml:space="preserve">
+    <value>and {0} more</value>
+  </data>
+  <data name="UsedOnCallsColumn" xml:space="preserve">
+    <value>Calls (30 days)</value>
+  </data>
+  <data name="LastUpdatedColumn" xml:space="preserve">
+    <value>Last updated</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="EnableButton" xml:space="preserve">
+    <value>Enable</value>
+  </data>
+  <data name="DisableButton" xml:space="preserve">
+    <value>Disable</value>
+  </data>
+  <data name="DeleteProtocolConfirm" xml:space="preserve">
+    <value>The protocol leaves the library and new calls; calls that used it keep showing it. Delete the protocol</value>
+  </data>
+  <data name="DeletedLabel" xml:space="preserve">
+    <value>Deleted</value>
+  </data>
+  <data name="DeletedProtocolNotice" xml:space="preserve">
+    <value>This protocol was deleted. It is kept because calls cite it; it is not suggested or attached.</value>
+  </data>
+  <data name="DisabledProtocolNotice" xml:space="preserve">
+    <value>This protocol is disabled: it is not suggested on calls or attached to them. Enable it to use it again.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="TriggerMatchesColumn" xml:space="preserve">
+    <value>Matches</value>
+  </data>
+  <data name="NoTriggersHelp" xml:space="preserve">
+    <value>No triggers: the protocol is never suggested, but it can be added to a call by hand.</value>
+  </data>
+  <data name="NoQuestionsHelp" xml:space="preserve">
+    <value>No questions: when a trigger matches, the protocol applies at once.</value>
+  </data>
+  <data name="MinimumWeightHelp" xml:space="preserve">
+    <value>When a trigger matches, the protocol applies once the answers' weights add up to at least {0}.</value>
+  </data>
+  <data name="DownloadButton" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="NoAttachments" xml:space="preserve">
+    <value>No attachments.</value>
+  </data>
+  <data name="NoProtocolText" xml:space="preserve">
+    <value>No protocol text.</value>
+  </data>
+  <data name="ProtocolSavedMessage" xml:space="preserve">
+    <value>The protocol was saved.</value>
+  </data>
+  <data name="ProtocolDisabledMessage" xml:space="preserve">
+    <value>The protocol was disabled.</value>
+  </data>
+  <data name="ProtocolEnabledMessage" xml:space="preserve">
+    <value>The protocol was enabled.</value>
+  </data>
+  <data name="EditProtocolHeader" xml:space="preserve">
+    <value>Edit Protocol</value>
+  </data>
+  <data name="EditorIntroNew" xml:space="preserve">
+    <value>Name the protocol, write its content, then add the triggers that suggest it and the questions that decide whether it applies.</value>
+  </data>
+  <data name="BasicsHeader" xml:space="preserve">
+    <value>Basics</value>
+  </data>
+  <data name="CodeHelp" xml:space="preserve">
+    <value>Up to {0} letters, digits, spaces and . _ / - (for example 09-E-01 or SOG-204).</value>
+  </data>
+  <data name="MinimumWeightEditorHelp" xml:space="preserve">
+    <value>The total answer weight a suggested protocol needs to apply. 0 applies it whatever the answers.</value>
+  </data>
+  <data name="DisabledCheckbox" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="DisabledCheckboxHelp" xml:space="preserve">
+    <value>A disabled protocol stays in the library but is not suggested on calls or attached to them.</value>
+  </data>
+  <data name="ContentHeader" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="DescriptionHelp" xml:space="preserve">
+    <value>A short summary, up to {0} characters of text.</value>
+  </data>
+  <data name="TriggerTimeZoneHelp" xml:space="preserve">
+    <value>Start and end times are in the department's time zone ({0}).</value>
+  </data>
+  <data name="TriggerLabel" xml:space="preserve">
+    <value>Trigger</value>
+  </data>
+  <data name="RemoveTriggerButton" xml:space="preserve">
+    <value>Remove trigger</value>
+  </data>
+  <data name="NoTypeOption" xml:space="preserve">
+    <value>No type</value>
+  </data>
+  <data name="LegacyTypeHelp" xml:space="preserve">
+    <value>This trigger names the call type "{0}", which no longer exists. Choose a call type to keep it matching.</value>
+  </data>
+  <data name="RemovedNamed" xml:space="preserve">
+    <value>{0} (removed)</value>
+  </data>
+  <data name="RemovedPriority" xml:space="preserve">
+    <value>Removed priority</value>
+  </data>
+  <data name="RemoveQuestionButton" xml:space="preserve">
+    <value>Remove question</value>
+  </data>
+  <data name="AddAnswerButton" xml:space="preserve">
+    <value>Add answer</value>
+  </data>
+  <data name="RemoveAnswerButton" xml:space="preserve">
+    <value>Remove answer</value>
+  </data>
+  <data name="RemoveOnSaveColumn" xml:space="preserve">
+    <value>Remove on save</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="AddFilesLabel" xml:space="preserve">
+    <value>Add files</value>
+  </data>
+  <data name="AttachmentsLimitsHelp" xml:space="preserve">
+    <value>Up to {0} files per save, {1} MB each and {2} MB together: images, PDF, Office documents, text and video.</value>
+  </data>
+  <data name="AttachmentsReselectHelp" xml:space="preserve">
+    <value>If the save fails, choose the files again: a browser never keeps them.</value>
+  </data>
+  <data name="SaveProtocolButton" xml:space="preserve">
+    <value>Save Protocol</value>
+  </data>
+  <data name="TriggerSummaryPriority" xml:space="preserve">
+    <value>Priority: {0}</value>
+  </data>
+  <data name="TriggerSummaryType" xml:space="preserve">
+    <value>Type: {0}</value>
+  </data>
+  <data name="TriggerSummaryPriorityAndType" xml:space="preserve">
+    <value>{0} · priority {1}</value>
+  </data>
+  <data name="ReasonMatched" xml:space="preserve">
+    <value>Matched: {0}</value>
+  </data>
+  <data name="ErrorProtocolMissing" xml:space="preserve">
+    <value>The protocol could not be read.</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>A protocol name is required.</value>
+  </data>
+  <data name="ErrorNameTooLong" xml:space="preserve">
+    <value>The name can be at most 100 characters.</value>
+  </data>
+  <data name="ErrorCodeRequired" xml:space="preserve">
+    <value>A protocol code is required.</value>
+  </data>
+  <data name="ErrorCodeInvalid" xml:space="preserve">
+    <value>The code can be up to 16 letters, digits, spaces and . _ / - characters.</value>
+  </data>
+  <data name="ErrorDescriptionTooLong" xml:space="preserve">
+    <value>The description can be at most 500 characters of text.</value>
+  </data>
+  <data name="ErrorMinimumWeightRange" xml:space="preserve">
+    <value>The minimum weight must be between 0 and 1000.</value>
+  </data>
+  <data name="ErrorTriggerType" xml:space="preserve">
+    <value>A trigger has an unknown type.</value>
+  </data>
+  <data name="ErrorTriggerWindow" xml:space="preserve">
+    <value>A trigger ends before it starts.</value>
+  </data>
+  <data name="ErrorTriggerPriority" xml:space="preserve">
+    <value>A priority trigger needs one of the department's call priorities.</value>
+  </data>
+  <data name="ErrorTriggerCallType" xml:space="preserve">
+    <value>A type trigger names a call type that is not the department's.</value>
+  </data>
+  <data name="ErrorTriggerDate" xml:space="preserve">
+    <value>A trigger's start or end time could not be read.</value>
+  </data>
+  <data name="ErrorQuestionText" xml:space="preserve">
+    <value>Every question needs its text.</value>
+  </data>
+  <data name="ErrorQuestionAnswers" xml:space="preserve">
+    <value>Every question needs at least one answer.</value>
+  </data>
+  <data name="ErrorAnswerText" xml:space="preserve">
+    <value>Every answer needs its text.</value>
+  </data>
+  <data name="ErrorTooManyFiles" xml:space="preserve">
+    <value>Add at most {0} files at a time.</value>
+  </data>
+  <data name="ErrorTooManyAttachments" xml:space="preserve">
+    <value>A protocol can have at most {0} attachments.</value>
+  </data>
+  <data name="ErrorUploadTooLarge" xml:space="preserve">
+    <value>The files together must be smaller than {0} MB.</value>
+  </data>
+  <data name="ErrorFileType" xml:space="preserve">
+    <value>Files of type ({0}) cannot be attached.</value>
+  </data>
+  <data name="ErrorFileTooLarge" xml:space="preserve">
+    <value>{0} is too large: each file must be smaller than {1} MB.</value>
+  </data>
+  <data name="ErrorForeignRows" xml:space="preserve">
+    <value>The edit names triggers, questions or answers that are not this protocol's.</value>
+  </data>
+  <data name="TriggersRenamedType" xml:space="preserve">
+    <value>{0} protocol triggers use this call type; they keep matching and show the new name: {1}.</value>
+  </data>
+  <data name="TriggersDeletedType" xml:space="preserve">
+    <value>{0} protocol triggers used the deleted call type and no longer match until they are changed: {1}.</value>
+  </data>
+  <data name="TriggersRemovedPriority" xml:space="preserve">
+    <value>{0} protocol triggers used the removed priority and no longer match until they are changed: {1}.</value>
+  </data>
+  <data name="NoProtocolsOnCall" xml:space="preserve">
+    <value>No protocols are on this call.</value>
+  </data>
+  <data name="SourceTrigger" xml:space="preserve">
+    <value>Suggested by a trigger</value>
+  </data>
+  <data name="SourceManual" xml:space="preserve">
+    <value>Added by hand</value>
+  </data>
+  <data name="SourceUnknown" xml:space="preserve">
+    <value>Attached before answers were kept</value>
+  </data>
+  <data name="RemovedFromCallLabel" xml:space="preserve">
+    <value>Removed</value>
+  </data>
+  <data name="RemovedByOn" xml:space="preserve">
+    <value>Removed by {0} on {1}.</value>
+  </data>
+  <data name="RemovalReasonLabel" xml:space="preserve">
+    <value>Reason</value>
+  </data>
+  <data name="ScoreLabel" xml:space="preserve">
+    <value>Score</value>
+  </data>
+  <data name="ScoreOfMinimum" xml:space="preserve">
+    <value>{0} of minimum {1}</value>
+  </data>
+  <data name="PanelScore" xml:space="preserve">
+    <value>Score {0} of minimum {1}</value>
+  </data>
+  <data name="QuestionsPassed" xml:space="preserve">
+    <value>Applies</value>
+  </data>
+  <data name="QuestionsIncomplete" xml:space="preserve">
+    <value>Not every question answered</value>
+  </data>
+  <data name="QuestionsBelowMinimum" xml:space="preserve">
+    <value>Below the minimum</value>
+  </data>
+  <data name="NotAnswered" xml:space="preserve">
+    <value>Not answered</value>
+  </data>
+  <data name="NoAnswersRecorded" xml:space="preserve">
+    <value>No answers were recorded for this protocol.</value>
+  </data>
+  <data name="AttachedByOn" xml:space="preserve">
+    <value>Attached by {0} on {1}.</value>
+  </data>
+  <data name="TextAsDispatched" xml:space="preserve">
+    <value>Text as dispatched</value>
+  </data>
+  <data name="ChangedSinceDispatch" xml:space="preserve">
+    <value>Changed since dispatch</value>
+  </data>
+  <data name="NoSnapshotRecorded" xml:space="preserve">
+    <value>Attached before the text as dispatched was kept.</value>
+  </data>
+  <data name="CurrentTextLink" xml:space="preserve">
+    <value>Current text</value>
+  </data>
+  <data name="RemoveFromCallButton" xml:space="preserve">
+    <value>Remove from call</value>
+  </data>
+  <data name="RemovalReasonPlaceholder" xml:space="preserve">
+    <value>Why it does not apply</value>
+  </data>
+  <data name="CallProtocolRemovedMessage" xml:space="preserve">
+    <value>The protocol was removed from the call. It stays on the record with the reason.</value>
+  </data>
+  <data name="RemovalReasonRequired" xml:space="preserve">
+    <value>Give a reason to remove a protocol from the call.</value>
+  </data>
+  <data name="PanelIntro" xml:space="preserve">
+    <value>Protocols the call's type and priority suggest, with the trigger that matched. Answer each protocol's questions; you can also add one by hand.</value>
+  </data>
+  <data name="PanelNoSuggestions" xml:space="preserve">
+    <value>No protocol matches this call's type and priority.</value>
+  </data>
+  <data name="PanelAddByHand" xml:space="preserve">
+    <value>Add a protocol by hand</value>
+  </data>
+  <data name="PanelAddButton" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="PanelAnswerToContinue" xml:space="preserve">
+    <value>Answer every question to see whether this protocol applies.</value>
+  </data>
+  <data name="PanelApplies" xml:space="preserve">
+    <value>Applies</value>
+  </data>
+  <data name="PanelDoesNotApply" xml:space="preserve">
+    <value>Does not apply</value>
+  </data>
+  <data name="PanelQuestionOf" xml:space="preserve">
+    <value>Question {0} of {1}</value>
+  </data>
+  <data name="PanelBack" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="PanelNext" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="PanelChoose" xml:space="preserve">
+    <value>Choose a protocol…</value>
+  </data>
 </root>

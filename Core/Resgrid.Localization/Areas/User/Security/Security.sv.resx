@@ -1286,6 +1286,18 @@
   <data name="PermCreateTrainingNote" xml:space="preserve">
     <value>Det här alternativet avgör vem som får skapa utbildningar. Som standard kan bara avdelningsadministratörer skapa utbildningar.</value>
   </data>
+  <data name="PermAssignTrainingLabel" xml:space="preserve">
+    <value>Vem kan tilldela utbildningar och se rapporter</value>
+  </data>
+  <data name="PermAssignTrainingNote" xml:space="preserve">
+    <value>Det här alternativet avgör vem som kan tilldela medlemmar utbildningar, ange förfallodatum, förlängningar och undantag samt läsa utbildningsrapporten och försökshistoriken. Gruppadministratörer agerar bara för medlemmar i sin egen grupp. Tills du sparar en regel här följer den Skapa utbildningar.</value>
+  </data>
+  <data name="PermDeleteTrainingLabel" xml:space="preserve">
+    <value>Vem kan arkivera och ta bort utbildningar</value>
+  </data>
+  <data name="PermDeleteTrainingNote" xml:space="preserve">
+    <value>Det här alternativet avgör vem som kan arkivera, återställa och ta bort utbildningar. En utbildning som någon har slutfört arkiveras, tas aldrig bort. Tills du sparar en regel här följer den Skapa utbildningar.</value>
+  </data>
   <data name="PermCreateDocumentLabel" xml:space="preserve">
     <value>Vem kan lägga till dokument</value>
   </data>
@@ -2742,4 +2754,18 @@
   <data name="AuditLogTypeRecurringCallOccurrenceCreated" xml:space="preserve"><value>Tillfälle för återkommande larm skapat</value></data>
   <data name="AuditLogTypeRecurringCallAlertAcknowledged" xml:space="preserve"><value>Varning för återkommande larm kvitterad</value></data>
   <data name="AuditLogTypeRecurringCallAlertDismissed" xml:space="preserve"><value>Varning för återkommande larm avfärdad</value></data>
+  <data name="AuditLogTypeProtocolCreated" xml:space="preserve"><value>Protokoll skapat</value></data>
+  <data name="AuditLogTypeProtocolUpdated" xml:space="preserve"><value>Protokoll uppdaterat</value></data>
+  <data name="AuditLogTypeProtocolDisabled" xml:space="preserve"><value>Protokoll inaktiverat</value></data>
+  <data name="AuditLogTypeProtocolEnabled" xml:space="preserve"><value>Protokoll aktiverat</value></data>
+  <data name="AuditLogTypeProtocolDeleted" xml:space="preserve"><value>Protokoll borttaget</value></data>
+  <data name="AuditLogTypeCallProtocolRemoved" xml:space="preserve"><value>Protokoll borttaget från larm</value></data>
+  <data name="AuditLogTypeTrainingArchived" xml:space="preserve"><value>Utbildning arkiverad</value></data>
+  <data name="AuditLogTypeTrainingRestored" xml:space="preserve"><value>Utbildning återställd</value></data>
+  <data name="AuditLogTypeTrainingDeleted" xml:space="preserve"><value>Utbildning borttagen</value></data>
+  <data name="AuditLogTypeTrainingCopied" xml:space="preserve"><value>Utbildning kopierad</value></data>
+  <data name="AuditLogTypeTrainingAssigneeRemoved" xml:space="preserve"><value>Utbildningsdeltagare borttagen</value></data>
+  <data name="AuditLogTypeTrainingAssignmentExtended" xml:space="preserve"><value>Utbildningstilldelning förlängd</value></data>
+  <data name="AuditLogTypeTrainingAssignmentExempted" xml:space="preserve"><value>Undantag från utbildningstilldelning ändrat</value></data>
+  <data name="AuditLogTypeMemberLeavePeriodChanged" xml:space="preserve"><value>Medlems ledighetsperiod ändrad</value></data>
 </root>

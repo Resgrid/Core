@@ -1,169 +1,79 @@
-
 @using Resgrid.Model
-@model Resgrid.Web.Areas.User.Models.Training.ViewTrainingModel
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingQuizView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    The quiz player: questions and options only (R-T11). The answer key never reaches the page; the server scores.
+    With OneQuestionPerPage the script shows one question at a time; without script every question shows.
+*@
 @{
-	ViewBag.Title = "Resgrid | " + localizer["QuizPageHeader"];
+    ViewBag.Title = "Resgrid | " + localizer["QuizPageHeader"];
+    ViewData["Title"] = localizer["QuizPageHeader"].Value;
+    ViewData["Subtitle"] = Model.Name;
+    var number = 0;
 }
 
-<link rel="stylesheet" href="~/lib/bootstrapvalidator/dist/css/bootstrapValidator.css" />
+@await Html.PartialAsync("_Shell")
 
-<div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
-		<h2>@localizer["QuizPageHeader"]</h2>
-		<ol class="breadcrumb">
-			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@localizer["HomeLink"]</a>
-			</li>
-			<li>
-				<a asp-controller="Trainings" asp-action="Index" asp-route-area="User">@localizer["TrainingsLink"]</a>
-			</li>
-			<li>
-				<a asp-controller="Trainings" asp-action="View" asp-route-area="User" asp-route-trainingId="@Model.Training.TrainingId">@localizer["TrainingBreadcrumb"]</a>
-			</li>
-			<li class="active">
-				<strong>@localizer["QuizPageHeader"]</strong>
-			</li>
-		</ol>
-	</div>
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox">
+        <div class="ibox-content">
+            <p>@string.Format(localizer["QuizIntro"].Value, Model.Questions.Count, Model.MinimumScore.ToString("0.##"))</p>
+            @if (Model.AttemptsLeft.HasValue)
+            {
+                <p class="rgw-progress-honest"><i class="fa fa-repeat" aria-hidden="true"></i> @string.Format(localizer["AttemptsLeftValue"].Value, Model.AttemptsLeft.Value)</p>
+            }
+            @if (Model.IsPreview)
+            {
+                <div class="alert alert-info"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["QuizPreviewNotice"]</div>
+            }
+
+            <form id="quizForm" method="post" asp-controller="Trainings" asp-action="SubmitQuiz" asp-route-area="User" asp-route-trainingId="@Model.TrainingId" data-one-per-page="@(Model.OneQuestionPerPage ? "true" : "false")">
+                @Html.AntiForgeryToken()
+                @foreach (var question in Model.Questions)
+                {
+                    number++;
+                    var name = "question_" + question.QuestionId;
+                    var inputType = question.Type == (int)TrainingQuestionTypes.MultiChoice ? "checkbox" : "radio";
+                    <fieldset class="rgw-builder-section quiz-question" data-index="@number">
+                        <legend class="rgw-builder-heading">@string.Format(localizer["QuestionOfValue"].Value, number, Model.Questions.Count)</legend>
+                        <p><strong>@question.Text</strong></p>
+                        @if (question.Type == (int)TrainingQuestionTypes.MultiChoice)
+                        {
+                            <p class="text-muted"><i class="fa fa-check-square-o" aria-hidden="true"></i> @localizer["SelectAllThatApply"]</p>
+                        }
+                        @foreach (var option in question.Options)
+                        {
+                            var id = name + "_" + option.OptionId;
+                            <div class="@inputType">
+                                <label for="@id"><input type="@inputType" id="@id" name="@name" value="@option.OptionId" /> @option.Text</label>
+                            </div>
+                        }
+                    </fieldset>
+                }
+
+                <div class="rgw-wizard-actions">
+                    <button type="button" class="btn btn-default quiz-previous" style="display:none"><i class="fa fa-chevron-left" aria-hidden="true"></i> @localizer["PreviousButton"]</button>
+                    <span class="rgw-progress-honest quiz-position" aria-live="polite"></span>
+                    <button type="button" class="btn btn-default quiz-next" style="display:none">@localizer["NextButton"] <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+                    @if (!Model.IsPreview)
+                    {
+                        <button type="submit" class="btn btn-primary quiz-submit" data-confirm="@localizer["SubmitQuizConfirm"]"><i class="fa fa-check" aria-hidden="true"></i> @localizer["FinishButton"]</button>
+                    }
+                    <a class="btn btn-white" asp-controller="Trainings" asp-action="View" asp-route-area="User" asp-route-trainingId="@Model.TrainingId">@localizer["CancelButton"]</a>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
-@{
-	var questionCount = 0;
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }
-
-<form class="form-horizontal" role="form" asp-controller="Trainings" asp-action="Quiz" asp-route-area="User" method="post" id="quiz_form" name="quiz_form">
-	@Html.HiddenFor(m => m.Training.TrainingId)
-	<div class="row">
-		<div class="col-xs-12">
-			<div class="wrapper wrapper-content">
-				<div class="ibox float-e-margins">
-					<div class="ibox-content">
-						<div id="rootwizard">
-							<div class="navbar">
-								<div class="navbar-inner">
-									<div class="container">
-										<ul>
-											<li><a href="#start" data-toggle="tab">@localizer["StartTab"]</a></li>
-
-											@foreach (var question in Model.Training.Questions)
-											{
-												questionCount++;
-												var questionId = "#question" + question.TrainingQuestionId;
-
-												<li><a href="@questionId" data-toggle="tab">@localizer["QuestionTab"] @questionCount ></a></li>
-											}
-											<li><a href="#finish" data-toggle="tab">@localizer["FinishTab"]</a></li>
-										</ul>
-									</div>
-								</div>
-							</div>
-							<div class="tab-content">
-								<div class="tab-pane" id="start">
-									<div class="row">
-										<div class="col-xs-12">
-											<p>@string.Format(localizer["QuizWelcomeText"].Value, Model.Training.Name)</p>
-										</div>
-									</div>
-								</div>
-
-								@foreach (var question in Model.Training.Questions)
-								{
-									var questionId2 = "question" + question.TrainingQuestionId;
-
-									<div class="tab-pane" id="@questionId2">
-										<div class="row">
-											<div class="col-xs-12">
-												<p>@question.Question</p>
-												<table>
-													@foreach (var answer in question.Answers)
-													{
-														<tr>
-															<td style="padding: 5px;"><input type='radio' name='question_@question.TrainingQuestionId' value='@answer.TrainingQuestionAnswerId'></td>
-															<td style="padding: 5px;">@answer.Answer</td>
-														</tr>
-													}
-												</table>
-											</div>
-										</div>
-									</div>
-								}
-
-								<div class="tab-pane" id="finish">
-									<div class="row">
-										<div class="col-xs-12">
-											<p>@localizer["QuizFinishText"]</p>
-										</div>
-									</div>
-									<span class="alert alert-error">
-										@Html.ValidationSummary(false)
-										@Html.AntiForgeryToken()
-									</span>
-								</div>
-								<ul class="pager wizard" style="display:block;">
-									<li class="previous first" style="display:none;"><a href="#">@localizer["FirstButton"]</a></li>
-									<li class="previous"><a href="#">@localizer["PreviousButton"]</a></li>
-									<li class="next"><a href="#">@localizer["NextButton"]</a></li>
-									<li class="next finish" style="display:none;"><a href="javascript:;">@localizer["FinishButton"]</a></li>
-								</ul>
-							</div>
-						</div>
-
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</form>
-
-@section Scripts
-{
-	<script src="~/lib/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
-	<script src="~/lib/bootstrapvalidator/dist/js/bootstrapValidator.min.js"></script>
-
-	<script>
-		$(document).ready(function () {
-			$('.sl2').select2();
-
-			$("#colorPicker").minicolors({
-				animationSpeed: 50,
-				animationEasing: 'swing',
-				changeDelay: 0,
-				control: 'hue',
-				defaultValue: '#0080ff',
-				format: 'hex',
-				showSpeed: 100,
-				hideSpeed: 100,
-				inline: false,
-				theme: 'bootstrap'
-			});
-
-			$('#rootwizard').bootstrapWizard({
-				onTabShow: function (tab, navigation, index) {
-					var $total = navigation.find('li').length;
-					var $current = index + 1;
-
-					// If it's the last tab then hide the last button and show the finish instead
-					if ($current >= $total) {
-						$('#rootwizard').find('.pager .next').hide();
-						$('#rootwizard').find('.pager .finish').show();
-						$('#rootwizard').find('.pager .finish').removeClass('disabled');
-					} else {
-						$('#rootwizard').find('.pager .next').show();
-						$('#rootwizard').find('.pager .finish').hide();
-					}
-				},
-				onTabClick: function (tab, navigation, index) {
-					return false;
-				},
-				onNext: function (tab, navigation, index) {
-				}
-			});
-
-			$('#rootwizard .finish').click(function () {
-				$("form#quiz_form")[0].submit();
-			});
-		});
-	</script>
-	<script src="~/js/app/internal/training/resgrid.training.quiz.js"></script>
+@section Scripts {
+    <script>
+        var resgridQuizI18n = @Html.ScriptJson(new { position = localizer["QuestionOfValue"].Value });
+    </script>
+    <script src="~/js/app/internal/training/resgrid.training.quiz.js" asp-append-version="true"></script>
 }

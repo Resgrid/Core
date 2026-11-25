@@ -25,12 +25,14 @@ namespace Resgrid.Services
 		private readonly Lazy<ICertificationService> _certifications;
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
 		private readonly ITypeIconsRepository _typeIconsRepository;
+		private readonly IContentAudienceChangeQueue _audienceChanges;
 
 		public PersonnelRolesService(IPersonnelRolesRepository personnelRolesRepository, IPersonnelRoleUsersRepository personnelRoleUsersRepository,
 			ISubscriptionsService subscriptionsService, IDepartmentMembersRepository departmentMemberRepository,
 			IEventAggregator eventAggregator, IUnitOfWork unitOfWork, Lazy<ICertificationService> certifications = null,
-			Lazy<ISearchProjectionService> searchProjections = null, ITypeIconsRepository typeIconsRepository = null)
+			Lazy<ISearchProjectionService> searchProjections = null, ITypeIconsRepository typeIconsRepository = null, IContentAudienceChangeQueue audienceChanges = null)
 		{
+			_audienceChanges = audienceChanges;
 			_typeIconsRepository = typeIconsRepository;
 			_searchProjections = searchProjections;
 			_personnelRolesRepository = personnelRolesRepository;
@@ -166,6 +168,11 @@ namespace Resgrid.Services
 
 		private async Task RefreshPersonnelProjectionsAsync(int departmentId, IEnumerable<string> userIds, CancellationToken cancellationToken)
 		{
+			// Every role membership change passes here with the members it moved: worker 83 re-evaluates their dynamic
+			// training (and protocol) audiences.
+			if (_audienceChanges != null && userIds != null)
+				await _audienceChanges.EnqueueManyAsync(departmentId, userIds.ToList(), ContentAudienceChangeSources.Role, cancellationToken);
+
 			if (_searchProjections == null || userIds == null)
 				return;
 			foreach (var userId in userIds.Where(u => !string.IsNullOrWhiteSpace(u)).Distinct(StringComparer.OrdinalIgnoreCase))
@@ -256,7 +263,7 @@ namespace Resgrid.Services
 			if (role == null)
 				return false;
 
-			var formerMembers = _searchProjections != null
+			var formerMembers = _searchProjections != null || _audienceChanges != null
 				? (await _personnelRoleUsersRepository.GetAllMembersOfRoleAsync(roleId) ?? Enumerable.Empty<PersonnelRoleUser>()).Select(m => m.UserId).ToList()
 				: null;
 

@@ -30,6 +30,29 @@ namespace Resgrid.Repositories.DataRepository
 			_unitOfWork = unitOfWork;
 		}
 
+		public async Task<IEnumerable<DispatchProtocolQuestion>> GetQuestionsWithAnswersByDepartmentIdAsync(int departmentId)
+		{
+			var parameters = new { DepartmentId = departmentId };
+			var protocolsOfDepartment = $"SELECT p.{Col("DispatchProtocolId")} FROM {Tbl("DispatchProtocols")} p WHERE p.{Col("DepartmentId")} = {P}DepartmentId";
+
+			var questions = (await QueryAsync<DispatchProtocolQuestion>(
+				$"SELECT q.* FROM {Tbl("DispatchProtocolQuestions")} q WHERE q.{Col("DispatchProtocolId")} IN ({protocolsOfDepartment}) ORDER BY q.{Col("DispatchProtocolQuestionId")}",
+				parameters)).ToList();
+
+			if (questions.Count == 0)
+				return questions;
+
+			var answers = (await QueryAsync<DispatchProtocolQuestionAnswer>(
+				$"SELECT a.* FROM {Tbl("DispatchProtocolQuestionAnswers")} a INNER JOIN {Tbl("DispatchProtocolQuestions")} q ON q.{Col("DispatchProtocolQuestionId")} = a.{Col("DispatchProtocolQuestionId")} " +
+				$"WHERE q.{Col("DispatchProtocolId")} IN ({protocolsOfDepartment}) ORDER BY a.{Col("DispatchProtocolQuestionAnswerId")}",
+				parameters)).ToLookup(x => x.DispatchProtocolQuestionId);
+
+			foreach (var question in questions)
+				question.Answers = answers[question.DispatchProtocolQuestionId].ToList();
+
+			return questions;
+		}
+
 		public async Task<IEnumerable<DispatchProtocolQuestion>> GetDispatchProtocolQuestionsByProtocolIdAsync(int protocolId)
 		{
 			try

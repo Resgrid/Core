@@ -28,6 +28,15 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public List<UnitType> UnitTypes { get; set; } = new List<UnitType>();
 		public List<DepartmentGroup> Stations { get; set; }
 		public List<DispatchProtocol> Protocols { get; set; }
+
+		/// <summary>"Text as dispatched" for the call's protocols, keyed "{DispatchProtocolId}:{ContentHash}".</summary>
+		public Dictionary<string, DispatchProtocolSnapshot> ProtocolSnapshots { get; set; } = new Dictionary<string, DispatchProtocolSnapshot>();
+
+		/// <summary>The member may edit the call: protocols get a Remove (with a reason) action.</summary>
+		public bool CanRemoveProtocols { get; set; }
+
+		/// <summary>The outcome of the last protocol removal ("Removed", "ReasonRequired"), shown once.</summary>
+		public string CallProtocolMessage { get; set; }
 		public List<CallReference> ChildCalls { get; set; }
 		public List<Contact> Contacts { get; set; }
 

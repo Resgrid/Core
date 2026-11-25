@@ -1,0 +1,52 @@
+@using Resgrid.Web.Areas.User.Models
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    Page heading shared by the protocol screens (module-workspace.css): title, breadcrumb and an optional line under it,
+    the page's actions (ViewData["HeaderActions"]), and the module's sections in a strip underneath.
+    ViewData["Title"] heading + last crumb; ViewData["Subtitle"] optional; ViewData["Section"] "Library" or "Editor";
+    ViewData["CanCreate"] shows the New Protocol section.
+*@
+@{
+    var moduleName = localizer["ProtocolsHeader"].Value;
+    var title = (string)ViewData["Title"] ?? moduleName;
+    var subtitle = (string)ViewData["Subtitle"];
+    var section = (string)ViewData["Section"] ?? "Library";
+    var canCreate = ViewData["CanCreate"] as bool? ?? false;
+    var isRoot = string.Equals(title, moduleName, StringComparison.Ordinal);
+    // Optional status pill beside the title (the detail page): text, label class and icon.
+    var status = ViewData["TitleStatus"] as string;
+    var statusCss = ViewData["TitleStatusCss"] as string ?? "label-default";
+    var statusIcon = ViewData["TitleStatusIcon"] as string ?? "fa-circle";
+
+    var sections = new ModuleTabsView { Label = moduleName };
+    sections.Tabs.Add(new ModuleTab(localizer["LibraryTab"].Value, "fa-book", "Protocols", "Index", section == "Library"));
+    if (canCreate || section == "Editor")
+    {
+        sections.Tabs.Add(new ModuleTab(localizer["NewProtocolButton"].Value, "fa-plus", "Protocols", "New", section == "Editor"));
+    }
+}
+<div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">
+    <div class="col-sm-12">
+        <h2>@title @if (!string.IsNullOrEmpty(status)) { <span class="label @statusCss" style="vertical-align: middle; font-size: 12px;"><i class="fa @statusIcon" aria-hidden="true"></i> @status</span> }</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            @if (isRoot)
+            {
+                <li class="active"><strong>@moduleName</strong></li>
+            }
+            else
+            {
+                <li><a asp-controller="Protocols" asp-action="Index" asp-route-area="User">@moduleName</a></li>
+                <li class="active"><strong>@title</strong></li>
+            }
+        </ol>
+        @if (!string.IsNullOrEmpty(subtitle))
+        {
+            <small class="text-muted">@subtitle</small>
+        }
+    </div>
+    @await Html.PartialAsync("_WorkspaceHeaderActions")
+    <div class="col-sm-12 rgw-module-navigation">
+        @await Html.PartialAsync("_ModuleTabs", sections)
+    </div>
+</div>

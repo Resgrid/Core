@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Resgrid.Framework;
@@ -13,7 +14,7 @@ using Resgrid.Repositories.DataRepository.Queries.Calls;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class CallProtocolsRepository : RepositoryBase<CallProtocol>, ICallProtocolsRepository
+	public class CallProtocolsRepository : RmsRepositoryBase<CallProtocol>, ICallProtocolsRepository
 	{
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;
@@ -28,6 +29,16 @@ namespace Resgrid.Repositories.DataRepository
 			_queryFactory = queryFactory;
 			_unitOfWork = unitOfWork;
 		}
+		public Task<IEnumerable<ProtocolUsageCount>> GetUsageCountsAsync(int departmentId, DateTime sinceUtc)
+		{
+			return QueryAsync<ProtocolUsageCount>(
+				$"SELECT cp.{Col("DispatchProtocolId")} AS {Col("DispatchProtocolId")}, COUNT(DISTINCT cp.{Col("CallId")}) AS {Col("Calls")} " +
+				$"FROM {Tbl("CallProtocols")} cp INNER JOIN {Tbl("Calls")} c ON c.{Col("CallId")} = cp.{Col("CallId")} " +
+				$"WHERE c.{Col("DepartmentId")} = {P}DepartmentId AND c.{Col("LoggedOn")} >= {P}Since AND cp.{Col("RemovedOn")} IS NULL " +
+				$"GROUP BY cp.{Col("DispatchProtocolId")}",
+				new { DepartmentId = departmentId, Since = DatabaseTimestamp(sinceUtc) });
+		}
+
 		public async Task<IEnumerable<CallProtocol>> GetCallProtocolsByCallIdAsync(int callId)
 		{
 			try

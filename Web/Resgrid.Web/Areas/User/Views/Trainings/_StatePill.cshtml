@@ -1,0 +1,5 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingAssignmentStates
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+<span class="label @TrainingStatePresentation.LabelClass(Model)"><i class="fa @TrainingStatePresentation.Icon(Model)" aria-hidden="true"></i> @localizer[TrainingStatePresentation.Key(Model)]</span>

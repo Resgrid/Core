@@ -1286,6 +1286,18 @@
   <data name="PermCreateTrainingNote" xml:space="preserve">
     <value>Diese Option legt fest, wer Schulungen erstellen kann. Standardmäßig können nur Abteilungsadministratoren Schulungen erstellen.</value>
   </data>
+  <data name="PermAssignTrainingLabel" xml:space="preserve">
+    <value>Wer Schulungen zuweisen und Berichte sehen darf</value>
+  </data>
+  <data name="PermAssignTrainingNote" xml:space="preserve">
+    <value>Diese Option legt fest, wer Schulungen an Mitglieder zuweisen, Fälligkeiten, Verlängerungen und Befreiungen festlegen sowie den Schulungsbericht und den Versuchsverlauf lesen darf. Gruppenadministratoren handeln nur für Mitglieder ihrer eigenen Gruppe. Solange Sie hier keine Regel speichern, gilt die Einstellung für das Erstellen von Schulungen.</value>
+  </data>
+  <data name="PermDeleteTrainingLabel" xml:space="preserve">
+    <value>Wer Schulungen archivieren und löschen darf</value>
+  </data>
+  <data name="PermDeleteTrainingNote" xml:space="preserve">
+    <value>Diese Option legt fest, wer Schulungen archivieren, wiederherstellen und löschen darf. Eine Schulung, die jemand abgeschlossen hat, wird archiviert, nie gelöscht. Solange Sie hier keine Regel speichern, gilt die Einstellung für das Erstellen von Schulungen.</value>
+  </data>
   <data name="PermCreateDocumentLabel" xml:space="preserve">
     <value>Wer kann Dokumente hinzufügen</value>
   </data>
@@ -2742,4 +2754,18 @@
   <data name="AuditLogTypeRecurringCallOccurrenceCreated" xml:space="preserve"><value>Termin eines wiederkehrenden Einsatzes angelegt</value></data>
   <data name="AuditLogTypeRecurringCallAlertAcknowledged" xml:space="preserve"><value>Benachrichtigung zu wiederkehrendem Einsatz bestätigt</value></data>
   <data name="AuditLogTypeRecurringCallAlertDismissed" xml:space="preserve"><value>Benachrichtigung zu wiederkehrendem Einsatz verworfen</value></data>
+  <data name="AuditLogTypeProtocolCreated" xml:space="preserve"><value>Protokoll erstellt</value></data>
+  <data name="AuditLogTypeProtocolUpdated" xml:space="preserve"><value>Protokoll geändert</value></data>
+  <data name="AuditLogTypeProtocolDisabled" xml:space="preserve"><value>Protokoll deaktiviert</value></data>
+  <data name="AuditLogTypeProtocolEnabled" xml:space="preserve"><value>Protokoll aktiviert</value></data>
+  <data name="AuditLogTypeProtocolDeleted" xml:space="preserve"><value>Protokoll gelöscht</value></data>
+  <data name="AuditLogTypeCallProtocolRemoved" xml:space="preserve"><value>Protokoll vom Einsatz entfernt</value></data>
+  <data name="AuditLogTypeTrainingArchived" xml:space="preserve"><value>Schulung archiviert</value></data>
+  <data name="AuditLogTypeTrainingRestored" xml:space="preserve"><value>Schulung wiederhergestellt</value></data>
+  <data name="AuditLogTypeTrainingDeleted" xml:space="preserve"><value>Schulung gelöscht</value></data>
+  <data name="AuditLogTypeTrainingCopied" xml:space="preserve"><value>Schulung kopiert</value></data>
+  <data name="AuditLogTypeTrainingAssigneeRemoved" xml:space="preserve"><value>Schulungsteilnehmer entfernt</value></data>
+  <data name="AuditLogTypeTrainingAssignmentExtended" xml:space="preserve"><value>Schulungszuweisung verlängert</value></data>
+  <data name="AuditLogTypeTrainingAssignmentExempted" xml:space="preserve"><value>Befreiung von der Schulungszuweisung geändert</value></data>
+  <data name="AuditLogTypeMemberLeavePeriodChanged" xml:space="preserve"><value>Abwesenheitszeitraum des Mitglieds geändert</value></data>
 </root>

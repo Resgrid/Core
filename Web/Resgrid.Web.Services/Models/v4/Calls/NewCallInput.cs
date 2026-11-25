@@ -184,6 +184,14 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public List<int> ProtocolIds { get; set; }
 
 		/// <summary>
+		/// Optional, beside <see cref="ProtocolIds"/>: for a protocol with questions, the answer ids the dispatcher chose, keyed by
+		/// protocol id. The server scores them and records each question and answer in words on the call; a protocol a trigger
+		/// suggested is then attached only when every question is answered and the score reaches its minimum weight. Leave it out
+		/// (null) to attach the protocols in ProtocolIds as before, without answers.
+		/// </summary>
+		public Dictionary<int, List<int>> ProtocolAnswers { get; set; }
+
+		/// <summary>
 		/// Time in the future, in the departments local time, to dispatch the call. Leave NULL to dispatch now.
 		/// </summary>
 		public DateTime? DispatchOn { get; set; }

@@ -481,7 +481,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var protocols = new List<DispatchProtocol>();
 			if (c.Protocols != null && c.Protocols.Any())
 			{
-				foreach (var callProtocol in c.Protocols)
+				// A protocol taken off the call (removed with a reason) is not shown as one of its protocols.
+				foreach (var callProtocol in c.Protocols.Where(x => !x.IsRemoved))
 				{
 					var protocol = await _protocolsService.GetProtocolByIdAsync(callProtocol.DispatchProtocolId);
 
@@ -1041,13 +1042,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (call.Protocols != null && call.Protocols.Any())
 			{
-				foreach (var callProtocol in call.Protocols)
+				foreach (var callProtocol in call.Protocols.Where(x => !x.IsRemoved))
 				{
 					var protocol = await _protocolsService.GetProtocolByIdAsync(callProtocol.DispatchProtocolId);
 
 					// Only a protocol of the call's own department: a row pointing at another department's protocol is never read out.
+					// With the row: how it came onto the call and the answers recorded then.
 					if (protocol != null && protocol.DepartmentId == call.DepartmentId)
-						result.Data.Protocols.Add(CallProtocolsController.ConvertProtocolData(protocol));
+						result.Data.Protocols.Add(CallProtocolsController.ConvertProtocolData(protocol, callProtocol));
 				}
 			}
 
@@ -1193,13 +1195,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 					return BadRequest("LinkedCallId is not a call in this department.");
 			}
 
-			// Ids that are not this department's protocols are dropped, like unknown entries on the dispatch list.
-			var protocols = new List<DispatchProtocol>();
-			if (newCallInput.ProtocolIds != null && newCallInput.ProtocolIds.Any())
-			{
-				var departmentProtocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(effectiveDepartmentId) ?? new List<DispatchProtocol>();
-				protocols = departmentProtocols.Where(x => newCallInput.ProtocolIds.Contains(x.DispatchProtocolId)).ToList();
-			}
+			// The server decides which of the sent protocols go on the call (D15, D19): this department's, enabled, matched by a
+			// trigger or recorded as picked by hand, with the answers the client collected (ProtocolAnswers) scored here. Ids it
+			// refuses are dropped, like unknown entries on the dispatch list. Checked now for the field policy, attached below.
+			var protocolRequests = ProtocolRequests(newCallInput.ProtocolIds, newCallInput.ProtocolAnswers);
+			var protocolsWillAttach = protocolRequests.Count > 0 && (await _protocolsService.PrepareCallProtocolsAsync(effectiveDepartmentId,
+				new Resgrid.Model.Call { DepartmentId = effectiveDepartmentId, Priority = newCallInput.Priority, Type = newCallInput.Type, LoggedOn = DateTime.UtcNow },
+				protocolRequests, UserId, null, false)).Attached.Count > 0;
 
 			// The department's new-call field policy is enforced here, not only in the clients: an old
 			// build, an offline-queued call or a third-party integration must not be able to put an
@@ -1223,7 +1225,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				DestinationGeolocation = freeDestinationGeolocation,
 				DestinationW3W = destinationPoi == null ? newCallInput.DestinationWhat3Words : null,
 				IndoorMapZoneId = newCallInput.IndoorMapZoneId,
-				HasProtocols = protocols.Any(),
+				HasProtocols = protocolsWillAttach,
 				HasLinkedCall = linkedCall != null,
 				DispatchOn = isPending ? null : (newCallInput.DispatchOnUtc ?? newCallInput.DispatchOn),
 				HasDispatchList = DispatchListHelper.HasEntries(newCallInput.DispatchList),
@@ -1315,9 +1317,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!string.IsNullOrWhiteSpace(newCallInput.IndoorMapFloorId))
 				call.IndoorMapFloorId = newCallInput.IndoorMapFloorId;
 
-			if (protocols.Any())
-				call.Protocols = protocols.Select(x => new CallProtocol { DispatchProtocolId = x.DispatchProtocolId, Data = x.Code }).ToList();
-
 			if (linkedCall != null)
 				call.References = new List<CallReference> { new CallReference { TargetCallId = linkedCall.CallId, AddedOn = DateTime.UtcNow, AddedByUserId = UserId } };
 
@@ -1374,6 +1373,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 					call.Type = type.Type;
 				}
 			}
+
+			// Once the call's type, priority and logged time are set: the triggers are matched against them.
+			if (protocolRequests.Count > 0)
+				call.Protocols = (await _protocolsService.PrepareCallProtocolsAsync(effectiveDepartmentId, call, protocolRequests, UserId, null, true, cancellationToken)).Attached;
 			var users = await _departmentsService.GetAllUsersForDepartmentAsync(effectiveDepartmentId);
 			call.Dispatches = new Collection<CallDispatch>();
 			call.GroupDispatches = new List<CallDispatchGroup>();
@@ -1870,21 +1873,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
-			// Added to what the call already has, the same as the web edit form: neither can remove one here.
-			if (editCallInput.ProtocolIds != null && editCallInput.ProtocolIds.Any())
-			{
-				var departmentProtocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(DepartmentId) ?? new List<DispatchProtocol>();
-
-				if (call.Protocols == null)
-					call.Protocols = new List<CallProtocol>();
-
-				foreach (var protocol in departmentProtocols.Where(x => editCallInput.ProtocolIds.Contains(x.DispatchProtocolId)))
-				{
-					if (!call.Protocols.Any(x => x.DispatchProtocolId == protocol.DispatchProtocolId))
-						call.Protocols.Add(new CallProtocol { CallId = call.CallId, DispatchProtocolId = protocol.DispatchProtocolId, Data = protocol.Code });
-				}
-			}
-
 			if (!string.IsNullOrWhiteSpace(editCallInput.LinkedCallId))
 			{
 				if (!int.TryParse(editCallInput.LinkedCallId, NumberStyles.Integer, CultureInfo.InvariantCulture, out int linkedCallId) || linkedCallId == call.CallId)
@@ -1960,6 +1948,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					call.Type = type.Type;
 				}
+			}
+
+			// Added to what the call already has (a protocol already on it, removed or not, is not added again), the same as the
+			// web edit form, and decided by the server the same way as SaveCall. Taking one off is CallProtocols/RemoveCallProtocol.
+			var editProtocolRequests = ProtocolRequests(editCallInput.ProtocolIds, editCallInput.ProtocolAnswers);
+			if (editProtocolRequests.Count > 0)
+			{
+				if (call.Protocols == null)
+					call.Protocols = new List<CallProtocol>();
+
+				foreach (var added in (await _protocolsService.PrepareCallProtocolsAsync(DepartmentId, call, editProtocolRequests, UserId, call.Protocols, true, cancellationToken)).Attached)
+					call.Protocols.Add(added);
 			}
 
 			// Capture existing dispatch snapshots for cancel notification diffing
@@ -2174,7 +2174,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				DestinationGeolocation = call.DestinationPoiId.HasValue ? null : call.DestinationGeoLocationData,
 				DestinationW3W = call.DestinationPoiId.HasValue ? null : call.DestinationW3W,
 				IndoorMapZoneId = call.IndoorMapZoneId,
-				HasProtocols = call.Protocols?.Any() ?? false,
+				HasProtocols = call.Protocols?.Any(x => !x.IsRemoved) ?? false,
 				HasLinkedCall = call.References?.Any() ?? false,
 				HasDispatchList = (call.Dispatches?.Any() ?? false) || (call.GroupDispatches?.Any() ?? false) ||
 								  (call.UnitDispatches?.Any() ?? false) || (call.RoleDispatches?.Any() ?? false),
@@ -3506,6 +3506,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return CallSubjectIdentifiers.TryParse(stored, out var identifiers) && identifiers.Count > 0
 				? new Dictionary<string, string>(identifiers, StringComparer.Ordinal)
 				: null;
+		}
+
+		/// <summary>
+		/// The protocols a v4 client asked to attach. Ids alone (the older apps) attach the pick as before; a protocol the client also
+		/// sent answers for (ProtocolAnswers) has them scored, and as on the web forms a suggested protocol with questions then
+		/// needs them answered and passing.
+		/// </summary>
+		private static List<ProtocolAttachRequest> ProtocolRequests(List<int> protocolIds, Dictionary<int, List<int>> protocolAnswers)
+		{
+			return (protocolIds ?? new List<int>()).Where(x => x > 0).Distinct().Select(id => new ProtocolAttachRequest
+			{
+				ProtocolId = id,
+				AnswerIds = protocolAnswers != null && protocolAnswers.TryGetValue(id, out var answers) ? answers ?? new List<int>() : null,
+				AnswersRequired = protocolAnswers != null && protocolAnswers.ContainsKey(id)
+			}).ToList();
 		}
 
 		public static CallResultData ConvertCall(Call call, List<DispatchProtocol> protocol, string geoLocationAddress, string timeZone, Poi destinationPoi = null,

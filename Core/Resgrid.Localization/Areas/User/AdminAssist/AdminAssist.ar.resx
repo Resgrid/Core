@@ -3243,6 +3243,12 @@
   <data xml:space="preserve" name="Permission.CreateTraining">
     <value>إنشاء تدريب</value>
   </data>
+  <data xml:space="preserve" name="Permission.AssignTraining">
+    <value>تعيين التدريب</value>
+  </data>
+  <data xml:space="preserve" name="Permission.DeleteTraining">
+    <value>حذف التدريب</value>
+  </data>
   <data xml:space="preserve" name="Permission.CreateWorkflow">
     <value>إنشاء سير عمل</value>
   </data>
@@ -3487,7 +3493,13 @@
     <value>يسمح بإنشاء الورديات وورديات العمل وتعديلها وحذفها، وإدارة التسجيلات لكل مجموعة. يدير مدراء المجموعات دائمًا التسجيلات الخاصة بمجموعاتهم. ويجب على الأعضاء الذين يسجّلون — على الويب أو في التطبيقات أو عبر روبوت الدردشة — الالتزام بقواعد الوردية (لا أيام ماضية، والورديات المعيّنة تتطلب تعيينًا، وورديات المجموعات تتطلب مجموعة العضو). يظل بإمكان الجميع عرض الورديات. عند عدم وجود قاعدة محفوظة، يقتصر تغيير الورديات على مدراء القسم.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateTraining">
-    <value>يسمح بإنشاء التدريبات وتعديلها وحذفها وإعادة تعيين تقدّم الأعضاء في التدريب. يظل بإمكان الجميع عرض التدريبات وإكمالها. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم.</value>
+    <value>يتيح إنشاء التدريبات وتأليف محتواها واختبارها، بما في ذلك مفتاح الإجابات. التعيين والتقارير (تعيين التدريب) والأرشفة أو الحذف (حذف التدريب) قاعدتان منفصلتان تتبعان هذه القاعدة إلى أن تُحفظا. يظل بإمكان الجميع عرض التدريبات المعيّنة لهم أو المفتوحة لهم وإكمالها. وإذا لم تُحفظ قاعدة، فلا يُسمح بذلك إلا لمسؤولي القسم.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AssignTraining">
+    <value>يتيح تعيين التدريبات للأعضاء، وتحديد مواعيد الاستحقاق والتمديدات والإعفاءات، وإعادة تعيين تقدم الأعضاء، وقراءة تقرير التدريب وسجل المحاولات. لا يتصرف مسؤولو المجموعات إلا في أعضاء مجموعتهم. وإلى أن يُحفظ، يتبع إنشاء التدريب.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.DeleteTraining">
+    <value>يتيح أرشفة التدريبات واستعادتها وحذفها. التدريب الذي أكمله أحد الأعضاء يُؤرشف بدل حذفه، فتبقى إكمالاته في السجل. وإلى أن يُحفظ، يتبع إنشاء التدريب.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateWorkflow">
     <value>يسمح بإنشاء سير العمل وتعديله وحذفه، ومعاينة شروطه، وقراءة إعدادات الخطوات في التطبيقات وواجهة API، ورؤية المخرجات المُنشأة لعمليات تشغيل سير العمل. عند عدم وجود قاعدة محفوظة، لا يستطيع تغيير سير العمل إلا مدراء القسم، لكن يمكن لكل عضو فتح صفحة سير العمل وقراءة التعريفات؛ ويؤدي حفظ «مدراء القسم» أيضًا إلى إخفاء سير العمل عن جميع الآخرين. تتطلب الخطوات التي ترسل تصديرًا من السجلات أيضًا صلاحيتي «تصدير السجلات» و«إدارة تقارير السجلات». الخطط المجانية محدودة في عدد سير العمل المسموح به.</value>
@@ -8267,5 +8279,23 @@
   </data>
   <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
     <value>تُستخدم عندما يكون تنسيق البريد لديك "Labeled fields". أدخل التسمية التي يكتبها نظام CAD لديك قبل كل قيمة. افصل بين البدائل بالرمز |.</value>
+  </data>
+  <data name="Feature.protocol-edit" xml:space="preserve">
+    <value>تعديل البروتوكولات</value>
+  </data>
+  <data name="FeaturePurpose.protocol-edit" xml:space="preserve">
+    <value>غيّر محتوى البروتوكول ومشغّلاته وأسئلته في مكانها، وتحتفظ البلاغات بالنص الذي أُرسلت به.</value>
+  </data>
+  <data name="Feature.protocol-disable" xml:space="preserve">
+    <value>تعطيل البروتوكولات</value>
+  </data>
+  <data name="FeaturePurpose.protocol-disable" xml:space="preserve">
+    <value>أوقف اقتراح بروتوكول وإرفاقه دون حذفه.</value>
+  </data>
+  <data name="Feature.call-protocol-removal" xml:space="preserve">
+    <value>إزالة بروتوكول من بلاغ</value>
+  </data>
+  <data name="FeaturePurpose.call-protocol-removal" xml:space="preserve">
+    <value>أزل بروتوكولًا أُرفق خطأً من بلاغ مع ذكر السبب، ويحتفظ به السجل موسومًا بالإزالة.</value>
   </data>
 </root>

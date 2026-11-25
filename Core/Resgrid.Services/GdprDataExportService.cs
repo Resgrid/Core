@@ -536,8 +536,27 @@ namespace Resgrid.Services
 
 		private async Task<object> BuildTrainingsDataAsync(string userId)
 		{
-			var trainings = await _trainingService.GetTrainingUsersForUserAsync(userId);
-			return trainings;
+			// Each assignment names its training (T-D23), not just the raw row ids.
+			var trainings = await _trainingService.GetTrainingUsersForUserAsync(userId) ?? new List<TrainingUser>();
+			return trainings.Select(t => new
+			{
+				t.TrainingId,
+				TrainingName = t.Training?.Name,
+				t.AssignedOn,
+				t.DueOn,
+				t.Viewed,
+				t.ViewedOn,
+				t.Complete,
+				t.CompletedOn,
+				t.Score,
+				t.Passed,
+				t.AttemptCount,
+				t.RemovedOn,
+				t.ExemptOn,
+				t.ExemptReason,
+				t.ExtendedOn,
+				t.ExtensionReason
+			}).ToList();
 		}
 
 		private async Task<object> BuildShiftsDataAsync(string userId)

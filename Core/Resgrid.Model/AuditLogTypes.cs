@@ -425,6 +425,23 @@ ChecklistReminderSettingsUpdated,
 		/// <summary>A dispatcher created (and possibly sent) an occurrence's call by hand.</summary>
 		RecurringCallOccurrenceCreated,
 		RecurringCallAlertAcknowledged,
-		RecurringCallAlertDismissed
+		RecurringCallAlertDismissed,
+		// Protocols P0 (2026-11-24): authoring and the call record
+		ProtocolCreated,
+		ProtocolUpdated,
+		ProtocolDisabled,
+		ProtocolEnabled,
+		ProtocolDeleted,
+		/// <summary>A protocol was taken off a call, with a reason; the row stays on the call.</summary>
+		CallProtocolRemoved,
+		// Training T0 (2026-11-24): archive instead of delete (T-D21), copy, assignee removal, extensions, exemptions and leave
+		TrainingArchived,
+		TrainingRestored,
+		TrainingDeleted,
+		TrainingCopied,
+		TrainingAssigneeRemoved,
+		TrainingAssignmentExtended,
+		TrainingAssignmentExempted,
+		MemberLeavePeriodChanged
 	}
 }

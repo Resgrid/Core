@@ -11,6 +11,13 @@ using System.Linq;
 using Resgrid.Model;
 using Resgrid.Web.Services.Models.v4.CallProtocols;
 using System.Collections.Generic;
+using System;
+using System.Net.Mime;
+using System.Threading;
+using Resgrid.Model.Events;
+using Resgrid.Model.Providers;
+using Resgrid.Web.Helpers;
+using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -24,10 +31,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		#region Members and Constructors
 		private readonly IProtocolsService _protocolsService;
+		private readonly IAuthorizationService _authorizationService;
+		private readonly IEventAggregator _eventAggregator;
 
-		public CallProtocolsController(IProtocolsService protocolsService)
+		public CallProtocolsController(IProtocolsService protocolsService, IAuthorizationService authorizationService = null, IEventAggregator eventAggregator = null)
 		{
 			_protocolsService = protocolsService;
+			_authorizationService = authorizationService;
+			_eventAggregator = eventAggregator;
 		}
 		#endregion Members and Constructors
 
@@ -42,7 +53,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var result = new CallProtocolsResult();
 
-			var priorities = await _protocolsService.GetAllProtocolsForDepartmentAsync(DepartmentId);
+			// Enabled protocols only (D19); never an attachment's bytes.
+			var priorities = await _protocolsService.GetProtocolSummariesForDepartmentAsync(DepartmentId, true);
 
 			if (priorities != null && priorities.Any())
 			{
@@ -73,6 +85,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[Authorize(Policy = ResgridResources.Protocol_View)]
 		public async Task<ActionResult<CallProtocolResult>> GetProtocol(int protocolId)
 		{
 			var result = new CallProtocolResult();
@@ -100,19 +113,86 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[Authorize(Policy = ResgridResources.Protocol_View)]
 		public async Task<ActionResult> GetFile(int protocolAttachmentId)
 		{
-			var attachment = await _protocolsService.GetAttachmentByIdAsync(protocolAttachmentId);
+			// The same department-checked download as Protocols/GetFile; unknown or another department's is a 404.
+			var attachment = await _protocolsService.GetAttachmentForDepartmentAsync(DepartmentId, protocolAttachmentId);
 
-			if (attachment == null)
+			if (attachment == null || attachment.Data == null)
 				return NotFound();
 
-			var protocol = await _protocolsService.GetProtocolByIdAsync(attachment.DispatchProtocolId);
+			return File(attachment.Data, string.IsNullOrWhiteSpace(attachment.FileType) ? "application/octet-stream" : attachment.FileType, attachment.FileName);
+		}
 
-			if (protocol == null || protocol.DepartmentId != DepartmentId)
+		/// <summary>
+		/// Takes a protocol off a call, with a reason. The row stays on the call, marked removed with who, when and why, and the
+		/// removal is written to the department's audit log.
+		/// </summary>
+		[HttpPost("RemoveCallProtocol")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[Authorize(Policy = ResgridResources.Call_Update)]
+		public async Task<ActionResult<RemoveCallProtocolResult>> RemoveCallProtocol([FromBody] RemoveCallProtocolInput input, CancellationToken cancellationToken)
+		{
+			if (input == null || input.CallId <= 0 || input.CallProtocolId <= 0 || string.IsNullOrWhiteSpace(input.Reason))
+				return BadRequest();
+
+			if (_authorizationService == null || !await _authorizationService.CanUserEditCallAsync(UserId, input.CallId))
 				return Unauthorized();
 
-			return File(attachment.Data, attachment.FileType);
+			var removed = await _protocolsService.RemoveProtocolFromCallAsync(DepartmentId, input.CallId, input.CallProtocolId, input.Reason, UserId, cancellationToken);
+			if (removed == null)
+				return NotFound();
+
+			_eventAggregator?.SendMessage<AuditEvent>(new AuditEvent
+			{
+				DepartmentId = DepartmentId,
+				UserId = UserId,
+				Type = AuditLogTypes.CallProtocolRemoved,
+				After = Newtonsoft.Json.JsonConvert.SerializeObject(new { removed.CallId, removed.CallProtocolId, removed.DispatchProtocolId, Code = removed.Data, removed.RemovedReason, removed.RemovedOn }),
+				Successful = true,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				ServerName = Environment.MachineName,
+				UserAgent = $"{Request?.Headers["User-Agent"]} {Request?.Headers["Accept-Language"]}"
+			});
+
+			var result = new RemoveCallProtocolResult { Id = removed.CallProtocolId.ToString(), PageSize = 1, Status = ResponseHelper.Success };
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// The protocol as a call's protocol: its definition and, from the call's row, how it came there and the answers
+		/// recorded when it was attached.
+		/// </summary>
+		public static CallProtocolResultData ConvertProtocolData(DispatchProtocol dp, CallProtocol row)
+		{
+			var protocol = ConvertProtocolData(dp);
+			if (row == null)
+				return protocol;
+
+			protocol.CallProtocolId = row.CallProtocolId.ToString();
+			protocol.Source = row.Source;
+			protocol.Score = row.Score;
+
+			if (!string.IsNullOrWhiteSpace(row.AnswersJson))
+			{
+				try
+				{
+					var answers = Newtonsoft.Json.JsonConvert.DeserializeObject<CallProtocolAnswers>(row.AnswersJson);
+					protocol.RecordedAnswers = answers?.Answers?.Select(a => new CallProtocolAnswerResultData { Question = a.Question, Answer = a.Answer, Weight = a.Weight }).ToList();
+				}
+				catch (Newtonsoft.Json.JsonException)
+				{
+					protocol.RecordedAnswers = null;
+				}
+			}
+
+			return protocol;
 		}
 
 		public static CallProtocolResultData ConvertProtocolData(DispatchProtocol dp)
@@ -144,6 +224,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				trigger.EndsOn = t.EndsOn;
 				trigger.Priority = t.Priority;
 				trigger.CallType = t.CallType;
+				trigger.CallTypeId = t.CallTypeId;
 				trigger.Geofence = t.Geofence;
 
 				protocol.Triggers.Add(trigger);
@@ -155,6 +236,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				attachment.Id = a.DispatchProtocolAttachmentId.ToString();
 				attachment.FileName = a.FileName;
 				attachment.FileType = a.FileType;
+				attachment.Size = a.Size;
 
 				protocol.Attachments.Add(attachment);
 			}

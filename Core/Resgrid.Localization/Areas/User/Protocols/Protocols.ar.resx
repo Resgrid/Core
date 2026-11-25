@@ -250,4 +250,376 @@
   <data name="ProtocolsLabel" xml:space="preserve">
     <value>البروتوكولات</value>
   </data>
+  <data name="LibraryTab" xml:space="preserve">
+    <value>المكتبة</value>
+  </data>
+  <data name="LibraryIntro" xml:space="preserve">
+    <value>بروتوكولات الإرسال: الأسئلة والتعليمات المعدّة مسبقًا التي يستدعيها نوع البلاغ وأولويته.</value>
+  </data>
+  <data name="LibraryHeader" xml:space="preserve">
+    <value>مكتبة البروتوكولات</value>
+  </data>
+  <data name="KpiTotal" xml:space="preserve">
+    <value>البروتوكولات</value>
+  </data>
+  <data name="KpiDisabled" xml:space="preserve">
+    <value>معطّلة</value>
+  </data>
+  <data name="KpiUsedOnCalls" xml:space="preserve">
+    <value>مستخدمة في البلاغات (30 يومًا)</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>البحث في البروتوكولات</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>الاسم أو الرمز</value>
+  </data>
+  <data name="StatusAll" xml:space="preserve">
+    <value>كل الحالات</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>تصفية</value>
+  </data>
+  <data name="ClearFilterButton" xml:space="preserve">
+    <value>مسح</value>
+  </data>
+  <data name="NoProtocolsYet" xml:space="preserve">
+    <value>لا توجد بروتوكولات بعد.</value>
+  </data>
+  <data name="NoProtocolsMatch" xml:space="preserve">
+    <value>لا يوجد بروتوكول يطابق عامل التصفية.</value>
+  </data>
+  <data name="QuestionsCount" xml:space="preserve">
+    <value>عدد الأسئلة: {0}</value>
+  </data>
+  <data name="NoTriggers" xml:space="preserve">
+    <value>بلا مشغّلات (يُختار يدويًا فقط)</value>
+  </data>
+  <data name="MoreTriggers" xml:space="preserve">
+    <value>و{0} أخرى</value>
+  </data>
+  <data name="UsedOnCallsColumn" xml:space="preserve">
+    <value>البلاغات (30 يومًا)</value>
+  </data>
+  <data name="LastUpdatedColumn" xml:space="preserve">
+    <value>آخر تحديث</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="EnableButton" xml:space="preserve">
+    <value>تفعيل</value>
+  </data>
+  <data name="DisableButton" xml:space="preserve">
+    <value>تعطيل</value>
+  </data>
+  <data name="DeleteProtocolConfirm" xml:space="preserve">
+    <value>يخرج البروتوكول من المكتبة ومن البلاغات الجديدة، وتبقى البلاغات التي استخدمته تعرضه. حذف البروتوكول</value>
+  </data>
+  <data name="DeletedLabel" xml:space="preserve">
+    <value>محذوف</value>
+  </data>
+  <data name="DeletedProtocolNotice" xml:space="preserve">
+    <value>حُذف هذا البروتوكول. يُحتفظ به لأن بلاغات تشير إليه، ولا يُقترح ولا يُرفق.</value>
+  </data>
+  <data name="DisabledProtocolNotice" xml:space="preserve">
+    <value>هذا البروتوكول معطّل: لا يُقترح في البلاغات ولا يُرفق بها. فعّله لاستخدامه من جديد.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="TriggerMatchesColumn" xml:space="preserve">
+    <value>يطابق</value>
+  </data>
+  <data name="NoTriggersHelp" xml:space="preserve">
+    <value>بلا مشغّلات: لا يُقترح البروتوكول أبدًا، لكن يمكن إضافته إلى بلاغ يدويًا.</value>
+  </data>
+  <data name="NoQuestionsHelp" xml:space="preserve">
+    <value>بلا أسئلة: عند تطابق مشغّل يُطبَّق البروتوكول فورًا.</value>
+  </data>
+  <data name="MinimumWeightHelp" xml:space="preserve">
+    <value>عند تطابق مشغّل يُطبَّق البروتوكول متى بلغ مجموع أوزان الإجابات {0} على الأقل.</value>
+  </data>
+  <data name="DownloadButton" xml:space="preserve">
+    <value>تنزيل</value>
+  </data>
+  <data name="NoAttachments" xml:space="preserve">
+    <value>لا توجد مرفقات.</value>
+  </data>
+  <data name="NoProtocolText" xml:space="preserve">
+    <value>لا يوجد نص للبروتوكول.</value>
+  </data>
+  <data name="ProtocolSavedMessage" xml:space="preserve">
+    <value>حُفظ البروتوكول.</value>
+  </data>
+  <data name="ProtocolDisabledMessage" xml:space="preserve">
+    <value>عُطّل البروتوكول.</value>
+  </data>
+  <data name="ProtocolEnabledMessage" xml:space="preserve">
+    <value>فُعّل البروتوكول.</value>
+  </data>
+  <data name="EditProtocolHeader" xml:space="preserve">
+    <value>تعديل البروتوكول</value>
+  </data>
+  <data name="EditorIntroNew" xml:space="preserve">
+    <value>سمِّ البروتوكول واكتب محتواه، ثم أضف المشغّلات التي تقترحه والأسئلة التي تقرر ما إذا كان ينطبق.</value>
+  </data>
+  <data name="BasicsHeader" xml:space="preserve">
+    <value>الأساسيات</value>
+  </data>
+  <data name="CodeHelp" xml:space="preserve">
+    <value>حتى {0} من الحروف والأرقام والمسافات و. _ / - (مثل 09-E-01 أو SOG-204).</value>
+  </data>
+  <data name="MinimumWeightEditorHelp" xml:space="preserve">
+    <value>مجموع أوزان الإجابات الذي يحتاجه بروتوكول مقترح لينطبق. مع 0 ينطبق أيًّا كانت الإجابات.</value>
+  </data>
+  <data name="DisabledCheckbox" xml:space="preserve">
+    <value>معطّل</value>
+  </data>
+  <data name="DisabledCheckboxHelp" xml:space="preserve">
+    <value>يبقى البروتوكول المعطّل في المكتبة لكنه لا يُقترح في البلاغات ولا يُرفق بها.</value>
+  </data>
+  <data name="ContentHeader" xml:space="preserve">
+    <value>المحتوى</value>
+  </data>
+  <data name="DescriptionHelp" xml:space="preserve">
+    <value>ملخص قصير، حتى {0} حرفًا من النص.</value>
+  </data>
+  <data name="TriggerTimeZoneHelp" xml:space="preserve">
+    <value>أوقات البدء والانتهاء بتوقيت المنطقة الزمنية للإدارة ({0}).</value>
+  </data>
+  <data name="TriggerLabel" xml:space="preserve">
+    <value>المشغّل</value>
+  </data>
+  <data name="RemoveTriggerButton" xml:space="preserve">
+    <value>إزالة المشغّل</value>
+  </data>
+  <data name="NoTypeOption" xml:space="preserve">
+    <value>بلا نوع</value>
+  </data>
+  <data name="LegacyTypeHelp" xml:space="preserve">
+    <value>يذكر هذا المشغّل نوع البلاغ "{0}" الذي لم يعد موجودًا. اختر نوع بلاغ ليظل مطابقًا.</value>
+  </data>
+  <data name="RemovedNamed" xml:space="preserve">
+    <value>{0} (أُزيل)</value>
+  </data>
+  <data name="RemovedPriority" xml:space="preserve">
+    <value>أولوية مُزالة</value>
+  </data>
+  <data name="RemoveQuestionButton" xml:space="preserve">
+    <value>إزالة السؤال</value>
+  </data>
+  <data name="AddAnswerButton" xml:space="preserve">
+    <value>إضافة إجابة</value>
+  </data>
+  <data name="RemoveAnswerButton" xml:space="preserve">
+    <value>إزالة الإجابة</value>
+  </data>
+  <data name="RemoveOnSaveColumn" xml:space="preserve">
+    <value>إزالة عند الحفظ</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>إزالة</value>
+  </data>
+  <data name="AddFilesLabel" xml:space="preserve">
+    <value>إضافة ملفات</value>
+  </data>
+  <data name="AttachmentsLimitsHelp" xml:space="preserve">
+    <value>حتى {0} ملفات في كل حفظ، {1} ميغابايت لكل ملف و{2} ميغابايت معًا: صور وPDF ومستندات Office ونصوص وفيديو.</value>
+  </data>
+  <data name="AttachmentsReselectHelp" xml:space="preserve">
+    <value>إذا فشل الحفظ فاختر الملفات من جديد، فالمتصفح لا يحتفظ بها.</value>
+  </data>
+  <data name="SaveProtocolButton" xml:space="preserve">
+    <value>حفظ البروتوكول</value>
+  </data>
+  <data name="TriggerSummaryPriority" xml:space="preserve">
+    <value>الأولوية: {0}</value>
+  </data>
+  <data name="TriggerSummaryType" xml:space="preserve">
+    <value>النوع: {0}</value>
+  </data>
+  <data name="TriggerSummaryPriorityAndType" xml:space="preserve">
+    <value>{0} · الأولوية {1}</value>
+  </data>
+  <data name="ReasonMatched" xml:space="preserve">
+    <value>مطابق: {0}</value>
+  </data>
+  <data name="ErrorProtocolMissing" xml:space="preserve">
+    <value>تعذّرت قراءة البروتوكول.</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>اسم البروتوكول مطلوب.</value>
+  </data>
+  <data name="ErrorNameTooLong" xml:space="preserve">
+    <value>يمكن أن يتكون الاسم من 100 حرف على الأكثر.</value>
+  </data>
+  <data name="ErrorCodeRequired" xml:space="preserve">
+    <value>رمز البروتوكول مطلوب.</value>
+  </data>
+  <data name="ErrorCodeInvalid" xml:space="preserve">
+    <value>يمكن أن يحتوي الرمز على 16 حرفًا ورقمًا ومسافة وأحرف . _ / - على الأكثر.</value>
+  </data>
+  <data name="ErrorDescriptionTooLong" xml:space="preserve">
+    <value>يمكن أن يتكون الوصف من 500 حرف من النص على الأكثر.</value>
+  </data>
+  <data name="ErrorMinimumWeightRange" xml:space="preserve">
+    <value>يجب أن يكون الحد الأدنى للوزن بين 0 و1000.</value>
+  </data>
+  <data name="ErrorTriggerType" xml:space="preserve">
+    <value>أحد المشغّلات من نوع غير معروف.</value>
+  </data>
+  <data name="ErrorTriggerWindow" xml:space="preserve">
+    <value>ينتهي أحد المشغّلات قبل أن يبدأ.</value>
+  </data>
+  <data name="ErrorTriggerPriority" xml:space="preserve">
+    <value>يحتاج مشغّل الأولوية إلى إحدى أولويات البلاغات في الإدارة.</value>
+  </data>
+  <data name="ErrorTriggerCallType" xml:space="preserve">
+    <value>يذكر مشغّل النوع نوع بلاغ لا يخص الإدارة.</value>
+  </data>
+  <data name="ErrorTriggerDate" xml:space="preserve">
+    <value>تعذّرت قراءة وقت بدء أحد المشغّلات أو انتهائه.</value>
+  </data>
+  <data name="ErrorQuestionText" xml:space="preserve">
+    <value>يحتاج كل سؤال إلى نص.</value>
+  </data>
+  <data name="ErrorQuestionAnswers" xml:space="preserve">
+    <value>يحتاج كل سؤال إلى إجابة واحدة على الأقل.</value>
+  </data>
+  <data name="ErrorAnswerText" xml:space="preserve">
+    <value>تحتاج كل إجابة إلى نص.</value>
+  </data>
+  <data name="ErrorTooManyFiles" xml:space="preserve">
+    <value>أضف {0} ملفات على الأكثر في كل مرة.</value>
+  </data>
+  <data name="ErrorTooManyAttachments" xml:space="preserve">
+    <value>يمكن أن يحتوي البروتوكول على {0} مرفقًا على الأكثر.</value>
+  </data>
+  <data name="ErrorUploadTooLarge" xml:space="preserve">
+    <value>يجب أن يكون حجم الملفات معًا أقل من {0} ميغابايت.</value>
+  </data>
+  <data name="ErrorFileType" xml:space="preserve">
+    <value>لا يمكن إرفاق ملفات من النوع ({0}).</value>
+  </data>
+  <data name="ErrorFileTooLarge" xml:space="preserve">
+    <value>الملف {0} كبير جدًا: يجب أن يكون كل ملف أقل من {1} ميغابايت.</value>
+  </data>
+  <data name="ErrorForeignRows" xml:space="preserve">
+    <value>يذكر التعديل مشغّلات أو أسئلة أو إجابات لا تخص هذا البروتوكول.</value>
+  </data>
+  <data name="TriggersRenamedType" xml:space="preserve">
+    <value>تستخدم مشغّلات البروتوكولات ({0}) نوع البلاغ هذا، وتظل مطابقة وتعرض الاسم الجديد: {1}.</value>
+  </data>
+  <data name="TriggersDeletedType" xml:space="preserve">
+    <value>استخدمت مشغّلات البروتوكولات ({0}) نوع البلاغ المحذوف ولن تتطابق حتى تُعدَّل: {1}.</value>
+  </data>
+  <data name="TriggersRemovedPriority" xml:space="preserve">
+    <value>استخدمت مشغّلات البروتوكولات ({0}) الأولوية المُزالة ولن تتطابق حتى تُعدَّل: {1}.</value>
+  </data>
+  <data name="NoProtocolsOnCall" xml:space="preserve">
+    <value>لا توجد بروتوكولات على هذا البلاغ.</value>
+  </data>
+  <data name="SourceTrigger" xml:space="preserve">
+    <value>مقترح من مشغّل</value>
+  </data>
+  <data name="SourceManual" xml:space="preserve">
+    <value>أُضيف يدويًا</value>
+  </data>
+  <data name="SourceUnknown" xml:space="preserve">
+    <value>أُرفق قبل حفظ الإجابات</value>
+  </data>
+  <data name="RemovedFromCallLabel" xml:space="preserve">
+    <value>أُزيل</value>
+  </data>
+  <data name="RemovedByOn" xml:space="preserve">
+    <value>أزاله {0} في {1}.</value>
+  </data>
+  <data name="RemovalReasonLabel" xml:space="preserve">
+    <value>السبب</value>
+  </data>
+  <data name="ScoreLabel" xml:space="preserve">
+    <value>النتيجة</value>
+  </data>
+  <data name="ScoreOfMinimum" xml:space="preserve">
+    <value>{0} من حد أدنى {1}</value>
+  </data>
+  <data name="PanelScore" xml:space="preserve">
+    <value>النتيجة {0} من حد أدنى {1}</value>
+  </data>
+  <data name="QuestionsPassed" xml:space="preserve">
+    <value>ينطبق</value>
+  </data>
+  <data name="QuestionsIncomplete" xml:space="preserve">
+    <value>لم تتم الإجابة عن كل الأسئلة</value>
+  </data>
+  <data name="QuestionsBelowMinimum" xml:space="preserve">
+    <value>أقل من الحد الأدنى</value>
+  </data>
+  <data name="NotAnswered" xml:space="preserve">
+    <value>بلا إجابة</value>
+  </data>
+  <data name="NoAnswersRecorded" xml:space="preserve">
+    <value>لم تُسجَّل إجابات لهذا البروتوكول.</value>
+  </data>
+  <data name="AttachedByOn" xml:space="preserve">
+    <value>أرفقه {0} في {1}.</value>
+  </data>
+  <data name="TextAsDispatched" xml:space="preserve">
+    <value>النص كما أُرسل</value>
+  </data>
+  <data name="ChangedSinceDispatch" xml:space="preserve">
+    <value>تغيّر منذ الإرسال</value>
+  </data>
+  <data name="NoSnapshotRecorded" xml:space="preserve">
+    <value>أُرفق قبل حفظ النص كما أُرسل.</value>
+  </data>
+  <data name="CurrentTextLink" xml:space="preserve">
+    <value>النص الحالي</value>
+  </data>
+  <data name="RemoveFromCallButton" xml:space="preserve">
+    <value>إزالة من البلاغ</value>
+  </data>
+  <data name="RemovalReasonPlaceholder" xml:space="preserve">
+    <value>لماذا لا ينطبق</value>
+  </data>
+  <data name="CallProtocolRemovedMessage" xml:space="preserve">
+    <value>أُزيل البروتوكول من البلاغ، ويبقى في السجل مع السبب.</value>
+  </data>
+  <data name="RemovalReasonRequired" xml:space="preserve">
+    <value>اذكر سببًا لإزالة بروتوكول من البلاغ.</value>
+  </data>
+  <data name="PanelIntro" xml:space="preserve">
+    <value>البروتوكولات التي يقترحها نوع البلاغ وأولويته، مع المشغّل المطابق. أجب عن أسئلة كل بروتوكول، ويمكنك أيضًا إضافة بروتوكول يدويًا.</value>
+  </data>
+  <data name="PanelNoSuggestions" xml:space="preserve">
+    <value>لا يطابق أي بروتوكول نوع هذا البلاغ وأولويته.</value>
+  </data>
+  <data name="PanelAddByHand" xml:space="preserve">
+    <value>إضافة بروتوكول يدويًا</value>
+  </data>
+  <data name="PanelAddButton" xml:space="preserve">
+    <value>إضافة</value>
+  </data>
+  <data name="PanelAnswerToContinue" xml:space="preserve">
+    <value>أجب عن كل الأسئلة لترى ما إذا كان هذا البروتوكول ينطبق.</value>
+  </data>
+  <data name="PanelApplies" xml:space="preserve">
+    <value>ينطبق</value>
+  </data>
+  <data name="PanelDoesNotApply" xml:space="preserve">
+    <value>لا ينطبق</value>
+  </data>
+  <data name="PanelQuestionOf" xml:space="preserve">
+    <value>السؤال {0} من {1}</value>
+  </data>
+  <data name="PanelBack" xml:space="preserve">
+    <value>رجوع</value>
+  </data>
+  <data name="PanelNext" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="PanelChoose" xml:space="preserve">
+    <value>اختر بروتوكولًا…</value>
+  </data>
 </root>

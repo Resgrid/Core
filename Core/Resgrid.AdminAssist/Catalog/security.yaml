@@ -1221,7 +1221,7 @@
         "Field": "CreateTraining"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-10-04T00:00:00Z",
+      "ReviewedOn": "2026-11-24T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1234,9 +1234,75 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.CreateTraining",
-      "DefaultValue": "No permission row: department admins create, edit and delete trainings; everyone can view",
+      "DefaultValue": "No permission row: department admins create and author trainings; everyone can view the trainings assigned or open to them; Assign Training and Delete Training follow this row",
       "AllowedValues": "Actions 0, 1, 2 and selected department role IDs for action 2; no group lock",
-      "EvidenceSource": "ClaimsLogic.AddTrainingClaims (Training:*) → Training_Create / _Update / _Delete on MVC TrainingsController (web only)",
+      "EvidenceSource": "ClaimsLogic.AddTrainingClaims (Training:Create, the author right) and IAuthorizationService.GetTrainingManagementScopeAsync (Author scope) on the MVC TrainingsController New, Edit (content and quiz with the answer key), Copy and attachment removal; group admins author their own and their group's trainings, under Everyone a member authors only their own. Assign Training (126) and Delete Training (127) follow this row until they have their own",
+      "Availability": "available"
+    },
+    {
+      "Id": "permission.AssignTraining",
+      "AreaId": "security",
+      "LabelKey": "Permission.AssignTraining",
+      "HelpKey": "PermissionHelp.AssignTraining",
+      "Binding": "PermissionTypes.AssignTraining",
+      "ValueType": "permission",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Security",
+        "Action": "Index",
+        "Field": "AssignTraining"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.PermissionTiming",
+        "ReversibilityKey": "Impact.PermissionReversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "permission.AssignTraining",
+      "DefaultValue": "No permission row: follows the Create Training row (department admins only when neither is saved)",
+      "AllowedValues": "Actions 0, 1, 2 and selected department role IDs for action 2; no group lock. With action 1 group admins assign and report only on trainings assigned to their own group's members",
+      "EvidenceSource": "ClaimsLogic.AddTrainingClaims (Training:Update) and IAuthorizationService.GetTrainingManagementScopeAsync (Assign scope) on the MVC TrainingsController assignment, audience, extension, exemption, reset, removal, Report, Leave and flag actions and on v4 Trainings/GetTrainingReport; ITrainingAssignmentService limits a group admin to their group's members",
+      "Availability": "available"
+    },
+    {
+      "Id": "permission.DeleteTraining",
+      "AreaId": "security",
+      "LabelKey": "Permission.DeleteTraining",
+      "HelpKey": "PermissionHelp.DeleteTraining",
+      "Binding": "PermissionTypes.DeleteTraining",
+      "ValueType": "permission",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Security",
+        "Action": "Index",
+        "Field": "DeleteTraining"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.PermissionTiming",
+        "ReversibilityKey": "Impact.PermissionReversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "permission.DeleteTraining",
+      "DefaultValue": "No permission row: follows the Create Training row (department admins only when neither is saved)",
+      "AllowedValues": "Actions 0, 1, 2 and selected department role IDs for action 2; no group lock. A training anyone completed is archived, never deleted",
+      "EvidenceSource": "ClaimsLogic.AddTrainingClaims (Training:Delete) and IAuthorizationService.GetTrainingManagementScopeAsync (Delete scope) on the MVC TrainingsController Archive, Restore and DeleteTraining actions; ITrainingService.DeleteTrainingAsync refuses a training with completions",
       "Availability": "available"
     },
     {
@@ -6997,6 +7063,7 @@
         "permission.AmendRecords",
         "permission.ApproveRecords",
         "permission.ApproveTimeReports",
+        "permission.AssignTraining",
         "permission.BreakGlassProtectedData",
         "permission.CanSeePersonnelLocations",
         "permission.CanSeeUnitLocations",
@@ -7017,6 +7084,7 @@
         "permission.CreateTraining",
         "permission.CreateWorkflow",
         "permission.DeleteCall",
+        "permission.DeleteTraining",
         "permission.DeleteLog",
         "permission.DeleteRecord",
         "permission.DispatchAppLogin",
@@ -7737,6 +7805,28 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "permission.AssignTraining",
+      "Locale": "en",
+      "TitleKey": "Permission.AssignTraining",
+      "Body": "Assign Training. Who can assign trainings to members, set due dates, extensions and exemptions, and read the training report and attempt history. Until it is saved it follows Create Training. Group admins act only on their own group's members.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "permission-assigntraining",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "permission.DeleteTraining",
+      "Locale": "en",
+      "TitleKey": "Permission.DeleteTraining",
+      "Body": "Delete Training. Who can archive, restore and delete trainings. A training someone completed is archived instead of deleted, so its completions stay on the record. Until it is saved it follows Create Training.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "permission-deletetraining",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
     },
     {
       "Id": "permission.CreateDocument",

@@ -207,6 +207,12 @@ namespace Resgrid.Config
 		public static string HelpAndSupportUrl = "https://resgrid.zohodesk.com/portal/en/home";
 
 		/// <summary>
+		/// The Resgrid Academy (short product lessons and walkthroughs). The Help menu links to it, and to the lesson for the
+		/// current module. Air-gapped installs can point it at a local mirror, or blank it to hide the Academy links.
+		/// </summary>
+		public static string AcademyUrl = "https://academy.resgrid.com/";
+
+		/// <summary>
 		/// Contact Us Url
 		/// </summary>
 		public static string ContactUsUrl = "https://resgrid.com/contact";

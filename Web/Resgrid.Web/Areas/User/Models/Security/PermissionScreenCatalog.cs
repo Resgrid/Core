@@ -80,6 +80,10 @@ namespace Resgrid.Web.Areas.User.Models.Security
 			new PermissionScreenEntry(PermissionTypes.CloseCall, EveryoneFirst, Everyone, lockToGroupOffered: true),
 			new PermissionScreenEntry(PermissionTypes.AddCallData, EveryoneFirst, Everyone, lockToGroupOffered: true),
 			new PermissionScreenEntry(PermissionTypes.CreateTraining, AdminsUpward, DepartmentAdmins),
+			// Training T0: assign-and-report and delete were split out of Create Training; with no row of their own they show
+			// (and apply) the Create Training row (ClaimsLogic.AddTrainingClaims, GetTrainingManagementScopeAsync).
+			new PermissionScreenEntry(PermissionTypes.AssignTraining, AdminsUpward, DepartmentAdmins),
+			new PermissionScreenEntry(PermissionTypes.DeleteTraining, AdminsUpward, DepartmentAdmins),
 			new PermissionScreenEntry(PermissionTypes.CreateDocument, EveryoneFirst, Everyone),
 			new PermissionScreenEntry(PermissionTypes.CreateCalendarEntry, EveryoneFirst, Everyone),
 			new PermissionScreenEntry(PermissionTypes.CreateNote, EveryoneFirst, Everyone),
@@ -148,6 +152,8 @@ namespace Resgrid.Web.Areas.User.Models.Security
 				row = rows.FirstOrDefault(p => p.PermissionType == (int)PermissionTypes.AdjustInventory);
 			if (row == null && type == PermissionTypes.ViewCommandBoards)
 				row = rows.FirstOrDefault(p => p.PermissionType == (int)PermissionTypes.CommandAppLogin);
+			if (row == null && type is PermissionTypes.AssignTraining or PermissionTypes.DeleteTraining)
+				row = rows.FirstOrDefault(p => p.PermissionType == (int)PermissionTypes.CreateTraining);
 
 			return row;
 		}

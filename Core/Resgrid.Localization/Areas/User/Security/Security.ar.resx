@@ -414,6 +414,10 @@
   <data name="PermAddCallDataNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إضافة بيانات كالصور والملاحظات والملفات للبلاغات. افتراضياً يمكن للجميع إضافة بيانات للبلاغات.</value></data>
   <data name="PermCreateTrainingLabel" xml:space="preserve"><value>من يمكنه إنشاء تدريبات</value></data>
   <data name="PermCreateTrainingNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إنشاء تدريبات. افتراضياً يستطيع مدراء القسم فقط إنشاء التدريبات.</value></data>
+  <data name="PermAssignTrainingLabel" xml:space="preserve"><value>من يمكنه تعيين التدريبات والاطلاع على التقارير</value></data>
+  <data name="PermAssignTrainingNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه تعيين التدريبات للأعضاء، وتحديد مواعيد الاستحقاق والتمديدات والإعفاءات، وقراءة تقرير التدريب وسجل المحاولات. لا يتصرف مسؤولو المجموعات إلا في أعضاء مجموعتهم. وإلى أن تحفظ قاعدة هنا، يتبع هذا الإعداد إنشاء التدريبات.</value></data>
+  <data name="PermDeleteTrainingLabel" xml:space="preserve"><value>من يمكنه أرشفة التدريبات وحذفها</value></data>
+  <data name="PermDeleteTrainingNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه أرشفة التدريبات واستعادتها وحذفها. التدريب الذي أكمله أحد الأعضاء يُؤرشف ولا يُحذف أبدًا. وإلى أن تحفظ قاعدة هنا، يتبع هذا الإعداد إنشاء التدريبات.</value></data>
   <data name="PermCreateDocumentLabel" xml:space="preserve"><value>من يمكنه إضافة مستندات</value></data>
   <data name="PermCreateDocumentNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إضافة مستندات. افتراضياً يمكن للجميع إضافة مستندات.</value></data>
   <data name="PermCreateCalendarEntryLabel" xml:space="preserve"><value>من يمكنه إنشاء إدخالات تقويم</value></data>
@@ -1349,4 +1353,18 @@
   <data name="AuditLogTypeRecurringCallOccurrenceCreated" xml:space="preserve"><value>تم إنشاء موعد مكالمة متكررة يدويًا</value></data>
   <data name="AuditLogTypeRecurringCallAlertAcknowledged" xml:space="preserve"><value>تم الإقرار بتنبيه مكالمة متكررة</value></data>
   <data name="AuditLogTypeRecurringCallAlertDismissed" xml:space="preserve"><value>تم تجاهل تنبيه مكالمة متكررة</value></data>
+  <data name="AuditLogTypeProtocolCreated" xml:space="preserve"><value>أُنشئ بروتوكول</value></data>
+  <data name="AuditLogTypeProtocolUpdated" xml:space="preserve"><value>حُدّث بروتوكول</value></data>
+  <data name="AuditLogTypeProtocolDisabled" xml:space="preserve"><value>عُطّل بروتوكول</value></data>
+  <data name="AuditLogTypeProtocolEnabled" xml:space="preserve"><value>فُعّل بروتوكول</value></data>
+  <data name="AuditLogTypeProtocolDeleted" xml:space="preserve"><value>حُذف بروتوكول</value></data>
+  <data name="AuditLogTypeCallProtocolRemoved" xml:space="preserve"><value>أُزيل بروتوكول من بلاغ</value></data>
+  <data name="AuditLogTypeTrainingArchived" xml:space="preserve"><value>تمت أرشفة التدريب</value></data>
+  <data name="AuditLogTypeTrainingRestored" xml:space="preserve"><value>تمت استعادة التدريب</value></data>
+  <data name="AuditLogTypeTrainingDeleted" xml:space="preserve"><value>تم حذف التدريب</value></data>
+  <data name="AuditLogTypeTrainingCopied" xml:space="preserve"><value>تم نسخ التدريب</value></data>
+  <data name="AuditLogTypeTrainingAssigneeRemoved" xml:space="preserve"><value>تمت إزالة المكلّف بالتدريب</value></data>
+  <data name="AuditLogTypeTrainingAssignmentExtended" xml:space="preserve"><value>تم تمديد تكليف التدريب</value></data>
+  <data name="AuditLogTypeTrainingAssignmentExempted" xml:space="preserve"><value>تم تغيير إعفاء تكليف التدريب</value></data>
+  <data name="AuditLogTypeMemberLeavePeriodChanged" xml:space="preserve"><value>تم تغيير فترة إجازة العضو</value></data>
 </root>

@@ -200,6 +200,26 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>@localizer["PermAssignTrainingLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermAssignTrainingNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.AssignTraining, Model.AssignTrainingPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="trainingAssignNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="trainingAssignRolesDiv" style="display: none;"><select id="trainingAssignRoles" name="trainingAssignRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermDeleteTrainingLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermDeleteTrainingNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.DeleteTraining, Model.DeleteTrainingPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="trainingDeleteNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="trainingDeleteRolesDiv" style="display: none;"><select id="trainingDeleteRoles" name="trainingDeleteRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td>@localizer["PermCreateDocumentLabel"]</td>
                                         <td style="max-width: 350px">@localizer["PermCreateDocumentNote"]</td>
                                         <td>@Html.DropDownListFor(m => m.CreateDocument, Model.CreateDocumentPermissions)</td>

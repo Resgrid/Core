@@ -146,6 +146,18 @@ namespace Resgrid.Web.Helpers
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Create);
 		}
 
+		/// <summary>Holds the Assign Training right somewhere (assign and report; scoped per training).</summary>
+		public static bool CanAssignTraining()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Update);
+		}
+
+		/// <summary>Holds the Delete Training right somewhere (archive and delete; scoped per training).</summary>
+		public static bool CanDeleteTraining()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Delete);
+		}
+
 		public static bool CanCreateDocument()
 		{
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Documents, ResgridClaimTypes.Actions.Create);

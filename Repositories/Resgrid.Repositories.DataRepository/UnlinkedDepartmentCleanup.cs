@@ -37,7 +37,8 @@ namespace Resgrid.Repositories.DataRepository
 			"RunCards", "StationCoverageRequirements", "ModerationActions", "ModerationReports", "ModerationRequests", "MessageRecipients", "Messages",
 			"DepartmentMemberSensitiveData", "DepartmentMemberEmergencyContacts", "UserExternalIdentityLinks", "DepartmentSecurityPolicies",
 			"DepartmentSsoConfigs", "GdprDataExportRequests", "Autofills", "DomainEventOutbox", "ReportingDailyRollup", "SearchProjections",
-			"VoiceTransmissionLogs"
+			"VoiceTransmissionLogs", "TrainingQuestionFlags", "TrainingCompletionHistories", "TrainingQuizAttempts", "TrainingAudiences",
+			"ContentAudienceChanges", "MemberLeavePeriods", "MemberPinnedItems"
 		};
 
 		public static async Task DeleteWithinTransactionAsync(DbConnection connection, DbTransaction transaction, int departmentId, DatabaseTypes type, CancellationToken ct = default)
@@ -112,6 +113,11 @@ namespace Resgrid.Repositories.DataRepository
 
 			// Home dashboard boards and department templates (layouts only)
 			await Delete("UserDashboards", "DepartmentDashboardTemplates");
+
+			// Training T0 (M0339, M0340): attempts, audience rules, completion history and question flags reference Trainings, which the
+			// SQL Server script deletes later, so they go first; the audience-change queue, leave periods and My Training pins have no keys
+			await Delete("TrainingQuestionFlags", "TrainingCompletionHistories", "TrainingQuizAttempts", "TrainingAudiences", "ContentAudienceChanges",
+				"MemberLeavePeriods", "MemberPinnedItems");
 
 			// The orphan decision-node sweep below reads every department's nodes, so two cleanups in it at once (a deletion and
 			// the deleted-department sweep) could each wait on nodes the other just deleted. One transaction-scoped lock, taken

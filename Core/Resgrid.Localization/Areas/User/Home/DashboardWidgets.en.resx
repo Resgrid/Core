@@ -1785,6 +1785,45 @@
   <data name="W.trainings.mine.OverdueSince" xml:space="preserve">
     <value>Was due {0}</value>
   </data>
+  <data name="W.trainings.bulletin.Title" xml:space="preserve">
+    <value>Training Bulletin</value>
+  </data>
+  <data name="W.trainings.bulletin.Description" xml:space="preserve">
+    <value>New training for you: recent assignments and newly published trainings open to all members.</value>
+  </data>
+  <data name="W.trainings.bulletin.Setting.days" xml:space="preserve">
+    <value>Days to look back</value>
+  </data>
+  <data name="W.trainings.bulletin.Setting.maxItems" xml:space="preserve">
+    <value>Maximum trainings listed</value>
+  </data>
+  <data name="W.trainings.bulletin.Empty" xml:space="preserve">
+    <value>Nothing new in training.</value>
+  </data>
+  <data name="W.trainings.bulletin.NewAssignedCount" xml:space="preserve">
+    <value>{0} new for you</value>
+  </data>
+  <data name="W.trainings.bulletin.Training" xml:space="preserve">
+    <value>Training</value>
+  </data>
+  <data name="W.trainings.bulletin.Assigned" xml:space="preserve">
+    <value>Assigned to you</value>
+  </data>
+  <data name="W.trainings.bulletin.Catalog" xml:space="preserve">
+    <value>Open to all members</value>
+  </data>
+  <data name="W.trainings.bulletin.CanEnrol" xml:space="preserve">
+    <value>Open to all members, you can enrol</value>
+  </data>
+  <data name="W.trainings.bulletin.Due" xml:space="preserve">
+    <value>Due {0}</value>
+  </data>
+  <data name="W.trainings.bulletin.OverdueSince" xml:space="preserve">
+    <value>Was due {0}</value>
+  </data>
+  <data name="W.trainings.bulletin.Published" xml:space="preserve">
+    <value>Published {0}</value>
+  </data>
   <data name="W.documents.recent.OpenDocuments" xml:space="preserve">
     <value>Open documents</value>
   </data>

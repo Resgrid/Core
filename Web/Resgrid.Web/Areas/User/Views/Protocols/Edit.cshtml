@@ -1,0 +1,367 @@
+@using Resgrid.Model
+@using Resgrid.Framework
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolEditorModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    The protocol editor, shared by New and Edit (one full page, no modals). Triggers, questions and answers are rows posted
+    with the "Index" convention (Triggers.Index / Triggers[key].Field), so the page can add and remove rows freely and a
+    failed save shows every row the author built. Each existing row carries its id; the server checks it is this protocol's.
+*@
+@{
+    var title = Model.IsNew ? localizer["NewProtocolHeader"].Value : localizer["EditProtocolHeader"].Value;
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = Model.IsNew ? localizer["EditorIntroNew"].Value : Model.Name;
+    ViewData["Section"] = Model.IsNew ? "Editor" : "Library";
+    ViewData["CanCreate"] = Model.IsNew;
+
+    var activePriorities = Model.CallPriorities.Where(x => !x.IsDeleted).ToList();
+
+    bool ShowsPriority(int type) => type == (int)ProtocolTriggerTypes.CallPriorty || type == (int)ProtocolTriggerTypes.CallPriortyAndType;
+    bool ShowsType(int type) => type == (int)ProtocolTriggerTypes.CallType || type == (int)ProtocolTriggerTypes.CallPriortyAndType;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    <form id="protocolEditorForm" method="post" enctype="multipart/form-data"
+          asp-controller="Protocols" asp-action="@(Model.IsNew ? "New" : "Edit")" asp-route-area="User" asp-route-id="@(Model.IsNew ? null : (int?)Model.ProtocolId)">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-id-card-o" aria-hidden="true"></i> @localizer["BasicsHeader"]</h5></div>
+            <div class="ibox-content">
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label class="control-label required" for="Name">@localizer["ProtocolNameLabel"]</label>
+                        <input class="form-control" id="Name" name="Name" value="@Model.Name" maxlength="100" required autofocus />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label required" for="Code">@localizer["ProtocolCodeLabel"]</label>
+                        <input class="form-control" id="Code" name="Code" value="@Model.Code" maxlength="@DispatchProtocol.CodeMaxLength" required pattern="[A-Za-z0-9][A-Za-z0-9 ._/\-]*" aria-describedby="CodeHelp" />
+                        <span id="CodeHelp" class="help-block">@string.Format(localizer["CodeHelp"].Value, DispatchProtocol.CodeMaxLength)</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="MinimumWeight">@localizer["ActivationQuestionWeightLabel"]</label>
+                        <input class="form-control" id="MinimumWeight" name="MinimumWeight" type="number" min="0" max="1000" value="@Model.MinimumWeight" aria-describedby="MinimumWeightHelpText" />
+                        <span id="MinimumWeightHelpText" class="help-block">@localizer["MinimumWeightEditorHelp"]</span>
+                    </div>
+                    <div class="form-group">
+                        <span class="control-label">@localizer["StatusLabel"]</span>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="IsDisabled" value="true" @(Model.IsDisabled ? "checked" : "") />
+                                @localizer["DisabledCheckbox"]
+                            </label>
+                            <input type="hidden" name="IsDisabled" value="false" />
+                        </div>
+                        <span class="help-block">@localizer["DisabledCheckboxHelp"]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-file-text-o" aria-hidden="true"></i> @localizer["ContentHeader"]</h5></div>
+            <div class="ibox-content">
+                <div class="form-group">
+                    <label class="control-label" for="editor-container" id="DescriptionLabelText">@localizer["DescriptionLabel"]</label>
+                    <input type="hidden" id="Description" name="Description" value="@Model.Description" />
+                    <div id="editor-container" style="width:100%; height: 160px;" aria-labelledby="DescriptionLabelText">@Html.SanitizedHtml(Model.Description)</div>
+                    <span class="help-block">@string.Format(localizer["DescriptionHelp"].Value, DispatchProtocol.DescriptionTextMaxLength)</span>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="editor-container2" id="ProtocolTextLabelText">@localizer["ProtocolTextLabel"]</label>
+                    <input type="hidden" id="ProtocolText" name="ProtocolText" value="@Model.ProtocolText" />
+                    <div id="editor-container2" style="width:100%; height: 360px;" aria-labelledby="ProtocolTextLabelText">@Html.SanitizedHtml(Model.ProtocolText)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-bolt" aria-hidden="true"></i> @localizer["TriggersLabel"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted">@localizer["TriggersHelp"] @string.Format(localizer["TriggerTimeZoneHelp"].Value, Model.TimeZoneName)</p>
+                <div id="triggerRows">
+                    @foreach (var t in Model.Triggers)
+                    {
+                        <div class="panel panel-default rgw-builder-item protocol-trigger" data-key="@t.Key">
+                            <input type="hidden" name="Triggers.Index" value="@t.Key" />
+                            <input type="hidden" name="Triggers[@t.Key].Key" value="@t.Key" />
+                            <input type="hidden" name="Triggers[@t.Key].Id" value="@t.Id" />
+                            @if (!string.IsNullOrEmpty(t.CallTypeName))
+                            {
+                                <input type="hidden" name="Triggers[@t.Key].CallTypeName" value="@t.CallTypeName" />
+                            }
+                            <div class="panel-heading rgw-builder-heading">
+                                <span class="rgw-builder-title">@localizer["TriggerLabel"]</span>
+                                <span class="rgw-builder-actions"><button type="button" class="btn btn-xs btn-danger protocol-remove-row"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["RemoveTriggerButton"]</button></span>
+                            </div>
+                            <div class="panel-body">
+                                <div class="rgw-grid">
+                                    <div class="form-group">
+                                        <label class="control-label" for="trigger-type-@t.Key">@localizer["TriggerTypeLabel"]</label>
+                                        <select class="form-control protocol-trigger-type" id="trigger-type-@t.Key" name="Triggers[@t.Key].Type">
+                                            @foreach (ProtocolTriggerTypes value in Enum.GetValues(typeof(ProtocolTriggerTypes)))
+                                            {
+                                                <option value="@((int)value)" selected="@(t.Type == (int)value)">@ProtocolDisplay.TriggerTypeName((int)value, localizer)</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="form-group protocol-trigger-priority" hidden="@(!ShowsPriority(t.Type))">
+                                        <label class="control-label" for="trigger-priority-@t.Key">@localizer["TriggerCallPriorityLabel"]</label>
+                                        <select class="form-control" id="trigger-priority-@t.Key" name="Triggers[@t.Key].Priority">
+                                            @foreach (var priority in activePriorities)
+                                            {
+                                                <option value="@priority.DepartmentCallPriorityId" selected="@(t.Priority == priority.DepartmentCallPriorityId)">@priority.Name</option>
+                                            }
+                                            @if (t.Priority.HasValue && activePriorities.All(x => x.DepartmentCallPriorityId != t.Priority.Value))
+                                            {
+                                                <option value="@t.Priority" selected>@ProtocolDisplay.PriorityName(t.Priority, Model.CallPriorities, localizer)</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="form-group protocol-trigger-calltype" hidden="@(!ShowsType(t.Type))">
+                                        <label class="control-label" for="trigger-calltype-@t.Key">@localizer["TriggerCallTypeLabel"]</label>
+                                        <select class="form-control" id="trigger-calltype-@t.Key" name="Triggers[@t.Key].CallTypeId">
+                                            <option value="" selected="@(!t.CallTypeId.HasValue && string.IsNullOrEmpty(t.CallTypeName))">@localizer["NoTypeOption"]</option>
+                                            @foreach (var type in Model.CallTypes)
+                                            {
+                                                <option value="@type.CallTypeId" selected="@(t.CallTypeId == type.CallTypeId)">@type.Type</option>
+                                            }
+                                            @if (t.CallTypeId.HasValue && Model.CallTypes.All(x => x.CallTypeId != t.CallTypeId.Value))
+                                            {
+                                                <option value="@t.CallTypeId" selected>@string.Format(localizer["RemovedNamed"].Value, t.CallTypeId)</option>
+                                            }
+                                        </select>
+                                        @if (!string.IsNullOrEmpty(t.CallTypeName))
+                                        {
+                                            <span class="help-block text-warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @string.Format(localizer["LegacyTypeHelp"].Value, t.CallTypeName)</span>
+                                        }
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="trigger-starts-@t.Key">@localizer["TriggerStartsOnLabel"]</label>
+                                        <input class="form-control" type="datetime-local" id="trigger-starts-@t.Key" name="Triggers[@t.Key].StartsOn" value="@(t.StartsOn?.Length > 16 ? t.StartsOn.Substring(0, 16) : t.StartsOn)" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="trigger-ends-@t.Key">@localizer["TriggerEndsOnLabel"]</label>
+                                        <input class="form-control" type="datetime-local" id="trigger-ends-@t.Key" name="Triggers[@t.Key].EndsOn" value="@(t.EndsOn?.Length > 16 ? t.EndsOn.Substring(0, 16) : t.EndsOn)" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <p id="noTriggersText" class="text-muted" hidden="@(Model.Triggers.Count > 0)">@localizer["NoTriggersHelp"]</p>
+                <button type="button" class="btn btn-success btn-sm" id="addTriggerButton"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddTriggerButton"]</button>
+            </div>
+        </div>
+
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-question-circle" aria-hidden="true"></i> @localizer["QuestionsLabel"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted">@localizer["QuestionsHelp"]</p>
+                <div id="questionRows">
+                    @foreach (var q in Model.Questions)
+                    {
+                        <div class="panel panel-default rgw-builder-section protocol-question" data-key="@q.Key">
+                            <input type="hidden" name="Questions.Index" value="@q.Key" />
+                            <input type="hidden" name="Questions[@q.Key].Key" value="@q.Key" />
+                            <input type="hidden" name="Questions[@q.Key].Id" value="@q.Id" />
+                            <div class="panel-heading rgw-builder-heading">
+                                <span class="rgw-builder-title">@localizer["QuestionLabel"]</span>
+                                <span class="rgw-builder-actions"><button type="button" class="btn btn-xs btn-danger protocol-remove-row"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["RemoveQuestionButton"]</button></span>
+                            </div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label class="control-label" for="question-text-@q.Key">@localizer["QuestionLabel"]</label>
+                                    <textarea class="form-control" rows="2" id="question-text-@q.Key" name="Questions[@q.Key].Text">@q.Text</textarea>
+                                </div>
+                                <div class="protocol-answers">
+                                    @foreach (var a in q.Answers)
+                                    {
+                                        <div class="rgw-grid protocol-answer" data-key="@a.Key">
+                                            <input type="hidden" name="Questions[@q.Key].Answers.Index" value="@a.Key" />
+                                            <input type="hidden" name="Questions[@q.Key].Answers[@a.Key].Key" value="@a.Key" />
+                                            <input type="hidden" name="Questions[@q.Key].Answers[@a.Key].Id" value="@a.Id" />
+                                            <div class="form-group">
+                                                <label class="control-label" for="answer-text-@q.Key-@a.Key">@localizer["AnswerColumn"]</label>
+                                                <input class="form-control" id="answer-text-@q.Key-@a.Key" name="Questions[@q.Key].Answers[@a.Key].Text" value="@a.Text" maxlength="500" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label" for="answer-weight-@q.Key-@a.Key">@localizer["WeightColumn"]</label>
+                                                <input class="form-control" type="number" min="0" max="1000" id="answer-weight-@q.Key-@a.Key" name="Questions[@q.Key].Answers[@a.Key].Weight" value="@a.Weight" />
+                                            </div>
+                                            <div class="form-group">
+                                                <span class="control-label">&nbsp;</span>
+                                                <div><button type="button" class="btn btn-xs btn-danger protocol-remove-answer"><i class="fa fa-minus" aria-hidden="true"></i> @localizer["RemoveAnswerButton"]</button></div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                                <button type="button" class="btn btn-xs btn-success protocol-add-answer"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddAnswerButton"]</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <p id="noQuestionsText" class="text-muted" hidden="@(Model.Questions.Count > 0)">@localizer["NoQuestionsHelp"]</p>
+                <button type="button" class="btn btn-success btn-sm" id="addQuestionButton"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddQuestionButton"]</button>
+            </div>
+        </div>
+
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-paperclip" aria-hidden="true"></i> @localizer["AttachmentsLabel"]</h5></div>
+            <div class="ibox-content">
+                @if (Model.ExistingAttachments.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["FileNameColumn"]</th>
+                                    <th>@localizer["SizeColumn"]</th>
+                                    <th>@localizer["RemoveOnSaveColumn"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var a in Model.ExistingAttachments)
+                                {
+                                    <tr>
+                                        <td><a asp-controller="Protocols" asp-action="GetProtocolAttachment" asp-route-area="User" asp-route-protocolAttachmentId="@a.DispatchProtocolAttachmentId"><i class="fa fa-download" aria-hidden="true"></i> @a.FileName</a></td>
+                                        <td>@((a.Size ?? 0).GetSizeInMemory())</td>
+                                        <td>
+                                            <label class="m-b-none">
+                                                <input type="checkbox" name="RemoveAttachmentIds" value="@a.DispatchProtocolAttachmentId" @(Model.RemoveAttachmentIds.Contains(a.DispatchProtocolAttachmentId) ? "checked" : "") />
+                                                <span>@localizer["RemoveButton"]</span><span class="sr-only"> @a.FileName</span>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                <div class="form-group">
+                    <label class="control-label" for="attachments">@localizer["AddFilesLabel"]</label>
+                    <input name="attachments" id="attachments" type="file" multiple aria-describedby="AttachmentsHelp" />
+                    <span id="AttachmentsHelp" class="help-block">@string.Format(localizer["AttachmentsLimitsHelp"].Value, ProtocolRules.MaxFilesPerSave, ProtocolRules.MaxAttachmentBytes / 1000000, ProtocolRules.MaxBytesPerSave / 1000000)</span>
+                    @if (!Model.IsNew)
+                    {
+                        <span class="help-block">@localizer["AttachmentsReselectHelp"]</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="rgw-wizard-actions">
+            <a class="btn btn-default" asp-controller="Protocols" asp-action="@(Model.IsNew ? "Index" : "View")" asp-route-area="User" asp-route-id="@(Model.IsNew ? null : (int?)Model.ProtocolId)"><i class="fa fa-times" aria-hidden="true"></i> @commonLocalizer["Cancel"]</a>
+            <span class="rgw-wizard-spacer"></span>
+            <button class="btn btn-primary" type="submit"><i class="fa fa-save" aria-hidden="true"></i> @(Model.IsNew ? localizer["AddProtocolButton"] : localizer["SaveProtocolButton"])</button>
+        </div>
+    </form>
+</div>
+
+@* Row templates the editor clones; __key__ is replaced with a fresh row key. *@
+<template id="triggerTemplate">
+    <div class="panel panel-default rgw-builder-item protocol-trigger" data-key="__key__">
+        <input type="hidden" name="Triggers.Index" value="__key__" />
+        <input type="hidden" name="Triggers[__key__].Key" value="__key__" />
+        <input type="hidden" name="Triggers[__key__].Id" value="0" />
+        <div class="panel-heading rgw-builder-heading">
+            <span class="rgw-builder-title">@localizer["TriggerLabel"]</span>
+            <span class="rgw-builder-actions"><button type="button" class="btn btn-xs btn-danger protocol-remove-row"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["RemoveTriggerButton"]</button></span>
+        </div>
+        <div class="panel-body">
+            <div class="rgw-grid">
+                <div class="form-group">
+                    <label class="control-label" for="trigger-type-__key__">@localizer["TriggerTypeLabel"]</label>
+                    <select class="form-control protocol-trigger-type" id="trigger-type-__key__" name="Triggers[__key__].Type">
+                        @foreach (ProtocolTriggerTypes value in Enum.GetValues(typeof(ProtocolTriggerTypes)))
+                        {
+                            <option value="@((int)value)">@ProtocolDisplay.TriggerTypeName((int)value, localizer)</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group protocol-trigger-priority">
+                    <label class="control-label" for="trigger-priority-__key__">@localizer["TriggerCallPriorityLabel"]</label>
+                    <select class="form-control" id="trigger-priority-__key__" name="Triggers[__key__].Priority">
+                        @foreach (var priority in activePriorities)
+                        {
+                            <option value="@priority.DepartmentCallPriorityId" selected="@priority.IsDefault">@priority.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group protocol-trigger-calltype" hidden>
+                    <label class="control-label" for="trigger-calltype-__key__">@localizer["TriggerCallTypeLabel"]</label>
+                    <select class="form-control" id="trigger-calltype-__key__" name="Triggers[__key__].CallTypeId">
+                        <option value="">@localizer["NoTypeOption"]</option>
+                        @foreach (var type in Model.CallTypes)
+                        {
+                            <option value="@type.CallTypeId">@type.Type</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="trigger-starts-__key__">@localizer["TriggerStartsOnLabel"]</label>
+                    <input class="form-control" type="datetime-local" id="trigger-starts-__key__" name="Triggers[__key__].StartsOn" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="trigger-ends-__key__">@localizer["TriggerEndsOnLabel"]</label>
+                    <input class="form-control" type="datetime-local" id="trigger-ends-__key__" name="Triggers[__key__].EndsOn" />
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="questionTemplate">
+    <div class="panel panel-default rgw-builder-section protocol-question" data-key="__key__">
+        <input type="hidden" name="Questions.Index" value="__key__" />
+        <input type="hidden" name="Questions[__key__].Key" value="__key__" />
+        <input type="hidden" name="Questions[__key__].Id" value="0" />
+        <div class="panel-heading rgw-builder-heading">
+            <span class="rgw-builder-title">@localizer["QuestionLabel"]</span>
+            <span class="rgw-builder-actions"><button type="button" class="btn btn-xs btn-danger protocol-remove-row"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["RemoveQuestionButton"]</button></span>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="control-label" for="question-text-__key__">@localizer["QuestionLabel"]</label>
+                <textarea class="form-control" rows="2" id="question-text-__key__" name="Questions[__key__].Text"></textarea>
+            </div>
+            <div class="protocol-answers"></div>
+            <button type="button" class="btn btn-xs btn-success protocol-add-answer"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddAnswerButton"]</button>
+        </div>
+    </div>
+</template>
+
+<template id="answerTemplate">
+    <div class="rgw-grid protocol-answer" data-key="__akey__">
+        <input type="hidden" name="Questions[__qkey__].Answers.Index" value="__akey__" />
+        <input type="hidden" name="Questions[__qkey__].Answers[__akey__].Key" value="__akey__" />
+        <input type="hidden" name="Questions[__qkey__].Answers[__akey__].Id" value="0" />
+        <div class="form-group">
+            <label class="control-label" for="answer-text-__qkey__-__akey__">@localizer["AnswerColumn"]</label>
+            <input class="form-control" id="answer-text-__qkey__-__akey__" name="Questions[__qkey__].Answers[__akey__].Text" maxlength="500" />
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="answer-weight-__qkey__-__akey__">@localizer["WeightColumn"]</label>
+            <input class="form-control" type="number" min="0" max="1000" id="answer-weight-__qkey__-__akey__" name="Questions[__qkey__].Answers[__akey__].Weight" value="0" />
+        </div>
+        <div class="form-group">
+            <span class="control-label">&nbsp;</span>
+            <div><button type="button" class="btn btn-xs btn-danger protocol-remove-answer"><i class="fa fa-minus" aria-hidden="true"></i> @localizer["RemoveAnswerButton"]</button></div>
+        </div>
+    </div>
+</template>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+
+@section Scripts
+{
+    <script src="~/js/app/internal/protocols/resgrid.protocols.editor.js" asp-append-version="true"></script>
+}

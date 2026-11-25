@@ -21,6 +21,16 @@ namespace Resgrid.Web
 		}
 
 		/// <summary>
+		/// <see cref="SanitizedHtml"/> for rich text that may carry an allow-listed embed (training text): YouTube, Vimeo, Google
+		/// Docs/Sheets and Microsoft Stream/Teams frames are kept with fixed safe attributes; any other frame is removed.
+		/// </summary>
+		public static IHtmlContent SanitizedHtmlWithEmbeds(this IHtmlHelper html, string value)
+		{
+			var clean = StringHelpers.SanitizeHtmlWithEmbedsForDisplay(value);
+			return clean.Length == 0 ? HtmlString.Empty : new HtmlString(clean);
+		}
+
+		/// <summary>
 		/// Newtonsoft settings for JSON written into a page (a &lt;script&gt; block, a data attribute or an inline handler):
 		/// &lt;, &gt;, &amp; and quotes are \u-escaped, so a name such as "&lt;/script&gt;&lt;script&gt;..." stays inside its string
 		/// instead of closing the block. The JSON value itself is unchanged.

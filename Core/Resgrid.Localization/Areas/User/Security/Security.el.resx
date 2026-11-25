@@ -429,6 +429,10 @@
 
   <data name="PermCreateTrainingLabel" xml:space="preserve"><value>Ποιος μπορεί να Δημιουργεί Εκπαιδεύσεις</value></data>
   <data name="PermCreateTrainingNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να δημιουργεί εκπαιδεύσεις. Από προεπιλογή μόνο οι Διαχειριστές Τμήματος μπορούν να δημιουργούν εκπαιδεύσεις.</value></data>
+  <data name="PermAssignTrainingLabel" xml:space="preserve"><value>Ποιος μπορεί να αναθέτει εκπαιδεύσεις και να βλέπει αναφορές</value></data>
+  <data name="PermAssignTrainingNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να αναθέτει εκπαιδεύσεις σε μέλη, να ορίζει προθεσμίες, παρατάσεις και απαλλαγές και να διαβάζει την αναφορά της εκπαίδευσης και το ιστορικό προσπαθειών. Οι διαχειριστές ομάδων ενεργούν μόνο για τα μέλη της δικής τους ομάδας. Μέχρι να αποθηκεύσετε έναν κανόνα εδώ, ακολουθεί τη ρύθμιση Δημιουργία εκπαιδεύσεων.</value></data>
+  <data name="PermDeleteTrainingLabel" xml:space="preserve"><value>Ποιος μπορεί να αρχειοθετεί και να διαγράφει εκπαιδεύσεις</value></data>
+  <data name="PermDeleteTrainingNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να αρχειοθετεί, να επαναφέρει και να διαγράφει εκπαιδεύσεις. Μια εκπαίδευση που έχει ολοκληρώσει κάποιος αρχειοθετείται, δεν διαγράφεται ποτέ. Μέχρι να αποθηκεύσετε έναν κανόνα εδώ, ακολουθεί τη ρύθμιση Δημιουργία εκπαιδεύσεων.</value></data>
 
   <data name="PermCreateDocumentLabel" xml:space="preserve"><value>Ποιος μπορεί να Προσθέτει Έγγραφα</value></data>
   <data name="PermCreateDocumentNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να προσθέτει έγγραφα. Από προεπιλογή όλοι μπορούν να προσθέτουν έγγραφα.</value></data>
@@ -1394,6 +1398,20 @@
   <data name="AuditLogTypeRecurringCallOccurrenceCreated" xml:space="preserve"><value>Δημιουργήθηκε εμφάνιση επαναλαμβανόμενης κλήσης</value></data>
   <data name="AuditLogTypeRecurringCallAlertAcknowledged" xml:space="preserve"><value>Επιβεβαιώθηκε ειδοποίηση επαναλαμβανόμενης κλήσης</value></data>
   <data name="AuditLogTypeRecurringCallAlertDismissed" xml:space="preserve"><value>Απορρίφθηκε ειδοποίηση επαναλαμβανόμενης κλήσης</value></data>
+  <data name="AuditLogTypeProtocolCreated" xml:space="preserve"><value>Δημιουργήθηκε πρωτόκολλο</value></data>
+  <data name="AuditLogTypeProtocolUpdated" xml:space="preserve"><value>Ενημερώθηκε πρωτόκολλο</value></data>
+  <data name="AuditLogTypeProtocolDisabled" xml:space="preserve"><value>Απενεργοποιήθηκε πρωτόκολλο</value></data>
+  <data name="AuditLogTypeProtocolEnabled" xml:space="preserve"><value>Ενεργοποιήθηκε πρωτόκολλο</value></data>
+  <data name="AuditLogTypeProtocolDeleted" xml:space="preserve"><value>Διαγράφηκε πρωτόκολλο</value></data>
+  <data name="AuditLogTypeCallProtocolRemoved" xml:space="preserve"><value>Αφαιρέθηκε πρωτόκολλο από κλήση</value></data>
+  <data name="AuditLogTypeTrainingArchived" xml:space="preserve"><value>Η εκπαίδευση αρχειοθετήθηκε</value></data>
+  <data name="AuditLogTypeTrainingRestored" xml:space="preserve"><value>Η εκπαίδευση επαναφέρθηκε</value></data>
+  <data name="AuditLogTypeTrainingDeleted" xml:space="preserve"><value>Η εκπαίδευση διαγράφηκε</value></data>
+  <data name="AuditLogTypeTrainingCopied" xml:space="preserve"><value>Η εκπαίδευση αντιγράφηκε</value></data>
+  <data name="AuditLogTypeTrainingAssigneeRemoved" xml:space="preserve"><value>Αφαιρέθηκε εκπαιδευόμενος από την εκπαίδευση</value></data>
+  <data name="AuditLogTypeTrainingAssignmentExtended" xml:space="preserve"><value>Η ανάθεση εκπαίδευσης παρατάθηκε</value></data>
+  <data name="AuditLogTypeTrainingAssignmentExempted" xml:space="preserve"><value>Η απαλλαγή από την ανάθεση εκπαίδευσης άλλαξε</value></data>
+  <data name="AuditLogTypeMemberLeavePeriodChanged" xml:space="preserve"><value>Η περίοδος άδειας του μέλους άλλαξε</value></data>
 </root>
 
 

@@ -245,6 +245,12 @@ namespace Resgrid.Web.ServicesCore.Helpers
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Create);
 		}
 
+		/// <summary>Holds the Assign Training right somewhere (assign and report; scoped per training).</summary>
+		public static bool CanAssignTraining()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Update);
+		}
+
 		public static bool CanCreateDocument()
 		{
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Documents, ResgridClaimTypes.Actions.Create);

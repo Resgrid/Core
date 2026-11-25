@@ -1,3 +1,5 @@
+using System;
+
 namespace Resgrid.Model
 {
 	/// <summary>A training assigned to one member and where that member stands on it (ITrainingService.GetOutstandingTrainingsForUserAsync).</summary>
@@ -8,7 +10,14 @@ namespace Resgrid.Model
 		/// <summary>The member's assignment row.</summary>
 		public TrainingUser Assignment { get; set; }
 
-		/// <summary>Completed, but the quiz score is below the training's minimum (the page's red "complete" state).</summary>
+		/// <summary>The latest quiz attempt failed (stored on the assignment, never recomputed from the current quiz).</summary>
 		public bool QuizFailed { get; set; }
+
+		/// <summary>The due moment, UTC, with leave applied (TrainingDueDates.EffectiveDueUtc). Null when nothing is due.</summary>
+		public DateTime? DueUtc { get; set; }
+
+		public TrainingAssignmentStates State { get; set; }
+
+		public bool IsOverdue => State == TrainingAssignmentStates.Overdue;
 	}
 }

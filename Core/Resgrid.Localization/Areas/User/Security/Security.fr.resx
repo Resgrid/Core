@@ -1286,6 +1286,18 @@
   <data name="PermCreateTrainingNote" xml:space="preserve">
     <value>Cette option détermine qui peut créer des formations. Par défaut, seuls les administrateurs du département peuvent créer des formations.</value>
   </data>
+  <data name="PermAssignTrainingLabel" xml:space="preserve">
+    <value>Qui peut attribuer des formations et consulter les rapports</value>
+  </data>
+  <data name="PermAssignTrainingNote" xml:space="preserve">
+    <value>Cette option détermine qui peut attribuer des formations aux membres, fixer les échéances, prolongations et exemptions, et consulter le rapport de formation et l'historique des tentatives. Les administrateurs de groupe n'agissent que sur les membres de leur propre groupe. Tant que vous n'enregistrez pas de règle ici, elle suit Créer des formations.</value>
+  </data>
+  <data name="PermDeleteTrainingLabel" xml:space="preserve">
+    <value>Qui peut archiver et supprimer des formations</value>
+  </data>
+  <data name="PermDeleteTrainingNote" xml:space="preserve">
+    <value>Cette option détermine qui peut archiver, restaurer et supprimer des formations. Une formation que quelqu'un a terminée est archivée, jamais supprimée. Tant que vous n'enregistrez pas de règle ici, elle suit Créer des formations.</value>
+  </data>
   <data name="PermCreateDocumentLabel" xml:space="preserve">
     <value>Qui peut ajouter des documents</value>
   </data>
@@ -2742,4 +2754,18 @@
   <data name="AuditLogTypeRecurringCallOccurrenceCreated" xml:space="preserve"><value>Occurrence d'appel récurrent créée</value></data>
   <data name="AuditLogTypeRecurringCallAlertAcknowledged" xml:space="preserve"><value>Alerte d'appel récurrent prise en compte</value></data>
   <data name="AuditLogTypeRecurringCallAlertDismissed" xml:space="preserve"><value>Alerte d'appel récurrent close</value></data>
+  <data name="AuditLogTypeProtocolCreated" xml:space="preserve"><value>Protocole créé</value></data>
+  <data name="AuditLogTypeProtocolUpdated" xml:space="preserve"><value>Protocole modifié</value></data>
+  <data name="AuditLogTypeProtocolDisabled" xml:space="preserve"><value>Protocole désactivé</value></data>
+  <data name="AuditLogTypeProtocolEnabled" xml:space="preserve"><value>Protocole activé</value></data>
+  <data name="AuditLogTypeProtocolDeleted" xml:space="preserve"><value>Protocole supprimé</value></data>
+  <data name="AuditLogTypeCallProtocolRemoved" xml:space="preserve"><value>Protocole retiré de l'appel</value></data>
+  <data name="AuditLogTypeTrainingArchived" xml:space="preserve"><value>Formation archivée</value></data>
+  <data name="AuditLogTypeTrainingRestored" xml:space="preserve"><value>Formation restaurée</value></data>
+  <data name="AuditLogTypeTrainingDeleted" xml:space="preserve"><value>Formation supprimée</value></data>
+  <data name="AuditLogTypeTrainingCopied" xml:space="preserve"><value>Formation copiée</value></data>
+  <data name="AuditLogTypeTrainingAssigneeRemoved" xml:space="preserve"><value>Participant à la formation retiré</value></data>
+  <data name="AuditLogTypeTrainingAssignmentExtended" xml:space="preserve"><value>Attribution de formation prolongée</value></data>
+  <data name="AuditLogTypeTrainingAssignmentExempted" xml:space="preserve"><value>Exemption d'attribution de formation modifiée</value></data>
+  <data name="AuditLogTypeMemberLeavePeriodChanged" xml:space="preserve"><value>Période de congé du membre modifiée</value></data>
 </root>

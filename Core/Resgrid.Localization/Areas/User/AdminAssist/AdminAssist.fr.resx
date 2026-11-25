@@ -3243,6 +3243,12 @@
   <data xml:space="preserve" name="Permission.CreateTraining">
     <value>Créer une formation</value>
   </data>
+  <data xml:space="preserve" name="Permission.AssignTraining">
+    <value>Attribuer une formation</value>
+  </data>
+  <data xml:space="preserve" name="Permission.DeleteTraining">
+    <value>Supprimer une formation</value>
+  </data>
   <data xml:space="preserve" name="Permission.CreateWorkflow">
     <value>Créer un flux de travail</value>
   </data>
@@ -3487,7 +3493,13 @@
     <value>Permet de créer, modifier et supprimer des quarts et des quarts de travail, et de gérer les inscriptions de tous les groupes. Les administrateurs de groupe gèrent toujours les inscriptions de leurs propres groupes. Les membres qui s'inscrivent — sur le web, dans les applications ou via le chatbot — doivent respecter les règles du quart (pas de jours passés, les quarts attribués nécessitent une affectation, les quarts de groupe nécessitent le groupe du membre). Tout le monde peut toujours consulter les quarts. Sans règle enregistrée, seuls les administrateurs du département peuvent modifier les quarts.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateTraining">
-    <value>Permet de créer, modifier et supprimer des formations, et de réinitialiser la progression des membres dans les formations. Tout le monde peut toujours consulter et suivre les formations. Sans règle enregistrée, seuls les administrateurs du département le peuvent.</value>
+    <value>Permet de créer des formations et d'en rédiger le contenu et le quiz, y compris le corrigé. L'attribution et les rapports (Attribuer une formation) ainsi que l'archivage ou la suppression (Supprimer une formation) sont des règles distinctes qui suivent celle-ci tant qu'elles ne sont pas enregistrées. Tout le monde peut toujours consulter et suivre les formations qui lui sont attribuées ou ouvertes. Sans règle enregistrée, seuls les administrateurs du service le peuvent.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AssignTraining">
+    <value>Permet d'attribuer des formations aux membres, de fixer les échéances, prolongations et exemptions, de réinitialiser des membres et de consulter le rapport de formation et l'historique des tentatives. Les administrateurs de groupe n'agissent que sur les membres de leur propre groupe. Tant qu'elle n'est pas enregistrée, elle suit Créer une formation.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.DeleteTraining">
+    <value>Permet d'archiver, de restaurer et de supprimer des formations. Une formation que quelqu'un a terminée est archivée au lieu d'être supprimée, afin que ses achèvements restent au dossier. Tant qu'elle n'est pas enregistrée, elle suit Créer une formation.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateWorkflow">
     <value>Permet de créer, modifier et supprimer des flux de travail, de prévisualiser leurs conditions, de lire la configuration des étapes dans les applications et l'API, et de voir la sortie générée des exécutions de flux de travail. Sans règle enregistrée, seuls les administrateurs du département peuvent modifier les flux de travail, mais chaque membre peut ouvrir la page Flux de travail et lire les définitions ; enregistrer « Administrateurs du département » masque en outre les flux de travail à tous les autres. Les étapes qui envoient une exportation des Rapports nécessitent aussi « Exporter des dossiers » et « Gérer les états de rapports ». Le nombre de flux de travail est limité dans les abonnements gratuits.</value>
@@ -8267,5 +8279,23 @@
   </data>
   <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
     <value>Utilisés quand votre format d'e-mail est « Labeled fields ». Saisissez le libellé que votre CAD écrit devant chaque valeur. Séparez les variantes par |.</value>
+  </data>
+  <data name="Feature.protocol-edit" xml:space="preserve">
+    <value>Modifier les protocoles</value>
+  </data>
+  <data name="FeaturePurpose.protocol-edit" xml:space="preserve">
+    <value>Modifier sur place le contenu, les déclencheurs et les questions d'un protocole ; les appels gardent le texte avec lequel ils ont été transmis.</value>
+  </data>
+  <data name="Feature.protocol-disable" xml:space="preserve">
+    <value>Désactiver des protocoles</value>
+  </data>
+  <data name="FeaturePurpose.protocol-disable" xml:space="preserve">
+    <value>Cesser de suggérer et de joindre un protocole sans le supprimer.</value>
+  </data>
+  <data name="Feature.call-protocol-removal" xml:space="preserve">
+    <value>Retirer un protocole d'un appel</value>
+  </data>
+  <data name="FeaturePurpose.call-protocol-removal" xml:space="preserve">
+    <value>Retirer d'un appel un protocole joint par erreur avec un motif ; le dossier le conserve, marqué comme retiré.</value>
   </data>
 </root>

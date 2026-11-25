@@ -16,5 +16,8 @@ namespace Resgrid.Model.Repositories
 		/// <param name="protocolId">The protocol identifier.</param>
 		/// <returns>Task&lt;IEnumerable&lt;DispatchProtocolQuestion&gt;&gt;.</returns>
 		Task<IEnumerable<DispatchProtocolQuestion>> GetDispatchProtocolQuestionsByProtocolIdAsync(int protocolId);
+
+		/// <summary>Every question of the department's protocols, with its answers, in two queries (not one per protocol).</summary>
+		Task<IEnumerable<DispatchProtocolQuestion>> GetQuestionsWithAnswersByDepartmentIdAsync(int departmentId);
 	}
 }

@@ -393,4 +393,844 @@
   <data name="AnswerTextColumn" xml:space="preserve">
     <value>Svarstext</value>
   </data>
+  <data name="AddLeaveHeader" xml:space="preserve">
+    <value>Lägg till ledighet</value>
+  </data>
+  <data name="AllowSelfEnrollLabel" xml:space="preserve">
+    <value>Medlemmar får anmäla sig själva</value>
+  </data>
+  <data name="ArchiveButton" xml:space="preserve">
+    <value>Arkivera</value>
+  </data>
+  <data name="ArchiveConfirm" xml:space="preserve">
+    <value>Arkivera {0}? Medlemmarna ser den inte längre; posterna sparas och den kan återställas.</value>
+  </data>
+  <data name="ArchivedLabel" xml:space="preserve">
+    <value>Arkiverad</value>
+  </data>
+  <data name="ArchivedNotice" xml:space="preserve">
+    <value>Utbildningen är arkiverad: medlemmarna ser den inte längre och posterna sparas.</value>
+  </data>
+  <data name="AssignOnlyNotice" xml:space="preserve">
+    <value>Du kan ändra vem som är tilldelad. Innehåll och quiz redigeras av utbildningens författare.</value>
+  </data>
+  <data name="AssignedColumn" xml:space="preserve">
+    <value>Tilldelade</value>
+  </data>
+  <data name="AssignedCountMessage" xml:space="preserve">
+    <value>{0} medlem(mar) tilldelade, {1} redan tilldelade.</value>
+  </data>
+  <data name="AssignedSummary" xml:space="preserve">
+    <value>{0} tilldelade, {1} slutförda.</value>
+  </data>
+  <data name="AssigneeNotRemovedError" xml:space="preserve">
+    <value>Medlemmen kunde inte tas bort.</value>
+  </data>
+  <data name="AssigneeRemovedMessage" xml:space="preserve">
+    <value>Medlemmen är borttagen från utbildningen.</value>
+  </data>
+  <data name="AssigneesHeader" xml:space="preserve">
+    <value>Deltagare</value>
+  </data>
+  <data name="AssignmentSection" xml:space="preserve">
+    <value>Vem som är tilldelad</value>
+  </data>
+  <data name="AttachmentNotRemovedError" xml:space="preserve">
+    <value>Bilagan kunde inte tas bort.</value>
+  </data>
+  <data name="AttachmentRemovedMessage" xml:space="preserve">
+    <value>Bilagan är borttagen.</value>
+  </data>
+  <data name="AttachmentSizeError" xml:space="preserve">
+    <value>En bilaga måste vara mindre än 30 MB.</value>
+  </data>
+  <data name="AttachmentTypeError" xml:space="preserve">
+    <value>Filtypen ({0}) kan inte bifogas.</value>
+  </data>
+  <data name="AttachmentsHelp" xml:space="preserve">
+    <value>Bilder, PDF, Office-dokument, text- och videofiler upp till 30 MB.</value>
+  </data>
+  <data name="AttemptColumn" xml:space="preserve">
+    <value>Försök</value>
+  </data>
+  <data name="AttemptHistoryHeader" xml:space="preserve">
+    <value>Försökshistorik</value>
+  </data>
+  <data name="AttemptHistoryHelp" xml:space="preserve">
+    <value>Varje inskickat försök, rättat mot quizet som det var då. Visas bara för dem som tilldelar och följer upp utbildningen.</value>
+  </data>
+  <data name="AttemptLimitHelp" xml:space="preserve">
+    <value>Lämna tomt för obegränsat antal försök.</value>
+  </data>
+  <data name="AttemptLimitLabel" xml:space="preserve">
+    <value>Max antal försök</value>
+  </data>
+  <data name="AttemptLimitRange" xml:space="preserve">
+    <value>Ange ett tal från {0} till {1}.</value>
+  </data>
+  <data name="AttemptsLeftValue" xml:space="preserve">
+    <value>{0} försök kvar</value>
+  </data>
+  <data name="AttemptsValue" xml:space="preserve">
+    <value>{0} försök</value>
+  </data>
+  <data name="BackToTrainingButton" xml:space="preserve">
+    <value>Tillbaka till utbildningen</value>
+  </data>
+  <data name="CatalogHeader" xml:space="preserve">
+    <value>Öppna utbildningar</value>
+  </data>
+  <data name="CatalogHelp" xml:space="preserve">
+    <value>Referensmaterial öppet för alla medlemmar. Anmäl dig för att få en utbildning registrerad.</value>
+  </data>
+  <data name="CategoryIdHelp" xml:space="preserve">
+    <value>Valfritt. Kategorier kommer med utbildningsregistret; tills dess är detta ett nummer.</value>
+  </data>
+  <data name="CategoryIdLabel" xml:space="preserve">
+    <value>Kategorinummer</value>
+  </data>
+  <data name="CeCourseNumberLabel" xml:space="preserve">
+    <value>Kursnummer</value>
+  </data>
+  <data name="CeHoursLabel" xml:space="preserve">
+    <value>Fortbildningstimmar</value>
+  </data>
+  <data name="CeProviderLabel" xml:space="preserve">
+    <value>Utbildningsanordnare</value>
+  </data>
+  <data name="CertificationColumn" xml:space="preserve">
+    <value>Certifiering</value>
+  </data>
+  <data name="CertificationCurrent" xml:space="preserve">
+    <value>Giltig</value>
+  </data>
+  <data name="CertificationDaysLeft" xml:space="preserve">
+    <value>{0} dag(ar) kvar</value>
+  </data>
+  <data name="CertificationExpired" xml:space="preserve">
+    <value>Utgången</value>
+  </data>
+  <data name="CertificationPinError" xml:space="preserve">
+    <value>Certifieringen kunde inte fästas.</value>
+  </data>
+  <data name="CertificationPinnedMessage" xml:space="preserve">
+    <value>Certifieringen är fäst i Min utbildning.</value>
+  </data>
+  <data name="CertificationTypesLabel" xml:space="preserve">
+    <value>Innehavare av certifieringar</value>
+  </data>
+  <data name="CertificationUnpinnedMessage" xml:space="preserve">
+    <value>Certifieringen är inte längre fäst.</value>
+  </data>
+  <data name="CertificationsDueHeader" xml:space="preserve">
+    <value>Certifieringar som förfaller</value>
+  </data>
+  <data name="CertificationsDueHelp" xml:space="preserve">
+    <value>Dina certifieringar som snart går ut eller har gått ut, och de du har fäst.</value>
+  </data>
+  <data name="ClearExemptionButton" xml:space="preserve">
+    <value>Avsluta undantag</value>
+  </data>
+  <data name="ClosedLabel" xml:space="preserve">
+    <value>Stängd för nya deltagare</value>
+  </data>
+  <data name="ClosedToNewAssigneesHelp" xml:space="preserve">
+    <value>Ingen mer tilldelas, varken via ändring, medlemskap eller anmälan (en engångsgenomgång).</value>
+  </data>
+  <data name="ClosedToNewAssigneesLabel" xml:space="preserve">
+    <value>Stängd för nya deltagare</value>
+  </data>
+  <data name="ClosedToNewAssigneesMessage" xml:space="preserve">
+    <value>Utbildningen är stängd för nya deltagare, så ingen lades till.</value>
+  </data>
+  <data name="CompletedOnValue" xml:space="preserve">
+    <value>Slutförd {0}</value>
+  </data>
+  <data name="CompletionHistoryHeader" xml:space="preserve">
+    <value>Tidigare slutföranden</value>
+  </data>
+  <data name="ContentSection" xml:space="preserve">
+    <value>Innehåll</value>
+  </data>
+  <data name="ContinueTrainingButton" xml:space="preserve">
+    <value>Fortsätt</value>
+  </data>
+  <data name="CopyButton" xml:space="preserve">
+    <value>Kopiera</value>
+  </data>
+  <data name="CopyNameFormat" xml:space="preserve">
+    <value>{0} (kopia)</value>
+  </data>
+  <data name="CreditSection" xml:space="preserve">
+    <value>Timmar och fortbildning</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Ta bort {0}? Det går inte att ångra.</value>
+  </data>
+  <data name="DeleteHasCompletionsError" xml:space="preserve">
+    <value>Medlemmar har slutfört utbildningen, så den kan inte tas bort. Arkivera den i stället: posterna sparas.</value>
+  </data>
+  <data name="DeleteLeaveConfirm" xml:space="preserve">
+    <value>Ta bort ledigheten? Slutdatumen flyttas tillbaka.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Detaljer</value>
+  </data>
+  <data name="DueDateHelp" xml:space="preserve">
+    <value>Ska vara klar vid dagens slut. Den som tilldelas efteråt får 30 dagar.</value>
+  </data>
+  <data name="DueDateRequired" xml:space="preserve">
+    <value>Välj slutdatum.</value>
+  </data>
+  <data name="DueDaysLabel" xml:space="preserve">
+    <value>Dagar att slutföra</value>
+  </data>
+  <data name="DueDaysRange" xml:space="preserve">
+    <value>Ange mellan 1 och 3650 dagar.</value>
+  </data>
+  <data name="DueModeFixed" xml:space="preserve">
+    <value>Ett datum</value>
+  </data>
+  <data name="DueModeLabel" xml:space="preserve">
+    <value>Slutdatum</value>
+  </data>
+  <data name="DueModeNone" xml:space="preserve">
+    <value>Inget slutdatum</value>
+  </data>
+  <data name="DueModeRelative" xml:space="preserve">
+    <value>Dagar efter varje tilldelning</value>
+  </data>
+  <data name="DueOnLabel" xml:space="preserve">
+    <value>Förfaller</value>
+  </data>
+  <data name="DueSoonHeader" xml:space="preserve">
+    <value>Förfaller snart</value>
+  </data>
+  <data name="DynamicNotice" xml:space="preserve">
+    <value>Tilldelningen är dynamisk: medlemmar som går med i dessa grupper, roller, skift, certifieringar eller enhetstyper tilldelas automatiskt, och de som lämnar innan de öppnat den tas bort.</value>
+  </data>
+  <data name="EmbedsHelp" xml:space="preserve">
+    <value>Inbäddningar från YouTube, Vimeo, Google Docs och Sheets samt Microsoft Stream och Teams behålls; andra inbäddade ramar tas bort.</value>
+  </data>
+  <data name="EnrollButton" xml:space="preserve">
+    <value>Anmäl dig</value>
+  </data>
+  <data name="EnrollError" xml:space="preserve">
+    <value>Du kan inte anmäla dig till den utbildningen.</value>
+  </data>
+  <data name="EnrollHelp" xml:space="preserve">
+    <value>Anmäl dig så registreras utbildningen för dig, med slutdatum och påminnelser.</value>
+  </data>
+  <data name="EnrolledMessage" xml:space="preserve">
+    <value>Du är anmäld till utbildningen.</value>
+  </data>
+  <data name="ExemptButton" xml:space="preserve">
+    <value>Undanta</value>
+  </data>
+  <data name="ExemptError" xml:space="preserve">
+    <value>Undantaget kunde inte sparas (skäl krävs).</value>
+  </data>
+  <data name="ExemptNotice" xml:space="preserve">
+    <value>Du är undantagen från utbildningen.</value>
+  </data>
+  <data name="ExemptUntilLabel" xml:space="preserve">
+    <value>Till (valfritt)</value>
+  </data>
+  <data name="ExemptedMessage" xml:space="preserve">
+    <value>Medlemmen är undantagen.</value>
+  </data>
+  <data name="ExemptionClearedMessage" xml:space="preserve">
+    <value>Undantaget har avslutats.</value>
+  </data>
+  <data name="ExpiresColumn" xml:space="preserve">
+    <value>Går ut</value>
+  </data>
+  <data name="ExtendButton" xml:space="preserve">
+    <value>Förläng</value>
+  </data>
+  <data name="ExtendError" xml:space="preserve">
+    <value>Ange ett framtida datum och ett skäl.</value>
+  </data>
+  <data name="ExtendedLabel" xml:space="preserve">
+    <value>Förlängd</value>
+  </data>
+  <data name="ExtendedMessage" xml:space="preserve">
+    <value>Slutdatumet är förlängt.</value>
+  </data>
+  <data name="FalseLabel" xml:space="preserve">
+    <value>Falskt</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Filtrera</value>
+  </data>
+  <data name="FlagCommentLabel" xml:space="preserve">
+    <value>Vad ser fel ut?</value>
+  </data>
+  <data name="FlagNotResolvedError" xml:space="preserve">
+    <value>Flaggan kunde inte åtgärdas.</value>
+  </data>
+  <data name="FlagQuestionButton" xml:space="preserve">
+    <value>Flagga fråga</value>
+  </data>
+  <data name="FlagQuestionHeader" xml:space="preserve">
+    <value>Flagga en fråga</value>
+  </data>
+  <data name="FlagQuestionHelp" xml:space="preserve">
+    <value>Om en fråga ser fel ut, meddela författaren.</value>
+  </data>
+  <data name="FlagResolvedMessage" xml:space="preserve">
+    <value>Flaggan är åtgärdad.</value>
+  </data>
+  <data name="FlaggedByColumn" xml:space="preserve">
+    <value>Flaggad av</value>
+  </data>
+  <data name="FormerMemberLabel" xml:space="preserve">
+    <value>Tidigare medlem</value>
+  </data>
+  <data name="HideFormerMembersButton" xml:space="preserve">
+    <value>Dölj tidigare medlemmar</value>
+  </data>
+  <data name="HistoryReasonColumn" xml:space="preserve">
+    <value>Varför</value>
+  </data>
+  <data name="HistoryReasonMaterialEdit" xml:space="preserve">
+    <value>Väsentlig ändring</value>
+  </data>
+  <data name="HistoryReasonRepeat" xml:space="preserve">
+    <value>Upprepning</value>
+  </data>
+  <data name="HistoryReasonReset" xml:space="preserve">
+    <value>Återställd</value>
+  </data>
+  <data name="HoursColumn" xml:space="preserve">
+    <value>Timmar</value>
+  </data>
+  <data name="HoursLabel" xml:space="preserve">
+    <value>Utbildningstimmar</value>
+  </data>
+  <data name="HoursRange" xml:space="preserve">
+    <value>Timmar anges från 0 till 9999.</value>
+  </data>
+  <data name="HoursValue" xml:space="preserve">
+    <value>{0} tim</value>
+  </data>
+  <data name="InProgressHeader" xml:space="preserve">
+    <value>Pågår</value>
+  </data>
+  <data name="InactiveMembersHelp" xml:space="preserve">
+    <value>Borttagna, inaktiverade och dolda medlemmar tilldelas aldrig; du får veta vem som hoppades över och varför.</value>
+  </data>
+  <data name="KpiCompletion" xml:space="preserve">
+    <value>Slutförande</value>
+  </data>
+  <data name="KpiDueThisWeek" xml:space="preserve">
+    <value>Förfaller denna vecka</value>
+  </data>
+  <data name="KpiOverdue" xml:space="preserve">
+    <value>Försenade</value>
+  </data>
+  <data name="LastScoreValue" xml:space="preserve">
+    <value>Senaste resultat {0} %</value>
+  </data>
+  <data name="LeadDaysInvalid" xml:space="preserve">
+    <value>Påminnelsedagar är heltal från 1 till {0}, kommaseparerade.</value>
+  </data>
+  <data name="LeaveDatesInvalid" xml:space="preserve">
+    <value>Ange första och sista dag; sista dagen kan inte vara före den första.</value>
+  </data>
+  <data name="LeaveDeletedMessage" xml:space="preserve">
+    <value>Ledigheten är borttagen.</value>
+  </data>
+  <data name="LeaveEndLabel" xml:space="preserve">
+    <value>Sista dagen</value>
+  </data>
+  <data name="LeaveIntro" xml:space="preserve">
+    <value>Under en ledighet pausas slutdatum och påminnelser; därefter flyttas de fram med ledighetens längd.</value>
+  </data>
+  <data name="LeaveKindLabel" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="LeaveKindLightDuty" xml:space="preserve">
+    <value>Lätt tjänst</value>
+  </data>
+  <data name="LeaveKindMedical" xml:space="preserve">
+    <value>Sjukdom</value>
+  </data>
+  <data name="LeaveKindMilitary" xml:space="preserve">
+    <value>Militärtjänst</value>
+  </data>
+  <data name="LeaveKindOther" xml:space="preserve">
+    <value>Annan</value>
+  </data>
+  <data name="LeaveKindParental" xml:space="preserve">
+    <value>Föräldraledighet</value>
+  </data>
+  <data name="LeaveMemberRequired" xml:space="preserve">
+    <value>Välj en medlem som du får tilldela utbildning.</value>
+  </data>
+  <data name="LeaveNotSavedError" xml:space="preserve">
+    <value>Ledigheten kunde inte sparas.</value>
+  </data>
+  <data name="LeaveNoteLabel" xml:space="preserve">
+    <value>Anteckning</value>
+  </data>
+  <data name="LeavePeriodsHeader" xml:space="preserve">
+    <value>Ledighetsperioder</value>
+  </data>
+  <data name="LeaveSavedMessage" xml:space="preserve">
+    <value>Ledigheten är sparad.</value>
+  </data>
+  <data name="LeaveStartLabel" xml:space="preserve">
+    <value>Första dagen</value>
+  </data>
+  <data name="LeaveTab" xml:space="preserve">
+    <value>Tjänstledighet</value>
+  </data>
+  <data name="MakeDynamicLabel" xml:space="preserve">
+    <value>Gör tilldelningen dynamisk (håll den aktuell när medlemskap ändras)</value>
+  </data>
+  <data name="ManageIntro" xml:space="preserve">
+    <value>Utbildningar som du skapar, tilldelar eller följer upp.</value>
+  </data>
+  <data name="ManageTrainingsTab" xml:space="preserve">
+    <value>Hantera utbildningar</value>
+  </data>
+  <data name="MaterialChangeHeader" xml:space="preserve">
+    <value>Quizet eller godkäntgränsen har ändrats</value>
+  </data>
+  <data name="MaterialChangeHelp" xml:space="preserve">
+    <value>{0} medlem(mar) har redan slutfört utbildningen. Är detta en väsentlig ändring?</value>
+  </data>
+  <data name="MaterialChangeNo" xml:space="preserve">
+    <value>Inte väsentlig: resultaten står kvar</value>
+  </data>
+  <data name="MaterialChangeRequired" xml:space="preserve">
+    <value>Ange om quizändringen är väsentlig innan du sparar.</value>
+  </data>
+  <data name="MaterialChangeYes" xml:space="preserve">
+    <value>Väsentlig: tilldela den igen till dem som slutfört den</value>
+  </data>
+  <data name="MaterialReassignedMessage" xml:space="preserve">
+    <value>{0} medlem(mar) tilldelades igen.</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Medlem</value>
+  </data>
+  <data name="MemberNotResetError" xml:space="preserve">
+    <value>Medlemmen kunde inte återställas.</value>
+  </data>
+  <data name="MemberResetMessage" xml:space="preserve">
+    <value>Medlemmen är återställd.</value>
+  </data>
+  <data name="MinimumScoreRange" xml:space="preserve">
+    <value>Godkäntgränsen är 0 till 100.</value>
+  </data>
+  <data name="MyTrainingIntro" xml:space="preserve">
+    <value>Dina tilldelade utbildningar, vad som förfaller härnäst och certifieringar som behöver åtgärdas.</value>
+  </data>
+  <data name="MyTrainingTab" xml:space="preserve">
+    <value>Min utbildning</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Ange ett namn.</value>
+  </data>
+  <data name="NewAssignmentHelp" xml:space="preserve">
+    <value>Grupper, roller, skift, certifieringar och enhetstyper hålls aktuella: den som ansluter senare tilldelas automatiskt.</value>
+  </data>
+  <data name="NewDueDateLabel" xml:space="preserve">
+    <value>Nytt slutdatum</value>
+  </data>
+  <data name="NewTrainingIntro" xml:space="preserve">
+    <value>Skriv utbildningen, lägg till ett valfritt quiz och välj sedan vem den gäller och när den ska vara klar.</value>
+  </data>
+  <data name="NextActionHeader" xml:space="preserve">
+    <value>Nästa steg</value>
+  </data>
+  <data name="NoAssigneesError" xml:space="preserve">
+    <value>Välj vem utbildningen gäller eller öppna den för alla medlemmar.</value>
+  </data>
+  <data name="NoAttachments" xml:space="preserve">
+    <value>Inga bilagor.</value>
+  </data>
+  <data name="NoAttempts" xml:space="preserve">
+    <value>Inga försök ännu.</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>Inget utgångsdatum</value>
+  </data>
+  <data name="NoLeavePeriods" xml:space="preserve">
+    <value>Ingen ledighet registrerad.</value>
+  </data>
+  <data name="NoTrainingsHeader" xml:space="preserve">
+    <value>Inga utbildningar att visa</value>
+  </data>
+  <data name="NotAssignedNotice" xml:space="preserve">
+    <value>Utbildningen är inte tilldelad dig.</value>
+  </data>
+  <data name="NotStartedHeader" xml:space="preserve">
+    <value>Ej påbörjade</value>
+  </data>
+  <data name="NothingAssignedHeader" xml:space="preserve">
+    <value>Inget är tilldelat dig</value>
+  </data>
+  <data name="NothingAssignedHelp" xml:space="preserve">
+    <value>Utbildningar som din avdelning tilldelar dig visas här.</value>
+  </data>
+  <data name="OnLeaveNotice" xml:space="preserve">
+    <value>Du är tjänstledig: slutdatum och påminnelser pausas och flyttas fram med ledighetens längd.</value>
+  </data>
+  <data name="OneQuestionPerPageLabel" xml:space="preserve">
+    <value>Visa en fråga i taget</value>
+  </data>
+  <data name="OpenFlagsHeader" xml:space="preserve">
+    <value>Flaggade frågor</value>
+  </data>
+  <data name="OpenLabel" xml:space="preserve">
+    <value>Öppen för alla</value>
+  </data>
+  <data name="OpenTrainingButton" xml:space="preserve">
+    <value>Öppna utbildningen</value>
+  </data>
+  <data name="OverdueHeader" xml:space="preserve">
+    <value>Försenade</value>
+  </data>
+  <data name="OverdueRepeatDaysHelp" xml:space="preserve">
+    <value>Tomt skickar det en gång.</value>
+  </data>
+  <data name="OverdueRepeatDaysLabel" xml:space="preserve">
+    <value>Upprepa försenad-meddelande var (dag)</value>
+  </data>
+  <data name="OverdueRepeatRange" xml:space="preserve">
+    <value>Ange ett tal från {0} till {1}.</value>
+  </data>
+  <data name="PinButton" xml:space="preserve">
+    <value>Fäst</value>
+  </data>
+  <data name="PinnedLabel" xml:space="preserve">
+    <value>Fäst</value>
+  </data>
+  <data name="PreviewAudienceButton" xml:space="preserve">
+    <value>Förhandsgranska vilka som läggs till</value>
+  </data>
+  <data name="PreviewHeader" xml:space="preserve">
+    <value>Förhandsgranskning</value>
+  </data>
+  <data name="PreviewQuizButton" xml:space="preserve">
+    <value>Förhandsgranska quiz</value>
+  </data>
+  <data name="PreviewSummary" xml:space="preserve">
+    <value>{0} medlem(mar) skulle läggas till; {1} redan tilldelade.</value>
+  </data>
+  <data name="ProgressHeader" xml:space="preserve">
+    <value>Dina framsteg</value>
+  </data>
+  <data name="QuestionCountValue" xml:space="preserve">
+    <value>{0} fråga/frågor</value>
+  </data>
+  <data name="QuestionFlaggedMessage" xml:space="preserve">
+    <value>Tack: utbildningens författare har meddelats.</value>
+  </data>
+  <data name="QuestionNotFlaggedError" xml:space="preserve">
+    <value>Frågan kunde inte flaggas.</value>
+  </data>
+  <data name="QuestionNumberLabel" xml:space="preserve">
+    <value>Fråga {0}</value>
+  </data>
+  <data name="QuestionOfValue" xml:space="preserve">
+    <value>Fråga {0} av {1}</value>
+  </data>
+  <data name="QuestionTypeLabel" xml:space="preserve">
+    <value>Frågetyp</value>
+  </data>
+  <data name="QuestionTypeMulti" xml:space="preserve">
+    <value>Flera svar (alla rätta alternativ)</value>
+  </data>
+  <data name="QuestionTypeSingle" xml:space="preserve">
+    <value>Ett svar</value>
+  </data>
+  <data name="QuestionTypeTrueFalse" xml:space="preserve">
+    <value>Sant eller falskt</value>
+  </data>
+  <data name="QuizAlreadyPassedMessage" xml:space="preserve">
+    <value>Du har redan klarat quizet.</value>
+  </data>
+  <data name="QuizAttemptLimitError" xml:space="preserve">
+    <value>Du har använt alla tillåtna försök.</value>
+  </data>
+  <data name="QuizFailedHeader" xml:space="preserve">
+    <value>Inte godkänt</value>
+  </data>
+  <data name="QuizFailedValue" xml:space="preserve">
+    <value>Quiz underkänt: {0} % (gräns {1} %)</value>
+  </data>
+  <data name="QuizIntro" xml:space="preserve">
+    <value>{0} fråga/frågor. Godkänt kräver {1} %.</value>
+  </data>
+  <data name="QuizNotAvailableError" xml:space="preserve">
+    <value>Quizet är inte tillgängligt.</value>
+  </data>
+  <data name="QuizNotTakenValue" xml:space="preserve">
+    <value>Quizet ej gjort (gräns {0} %)</value>
+  </data>
+  <data name="QuizPassedHeader" xml:space="preserve">
+    <value>Godkänt</value>
+  </data>
+  <data name="QuizPassedValue" xml:space="preserve">
+    <value>Quiz godkänt: {0} %</value>
+  </data>
+  <data name="QuizPreviewNotice" xml:space="preserve">
+    <value>Förhandsgranskning: du är inte tilldelad, så inget skickas in.</value>
+  </data>
+  <data name="QuizProblemMinimumScoreRange" xml:space="preserve">
+    <value>Godkäntgränsen är 0 till 100.</value>
+  </data>
+  <data name="QuizProblemQuestionAnswerKey" xml:space="preserve">
+    <value>Markera rätt svar: ett för ett-svarsfrågor och sant/falskt, minst ett för flervalsfrågor.</value>
+  </data>
+  <data name="QuizProblemQuestionOptions" xml:space="preserve">
+    <value>Varje fråga behöver minst två svar (högst 26).</value>
+  </data>
+  <data name="QuizProblemQuestionText" xml:space="preserve">
+    <value>Varje fråga behöver en text.</value>
+  </data>
+  <data name="QuizProblemQuestionType" xml:space="preserve">
+    <value>En fråga har en okänd typ.</value>
+  </data>
+  <data name="QuizProblemTooManyQuestions" xml:space="preserve">
+    <value>Ett quiz har högst 100 frågor.</value>
+  </data>
+  <data name="QuizProblemTrueFalseOptions" xml:space="preserve">
+    <value>En sant/falskt-fråga har exakt två svar.</value>
+  </data>
+  <data name="QuizResultHeader" xml:space="preserve">
+    <value>Quizresultat</value>
+  </data>
+  <data name="QuizRevisionColumn" xml:space="preserve">
+    <value>Quizversion</value>
+  </data>
+  <data name="QuizScoreValue" xml:space="preserve">
+    <value>Resultat {0} %: {1} av {2} rätt. Gräns {3} %.</value>
+  </data>
+  <data name="QuizSection" xml:space="preserve">
+    <value>Quiz</value>
+  </data>
+  <data name="ReadButton" xml:space="preserve">
+    <value>Läs</value>
+  </data>
+  <data name="ReasonLabel" xml:space="preserve">
+    <value>Skäl</value>
+  </data>
+  <data name="RecentCompletionsHeader" xml:space="preserve">
+    <value>Nyligen slutförda</value>
+  </data>
+  <data name="RelativeDueValue" xml:space="preserve">
+    <value>{0} dagar efter tilldelning</value>
+  </data>
+  <data name="ReminderLeadDaysHelp" xml:space="preserve">
+    <value>Kommaseparerat, till exempel 7,1. Tomt påminner en dag före.</value>
+  </data>
+  <data name="ReminderLeadDaysLabel" xml:space="preserve">
+    <value>Påminn före slutdatum (dagar)</value>
+  </data>
+  <data name="ReminderMessageHelp" xml:space="preserve">
+    <value>Valfritt, högst 500 tecken, läggs till i meddelanden om ny utbildning, påminnelser och förseningar.</value>
+  </data>
+  <data name="ReminderMessageLabel" xml:space="preserve">
+    <value>Meddelande som läggs till</value>
+  </data>
+  <data name="RemindersSection" xml:space="preserve">
+    <value>Påminnelser</value>
+  </data>
+  <data name="RemoveAssigneeButton" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="RemoveAssigneeConfirm" xml:space="preserve">
+    <value>Ta bort medlemmen från utbildningen? Ett slutförande sparas.</value>
+  </data>
+  <data name="RemoveAttachmentConfirm" xml:space="preserve">
+    <value>Ta bort bilagan?</value>
+  </data>
+  <data name="RemoveQuestionButton" xml:space="preserve">
+    <value>Ta bort fråga</value>
+  </data>
+  <data name="RemovedQuestionLabel" xml:space="preserve">
+    <value>(fråga borttagen)</value>
+  </data>
+  <data name="RepeatMonthsHelp" xml:space="preserve">
+    <value>Valfritt. Varje intervall tilldelar den igen med nytt slutdatum; tidigare slutföranden finns kvar.</value>
+  </data>
+  <data name="RepeatMonthsLabel" xml:space="preserve">
+    <value>Upprepa var (månad)</value>
+  </data>
+  <data name="RepeatMonthsRange" xml:space="preserve">
+    <value>Ange ett tal från {0} till {1}.</value>
+  </data>
+  <data name="RepeatsEveryValue" xml:space="preserve">
+    <value>Var {0}:e månad</value>
+  </data>
+  <data name="ResetConfirm" xml:space="preserve">
+    <value>Återställ medlemmen? Ett slutförande flyttas till historiken och hen börjar om.</value>
+  </data>
+  <data name="ResolveFlagButton" xml:space="preserve">
+    <value>Åtgärda</value>
+  </data>
+  <data name="RestoreButton" xml:space="preserve">
+    <value>Återställ</value>
+  </data>
+  <data name="RetakeQuizButton" xml:space="preserve">
+    <value>Gör om quizet</value>
+  </data>
+  <data name="SaveLeaveButton" xml:space="preserve">
+    <value>Spara ledighet</value>
+  </data>
+  <data name="ScheduleSection" xml:space="preserve">
+    <value>Schema och tillgänglighet</value>
+  </data>
+  <data name="ScheduledLabel" xml:space="preserve">
+    <value>Börjar</value>
+  </data>
+  <data name="ScheduledNotice" xml:space="preserve">
+    <value>Utbildningen börjar {0}. Från då ser deltagarna den.</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Sök</value>
+  </data>
+  <data name="SelectAllThatApply" xml:space="preserve">
+    <value>Välj alla rätta svar.</value>
+  </data>
+  <data name="SelectPlaceholder" xml:space="preserve">
+    <value>Välj...</value>
+  </data>
+  <data name="SelfEnrolledLabel" xml:space="preserve">
+    <value>Självanmäld</value>
+  </data>
+  <data name="SendOverdueNoticesLabel" xml:space="preserve">
+    <value>Skicka försenad-meddelande till medlemmen och skaparen</value>
+  </data>
+  <data name="ShiftsLabel" xml:space="preserve">
+    <value>Medlemmar i skift</value>
+  </data>
+  <data name="ShowFormerMembersButton" xml:space="preserve">
+    <value>Visa tidigare medlemmar</value>
+  </data>
+  <data name="SkipReasonDeleted" xml:space="preserve">
+    <value>borttagen från avdelningen</value>
+  </data>
+  <data name="SkipReasonDisabled" xml:space="preserve">
+    <value>inaktiverad</value>
+  </data>
+  <data name="SkipReasonHidden" xml:space="preserve">
+    <value>dold</value>
+  </data>
+  <data name="SkipReasonNotActivated" xml:space="preserve">
+    <value>importerad men inte aktiverad</value>
+  </data>
+  <data name="SkipReasonNotInDepartment" xml:space="preserve">
+    <value>inte medlem i avdelningen</value>
+  </data>
+  <data name="SkipReasonOutOfScope" xml:space="preserve">
+    <value>utanför gruppen du administrerar</value>
+  </data>
+  <data name="SkippedMembersIntro" xml:space="preserve">
+    <value>Inte tilldelade:</value>
+  </data>
+  <data name="StartsOnHelp" xml:space="preserve">
+    <value>Valfritt. Fram till dess ser deltagarna inte utbildningen och ingen meddelas.</value>
+  </data>
+  <data name="StartsOnInvalid" xml:space="preserve">
+    <value>Ange ett giltigt startdatum och klockslag.</value>
+  </data>
+  <data name="StartsOnLabel" xml:space="preserve">
+    <value>Börjar</value>
+  </data>
+  <data name="StateComplete" xml:space="preserve">
+    <value>Slutförd</value>
+  </data>
+  <data name="StateExempt" xml:space="preserve">
+    <value>Undantagen</value>
+  </data>
+  <data name="StateFailed" xml:space="preserve">
+    <value>Quiz underkänt</value>
+  </data>
+  <data name="StateInProgress" xml:space="preserve">
+    <value>Pågår</value>
+  </data>
+  <data name="StateNotStarted" xml:space="preserve">
+    <value>Ej påbörjad</value>
+  </data>
+  <data name="StateOnLeave" xml:space="preserve">
+    <value>Tjänstledig</value>
+  </data>
+  <data name="StateOverdue" xml:space="preserve">
+    <value>Försenad</value>
+  </data>
+  <data name="StateRemoved" xml:space="preserve">
+    <value>Borttagen</value>
+  </data>
+  <data name="StateScheduled" xml:space="preserve">
+    <value>Schemalagd</value>
+  </data>
+  <data name="StaticNotice" xml:space="preserve">
+    <value>Utbildningen har en fast deltagarlista. Valen nedan läggs till.</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>Aktiva</value>
+  </data>
+  <data name="StatusAll" xml:space="preserve">
+    <value>Alla</value>
+  </data>
+  <data name="StatusArchived" xml:space="preserve">
+    <value>Arkiverade</value>
+  </data>
+  <data name="StatusFilterLabel" xml:space="preserve">
+    <value>Visa</value>
+  </data>
+  <data name="StatusScheduled" xml:space="preserve">
+    <value>Schemalagda</value>
+  </data>
+  <data name="SubmitQuizConfirm" xml:space="preserve">
+    <value>Skicka in dina svar?</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Inskickat</value>
+  </data>
+  <data name="TextTooLong" xml:space="preserve">
+    <value>Texten är längre än {0} tecken.</value>
+  </data>
+  <data name="TrainingArchivedMessage" xml:space="preserve">
+    <value>Utbildningen är arkiverad.</value>
+  </data>
+  <data name="TrainingCopiedMessage" xml:space="preserve">
+    <value>En kopia skapades. Granska den och välj vem den gäller.</value>
+  </data>
+  <data name="TrainingDeletedMessage" xml:space="preserve">
+    <value>Utbildningen är borttagen.</value>
+  </data>
+  <data name="TrainingNotArchivedError" xml:space="preserve">
+    <value>Utbildningen kunde inte arkiveras.</value>
+  </data>
+  <data name="TrainingNotRestoredError" xml:space="preserve">
+    <value>Utbildningen kunde inte återställas.</value>
+  </data>
+  <data name="TrainingRestoredMessage" xml:space="preserve">
+    <value>Utbildningen är återställd.</value>
+  </data>
+  <data name="TrainingSavedMessage" xml:space="preserve">
+    <value>Utbildningen är sparad.</value>
+  </data>
+  <data name="TrueLabel" xml:space="preserve">
+    <value>Sant</value>
+  </data>
+  <data name="UnitTypesLabel" xml:space="preserve">
+    <value>Besättningar av enhetstyper</value>
+  </data>
+  <data name="UnpinButton" xml:space="preserve">
+    <value>Lossa</value>
+  </data>
+  <data name="ViewedLabel" xml:space="preserve">
+    <value>Visad</value>
+  </data>
+  <data name="ViewedOnValue" xml:space="preserve">
+    <value>Visad {0}</value>
+  </data>
 </root>

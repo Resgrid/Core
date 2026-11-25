@@ -1286,6 +1286,18 @@
   <data name="PermCreateTrainingNote" xml:space="preserve">
     <value>Визначає, хто може створювати навчання. За замовчуванням створювати навчання можуть лише адміністратори підрозділу.</value>
   </data>
+  <data name="PermAssignTrainingLabel" xml:space="preserve">
+    <value>Хто може призначати навчання та переглядати звіти</value>
+  </data>
+  <data name="PermAssignTrainingNote" xml:space="preserve">
+    <value>Цей параметр визначає, хто може призначати навчання учасникам, встановлювати терміни, продовження та звільнення, а також читати звіт навчання та історію спроб. Адміністратори груп діють лише щодо учасників власної групи. Доки ви не збережете тут правило, діє налаштування «Створення навчань».</value>
+  </data>
+  <data name="PermDeleteTrainingLabel" xml:space="preserve">
+    <value>Хто може архівувати та видаляти навчання</value>
+  </data>
+  <data name="PermDeleteTrainingNote" xml:space="preserve">
+    <value>Цей параметр визначає, хто може архівувати, відновлювати та видаляти навчання. Навчання, яке хтось завершив, архівується, а не видаляється. Доки ви не збережете тут правило, діє налаштування «Створення навчань».</value>
+  </data>
   <data name="PermCreateDocumentLabel" xml:space="preserve">
     <value>Хто може додавати документи</value>
   </data>
@@ -2742,4 +2754,18 @@
   <data name="AuditLogTypeRecurringCallOccurrenceCreated" xml:space="preserve"><value>Створено повтор виклику</value></data>
   <data name="AuditLogTypeRecurringCallAlertAcknowledged" xml:space="preserve"><value>Підтверджено сповіщення повторюваного виклику</value></data>
   <data name="AuditLogTypeRecurringCallAlertDismissed" xml:space="preserve"><value>Закрито сповіщення повторюваного виклику</value></data>
+  <data name="AuditLogTypeProtocolCreated" xml:space="preserve"><value>Протокол створено</value></data>
+  <data name="AuditLogTypeProtocolUpdated" xml:space="preserve"><value>Протокол оновлено</value></data>
+  <data name="AuditLogTypeProtocolDisabled" xml:space="preserve"><value>Протокол вимкнено</value></data>
+  <data name="AuditLogTypeProtocolEnabled" xml:space="preserve"><value>Протокол увімкнено</value></data>
+  <data name="AuditLogTypeProtocolDeleted" xml:space="preserve"><value>Протокол видалено</value></data>
+  <data name="AuditLogTypeCallProtocolRemoved" xml:space="preserve"><value>Протокол знято з виклику</value></data>
+  <data name="AuditLogTypeTrainingArchived" xml:space="preserve"><value>Навчання заархівовано</value></data>
+  <data name="AuditLogTypeTrainingRestored" xml:space="preserve"><value>Навчання відновлено</value></data>
+  <data name="AuditLogTypeTrainingDeleted" xml:space="preserve"><value>Навчання видалено</value></data>
+  <data name="AuditLogTypeTrainingCopied" xml:space="preserve"><value>Навчання скопійовано</value></data>
+  <data name="AuditLogTypeTrainingAssigneeRemoved" xml:space="preserve"><value>Учасника навчання вилучено</value></data>
+  <data name="AuditLogTypeTrainingAssignmentExtended" xml:space="preserve"><value>Призначення навчання продовжено</value></data>
+  <data name="AuditLogTypeTrainingAssignmentExempted" xml:space="preserve"><value>Звільнення від призначення навчання змінено</value></data>
+  <data name="AuditLogTypeMemberLeavePeriodChanged" xml:space="preserve"><value>Період відпустки учасника змінено</value></data>
 </root>

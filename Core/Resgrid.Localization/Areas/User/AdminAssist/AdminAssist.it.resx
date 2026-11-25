@@ -3243,6 +3243,12 @@
   <data xml:space="preserve" name="Permission.CreateTraining">
     <value>Crea Formazione</value>
   </data>
+  <data xml:space="preserve" name="Permission.AssignTraining">
+    <value>Assegnare formazione</value>
+  </data>
+  <data xml:space="preserve" name="Permission.DeleteTraining">
+    <value>Eliminare formazione</value>
+  </data>
   <data xml:space="preserve" name="Permission.CreateWorkflow">
     <value>Crea Flusso di Lavoro</value>
   </data>
@@ -3487,7 +3493,13 @@
     <value>Consente di creare, modificare ed eliminare turni e turni di lavoro e di gestire le iscrizioni per ogni gruppo. Gli amministratori di gruppo gestiscono sempre le iscrizioni dei propri gruppi. I membri che si iscrivono (sul web, nelle app o tramite il chatbot) devono rispettare le regole del turno: niente giorni passati, i turni assegnati richiedono un'assegnazione e i turni di gruppo richiedono il gruppo del membro. Tutti possono comunque visualizzare i turni. Senza una regola salvata, solo gli amministratori del dipartimento possono modificare i turni.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateTraining">
-    <value>Consente di creare, modificare ed eliminare formazioni e di azzerare l'avanzamento della formazione dei membri. Tutti possono comunque visualizzare e completare le formazioni. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento.</value>
+    <value>Consente di creare formazioni e redigerne il contenuto e il quiz, compresa la chiave delle risposte. Assegnazione e report (Assegnare formazione) e archiviazione o eliminazione (Eliminare formazione) sono regole separate che seguono questa finché non vengono salvate. Tutti possono comunque vedere e completare le formazioni assegnate o aperte a loro. Senza una regola salvata solo gli amministratori del dipartimento possono farlo.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AssignTraining">
+    <value>Consente di assegnare formazioni ai membri, impostare scadenze, proroghe ed esenzioni, reimpostare i membri e leggere il report della formazione e lo storico dei tentativi. Gli amministratori di gruppo agiscono solo sui membri del proprio gruppo. Finché non viene salvata, segue Creare formazione.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.DeleteTraining">
+    <value>Consente di archiviare, ripristinare ed eliminare formazioni. Una formazione che qualcuno ha completato viene archiviata invece che eliminata, così i completamenti restano nel registro. Finché non viene salvata, segue Creare formazione.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateWorkflow">
     <value>Consente di creare, modificare ed eliminare flussi di lavoro, visualizzare l'anteprima delle loro condizioni, leggere la configurazione dei passaggi nelle app e nell'API e vedere l'output generato dalle esecuzioni dei flussi di lavoro. Senza una regola salvata, solo gli amministratori del dipartimento possono modificare i flussi di lavoro, ma ogni membro può aprire la pagina Flussi di lavoro e leggerne le definizioni; salvando Amministratori del dipartimento i flussi di lavoro vengono anche nascosti a tutti gli altri. I passaggi che inviano un'esportazione dei Record richiedono anche Esporta Record e Gestire report sui rapporti. I piani gratuiti hanno un limite al numero di flussi di lavoro.</value>
@@ -8267,5 +8279,23 @@
   </data>
   <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
     <value>Usate quando il tuo formato email è "Labeled fields". Inserisci l'etichetta che il tuo CAD scrive prima di ogni valore. Separa le alternative con |.</value>
+  </data>
+  <data name="Feature.protocol-edit" xml:space="preserve">
+    <value>Modificare i protocolli</value>
+  </data>
+  <data name="FeaturePurpose.protocol-edit" xml:space="preserve">
+    <value>Modificare sul posto contenuto, attivatori e domande di un protocollo; le chiamate conservano il testo con cui sono state inviate.</value>
+  </data>
+  <data name="Feature.protocol-disable" xml:space="preserve">
+    <value>Disattivare i protocolli</value>
+  </data>
+  <data name="FeaturePurpose.protocol-disable" xml:space="preserve">
+    <value>Smettere di suggerire e allegare un protocollo senza eliminarlo.</value>
+  </data>
+  <data name="Feature.call-protocol-removal" xml:space="preserve">
+    <value>Rimuovere un protocollo da una chiamata</value>
+  </data>
+  <data name="FeaturePurpose.call-protocol-removal" xml:space="preserve">
+    <value>Togliere da una chiamata un protocollo allegato per errore indicando il motivo; il registro lo conserva, segnato come rimosso.</value>
   </data>
 </root>

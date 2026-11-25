@@ -429,6 +429,10 @@
 
   <data name="PermCreateTrainingLabel" xml:space="preserve"><value>Who can Create Trainings</value></data>
   <data name="PermCreateTrainingNote" xml:space="preserve"><value>This option determines who can create trainings. By default only Department Admins can create trainings.</value></data>
+  <data name="PermAssignTrainingLabel" xml:space="preserve"><value>Who can Assign Trainings and see Reports</value></data>
+  <data name="PermAssignTrainingNote" xml:space="preserve"><value>This option determines who can assign trainings to members, set due dates, extensions and exemptions, and read the training report and attempt history. Group admins only act on their own group's members. Until you save a rule here it follows Create Trainings.</value></data>
+  <data name="PermDeleteTrainingLabel" xml:space="preserve"><value>Who can Archive and Delete Trainings</value></data>
+  <data name="PermDeleteTrainingNote" xml:space="preserve"><value>This option determines who can archive, restore and delete trainings. A training someone has completed is archived, never deleted. Until you save a rule here it follows Create Trainings.</value></data>
 
   <data name="PermCreateDocumentLabel" xml:space="preserve"><value>Who can Add Documents</value></data>
   <data name="PermCreateDocumentNote" xml:space="preserve"><value>This option determines who can add documents. By default Everyone can add documents.</value></data>
@@ -1394,6 +1398,20 @@
   <data name="AuditLogTypeRecurringCallOccurrenceCreated" xml:space="preserve"><value>Recurring Call Occurrence Created</value></data>
   <data name="AuditLogTypeRecurringCallAlertAcknowledged" xml:space="preserve"><value>Recurring Call Alert Acknowledged</value></data>
   <data name="AuditLogTypeRecurringCallAlertDismissed" xml:space="preserve"><value>Recurring Call Alert Dismissed</value></data>
+  <data name="AuditLogTypeProtocolCreated" xml:space="preserve"><value>Protocol Created</value></data>
+  <data name="AuditLogTypeProtocolUpdated" xml:space="preserve"><value>Protocol Updated</value></data>
+  <data name="AuditLogTypeProtocolDisabled" xml:space="preserve"><value>Protocol Disabled</value></data>
+  <data name="AuditLogTypeProtocolEnabled" xml:space="preserve"><value>Protocol Enabled</value></data>
+  <data name="AuditLogTypeProtocolDeleted" xml:space="preserve"><value>Protocol Deleted</value></data>
+  <data name="AuditLogTypeCallProtocolRemoved" xml:space="preserve"><value>Protocol Removed from Call</value></data>
+  <data name="AuditLogTypeTrainingArchived" xml:space="preserve"><value>Training Archived</value></data>
+  <data name="AuditLogTypeTrainingRestored" xml:space="preserve"><value>Training Restored</value></data>
+  <data name="AuditLogTypeTrainingDeleted" xml:space="preserve"><value>Training Deleted</value></data>
+  <data name="AuditLogTypeTrainingCopied" xml:space="preserve"><value>Training Copied</value></data>
+  <data name="AuditLogTypeTrainingAssigneeRemoved" xml:space="preserve"><value>Training Assignee Removed</value></data>
+  <data name="AuditLogTypeTrainingAssignmentExtended" xml:space="preserve"><value>Training Assignment Extended</value></data>
+  <data name="AuditLogTypeTrainingAssignmentExempted" xml:space="preserve"><value>Training Assignment Exemption Changed</value></data>
+  <data name="AuditLogTypeMemberLeavePeriodChanged" xml:space="preserve"><value>Member Leave Period Changed</value></data>
 </root>
 
 

@@ -1,0 +1,372 @@
+@using System.Globalization
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingEditorModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    The New / Edit form. Content, quiz and settings show to whoever authors the training (the quiz carries the answer key);
+    the assignment section to whoever may assign it. Questions post as question_N / questionType_N / questionId_N with
+    answerForQuestion_N_M / answerId_N_M and the correct option(s) in correct_N.
+*@
+@{
+    var action = Model.IsNew ? "New" : "Edit";
+    var questionNumber = 0;
+}
+<form id="trainingEditorForm" class="rgw-page" role="form" asp-controller="Trainings" asp-action="@action" asp-route-area="User" asp-route-trainingId="@(Model.IsNew ? (int?)null : Model.TrainingId)" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+
+    @if (Model.AskMaterialChange)
+    {
+        <div class="alert alert-warning" role="alert">
+            <p><strong><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["MaterialChangeHeader"]</strong></p>
+            <p>@string.Format(localizer["MaterialChangeHelp"].Value, Model.CompletedCount)</p>
+            <div class="radio"><label><input type="radio" name="MaterialChange" value="material" /> @localizer["MaterialChangeYes"]</label></div>
+            <div class="radio"><label><input type="radio" name="MaterialChange" value="keep" /> @localizer["MaterialChangeNo"]</label></div>
+        </div>
+    }
+
+    @if (Model.CanAuthor)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-file-text-o" aria-hidden="true"></i> @localizer["ContentSection"]</h5></div>
+            <div class="ibox-content">
+                <div class="form-group">
+                    <label class="required" for="Name">@localizer["TrainingNameLabel"]</label>
+                    <input id="Name" name="Name" class="form-control" value="@Model.Name" maxlength="500" required autofocus />
+                </div>
+                <div class="form-group">
+                    <label class="required" id="descriptionLabel">@localizer["DescriptionLabel"]</label>
+                    <input type="hidden" id="Description" name="Description" value="@Model.Description" />
+                    <div id="description-editor" aria-labelledby="descriptionLabel" style="height: 160px;">@Html.SanitizedHtmlWithEmbeds(Model.Description)</div>
+                </div>
+                <div class="form-group">
+                    <label class="required" id="textLabel">@localizer["TrainingTextLabel"]</label>
+                    <input type="hidden" id="TrainingText" name="TrainingText" value="@Model.TrainingText" />
+                    <div id="text-editor" aria-labelledby="textLabel" style="height: 320px;">@Html.SanitizedHtmlWithEmbeds(Model.TrainingText)</div>
+                    <span class="help-block">@localizer["EmbedsHelp"]</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-question-circle" aria-hidden="true"></i> @localizer["QuizSection"]</h5></div>
+            <div class="ibox-content">
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="MinimumScore">@localizer["MinimumScoreLabel"]</label>
+                        <div class="input-group">
+                            <input id="MinimumScore" name="MinimumScore" type="number" min="0" max="100" step="1" class="form-control" value="@Model.MinimumScore.ToString(CultureInfo.InvariantCulture)" />
+                            <span class="input-group-addon">%</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="QuizAttemptLimit">@localizer["AttemptLimitLabel"]</label>
+                        <input id="QuizAttemptLimit" name="QuizAttemptLimit" type="number" min="1" max="100" class="form-control" value="@Model.QuizAttemptLimit" />
+                        <span class="help-block">@localizer["AttemptLimitHelp"]</span>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox"><label><input type="checkbox" name="OneQuestionPerPage" value="true" checked="@Model.OneQuestionPerPage" /> @localizer["OneQuestionPerPageLabel"]</label></div>
+                        <input type="hidden" name="OneQuestionPerPage" value="false" />
+                    </div>
+                </div>
+                <p class="text-muted">@localizer["QuestionsHelpText"]</p>
+                <div id="questions" data-true-label="@localizer["TrueLabel"]" data-false-label="@localizer["FalseLabel"]">
+                    @foreach (var question in Model.Questions)
+                    {
+                        questionNumber++;
+                        var n = questionNumber.ToString(CultureInfo.InvariantCulture);
+                        var inputType = question.Type == (int)TrainingQuestionTypes.MultiChoice ? "checkbox" : "radio";
+                        var answerNumber = 0;
+                        <fieldset class="rgw-builder-section training-question" data-question="@n" data-next-answer="@(question.Answers.Count + 1)">
+                            <legend class="rgw-builder-heading">@string.Format(localizer["QuestionNumberLabel"].Value, n)</legend>
+                            <input type="hidden" name="@("questionId_" + n)" value="@question.Id" />
+                            <div class="form-group">
+                                <label for="@("question_" + n)">@localizer["QuestionColumn"]</label>
+                                <textarea id="@("question_" + n)" name="@("question_" + n)" class="form-control" rows="2">@question.Text</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="@("questionType_" + n)">@localizer["QuestionTypeLabel"]</label>
+                                <select id="@("questionType_" + n)" name="@("questionType_" + n)" class="form-control training-question-type">
+                                    <option value="0" selected="@(question.Type == 0)">@localizer["QuestionTypeSingle"]</option>
+                                    <option value="1" selected="@(question.Type == 1)">@localizer["QuestionTypeMulti"]</option>
+                                    <option value="2" selected="@(question.Type == 2)">@localizer["QuestionTypeTrueFalse"]</option>
+                                </select>
+                            </div>
+                            <table class="table table-condensed rgw-table training-answers">
+                                <thead><tr><th>@localizer["CorrectLabel"]</th><th>@localizer["AnswerTextColumn"]</th><th class="rgw-row-actions"><span class="sr-only">@localizer["ActionColumn"]</span></th></tr></thead>
+                                <tbody>
+                                    @foreach (var answer in question.Answers)
+                                    {
+                                        answerNumber++;
+                                        var m = answerNumber.ToString(CultureInfo.InvariantCulture);
+                                        <tr>
+                                            <td><input type="@inputType" name="@("correct_" + n)" value="@m" checked="@answer.Correct" aria-label="@localizer["CorrectLabel"]" /></td>
+                                            <td>
+                                                <input type="hidden" name="@("answerId_" + n + "_" + m)" value="@answer.Id" />
+                                                <input type="text" class="form-control" name="@("answerForQuestion_" + n + "_" + m)" value="@answer.Text" aria-label="@localizer["AnswerTextColumn"]" />
+                                            </td>
+                                            <td class="rgw-row-actions"><button type="button" class="btn btn-xs btn-default training-remove-answer"><i class="fa fa-minus" aria-hidden="true"></i> @localizer["RemoveButton"]</button></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <div class="rgw-builder-actions">
+                                <button type="button" class="btn btn-xs btn-success training-add-answer"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddAnswerButton"]</button>
+                                <button type="button" class="btn btn-xs btn-danger training-remove-question"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["RemoveQuestionButton"]</button>
+                            </div>
+                        </fieldset>
+                    }
+                </div>
+                <button type="button" id="addQuestionButton" class="btn btn-success btn-sm" data-next-question="@(questionNumber + 1)"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddQuestionButton"]</button>
+
+                @if (Model.Flags.Count > 0)
+                {
+                    <h4 class="m-t-md"><i class="fa fa-flag" aria-hidden="true"></i> @localizer["OpenFlagsHeader"]</h4>
+                    <ul class="list-unstyled">
+                        @foreach (var flag in Model.Flags)
+                        {
+                            var flagged = Model.Questions.FirstOrDefault(q => q.Id == flag.TrainingQuestionId);
+                            <li class="m-b-xs">
+                                <strong>@(flagged?.Text ?? flag.TrainingQuestionId.ToString(CultureInfo.InvariantCulture))</strong>
+                                @if (!string.IsNullOrWhiteSpace(flag.Comment))
+                                {
+                                    <span>: @flag.Comment</span>
+                                }
+                                <button type="submit" formnovalidate formmethod="post" class="btn btn-xs btn-default"
+                                        formaction="@Url.Action("ResolveFlag", "Trainings", new { area = "User", trainingId = Model.TrainingId, trainingQuestionFlagId = flag.TrainingQuestionFlagId })">
+                                    <i class="fa fa-check" aria-hidden="true"></i> @localizer["ResolveFlagButton"]
+                                </button>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-calendar" aria-hidden="true"></i> @localizer["ScheduleSection"]</h5></div>
+            <div class="ibox-content">
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="StartsOn">@localizer["StartsOnLabel"]</label>
+                        <input id="StartsOn" name="StartsOn" type="datetime-local" class="form-control" value="@Model.StartsOn" />
+                        <span class="help-block">@localizer["StartsOnHelp"]</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="DueMode">@localizer["DueModeLabel"]</label>
+                        <select id="DueMode" name="DueMode" class="form-control">
+                            <option value="none" selected="@(Model.DueMode == "none")">@localizer["DueModeNone"]</option>
+                            <option value="fixed" selected="@(Model.DueMode == "fixed")">@localizer["DueModeFixed"]</option>
+                            <option value="relative" selected="@(Model.DueMode == "relative")">@localizer["DueModeRelative"]</option>
+                        </select>
+                    </div>
+                    <div class="form-group training-due-fixed">
+                        <label for="DueDate">@localizer["DueDateLabel"]</label>
+                        <input id="DueDate" name="DueDate" type="date" class="form-control" value="@Model.DueDate" />
+                        <span class="help-block">@localizer["DueDateHelp"]</span>
+                    </div>
+                    <div class="form-group training-due-relative">
+                        <label for="DueDays">@localizer["DueDaysLabel"]</label>
+                        <input id="DueDays" name="DueDays" type="number" min="1" max="3650" class="form-control" value="@Model.DueDays" />
+                    </div>
+                    <div class="form-group">
+                        <label for="RepeatMonths">@localizer["RepeatMonthsLabel"]</label>
+                        <input id="RepeatMonths" name="RepeatMonths" type="number" min="1" max="120" class="form-control" value="@Model.RepeatMonths" />
+                        <span class="help-block">@localizer["RepeatMonthsHelp"]</span>
+                    </div>
+                </div>
+                <div class="checkbox"><label><input type="checkbox" name="ClosedToNewAssignees" value="true" checked="@Model.ClosedToNewAssignees" /> @localizer["ClosedToNewAssigneesLabel"]</label></div>
+                <input type="hidden" name="ClosedToNewAssignees" value="false" />
+                <span class="help-block">@localizer["ClosedToNewAssigneesHelp"]</span>
+                <div class="checkbox"><label><input type="checkbox" id="OpenToAllMembers" name="OpenToAllMembers" value="true" checked="@Model.OpenToAllMembers" /> @localizer["OpenToAllMembersLabel"]</label></div>
+                <input type="hidden" name="OpenToAllMembers" value="false" />
+                <span class="help-block">@localizer["OpenToAllMembersHelp"]</span>
+                <div class="checkbox training-self-enroll"><label><input type="checkbox" name="AllowSelfEnroll" value="true" checked="@Model.AllowSelfEnroll" /> @localizer["AllowSelfEnrollLabel"]</label></div>
+                <input type="hidden" name="AllowSelfEnroll" value="false" />
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-bell" aria-hidden="true"></i> @localizer["RemindersSection"]</h5></div>
+            <div class="ibox-content">
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="ReminderLeadDaysCsv">@localizer["ReminderLeadDaysLabel"]</label>
+                        <input id="ReminderLeadDaysCsv" name="ReminderLeadDaysCsv" class="form-control" value="@Model.ReminderLeadDaysCsv" placeholder="7,1" />
+                        <span class="help-block">@localizer["ReminderLeadDaysHelp"]</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="OverdueRepeatDays">@localizer["OverdueRepeatDaysLabel"]</label>
+                        <input id="OverdueRepeatDays" name="OverdueRepeatDays" type="number" min="1" max="365" class="form-control" value="@Model.OverdueRepeatDays" />
+                        <span class="help-block">@localizer["OverdueRepeatDaysHelp"]</span>
+                    </div>
+                </div>
+                <div class="checkbox"><label><input type="checkbox" name="SendOverdueNotices" value="true" checked="@Model.SendOverdueNotices" /> @localizer["SendOverdueNoticesLabel"]</label></div>
+                <input type="hidden" name="SendOverdueNotices" value="false" />
+                <div class="form-group">
+                    <label for="ReminderMessage">@localizer["ReminderMessageLabel"]</label>
+                    <textarea id="ReminderMessage" name="ReminderMessage" class="form-control" rows="2" maxlength="500">@Model.ReminderMessage</textarea>
+                    <span class="help-block">@localizer["ReminderMessageHelp"]</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-certificate" aria-hidden="true"></i> @localizer["CreditSection"]</h5></div>
+            <div class="ibox-content">
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="Hours">@localizer["HoursLabel"]</label>
+                        <input id="Hours" name="Hours" type="number" min="0" max="9999" step="0.25" class="form-control" value="@Model.Hours?.ToString(CultureInfo.InvariantCulture)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="CeHours">@localizer["CeHoursLabel"]</label>
+                        <input id="CeHours" name="CeHours" type="number" min="0" max="9999" step="0.25" class="form-control" value="@Model.CeHours?.ToString(CultureInfo.InvariantCulture)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="CeProvider">@localizer["CeProviderLabel"]</label>
+                        <input id="CeProvider" name="CeProvider" class="form-control" maxlength="250" value="@Model.CeProvider" />
+                    </div>
+                    <div class="form-group">
+                        <label for="CeCourseNumber">@localizer["CeCourseNumberLabel"]</label>
+                        <input id="CeCourseNumber" name="CeCourseNumber" class="form-control" maxlength="100" value="@Model.CeCourseNumber" />
+                    </div>
+                    <div class="form-group">
+                        <label for="CategoryId">@localizer["CategoryIdLabel"]</label>
+                        <input id="CategoryId" name="CategoryId" type="number" min="1" class="form-control" value="@Model.CategoryId" />
+                        <span class="help-block">@localizer["CategoryIdHelp"]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-paperclip" aria-hidden="true"></i> @localizer["AttachmentsLabel"]</h5></div>
+            <div class="ibox-content">
+                @if (Model.Attachments.Count > 0)
+                {
+                    <ul class="list-unstyled">
+                        @foreach (var attachment in Model.Attachments)
+                        {
+                            <li class="m-b-xs">
+                                <a asp-controller="Trainings" asp-action="GetTrainingAttachment" asp-route-area="User" asp-route-trainingAttachmentId="@attachment.TrainingAttachmentId" target="_blank"><i class="fa fa-file" aria-hidden="true"></i> @attachment.FileName</a>
+                                <button type="submit" formnovalidate formmethod="post" class="btn btn-xs btn-default" data-confirm="@localizer["RemoveAttachmentConfirm"]"
+                                        formaction="@Url.Action("RemoveAttachment", "Trainings", new { area = "User", trainingId = Model.TrainingId, trainingAttachmentId = attachment.TrainingAttachmentId })">
+                                    <i class="fa fa-times" aria-hidden="true"></i> @localizer["RemoveButton"]
+                                </button>
+                            </li>
+                        }
+                    </ul>
+                }
+                <label for="attachments">@localizer["AddAttachmentsLabel"]</label>
+                <input name="attachments" id="attachments" type="file" multiple />
+                <span class="help-block">@localizer["AttachmentsHelp"]</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <input type="hidden" name="Name" value="@Model.Name" />
+        <div class="alert alert-info"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["AssignOnlyNotice"]</div>
+    }
+
+    @if (Model.CanAssign)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-users" aria-hidden="true"></i> @localizer["AssignmentSection"]</h5></div>
+            <div class="ibox-content">
+                @if (!Model.IsNew)
+                {
+                    <p class="rgw-progress-honest">@string.Format(localizer["AssignedSummary"].Value, Model.AssignedCount, Model.CompletedCount)</p>
+                    if (Model.IsDynamic)
+                    {
+                        <p class="alert alert-info"><i class="fa fa-refresh" aria-hidden="true"></i> @localizer["DynamicNotice"]</p>
+                    }
+                    else
+                    {
+                        <p class="text-muted">@localizer["StaticNotice"]</p>
+                        <div class="checkbox"><label><input type="checkbox" name="MakeDynamic" value="true" checked="@Model.MakeDynamic" /> @localizer["MakeDynamicLabel"]</label></div>
+                        <input type="hidden" name="MakeDynamic" value="false" />
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">@localizer["NewAssignmentHelp"]</p>
+                }
+
+                <div class="checkbox"><label><input type="checkbox" id="AssignEveryone" name="AssignEveryone" value="true" checked="@Model.AssignEveryone" /> @localizer["AddAllPersonnelLabel"]</label></div>
+                <input type="hidden" name="AssignEveryone" value="false" />
+
+                <div class="rgw-grid training-audience">
+                    <div class="form-group">
+                        <label for="UserIds">@localizer["UsersToAddLabel"]</label>
+                        <select id="UserIds" name="UserIds" multiple class="form-control training-select" asp-items="Model.Users" data-placeholder="@localizer["SelectUsersPlaceholder"]"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="GroupIds">@localizer["GroupsToAddLabel"]</label>
+                        <select id="GroupIds" name="GroupIds" multiple class="form-control training-select" asp-items="Model.Groups" data-placeholder="@localizer["SelectGroupsPlaceholder"]"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="RoleIds">@localizer["RolesToAddLabel"]</label>
+                        <select id="RoleIds" name="RoleIds" multiple class="form-control training-select" asp-items="Model.Roles" data-placeholder="@localizer["SelectRolesPlaceholder"]"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="CertificationTypeIds">@localizer["CertificationTypesLabel"]</label>
+                        <select id="CertificationTypeIds" name="CertificationTypeIds" multiple class="form-control training-select" asp-items="Model.CertificationTypes" data-placeholder="@localizer["SelectPlaceholder"]"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="UnitTypeIds">@localizer["UnitTypesLabel"]</label>
+                        <select id="UnitTypeIds" name="UnitTypeIds" multiple class="form-control training-select" asp-items="Model.UnitTypes" data-placeholder="@localizer["SelectPlaceholder"]"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ShiftIds">@localizer["ShiftsLabel"]</label>
+                        <select id="ShiftIds" name="ShiftIds" multiple class="form-control training-select" asp-items="Model.Shifts" data-placeholder="@localizer["SelectPlaceholder"]"></select>
+                    </div>
+                </div>
+                <span class="help-block">@localizer["InactiveMembersHelp"]</span>
+
+                @if (!Model.IsNew)
+                {
+                    <button type="submit" name="Command" value="Preview" class="btn btn-default btn-sm" formnovalidate><i class="fa fa-eye" aria-hidden="true"></i> @localizer["PreviewAudienceButton"]</button>
+                }
+
+                @if (Model.Preview != null)
+                {
+                    <div class="m-t-sm" role="status">
+                        <h4>@localizer["PreviewHeader"]</h4>
+                        @if (Model.Preview.Closed)
+                        {
+                            <p class="text-warning"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["ClosedToNewAssigneesMessage"]</p>
+                        }
+                        <p>@string.Format(localizer["PreviewSummary"].Value, Model.Preview.AddedNames.Count, Model.Preview.AlreadyAssigned)</p>
+                        @if (Model.Preview.AddedNames.Count > 0)
+                        {
+                            <ul>
+                                @foreach (var name in Model.Preview.AddedNames)
+                                {
+                                    <li>@name</li>
+                                }
+                            </ul>
+                        }
+                        @if (Model.Preview.Skipped.Count > 0)
+                        {
+                            <p><strong>@localizer["SkippedMembersIntro"]</strong></p>
+                            <ul>
+                                @foreach (var skipped in Model.Preview.Skipped)
+                                {
+                                    <li>@skipped.Name: @localizer[skipped.ReasonKey]</li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <div class="rgw-wizard-actions">
+        <a class="btn btn-white" asp-controller="Trainings" asp-action="Manage" asp-route-area="User">@localizer["CancelButton"]</a>
+        <button class="btn btn-primary" type="submit" name="Command" value="Save"><i class="fa fa-check" aria-hidden="true"></i> @(Model.IsNew ? localizer["AddTrainingButton"] : localizer["SaveTrainingButton"])</button>
+    </div>
+</form>

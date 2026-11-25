@@ -273,6 +273,11 @@ namespace Resgrid.Services
 			builder.RegisterType<NotificationService>().As<INotificationService>().InstancePerLifetimeScope();
 			builder.RegisterType<ShiftsService>().As<IShiftsService>().InstancePerLifetimeScope();
 			builder.RegisterType<TrainingService>().As<ITrainingService>().InstancePerLifetimeScope();
+			builder.RegisterType<TrainingAssignmentService>().As<ITrainingAssignmentService>().InstancePerLifetimeScope();
+			builder.RegisterType<MyTrainingService>().As<IMyTrainingService>().InstancePerLifetimeScope();
+			builder.RegisterType<MemberLeaveService>().As<IMemberLeaveService>().InstancePerLifetimeScope();
+			builder.RegisterType<ContentAudienceService>().As<IContentAudienceService>().InstancePerLifetimeScope();
+			builder.RegisterType<ContentAudienceChangeQueue>().As<IContentAudienceChangeQueue>().InstancePerLifetimeScope();
 			builder.RegisterType<CommandsService>().As<ICommandsService>().InstancePerLifetimeScope();
 			builder.RegisterType<CustomStateService>().As<ICustomStateService>().InstancePerLifetimeScope();
 			builder.RegisterType<GeoService>().As<IGeoService>().InstancePerLifetimeScope();

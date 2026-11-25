@@ -1,152 +1,194 @@
 @using Resgrid.Model
-@using Resgrid.Web.Helpers
-@model Resgrid.Web.Areas.User.Models.Training.TrainingIndexModel
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingIndexModel
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
 @{
-  var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Trainings, localizer["TrainingsHeader"]);
-  ViewBag.Title = "Resgrid | " + moduleTitle;
+    var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Trainings, localizer["TrainingsHeader"].Value);
+    ViewBag.Title = "Resgrid | " + moduleTitle;
+    ViewData["Section"] = "My";
+    ViewData["Title"] = moduleTitle;
+    ViewData["Subtitle"] = localizer["MyTrainingIntro"].Value;
+    ViewData["Scope"] = Model.Scope;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["Department"] = Model.Department;
 
-  // Creating follows the Training_Create policy. Edit, Report and Delete are decided per training by the controller
-  // (Model.Scope.CanManage): a member who may create trainings manages their own, not everyone's.
-  var canCreateTraining = ClaimsAuthorizationHelper.CanCreateTraining();
-  var currentUserId = ClaimsAuthorizationHelper.GetUserId();
+    var my = Model.MyTraining ?? new MyTrainingOverview();
+    var next = my.Overdue.FirstOrDefault() ?? my.DueSoon.FirstOrDefault() ?? my.InProgress.FirstOrDefault() ?? my.Other.FirstOrDefault();
+    var canCreate = Model.Scope != null && Model.Scope.CanCreate;
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a class="btn btn-success" asp-controller="Trainings" asp-action="New" asp-route-area="User"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddTrainingIndexButton"]</a>
+    </text>;
+    ViewData["HeaderActions"] = canCreate ? headerActions : null;
 }
 
-<div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
-    <h2>@moduleTitle</h2>
-    <ol class="breadcrumb">
-      <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@localizer["HomeLink"]</a>
-      </li>
-      <li class="active">
-        <strong>@moduleTitle</strong>
-      </li>
-    </ol>
-  </div>
-  @if (canCreateTraining)
-  {
-    <div class="col-sm-8">
-      <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-        <a title="@localizer["AddTrainingIndexButton"]" class="btn btn-success" asp-controller="Trainings" asp-action="New" asp-route-area="User">@localizer["AddTrainingIndexButton"]</a>
-      </div>
-    </div>
-  }
-</div>
+@await Html.PartialAsync("_Shell")
 
-<div class="row">
-  <div class="col-xs-12">
-    <div class="wrapper wrapper-content">
-      <div class="ibox float-e-margins">
-        <div class="ibox-content">
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>
-                    @localizer["NameColumn"]
-                  </th>
-                  <th style="max-width: 300px;">
-                    @localizer["DescriptionColumn"]
-                  </th>
-                  <th>
-                    @localizer["DueDateColumn"]
-                  </th>
-                  <th>
-                    @localizer["ActionColumn"]
-                  </th>
-                  <th class="span1">
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach (var t in Model.Trainings)
-				{
-                  <tr>
-                    <td>
-                      @t.Name
-                    </td>
-                    <td style="max-width: 300px;">
-                      @Html.SanitizedHtml(t.Description)
-                    </td>
-                    <td>
-                      @if (t.ToBeCompletedBy != null)
-					  {
-                        @Html.Raw(t.ToBeCompletedBy.Value.ToShortDateString())
-					  }
-					  else
-					  {
-                        @localizer["NoDueDate"]
-					  }
-                    </td>
-                    <td>
-                      @* Ids are matched without regard to case, as the controller's access check does (TrainingManagementScope.IsAssigned). *@
-                      @if (t.Users != null && t.Users.Any(x => x != null && string.Equals(x.UserId, currentUserId, StringComparison.OrdinalIgnoreCase)))
-					  {
-						var userRecord = t.Users.FirstOrDefault(x => x != null && string.Equals(x.UserId, currentUserId, StringComparison.OrdinalIgnoreCase));
-						if (userRecord != null)
-						{
-						  if (!userRecord.Viewed)
-						  {
-                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>" + Html.Encode(localizer["ViewTrainingButton"].Value) + "</a>")
-						  }
-						  else if (userRecord.Complete && (t.Questions == null || t.Questions.Count <= 0))
-						  {
-                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>" + Html.Encode(localizer["ViewTrainingButton"].Value) + "</a>")
-						  }
-						  else if (userRecord.Complete && userRecord.Score >= t.MinimumScore && (t.Questions != null && t.Questions.Count > 0))
-						  {
-                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-success'>" + Html.Encode(localizer["TrainingCompleteButton"].Value) + "</a>")
-						  }
-						  else if (userRecord.Complete && userRecord.Score < t.MinimumScore && (t.Questions != null && t.Questions.Count > 0))
-						  {
-                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-danger'>" + Html.Encode(localizer["TrainingCompleteButton"].Value) + "</a>")
-						  }
-						  else
-						  {
-                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>" + Html.Encode(localizer["ViewTrainingButton"].Value) + "</a>")
-						  }
-						}
-					  }
-					  else if (t.OpenToAllMembers || (Model.Scope != null && Model.Scope.CanManage(t)))
-					  {
-                        @* Not assigned, but it is open to all members or they manage it: the View action admits them. *@
-                        <a href="@Url.Action("View", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-primary'>@localizer["ViewTrainingButton"]</a>
-					  }
-                    </td>
-                    <td>
-                      @if (Model.Scope != null && Model.Scope.CanManage(t))
-					  {
-                        <a href="@Url.Action("Edit", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-info'>
-                          <i class='icon-pencil'></i> @localizer["EditButton"]
-                        </a>
-                        <a href="@Url.Action("Report", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-primary'>
-                          <i class='icon-eye-open'></i> @localizer["ReportButton"]
-                        </a>
-					  }
-                      @if (Model.Scope != null && Model.Scope.CanManage(t))
-					  {
-                        <form method="post" action="@Url.Action("DeleteTraining", "Trainings", new { area = "User", trainingId = t.TrainingId })" style="display: inline;">
-                          @Html.AntiForgeryToken()
-                          <button type="submit" class='btn btn-xs btn-danger' data-confirm="@localizer["DeleteTrainingWarning"] @t.Name ?">
-                            <i class="icon-trash">
-                            </i> @localizer["DeleteButton"]
-                          </button>
-                        </form>
-					  }
-                    </td>
-                  </tr>
-				}
-              </tbody>
-            </table>
-          </div>
+<div class="wrapper wrapper-content rgw-page">
+    @if (my.OnLeave)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-pause-circle" aria-hidden="true"></i> @localizer["OnLeaveNotice"]</div>
+    }
+
+    @if (next != null)
+    {
+        <div class="rgw-next-action">
+            <strong><i class="fa fa-arrow-circle-right" aria-hidden="true"></i> @localizer["NextActionHeader"]</strong>
+            <div class="m-t-xs">
+                <a asp-controller="Trainings" asp-action="View" asp-route-area="User" asp-route-trainingId="@next.Training.TrainingId">@next.Training.Name</a>
+                @await Html.PartialAsync("_StatePill", next.State)
+                @if (next.DueUtc.HasValue)
+                {
+                    <span class="rgw-progress-honest">@localizer["DueOnLabel"] @TrainingStatePresentation.LocalDate(next.DueUtc, Model.Department)</span>
+                }
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
+    }
+    else if (my.RecentCompletions.Count == 0)
+    {
+        <div class="text-center m-t-lg m-b-lg">
+            <i class="fa fa-graduation-cap fa-3x text-muted" aria-hidden="true"></i>
+            <h4 class="m-t-sm">@localizer["NothingAssignedHeader"]</h4>
+            <p class="text-muted">@localizer["NothingAssignedHelp"]</p>
+        </div>
+    }
+
+    @{
+        var groups = new[]
+        {
+            (Key: "OverdueHeader", Icon: "fa-exclamation-circle", Items: my.Overdue),
+            (Key: "DueSoonHeader", Icon: "fa-hourglass-half", Items: my.DueSoon),
+            (Key: "InProgressHeader", Icon: "fa-spinner", Items: my.InProgress),
+            (Key: "NotStartedHeader", Icon: "fa-circle-o", Items: my.Other)
+        };
+    }
+    @foreach (var group in groups.Where(g => g.Items.Count > 0))
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa @group.Icon" aria-hidden="true"></i> @localizer[group.Key] (@group.Items.Count)</h5></div>
+            <div class="ibox-content">
+                <div class="rgw-card-grid">
+                    @foreach (var item in group.Items)
+                    {
+                        @await Html.PartialAsync("_AssignmentCard", item, ViewData)
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (my.Certifications.Count > 0)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-id-card-o" aria-hidden="true"></i> @localizer["CertificationsDueHeader"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted">@localizer["CertificationsDueHelp"]</p>
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead><tr><th>@localizer["CertificationColumn"]</th><th>@localizer["ExpiresColumn"]</th><th>@localizer["StatusLabel"]</th><th class="rgw-row-actions">@localizer["ActionColumn"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var certification in my.Certifications)
+                            {
+                                <tr>
+                                    <td>
+                                        @certification.Name
+                                        @if (certification.Pinned)
+                                        {
+                                            <small class="rgw-sub"><i class="fa fa-thumb-tack" aria-hidden="true"></i> @localizer["PinnedLabel"]</small>
+                                        }
+                                    </td>
+                                    <td>@(TrainingStatePresentation.LocalDate(certification.ExpiresOn, Model.Department) ?? localizer["NoExpiry"].Value)</td>
+                                    <td>
+                                        @if (certification.IsExpired)
+                                        {
+                                            <span class="label label-danger"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> @localizer["CertificationExpired"]</span>
+                                        }
+                                        else if (certification.DueSoon)
+                                        {
+                                            <span class="label label-warning"><i class="fa fa-hourglass-half" aria-hidden="true"></i> @string.Format(localizer["CertificationDaysLeft"].Value, certification.DaysLeft ?? 0)</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="label label-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["CertificationCurrent"]</span>
+                                        }
+                                    </td>
+                                    <td class="rgw-row-actions">
+                                        <form method="post" asp-controller="Trainings" asp-action="PinCertification" asp-route-area="User">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="personnelCertificationId" value="@certification.Certification.PersonnelCertificationId" />
+                                            <input type="hidden" name="pinned" value="@(certification.Pinned ? "false" : "true")" />
+                                            <button type="submit" class="btn btn-xs btn-default"><i class="fa fa-thumb-tack" aria-hidden="true"></i> @(certification.Pinned ? localizer["UnpinButton"] : localizer["PinButton"])</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (my.Catalog.Count > 0)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-book" aria-hidden="true"></i> @localizer["CatalogHeader"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted">@localizer["CatalogHelp"]</p>
+                <div class="rgw-card-grid">
+                    @foreach (var training in my.Catalog)
+                    {
+                        <div class="rgw-card">
+                            <h4><a asp-controller="Trainings" asp-action="View" asp-route-area="User" asp-route-trainingId="@training.TrainingId">@training.Name</a></h4>
+                            <div class="rgw-card-meta">@Html.SanitizedHtml(training.Description)</div>
+                            <div class="rgw-card-action">
+                                <a class="btn btn-sm btn-default" asp-controller="Trainings" asp-action="View" asp-route-area="User" asp-route-trainingId="@training.TrainingId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["ReadButton"]</a>
+                                @if (training.AllowSelfEnroll && !training.ClosedToNewAssignees)
+                                {
+                                    <form method="post" asp-controller="Trainings" asp-action="Enroll" asp-route-area="User" asp-route-trainingId="@training.TrainingId" style="display:inline-block">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-user-plus" aria-hidden="true"></i> @localizer["EnrollButton"]</button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (my.RecentCompletions.Count > 0)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-check-circle" aria-hidden="true"></i> @localizer["RecentCompletionsHeader"]</h5></div>
+            <div class="ibox-content">
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead><tr><th>@localizer["NameColumn"]</th><th>@localizer["CompletedColumn"]</th><th>@localizer["ScoreColumn"]</th><th>@localizer["HoursColumn"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var item in my.RecentCompletions)
+                            {
+                                <tr>
+                                    <td><a asp-controller="Trainings" asp-action="View" asp-route-area="User" asp-route-trainingId="@item.Training.TrainingId">@item.Training.Name</a></td>
+                                    <td>@TrainingStatePresentation.LocalDate(item.Assignment.CompletedOn, Model.Department)</td>
+                                    <td>@(item.Training.HasQuiz ? item.Assignment.Score.ToString("0.##") + "%" : localizer["NoScore"].Value)</td>
+                                    <td>@(item.Training.Hours?.ToString("0.##") ?? "-")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
-@section Scripts
-{
-  <script src="~/js/app/internal/training/resgrid.training.index.js"></script>
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/training/resgrid.training.index.js" asp-append-version="true"></script>
 }

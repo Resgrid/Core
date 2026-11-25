@@ -95,6 +95,39 @@ namespace Resgrid.Framework
 		}
 
 		/// <summary>
+		/// <see cref="SanitizeHtmlInString"/> for rich text that may carry an allow-listed embed (training text, T0 item 6):
+		/// frames whose address is on <see cref="EmbedAllowList"/> are kept, rebuilt with fixed safe attributes; every other
+		/// frame is removed as before.
+		/// </summary>
+		public static string SanitizeHtmlWithEmbedsInString(string source)
+		{
+			if (string.IsNullOrWhiteSpace(source))
+				return source;
+
+			var remainder = EmbedAllowList.ExtractEmbeds(source, out var embeds, out var token);
+			if (embeds.Count == 0)
+				return SanitizeHtmlInString(remainder);
+
+			return EmbedAllowList.RestoreEmbeds(SanitizeHtmlInString(remainder), embeds, token);
+		}
+
+		/// <summary>
+		/// <see cref="SanitizeHtmlForDisplay"/> that keeps allow-listed embeds (<see cref="EmbedAllowList"/>), rebuilt with
+		/// fixed safe attributes. Any other frame is removed.
+		/// </summary>
+		public static string SanitizeHtmlWithEmbedsForDisplay(string source)
+		{
+			if (string.IsNullOrWhiteSpace(source))
+				return string.Empty;
+
+			var remainder = EmbedAllowList.ExtractEmbeds(source, out var embeds, out var token);
+			if (embeds.Count == 0)
+				return SanitizeHtmlForDisplay(source);
+
+			return EmbedAllowList.RestoreEmbeds(SanitizeHtmlForDisplay(remainder), embeds, token);
+		}
+
+		/// <summary>
 		/// Stored rich text (call nature and notes, messages, department notes, trainings, protocols, documents, calendar
 		/// items, logs, contact notes...) made safe to write into a page with Html.Raw: the same allow-list as
 		/// <see cref="SanitizeHtmlInString"/>, so scripts, event handlers, styles, frames and script URLs never reach the

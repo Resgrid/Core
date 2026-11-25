@@ -312,7 +312,17 @@ ViewChecklistResults = 113,
 		/// to the call directly or through their group, role or a unit they crew, and resources placed on the board — always
 		/// read that incident's board whatever this says.
 		/// </summary>
-		ViewCommandBoards = 125
+		ViewCommandBoards = 125,
+
+		/// <summary>
+		/// Training T0 (registry 126): assign trainings and read their reports (assignees, audiences, due dates, extensions,
+		/// exemptions, resets, attempt history). Create Training keeps authoring. No-row default: the Create Training row; a
+		/// group admin is scoped to the trainings assigned only to their own group, and under Everyone a member to their own.
+		/// </summary>
+		AssignTraining = 126,
+
+		/// <summary>Training T0 (registry 127): archive, restore and delete trainings. No-row default: the Create Training row.</summary>
+		DeleteTraining = 127
 	}
 
 }

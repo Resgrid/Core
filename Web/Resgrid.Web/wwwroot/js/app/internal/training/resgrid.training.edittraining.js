@@ -1,3 +1,4 @@
+
 var resgrid;
 (function (resgrid) {
     var training;
@@ -7,125 +8,141 @@ var resgrid;
             var i18n = (typeof resgridTrainingsI18n !== 'undefined') ? resgridTrainingsI18n : {};
 
             function escapeHtml(str) {
-                if (!str) return '';
+                if (str === null || str === undefined) return '';
                 return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            }
+
+            function inputTypeFor(type) {
+                return String(type) === '1' ? 'checkbox' : 'radio';
+            }
+
+            function answerRow(n, m, type, text, readOnly) {
+                return '<tr>' +
+                    '<td><input type="' + inputTypeFor(type) + '" name="correct_' + n + '" value="' + m + '" aria-label="' + escapeHtml(i18n.correct) + '" /></td>' +
+                    '<td><input type="hidden" name="answerId_' + n + '_' + m + '" value="0" />' +
+                    '<input type="text" class="form-control" name="answerForQuestion_' + n + '_' + m + '" value="' + escapeHtml(text || '') + '"' + (readOnly ? ' readonly' : '') + ' aria-label="' + escapeHtml(i18n.answerText) + '" /></td>' +
+                    '<td class="rgw-row-actions">' + (readOnly ? '' : '<button type="button" class="btn btn-xs btn-default training-remove-answer"><i class="fa fa-minus" aria-hidden="true"></i> ' + escapeHtml(i18n.removeAnswer) + '</button>') + '</td>' +
+                    '</tr>';
+            }
+
+            function addQuestion() {
+                var button = $('#addQuestionButton');
+                var n = parseInt(button.attr('data-next-question'), 10) || 1;
+                button.attr('data-next-question', n + 1);
+
+                var heading = escapeHtml(String(i18n.questionNumber || '{0}').replace('{0}', n));
+                var html = '<fieldset class="rgw-builder-section training-question" data-question="' + n + '" data-next-answer="1">' +
+                    '<legend class="rgw-builder-heading">' + heading + '</legend>' +
+                    '<input type="hidden" name="questionId_' + n + '" value="0" />' +
+                    '<div class="form-group"><label for="question_' + n + '">' + escapeHtml(i18n.question) + '</label>' +
+                    '<textarea id="question_' + n + '" name="question_' + n + '" class="form-control" rows="2"></textarea></div>' +
+                    '<div class="form-group"><label for="questionType_' + n + '">' + escapeHtml(i18n.questionType) + '</label>' +
+                    '<select id="questionType_' + n + '" name="questionType_' + n + '" class="form-control training-question-type">' +
+                    '<option value="0">' + escapeHtml(i18n.typeSingle) + '</option>' +
+                    '<option value="1">' + escapeHtml(i18n.typeMulti) + '</option>' +
+                    '<option value="2">' + escapeHtml(i18n.typeTrueFalse) + '</option>' +
+                    '</select></div>' +
+                    '<table class="table table-condensed rgw-table training-answers"><thead><tr><th>' + escapeHtml(i18n.correct) + '</th><th>' + escapeHtml(i18n.answerText) +
+                    '</th><th class="rgw-row-actions"><span class="sr-only">' + escapeHtml(i18n.actions) + '</span></th></tr></thead><tbody></tbody></table>' +
+                    '<div class="rgw-builder-actions">' +
+                    '<button type="button" class="btn btn-xs btn-success training-add-answer"><i class="fa fa-plus" aria-hidden="true"></i> ' + escapeHtml(i18n.addAnswer) + '</button> ' +
+                    '<button type="button" class="btn btn-xs btn-danger training-remove-question"><i class="fa fa-trash" aria-hidden="true"></i> ' + escapeHtml(i18n.removeQuestion) + '</button>' +
+                    '</div></fieldset>';
+
+                var fieldset = $(html).appendTo('#questions');
+                addAnswer(fieldset);
+                addAnswer(fieldset);
+                fieldset.find('textarea').first().focus();
+            }
+            edittraining.addQuestion = addQuestion;
+
+            function addAnswer(fieldset, text, readOnly) {
+                var n = fieldset.attr('data-question');
+                var m = parseInt(fieldset.attr('data-next-answer'), 10) || 1;
+                fieldset.attr('data-next-answer', m + 1);
+                var type = fieldset.find('.training-question-type').val();
+                fieldset.find('.training-answers tbody').append(answerRow(n, m, type, text, readOnly));
+            }
+            edittraining.addAnswer = addAnswer;
+
+            // True/false: exactly two fixed options, one correct; multiple choice: check boxes; single: radios.
+            function applyType(fieldset) {
+                var type = String(fieldset.find('.training-question-type').val());
+                var tbody = fieldset.find('.training-answers tbody');
+
+                if (type === '2') {
+                    tbody.empty();
+                    addAnswer(fieldset, i18n.trueLabel || 'True', true);
+                    addAnswer(fieldset, i18n.falseLabel || 'False', true);
+                    fieldset.find('.training-add-answer').hide();
+                    return;
+                }
+
+                fieldset.find('.training-add-answer').show();
+                fieldset.find('.training-answers input[readonly]').prop('readonly', false);
+                fieldset.find('input[name="correct_' + fieldset.attr('data-question') + '"]').each(function () {
+                    var current = $(this);
+                    if (current.attr('type') !== inputTypeFor(type)) {
+                        var replacement = $('<input />').attr({ type: inputTypeFor(type), name: current.attr('name'), value: current.val(), 'aria-label': current.attr('aria-label') });
+                        replacement.prop('checked', current.prop('checked') && type === '1');
+                        current.replaceWith(replacement);
+                    }
+                });
+            }
+
+            function syncDueMode() {
+                var mode = $('#DueMode').val();
+                $('.training-due-fixed').toggle(mode === 'fixed');
+                $('.training-due-relative').toggle(mode === 'relative');
+            }
+
+            function syncOpen() {
+                $('.training-self-enroll').toggle($('#OpenToAllMembers').is(':checked'));
+            }
+
+            function syncEveryone() {
+                var everyone = $('#AssignEveryone').is(':checked');
+                $('.training-audience select').prop('disabled', everyone).trigger('change.select2');
             }
 
             $(document).ready(function () {
                 resgrid.common.analytics.track('Training - Edit');
 
-                var quillDescription = new Quill('#editor-container', {
-                    placeholder: '',
-                    theme: 'snow'
-                });
+                var toolbar = [[{ header: [2, 3, false] }], ['bold', 'italic', 'underline', 'strike'], [{ list: 'ordered' }, { list: 'bullet' }], ['blockquote', 'link', 'video'], ['clean']];
+                var description = $('#description-editor').length ? new Quill('#description-editor', { theme: 'snow', modules: { toolbar: toolbar } }) : null;
+                var text = $('#text-editor').length ? new Quill('#text-editor', { theme: 'snow', modules: { toolbar: toolbar } }) : null;
 
-                var quillTraining = new Quill('#editor-container2', {
-                    placeholder: '',
-                    theme: 'snow'
-                });
-
-                $(document).on('submit', '#editTrainingForm', function () {
-                    $('#Training_Description').val(quillDescription.root.innerHTML);
-                    $('#Training_TrainingText').val(quillTraining.root.innerHTML);
-
+                $('#trainingEditorForm').on('submit', function () {
+                    if (description) $('#Description').val(description.root.innerHTML);
+                    if (text) $('#TrainingText').val(text.root.innerHTML);
+                    $('.training-audience select').prop('disabled', false);
                     return true;
                 });
 
-                // Date picker - no time needed
-                $('#Training_ToBeCompletedBy').datetimepicker({
-                    timepicker: false,
-                    format: 'm/d/Y',
-                    scrollMonth: false,
-                    scrollInput: false
+                $('#addQuestionButton').on('click', function () { addQuestion(); });
+                $('#questions').on('click', '.training-add-answer', function () { addAnswer($(this).closest('.training-question')); });
+                $('#questions').on('click', '.training-remove-answer', function () { $(this).closest('tr').remove(); });
+                $('#questions').on('click', '.training-remove-question', function () { $(this).closest('.training-question').remove(); });
+                $('#questions').on('change', '.training-question-type', function () { applyType($(this).closest('.training-question')); });
+                $('#questions .training-question').each(function () {
+                    if (String($(this).find('.training-question-type').val()) === '2') {
+                        $(this).find('.training-add-answer').hide();
+                    }
                 });
 
-                // File upload: use native HTML file input (no Kendo Upload needed)
+                $('#DueMode').on('change', syncDueMode);
+                $('#OpenToAllMembers').on('change', syncOpen);
+                $('#AssignEveryone').on('change', syncEveryone);
+                syncDueMode();
+                syncOpen();
 
-                $('#SendToAll').change(function () {
-                    if (this.checked) {
-                        $('#groupsToAdd').prop('disabled', true).trigger('change.select2');
-                        $('#rolesToAdd').prop('disabled', true).trigger('change.select2');
-                        $('#usersToAdd').prop('disabled', true).trigger('change.select2');
-                    } else {
-                        $('#groupsToAdd').prop('disabled', false).trigger('change.select2');
-                        $('#rolesToAdd').prop('disabled', false).trigger('change.select2');
-                        $('#usersToAdd').prop('disabled', false).trigger('change.select2');
-                    }
-                }).trigger('change');
-
-                function initSelect2(selector, placeholder, url) {
-                    $(selector).select2({
-                        placeholder: placeholder,
-                        allowClear: true,
-                        ajax: {
-                            url: url,
-                            dataType: 'json',
-                            processResults: function (data) {
-                                return {
-                                    results: $.map(data, function (item) {
-                                        return { id: item.Id, text: item.Name };
-                                    })
-                                };
-                            }
-                        }
+                if ($.fn.select2) {
+                    $('.training-select').each(function () {
+                        $(this).select2({ placeholder: $(this).attr('data-placeholder') || '', allowClear: true, width: '100%' });
                     });
                 }
-
-                initSelect2('#groupsToAdd', i18n.selectGroups || 'Select groups...', resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=1');
-                initSelect2('#rolesToAdd', i18n.selectRoles || 'Select roles...', resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=2');
-                initSelect2('#usersToAdd', i18n.selectUsers || 'Select users...', resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=3&filterSelf=true');
-                // Derive questionsCount from existing server-rendered question rows to avoid index collisions
-                var maxIndex = 0;
-                $('#questions tbody').first().find('input[name^="question_"], textarea[name^="question_"]').each(function () {
-                    var match = $(this).attr('name').match(/^question_(\d+)$/);
-                    if (match) {
-                        var idx = parseInt(match[1], 10);
-                        if (idx > maxIndex) maxIndex = idx;
-                    }
-                });
-                resgrid.training.edittraining.questionsCount = maxIndex;
-
-                // Existing answers are rendered as answerForQuestion_<q>_<0..n>; start new answer ids above them so an
-                // answer added to an existing question does not reuse a rendered field name.
-                $('#questions input[name^="answerForQuestion_"], #questions textarea[name^="answerForQuestion_"]').each(function () {
-                    var match = $(this).attr('name').match(/^answerForQuestion_\d+_(\d+)$/);
-                    if (match) {
-                        var idx = parseInt(match[1], 10);
-                        if (idx > _answerIdCounter) _answerIdCounter = idx;
-                    }
-                });
+                syncEveryone();
             });
-            function addQuestion() {
-                var removeTooltip = escapeHtml(i18n.removeQuestionTooltip || 'Remove this question');
-                resgrid.training.edittraining.questionsCount++;
-                $('#questions tbody').first().append("<tr id='questionRow_" + edittraining.questionsCount + "'><td style='max-width: 215px;'><textarea id='question_" + edittraining.questionsCount + "' name='question_" + edittraining.questionsCount + "' rows='4' cols='40'></textarea></td><td>" + resgrid.training.edittraining.generateAnswersTable(edittraining.questionsCount) + "</td><td style='text-align:center;'><a onclick='resgrid.training.edittraining.removeQuestion(" + edittraining.questionsCount + ");' class='tip-top' data-original-title='" + removeTooltip + "'><i class='fa fa-minus' style='color: red;'></i></a></td></tr>");
-            }
-            edittraining.addQuestion = addQuestion;
-            function generateAnswersTable(count) {
-                var addAnswerLabel = escapeHtml(i18n.addAnswer || 'Add Answer');
-                var addAnswerTooltip = escapeHtml(i18n.addAnswerTooltip || 'Add Answers to Question');
-                var correctLabel = escapeHtml(i18n.correct || 'Correct');
-                var answerTextLabel = escapeHtml(i18n.answerText || 'Answer Text');
-                var answersTable = '<table id="answersTable_' + count + '" class="table table-striped table-bordered"><thead><tr><th style="max-width:35px;font-size: 14px;" >' + correctLabel + '</th><th style = "font-size: 14px;" >' + answerTextLabel + '</th><th style = "font-size: 16px;" ><a id="addAnswerButton_' + count + '" class="btn btn-success btn-xs" onclick="resgrid.training.edittraining.addAnswer(' + count + ');" data-original-title="' + addAnswerTooltip + '" ><i class="icon-plus" ></i> ' + addAnswerLabel + '</a></th></tr></thead><tbody></tbody></table>';
-                return answersTable;
-            }
-            edittraining.generateAnswersTable = generateAnswersTable;
-            function addAnswer(count) {
-                var id = generate(4);
-                var answerRequired = escapeHtml(i18n.answerRequired || 'Answer is required');
-                var removeAnswerTooltip = escapeHtml(i18n.removeAnswerTooltip || 'Remove this answer from the question');
-                $('#answersTable_' + count + ' tbody').append("<tr><td><input type='radio' name='answer_" + count + "' value='answerForQuestion_" + count + "_" + id + "'></td><td><textarea rows='3' cols='30' data-bv-notempty data-bv-notempty-message='" + answerRequired + "' id='answerForQuestion_" + count + "_" + id + "' name='answerForQuestion_" + count + "_" + id + "'></textarea></td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='tip-top' data-original-title='" + removeAnswerTooltip + "'><i class='fa fa-minus' style='color: red;'></i></a></td></tr>");
-            }
-            edittraining.addAnswer = addAnswer;
-            function removeQuestion(index) {
-                $('#questionRow_' + index).remove();
-            }
-            edittraining.removeQuestion = removeQuestion;
-            var _answerIdCounter = 0;
-            function generate() {
-                return ++_answerIdCounter;
-            }
-            edittraining.generate = generate;
         })(edittraining = training.edittraining || (training.edittraining = {}));
     })(training = resgrid.training || (resgrid.training = {}));
 })(resgrid || (resgrid = {}));

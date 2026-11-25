@@ -29,6 +29,14 @@ namespace Resgrid.Repositories.DataRepository
 			_unitOfWork = unitOfWork;
 		}
 
+		public Task<IEnumerable<DispatchProtocolTrigger>> GetTriggersByDepartmentIdAsync(int departmentId)
+		{
+			return QueryAsync<DispatchProtocolTrigger>(
+				$"SELECT t.* FROM {Tbl("DispatchProtocolTriggers")} t INNER JOIN {Tbl("DispatchProtocols")} p ON p.{Col("DispatchProtocolId")} = t.{Col("DispatchProtocolId")} " +
+				$"WHERE p.{Col("DepartmentId")} = {P}DepartmentId ORDER BY t.{Col("DispatchProtocolTriggerId")}",
+				new { DepartmentId = departmentId });
+		}
+
 		public async Task<IEnumerable<DispatchProtocolTrigger>> GetDispatchProtocolTriggersByProtocolIdAsync(int protocolId)
 		{
 			try

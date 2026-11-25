@@ -840,4 +840,10 @@
   <data name="ToggleMenu" xml:space="preserve">
     <value>Menü ein- oder ausblenden</value>
   </data>
+  <data name="ResgridAcademy" xml:space="preserve">
+    <value>Resgrid-Akademie</value>
+  </data>
+  <data name="AcademyLearnThisPage" xml:space="preserve">
+    <value>Lektion zu dieser Seite ({0} Min.)</value>
+  </data>
 </root>

@@ -156,6 +156,34 @@ namespace Resgrid.Services
 					return "Recurring Call Alert Acknowledged";
 				case AuditLogTypes.RecurringCallAlertDismissed:
 					return "Recurring Call Alert Dismissed";
+				case AuditLogTypes.ProtocolCreated:
+					return "Protocol Created";
+				case AuditLogTypes.ProtocolUpdated:
+					return "Protocol Updated";
+				case AuditLogTypes.ProtocolDisabled:
+					return "Protocol Disabled";
+				case AuditLogTypes.ProtocolEnabled:
+					return "Protocol Enabled";
+				case AuditLogTypes.ProtocolDeleted:
+					return "Protocol Deleted";
+				case AuditLogTypes.CallProtocolRemoved:
+					return "Protocol Removed from Call";
+				case AuditLogTypes.TrainingArchived:
+					return "Training Archived";
+				case AuditLogTypes.TrainingRestored:
+					return "Training Restored";
+				case AuditLogTypes.TrainingDeleted:
+					return "Training Deleted";
+				case AuditLogTypes.TrainingCopied:
+					return "Training Copied";
+				case AuditLogTypes.TrainingAssigneeRemoved:
+					return "Training Assignee Removed";
+				case AuditLogTypes.TrainingAssignmentExtended:
+					return "Training Assignment Extended";
+				case AuditLogTypes.TrainingAssignmentExempted:
+					return "Training Assignment Exemption Changed";
+				case AuditLogTypes.MemberLeavePeriodChanged:
+					return "Member Leave Period Changed";
 				case AuditLogTypes.AdminAssistReviewChanged:
 					return "Admin Assist Review Changed";
 				case AuditLogTypes.DepartmentSettingsChanged:

@@ -1002,6 +1002,45 @@
   <data name="W.trainings.mine.OverdueSince" xml:space="preserve">
     <value>Έπρεπε να ολοκληρωθεί {0}</value>
   </data>
+  <data name="W.trainings.bulletin.Title" xml:space="preserve">
+    <value>Πίνακας ανακοινώσεων εκπαίδευσης</value>
+  </data>
+  <data name="W.trainings.bulletin.Description" xml:space="preserve">
+    <value>Νέα εκπαίδευση για εσάς: πρόσφατες αναθέσεις και εκπαιδεύσεις που μόλις δημοσιεύτηκαν, ανοιχτές σε όλα τα μέλη.</value>
+  </data>
+  <data name="W.trainings.bulletin.Setting.days" xml:space="preserve">
+    <value>Ημέρες προς τα πίσω</value>
+  </data>
+  <data name="W.trainings.bulletin.Setting.maxItems" xml:space="preserve">
+    <value>Μέγιστος αριθμός εκπαιδεύσεων</value>
+  </data>
+  <data name="W.trainings.bulletin.Empty" xml:space="preserve">
+    <value>Δεν υπάρχει νέα εκπαίδευση.</value>
+  </data>
+  <data name="W.trainings.bulletin.NewAssignedCount" xml:space="preserve">
+    <value>{0} νέες για εσάς</value>
+  </data>
+  <data name="W.trainings.bulletin.Training" xml:space="preserve">
+    <value>Εκπαίδευση</value>
+  </data>
+  <data name="W.trainings.bulletin.Assigned" xml:space="preserve">
+    <value>Ανατέθηκε σε εσάς</value>
+  </data>
+  <data name="W.trainings.bulletin.Catalog" xml:space="preserve">
+    <value>Ανοιχτή σε όλα τα μέλη</value>
+  </data>
+  <data name="W.trainings.bulletin.CanEnrol" xml:space="preserve">
+    <value>Ανοιχτή σε όλους, μπορείτε να εγγραφείτε</value>
+  </data>
+  <data name="W.trainings.bulletin.Due" xml:space="preserve">
+    <value>Προθεσμία {0}</value>
+  </data>
+  <data name="W.trainings.bulletin.OverdueSince" xml:space="preserve">
+    <value>Η προθεσμία ήταν {0}</value>
+  </data>
+  <data name="W.trainings.bulletin.Published" xml:space="preserve">
+    <value>Δημοσιεύτηκε {0}</value>
+  </data>
   <data name="W.documents.recent.OpenDocuments" xml:space="preserve">
     <value>Άνοιγμα εγγράφων</value>
   </data>

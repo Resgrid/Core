@@ -797,94 +797,54 @@ namespace Resgrid.Providers.Claims
 			}
 		}
 
+		/// <summary>
+		/// Training claims from the three training permissions (T0 item 1b): Create Training (author: Training:Create),
+		/// Assign Training (126, assign and report: Training:Update) and Delete Training (127, archive and delete:
+		/// Training:Delete). Assign and Delete with no row of their own follow the Create Training row. Every member reads
+		/// (Training:View). A claim admits the member to the pages; which trainings they act on is decided per training by
+		/// IAuthorizationService.GetTrainingManagementScopeAsync (a group admin only their own group's, under Everyone a
+		/// member only their own).
+		/// </summary>
 		public static void AddTrainingClaims(ClaimsIdentity identity, bool isAdmin, List<Permission> permissions, bool isGroupAdmin, List<PersonnelRole> roles)
 		{
-			if (permissions != null && permissions.Any(x => x.PermissionType == (int)PermissionTypes.CreateTraining))
+			var create = permissions?.FirstOrDefault(x => x != null && x.PermissionType == (int)PermissionTypes.CreateTraining);
+			var assign = permissions?.FirstOrDefault(x => x != null && x.PermissionType == (int)PermissionTypes.AssignTraining) ?? create;
+			var delete = permissions?.FirstOrDefault(x => x != null && x.PermissionType == (int)PermissionTypes.DeleteTraining) ?? create;
+
+			identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.View));
+
+			if (HoldsTrainingRight(create, isAdmin, isGroupAdmin, roles))
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Create));
+
+			if (HoldsTrainingRight(assign, isAdmin, isGroupAdmin, roles))
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Update));
+
+			if (HoldsTrainingRight(delete, isAdmin, isGroupAdmin, roles))
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Delete));
+		}
+
+		/// <summary>Whether a member holds one training permission at all (no row: department admins only).</summary>
+		public static bool HoldsTrainingRight(Permission permission, bool isAdmin, bool isGroupAdmin, List<PersonnelRole> roles)
+		{
+			if (isAdmin)
+				return true;
+
+			if (permission == null)
+				return false;
+
+			switch ((PermissionActions)permission.Action)
 			{
-				var permission = permissions.First(x => x.PermissionType == (int)PermissionTypes.CreateTraining);
-
-				if (permission.Action == (int)PermissionActions.DepartmentAdminsOnly && isAdmin)
-				{
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.View));
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Update));
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Create));
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Delete));
-				}
-				else if (permission.Action == (int)PermissionActions.DepartmentAdminsOnly && !isAdmin)
-				{
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.View));
-				}
-				else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && (isAdmin || isGroupAdmin))
-				{
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.View));
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Update));
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Create));
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Delete));
-				}
-				else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && !isAdmin && !isGroupAdmin)
-				{
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.View));
-				}
-				else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && isAdmin)
-				{
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.View));
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Update));
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Create));
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Delete));
-				}
-				else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && !isAdmin)
-				{
-					if (!String.IsNullOrWhiteSpace(permission.Data))
-					{
-						var roleIds = permission.Data.Split(char.Parse(",")).Select(int.Parse);
-						var role = from r in roles
-											 where roleIds.Contains(r.PersonnelRoleId)
-											 select r;
-
-						if (role.Any())
-						{
-							identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.View));
-							identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Update));
-							identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Create));
-							identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Delete));
-						}
-						else
-						{
-							identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.View));
-						}
-					}
-					else
-					{
-						identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.View));
-					}
-				}
-				else if (permission.Action == (int)PermissionActions.Everyone)
-				{
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.View));
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Create));
-
-					// "Everyone" lets every member create a training. It does not make every member the editor of everyone
-					// else's: the edit page shows the answer key and the report shows every score. A member manages the
-					// trainings they created (IAuthorizationService.GetTrainingManagementScopeAsync); only admins hold the
-					// department-wide claims.
-					if (isAdmin)
-					{
-						identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Update));
-						identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Delete));
-					}
-				}
-
-			}
-			else
-			{
-				if (isAdmin)
-				{
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Update));
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Create));
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Delete));
-				}
-
-				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.View));
+				case PermissionActions.DepartmentAndGroupAdmins:
+					return isGroupAdmin;
+				case PermissionActions.DepartmentAdminsAndSelectRoles:
+					if (string.IsNullOrWhiteSpace(permission.Data) || roles == null)
+						return false;
+					var roleIds = permission.Data.Split(',').Select(x => int.TryParse(x.Trim(), out var id) ? id : 0).Where(id => id > 0).ToHashSet();
+					return roles.Any(r => r != null && roleIds.Contains(r.PersonnelRoleId));
+				case PermissionActions.Everyone:
+					return true;
+				default:
+					return false;
 			}
 		}
 

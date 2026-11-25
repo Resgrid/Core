@@ -114,6 +114,10 @@ namespace Resgrid.Web.Services.Models.v4.Protocols
 
 		public string CallType { get; set; }
 
+		/// <summary>The call type id the trigger matches (null with no CallType is "no type").</summary>
+		public int? CallTypeId { get; set; }
+
+		/// <summary>Stored, not evaluated (planned: inside a station or group geofence).</summary>
 		public string Geofence { get; set; }
 	}
 
@@ -124,6 +128,9 @@ namespace Resgrid.Web.Services.Models.v4.Protocols
 		public string FileName { get; set; }
 
 		public string FileType { get; set; }
+
+		/// <summary>Size in bytes; the file itself comes from Protocols/GetFile.</summary>
+		public long? Size { get; set; }
 	}
 
 	public class ProtocolTriggerQuestionResult

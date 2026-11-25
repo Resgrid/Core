@@ -250,4 +250,376 @@
   <data name="ProtocolsLabel" xml:space="preserve">
     <value>Protokolle</value>
   </data>
+  <data name="LibraryTab" xml:space="preserve">
+    <value>Bibliothek</value>
+  </data>
+  <data name="LibraryIntro" xml:space="preserve">
+    <value>Einsatzprotokolle: die vorgegebenen Fragen und Anweisungen, die Einsatzart und Priorität auslösen.</value>
+  </data>
+  <data name="LibraryHeader" xml:space="preserve">
+    <value>Protokollbibliothek</value>
+  </data>
+  <data name="KpiTotal" xml:space="preserve">
+    <value>Protokolle</value>
+  </data>
+  <data name="KpiDisabled" xml:space="preserve">
+    <value>Deaktiviert</value>
+  </data>
+  <data name="KpiUsedOnCalls" xml:space="preserve">
+    <value>Bei Einsätzen verwendet (30 Tage)</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Protokolle suchen</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Name oder Code</value>
+  </data>
+  <data name="StatusAll" xml:space="preserve">
+    <value>Alle Status</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Filtern</value>
+  </data>
+  <data name="ClearFilterButton" xml:space="preserve">
+    <value>Zurücksetzen</value>
+  </data>
+  <data name="NoProtocolsYet" xml:space="preserve">
+    <value>Noch keine Protokolle.</value>
+  </data>
+  <data name="NoProtocolsMatch" xml:space="preserve">
+    <value>Kein Protokoll entspricht dem Filter.</value>
+  </data>
+  <data name="QuestionsCount" xml:space="preserve">
+    <value>{0} Fragen</value>
+  </data>
+  <data name="NoTriggers" xml:space="preserve">
+    <value>Keine Auslöser (nur manuell wählbar)</value>
+  </data>
+  <data name="MoreTriggers" xml:space="preserve">
+    <value>und {0} weitere</value>
+  </data>
+  <data name="UsedOnCallsColumn" xml:space="preserve">
+    <value>Einsätze (30 Tage)</value>
+  </data>
+  <data name="LastUpdatedColumn" xml:space="preserve">
+    <value>Zuletzt geändert</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
+  <data name="EnableButton" xml:space="preserve">
+    <value>Aktivieren</value>
+  </data>
+  <data name="DisableButton" xml:space="preserve">
+    <value>Deaktivieren</value>
+  </data>
+  <data name="DeleteProtocolConfirm" xml:space="preserve">
+    <value>Das Protokoll verschwindet aus der Bibliothek und aus neuen Einsätzen; Einsätze, die es verwendet haben, zeigen es weiterhin. Protokoll löschen</value>
+  </data>
+  <data name="DeletedLabel" xml:space="preserve">
+    <value>Gelöscht</value>
+  </data>
+  <data name="DeletedProtocolNotice" xml:space="preserve">
+    <value>Dieses Protokoll wurde gelöscht. Es bleibt erhalten, weil Einsätze darauf verweisen; es wird weder vorgeschlagen noch angehängt.</value>
+  </data>
+  <data name="DisabledProtocolNotice" xml:space="preserve">
+    <value>Dieses Protokoll ist deaktiviert: Es wird bei Einsätzen weder vorgeschlagen noch angehängt. Aktivieren Sie es, um es wieder zu verwenden.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="TriggerMatchesColumn" xml:space="preserve">
+    <value>Trifft zu bei</value>
+  </data>
+  <data name="NoTriggersHelp" xml:space="preserve">
+    <value>Keine Auslöser: Das Protokoll wird nie vorgeschlagen, kann aber manuell zu einem Einsatz hinzugefügt werden.</value>
+  </data>
+  <data name="NoQuestionsHelp" xml:space="preserve">
+    <value>Keine Fragen: Sobald ein Auslöser zutrifft, gilt das Protokoll sofort.</value>
+  </data>
+  <data name="MinimumWeightHelp" xml:space="preserve">
+    <value>Wenn ein Auslöser zutrifft, gilt das Protokoll, sobald die Gewichtungen der Antworten zusammen mindestens {0} ergeben.</value>
+  </data>
+  <data name="DownloadButton" xml:space="preserve">
+    <value>Herunterladen</value>
+  </data>
+  <data name="NoAttachments" xml:space="preserve">
+    <value>Keine Anhänge.</value>
+  </data>
+  <data name="NoProtocolText" xml:space="preserve">
+    <value>Kein Protokolltext.</value>
+  </data>
+  <data name="ProtocolSavedMessage" xml:space="preserve">
+    <value>Das Protokoll wurde gespeichert.</value>
+  </data>
+  <data name="ProtocolDisabledMessage" xml:space="preserve">
+    <value>Das Protokoll wurde deaktiviert.</value>
+  </data>
+  <data name="ProtocolEnabledMessage" xml:space="preserve">
+    <value>Das Protokoll wurde aktiviert.</value>
+  </data>
+  <data name="EditProtocolHeader" xml:space="preserve">
+    <value>Protokoll bearbeiten</value>
+  </data>
+  <data name="EditorIntroNew" xml:space="preserve">
+    <value>Benennen Sie das Protokoll, schreiben Sie den Inhalt und fügen Sie dann die Auslöser hinzu, die es vorschlagen, und die Fragen, die entscheiden, ob es gilt.</value>
+  </data>
+  <data name="BasicsHeader" xml:space="preserve">
+    <value>Grunddaten</value>
+  </data>
+  <data name="CodeHelp" xml:space="preserve">
+    <value>Bis zu {0} Buchstaben, Ziffern, Leerzeichen und . _ / - (zum Beispiel 09-E-01 oder SOG-204).</value>
+  </data>
+  <data name="MinimumWeightEditorHelp" xml:space="preserve">
+    <value>Die Gesamtgewichtung der Antworten, die ein vorgeschlagenes Protokoll braucht, um zu gelten. Bei 0 gilt es unabhängig von den Antworten.</value>
+  </data>
+  <data name="DisabledCheckbox" xml:space="preserve">
+    <value>Deaktiviert</value>
+  </data>
+  <data name="DisabledCheckboxHelp" xml:space="preserve">
+    <value>Ein deaktiviertes Protokoll bleibt in der Bibliothek, wird bei Einsätzen aber weder vorgeschlagen noch angehängt.</value>
+  </data>
+  <data name="ContentHeader" xml:space="preserve">
+    <value>Inhalt</value>
+  </data>
+  <data name="DescriptionHelp" xml:space="preserve">
+    <value>Eine kurze Zusammenfassung mit bis zu {0} Zeichen Text.</value>
+  </data>
+  <data name="TriggerTimeZoneHelp" xml:space="preserve">
+    <value>Beginn und Ende gelten in der Zeitzone der Abteilung ({0}).</value>
+  </data>
+  <data name="TriggerLabel" xml:space="preserve">
+    <value>Auslöser</value>
+  </data>
+  <data name="RemoveTriggerButton" xml:space="preserve">
+    <value>Auslöser entfernen</value>
+  </data>
+  <data name="NoTypeOption" xml:space="preserve">
+    <value>Keine Art</value>
+  </data>
+  <data name="LegacyTypeHelp" xml:space="preserve">
+    <value>Dieser Auslöser nennt die Einsatzart "{0}", die es nicht mehr gibt. Wählen Sie eine Einsatzart, damit er weiter zutrifft.</value>
+  </data>
+  <data name="RemovedNamed" xml:space="preserve">
+    <value>{0} (entfernt)</value>
+  </data>
+  <data name="RemovedPriority" xml:space="preserve">
+    <value>Entfernte Priorität</value>
+  </data>
+  <data name="RemoveQuestionButton" xml:space="preserve">
+    <value>Frage entfernen</value>
+  </data>
+  <data name="AddAnswerButton" xml:space="preserve">
+    <value>Antwort hinzufügen</value>
+  </data>
+  <data name="RemoveAnswerButton" xml:space="preserve">
+    <value>Antwort entfernen</value>
+  </data>
+  <data name="RemoveOnSaveColumn" xml:space="preserve">
+    <value>Beim Speichern entfernen</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
+  <data name="AddFilesLabel" xml:space="preserve">
+    <value>Dateien hinzufügen</value>
+  </data>
+  <data name="AttachmentsLimitsHelp" xml:space="preserve">
+    <value>Bis zu {0} Dateien pro Speichern, je {1} MB und zusammen {2} MB: Bilder, PDF, Office-Dokumente, Text und Video.</value>
+  </data>
+  <data name="AttachmentsReselectHelp" xml:space="preserve">
+    <value>Wenn das Speichern fehlschlägt, wählen Sie die Dateien erneut aus: Der Browser behält sie nicht.</value>
+  </data>
+  <data name="SaveProtocolButton" xml:space="preserve">
+    <value>Protokoll speichern</value>
+  </data>
+  <data name="TriggerSummaryPriority" xml:space="preserve">
+    <value>Priorität: {0}</value>
+  </data>
+  <data name="TriggerSummaryType" xml:space="preserve">
+    <value>Art: {0}</value>
+  </data>
+  <data name="TriggerSummaryPriorityAndType" xml:space="preserve">
+    <value>{0} · Priorität {1}</value>
+  </data>
+  <data name="ReasonMatched" xml:space="preserve">
+    <value>Trifft zu: {0}</value>
+  </data>
+  <data name="ErrorProtocolMissing" xml:space="preserve">
+    <value>Das Protokoll konnte nicht gelesen werden.</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>Ein Protokollname ist erforderlich.</value>
+  </data>
+  <data name="ErrorNameTooLong" xml:space="preserve">
+    <value>Der Name darf höchstens 100 Zeichen lang sein.</value>
+  </data>
+  <data name="ErrorCodeRequired" xml:space="preserve">
+    <value>Ein Protokollcode ist erforderlich.</value>
+  </data>
+  <data name="ErrorCodeInvalid" xml:space="preserve">
+    <value>Der Code darf aus bis zu 16 Buchstaben, Ziffern, Leerzeichen und den Zeichen . _ / - bestehen.</value>
+  </data>
+  <data name="ErrorDescriptionTooLong" xml:space="preserve">
+    <value>Die Beschreibung darf höchstens 500 Zeichen Text enthalten.</value>
+  </data>
+  <data name="ErrorMinimumWeightRange" xml:space="preserve">
+    <value>Die Mindestgewichtung muss zwischen 0 und 1000 liegen.</value>
+  </data>
+  <data name="ErrorTriggerType" xml:space="preserve">
+    <value>Ein Auslöser hat eine unbekannte Art.</value>
+  </data>
+  <data name="ErrorTriggerWindow" xml:space="preserve">
+    <value>Ein Auslöser endet, bevor er beginnt.</value>
+  </data>
+  <data name="ErrorTriggerPriority" xml:space="preserve">
+    <value>Ein Prioritätsauslöser braucht eine der Einsatzprioritäten der Abteilung.</value>
+  </data>
+  <data name="ErrorTriggerCallType" xml:space="preserve">
+    <value>Ein Artauslöser nennt eine Einsatzart, die nicht zur Abteilung gehört.</value>
+  </data>
+  <data name="ErrorTriggerDate" xml:space="preserve">
+    <value>Beginn oder Ende eines Auslösers konnte nicht gelesen werden.</value>
+  </data>
+  <data name="ErrorQuestionText" xml:space="preserve">
+    <value>Jede Frage braucht einen Text.</value>
+  </data>
+  <data name="ErrorQuestionAnswers" xml:space="preserve">
+    <value>Jede Frage braucht mindestens eine Antwort.</value>
+  </data>
+  <data name="ErrorAnswerText" xml:space="preserve">
+    <value>Jede Antwort braucht einen Text.</value>
+  </data>
+  <data name="ErrorTooManyFiles" xml:space="preserve">
+    <value>Fügen Sie höchstens {0} Dateien auf einmal hinzu.</value>
+  </data>
+  <data name="ErrorTooManyAttachments" xml:space="preserve">
+    <value>Ein Protokoll kann höchstens {0} Anhänge haben.</value>
+  </data>
+  <data name="ErrorUploadTooLarge" xml:space="preserve">
+    <value>Die Dateien müssen zusammen kleiner als {0} MB sein.</value>
+  </data>
+  <data name="ErrorFileType" xml:space="preserve">
+    <value>Dateien vom Typ ({0}) können nicht angehängt werden.</value>
+  </data>
+  <data name="ErrorFileTooLarge" xml:space="preserve">
+    <value>{0} ist zu groß: Jede Datei muss kleiner als {1} MB sein.</value>
+  </data>
+  <data name="ErrorForeignRows" xml:space="preserve">
+    <value>Die Änderung nennt Auslöser, Fragen oder Antworten, die nicht zu diesem Protokoll gehören.</value>
+  </data>
+  <data name="TriggersRenamedType" xml:space="preserve">
+    <value>{0} Protokollauslöser verwenden diese Einsatzart; sie treffen weiter zu und zeigen den neuen Namen: {1}.</value>
+  </data>
+  <data name="TriggersDeletedType" xml:space="preserve">
+    <value>{0} Protokollauslöser verwendeten die gelöschte Einsatzart und treffen erst wieder zu, wenn sie geändert werden: {1}.</value>
+  </data>
+  <data name="TriggersRemovedPriority" xml:space="preserve">
+    <value>{0} Protokollauslöser verwendeten die entfernte Priorität und treffen erst wieder zu, wenn sie geändert werden: {1}.</value>
+  </data>
+  <data name="NoProtocolsOnCall" xml:space="preserve">
+    <value>An diesem Einsatz hängen keine Protokolle.</value>
+  </data>
+  <data name="SourceTrigger" xml:space="preserve">
+    <value>Von einem Auslöser vorgeschlagen</value>
+  </data>
+  <data name="SourceManual" xml:space="preserve">
+    <value>Manuell hinzugefügt</value>
+  </data>
+  <data name="SourceUnknown" xml:space="preserve">
+    <value>Angehängt, bevor Antworten gespeichert wurden</value>
+  </data>
+  <data name="RemovedFromCallLabel" xml:space="preserve">
+    <value>Entfernt</value>
+  </data>
+  <data name="RemovedByOn" xml:space="preserve">
+    <value>Entfernt von {0} am {1}.</value>
+  </data>
+  <data name="RemovalReasonLabel" xml:space="preserve">
+    <value>Grund</value>
+  </data>
+  <data name="ScoreLabel" xml:space="preserve">
+    <value>Punktzahl</value>
+  </data>
+  <data name="ScoreOfMinimum" xml:space="preserve">
+    <value>{0} von mindestens {1}</value>
+  </data>
+  <data name="PanelScore" xml:space="preserve">
+    <value>Punktzahl {0} von mindestens {1}</value>
+  </data>
+  <data name="QuestionsPassed" xml:space="preserve">
+    <value>Gilt</value>
+  </data>
+  <data name="QuestionsIncomplete" xml:space="preserve">
+    <value>Nicht alle Fragen beantwortet</value>
+  </data>
+  <data name="QuestionsBelowMinimum" xml:space="preserve">
+    <value>Unter dem Minimum</value>
+  </data>
+  <data name="NotAnswered" xml:space="preserve">
+    <value>Nicht beantwortet</value>
+  </data>
+  <data name="NoAnswersRecorded" xml:space="preserve">
+    <value>Für dieses Protokoll wurden keine Antworten gespeichert.</value>
+  </data>
+  <data name="AttachedByOn" xml:space="preserve">
+    <value>Angehängt von {0} am {1}.</value>
+  </data>
+  <data name="TextAsDispatched" xml:space="preserve">
+    <value>Text wie alarmiert</value>
+  </data>
+  <data name="ChangedSinceDispatch" xml:space="preserve">
+    <value>Seit der Alarmierung geändert</value>
+  </data>
+  <data name="NoSnapshotRecorded" xml:space="preserve">
+    <value>Angehängt, bevor der Text zum Alarmierungszeitpunkt gespeichert wurde.</value>
+  </data>
+  <data name="CurrentTextLink" xml:space="preserve">
+    <value>Aktueller Text</value>
+  </data>
+  <data name="RemoveFromCallButton" xml:space="preserve">
+    <value>Vom Einsatz entfernen</value>
+  </data>
+  <data name="RemovalReasonPlaceholder" xml:space="preserve">
+    <value>Warum es nicht zutrifft</value>
+  </data>
+  <data name="CallProtocolRemovedMessage" xml:space="preserve">
+    <value>Das Protokoll wurde vom Einsatz entfernt. Es bleibt mit dem Grund im Verlauf erhalten.</value>
+  </data>
+  <data name="RemovalReasonRequired" xml:space="preserve">
+    <value>Geben Sie einen Grund an, um ein Protokoll vom Einsatz zu entfernen.</value>
+  </data>
+  <data name="PanelIntro" xml:space="preserve">
+    <value>Protokolle, die Einsatzart und Priorität vorschlagen, mit dem zutreffenden Auslöser. Beantworten Sie die Fragen jedes Protokolls; Sie können auch eines manuell hinzufügen.</value>
+  </data>
+  <data name="PanelNoSuggestions" xml:space="preserve">
+    <value>Kein Protokoll passt zu Art und Priorität dieses Einsatzes.</value>
+  </data>
+  <data name="PanelAddByHand" xml:space="preserve">
+    <value>Protokoll manuell hinzufügen</value>
+  </data>
+  <data name="PanelAddButton" xml:space="preserve">
+    <value>Hinzufügen</value>
+  </data>
+  <data name="PanelAnswerToContinue" xml:space="preserve">
+    <value>Beantworten Sie alle Fragen, um zu sehen, ob dieses Protokoll gilt.</value>
+  </data>
+  <data name="PanelApplies" xml:space="preserve">
+    <value>Gilt</value>
+  </data>
+  <data name="PanelDoesNotApply" xml:space="preserve">
+    <value>Gilt nicht</value>
+  </data>
+  <data name="PanelQuestionOf" xml:space="preserve">
+    <value>Frage {0} von {1}</value>
+  </data>
+  <data name="PanelBack" xml:space="preserve">
+    <value>Zurück</value>
+  </data>
+  <data name="PanelNext" xml:space="preserve">
+    <value>Weiter</value>
+  </data>
+  <data name="PanelChoose" xml:space="preserve">
+    <value>Protokoll wählen…</value>
+  </data>
 </root>

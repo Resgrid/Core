@@ -23,8 +23,14 @@ namespace Resgrid.Model
 		[MaxLength(100)]
 		public string Name { get; set; }
 
+		/// <summary>Longest code a protocol can carry: room for determinant-style codes (09-E-01, 26A01) and SOG numbers (SOG-204).</summary>
+		public const int CodeMaxLength = 16;
+
+		/// <summary>Longest description, counted on its text rather than its markup.</summary>
+		public const int DescriptionTextMaxLength = 500;
+
 		[Required]
-		[MaxLength(4)]
+		[MaxLength(CodeMaxLength)]
 		public string Code { get; set; }
 
 		public bool IsDisabled { get; set; }
@@ -37,7 +43,7 @@ namespace Resgrid.Model
 
 		public DateTime? DeletedOn { get; set; }
 
-		[MaxLength(500)]
+		/// <summary>Rich text. Its text, not its markup, is limited to <see cref="DescriptionTextMaxLength"/> (validated on save).</summary>
 		public string Description { get; set; }
 
 		public string ProtocolText { get; set; }

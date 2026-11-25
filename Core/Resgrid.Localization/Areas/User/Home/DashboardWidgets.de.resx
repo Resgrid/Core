@@ -1002,6 +1002,45 @@
   <data name="W.trainings.mine.OverdueSince" xml:space="preserve">
     <value>Fällig war: {0}</value>
   </data>
+  <data name="W.trainings.bulletin.Title" xml:space="preserve">
+    <value>Schulungs-Pinnwand</value>
+  </data>
+  <data name="W.trainings.bulletin.Description" xml:space="preserve">
+    <value>Neue Schulungen für Sie: aktuelle Zuweisungen und neu veröffentlichte Schulungen, die allen Mitgliedern offenstehen.</value>
+  </data>
+  <data name="W.trainings.bulletin.Setting.days" xml:space="preserve">
+    <value>Zurückliegende Tage</value>
+  </data>
+  <data name="W.trainings.bulletin.Setting.maxItems" xml:space="preserve">
+    <value>Maximale Anzahl angezeigter Schulungen</value>
+  </data>
+  <data name="W.trainings.bulletin.Empty" xml:space="preserve">
+    <value>Keine neuen Schulungen.</value>
+  </data>
+  <data name="W.trainings.bulletin.NewAssignedCount" xml:space="preserve">
+    <value>{0} neu für Sie</value>
+  </data>
+  <data name="W.trainings.bulletin.Training" xml:space="preserve">
+    <value>Schulung</value>
+  </data>
+  <data name="W.trainings.bulletin.Assigned" xml:space="preserve">
+    <value>Ihnen zugewiesen</value>
+  </data>
+  <data name="W.trainings.bulletin.Catalog" xml:space="preserve">
+    <value>Für alle Mitglieder offen</value>
+  </data>
+  <data name="W.trainings.bulletin.CanEnrol" xml:space="preserve">
+    <value>Für alle offen, Sie können sich anmelden</value>
+  </data>
+  <data name="W.trainings.bulletin.Due" xml:space="preserve">
+    <value>Fällig {0}</value>
+  </data>
+  <data name="W.trainings.bulletin.OverdueSince" xml:space="preserve">
+    <value>Fällig war: {0}</value>
+  </data>
+  <data name="W.trainings.bulletin.Published" xml:space="preserve">
+    <value>Veröffentlicht {0}</value>
+  </data>
   <data name="W.documents.recent.OpenDocuments" xml:space="preserve">
     <value>Dokumente öffnen</value>
   </data>

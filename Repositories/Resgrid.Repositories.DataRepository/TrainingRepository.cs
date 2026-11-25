@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using Resgrid.Framework;
@@ -14,7 +15,7 @@ using Resgrid.Repositories.DataRepository.Queries.Trainings;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class TrainingRepository : RepositoryBase<Training>, ITrainingRepository
+	public class TrainingRepository : RmsRepositoryBase<Training>, ITrainingRepository
 	{
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;
@@ -134,6 +135,88 @@ namespace Resgrid.Repositories.DataRepository
 
 				return null;
 			}
+		}
+
+		private sealed class QuestionCountRow
+		{
+			public int TrainingId { get; set; }
+			public int QuestionCount { get; set; }
+		}
+
+		private static string True => IsPostgres ? "true" : "1";
+
+		private static string False => IsPostgres ? "false" : "0";
+
+		public async Task<Dictionary<int, int>> GetQuestionCountsForDepartmentAsync(int departmentId)
+		{
+			var rows = await QueryAsync<QuestionCountRow>(
+				$"SELECT q.{Col("TrainingId")} AS TrainingId, CAST(COUNT(*) AS INT) AS QuestionCount FROM {Tbl("TrainingQuestions")} q " +
+				$"JOIN {Tbl("Trainings")} t ON t.{Col("TrainingId")} = q.{Col("TrainingId")} WHERE t.{Col("DepartmentId")} = {P}DepartmentId GROUP BY q.{Col("TrainingId")}",
+				new { DepartmentId = departmentId });
+
+			return rows.ToDictionary(r => r.TrainingId, r => r.QuestionCount);
+		}
+
+		public async Task<List<int>> GetTrainingIdsWithNoticeWorkAsync(DateTime utcNow, int maxLeadDays)
+		{
+			var parameters = new DynamicParameters();
+			parameters.Add("Now", DatabaseTimestamp(utcNow), System.Data.DbType.DateTime2);
+			parameters.Add("Horizon", DatabaseTimestamp(utcNow.AddDays(Math.Max(1, maxLeadDays) + 1)), System.Data.DbType.DateTime2);
+			parameters.Add("Yesterday", DatabaseTimestamp(utcNow.Date.AddDays(-1)), System.Data.DbType.DateTime2);
+
+			// Open assignments that were never announced, or whose due moment is inside the widest lead (or past, when the
+			// training sends overdue notices). Rows from before T0 have no DueOn and fall back to the training's local date.
+			var sql = $@"SELECT DISTINCT t.{Col("TrainingId")} FROM {Tbl("Trainings")} t
+JOIN {Tbl("TrainingUsers")} tu ON tu.{Col("TrainingId")} = t.{Col("TrainingId")}
+WHERE t.{Col("ArchivedOn")} IS NULL AND (t.{Col("StartsOn")} IS NULL OR t.{Col("StartsOn")} <= {P}Now)
+AND tu.{Col("Complete")} = {False} AND tu.{Col("RemovedOn")} IS NULL
+AND (tu.{Col("ExemptOn")} IS NULL OR (tu.{Col("ExemptUntil")} IS NOT NULL AND tu.{Col("ExemptUntil")} <= {P}Now))
+AND (tu.{Col("NotifiedOn")} IS NULL
+	OR (tu.{Col("DueOn")} IS NOT NULL AND tu.{Col("DueOn")} <= {P}Horizon AND (tu.{Col("DueOn")} >= {P}Now OR t.{Col("SendOverdueNotices")} = {True}))
+	OR (tu.{Col("DueOn")} IS NULL AND t.{Col("ToBeCompletedBy")} IS NOT NULL AND t.{Col("ToBeCompletedBy")} <= {P}Horizon AND (t.{Col("ToBeCompletedBy")} >= {P}Yesterday OR t.{Col("SendOverdueNotices")} = {True})))";
+
+			return (await QueryAsync<int>(sql, parameters)).ToList();
+		}
+
+		public async Task<List<Training>> GetTrainingsDueForRepeatAsync(DateTime utcNow, int take)
+		{
+			var parameters = new DynamicParameters();
+			parameters.Add("Now", DatabaseTimestamp(utcNow), System.Data.DbType.DateTime2);
+			parameters.Add("Take", Math.Max(1, take));
+			var where = $"{Col("ArchivedOn")} IS NULL AND {Col("RepeatMonths")} > 0 AND {Col("NextRepeatOn")} IS NOT NULL AND {Col("NextRepeatOn")} <= {P}Now ORDER BY {Col("NextRepeatOn")}";
+			var sql = IsPostgres
+				? $"SELECT * FROM {Tbl("Trainings")} WHERE {where} LIMIT {P}Take"
+				: $"SELECT TOP ({P}Take) * FROM {Tbl("Trainings")} WHERE {where}";
+			return (await QueryAsync<Training>(sql, parameters)).ToList();
+		}
+
+		public async Task<bool> SetArchivedAsync(int departmentId, int trainingId, DateTime? archivedOn, string userId, CancellationToken cancellationToken = default)
+		{
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("TrainingId", trainingId);
+			parameters.Add("ArchivedOn", archivedOn.HasValue ? DatabaseTimestamp(archivedOn.Value) : (DateTime?)null, System.Data.DbType.DateTime2);
+			parameters.Add("UserId", archivedOn.HasValue ? userId : null, System.Data.DbType.String);
+			parameters.Add("UpdatedOn", DatabaseTimestamp(DateTime.UtcNow), System.Data.DbType.DateTime2);
+			parameters.Add("UpdatedBy", userId, System.Data.DbType.String);
+			return await ExecuteAsync($"UPDATE {Tbl("Trainings")} SET {Col("ArchivedOn")} = {P}ArchivedOn, {Col("ArchivedByUserId")} = {P}UserId, {Col("UpdatedOn")} = {P}UpdatedOn, {Col("UpdatedByUserId")} = {P}UpdatedBy " +
+				$"WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("TrainingId")} = {P}TrainingId", parameters, cancellationToken) == 1;
+		}
+
+		public async Task<bool> SetNextRepeatOnAsync(int trainingId, DateTime? nextRepeatOn, CancellationToken cancellationToken = default)
+		{
+			var parameters = new DynamicParameters();
+			parameters.Add("TrainingId", trainingId);
+			parameters.Add("NextRepeatOn", nextRepeatOn.HasValue ? DatabaseTimestamp(nextRepeatOn.Value) : (DateTime?)null, System.Data.DbType.DateTime2);
+			return await ExecuteAsync($"UPDATE {Tbl("Trainings")} SET {Col("NextRepeatOn")} = {P}NextRepeatOn WHERE {Col("TrainingId")} = {P}TrainingId", parameters, cancellationToken) == 1;
+		}
+
+		public Task<int> CountCompletionsAsync(int trainingId)
+		{
+			return ScalarAsync<int>(
+				$"SELECT CAST((SELECT COUNT(*) FROM {Tbl("TrainingUsers")} WHERE {Col("TrainingId")} = {P}TrainingId AND {Col("Complete")} = {True}) + " +
+				$"(SELECT COUNT(*) FROM {Tbl("TrainingCompletionHistories")} WHERE {Col("TrainingId")} = {P}TrainingId) AS INT)",
+				new { TrainingId = trainingId });
 		}
 
 		private static Func<Training, TrainingUser, Training> TrainingUsersMapping(Dictionary<int, Training> dictionary)

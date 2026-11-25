@@ -250,4 +250,376 @@
   <data name="ProtocolsLabel" xml:space="preserve">
     <value>Protokoll</value>
   </data>
+  <data name="LibraryTab" xml:space="preserve">
+    <value>Bibliotek</value>
+  </data>
+  <data name="LibraryIntro" xml:space="preserve">
+    <value>Larmprotokoll: de förberedda frågor och instruktioner som larmets typ och prioritet tar fram.</value>
+  </data>
+  <data name="LibraryHeader" xml:space="preserve">
+    <value>Protokollbibliotek</value>
+  </data>
+  <data name="KpiTotal" xml:space="preserve">
+    <value>Protokoll</value>
+  </data>
+  <data name="KpiDisabled" xml:space="preserve">
+    <value>Inaktiverade</value>
+  </data>
+  <data name="KpiUsedOnCalls" xml:space="preserve">
+    <value>Använda vid larm (30 dagar)</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Sök protokoll</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Namn eller kod</value>
+  </data>
+  <data name="StatusAll" xml:space="preserve">
+    <value>Alla statusar</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Filtrera</value>
+  </data>
+  <data name="ClearFilterButton" xml:space="preserve">
+    <value>Rensa</value>
+  </data>
+  <data name="NoProtocolsYet" xml:space="preserve">
+    <value>Inga protokoll ännu.</value>
+  </data>
+  <data name="NoProtocolsMatch" xml:space="preserve">
+    <value>Inga protokoll matchar filtret.</value>
+  </data>
+  <data name="QuestionsCount" xml:space="preserve">
+    <value>{0} frågor</value>
+  </data>
+  <data name="NoTriggers" xml:space="preserve">
+    <value>Inga utlösare (väljs bara manuellt)</value>
+  </data>
+  <data name="MoreTriggers" xml:space="preserve">
+    <value>och {0} till</value>
+  </data>
+  <data name="UsedOnCallsColumn" xml:space="preserve">
+    <value>Larm (30 dagar)</value>
+  </data>
+  <data name="LastUpdatedColumn" xml:space="preserve">
+    <value>Senast ändrad</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Redigera</value>
+  </data>
+  <data name="EnableButton" xml:space="preserve">
+    <value>Aktivera</value>
+  </data>
+  <data name="DisableButton" xml:space="preserve">
+    <value>Inaktivera</value>
+  </data>
+  <data name="DeleteProtocolConfirm" xml:space="preserve">
+    <value>Protokollet försvinner ur biblioteket och nya larm; larm som använde det visar det fortfarande. Ta bort protokollet</value>
+  </data>
+  <data name="DeletedLabel" xml:space="preserve">
+    <value>Borttaget</value>
+  </data>
+  <data name="DeletedProtocolNotice" xml:space="preserve">
+    <value>Protokollet har tagits bort. Det sparas eftersom larm hänvisar till det; det föreslås eller bifogas inte.</value>
+  </data>
+  <data name="DisabledProtocolNotice" xml:space="preserve">
+    <value>Protokollet är inaktiverat: det föreslås inte vid larm och bifogas inte. Aktivera det för att använda det igen.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Detaljer</value>
+  </data>
+  <data name="TriggerMatchesColumn" xml:space="preserve">
+    <value>Matchar</value>
+  </data>
+  <data name="NoTriggersHelp" xml:space="preserve">
+    <value>Inga utlösare: protokollet föreslås aldrig, men det kan läggas till på ett larm manuellt.</value>
+  </data>
+  <data name="NoQuestionsHelp" xml:space="preserve">
+    <value>Inga frågor: när en utlösare matchar gäller protokollet direkt.</value>
+  </data>
+  <data name="MinimumWeightHelp" xml:space="preserve">
+    <value>När en utlösare matchar gäller protokollet när svarens vikter tillsammans blir minst {0}.</value>
+  </data>
+  <data name="DownloadButton" xml:space="preserve">
+    <value>Ladda ned</value>
+  </data>
+  <data name="NoAttachments" xml:space="preserve">
+    <value>Inga bilagor.</value>
+  </data>
+  <data name="NoProtocolText" xml:space="preserve">
+    <value>Ingen protokolltext.</value>
+  </data>
+  <data name="ProtocolSavedMessage" xml:space="preserve">
+    <value>Protokollet sparades.</value>
+  </data>
+  <data name="ProtocolDisabledMessage" xml:space="preserve">
+    <value>Protokollet inaktiverades.</value>
+  </data>
+  <data name="ProtocolEnabledMessage" xml:space="preserve">
+    <value>Protokollet aktiverades.</value>
+  </data>
+  <data name="EditProtocolHeader" xml:space="preserve">
+    <value>Redigera protokoll</value>
+  </data>
+  <data name="EditorIntroNew" xml:space="preserve">
+    <value>Namnge protokollet, skriv innehållet och lägg sedan till utlösarna som föreslår det och frågorna som avgör om det gäller.</value>
+  </data>
+  <data name="BasicsHeader" xml:space="preserve">
+    <value>Grunduppgifter</value>
+  </data>
+  <data name="CodeHelp" xml:space="preserve">
+    <value>Upp till {0} bokstäver, siffror, mellanslag och . _ / - (till exempel 09-E-01 eller SOG-204).</value>
+  </data>
+  <data name="MinimumWeightEditorHelp" xml:space="preserve">
+    <value>Den sammanlagda svarsvikt ett föreslaget protokoll behöver för att gälla. Med 0 gäller det oavsett svar.</value>
+  </data>
+  <data name="DisabledCheckbox" xml:space="preserve">
+    <value>Inaktiverat</value>
+  </data>
+  <data name="DisabledCheckboxHelp" xml:space="preserve">
+    <value>Ett inaktiverat protokoll finns kvar i biblioteket men föreslås inte vid larm och bifogas inte.</value>
+  </data>
+  <data name="ContentHeader" xml:space="preserve">
+    <value>Innehåll</value>
+  </data>
+  <data name="DescriptionHelp" xml:space="preserve">
+    <value>En kort sammanfattning, upp till {0} tecken text.</value>
+  </data>
+  <data name="TriggerTimeZoneHelp" xml:space="preserve">
+    <value>Start- och sluttider anges i avdelningens tidszon ({0}).</value>
+  </data>
+  <data name="TriggerLabel" xml:space="preserve">
+    <value>Utlösare</value>
+  </data>
+  <data name="RemoveTriggerButton" xml:space="preserve">
+    <value>Ta bort utlösare</value>
+  </data>
+  <data name="NoTypeOption" xml:space="preserve">
+    <value>Ingen typ</value>
+  </data>
+  <data name="LegacyTypeHelp" xml:space="preserve">
+    <value>Utlösaren anger larmtypen "{0}", som inte längre finns. Välj en larmtyp så att den fortsätter att matcha.</value>
+  </data>
+  <data name="RemovedNamed" xml:space="preserve">
+    <value>{0} (borttagen)</value>
+  </data>
+  <data name="RemovedPriority" xml:space="preserve">
+    <value>Borttagen prioritet</value>
+  </data>
+  <data name="RemoveQuestionButton" xml:space="preserve">
+    <value>Ta bort fråga</value>
+  </data>
+  <data name="AddAnswerButton" xml:space="preserve">
+    <value>Lägg till svar</value>
+  </data>
+  <data name="RemoveAnswerButton" xml:space="preserve">
+    <value>Ta bort svar</value>
+  </data>
+  <data name="RemoveOnSaveColumn" xml:space="preserve">
+    <value>Ta bort vid sparande</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="AddFilesLabel" xml:space="preserve">
+    <value>Lägg till filer</value>
+  </data>
+  <data name="AttachmentsLimitsHelp" xml:space="preserve">
+    <value>Upp till {0} filer per sparande, {1} MB styck och {2} MB sammanlagt: bilder, PDF, Office-dokument, text och video.</value>
+  </data>
+  <data name="AttachmentsReselectHelp" xml:space="preserve">
+    <value>Om sparandet misslyckas, välj filerna igen: webbläsaren behåller dem inte.</value>
+  </data>
+  <data name="SaveProtocolButton" xml:space="preserve">
+    <value>Spara protokoll</value>
+  </data>
+  <data name="TriggerSummaryPriority" xml:space="preserve">
+    <value>Prioritet: {0}</value>
+  </data>
+  <data name="TriggerSummaryType" xml:space="preserve">
+    <value>Typ: {0}</value>
+  </data>
+  <data name="TriggerSummaryPriorityAndType" xml:space="preserve">
+    <value>{0} · prioritet {1}</value>
+  </data>
+  <data name="ReasonMatched" xml:space="preserve">
+    <value>Matchar: {0}</value>
+  </data>
+  <data name="ErrorProtocolMissing" xml:space="preserve">
+    <value>Protokollet kunde inte läsas.</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>Protokollet måste ha ett namn.</value>
+  </data>
+  <data name="ErrorNameTooLong" xml:space="preserve">
+    <value>Namnet får vara högst 100 tecken.</value>
+  </data>
+  <data name="ErrorCodeRequired" xml:space="preserve">
+    <value>Protokollet måste ha en kod.</value>
+  </data>
+  <data name="ErrorCodeInvalid" xml:space="preserve">
+    <value>Koden får ha upp till 16 bokstäver, siffror, mellanslag och tecknen . _ / -.</value>
+  </data>
+  <data name="ErrorDescriptionTooLong" xml:space="preserve">
+    <value>Beskrivningen får innehålla högst 500 tecken text.</value>
+  </data>
+  <data name="ErrorMinimumWeightRange" xml:space="preserve">
+    <value>Minimivikten måste vara mellan 0 och 1000.</value>
+  </data>
+  <data name="ErrorTriggerType" xml:space="preserve">
+    <value>En utlösare har en okänd typ.</value>
+  </data>
+  <data name="ErrorTriggerWindow" xml:space="preserve">
+    <value>En utlösare slutar innan den börjar.</value>
+  </data>
+  <data name="ErrorTriggerPriority" xml:space="preserve">
+    <value>En prioritetsutlösare behöver en av avdelningens larmprioriteter.</value>
+  </data>
+  <data name="ErrorTriggerCallType" xml:space="preserve">
+    <value>En typutlösare anger en larmtyp som inte är avdelningens.</value>
+  </data>
+  <data name="ErrorTriggerDate" xml:space="preserve">
+    <value>En utlösares start- eller sluttid kunde inte läsas.</value>
+  </data>
+  <data name="ErrorQuestionText" xml:space="preserve">
+    <value>Varje fråga behöver en text.</value>
+  </data>
+  <data name="ErrorQuestionAnswers" xml:space="preserve">
+    <value>Varje fråga behöver minst ett svar.</value>
+  </data>
+  <data name="ErrorAnswerText" xml:space="preserve">
+    <value>Varje svar behöver en text.</value>
+  </data>
+  <data name="ErrorTooManyFiles" xml:space="preserve">
+    <value>Lägg till högst {0} filer åt gången.</value>
+  </data>
+  <data name="ErrorTooManyAttachments" xml:space="preserve">
+    <value>Ett protokoll kan ha högst {0} bilagor.</value>
+  </data>
+  <data name="ErrorUploadTooLarge" xml:space="preserve">
+    <value>Filerna måste tillsammans vara mindre än {0} MB.</value>
+  </data>
+  <data name="ErrorFileType" xml:space="preserve">
+    <value>Filer av typen ({0}) kan inte bifogas.</value>
+  </data>
+  <data name="ErrorFileTooLarge" xml:space="preserve">
+    <value>{0} är för stor: varje fil måste vara mindre än {1} MB.</value>
+  </data>
+  <data name="ErrorForeignRows" xml:space="preserve">
+    <value>Ändringen anger utlösare, frågor eller svar som inte hör till det här protokollet.</value>
+  </data>
+  <data name="TriggersRenamedType" xml:space="preserve">
+    <value>{0} protokollutlösare använder den här larmtypen; de fortsätter att matcha och visar det nya namnet: {1}.</value>
+  </data>
+  <data name="TriggersDeletedType" xml:space="preserve">
+    <value>{0} protokollutlösare använde den borttagna larmtypen och matchar inte förrän de ändras: {1}.</value>
+  </data>
+  <data name="TriggersRemovedPriority" xml:space="preserve">
+    <value>{0} protokollutlösare använde den borttagna prioriteten och matchar inte förrän de ändras: {1}.</value>
+  </data>
+  <data name="NoProtocolsOnCall" xml:space="preserve">
+    <value>Larmet har inga protokoll.</value>
+  </data>
+  <data name="SourceTrigger" xml:space="preserve">
+    <value>Föreslaget av en utlösare</value>
+  </data>
+  <data name="SourceManual" xml:space="preserve">
+    <value>Tillagt manuellt</value>
+  </data>
+  <data name="SourceUnknown" xml:space="preserve">
+    <value>Bifogat innan svar sparades</value>
+  </data>
+  <data name="RemovedFromCallLabel" xml:space="preserve">
+    <value>Borttaget</value>
+  </data>
+  <data name="RemovedByOn" xml:space="preserve">
+    <value>Borttaget av {0} den {1}.</value>
+  </data>
+  <data name="RemovalReasonLabel" xml:space="preserve">
+    <value>Orsak</value>
+  </data>
+  <data name="ScoreLabel" xml:space="preserve">
+    <value>Poäng</value>
+  </data>
+  <data name="ScoreOfMinimum" xml:space="preserve">
+    <value>{0} av minst {1}</value>
+  </data>
+  <data name="PanelScore" xml:space="preserve">
+    <value>Poäng {0} av minst {1}</value>
+  </data>
+  <data name="QuestionsPassed" xml:space="preserve">
+    <value>Gäller</value>
+  </data>
+  <data name="QuestionsIncomplete" xml:space="preserve">
+    <value>Alla frågor är inte besvarade</value>
+  </data>
+  <data name="QuestionsBelowMinimum" xml:space="preserve">
+    <value>Under miniminivån</value>
+  </data>
+  <data name="NotAnswered" xml:space="preserve">
+    <value>Inte besvarad</value>
+  </data>
+  <data name="NoAnswersRecorded" xml:space="preserve">
+    <value>Inga svar sparades för protokollet.</value>
+  </data>
+  <data name="AttachedByOn" xml:space="preserve">
+    <value>Bifogat av {0} den {1}.</value>
+  </data>
+  <data name="TextAsDispatched" xml:space="preserve">
+    <value>Text som larmad</value>
+  </data>
+  <data name="ChangedSinceDispatch" xml:space="preserve">
+    <value>Ändrat sedan larmet</value>
+  </data>
+  <data name="NoSnapshotRecorded" xml:space="preserve">
+    <value>Bifogat innan texten som larmad sparades.</value>
+  </data>
+  <data name="CurrentTextLink" xml:space="preserve">
+    <value>Nuvarande text</value>
+  </data>
+  <data name="RemoveFromCallButton" xml:space="preserve">
+    <value>Ta bort från larmet</value>
+  </data>
+  <data name="RemovalReasonPlaceholder" xml:space="preserve">
+    <value>Varför det inte gäller</value>
+  </data>
+  <data name="CallProtocolRemovedMessage" xml:space="preserve">
+    <value>Protokollet togs bort från larmet. Det finns kvar i registret med orsaken.</value>
+  </data>
+  <data name="RemovalReasonRequired" xml:space="preserve">
+    <value>Ange en orsak för att ta bort ett protokoll från larmet.</value>
+  </data>
+  <data name="PanelIntro" xml:space="preserve">
+    <value>Protokoll som larmets typ och prioritet föreslår, med utlösaren som matchade. Besvara varje protokolls frågor; du kan också lägga till ett manuellt.</value>
+  </data>
+  <data name="PanelNoSuggestions" xml:space="preserve">
+    <value>Inget protokoll matchar larmets typ och prioritet.</value>
+  </data>
+  <data name="PanelAddByHand" xml:space="preserve">
+    <value>Lägg till ett protokoll manuellt</value>
+  </data>
+  <data name="PanelAddButton" xml:space="preserve">
+    <value>Lägg till</value>
+  </data>
+  <data name="PanelAnswerToContinue" xml:space="preserve">
+    <value>Besvara alla frågor för att se om protokollet gäller.</value>
+  </data>
+  <data name="PanelApplies" xml:space="preserve">
+    <value>Gäller</value>
+  </data>
+  <data name="PanelDoesNotApply" xml:space="preserve">
+    <value>Gäller inte</value>
+  </data>
+  <data name="PanelQuestionOf" xml:space="preserve">
+    <value>Fråga {0} av {1}</value>
+  </data>
+  <data name="PanelBack" xml:space="preserve">
+    <value>Tillbaka</value>
+  </data>
+  <data name="PanelNext" xml:space="preserve">
+    <value>Nästa</value>
+  </data>
+  <data name="PanelChoose" xml:space="preserve">
+    <value>Välj ett protokoll…</value>
+  </data>
 </root>

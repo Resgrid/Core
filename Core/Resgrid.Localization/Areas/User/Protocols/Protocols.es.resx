@@ -250,4 +250,376 @@
   <data name="ProtocolsLabel" xml:space="preserve">
     <value>Protocolos</value>
   </data>
+  <data name="LibraryTab" xml:space="preserve">
+    <value>Biblioteca</value>
+  </data>
+  <data name="LibraryIntro" xml:space="preserve">
+    <value>Protocolos de despacho: las preguntas e instrucciones guionizadas que activan el tipo y la prioridad de la llamada.</value>
+  </data>
+  <data name="LibraryHeader" xml:space="preserve">
+    <value>Biblioteca de protocolos</value>
+  </data>
+  <data name="KpiTotal" xml:space="preserve">
+    <value>Protocolos</value>
+  </data>
+  <data name="KpiDisabled" xml:space="preserve">
+    <value>Desactivados</value>
+  </data>
+  <data name="KpiUsedOnCalls" xml:space="preserve">
+    <value>Usados en llamadas (30 días)</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Buscar protocolos</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Nombre o código</value>
+  </data>
+  <data name="StatusAll" xml:space="preserve">
+    <value>Todos los estados</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Filtrar</value>
+  </data>
+  <data name="ClearFilterButton" xml:space="preserve">
+    <value>Limpiar</value>
+  </data>
+  <data name="NoProtocolsYet" xml:space="preserve">
+    <value>Todavía no hay protocolos.</value>
+  </data>
+  <data name="NoProtocolsMatch" xml:space="preserve">
+    <value>Ningún protocolo coincide con el filtro.</value>
+  </data>
+  <data name="QuestionsCount" xml:space="preserve">
+    <value>{0} preguntas</value>
+  </data>
+  <data name="NoTriggers" xml:space="preserve">
+    <value>Sin disparadores (solo se elige a mano)</value>
+  </data>
+  <data name="MoreTriggers" xml:space="preserve">
+    <value>y {0} más</value>
+  </data>
+  <data name="UsedOnCallsColumn" xml:space="preserve">
+    <value>Llamadas (30 días)</value>
+  </data>
+  <data name="LastUpdatedColumn" xml:space="preserve">
+    <value>Última modificación</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="EnableButton" xml:space="preserve">
+    <value>Activar</value>
+  </data>
+  <data name="DisableButton" xml:space="preserve">
+    <value>Desactivar</value>
+  </data>
+  <data name="DeleteProtocolConfirm" xml:space="preserve">
+    <value>El protocolo sale de la biblioteca y de las llamadas nuevas; las llamadas que lo usaron lo siguen mostrando. Eliminar el protocolo</value>
+  </data>
+  <data name="DeletedLabel" xml:space="preserve">
+    <value>Eliminado</value>
+  </data>
+  <data name="DeletedProtocolNotice" xml:space="preserve">
+    <value>Este protocolo se eliminó. Se conserva porque hay llamadas que lo citan; no se sugiere ni se adjunta.</value>
+  </data>
+  <data name="DisabledProtocolNotice" xml:space="preserve">
+    <value>Este protocolo está desactivado: no se sugiere en las llamadas ni se adjunta a ellas. Actívelo para volver a usarlo.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Detalles</value>
+  </data>
+  <data name="TriggerMatchesColumn" xml:space="preserve">
+    <value>Coincide con</value>
+  </data>
+  <data name="NoTriggersHelp" xml:space="preserve">
+    <value>Sin disparadores: el protocolo nunca se sugiere, pero se puede añadir a una llamada a mano.</value>
+  </data>
+  <data name="NoQuestionsHelp" xml:space="preserve">
+    <value>Sin preguntas: cuando coincide un disparador, el protocolo se aplica de inmediato.</value>
+  </data>
+  <data name="MinimumWeightHelp" xml:space="preserve">
+    <value>Cuando coincide un disparador, el protocolo se aplica si los pesos de las respuestas suman al menos {0}.</value>
+  </data>
+  <data name="DownloadButton" xml:space="preserve">
+    <value>Descargar</value>
+  </data>
+  <data name="NoAttachments" xml:space="preserve">
+    <value>Sin archivos adjuntos.</value>
+  </data>
+  <data name="NoProtocolText" xml:space="preserve">
+    <value>Sin texto de protocolo.</value>
+  </data>
+  <data name="ProtocolSavedMessage" xml:space="preserve">
+    <value>Se guardó el protocolo.</value>
+  </data>
+  <data name="ProtocolDisabledMessage" xml:space="preserve">
+    <value>Se desactivó el protocolo.</value>
+  </data>
+  <data name="ProtocolEnabledMessage" xml:space="preserve">
+    <value>Se activó el protocolo.</value>
+  </data>
+  <data name="EditProtocolHeader" xml:space="preserve">
+    <value>Editar protocolo</value>
+  </data>
+  <data name="EditorIntroNew" xml:space="preserve">
+    <value>Ponga nombre al protocolo, escriba su contenido y añada los disparadores que lo sugieren y las preguntas que deciden si se aplica.</value>
+  </data>
+  <data name="BasicsHeader" xml:space="preserve">
+    <value>Datos básicos</value>
+  </data>
+  <data name="CodeHelp" xml:space="preserve">
+    <value>Hasta {0} letras, dígitos, espacios y . _ / - (por ejemplo 09-E-01 o SOG-204).</value>
+  </data>
+  <data name="MinimumWeightEditorHelp" xml:space="preserve">
+    <value>El peso total de respuestas que necesita un protocolo sugerido para aplicarse. Con 0 se aplica sean cuales sean las respuestas.</value>
+  </data>
+  <data name="DisabledCheckbox" xml:space="preserve">
+    <value>Desactivado</value>
+  </data>
+  <data name="DisabledCheckboxHelp" xml:space="preserve">
+    <value>Un protocolo desactivado sigue en la biblioteca, pero no se sugiere en las llamadas ni se adjunta a ellas.</value>
+  </data>
+  <data name="ContentHeader" xml:space="preserve">
+    <value>Contenido</value>
+  </data>
+  <data name="DescriptionHelp" xml:space="preserve">
+    <value>Un resumen breve, de hasta {0} caracteres de texto.</value>
+  </data>
+  <data name="TriggerTimeZoneHelp" xml:space="preserve">
+    <value>Las horas de inicio y fin están en la zona horaria del departamento ({0}).</value>
+  </data>
+  <data name="TriggerLabel" xml:space="preserve">
+    <value>Disparador</value>
+  </data>
+  <data name="RemoveTriggerButton" xml:space="preserve">
+    <value>Quitar disparador</value>
+  </data>
+  <data name="NoTypeOption" xml:space="preserve">
+    <value>Sin tipo</value>
+  </data>
+  <data name="LegacyTypeHelp" xml:space="preserve">
+    <value>Este disparador nombra el tipo de llamada "{0}", que ya no existe. Elija un tipo de llamada para que siga coincidiendo.</value>
+  </data>
+  <data name="RemovedNamed" xml:space="preserve">
+    <value>{0} (eliminado)</value>
+  </data>
+  <data name="RemovedPriority" xml:space="preserve">
+    <value>Prioridad eliminada</value>
+  </data>
+  <data name="RemoveQuestionButton" xml:space="preserve">
+    <value>Quitar pregunta</value>
+  </data>
+  <data name="AddAnswerButton" xml:space="preserve">
+    <value>Añadir respuesta</value>
+  </data>
+  <data name="RemoveAnswerButton" xml:space="preserve">
+    <value>Quitar respuesta</value>
+  </data>
+  <data name="RemoveOnSaveColumn" xml:space="preserve">
+    <value>Quitar al guardar</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Quitar</value>
+  </data>
+  <data name="AddFilesLabel" xml:space="preserve">
+    <value>Añadir archivos</value>
+  </data>
+  <data name="AttachmentsLimitsHelp" xml:space="preserve">
+    <value>Hasta {0} archivos por guardado, {1} MB cada uno y {2} MB en total: imágenes, PDF, documentos de Office, texto y vídeo.</value>
+  </data>
+  <data name="AttachmentsReselectHelp" xml:space="preserve">
+    <value>Si el guardado falla, vuelva a elegir los archivos: el navegador no los conserva.</value>
+  </data>
+  <data name="SaveProtocolButton" xml:space="preserve">
+    <value>Guardar protocolo</value>
+  </data>
+  <data name="TriggerSummaryPriority" xml:space="preserve">
+    <value>Prioridad: {0}</value>
+  </data>
+  <data name="TriggerSummaryType" xml:space="preserve">
+    <value>Tipo: {0}</value>
+  </data>
+  <data name="TriggerSummaryPriorityAndType" xml:space="preserve">
+    <value>{0} · prioridad {1}</value>
+  </data>
+  <data name="ReasonMatched" xml:space="preserve">
+    <value>Coincide: {0}</value>
+  </data>
+  <data name="ErrorProtocolMissing" xml:space="preserve">
+    <value>No se pudo leer el protocolo.</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>El nombre del protocolo es obligatorio.</value>
+  </data>
+  <data name="ErrorNameTooLong" xml:space="preserve">
+    <value>El nombre puede tener como máximo 100 caracteres.</value>
+  </data>
+  <data name="ErrorCodeRequired" xml:space="preserve">
+    <value>El código del protocolo es obligatorio.</value>
+  </data>
+  <data name="ErrorCodeInvalid" xml:space="preserve">
+    <value>El código puede tener hasta 16 letras, dígitos, espacios y los caracteres . _ / -.</value>
+  </data>
+  <data name="ErrorDescriptionTooLong" xml:space="preserve">
+    <value>La descripción puede tener como máximo 500 caracteres de texto.</value>
+  </data>
+  <data name="ErrorMinimumWeightRange" xml:space="preserve">
+    <value>El peso mínimo debe estar entre 0 y 1000.</value>
+  </data>
+  <data name="ErrorTriggerType" xml:space="preserve">
+    <value>Un disparador tiene un tipo desconocido.</value>
+  </data>
+  <data name="ErrorTriggerWindow" xml:space="preserve">
+    <value>Un disparador termina antes de empezar.</value>
+  </data>
+  <data name="ErrorTriggerPriority" xml:space="preserve">
+    <value>Un disparador de prioridad necesita una de las prioridades de llamada del departamento.</value>
+  </data>
+  <data name="ErrorTriggerCallType" xml:space="preserve">
+    <value>Un disparador de tipo indica un tipo de llamada que no es del departamento.</value>
+  </data>
+  <data name="ErrorTriggerDate" xml:space="preserve">
+    <value>No se pudo leer la hora de inicio o fin de un disparador.</value>
+  </data>
+  <data name="ErrorQuestionText" xml:space="preserve">
+    <value>Cada pregunta necesita su texto.</value>
+  </data>
+  <data name="ErrorQuestionAnswers" xml:space="preserve">
+    <value>Cada pregunta necesita al menos una respuesta.</value>
+  </data>
+  <data name="ErrorAnswerText" xml:space="preserve">
+    <value>Cada respuesta necesita su texto.</value>
+  </data>
+  <data name="ErrorTooManyFiles" xml:space="preserve">
+    <value>Añada como máximo {0} archivos a la vez.</value>
+  </data>
+  <data name="ErrorTooManyAttachments" xml:space="preserve">
+    <value>Un protocolo puede tener como máximo {0} archivos adjuntos.</value>
+  </data>
+  <data name="ErrorUploadTooLarge" xml:space="preserve">
+    <value>Los archivos juntos deben ocupar menos de {0} MB.</value>
+  </data>
+  <data name="ErrorFileType" xml:space="preserve">
+    <value>No se pueden adjuntar archivos de tipo ({0}).</value>
+  </data>
+  <data name="ErrorFileTooLarge" xml:space="preserve">
+    <value>{0} es demasiado grande: cada archivo debe ocupar menos de {1} MB.</value>
+  </data>
+  <data name="ErrorForeignRows" xml:space="preserve">
+    <value>La edición nombra disparadores, preguntas o respuestas que no son de este protocolo.</value>
+  </data>
+  <data name="TriggersRenamedType" xml:space="preserve">
+    <value>{0} disparadores de protocolo usan este tipo de llamada; siguen coincidiendo y muestran el nuevo nombre: {1}.</value>
+  </data>
+  <data name="TriggersDeletedType" xml:space="preserve">
+    <value>{0} disparadores de protocolo usaban el tipo de llamada eliminado y no coincidirán hasta que se cambien: {1}.</value>
+  </data>
+  <data name="TriggersRemovedPriority" xml:space="preserve">
+    <value>{0} disparadores de protocolo usaban la prioridad eliminada y no coincidirán hasta que se cambien: {1}.</value>
+  </data>
+  <data name="NoProtocolsOnCall" xml:space="preserve">
+    <value>Esta llamada no tiene protocolos.</value>
+  </data>
+  <data name="SourceTrigger" xml:space="preserve">
+    <value>Sugerido por un disparador</value>
+  </data>
+  <data name="SourceManual" xml:space="preserve">
+    <value>Añadido a mano</value>
+  </data>
+  <data name="SourceUnknown" xml:space="preserve">
+    <value>Adjuntado antes de que se guardaran las respuestas</value>
+  </data>
+  <data name="RemovedFromCallLabel" xml:space="preserve">
+    <value>Quitado</value>
+  </data>
+  <data name="RemovedByOn" xml:space="preserve">
+    <value>Quitado por {0} el {1}.</value>
+  </data>
+  <data name="RemovalReasonLabel" xml:space="preserve">
+    <value>Motivo</value>
+  </data>
+  <data name="ScoreLabel" xml:space="preserve">
+    <value>Puntuación</value>
+  </data>
+  <data name="ScoreOfMinimum" xml:space="preserve">
+    <value>{0} de un mínimo de {1}</value>
+  </data>
+  <data name="PanelScore" xml:space="preserve">
+    <value>Puntuación {0} de un mínimo de {1}</value>
+  </data>
+  <data name="QuestionsPassed" xml:space="preserve">
+    <value>Se aplica</value>
+  </data>
+  <data name="QuestionsIncomplete" xml:space="preserve">
+    <value>No se respondieron todas las preguntas</value>
+  </data>
+  <data name="QuestionsBelowMinimum" xml:space="preserve">
+    <value>Por debajo del mínimo</value>
+  </data>
+  <data name="NotAnswered" xml:space="preserve">
+    <value>Sin respuesta</value>
+  </data>
+  <data name="NoAnswersRecorded" xml:space="preserve">
+    <value>No se registraron respuestas para este protocolo.</value>
+  </data>
+  <data name="AttachedByOn" xml:space="preserve">
+    <value>Adjuntado por {0} el {1}.</value>
+  </data>
+  <data name="TextAsDispatched" xml:space="preserve">
+    <value>Texto tal como se despachó</value>
+  </data>
+  <data name="ChangedSinceDispatch" xml:space="preserve">
+    <value>Cambiado desde el despacho</value>
+  </data>
+  <data name="NoSnapshotRecorded" xml:space="preserve">
+    <value>Adjuntado antes de que se guardara el texto tal como se despachó.</value>
+  </data>
+  <data name="CurrentTextLink" xml:space="preserve">
+    <value>Texto actual</value>
+  </data>
+  <data name="RemoveFromCallButton" xml:space="preserve">
+    <value>Quitar de la llamada</value>
+  </data>
+  <data name="RemovalReasonPlaceholder" xml:space="preserve">
+    <value>Por qué no se aplica</value>
+  </data>
+  <data name="CallProtocolRemovedMessage" xml:space="preserve">
+    <value>Se quitó el protocolo de la llamada. Sigue en el registro con el motivo.</value>
+  </data>
+  <data name="RemovalReasonRequired" xml:space="preserve">
+    <value>Indique un motivo para quitar un protocolo de la llamada.</value>
+  </data>
+  <data name="PanelIntro" xml:space="preserve">
+    <value>Protocolos que sugieren el tipo y la prioridad de la llamada, con el disparador que coincidió. Responda las preguntas de cada protocolo; también puede añadir uno a mano.</value>
+  </data>
+  <data name="PanelNoSuggestions" xml:space="preserve">
+    <value>Ningún protocolo coincide con el tipo y la prioridad de esta llamada.</value>
+  </data>
+  <data name="PanelAddByHand" xml:space="preserve">
+    <value>Añadir un protocolo a mano</value>
+  </data>
+  <data name="PanelAddButton" xml:space="preserve">
+    <value>Añadir</value>
+  </data>
+  <data name="PanelAnswerToContinue" xml:space="preserve">
+    <value>Responda todas las preguntas para saber si este protocolo se aplica.</value>
+  </data>
+  <data name="PanelApplies" xml:space="preserve">
+    <value>Se aplica</value>
+  </data>
+  <data name="PanelDoesNotApply" xml:space="preserve">
+    <value>No se aplica</value>
+  </data>
+  <data name="PanelQuestionOf" xml:space="preserve">
+    <value>Pregunta {0} de {1}</value>
+  </data>
+  <data name="PanelBack" xml:space="preserve">
+    <value>Atrás</value>
+  </data>
+  <data name="PanelNext" xml:space="preserve">
+    <value>Siguiente</value>
+  </data>
+  <data name="PanelChoose" xml:space="preserve">
+    <value>Elija un protocolo…</value>
+  </data>
 </root>

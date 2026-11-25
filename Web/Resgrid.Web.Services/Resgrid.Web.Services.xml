@@ -1082,6 +1082,18 @@
             <param name="protocolAttachmentId">ID of the protocol attachment</param>
             <returns></returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallProtocolsController.RemoveCallProtocol(Resgrid.Web.Services.Models.v4.CallProtocols.RemoveCallProtocolInput,System.Threading.CancellationToken)">
+            <summary>
+            Takes a protocol off a call, with a reason. The row stays on the call, marked removed with who, when and why, and the
+            removal is written to the department's audit log.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallProtocolsController.ConvertProtocolData(Resgrid.Model.DispatchProtocol,Resgrid.Model.CallProtocol)">
+            <summary>
+            The protocol as a call's protocol: its definition and, from the call's row, how it came there and the answers
+            recorded when it was attached.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CallsController">
             <summary>
             Calls, also referred to as Dispatches.
@@ -1337,6 +1349,13 @@
             <summary>
             The subject identifiers for a response: only resolved plaintext is returned. An envelope or the REDACTED
             placeholder (no grant) comes back as null, with calls.subjectidentifiers in RedactedFields.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ProtocolRequests(System.Collections.Generic.List{System.Int32},System.Collections.Generic.Dictionary{System.Int32,System.Collections.Generic.List{System.Int32}})">
+            <summary>
+            The protocols a v4 client asked to attach. Ids alone (the older apps) attach the pick as before; a protocol the client also
+            sent answers for (ProtocolAnswers) has them scored, and as on the web forms a suggested protocol with questions then
+            needs them answered and passing.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.KeepStoredContactLinks(Resgrid.Model.Call,System.Collections.Generic.List{Resgrid.Model.CallContact},System.Boolean,System.Boolean)">
@@ -4871,27 +4890,49 @@
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ProtocolsController">
             <summary>
-            The options for Protocols in the Resgrid system
+            The options for Protocols in the Resgrid system: the department's protocols, matching them to a call, and writing them
+            (create, update in place, disable). Attachment bytes leave only through <see cref="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetFile(System.Int32)"/>.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetAllProtocols">
             <summary>
-            Gets all protocols for a department
+            Gets the department's enabled protocols (disabled and deleted ones are left out). No attachment bytes: a file comes
+            from <see cref="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetFile(System.Int32)"/>.
             </summary>
-            <returns></returns>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetProtocol(System.Int32)">
             <summary>
-            Gets a single protocol by id
+            Gets a single protocol by id. A deleted protocol is still returned inside its department: calls that cite it keep
+            showing it.
             </summary>
-            <returns>List of ProtocolResult objects.</returns>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetFile(System.Int32)">
             <summary>
-            Gets a protocol attachment by it's id
+            Gets a protocol attachment by its id: the one endpoint the bytes leave through. Unknown, or another department's, is a 404.
             </summary>
             <param name="protocolAttachmentId">ID of the protocol attachment</param>
-            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.GetProtocolsForCall(System.Int32,System.Nullable{System.Int32},System.String,System.Nullable{System.DateTime},System.Nullable{System.Int32})">
+            <summary>
+            Every enabled protocol evaluated for a call: the matcher the web call forms use (D18). Pass the call's priority id and
+            its type (by id, or by name), and optionally the call's logged time in UTC (now when left out) or an existing call's id,
+            whose logged time is then used and whose protocols are left out.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.SaveProtocol(Resgrid.Web.Services.Models.v4.Protocols.ProtocolInput,System.Threading.CancellationToken)">
+            <summary>Creates a protocol with its triggers, questions and answers.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.UpdateProtocol(Resgrid.Web.Services.Models.v4.Protocols.ProtocolInput,System.Threading.CancellationToken)">
+            <summary>
+            Updates a protocol in place: its triggers, questions and answers are matched by id (changed, added or removed), so ids
+            stay stable. An id that is not one of this protocol's rows is refused (400).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.SetDisabled(Resgrid.Web.Services.Models.v4.Protocols.SetProtocolDisabledInput,System.Threading.CancellationToken)">
+            <summary>Disables (or enables) a protocol. A disabled protocol is never suggested, listed for the apps or attached.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ProtocolsController.ValidateReferencesAsync(Resgrid.Model.DispatchProtocol,Resgrid.Model.DispatchProtocol)">
+            <summary>The call types and priorities the triggers name must be the department's (or what the trigger already had).</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.PublicIncidentController">
             <summary>
@@ -6377,7 +6418,7 @@
             Unlike <see cref="M:Resgrid.Web.Services.Controllers.v4.SyncController.Changes(System.Int64)"/> (a row-based delta), this returns the computed PAR/accountability state.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.SyncController.Reference(System.Boolean)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SyncController.Reference">
             <summary>
             Shift-start REFERENCE pull: the slowly-changing department configuration + a safe personnel roster needed to
             start and run an incident offline (call types, command templates, units, personnel, groups, POIs, protocols,
@@ -6432,6 +6473,72 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.TimeReportsController.TryResolve(System.String,System.DateTime,Resgrid.Model.Department,System.DateTime@)">
             <summary>A department-local wall clock wins when sent; otherwise the UTC instant (the converter already normalised it).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.TrainingsController">
+            <summary>
+            Baseline training (Training T0 item 3, protocols-training-knowledge-plan §13): the member's My Training, reading a training,
+            its attachments, taking the quiz (scored on the server: questions and options go out, the answer key never does, R-T11),
+            their own attempts, self-enrolment, "flag this question" and certification pins; and the officer's report. Every endpoint
+            is refused while the department's Trainings module is switched off. Which trainings a member may open, take or report on
+            comes from IAuthorizationService.GetTrainingManagementScopeAsync, as on the web pages. Omni's Training screen uses this.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TrainingsController.TrainingDisabledAsync">
+            <summary>True when the department switched the Trainings module off (T0 item 1b): every endpoint then answers 404.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TrainingsController.GetMyTrainings">
+            <summary>
+            The member's My Training: their assignments with state and due moment (overdue, due soon, in progress, open and recently
+            completed), the catalog of open trainings they are not assigned to, and their certifications that are due or pinned.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TrainingsController.GetTraining(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            One training: its content (sanitized; allow-listed embeds only), attachment metadata and, for its assignees and authors,
+            the quiz as questions and options. Opening it marks the member's assignment viewed (written once).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TrainingsController.GetTrainingAttachment(System.Int32)">
+            <summary>An attachment of a training the member may open: the one place its bytes are served (T-D22).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TrainingsController.SubmitQuiz(Resgrid.Web.Services.Models.v4.Trainings.SubmitTrainingQuizInput,System.Threading.CancellationToken)">
+            <summary>
+            Submits the member's quiz answers. Scored on the server against the training's own questions and options: unknown ids
+            are dropped, each question counts once (at most <see cref="F:Resgrid.Model.Helpers.TrainingQuizScorer.MaxQuestions"/>), the attempt limit is
+            enforced and the attempt is kept with its snapshot. The response carries the score and result, never the answer key.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TrainingsController.ToAnswers(System.Collections.Generic.IEnumerable{Resgrid.Web.Services.Models.v4.Trainings.TrainingQuizAnswerInput})">
+            <summary>
+            The posted answers as the scorer reads them: positive ids only, each question once (the first answer for it wins), at
+            most <see cref="F:Resgrid.Model.Helpers.TrainingQuizScorer.MaxQuestions"/> questions and <see cref="F:Resgrid.Model.Helpers.TrainingQuizScorer.MaxOptionsPerQuestion"/>
+            options per question (T-D11).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TrainingsController.GetMyAttempts(System.Int32)">
+            <summary>The member's own attempts at a training's quiz: result and time only, never the answers.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TrainingsController.SelfEnroll(Resgrid.Web.Services.Models.v4.Trainings.TrainingIdInput,System.Threading.CancellationToken)">
+            <summary>Enrols the member in an open training that allows self-enrolment, to be tracked with its due rule.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TrainingsController.FlagQuestion(Resgrid.Web.Services.Models.v4.Trainings.FlagTrainingQuestionInput,System.Threading.CancellationToken)">
+            <summary>"Flag this question": the member tells the author a question of a quiz they may take looks wrong.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TrainingsController.PinCertification(Resgrid.Web.Services.Models.v4.Trainings.PinTrainingCertificationInput,System.Threading.CancellationToken)">
+            <summary>Pins (or unpins) one of the member's own certifications to My Training.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TrainingsController.GetTrainingReport(System.Int32)">
+            <summary>
+            The officer's report for a training they may assign and report on (Assign Training, scoped to their group for a group
+            admin): per-assignee state, due moment, attempts, last score, extension and exemption, and the completion KPIs.
+            Per-question answers are not part of it (R-T12).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TrainingsController.MapTraining(Resgrid.Model.Training,Resgrid.Web.Services.Models.v4.Trainings.TrainingAssignmentData,System.Boolean)">
+            <summary>
+            The training as the member reads it. The quiz carries questions and options only (R-T11), and only when
+            <paramref name="includeQuiz"/> (the member may take it).
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.TypeIconsController">
             <summary>
@@ -11845,6 +11952,14 @@
             it out (null) when the client has no protocol picker, which also leaves the protocols requirement unenforced.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.ProtocolAnswers">
+            <summary>
+            Optional, beside <see cref="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.ProtocolIds"/>: for a protocol with questions, the answer ids the dispatcher chose, keyed by
+            protocol id. The server scores them and records each question and answer in words on the call; a protocol a trigger
+            suggested is then attached only when every question is answered and the score reaches its minimum weight. Leave it out
+            (null) to attach the protocols in ProtocolIds as before, without answers.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.LinkedCallId">
             <summary>
             Optional. Id of another call in the department to link this call to; existing links are kept. Leave it out
@@ -12222,6 +12337,14 @@
             <summary>
             Optional. Ids of the department's dispatch protocols to attach to the call. Leave it out (null) when the client
             has no protocol picker: the department's protocols requirement is then not enforced; sent empty, it is.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.ProtocolAnswers">
+            <summary>
+            Optional, beside <see cref="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.ProtocolIds"/>: for a protocol with questions, the answer ids the dispatcher chose, keyed by
+            protocol id. The server scores them and records each question and answer in words on the call; a protocol a trigger
+            suggested is then attached only when every question is answered and the score reaches its minimum weight. Leave it out
+            (null) to attach the protocols in ProtocolIds as before, without answers.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.DispatchOn">
@@ -12615,6 +12738,21 @@
             Who updated the protocol
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.CallProtocolResultData.CallProtocolId">
+            <summary>On a call (Calls/GetCallExtraData): the call's protocol row id, for CallProtocols/RemoveCallProtocol.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.CallProtocolResultData.Source">
+            <summary>On a call: how it came onto the call (0 trigger, 1 picked by hand; null before answers were kept).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.CallProtocolResultData.Score">
+            <summary>On a call: the score recomputed from the recorded answers.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.CallProtocolResultData.RecordedAnswers">
+            <summary>On a call: the questions and the answers chosen, in words, as recorded when it was attached.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.CallProtocolAnswerResultData.Answer">
+            <summary>Null when the question was left unanswered.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CallProtocols.CallProtocolsResult">
             <summary>
             Gets all the call protocols for the department
@@ -12629,6 +12767,18 @@
             <summary>
             Default constructor
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CallProtocols.RemoveCallProtocolInput">
+            <summary>CallProtocols/RemoveCallProtocol: takes a protocol off a call with a reason; the row stays, marked removed.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.RemoveCallProtocolInput.CallProtocolId">
+            <summary>The call's protocol row (CallProtocolId from Calls/GetCallExtraData).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.RemoveCallProtocolInput.Reason">
+            <summary>Why it was removed (required, up to 500 characters).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallProtocols.RemoveCallProtocolResult.Id">
+            <summary>The removed row's id.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CallTypes.CallTypeResultData">
             <summary>
@@ -18876,6 +19026,15 @@
             State type
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolTriggerResult.CallTypeId">
+            <summary>The call type id the trigger matches (null with no CallType is "no type").</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolTriggerResult.Geofence">
+            <summary>Stored, not evaluated (planned: inside a station or group geofence).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolTriggerAttachmentResult.Size">
+            <summary>Size in bytes; the file itself comes from Protocols/GetFile.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Protocols.GetProtocolResult">
             <summary>
             Result containing all the data required to populate the New Call form
@@ -18885,6 +19044,79 @@
             <summary>
             Response Data
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Protocols.ProtocolInput">
+            <summary>
+            A protocol to create (Protocols/SaveProtocol) or update in place (Protocols/UpdateProtocol). On update, triggers, questions
+            and answers are matched by their ids: rows with an id are changed, rows without one (0 or blank) are added, and the
+            protocol's rows that are left out are removed. An id that is not one of this protocol's rows is refused.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolInput.ProtocolId">
+            <summary>The protocol to update (UpdateProtocol only; ignored by SaveProtocol).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolInput.Name">
+            <summary>Name, up to 100 characters.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolInput.Code">
+            <summary>Code, up to 16 letters, digits, spaces and . _ / - (stored upper case).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolInput.Description">
+            <summary>Rich text; up to 500 characters of text (markup not counted). Sanitized on save.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolInput.ProtocolText">
+            <summary>Rich text, sanitized on save.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolInput.MinimumWeight">
+            <summary>The score the answers must reach for a suggested protocol to apply.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolInput.IsDisabled">
+            <summary>A disabled protocol is never suggested or attached.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolInput.RemoveAttachmentIds">
+            <summary>UpdateProtocol: attachments of this protocol to remove. Files are added through the web editor.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolTriggerInput.ProtocolTriggerId">
+            <summary>The trigger's id on update; 0 for a new one.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolTriggerInput.Type">
+            <summary>0 call priority, 1 call type, 2 call priority and type.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolTriggerInput.StartsOn">
+            <summary>UTC. The trigger applies to calls logged at or after this time.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolTriggerInput.EndsOn">
+            <summary>UTC. The trigger applies to calls logged at or before this time.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolTriggerInput.Priority">
+            <summary>The department call priority id (types 0 and 2).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolTriggerInput.CallTypeId">
+            <summary>The department call type id (types 1 and 2); null means "no type".</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Protocols.SetProtocolDisabledInput">
+            <summary>Protocols/SetDisabled.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Protocols.SaveProtocolResult">
+            <summary>The saved protocol (SaveProtocol, UpdateProtocol, SetDisabled), or the reasons it was refused.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.SaveProtocolResult.Errors">
+            <summary>Validation errors (resource keys), empty when saved.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Protocols.GetProtocolsForCallResult">
+            <summary>Protocols/GetProtocolsForCall: every enabled protocol evaluated for a call's priority, type and time.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Protocols.ProtocolCallMatchData">
+            <summary>A protocol evaluated for a call: the same matcher the web call forms use.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolCallMatchData.State">
+            <summary>0 inactive (no trigger matched; it can still be picked), 1 active (matched, no questions), 2 pending (matched, questions to answer).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolCallMatchData.MatchedTriggerId">
+            <summary>The most specific trigger that matched, when one did.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Protocols.ProtocolCallMatchData.MatchedTriggerType">
+            <summary>That trigger's type (0 priority, 1 type, 2 priority and type).</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Records.FieldRecordCatalogInput.OriginClient">
             <summary><see cref="T:Resgrid.Model.RmsOriginClient"/>: 2 Responder, 3 Unit, 4 IncidentCommand, 5 Dispatch.</summary>
@@ -21575,6 +21807,78 @@
             When the template was created (UTC)
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Trainings.TrainingAssignmentData">
+            <summary>One of the member's assignments, with where they stand on it.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.TrainingAssignmentData.Summary">
+            <summary>The training's description as plain text.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.TrainingAssignmentData.State">
+            <summary>TrainingAssignmentStates value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.TrainingAssignmentData.StateName">
+            <summary>TrainingAssignmentStates name (NotStarted, InProgress, Failed, Complete, Overdue, Exempt, OnLeave, Scheduled, Removed).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.TrainingAssignmentData.DueOn">
+            <summary>The due moment with leave applied (end of the department-local day).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.TrainingAssignmentData.Score">
+            <summary>The latest attempt's score (0-100); 0 before any attempt.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.TrainingAssignmentData.Passed">
+            <summary>The latest attempt's stored result; null without a quiz or an attempt.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.TrainingAssignmentData.AttemptsLeft">
+            <summary>Attempts left in this cycle; null when unlimited.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Trainings.TrainingCatalogData">
+            <summary>An open training the member is not assigned to (reference material, or one they may enrol in).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.TrainingCatalogData.DueDays">
+            <summary>Relative due rule of an enrolment (days), when the training has one.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Trainings.TrainingCertificationData">
+            <summary>A certification of the member that is due, expired or pinned (My Training).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.MyTrainingsData.Assignments">
+            <summary>Overdue, due soon, in progress, other open and recently completed assignments, soonest due first.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.MyTrainingsData.OnLeave">
+            <summary>A leave period is running: due dates and reminders are paused.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Trainings.TrainingQuizOptionData">
+            <summary>One quiz option: its id and text, never whether it is correct (R-T11).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Trainings.TrainingQuizQuestionData">
+            <summary>One quiz question: text, type (TrainingQuestionTypes) and options; scoring happens on the server.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.TrainingQuizQuestionData.Type">
+            <summary>TrainingQuestionTypes value: 0 single choice, 1 multiple choice (all-or-nothing), 2 true/false.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.TrainingDetailData.Description">
+            <summary>Sanitized rich text; allow-listed embeds (YouTube, Vimeo, Google Docs/Sheets, Microsoft Stream/Teams) only.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.TrainingDetailData.TrainingText">
+            <summary>Sanitized rich text; allow-listed embeds only.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.TrainingDetailData.Assignment">
+            <summary>The member's assignment; null when they read an open training they are not assigned to.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.TrainingDetailData.Quiz">
+            <summary>Questions and options only; null when the member may not take the quiz (not assigned) or there is none.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Trainings.TrainingQuizSubmissionData">
+            <summary>The outcome of a quiz submission: the score and result only, never which answers were right.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Trainings.TrainingQuizSubmissionData.Status">
+            <summary>TrainingQuizSubmissionStatuses name (Recorded, NotAssigned, NoQuiz, AlreadyPassed, AttemptLimitReached, NotStarted, NotFound).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Trainings.TrainingAttemptData">
+            <summary>One of the member's own attempts: result only, no snapshot of answers.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Trainings.TrainingReportRowData">
+            <summary>One assignee row of the officer's report. Per-question answers are not included (R-T12).</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationInput">
             <summary>
             A GPS location for a point in time of a specificed unit
@@ -22775,6 +23079,9 @@
             Returns the TTS audio URL for the given text, generating it if necessary.
             Respects the provided cancellation token for timeout control.
             </summary>
+        </member>
+        <member name="M:Resgrid.Web.ServicesCore.Helpers.ClaimsAuthorizationHelper.CanAssignTraining">
+            <summary>Holds the Assign Training right somewhere (assign and report; scoped per training).</summary>
         </member>
         <member name="M:Resgrid.Web.ServicesCore.Startup.ConfigureSwagger(Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions)">
             <summary>

@@ -1,23 +1,27 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Resgrid.Model.Helpers
 {
-	/// <summary>What the training notifier sends for one training on one run.</summary>
+	/// <summary>What the training notifier sends one assignee on one run.</summary>
 	public enum TrainingNoticeKinds
 	{
 		/// <summary>Nothing is sent.</summary>
 		None = 0,
 
-		/// <summary>The first notice: the training was assigned and has not been announced yet.</summary>
+		/// <summary>The first notice: the member was assigned and has not been told yet.</summary>
 		NewTraining = 1,
 
-		/// <summary>The reminder the day before the training is due.</summary>
-		DueTomorrow = 2
+		/// <summary>A due reminder: the assignment is due within one of the training's reminder leads.</summary>
+		DueReminder = 2,
+
+		/// <summary>The assignment is overdue (once, or on the training's repeating cadence).</summary>
+		Overdue = 3
 	}
 
-	/// <summary>The notice the training notifier sends for one training: its kind, its text and who receives it.</summary>
+	/// <summary>The notice for one assignee, and the stamps to write back on the assignment row.</summary>
 	public class TrainingNoticePlan
 	{
 		public TrainingNoticeKinds Kind { get; set; }
@@ -26,24 +30,37 @@ namespace Resgrid.Model.Helpers
 
 		public string Message { get; set; }
 
-		public List<string> RecipientUserIds { get; set; } = new List<string>();
+		public string UserId { get; set; }
+
+		/// <summary>Stamp NotifiedOn without sending (an assignment too old to announce as new).</summary>
+		public bool MarkNotifiedOnly { get; set; }
+
+		/// <summary>The reminder lead (days) this plan reminds for.</summary>
+		public int? LeadDays { get; set; }
 	}
 
 	/// <summary>
-	/// Decides what the training notifier sends for a training. Kept apart from the worker so the rules can be tested:
-	/// who is told, and that an old training is never announced as new.
+	/// Decides what the training notifier sends each assignee (T-D9, T-D19, T0 item 4). Kept apart from the worker so the
+	/// rules can be tested:
+	/// <list type="bullet">
+	/// <item>a new assignment is announced once, never when it is older than <see cref="NewNoticeMaxAgeDays"/> (the
+	/// notifier sent nothing for years, so old rows still look unannounced);</item>
+	/// <item>a due reminder goes out when the due moment is within a lead ("due within the next N hours and not yet
+	/// reminded"), once per lead, recorded on the assignee: no 10:00 window, so any zone and offset is reached;</item>
+	/// <item>an overdue notice goes out once, or every <see cref="Training.OverdueRepeatDays"/> days;</item>
+	/// <item>nothing goes to completed, exempt, removed or inactive members, members on leave, or before a scheduled
+	/// start.</item>
+	/// </list>
+	/// Notices are English (outbound messages are English-only by design).
 	/// </summary>
 	public static class TrainingNoticePlanner
 	{
-		/// <summary>
-		/// A training that was never announced is announced only while it is this recent. The notifier sent nothing for
-		/// years (it loaded trainings without their assignees), so every older training still looks unannounced; without
-		/// this limit the first working run would tell every assignee about every training the department ever made.
-		/// </summary>
+		/// <summary>An assignment is announced as new only while it is this recent.</summary>
 		public const int NewNoticeMaxAgeDays = 7;
 
 		public const string NewTrainingTitle = "New Training Notice";
-		public const string DueTomorrowTitle = "Training Due Notice";
+		public const string DueReminderTitle = "Training Due Notice";
+		public const string OverdueTitle = "Training Overdue Notice";
 
 		/// <summary>True when the training was never announced and is too old to announce now.</summary>
 		public static bool IsStaleUnannounced(Training training, DateTime utcNow)
@@ -52,46 +69,94 @@ namespace Resgrid.Model.Helpers
 		}
 
 		/// <summary>
-		/// The notice for a training. Recipients are the assignees who have not completed it and who are still active
-		/// members of the department (deleted, disabled and hidden members are left out of automation).
+		/// The notice for one assignment on this run.
 		/// </summary>
-		/// <param name="training">The training, with its assignees loaded.</param>
-		/// <param name="activeMemberUserIds">The department's active member ids.</param>
+		/// <param name="training">The training.</param>
+		/// <param name="assignment">The assignee's row.</param>
+		/// <param name="effectiveDueUtc">The due moment with leave applied (TrainingDueDates.EffectiveDueUtc).</param>
+		/// <param name="isActiveMember">The member is an active member of the department.</param>
+		/// <param name="onLeave">A leave period is running: due dates and reminders pause.</param>
+		/// <param name="localDueText">The due date as the department reads it (short date), for the message.</param>
 		/// <param name="utcNow">The current time, UTC.</param>
-		public static TrainingNoticePlan Plan(Training training, IEnumerable<string> activeMemberUserIds, DateTime utcNow)
+		public static TrainingNoticePlan PlanAssignment(Training training, TrainingUser assignment, DateTime? effectiveDueUtc, bool isActiveMember,
+			bool onLeave, string localDueText, DateTime utcNow)
 		{
-			var plan = new TrainingNoticePlan { Kind = TrainingNoticeKinds.None };
+			var plan = new TrainingNoticePlan { Kind = TrainingNoticeKinds.None, UserId = assignment?.UserId };
 
-			if (training == null || IsStaleUnannounced(training, utcNow))
+			if (training == null || assignment == null || string.IsNullOrWhiteSpace(assignment.UserId) || training.IsArchived || !training.HasStarted(utcNow))
 				return plan;
 
-			var active = new HashSet<string>(activeMemberUserIds ?? Enumerable.Empty<string>(), StringComparer.OrdinalIgnoreCase);
-
-			plan.RecipientUserIds = (training.Users ?? Enumerable.Empty<TrainingUser>())
-				.Where(x => x != null && !x.Complete && !string.IsNullOrWhiteSpace(x.UserId) && active.Contains(x.UserId))
-				.Select(x => x.UserId)
-				.Distinct(StringComparer.OrdinalIgnoreCase)
-				.ToList();
-
-			if (plan.RecipientUserIds.Count == 0)
+			if (!assignment.IsOpenOn(utcNow))
 				return plan;
 
-			if (!training.Notified.HasValue)
+			var custom = string.IsNullOrWhiteSpace(training.ReminderMessage) ? string.Empty : " " + training.ReminderMessage.Trim();
+
+			if (!assignment.NotifiedOn.HasValue)
 			{
+				// The assignment's age: when it was made, or (rows from before T0) when the training was made.
+				var assignedOn = assignment.AssignedOn ?? training.CreatedOn;
+				var startedOn = training.StartsOn.HasValue && training.StartsOn.Value > assignedOn ? training.StartsOn.Value : assignedOn;
+
+				if (startedOn < utcNow.AddDays(-NewNoticeMaxAgeDays) || !isActiveMember)
+				{
+					plan.MarkNotifiedOnly = true;
+					return plan;
+				}
+
+				if (onLeave)
+					return plan;
+
 				plan.Kind = TrainingNoticeKinds.NewTraining;
 				plan.Title = NewTrainingTitle;
-				plan.Message = training.ToBeCompletedBy.HasValue
-					? string.Format("New Training ({0}) due on {1}", training.Name, training.ToBeCompletedBy.Value.ToShortDateString())
-					: string.Format("New Training ({0}) assigned to you", training.Name);
-			}
-			else
-			{
-				plan.Kind = TrainingNoticeKinds.DueTomorrow;
-				plan.Title = DueTomorrowTitle;
-				plan.Message = string.Format("Training ({0}) is due tomorrow", training.Name);
+				plan.Message = (effectiveDueUtc.HasValue && !string.IsNullOrWhiteSpace(localDueText)
+					? string.Format(CultureInfo.InvariantCulture, "New Training ({0}) due on {1}", training.Name, localDueText)
+					: string.Format(CultureInfo.InvariantCulture, "New Training ({0}) assigned to you", training.Name)) + custom;
+				return plan;
 			}
 
+			if (!isActiveMember || onLeave || !effectiveDueUtc.HasValue)
+				return plan;
+
+			if (TrainingDueDates.IsOverdue(effectiveDueUtc, utcNow))
+			{
+				if (!training.SendOverdueNotices)
+					return plan;
+
+				var repeat = training.OverdueRepeatDays.GetValueOrDefault();
+				var due = !assignment.OverdueNotifiedOn.HasValue || (repeat > 0 && assignment.OverdueNotifiedOn.Value <= utcNow.AddDays(-repeat));
+				if (!due)
+					return plan;
+
+				plan.Kind = TrainingNoticeKinds.Overdue;
+				plan.Title = OverdueTitle;
+				plan.Message = string.Format(CultureInfo.InvariantCulture, "Training ({0}) is overdue", training.Name)
+					+ (string.IsNullOrWhiteSpace(localDueText) ? string.Empty : string.Format(CultureInfo.InvariantCulture, " (due {0})", localDueText)) + custom;
+				return plan;
+			}
+
+			// The smallest lead the due moment is already inside, if it was not reminded for that lead (or a smaller one).
+			var lead = TrainingDueDates.ParseLeadDays(training.ReminderLeadDaysCsv)
+				.Where(days => TrainingDueDates.IsDueWithin(effectiveDueUtc, utcNow, TimeSpan.FromDays(days)))
+				.DefaultIfEmpty(0)
+				.Min();
+
+			if (lead <= 0 || (assignment.LastReminderLeadDays.HasValue && assignment.LastReminderLeadDays.Value <= lead))
+				return plan;
+
+			plan.Kind = TrainingNoticeKinds.DueReminder;
+			plan.Title = DueReminderTitle;
+			plan.LeadDays = lead;
+			plan.Message = (lead == 1
+				? string.Format(CultureInfo.InvariantCulture, "Training ({0}) is due within a day", training.Name)
+				: string.Format(CultureInfo.InvariantCulture, "Training ({0}) is due within {1} days", training.Name, lead))
+				+ (string.IsNullOrWhiteSpace(localDueText) ? string.Empty : string.Format(CultureInfo.InvariantCulture, " ({0})", localDueText)) + custom;
 			return plan;
+		}
+
+		/// <summary>The overdue digest for the training's creator: how many active assignees went overdue on this run.</summary>
+		public static string CreatorOverdueMessage(Training training, int overdueCount)
+		{
+			return string.Format(CultureInfo.InvariantCulture, "{0} member(s) are overdue on training ({1})", overdueCount, training?.Name);
 		}
 	}
 }

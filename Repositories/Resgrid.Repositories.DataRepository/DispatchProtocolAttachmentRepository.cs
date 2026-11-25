@@ -29,6 +29,26 @@ namespace Resgrid.Repositories.DataRepository
 			_unitOfWork = unitOfWork;
 		}
 
+		/// <summary>Columns of an attachment without its bytes; the size is computed in the database.</summary>
+		private static string InfoColumns(string alias) =>
+			$"{alias}.{Col("DispatchProtocolAttachmentId")}, {alias}.{Col("DispatchProtocolId")}, {alias}.{Col("FileName")}, {alias}.{Col("FileType")}, " +
+			(IsPostgres ? $"octet_length({alias}.data) AS size" : $"CAST(DATALENGTH({alias}.[Data]) AS bigint) AS [Size]");
+
+		public Task<IEnumerable<DispatchProtocolAttachment>> GetAttachmentInfoByProtocolIdAsync(int protocolId)
+		{
+			return QueryAsync<DispatchProtocolAttachment>(
+				$"SELECT {InfoColumns("a")} FROM {Tbl("DispatchProtocolAttachments")} a WHERE a.{Col("DispatchProtocolId")} = {P}ProtocolId ORDER BY a.{Col("DispatchProtocolAttachmentId")}",
+				new { ProtocolId = protocolId });
+		}
+
+		public Task<IEnumerable<DispatchProtocolAttachment>> GetAttachmentInfoByDepartmentIdAsync(int departmentId)
+		{
+			return QueryAsync<DispatchProtocolAttachment>(
+				$"SELECT {InfoColumns("a")} FROM {Tbl("DispatchProtocolAttachments")} a INNER JOIN {Tbl("DispatchProtocols")} p ON p.{Col("DispatchProtocolId")} = a.{Col("DispatchProtocolId")} " +
+				$"WHERE p.{Col("DepartmentId")} = {P}DepartmentId ORDER BY a.{Col("DispatchProtocolAttachmentId")}",
+				new { DepartmentId = departmentId });
+		}
+
 		public async Task<IEnumerable<DispatchProtocolAttachment>> GetDispatchProtocolAttachmentByProtocolIdAsync(int protocolId)
 		{
 			try

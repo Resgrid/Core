@@ -250,4 +250,376 @@
   <data name="ProtocolsLabel" xml:space="preserve">
     <value>Protocolli</value>
   </data>
+  <data name="LibraryTab" xml:space="preserve">
+    <value>Libreria</value>
+  </data>
+  <data name="LibraryIntro" xml:space="preserve">
+    <value>Protocolli di invio: le domande e le istruzioni guidate attivate dal tipo e dalla priorità della chiamata.</value>
+  </data>
+  <data name="LibraryHeader" xml:space="preserve">
+    <value>Libreria dei protocolli</value>
+  </data>
+  <data name="KpiTotal" xml:space="preserve">
+    <value>Protocolli</value>
+  </data>
+  <data name="KpiDisabled" xml:space="preserve">
+    <value>Disattivati</value>
+  </data>
+  <data name="KpiUsedOnCalls" xml:space="preserve">
+    <value>Usati nelle chiamate (30 giorni)</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Cerca protocolli</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Nome o codice</value>
+  </data>
+  <data name="StatusAll" xml:space="preserve">
+    <value>Tutti gli stati</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Filtra</value>
+  </data>
+  <data name="ClearFilterButton" xml:space="preserve">
+    <value>Azzera</value>
+  </data>
+  <data name="NoProtocolsYet" xml:space="preserve">
+    <value>Ancora nessun protocollo.</value>
+  </data>
+  <data name="NoProtocolsMatch" xml:space="preserve">
+    <value>Nessun protocollo corrisponde al filtro.</value>
+  </data>
+  <data name="QuestionsCount" xml:space="preserve">
+    <value>{0} domande</value>
+  </data>
+  <data name="NoTriggers" xml:space="preserve">
+    <value>Nessun attivatore (solo scelta manuale)</value>
+  </data>
+  <data name="MoreTriggers" xml:space="preserve">
+    <value>e altri {0}</value>
+  </data>
+  <data name="UsedOnCallsColumn" xml:space="preserve">
+    <value>Chiamate (30 giorni)</value>
+  </data>
+  <data name="LastUpdatedColumn" xml:space="preserve">
+    <value>Ultima modifica</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Modifica</value>
+  </data>
+  <data name="EnableButton" xml:space="preserve">
+    <value>Attiva</value>
+  </data>
+  <data name="DisableButton" xml:space="preserve">
+    <value>Disattiva</value>
+  </data>
+  <data name="DeleteProtocolConfirm" xml:space="preserve">
+    <value>Il protocollo esce dalla libreria e dalle nuove chiamate; le chiamate che lo hanno usato continuano a mostrarlo. Eliminare il protocollo</value>
+  </data>
+  <data name="DeletedLabel" xml:space="preserve">
+    <value>Eliminato</value>
+  </data>
+  <data name="DeletedProtocolNotice" xml:space="preserve">
+    <value>Questo protocollo è stato eliminato. Viene conservato perché alcune chiamate lo citano; non viene suggerito né allegato.</value>
+  </data>
+  <data name="DisabledProtocolNotice" xml:space="preserve">
+    <value>Questo protocollo è disattivato: non viene suggerito né allegato alle chiamate. Attivalo per usarlo di nuovo.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Dettagli</value>
+  </data>
+  <data name="TriggerMatchesColumn" xml:space="preserve">
+    <value>Corrisponde a</value>
+  </data>
+  <data name="NoTriggersHelp" xml:space="preserve">
+    <value>Nessun attivatore: il protocollo non viene mai suggerito, ma si può aggiungere a mano a una chiamata.</value>
+  </data>
+  <data name="NoQuestionsHelp" xml:space="preserve">
+    <value>Nessuna domanda: quando un attivatore corrisponde, il protocollo si applica subito.</value>
+  </data>
+  <data name="MinimumWeightHelp" xml:space="preserve">
+    <value>Quando un attivatore corrisponde, il protocollo si applica se i pesi delle risposte sommano almeno {0}.</value>
+  </data>
+  <data name="DownloadButton" xml:space="preserve">
+    <value>Scarica</value>
+  </data>
+  <data name="NoAttachments" xml:space="preserve">
+    <value>Nessun allegato.</value>
+  </data>
+  <data name="NoProtocolText" xml:space="preserve">
+    <value>Nessun testo del protocollo.</value>
+  </data>
+  <data name="ProtocolSavedMessage" xml:space="preserve">
+    <value>Il protocollo è stato salvato.</value>
+  </data>
+  <data name="ProtocolDisabledMessage" xml:space="preserve">
+    <value>Il protocollo è stato disattivato.</value>
+  </data>
+  <data name="ProtocolEnabledMessage" xml:space="preserve">
+    <value>Il protocollo è stato attivato.</value>
+  </data>
+  <data name="EditProtocolHeader" xml:space="preserve">
+    <value>Modifica protocollo</value>
+  </data>
+  <data name="EditorIntroNew" xml:space="preserve">
+    <value>Dai un nome al protocollo, scrivi il contenuto, poi aggiungi gli attivatori che lo suggeriscono e le domande che decidono se si applica.</value>
+  </data>
+  <data name="BasicsHeader" xml:space="preserve">
+    <value>Dati di base</value>
+  </data>
+  <data name="CodeHelp" xml:space="preserve">
+    <value>Fino a {0} lettere, cifre, spazi e . _ / - (per esempio 09-E-01 o SOG-204).</value>
+  </data>
+  <data name="MinimumWeightEditorHelp" xml:space="preserve">
+    <value>Il peso totale delle risposte necessario perché un protocollo suggerito si applichi. Con 0 si applica qualunque siano le risposte.</value>
+  </data>
+  <data name="DisabledCheckbox" xml:space="preserve">
+    <value>Disattivato</value>
+  </data>
+  <data name="DisabledCheckboxHelp" xml:space="preserve">
+    <value>Un protocollo disattivato resta nella libreria ma non viene suggerito né allegato alle chiamate.</value>
+  </data>
+  <data name="ContentHeader" xml:space="preserve">
+    <value>Contenuto</value>
+  </data>
+  <data name="DescriptionHelp" xml:space="preserve">
+    <value>Un breve riassunto, fino a {0} caratteri di testo.</value>
+  </data>
+  <data name="TriggerTimeZoneHelp" xml:space="preserve">
+    <value>Gli orari di inizio e fine sono nel fuso orario del dipartimento ({0}).</value>
+  </data>
+  <data name="TriggerLabel" xml:space="preserve">
+    <value>Attivatore</value>
+  </data>
+  <data name="RemoveTriggerButton" xml:space="preserve">
+    <value>Rimuovi attivatore</value>
+  </data>
+  <data name="NoTypeOption" xml:space="preserve">
+    <value>Nessun tipo</value>
+  </data>
+  <data name="LegacyTypeHelp" xml:space="preserve">
+    <value>Questo attivatore indica il tipo di chiamata "{0}", che non esiste più. Scegli un tipo di chiamata perché continui a corrispondere.</value>
+  </data>
+  <data name="RemovedNamed" xml:space="preserve">
+    <value>{0} (rimosso)</value>
+  </data>
+  <data name="RemovedPriority" xml:space="preserve">
+    <value>Priorità rimossa</value>
+  </data>
+  <data name="RemoveQuestionButton" xml:space="preserve">
+    <value>Rimuovi domanda</value>
+  </data>
+  <data name="AddAnswerButton" xml:space="preserve">
+    <value>Aggiungi risposta</value>
+  </data>
+  <data name="RemoveAnswerButton" xml:space="preserve">
+    <value>Rimuovi risposta</value>
+  </data>
+  <data name="RemoveOnSaveColumn" xml:space="preserve">
+    <value>Rimuovi al salvataggio</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Rimuovi</value>
+  </data>
+  <data name="AddFilesLabel" xml:space="preserve">
+    <value>Aggiungi file</value>
+  </data>
+  <data name="AttachmentsLimitsHelp" xml:space="preserve">
+    <value>Fino a {0} file per salvataggio, {1} MB ciascuno e {2} MB in tutto: immagini, PDF, documenti Office, testo e video.</value>
+  </data>
+  <data name="AttachmentsReselectHelp" xml:space="preserve">
+    <value>Se il salvataggio non riesce, scegli di nuovo i file: il browser non li conserva.</value>
+  </data>
+  <data name="SaveProtocolButton" xml:space="preserve">
+    <value>Salva protocollo</value>
+  </data>
+  <data name="TriggerSummaryPriority" xml:space="preserve">
+    <value>Priorità: {0}</value>
+  </data>
+  <data name="TriggerSummaryType" xml:space="preserve">
+    <value>Tipo: {0}</value>
+  </data>
+  <data name="TriggerSummaryPriorityAndType" xml:space="preserve">
+    <value>{0} · priorità {1}</value>
+  </data>
+  <data name="ReasonMatched" xml:space="preserve">
+    <value>Corrisponde: {0}</value>
+  </data>
+  <data name="ErrorProtocolMissing" xml:space="preserve">
+    <value>Impossibile leggere il protocollo.</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>Il nome del protocollo è obbligatorio.</value>
+  </data>
+  <data name="ErrorNameTooLong" xml:space="preserve">
+    <value>Il nome può avere al massimo 100 caratteri.</value>
+  </data>
+  <data name="ErrorCodeRequired" xml:space="preserve">
+    <value>Il codice del protocollo è obbligatorio.</value>
+  </data>
+  <data name="ErrorCodeInvalid" xml:space="preserve">
+    <value>Il codice può avere fino a 16 lettere, cifre, spazi e i caratteri . _ / -.</value>
+  </data>
+  <data name="ErrorDescriptionTooLong" xml:space="preserve">
+    <value>La descrizione può avere al massimo 500 caratteri di testo.</value>
+  </data>
+  <data name="ErrorMinimumWeightRange" xml:space="preserve">
+    <value>Il peso minimo deve essere compreso tra 0 e 1000.</value>
+  </data>
+  <data name="ErrorTriggerType" xml:space="preserve">
+    <value>Un attivatore ha un tipo sconosciuto.</value>
+  </data>
+  <data name="ErrorTriggerWindow" xml:space="preserve">
+    <value>Un attivatore termina prima di iniziare.</value>
+  </data>
+  <data name="ErrorTriggerPriority" xml:space="preserve">
+    <value>Un attivatore di priorità richiede una delle priorità di chiamata del dipartimento.</value>
+  </data>
+  <data name="ErrorTriggerCallType" xml:space="preserve">
+    <value>Un attivatore di tipo indica un tipo di chiamata che non è del dipartimento.</value>
+  </data>
+  <data name="ErrorTriggerDate" xml:space="preserve">
+    <value>Impossibile leggere l'orario di inizio o fine di un attivatore.</value>
+  </data>
+  <data name="ErrorQuestionText" xml:space="preserve">
+    <value>Ogni domanda deve avere un testo.</value>
+  </data>
+  <data name="ErrorQuestionAnswers" xml:space="preserve">
+    <value>Ogni domanda deve avere almeno una risposta.</value>
+  </data>
+  <data name="ErrorAnswerText" xml:space="preserve">
+    <value>Ogni risposta deve avere un testo.</value>
+  </data>
+  <data name="ErrorTooManyFiles" xml:space="preserve">
+    <value>Aggiungi al massimo {0} file alla volta.</value>
+  </data>
+  <data name="ErrorTooManyAttachments" xml:space="preserve">
+    <value>Un protocollo può avere al massimo {0} allegati.</value>
+  </data>
+  <data name="ErrorUploadTooLarge" xml:space="preserve">
+    <value>I file insieme devono essere più piccoli di {0} MB.</value>
+  </data>
+  <data name="ErrorFileType" xml:space="preserve">
+    <value>Non è possibile allegare file di tipo ({0}).</value>
+  </data>
+  <data name="ErrorFileTooLarge" xml:space="preserve">
+    <value>{0} è troppo grande: ogni file deve essere più piccolo di {1} MB.</value>
+  </data>
+  <data name="ErrorForeignRows" xml:space="preserve">
+    <value>La modifica indica attivatori, domande o risposte che non sono di questo protocollo.</value>
+  </data>
+  <data name="TriggersRenamedType" xml:space="preserve">
+    <value>{0} attivatori di protocollo usano questo tipo di chiamata; continuano a corrispondere e mostrano il nuovo nome: {1}.</value>
+  </data>
+  <data name="TriggersDeletedType" xml:space="preserve">
+    <value>{0} attivatori di protocollo usavano il tipo di chiamata eliminato e non corrispondono più finché non vengono modificati: {1}.</value>
+  </data>
+  <data name="TriggersRemovedPriority" xml:space="preserve">
+    <value>{0} attivatori di protocollo usavano la priorità rimossa e non corrispondono più finché non vengono modificati: {1}.</value>
+  </data>
+  <data name="NoProtocolsOnCall" xml:space="preserve">
+    <value>Nessun protocollo su questa chiamata.</value>
+  </data>
+  <data name="SourceTrigger" xml:space="preserve">
+    <value>Suggerito da un attivatore</value>
+  </data>
+  <data name="SourceManual" xml:space="preserve">
+    <value>Aggiunto a mano</value>
+  </data>
+  <data name="SourceUnknown" xml:space="preserve">
+    <value>Allegato prima che le risposte venissero conservate</value>
+  </data>
+  <data name="RemovedFromCallLabel" xml:space="preserve">
+    <value>Rimosso</value>
+  </data>
+  <data name="RemovedByOn" xml:space="preserve">
+    <value>Rimosso da {0} il {1}.</value>
+  </data>
+  <data name="RemovalReasonLabel" xml:space="preserve">
+    <value>Motivo</value>
+  </data>
+  <data name="ScoreLabel" xml:space="preserve">
+    <value>Punteggio</value>
+  </data>
+  <data name="ScoreOfMinimum" xml:space="preserve">
+    <value>{0} su un minimo di {1}</value>
+  </data>
+  <data name="PanelScore" xml:space="preserve">
+    <value>Punteggio {0} su un minimo di {1}</value>
+  </data>
+  <data name="QuestionsPassed" xml:space="preserve">
+    <value>Si applica</value>
+  </data>
+  <data name="QuestionsIncomplete" xml:space="preserve">
+    <value>Non tutte le domande hanno una risposta</value>
+  </data>
+  <data name="QuestionsBelowMinimum" xml:space="preserve">
+    <value>Sotto il minimo</value>
+  </data>
+  <data name="NotAnswered" xml:space="preserve">
+    <value>Senza risposta</value>
+  </data>
+  <data name="NoAnswersRecorded" xml:space="preserve">
+    <value>Non sono state registrate risposte per questo protocollo.</value>
+  </data>
+  <data name="AttachedByOn" xml:space="preserve">
+    <value>Allegato da {0} il {1}.</value>
+  </data>
+  <data name="TextAsDispatched" xml:space="preserve">
+    <value>Testo come inviato</value>
+  </data>
+  <data name="ChangedSinceDispatch" xml:space="preserve">
+    <value>Modificato dopo l'invio</value>
+  </data>
+  <data name="NoSnapshotRecorded" xml:space="preserve">
+    <value>Allegato prima che il testo come inviato venisse conservato.</value>
+  </data>
+  <data name="CurrentTextLink" xml:space="preserve">
+    <value>Testo attuale</value>
+  </data>
+  <data name="RemoveFromCallButton" xml:space="preserve">
+    <value>Rimuovi dalla chiamata</value>
+  </data>
+  <data name="RemovalReasonPlaceholder" xml:space="preserve">
+    <value>Perché non si applica</value>
+  </data>
+  <data name="CallProtocolRemovedMessage" xml:space="preserve">
+    <value>Il protocollo è stato rimosso dalla chiamata. Resta nel registro con il motivo.</value>
+  </data>
+  <data name="RemovalReasonRequired" xml:space="preserve">
+    <value>Indica un motivo per rimuovere un protocollo dalla chiamata.</value>
+  </data>
+  <data name="PanelIntro" xml:space="preserve">
+    <value>Protocolli suggeriti dal tipo e dalla priorità della chiamata, con l'attivatore che corrisponde. Rispondi alle domande di ogni protocollo; puoi anche aggiungerne uno a mano.</value>
+  </data>
+  <data name="PanelNoSuggestions" xml:space="preserve">
+    <value>Nessun protocollo corrisponde al tipo e alla priorità di questa chiamata.</value>
+  </data>
+  <data name="PanelAddByHand" xml:space="preserve">
+    <value>Aggiungi un protocollo a mano</value>
+  </data>
+  <data name="PanelAddButton" xml:space="preserve">
+    <value>Aggiungi</value>
+  </data>
+  <data name="PanelAnswerToContinue" xml:space="preserve">
+    <value>Rispondi a tutte le domande per sapere se questo protocollo si applica.</value>
+  </data>
+  <data name="PanelApplies" xml:space="preserve">
+    <value>Si applica</value>
+  </data>
+  <data name="PanelDoesNotApply" xml:space="preserve">
+    <value>Non si applica</value>
+  </data>
+  <data name="PanelQuestionOf" xml:space="preserve">
+    <value>Domanda {0} di {1}</value>
+  </data>
+  <data name="PanelBack" xml:space="preserve">
+    <value>Indietro</value>
+  </data>
+  <data name="PanelNext" xml:space="preserve">
+    <value>Avanti</value>
+  </data>
+  <data name="PanelChoose" xml:space="preserve">
+    <value>Scegli un protocollo…</value>
+  </data>
 </root>

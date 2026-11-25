@@ -65,6 +65,8 @@ namespace Resgrid.Tests.Localization
 			"Areas/User/DispatcherDesk/DispatcherDesk",
 			// Inventory -> Import (opening counts, catalog seeding and the export to edit; 2026-11-23) shipped fully translated.
 			"Areas/User/Inventory/InventoryImport",
+			// Protocols library, detail, editor and the call forms' protocol panel (Protocols P0, 2026-11-24) shipped fully translated.
+			"Areas/User/Protocols/Protocols",
 		};
 
 		private static string LocalizationRoot()
@@ -407,6 +409,13 @@ namespace Resgrid.Tests.Localization
 			// Module names that read the same as English in these languages (the menu uses the same words).
 			"DepartmentImport|fr|ConfigModule.Contacts", "DepartmentImport|fr|ConfigModule.Certifications", "DepartmentImport|de|ConfigModule.Chat", "DepartmentImport|es|ConfigModule.Chat", "DepartmentImport|it|ConfigModule.Chat",
 			"DepartmentImport|de|GlossaryProductColumn", "DepartmentImport|de|GlossaryResgridColumn", "DepartmentImport|it|GlossaryProductColumn", "DepartmentImport|it|GlossaryResgridColumn", "DepartmentImport|fr|ConfigKind.inspection", "DepartmentImport|sv|ConfigField.prefix",
+
+			// Protocols (2026-11-24), checked side by side: N/A everywhere it is written that way; Status, Code and Details in German;
+			// Status in Polish and Swedish; French Type, Description, Question(s) and Score, and "{0} questions".
+			"Protocols|de|NotApplicableLabel", "Protocols|es|NotApplicableLabel", "Protocols|fr|NotApplicableLabel", "Protocols|it|NotApplicableLabel", "Protocols|sv|NotApplicableLabel",
+			"Protocols|de|StatusLabel", "Protocols|pl|StatusLabel", "Protocols|sv|StatusLabel", "Protocols|de|CodeLabel", "Protocols|de|DetailsHeader",
+			"Protocols|fr|DescriptionLabel", "Protocols|fr|TriggerTypeColumn", "Protocols|fr|QuestionsLabel", "Protocols|fr|QuestionColumn", "Protocols|fr|QuestionsTab",
+			"Protocols|fr|QuestionsCount", "Protocols|fr|ScoreLabel",
 
 			// Counted phrases whose wording matches English.
 			"CommunicationTest|es|ScopeRoles",    // {0} roles

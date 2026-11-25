@@ -47,9 +47,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			INotesService notesService,
 			IContactsService contactsService, IBusinessOperationsAccessService businessOperationsAccess,
 			IProtocolsService protocolsService, ITemplatesService templatesService, IBaseTypeAiSuggestionService baseTypeAiSuggestions,
-			ITypeIconsService typeIconsService, Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Icons.IconUpload> iconLocalizer)
+			ITypeIconsService typeIconsService, Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Icons.IconUpload> iconLocalizer,
+			Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> protocolsLocalizer = null)
 		{
 			_iconLocalizer = iconLocalizer;
+			_protocolsLocalizer = protocolsLocalizer;
 			_unitsService = unitsService;
 			_customStateService = customStateService;
 			_callsService = callsService;
@@ -65,6 +67,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_templatesService = templatesService;
 			_baseTypeAiSuggestions = baseTypeAiSuggestions;
 			_typeIconsService = typeIconsService;
+		}
+
+		private readonly Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> _protocolsLocalizer;
+
+		/// <summary>
+		/// Tells the person changing a call type or priority which protocol triggers the change touches (D17), on the Types page:
+		/// a rename keeps them matching (by id) under the new name; a deleted type or removed priority means they stop matching.
+		/// </summary>
+		private void ReportProtocolTriggers(List<ProtocolTriggerImpact> affected, string messageKey)
+		{
+			if (affected == null || affected.Count == 0)
+				return;
+
+			var protocols = string.Join(", ", affected.GroupBy(x => x.ProtocolId).Select(x => $"{x.First().ProtocolCode} {x.First().ProtocolName}".Trim()));
+			var template = _protocolsLocalizer?[messageKey]?.Value ?? messageKey + ": {0} ({1})";
+
+			if (TempData != null)
+				TempData["ProtocolTriggersAffected"] = string.Format(template, affected.Count, protocols);
 		}
 
 		/// <summary>A posted class (base type) kept only when it is a value of its enum; anything else is -1 (none).</summary>
@@ -452,8 +472,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				await _callsService.SaveCallTypeAsync(callType, cancellationToken);
 
-				// Protocol triggers and quick templates store the type's name: follow the rename so they keep matching.
-				await _protocolsService.RenameCallTypeInTriggersAsync(DepartmentId, previousName, callType.Type, cancellationToken);
+				// Protocol triggers match the type by id and show its name; quick templates store the name: follow the rename.
+				await _protocolsService.RenameCallTypeInTriggersAsync(DepartmentId, callType.CallTypeId, previousName, callType.Type, cancellationToken);
+				if (!CallTypeLink.SameName(previousName, callType.Type))
+					ReportProtocolTriggers(await _protocolsService.GetTriggersForCallTypeAsync(DepartmentId, callType.CallTypeId, callType.Type), "TriggersRenamedType");
 				await _templatesService.RenameCallTypeInTemplatesAsync(DepartmentId, previousName, callType.Type, cancellationToken);
 
 				// After the field save, which writes the IconKey it loaded: the icon calls then set the new key themselves.
@@ -493,7 +515,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
+			// Read before the delete: the protocol triggers on this type stop matching once it is gone.
+			var affectedTriggers = await _protocolsService.GetTriggersForCallTypeAsync(DepartmentId, callTypeId, callType?.Type);
+
 			await _callsService.DeleteCallTypeAsync(callTypeId, cancellationToken);
+			ReportProtocolTriggers(affectedTriggers, "TriggersDeletedType");
 
 			return RedirectToAction("Types", "Department", new { Area = "User" });
 		}
@@ -671,6 +697,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				await _callsService.SaveCallPriorityAsync(priority, cancellationToken);
+				ReportProtocolTriggers(await _protocolsService.GetTriggersForPriorityAsync(DepartmentId, priorityId), "TriggersRemovedPriority");
 			}
 
 			return RedirectToAction("Types", "Department", new { Area = "User" });

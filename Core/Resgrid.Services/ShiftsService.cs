@@ -40,6 +40,7 @@ namespace Resgrid.Services
 		private readonly Lazy<IWorkShiftsService> _workShiftsService;
 		private readonly Lazy<IShiftDispatchersService> _shiftDispatchers;
 		private readonly IUnitOfWork _unitOfWork;
+		private readonly IContentAudienceChangeQueue _audienceChanges;
 
 		public ShiftsService(IShiftsRepository shiftsRepository, IShiftPersonRepository shiftPersonRepository,
 			IShiftDaysRepository shiftDaysRepository, IShiftGroupsRepository shiftGroupsRepository,
@@ -49,8 +50,9 @@ namespace Resgrid.Services
 			IDepartmentGroupsService departmentGroupsService, IShiftGroupAssignmentsRepository shiftGroupAssignmentsRepository, IShiftGroupRolesRepository shiftGroupRolesRepositor,
 			IEventAggregator eventAggregator, IDepartmentSettingsService departmentSettingsService, Lazy<ISearchProjectionService> searchProjections = null,
 			Lazy<IShiftStaffingService> shiftStaffingService = null, Lazy<IWorkShiftsService> workShiftsService = null,
-			Lazy<IShiftDispatchersService> shiftDispatchers = null, IUnitOfWork unitOfWork = null)
+			Lazy<IShiftDispatchersService> shiftDispatchers = null, IUnitOfWork unitOfWork = null, IContentAudienceChangeQueue audienceChanges = null)
 		{
+			_audienceChanges = audienceChanges;
 			_searchProjections = searchProjections;
 			_shiftDispatchers = shiftDispatchers;
 			_unitOfWork = unitOfWork;
@@ -215,6 +217,11 @@ namespace Resgrid.Services
 				await _shiftPersonRepository.SaveOrUpdateAsync(person, cancellationToken);
 			}
 
+			// Standing shift members changed: worker 83 re-evaluates shift training (and protocol) audiences for them.
+			if (_audienceChanges != null)
+				await _audienceChanges.EnqueueManyAsync(dbShift.DepartmentId, (dbShift.Personnel ?? new List<ShiftPerson>()).Select(p => p.UserId).Concat(newPersonnel.Select(p => p.UserId)),
+					ContentAudienceChangeSources.Shift, cancellationToken);
+
 			return true;
 		}
 
@@ -293,6 +300,10 @@ namespace Resgrid.Services
 					await ReleaseTradeReferencesToSignupAsync(signup.ShiftSignupId, cancellationToken);
 
 				deleted = await _shiftsRepository.DeleteAsync(shift, cancellationToken);
+
+				// The shift's audiences resolve to nobody now: the department's dynamic trainings are re-evaluated once.
+				if (deleted && _audienceChanges != null)
+					await _audienceChanges.EnqueueAsync(shift.DepartmentId, null, ContentAudienceChangeSources.Shift, cancellationToken);
 
 				if (deleted && _shiftDispatchers != null)
 					await _shiftDispatchers.Value.DeleteForShiftAsync(shift.ShiftId, cancellationToken);

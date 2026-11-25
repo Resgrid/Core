@@ -250,4 +250,376 @@
   <data name="ProtocolsLabel" xml:space="preserve">
     <value>Протоколи</value>
   </data>
+  <data name="LibraryTab" xml:space="preserve">
+    <value>Бібліотека</value>
+  </data>
+  <data name="LibraryIntro" xml:space="preserve">
+    <value>Протоколи диспетчеризації: сценарні запитання й інструкції, які підтягують тип і пріоритет виклику.</value>
+  </data>
+  <data name="LibraryHeader" xml:space="preserve">
+    <value>Бібліотека протоколів</value>
+  </data>
+  <data name="KpiTotal" xml:space="preserve">
+    <value>Протоколи</value>
+  </data>
+  <data name="KpiDisabled" xml:space="preserve">
+    <value>Вимкнені</value>
+  </data>
+  <data name="KpiUsedOnCalls" xml:space="preserve">
+    <value>Використано у викликах (30 днів)</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Пошук протоколів</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Назва або код</value>
+  </data>
+  <data name="StatusAll" xml:space="preserve">
+    <value>Усі статуси</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Фільтрувати</value>
+  </data>
+  <data name="ClearFilterButton" xml:space="preserve">
+    <value>Очистити</value>
+  </data>
+  <data name="NoProtocolsYet" xml:space="preserve">
+    <value>Протоколів ще немає.</value>
+  </data>
+  <data name="NoProtocolsMatch" xml:space="preserve">
+    <value>Жоден протокол не відповідає фільтру.</value>
+  </data>
+  <data name="QuestionsCount" xml:space="preserve">
+    <value>Запитань: {0}</value>
+  </data>
+  <data name="NoTriggers" xml:space="preserve">
+    <value>Немає тригерів (лише ручний вибір)</value>
+  </data>
+  <data name="MoreTriggers" xml:space="preserve">
+    <value>і ще {0}</value>
+  </data>
+  <data name="UsedOnCallsColumn" xml:space="preserve">
+    <value>Виклики (30 днів)</value>
+  </data>
+  <data name="LastUpdatedColumn" xml:space="preserve">
+    <value>Останнє оновлення</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Редагувати</value>
+  </data>
+  <data name="EnableButton" xml:space="preserve">
+    <value>Увімкнути</value>
+  </data>
+  <data name="DisableButton" xml:space="preserve">
+    <value>Вимкнути</value>
+  </data>
+  <data name="DeleteProtocolConfirm" xml:space="preserve">
+    <value>Протокол зникне з бібліотеки та нових викликів; виклики, де його використали, і далі його показуватимуть. Видалити протокол</value>
+  </data>
+  <data name="DeletedLabel" xml:space="preserve">
+    <value>Видалено</value>
+  </data>
+  <data name="DeletedProtocolNotice" xml:space="preserve">
+    <value>Цей протокол видалено. Його збережено, бо на нього посилаються виклики; він не пропонується й не додається.</value>
+  </data>
+  <data name="DisabledProtocolNotice" xml:space="preserve">
+    <value>Цей протокол вимкнено: він не пропонується у викликах і не додається до них. Увімкніть його, щоб знову користуватися.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Подробиці</value>
+  </data>
+  <data name="TriggerMatchesColumn" xml:space="preserve">
+    <value>Збігається з</value>
+  </data>
+  <data name="NoTriggersHelp" xml:space="preserve">
+    <value>Немає тригерів: протокол ніколи не пропонується, але його можна додати до виклику вручну.</value>
+  </data>
+  <data name="NoQuestionsHelp" xml:space="preserve">
+    <value>Немає запитань: щойно тригер збігся, протокол застосовується одразу.</value>
+  </data>
+  <data name="MinimumWeightHelp" xml:space="preserve">
+    <value>Коли тригер збігся, протокол застосовується, щойно ваги відповідей у сумі дають щонайменше {0}.</value>
+  </data>
+  <data name="DownloadButton" xml:space="preserve">
+    <value>Завантажити</value>
+  </data>
+  <data name="NoAttachments" xml:space="preserve">
+    <value>Немає вкладень.</value>
+  </data>
+  <data name="NoProtocolText" xml:space="preserve">
+    <value>Немає тексту протоколу.</value>
+  </data>
+  <data name="ProtocolSavedMessage" xml:space="preserve">
+    <value>Протокол збережено.</value>
+  </data>
+  <data name="ProtocolDisabledMessage" xml:space="preserve">
+    <value>Протокол вимкнено.</value>
+  </data>
+  <data name="ProtocolEnabledMessage" xml:space="preserve">
+    <value>Протокол увімкнено.</value>
+  </data>
+  <data name="EditProtocolHeader" xml:space="preserve">
+    <value>Редагувати протокол</value>
+  </data>
+  <data name="EditorIntroNew" xml:space="preserve">
+    <value>Назвіть протокол, напишіть його зміст, потім додайте тригери, що його пропонують, і запитання, які вирішують, чи він застосовується.</value>
+  </data>
+  <data name="BasicsHeader" xml:space="preserve">
+    <value>Основне</value>
+  </data>
+  <data name="CodeHelp" xml:space="preserve">
+    <value>До {0} літер, цифр, пробілів і . _ / - (наприклад, 09-E-01 або SOG-204).</value>
+  </data>
+  <data name="MinimumWeightEditorHelp" xml:space="preserve">
+    <value>Сумарна вага відповідей, потрібна, щоб запропонований протокол застосовувався. При 0 він застосовується за будь-яких відповідей.</value>
+  </data>
+  <data name="DisabledCheckbox" xml:space="preserve">
+    <value>Вимкнено</value>
+  </data>
+  <data name="DisabledCheckboxHelp" xml:space="preserve">
+    <value>Вимкнений протокол лишається в бібліотеці, але не пропонується у викликах і не додається до них.</value>
+  </data>
+  <data name="ContentHeader" xml:space="preserve">
+    <value>Зміст</value>
+  </data>
+  <data name="DescriptionHelp" xml:space="preserve">
+    <value>Короткий опис, до {0} символів тексту.</value>
+  </data>
+  <data name="TriggerTimeZoneHelp" xml:space="preserve">
+    <value>Час початку й завершення вказано в часовому поясі підрозділу ({0}).</value>
+  </data>
+  <data name="TriggerLabel" xml:space="preserve">
+    <value>Тригер</value>
+  </data>
+  <data name="RemoveTriggerButton" xml:space="preserve">
+    <value>Видалити тригер</value>
+  </data>
+  <data name="NoTypeOption" xml:space="preserve">
+    <value>Без типу</value>
+  </data>
+  <data name="LegacyTypeHelp" xml:space="preserve">
+    <value>Цей тригер вказує тип виклику «{0}», якого більше немає. Виберіть тип виклику, щоб він і далі збігався.</value>
+  </data>
+  <data name="RemovedNamed" xml:space="preserve">
+    <value>{0} (вилучено)</value>
+  </data>
+  <data name="RemovedPriority" xml:space="preserve">
+    <value>Вилучений пріоритет</value>
+  </data>
+  <data name="RemoveQuestionButton" xml:space="preserve">
+    <value>Видалити запитання</value>
+  </data>
+  <data name="AddAnswerButton" xml:space="preserve">
+    <value>Додати відповідь</value>
+  </data>
+  <data name="RemoveAnswerButton" xml:space="preserve">
+    <value>Видалити відповідь</value>
+  </data>
+  <data name="RemoveOnSaveColumn" xml:space="preserve">
+    <value>Видалити під час збереження</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="AddFilesLabel" xml:space="preserve">
+    <value>Додати файли</value>
+  </data>
+  <data name="AttachmentsLimitsHelp" xml:space="preserve">
+    <value>До {0} файлів за одне збереження, по {1} МБ кожен і {2} МБ разом: зображення, PDF, документи Office, текст і відео.</value>
+  </data>
+  <data name="AttachmentsReselectHelp" xml:space="preserve">
+    <value>Якщо зберегти не вдалося, виберіть файли ще раз: браузер їх не зберігає.</value>
+  </data>
+  <data name="SaveProtocolButton" xml:space="preserve">
+    <value>Зберегти протокол</value>
+  </data>
+  <data name="TriggerSummaryPriority" xml:space="preserve">
+    <value>Пріоритет: {0}</value>
+  </data>
+  <data name="TriggerSummaryType" xml:space="preserve">
+    <value>Тип: {0}</value>
+  </data>
+  <data name="TriggerSummaryPriorityAndType" xml:space="preserve">
+    <value>{0} · пріоритет {1}</value>
+  </data>
+  <data name="ReasonMatched" xml:space="preserve">
+    <value>Збіг: {0}</value>
+  </data>
+  <data name="ErrorProtocolMissing" xml:space="preserve">
+    <value>Не вдалося прочитати протокол.</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>Назва протоколу обов'язкова.</value>
+  </data>
+  <data name="ErrorNameTooLong" xml:space="preserve">
+    <value>Назва може мати не більше 100 символів.</value>
+  </data>
+  <data name="ErrorCodeRequired" xml:space="preserve">
+    <value>Код протоколу обов'язковий.</value>
+  </data>
+  <data name="ErrorCodeInvalid" xml:space="preserve">
+    <value>Код може містити до 16 літер, цифр, пробілів і символів . _ / -.</value>
+  </data>
+  <data name="ErrorDescriptionTooLong" xml:space="preserve">
+    <value>Опис може містити не більше 500 символів тексту.</value>
+  </data>
+  <data name="ErrorMinimumWeightRange" xml:space="preserve">
+    <value>Мінімальна вага має бути від 0 до 1000.</value>
+  </data>
+  <data name="ErrorTriggerType" xml:space="preserve">
+    <value>Тригер має невідомий тип.</value>
+  </data>
+  <data name="ErrorTriggerWindow" xml:space="preserve">
+    <value>Тригер закінчується раніше, ніж починається.</value>
+  </data>
+  <data name="ErrorTriggerPriority" xml:space="preserve">
+    <value>Тригеру пріоритету потрібен один із пріоритетів викликів підрозділу.</value>
+  </data>
+  <data name="ErrorTriggerCallType" xml:space="preserve">
+    <value>Тригер типу вказує тип виклику, що не належить підрозділу.</value>
+  </data>
+  <data name="ErrorTriggerDate" xml:space="preserve">
+    <value>Не вдалося прочитати час початку або завершення тригера.</value>
+  </data>
+  <data name="ErrorQuestionText" xml:space="preserve">
+    <value>Кожне запитання має мати текст.</value>
+  </data>
+  <data name="ErrorQuestionAnswers" xml:space="preserve">
+    <value>Кожне запитання має мати принаймні одну відповідь.</value>
+  </data>
+  <data name="ErrorAnswerText" xml:space="preserve">
+    <value>Кожна відповідь має мати текст.</value>
+  </data>
+  <data name="ErrorTooManyFiles" xml:space="preserve">
+    <value>Додавайте не більше {0} файлів за раз.</value>
+  </data>
+  <data name="ErrorTooManyAttachments" xml:space="preserve">
+    <value>Протокол може мати не більше {0} вкладень.</value>
+  </data>
+  <data name="ErrorUploadTooLarge" xml:space="preserve">
+    <value>Файли разом мають бути меншими за {0} МБ.</value>
+  </data>
+  <data name="ErrorFileType" xml:space="preserve">
+    <value>Файли типу ({0}) не можна додавати.</value>
+  </data>
+  <data name="ErrorFileTooLarge" xml:space="preserve">
+    <value>{0} завеликий: кожен файл має бути меншим за {1} МБ.</value>
+  </data>
+  <data name="ErrorForeignRows" xml:space="preserve">
+    <value>Зміна вказує тригери, запитання чи відповіді, що не належать цьому протоколу.</value>
+  </data>
+  <data name="TriggersRenamedType" xml:space="preserve">
+    <value>Тригери протоколів, що використовують цей тип виклику ({0}), і далі збігаються та показують нову назву: {1}.</value>
+  </data>
+  <data name="TriggersDeletedType" xml:space="preserve">
+    <value>Тригери протоколів, що використовували видалений тип виклику ({0}), не збігатимуться, доки їх не змінять: {1}.</value>
+  </data>
+  <data name="TriggersRemovedPriority" xml:space="preserve">
+    <value>Тригери протоколів, що використовували вилучений пріоритет ({0}), не збігатимуться, доки їх не змінять: {1}.</value>
+  </data>
+  <data name="NoProtocolsOnCall" xml:space="preserve">
+    <value>У цьому виклику немає протоколів.</value>
+  </data>
+  <data name="SourceTrigger" xml:space="preserve">
+    <value>Запропоновано тригером</value>
+  </data>
+  <data name="SourceManual" xml:space="preserve">
+    <value>Додано вручну</value>
+  </data>
+  <data name="SourceUnknown" xml:space="preserve">
+    <value>Додано ще до збереження відповідей</value>
+  </data>
+  <data name="RemovedFromCallLabel" xml:space="preserve">
+    <value>Знято</value>
+  </data>
+  <data name="RemovedByOn" xml:space="preserve">
+    <value>Знято користувачем {0} {1}.</value>
+  </data>
+  <data name="RemovalReasonLabel" xml:space="preserve">
+    <value>Причина</value>
+  </data>
+  <data name="ScoreLabel" xml:space="preserve">
+    <value>Бал</value>
+  </data>
+  <data name="ScoreOfMinimum" xml:space="preserve">
+    <value>{0} з мінімуму {1}</value>
+  </data>
+  <data name="PanelScore" xml:space="preserve">
+    <value>Бал {0} з мінімуму {1}</value>
+  </data>
+  <data name="QuestionsPassed" xml:space="preserve">
+    <value>Застосовується</value>
+  </data>
+  <data name="QuestionsIncomplete" xml:space="preserve">
+    <value>Не на всі запитання є відповідь</value>
+  </data>
+  <data name="QuestionsBelowMinimum" xml:space="preserve">
+    <value>Нижче мінімуму</value>
+  </data>
+  <data name="NotAnswered" xml:space="preserve">
+    <value>Без відповіді</value>
+  </data>
+  <data name="NoAnswersRecorded" xml:space="preserve">
+    <value>Для цього протоколу не збережено відповідей.</value>
+  </data>
+  <data name="AttachedByOn" xml:space="preserve">
+    <value>Додано користувачем {0} {1}.</value>
+  </data>
+  <data name="TextAsDispatched" xml:space="preserve">
+    <value>Текст на момент диспетчеризації</value>
+  </data>
+  <data name="ChangedSinceDispatch" xml:space="preserve">
+    <value>Змінено після диспетчеризації</value>
+  </data>
+  <data name="NoSnapshotRecorded" xml:space="preserve">
+    <value>Додано ще до збереження тексту на момент диспетчеризації.</value>
+  </data>
+  <data name="CurrentTextLink" xml:space="preserve">
+    <value>Поточний текст</value>
+  </data>
+  <data name="RemoveFromCallButton" xml:space="preserve">
+    <value>Зняти з виклику</value>
+  </data>
+  <data name="RemovalReasonPlaceholder" xml:space="preserve">
+    <value>Чому він не застосовується</value>
+  </data>
+  <data name="CallProtocolRemovedMessage" xml:space="preserve">
+    <value>Протокол знято з виклику. Він лишається в записі разом із причиною.</value>
+  </data>
+  <data name="RemovalReasonRequired" xml:space="preserve">
+    <value>Вкажіть причину, щоб зняти протокол із виклику.</value>
+  </data>
+  <data name="PanelIntro" xml:space="preserve">
+    <value>Протоколи, які пропонують тип і пріоритет виклику, разом із тригером, що збігся. Дайте відповіді на запитання кожного протоколу; також можна додати протокол вручну.</value>
+  </data>
+  <data name="PanelNoSuggestions" xml:space="preserve">
+    <value>Жоден протокол не відповідає типу й пріоритету цього виклику.</value>
+  </data>
+  <data name="PanelAddByHand" xml:space="preserve">
+    <value>Додати протокол вручну</value>
+  </data>
+  <data name="PanelAddButton" xml:space="preserve">
+    <value>Додати</value>
+  </data>
+  <data name="PanelAnswerToContinue" xml:space="preserve">
+    <value>Дайте відповідь на всі запитання, щоб побачити, чи застосовується цей протокол.</value>
+  </data>
+  <data name="PanelApplies" xml:space="preserve">
+    <value>Застосовується</value>
+  </data>
+  <data name="PanelDoesNotApply" xml:space="preserve">
+    <value>Не застосовується</value>
+  </data>
+  <data name="PanelQuestionOf" xml:space="preserve">
+    <value>Запитання {0} з {1}</value>
+  </data>
+  <data name="PanelBack" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="PanelNext" xml:space="preserve">
+    <value>Далі</value>
+  </data>
+  <data name="PanelChoose" xml:space="preserve">
+    <value>Виберіть протокол…</value>
+  </data>
 </root>

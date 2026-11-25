@@ -3243,6 +3243,12 @@
   <data xml:space="preserve" name="Permission.CreateTraining">
     <value>Crear capacitación</value>
   </data>
+  <data xml:space="preserve" name="Permission.AssignTraining">
+    <value>Asignar capacitación</value>
+  </data>
+  <data xml:space="preserve" name="Permission.DeleteTraining">
+    <value>Eliminar capacitación</value>
+  </data>
   <data xml:space="preserve" name="Permission.CreateWorkflow">
     <value>Crear flujo de trabajo</value>
   </data>
@@ -3487,7 +3493,13 @@
     <value>Permite crear, editar y eliminar turnos y turnos de trabajo, y gestionar las inscripciones de todos los grupos. Los administradores de grupo siempre gestionan las inscripciones de sus propios grupos. Los miembros que se inscriben (en la web, en las aplicaciones o a través del chatbot) deben cumplir las reglas del turno: no se admiten días pasados, los turnos asignados requieren una asignación y los turnos de grupo requieren el grupo del miembro. Todos pueden seguir viendo los turnos. Sin una regla guardada, solo los administradores del departamento pueden cambiar los turnos.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateTraining">
-    <value>Permite crear, editar y eliminar capacitaciones y restablecer el progreso de capacitación de los miembros. Todos pueden seguir viendo y completando capacitaciones. Sin una regla guardada, solo los administradores del departamento pueden hacerlo.</value>
+    <value>Permite crear capacitaciones y redactar su contenido y su cuestionario, incluida la clave de respuestas. Asignar e informar (Asignar capacitación) y archivar o eliminar (Eliminar capacitación) son reglas aparte que siguen a esta hasta que se guarden. Todos pueden seguir viendo y completando las capacitaciones que tienen asignadas o abiertas. Sin una regla guardada solo pueden hacerlo los administradores del departamento.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AssignTraining">
+    <value>Permite asignar capacitaciones a los miembros, fijar fechas de vencimiento, prórrogas y exenciones, restablecer a los miembros y leer el informe de la capacitación y el historial de intentos. Los administradores de grupo solo actúan sobre los miembros de su propio grupo. Hasta que se guarde, sigue a Crear capacitación.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.DeleteTraining">
+    <value>Permite archivar, restaurar y eliminar capacitaciones. Una capacitación que alguien completó se archiva en lugar de eliminarse, para que sus finalizaciones queden en el registro. Hasta que se guarde, sigue a Crear capacitación.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateWorkflow">
     <value>Permite crear, editar y eliminar flujos de trabajo, previsualizar sus condiciones, leer la configuración de los pasos en las aplicaciones y la API, y ver la salida generada de las ejecuciones de flujos de trabajo. Sin una regla guardada, solo los administradores del departamento pueden cambiar los flujos de trabajo, pero cualquier miembro puede abrir la página Flujos de trabajo y leer las definiciones; guardar «Administradores del departamento» también oculta los flujos de trabajo a todos los demás. Los pasos que envían una exportación de Registros también requieren «Exportar registros» y «Administrar informes de registros». Los planes gratuitos tienen un límite en la cantidad de flujos de trabajo.</value>
@@ -8267,5 +8279,23 @@
   </data>
   <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
     <value>Se usan cuando su formato de correo es "Labeled fields". Introduzca la etiqueta que su CAD escribe delante de cada valor. Separe las alternativas con |.</value>
+  </data>
+  <data name="Feature.protocol-edit" xml:space="preserve">
+    <value>Editar protocolos</value>
+  </data>
+  <data name="FeaturePurpose.protocol-edit" xml:space="preserve">
+    <value>Cambiar en el sitio el contenido, los disparadores y las preguntas de un protocolo; las llamadas conservan el texto con que se despacharon.</value>
+  </data>
+  <data name="Feature.protocol-disable" xml:space="preserve">
+    <value>Desactivar protocolos</value>
+  </data>
+  <data name="FeaturePurpose.protocol-disable" xml:space="preserve">
+    <value>Dejar de sugerir y adjuntar un protocolo sin eliminarlo.</value>
+  </data>
+  <data name="Feature.call-protocol-removal" xml:space="preserve">
+    <value>Quitar un protocolo de una llamada</value>
+  </data>
+  <data name="FeaturePurpose.call-protocol-removal" xml:space="preserve">
+    <value>Quitar de una llamada un protocolo mal adjuntado indicando el motivo; el registro lo conserva marcado como quitado.</value>
   </data>
 </root>

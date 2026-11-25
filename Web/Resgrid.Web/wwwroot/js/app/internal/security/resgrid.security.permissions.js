@@ -909,6 +909,60 @@ var resgrid;
                 initPermRoles("#commandAppLoginRoles", 30);
                 ////////////////////////////////////////////////////////
 
+                // Assign Training (assign and report)
+                ////////////////////////////////////////////////////////
+                $('#AssignTraining').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=126&perm=' + val,
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
+                    }).done(function (results) {
+                    });
+                    if ($("#AssignTraining").val() === "2") {
+                        $('#trainingAssignNoRolesSpan').hide();
+                        $('#trainingAssignRolesDiv').show();
+                    } else {
+                        $('#trainingAssignNoRolesSpan').show();
+                        $('#trainingAssignRolesDiv').hide();
+                    }
+                });
+                if ($("#AssignTraining").val() === "2") {
+                    $('#trainingAssignNoRolesSpan').hide();
+                    $('#trainingAssignRolesDiv').show();
+                } else {
+                    $('#trainingAssignNoRolesSpan').show();
+                    $('#trainingAssignRolesDiv').hide();
+                }
+                initPermRoles("#trainingAssignRoles", 126);
+                ////////////////////////////////////////////////////////
+                // Delete Training (archive and delete)
+                ////////////////////////////////////////////////////////
+                $('#DeleteTraining').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=127&perm=' + val,
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
+                    }).done(function (results) {
+                    });
+                    if ($("#DeleteTraining").val() === "2") {
+                        $('#trainingDeleteNoRolesSpan').hide();
+                        $('#trainingDeleteRolesDiv').show();
+                    } else {
+                        $('#trainingDeleteNoRolesSpan').show();
+                        $('#trainingDeleteRolesDiv').hide();
+                    }
+                });
+                if ($("#DeleteTraining").val() === "2") {
+                    $('#trainingDeleteNoRolesSpan').hide();
+                    $('#trainingDeleteRolesDiv').show();
+                } else {
+                    $('#trainingDeleteNoRolesSpan').show();
+                    $('#trainingDeleteRolesDiv').hide();
+                }
+                initPermRoles("#trainingDeleteRoles", 127);
+                ////////////////////////////////////////////////////////
                 // View Command Boards
                 ////////////////////////////////////////////////////////
                 $('#ViewCommandBoards').change(function () {

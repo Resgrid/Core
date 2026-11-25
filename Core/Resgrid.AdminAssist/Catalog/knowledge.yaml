@@ -425,6 +425,63 @@
       "DocsPath": "/web-app/protocols/"
     },
     {
+      "Id": "protocol-edit",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-edit",
+      "PurposeKey": "FeaturePurpose.protocol-edit",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-disable",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-disable",
+      "PurposeKey": "FeaturePurpose.protocol-disable",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "call-protocol-removal",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.call-protocol-removal",
+      "PurposeKey": "FeaturePurpose.call-protocol-removal",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Dispatch",
+        "Action": "Dashboard"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
       "Id": "forms",
       "AreaId": "knowledge",
       "LabelKey": "Feature.forms",
@@ -726,6 +783,39 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "protocol-edit",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-edit",
+      "Body": "Edit Protocols Change a protocol's content, triggers and questions in place; calls keep the text they were dispatched with. Triggers, questions and answers keep their ids when edited, and each call shows the text as dispatched, marked when the protocol has changed since.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-edit",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "protocol-disable",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-disable",
+      "Body": "Disable Protocols Stop suggesting and attaching a protocol without deleting it. A disabled protocol stays in the library, leaves the apps' lists and offline reference data, and is refused when a call form or app tries to attach it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-disable",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "call-protocol-removal",
+      "Locale": "en",
+      "TitleKey": "Feature.call-protocol-removal",
+      "Body": "Remove a Protocol from a Call Take a mis-attached protocol off a call with a reason; the record keeps it, marked removed. On View Call, open the Protocols tab and use Remove from call; the removal is written to the department's audit log.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "call-protocol-removal",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
     },
     {
       "Id": "forms",

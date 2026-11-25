@@ -16,5 +16,11 @@ namespace Resgrid.Model.Repositories
 		/// <param name="protocolId">The protocol identifier.</param>
 		/// <returns>Task&lt;IEnumerable&lt;DispatchProtocolAttachment&gt;&gt;.</returns>
 		Task<IEnumerable<DispatchProtocolAttachment>> GetDispatchProtocolAttachmentByProtocolIdAsync(int protocolId);
+
+		/// <summary>A protocol's attachments without their bytes: id, name, type and <see cref="DispatchProtocolAttachment.Size"/>.</summary>
+		Task<IEnumerable<DispatchProtocolAttachment>> GetAttachmentInfoByProtocolIdAsync(int protocolId);
+
+		/// <summary>Every attachment of the department's protocols without their bytes, in one query.</summary>
+		Task<IEnumerable<DispatchProtocolAttachment>> GetAttachmentInfoByDepartmentIdAsync(int departmentId);
 	}
 }

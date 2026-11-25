@@ -3243,6 +3243,12 @@
   <data xml:space="preserve" name="Permission.CreateTraining">
     <value>Skapa utbildning</value>
   </data>
+  <data xml:space="preserve" name="Permission.AssignTraining">
+    <value>Tilldela utbildning</value>
+  </data>
+  <data xml:space="preserve" name="Permission.DeleteTraining">
+    <value>Ta bort utbildning</value>
+  </data>
   <data xml:space="preserve" name="Permission.CreateWorkflow">
     <value>Skapa arbetsflöde</value>
   </data>
@@ -3487,7 +3493,13 @@
     <value>Tillåter att skift och arbetsskift skapas, redigeras och tas bort samt att anmälningar hanteras för alla grupper. Gruppadministratörer hanterar alltid anmälningar för sina egna grupper. Medlemmar som anmäler sig – på webben, i apparna eller via chattboten – måste följa skiftets regler (inga passerade dagar, tilldelade skift kräver en tilldelning, gruppskift kräver medlemmens grupp). Alla kan fortfarande visa skift. Utan sparad regel får endast avdelningsadministratörer ändra skift.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateTraining">
-    <value>Tillåter att utbildningar skapas, redigeras och tas bort samt att medlemmars utbildningsframsteg återställs. Alla kan fortfarande visa och genomföra utbildningar. Utan sparad regel får endast avdelningsadministratörer göra detta.</value>
+    <value>Tillåter att skapa utbildningar och skriva deras innehåll och quiz, inklusive facit. Tilldelning och rapporter (Tilldela utbildning) samt arkivering eller borttagning (Ta bort utbildning) är egna regler som följer den här tills de sparas. Alla kan fortfarande visa och slutföra de utbildningar som tilldelats dem eller är öppna för dem. Utan sparad regel får bara avdelningsadministratörer göra detta.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AssignTraining">
+    <value>Tillåter att tilldela medlemmar utbildningar, ange förfallodatum, förlängningar och undantag, återställa medlemmar och läsa utbildningsrapporten och försökshistoriken. Gruppadministratörer agerar bara för medlemmar i sin egen grupp. Tills den sparas följer den Skapa utbildning.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.DeleteTraining">
+    <value>Tillåter att arkivera, återställa och ta bort utbildningar. En utbildning som någon har slutfört arkiveras i stället för att tas bort, så att dess slutföranden finns kvar. Tills den sparas följer den Skapa utbildning.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateWorkflow">
     <value>Tillåter att arbetsflöden skapas, redigeras och tas bort, att deras villkor förhandsgranskas, att stegkonfigurationen läses i apparna och API:t och att den renderade utdatan från arbetsflödeskörningar visas. Utan sparad regel kan endast avdelningsadministratörer ändra arbetsflöden, men alla medlemmar kan öppna sidan Arbetsflöden och läsa definitioner; om du sparar Avdelningsadministratörer döljs arbetsflödena även för alla andra. Steg som skickar en export från Poster kräver också Exportera poster och Hantera rapportsammanställningar. Gratisplaner är begränsade i hur många arbetsflöden de kan ha.</value>
@@ -8267,5 +8279,23 @@
   </data>
   <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
     <value>Används när ert e-postformat är "Labeled fields". Ange etiketten som ert CAD skriver framför varje värde. Skilj alternativ åt med |.</value>
+  </data>
+  <data name="Feature.protocol-edit" xml:space="preserve">
+    <value>Redigera protokoll</value>
+  </data>
+  <data name="FeaturePurpose.protocol-edit" xml:space="preserve">
+    <value>Ändra ett protokolls innehåll, utlösare och frågor på plats; larm behåller texten de larmades med.</value>
+  </data>
+  <data name="Feature.protocol-disable" xml:space="preserve">
+    <value>Inaktivera protokoll</value>
+  </data>
+  <data name="FeaturePurpose.protocol-disable" xml:space="preserve">
+    <value>Sluta föreslå och bifoga ett protokoll utan att ta bort det.</value>
+  </data>
+  <data name="Feature.call-protocol-removal" xml:space="preserve">
+    <value>Ta bort ett protokoll från ett larm</value>
+  </data>
+  <data name="FeaturePurpose.call-protocol-removal" xml:space="preserve">
+    <value>Ta bort ett felaktigt bifogat protokoll från ett larm med en orsak; registret behåller det, markerat som borttaget.</value>
   </data>
 </root>

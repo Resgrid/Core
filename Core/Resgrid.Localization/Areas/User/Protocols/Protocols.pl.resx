@@ -250,4 +250,376 @@
   <data name="ProtocolsLabel" xml:space="preserve">
     <value>Protokoły</value>
   </data>
+  <data name="LibraryTab" xml:space="preserve">
+    <value>Biblioteka</value>
+  </data>
+  <data name="LibraryIntro" xml:space="preserve">
+    <value>Protokoły dyspozytorskie: pytania i instrukcje według scenariusza, które uruchamia typ i priorytet zgłoszenia.</value>
+  </data>
+  <data name="LibraryHeader" xml:space="preserve">
+    <value>Biblioteka protokołów</value>
+  </data>
+  <data name="KpiTotal" xml:space="preserve">
+    <value>Protokoły</value>
+  </data>
+  <data name="KpiDisabled" xml:space="preserve">
+    <value>Wyłączone</value>
+  </data>
+  <data name="KpiUsedOnCalls" xml:space="preserve">
+    <value>Użyte w zgłoszeniach (30 dni)</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Szukaj protokołów</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Nazwa lub kod</value>
+  </data>
+  <data name="StatusAll" xml:space="preserve">
+    <value>Wszystkie statusy</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Filtruj</value>
+  </data>
+  <data name="ClearFilterButton" xml:space="preserve">
+    <value>Wyczyść</value>
+  </data>
+  <data name="NoProtocolsYet" xml:space="preserve">
+    <value>Nie ma jeszcze protokołów.</value>
+  </data>
+  <data name="NoProtocolsMatch" xml:space="preserve">
+    <value>Żaden protokół nie pasuje do filtra.</value>
+  </data>
+  <data name="QuestionsCount" xml:space="preserve">
+    <value>Pytania: {0}</value>
+  </data>
+  <data name="NoTriggers" xml:space="preserve">
+    <value>Brak wyzwalaczy (tylko wybór ręczny)</value>
+  </data>
+  <data name="MoreTriggers" xml:space="preserve">
+    <value>i jeszcze {0}</value>
+  </data>
+  <data name="UsedOnCallsColumn" xml:space="preserve">
+    <value>Zgłoszenia (30 dni)</value>
+  </data>
+  <data name="LastUpdatedColumn" xml:space="preserve">
+    <value>Ostatnia zmiana</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Edytuj</value>
+  </data>
+  <data name="EnableButton" xml:space="preserve">
+    <value>Włącz</value>
+  </data>
+  <data name="DisableButton" xml:space="preserve">
+    <value>Wyłącz</value>
+  </data>
+  <data name="DeleteProtocolConfirm" xml:space="preserve">
+    <value>Protokół zniknie z biblioteki i nowych zgłoszeń; zgłoszenia, w których go użyto, nadal będą go pokazywać. Usunąć protokół</value>
+  </data>
+  <data name="DeletedLabel" xml:space="preserve">
+    <value>Usunięty</value>
+  </data>
+  <data name="DeletedProtocolNotice" xml:space="preserve">
+    <value>Ten protokół został usunięty. Jest przechowywany, bo odwołują się do niego zgłoszenia; nie jest proponowany ani dołączany.</value>
+  </data>
+  <data name="DisabledProtocolNotice" xml:space="preserve">
+    <value>Ten protokół jest wyłączony: nie jest proponowany w zgłoszeniach ani do nich dołączany. Włącz go, aby znowu z niego korzystać.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Szczegóły</value>
+  </data>
+  <data name="TriggerMatchesColumn" xml:space="preserve">
+    <value>Pasuje do</value>
+  </data>
+  <data name="NoTriggersHelp" xml:space="preserve">
+    <value>Brak wyzwalaczy: protokół nigdy nie jest proponowany, ale można go ręcznie dodać do zgłoszenia.</value>
+  </data>
+  <data name="NoQuestionsHelp" xml:space="preserve">
+    <value>Brak pytań: gdy wyzwalacz pasuje, protokół obowiązuje od razu.</value>
+  </data>
+  <data name="MinimumWeightHelp" xml:space="preserve">
+    <value>Gdy wyzwalacz pasuje, protokół obowiązuje, jeśli wagi odpowiedzi sumują się co najmniej do {0}.</value>
+  </data>
+  <data name="DownloadButton" xml:space="preserve">
+    <value>Pobierz</value>
+  </data>
+  <data name="NoAttachments" xml:space="preserve">
+    <value>Brak załączników.</value>
+  </data>
+  <data name="NoProtocolText" xml:space="preserve">
+    <value>Brak tekstu protokołu.</value>
+  </data>
+  <data name="ProtocolSavedMessage" xml:space="preserve">
+    <value>Protokół został zapisany.</value>
+  </data>
+  <data name="ProtocolDisabledMessage" xml:space="preserve">
+    <value>Protokół został wyłączony.</value>
+  </data>
+  <data name="ProtocolEnabledMessage" xml:space="preserve">
+    <value>Protokół został włączony.</value>
+  </data>
+  <data name="EditProtocolHeader" xml:space="preserve">
+    <value>Edytuj protokół</value>
+  </data>
+  <data name="EditorIntroNew" xml:space="preserve">
+    <value>Nazwij protokół, napisz jego treść, a potem dodaj wyzwalacze, które go proponują, i pytania, które decydują, czy obowiązuje.</value>
+  </data>
+  <data name="BasicsHeader" xml:space="preserve">
+    <value>Podstawowe dane</value>
+  </data>
+  <data name="CodeHelp" xml:space="preserve">
+    <value>Do {0} liter, cyfr, spacji i znaków . _ / - (na przykład 09-E-01 lub SOG-204).</value>
+  </data>
+  <data name="MinimumWeightEditorHelp" xml:space="preserve">
+    <value>Łączna waga odpowiedzi potrzebna, by proponowany protokół obowiązywał. Przy 0 obowiązuje niezależnie od odpowiedzi.</value>
+  </data>
+  <data name="DisabledCheckbox" xml:space="preserve">
+    <value>Wyłączony</value>
+  </data>
+  <data name="DisabledCheckboxHelp" xml:space="preserve">
+    <value>Wyłączony protokół zostaje w bibliotece, ale nie jest proponowany w zgłoszeniach ani do nich dołączany.</value>
+  </data>
+  <data name="ContentHeader" xml:space="preserve">
+    <value>Treść</value>
+  </data>
+  <data name="DescriptionHelp" xml:space="preserve">
+    <value>Krótkie podsumowanie, do {0} znaków tekstu.</value>
+  </data>
+  <data name="TriggerTimeZoneHelp" xml:space="preserve">
+    <value>Godziny rozpoczęcia i zakończenia są w strefie czasowej jednostki ({0}).</value>
+  </data>
+  <data name="TriggerLabel" xml:space="preserve">
+    <value>Wyzwalacz</value>
+  </data>
+  <data name="RemoveTriggerButton" xml:space="preserve">
+    <value>Usuń wyzwalacz</value>
+  </data>
+  <data name="NoTypeOption" xml:space="preserve">
+    <value>Bez typu</value>
+  </data>
+  <data name="LegacyTypeHelp" xml:space="preserve">
+    <value>Ten wyzwalacz wskazuje typ zgłoszenia "{0}", który już nie istnieje. Wybierz typ zgłoszenia, aby nadal pasował.</value>
+  </data>
+  <data name="RemovedNamed" xml:space="preserve">
+    <value>{0} (usunięty)</value>
+  </data>
+  <data name="RemovedPriority" xml:space="preserve">
+    <value>Usunięty priorytet</value>
+  </data>
+  <data name="RemoveQuestionButton" xml:space="preserve">
+    <value>Usuń pytanie</value>
+  </data>
+  <data name="AddAnswerButton" xml:space="preserve">
+    <value>Dodaj odpowiedź</value>
+  </data>
+  <data name="RemoveAnswerButton" xml:space="preserve">
+    <value>Usuń odpowiedź</value>
+  </data>
+  <data name="RemoveOnSaveColumn" xml:space="preserve">
+    <value>Usuń przy zapisie</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="AddFilesLabel" xml:space="preserve">
+    <value>Dodaj pliki</value>
+  </data>
+  <data name="AttachmentsLimitsHelp" xml:space="preserve">
+    <value>Do {0} plików na zapis, po {1} MB i łącznie {2} MB: obrazy, PDF, dokumenty Office, tekst i wideo.</value>
+  </data>
+  <data name="AttachmentsReselectHelp" xml:space="preserve">
+    <value>Jeśli zapis się nie powiedzie, wybierz pliki ponownie: przeglądarka ich nie zachowuje.</value>
+  </data>
+  <data name="SaveProtocolButton" xml:space="preserve">
+    <value>Zapisz protokół</value>
+  </data>
+  <data name="TriggerSummaryPriority" xml:space="preserve">
+    <value>Priorytet: {0}</value>
+  </data>
+  <data name="TriggerSummaryType" xml:space="preserve">
+    <value>Typ: {0}</value>
+  </data>
+  <data name="TriggerSummaryPriorityAndType" xml:space="preserve">
+    <value>{0} · priorytet {1}</value>
+  </data>
+  <data name="ReasonMatched" xml:space="preserve">
+    <value>Pasuje: {0}</value>
+  </data>
+  <data name="ErrorProtocolMissing" xml:space="preserve">
+    <value>Nie udało się odczytać protokołu.</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>Nazwa protokołu jest wymagana.</value>
+  </data>
+  <data name="ErrorNameTooLong" xml:space="preserve">
+    <value>Nazwa może mieć najwyżej 100 znaków.</value>
+  </data>
+  <data name="ErrorCodeRequired" xml:space="preserve">
+    <value>Kod protokołu jest wymagany.</value>
+  </data>
+  <data name="ErrorCodeInvalid" xml:space="preserve">
+    <value>Kod może mieć do 16 liter, cyfr, spacji i znaków . _ / -.</value>
+  </data>
+  <data name="ErrorDescriptionTooLong" xml:space="preserve">
+    <value>Opis może mieć najwyżej 500 znaków tekstu.</value>
+  </data>
+  <data name="ErrorMinimumWeightRange" xml:space="preserve">
+    <value>Minimalna waga musi wynosić od 0 do 1000.</value>
+  </data>
+  <data name="ErrorTriggerType" xml:space="preserve">
+    <value>Wyzwalacz ma nieznany typ.</value>
+  </data>
+  <data name="ErrorTriggerWindow" xml:space="preserve">
+    <value>Wyzwalacz kończy się, zanim się zaczyna.</value>
+  </data>
+  <data name="ErrorTriggerPriority" xml:space="preserve">
+    <value>Wyzwalacz priorytetu wymaga jednego z priorytetów zgłoszeń jednostki.</value>
+  </data>
+  <data name="ErrorTriggerCallType" xml:space="preserve">
+    <value>Wyzwalacz typu wskazuje typ zgłoszenia, który nie należy do jednostki.</value>
+  </data>
+  <data name="ErrorTriggerDate" xml:space="preserve">
+    <value>Nie udało się odczytać godziny rozpoczęcia lub zakończenia wyzwalacza.</value>
+  </data>
+  <data name="ErrorQuestionText" xml:space="preserve">
+    <value>Każde pytanie musi mieć treść.</value>
+  </data>
+  <data name="ErrorQuestionAnswers" xml:space="preserve">
+    <value>Każde pytanie musi mieć co najmniej jedną odpowiedź.</value>
+  </data>
+  <data name="ErrorAnswerText" xml:space="preserve">
+    <value>Każda odpowiedź musi mieć treść.</value>
+  </data>
+  <data name="ErrorTooManyFiles" xml:space="preserve">
+    <value>Dodaj naraz najwyżej {0} plików.</value>
+  </data>
+  <data name="ErrorTooManyAttachments" xml:space="preserve">
+    <value>Protokół może mieć najwyżej {0} załączników.</value>
+  </data>
+  <data name="ErrorUploadTooLarge" xml:space="preserve">
+    <value>Pliki razem muszą mieć mniej niż {0} MB.</value>
+  </data>
+  <data name="ErrorFileType" xml:space="preserve">
+    <value>Nie można dołączać plików typu ({0}).</value>
+  </data>
+  <data name="ErrorFileTooLarge" xml:space="preserve">
+    <value>{0} jest za duży: każdy plik musi mieć mniej niż {1} MB.</value>
+  </data>
+  <data name="ErrorForeignRows" xml:space="preserve">
+    <value>Zmiana wskazuje wyzwalacze, pytania lub odpowiedzi, które nie należą do tego protokołu.</value>
+  </data>
+  <data name="TriggersRenamedType" xml:space="preserve">
+    <value>Wyzwalacze protokołów używające tego typu zgłoszenia ({0}) nadal pasują i pokazują nową nazwę: {1}.</value>
+  </data>
+  <data name="TriggersDeletedType" xml:space="preserve">
+    <value>Wyzwalacze protokołów używające usuniętego typu zgłoszenia ({0}) nie będą pasować, dopóki nie zostaną zmienione: {1}.</value>
+  </data>
+  <data name="TriggersRemovedPriority" xml:space="preserve">
+    <value>Wyzwalacze protokołów używające usuniętego priorytetu ({0}) nie będą pasować, dopóki nie zostaną zmienione: {1}.</value>
+  </data>
+  <data name="NoProtocolsOnCall" xml:space="preserve">
+    <value>To zgłoszenie nie ma protokołów.</value>
+  </data>
+  <data name="SourceTrigger" xml:space="preserve">
+    <value>Zaproponowany przez wyzwalacz</value>
+  </data>
+  <data name="SourceManual" xml:space="preserve">
+    <value>Dodany ręcznie</value>
+  </data>
+  <data name="SourceUnknown" xml:space="preserve">
+    <value>Dołączony, zanim zaczęto zapisywać odpowiedzi</value>
+  </data>
+  <data name="RemovedFromCallLabel" xml:space="preserve">
+    <value>Usunięty</value>
+  </data>
+  <data name="RemovedByOn" xml:space="preserve">
+    <value>Usunięty przez {0} dnia {1}.</value>
+  </data>
+  <data name="RemovalReasonLabel" xml:space="preserve">
+    <value>Powód</value>
+  </data>
+  <data name="ScoreLabel" xml:space="preserve">
+    <value>Wynik</value>
+  </data>
+  <data name="ScoreOfMinimum" xml:space="preserve">
+    <value>{0} przy minimum {1}</value>
+  </data>
+  <data name="PanelScore" xml:space="preserve">
+    <value>Wynik {0} przy minimum {1}</value>
+  </data>
+  <data name="QuestionsPassed" xml:space="preserve">
+    <value>Obowiązuje</value>
+  </data>
+  <data name="QuestionsIncomplete" xml:space="preserve">
+    <value>Nie na wszystkie pytania odpowiedziano</value>
+  </data>
+  <data name="QuestionsBelowMinimum" xml:space="preserve">
+    <value>Poniżej minimum</value>
+  </data>
+  <data name="NotAnswered" xml:space="preserve">
+    <value>Bez odpowiedzi</value>
+  </data>
+  <data name="NoAnswersRecorded" xml:space="preserve">
+    <value>Dla tego protokołu nie zapisano odpowiedzi.</value>
+  </data>
+  <data name="AttachedByOn" xml:space="preserve">
+    <value>Dołączony przez {0} dnia {1}.</value>
+  </data>
+  <data name="TextAsDispatched" xml:space="preserve">
+    <value>Tekst w chwili zadysponowania</value>
+  </data>
+  <data name="ChangedSinceDispatch" xml:space="preserve">
+    <value>Zmieniony od zadysponowania</value>
+  </data>
+  <data name="NoSnapshotRecorded" xml:space="preserve">
+    <value>Dołączony, zanim zaczęto zapisywać tekst w chwili zadysponowania.</value>
+  </data>
+  <data name="CurrentTextLink" xml:space="preserve">
+    <value>Aktualny tekst</value>
+  </data>
+  <data name="RemoveFromCallButton" xml:space="preserve">
+    <value>Usuń ze zgłoszenia</value>
+  </data>
+  <data name="RemovalReasonPlaceholder" xml:space="preserve">
+    <value>Dlaczego nie ma zastosowania</value>
+  </data>
+  <data name="CallProtocolRemovedMessage" xml:space="preserve">
+    <value>Protokół został usunięty ze zgłoszenia. Pozostaje w zapisie wraz z powodem.</value>
+  </data>
+  <data name="RemovalReasonRequired" xml:space="preserve">
+    <value>Podaj powód, aby usunąć protokół ze zgłoszenia.</value>
+  </data>
+  <data name="PanelIntro" xml:space="preserve">
+    <value>Protokoły proponowane przez typ i priorytet zgłoszenia, z wyzwalaczem, który pasuje. Odpowiedz na pytania każdego protokołu; możesz też dodać protokół ręcznie.</value>
+  </data>
+  <data name="PanelNoSuggestions" xml:space="preserve">
+    <value>Żaden protokół nie pasuje do typu i priorytetu tego zgłoszenia.</value>
+  </data>
+  <data name="PanelAddByHand" xml:space="preserve">
+    <value>Dodaj protokół ręcznie</value>
+  </data>
+  <data name="PanelAddButton" xml:space="preserve">
+    <value>Dodaj</value>
+  </data>
+  <data name="PanelAnswerToContinue" xml:space="preserve">
+    <value>Odpowiedz na wszystkie pytania, aby sprawdzić, czy ten protokół obowiązuje.</value>
+  </data>
+  <data name="PanelApplies" xml:space="preserve">
+    <value>Obowiązuje</value>
+  </data>
+  <data name="PanelDoesNotApply" xml:space="preserve">
+    <value>Nie obowiązuje</value>
+  </data>
+  <data name="PanelQuestionOf" xml:space="preserve">
+    <value>Pytanie {0} z {1}</value>
+  </data>
+  <data name="PanelBack" xml:space="preserve">
+    <value>Wstecz</value>
+  </data>
+  <data name="PanelNext" xml:space="preserve">
+    <value>Dalej</value>
+  </data>
+  <data name="PanelChoose" xml:space="preserve">
+    <value>Wybierz protokół…</value>
+  </data>
 </root>

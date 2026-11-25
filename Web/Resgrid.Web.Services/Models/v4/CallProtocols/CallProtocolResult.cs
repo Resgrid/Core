@@ -86,6 +86,28 @@ namespace Resgrid.Web.Services.Models.v4.CallProtocols
 		public List<ProtocolTriggerQuestionResultData> Questions { get; set; }
 
 		public int State { get; set; }
+
+		/// <summary>On a call (Calls/GetCallExtraData): the call's protocol row id, for CallProtocols/RemoveCallProtocol.</summary>
+		public string CallProtocolId { get; set; }
+
+		/// <summary>On a call: how it came onto the call (0 trigger, 1 picked by hand; null before answers were kept).</summary>
+		public int? Source { get; set; }
+
+		/// <summary>On a call: the score recomputed from the recorded answers.</summary>
+		public int? Score { get; set; }
+
+		/// <summary>On a call: the questions and the answers chosen, in words, as recorded when it was attached.</summary>
+		public List<CallProtocolAnswerResultData> RecordedAnswers { get; set; }
+	}
+
+	public class CallProtocolAnswerResultData
+	{
+		public string Question { get; set; }
+
+		/// <summary>Null when the question was left unanswered.</summary>
+		public string Answer { get; set; }
+
+		public int Weight { get; set; }
 	}
 
 	public class ProtocolTriggerResultData
@@ -102,6 +124,8 @@ namespace Resgrid.Web.Services.Models.v4.CallProtocols
 
 		public string CallType { get; set; }
 
+		public int? CallTypeId { get; set; }
+
 		public string Geofence { get; set; }
 	}
 
@@ -112,6 +136,8 @@ namespace Resgrid.Web.Services.Models.v4.CallProtocols
 		public string FileName { get; set; }
 
 		public string FileType { get; set; }
+
+		public long? Size { get; set; }
 	}
 
 	public class ProtocolTriggerQuestionResultData

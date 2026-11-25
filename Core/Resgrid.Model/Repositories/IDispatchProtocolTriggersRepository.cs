@@ -11,5 +11,8 @@ namespace Resgrid.Model.Repositories
 	public interface IDispatchProtocolTriggersRepository: IRepository<DispatchProtocolTrigger>
 	{
 		Task<IEnumerable<DispatchProtocolTrigger>> GetDispatchProtocolTriggersByProtocolIdAsync(int protocolId);
+
+		/// <summary>Every trigger of the department's protocols in one query (deleted protocols included; the caller filters).</summary>
+		Task<IEnumerable<DispatchProtocolTrigger>> GetTriggersByDepartmentIdAsync(int departmentId);
 	}
 }

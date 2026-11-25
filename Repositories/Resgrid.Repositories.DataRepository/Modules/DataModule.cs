@@ -190,6 +190,13 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<CustomStateRepository>().As<ICustomStateRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CustomStateDetailRepository>().As<ICustomStateDetailRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<TrainingUserRepository>().As<ITrainingUserRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<TrainingQuizAttemptsRepository>().As<ITrainingQuizAttemptsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<TrainingAudiencesRepository>().As<ITrainingAudiencesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<TrainingCompletionHistoriesRepository>().As<ITrainingCompletionHistoriesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<TrainingQuestionFlagsRepository>().As<ITrainingQuestionFlagsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ContentAudienceChangesRepository>().As<IContentAudienceChangesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<MemberLeavePeriodsRepository>().As<IMemberLeavePeriodsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<MemberPinnedItemsRepository>().As<IMemberPinnedItemsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<TrainingAttachmentRepository>().As<ITrainingAttachmentRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CalendarItemTypeRepository>().As<ICalendarItemTypeRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CalendarItemAttendeeRepository>().As<ICalendarItemAttendeeRepository>().InstancePerLifetimeScope();
@@ -236,6 +243,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<DispatchProtocolTriggersRepository>().As<IDispatchProtocolTriggersRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitActiveRolesRepository>().As<IUnitActiveRolesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DispatchProtocolQuestionAnswersRepository>().As<IDispatchProtocolQuestionAnswersRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatchProtocolSnapshotsRepository>().As<IDispatchProtocolSnapshotsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<FormsRepository>().As<IFormsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<FormAutomationsRepository>().As<IFormAutomationsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PlanAddonsRepository>().As<IPlanAddonsRepository>().InstancePerLifetimeScope();

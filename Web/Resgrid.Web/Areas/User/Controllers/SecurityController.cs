@@ -119,6 +119,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CreateTraining = Value(PermissionTypes.CreateTraining);
 			model.CreateTrainingPermissions = Options(PermissionTypes.CreateTraining);
 
+			// Assign-and-report and delete: with no row of their own they show (and apply) the Create Training row.
+			model.AssignTraining = Value(PermissionTypes.AssignTraining);
+			model.AssignTrainingPermissions = Options(PermissionTypes.AssignTraining);
+			model.DeleteTraining = Value(PermissionTypes.DeleteTraining);
+			model.DeleteTrainingPermissions = Options(PermissionTypes.DeleteTraining);
+
 			model.CreateDocument = Value(PermissionTypes.CreateDocument);
 			model.CreateDocumentPermissions = Options(PermissionTypes.CreateDocument);
 
@@ -493,6 +499,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (type == PermissionTypes.ViewCommandBoards)
 				return await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.CommandAppLogin);
+
+			if (type is PermissionTypes.AssignTraining or PermissionTypes.DeleteTraining)
+				return await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.CreateTraining);
 
 			return null;
 		}

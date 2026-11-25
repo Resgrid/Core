@@ -3243,6 +3243,12 @@
   <data xml:space="preserve" name="Permission.CreateTraining">
     <value>Schulung erstellen</value>
   </data>
+  <data xml:space="preserve" name="Permission.AssignTraining">
+    <value>Schulung zuweisen</value>
+  </data>
+  <data xml:space="preserve" name="Permission.DeleteTraining">
+    <value>Schulung löschen</value>
+  </data>
   <data xml:space="preserve" name="Permission.CreateWorkflow">
     <value>Workflow erstellen</value>
   </data>
@@ -3487,7 +3493,13 @@
     <value>Ermöglicht das Erstellen, Bearbeiten und Löschen von Schichten und Arbeitsschichten sowie das Verwalten der Eintragungen für alle Gruppen. Gruppenadministratoren verwalten die Eintragungen ihrer eigenen Gruppen immer. Mitglieder, die sich eintragen – im Web, in den Apps oder über den Chatbot –, müssen die Regeln der Schicht einhalten (keine vergangenen Tage, zugewiesene Schichten erfordern eine Zuweisung, Gruppenschichten erfordern die Gruppe des Mitglieds). Alle können Schichten weiterhin anzeigen. Ohne gespeicherte Regel dürfen nur Abteilungsadministratoren Schichten ändern.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateTraining">
-    <value>Ermöglicht das Erstellen, Bearbeiten und Löschen von Schulungen sowie das Zurücksetzen des Schulungsfortschritts von Mitgliedern. Alle können Schulungen weiterhin anzeigen und absolvieren. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
+    <value>Ermöglicht das Erstellen von Schulungen und das Verfassen ihrer Inhalte und ihres Quiz einschließlich des Lösungsschlüssels. Zuweisen und Berichte (Schulung zuweisen) sowie Archivieren oder Löschen (Schulung löschen) sind eigene Regeln, die bis zum Speichern dieser folgen. Alle können die ihnen zugewiesenen oder für sie offenen Schulungen weiterhin anzeigen und absolvieren. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AssignTraining">
+    <value>Ermöglicht das Zuweisen von Schulungen an Mitglieder, das Festlegen von Fälligkeiten, Verlängerungen und Befreiungen, das Zurücksetzen von Mitgliedern sowie das Lesen des Schulungsberichts und des Versuchsverlaufs. Gruppenadministratoren handeln nur für Mitglieder ihrer eigenen Gruppe. Bis zum Speichern gilt die Regel für Schulung erstellen.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.DeleteTraining">
+    <value>Ermöglicht das Archivieren, Wiederherstellen und Löschen von Schulungen. Eine Schulung, die jemand abgeschlossen hat, wird archiviert statt gelöscht, damit ihre Abschlüsse erhalten bleiben. Bis zum Speichern gilt die Regel für Schulung erstellen.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateWorkflow">
     <value>Ermöglicht das Erstellen, Bearbeiten und Löschen von Workflows, die Vorschau ihrer Bedingungen, das Lesen der Schrittkonfiguration in den Apps und der API sowie das Anzeigen der gerenderten Ausgabe von Workflow-Ausführungen. Ohne gespeicherte Regel können nur Abteilungsadministratoren Workflows ändern, aber jedes Mitglied kann die Seite „Workflows“ öffnen und Definitionen lesen; wird „Abteilungsadministratoren“ gespeichert, werden die Workflows zusätzlich für alle anderen ausgeblendet. Schritte, die einen Berichtsexport senden, erfordern außerdem „Datensätze exportieren“ und „Berichtsauswertungen verwalten“. Kostenlose Abonnements sind in der Anzahl ihrer Workflows begrenzt.</value>
@@ -8267,5 +8279,23 @@
   </data>
   <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
     <value>Wird verwendet, wenn Ihr E-Mail-Format "Labeled fields" ist. Geben Sie die Bezeichnung ein, die Ihr CAD vor jeden Wert schreibt. Trennen Sie Alternativen mit |.</value>
+  </data>
+  <data name="Feature.protocol-edit" xml:space="preserve">
+    <value>Protokolle bearbeiten</value>
+  </data>
+  <data name="FeaturePurpose.protocol-edit" xml:space="preserve">
+    <value>Inhalt, Auslöser und Fragen eines Protokolls direkt ändern; Einsätze behalten den Text, mit dem sie alarmiert wurden.</value>
+  </data>
+  <data name="Feature.protocol-disable" xml:space="preserve">
+    <value>Protokolle deaktivieren</value>
+  </data>
+  <data name="FeaturePurpose.protocol-disable" xml:space="preserve">
+    <value>Ein Protokoll nicht mehr vorschlagen oder anhängen, ohne es zu löschen.</value>
+  </data>
+  <data name="Feature.call-protocol-removal" xml:space="preserve">
+    <value>Protokoll von einem Einsatz entfernen</value>
+  </data>
+  <data name="FeaturePurpose.call-protocol-removal" xml:space="preserve">
+    <value>Ein falsch angehängtes Protokoll mit Begründung vom Einsatz entfernen; der Verlauf behält es, als entfernt markiert.</value>
   </data>
 </root>

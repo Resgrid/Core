@@ -32,6 +32,10 @@
 <div class="row">
     <div class="col-xs-12">
         <div class="wrapper wrapper-content">
+            @if (TempData["ProtocolTriggersAffected"] is string protocolTriggersAffected)
+            {
+                <div class="alert alert-warning" role="status"><i class="fa fa-bolt" aria-hidden="true"></i> @protocolTriggersAffected <a asp-controller="Protocols" asp-action="Index" asp-route-area="User">@commonLocalizer["Protocols"]</a></div>
+            }
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>@localizer["CallTypesHeader"]</h5>

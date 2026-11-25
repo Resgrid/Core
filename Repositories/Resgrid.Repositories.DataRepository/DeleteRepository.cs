@@ -261,6 +261,9 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[Payments] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[PersonnelRoles] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[UnitTypes] WHERE DepartmentId = @DepartmentId
+								-- CallProtocols no longer cascades from DispatchProtocols (M0333): clear any row that still cites this
+								-- department's protocols (its own calls' rows went with the call tree above).
+								DELETE FROM [dbo].[CallProtocols] WHERE DispatchProtocolId IN (SELECT DispatchProtocolId FROM [dbo].[DispatchProtocols] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[DispatchProtocols] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[FormAutomations] WHERE FormId IN (SELECT FormId FROM [dbo].[Forms] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[Forms] WHERE DepartmentId = @DepartmentId

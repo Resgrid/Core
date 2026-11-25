@@ -45,6 +45,13 @@ namespace Resgrid.Model
 
 		public DateTime? Notified { get; set; }
 
+		/// <summary>
+		/// Any member of the department may view this training without being assigned to it (reference and optional
+		/// material). Only assignees are tracked, notified and take the quiz. Off by default: a training is otherwise seen
+		/// by its assignees and by whoever manages it.
+		/// </summary>
+		public bool OpenToAllMembers { get; set; }
+
 		public virtual ICollection<TrainingQuestion> Questions { get; set; }
 
 		public virtual ICollection<TrainingAttachment> Attachments { get; set; }

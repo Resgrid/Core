@@ -14,6 +14,15 @@ namespace Resgrid.Model.Services
 		Task<List<DispatchProtocol>> GetAllProtocolsForDepartmentAsync(int departmentId);
 
 		/// <summary>
+		/// Of the given protocol ids, returns the ones that belong to the department, without duplicates. A protocol id
+		/// that arrives from a client (a call form, an API body) must pass through this before it is attached to a
+		/// call: an id owned by another department would otherwise let that department's protocol be read through the call.
+		/// </summary>
+		/// <param name="departmentId">The department the call belongs to.</param>
+		/// <param name="protocolIds">The protocol ids the client sent.</param>
+		Task<List<int>> GetProtocolIdsOwnedByDepartmentAsync(int departmentId, IEnumerable<int> protocolIds);
+
+		/// <summary>
 		/// Follows a call type rename: protocol triggers store the call type's name, so a trigger on the old name is moved to
 		/// the new one instead of silently never matching again. Returns how many triggers changed.
 		/// </summary>

@@ -1,4 +1,5 @@
-﻿using Resgrid.Model.Services;
+﻿using Resgrid.Model.Helpers;
+using Resgrid.Model.Services;
 using Resgrid.Workers.Framework.Workers.TrainingNotifier;
 using System;
 using System.Linq;
@@ -15,51 +16,47 @@ namespace Resgrid.Workers.Framework.Logic
 			bool success = true;
 			string result = "";
 
-			if (item != null && item.Training != null && item.Training.Users != null && item.Training.Users.Count > 0)
+			try
 			{
-				// Own scope per item: root-scope services would share the process-wide root unit of work.
-				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
-				var trainingService = scope.Resolve<ITrainingService>();
-				var communicationService = scope.Resolve<ICommunicationService>();
-				var userProfileService = scope.Resolve<IUserProfileService>();
-				var departmentSettingsService = scope.Resolve<IDepartmentSettingsService>();
-				var departmentsService = scope.Resolve<IDepartmentsService>();
-
-				var message = String.Empty;
-				var title = String.Empty;
-				var profiles = await userProfileService.GetSelectedUserProfilesAsync(item.Training.Users.Select(x => x.UserId).ToList());
-				var departmentNumber = await departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.Training.DepartmentId);
-				var department = await departmentsService.GetDepartmentByIdAsync(item.Training.DepartmentId, false);
-
-				if (ConfigHelper.CanTransmit(item.Training.DepartmentId))
+				// A training without assignees is still marked, so it stops coming back as unannounced on every run.
+				if (item != null && item.Training != null)
 				{
-					if (!item.Training.Notified.HasValue)
+					// Own scope per item: root-scope services would share the process-wide root unit of work.
+					using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+					var trainingService = scope.Resolve<ITrainingService>();
+					var communicationService = scope.Resolve<ICommunicationService>();
+					var userProfileService = scope.Resolve<IUserProfileService>();
+					var departmentSettingsService = scope.Resolve<IDepartmentSettingsService>();
+					var departmentsService = scope.Resolve<IDepartmentsService>();
+
+					// Who is told and with what text: assignees who have not completed it and are still active members, and never
+					// an old training announced as new (TrainingNoticePlanner).
+					var activeMemberIds = await departmentsService.GetActiveMemberUserIdsAsync(item.Training.DepartmentId);
+					var plan = TrainingNoticePlanner.Plan(item.Training, activeMemberIds, DateTime.UtcNow);
+
+					if (plan.Kind != TrainingNoticeKinds.None && ConfigHelper.CanTransmit(item.Training.DepartmentId))
 					{
-						if (item.Training.ToBeCompletedBy.HasValue)
-							message = string.Format("New Training ({0}) due on {1}", item.Training.Name,
-								item.Training.ToBeCompletedBy.Value.ToShortDateString());
-						else
-							message = string.Format("New Training ({0}) assigned to you", item.Training.Name);
+						var profiles = await userProfileService.GetSelectedUserProfilesAsync(plan.RecipientUserIds);
+						var departmentNumber = await departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.Training.DepartmentId);
+						var department = await departmentsService.GetDepartmentByIdAsync(item.Training.DepartmentId, false);
 
-						title = "New Training Notice";
+						foreach (var userId in plan.RecipientUserIds)
+						{
+							var profile = profiles?.FirstOrDefault(x => string.Equals(x.UserId, userId, StringComparison.OrdinalIgnoreCase));
+
+							await communicationService.SendNotificationAsync(userId, item.Training.DepartmentId, plan.Message, departmentNumber, department, plan.Title, profile);
+						}
 					}
-					else
-					{
-						message = string.Format("Training ({0}) is due tomorrow", item.Training.Name);
-					}
 
-					foreach (var person in item.Training.Users)
-					{
-						var profile = profiles.FirstOrDefault(x => x.UserId == person.UserId);
-
-						if (!item.Training.Notified.HasValue || !person.Complete)
-							await communicationService.SendNotificationAsync(person.UserId, item.Training.DepartmentId, message, departmentNumber, department, title, profile);
-
-						title = "Training Due Notice";
-					}
+					await trainingService.MarkAsNotifiedAsync(item.Training.TrainingId);
 				}
-
-				await trainingService.MarkAsNotifiedAsync(item.Training.TrainingId);
+			}
+			catch (Exception ex)
+			{
+				// One training that fails must not stop the rest of the run.
+				Logging.LogException(ex, $"Training notifier failed for training {item?.Training?.TrainingId} in department {item?.Training?.DepartmentId}");
+				success = false;
+				result = ex.ToString();
 			}
 
 			return new Tuple<bool, string>(success, result);

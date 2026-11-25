@@ -168,6 +168,12 @@
   <data name="AddAllPersonnelLabel" xml:space="preserve">
     <value>&#1044;&#1086;&#1076;&#1072;&#1090;&#1080; &#1074;&#1077;&#1089;&#1100; &#1087;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;</value>
   </data>
+  <data name="OpenToAllMembersLabel" xml:space="preserve">
+    <value>Відкрито для всіх учасників</value>
+  </data>
+  <data name="OpenToAllMembersHelp" xml:space="preserve">
+    <value>Будь-який учасник може переглянути це навчання без призначення. Лише призначені учасники відстежуються та проходять тест.</value>
+  </data>
   <data name="AddGroupsLabel" xml:space="preserve">
     <value>&#1044;&#1086;&#1076;&#1072;&#1090;&#1080; &#1075;&#1088;&#1091;&#1087;&#1080;</value>
   </data>

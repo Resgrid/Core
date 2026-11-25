@@ -276,6 +276,42 @@ namespace Resgrid.Tests.Security.Audit20261005
 		}
 
 		[Test]
+		public async Task Call_extra_data_leaves_out_a_protocol_owned_by_another_department()
+		{
+			ArrangeCallActivity();
+			M<ICallsService>().Setup(x => x.PopulateCallData(It.IsAny<Call>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
+					It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
+				.ReturnsAsync((Call c, bool _, bool __, bool ___, bool ____, bool _____, bool ______, bool _______, bool ________, bool _________, bool __________) =>
+				{
+					c.Dispatches = new List<CallDispatch>();
+					c.Protocols = new List<CallProtocol>
+					{
+						new CallProtocol { CallId = CallId, DispatchProtocolId = 5 },
+						new CallProtocol { CallId = CallId, DispatchProtocolId = 6 }
+					};
+					return c;
+				});
+			M<IProtocolsService>().Setup(x => x.GetProtocolByIdAsync(5)).ReturnsAsync(AttachedProtocol(5, DepartmentId));
+			M<IProtocolsService>().Setup(x => x.GetProtocolByIdAsync(6)).ReturnsAsync(AttachedProtocol(6, OtherDepartmentId));
+
+			var protocols = Ok(await Build<CallsController>().GetCallExtraData(CallId)).Data.Protocols;
+
+			protocols.Should().ContainSingle().Which.Id.Should().Be("5");
+		}
+
+		private static DispatchProtocol AttachedProtocol(int id, int departmentId) => new DispatchProtocol
+		{
+			DispatchProtocolId = id,
+			DepartmentId = departmentId,
+			Name = "Protocol " + id,
+			Code = "P" + id,
+			ProtocolText = "Text of protocol " + id,
+			Triggers = new List<DispatchProtocolTrigger>(),
+			Attachments = new List<DispatchProtocolAttachment>(),
+			Questions = new List<DispatchProtocolQuestion>()
+		};
+
+		[Test]
 		public async Task Call_history_withholds_the_positions_the_location_rules_hide()
 		{
 			ArrangeCallActivity();

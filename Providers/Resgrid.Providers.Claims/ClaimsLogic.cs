@@ -861,9 +861,17 @@ namespace Resgrid.Providers.Claims
 				else if (permission.Action == (int)PermissionActions.Everyone)
 				{
 					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.View));
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Update));
 					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Create));
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Delete));
+
+					// "Everyone" lets every member create a training. It does not make every member the editor of everyone
+					// else's: the edit page shows the answer key and the report shows every score. A member manages the
+					// trainings they created (IAuthorizationService.GetTrainingManagementScopeAsync); only admins hold the
+					// department-wide claims.
+					if (isAdmin)
+					{
+						identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Update));
+						identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Delete));
+					}
 				}
 
 			}

@@ -327,15 +327,44 @@ namespace Resgrid.Services
 				}
 			}
 
+			// GetAllAsync reads the training rows alone, so the assignees are loaded here for the trainings that will be
+			// notified. Without them the notifier had nobody to tell and skipped every training. A training that was never
+			// announced and is too old to announce is only marked, so it needs no assignees.
+			var unread = new List<Training>();
+
+			foreach (var training in trainingsToNotify.Where(x => !TrainingNoticePlanner.IsStaleUnannounced(x, currentTime)))
+			{
+				var withUsers = await _trainingRepository.GetTrainingByTrainingIdAsync(training.TrainingId);
+
+				// The repository answers null for a read that failed as well as for a row that is gone. Neither is a
+				// training without assignees: returned with an empty list it would be marked notified with nobody told, and
+				// a failed read would lose the notice for good. It is left out instead, so a later run reads it again.
+				if (withUsers == null)
+				{
+					unread.Add(training);
+					continue;
+				}
+
+				training.Users = withUsers.Users?.ToList() ?? new List<TrainingUser>();
+			}
+
+			trainingsToNotify.RemoveAll(unread.Contains);
+
 			return trainingsToNotify;
 		}
 
 		public async Task<Training> MarkAsNotifiedAsync(int trainingId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var training = await GetTrainingByIdAsync(trainingId);
+			// The training row alone: loading the attachments and saving the whole tree back would rewrite every assignee row
+			// from a copy read moments earlier, undoing a quiz result recorded in between.
+			var training = await _trainingRepository.GetTrainingByTrainingIdAsync(trainingId);
+
+			if (training == null)
+				return null;
+
 			training.Notified = DateTime.UtcNow;
 
-			return await _trainingRepository.SaveOrUpdateAsync(training, cancellationToken);
+			return await _trainingRepository.SaveOrUpdateAsync(training, cancellationToken, true);
 		}
 
 		public async Task<List<TrainingUser>> GetTrainingUsersForUserAsync(string userId)

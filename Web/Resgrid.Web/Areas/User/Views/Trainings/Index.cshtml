@@ -6,11 +6,9 @@
   var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Trainings, localizer["TrainingsHeader"]);
   ViewBag.Title = "Resgrid | " + moduleTitle;
 
-  // Mirror the controller policies (Training_Create / Training_Update / Training_Delete): group admins and roles
-  // granted training permissions hold these claims too, not only department admins.
+  // Creating follows the Training_Create policy. Edit, Report and Delete are decided per training by the controller
+  // (Model.Scope.CanManage): a member who may create trainings manages their own, not everyone's.
   var canCreateTraining = ClaimsAuthorizationHelper.CanCreateTraining();
-  var canUpdateTraining = User.HasClaim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Training, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.Update);
-  var canDeleteTraining = User.HasClaim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Training, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.Delete);
   var currentUserId = ClaimsAuthorizationHelper.GetUserId();
 }
 
@@ -82,9 +80,10 @@
 					  }
                     </td>
                     <td>
-                      @if (t.Users != null && t.Users.Any(x => x.UserId == currentUserId))
+                      @* Ids are matched without regard to case, as the controller's access check does (TrainingManagementScope.IsAssigned). *@
+                      @if (t.Users != null && t.Users.Any(x => x != null && string.Equals(x.UserId, currentUserId, StringComparison.OrdinalIgnoreCase)))
 					  {
-						var userRecord = t.Users.FirstOrDefault(x => x.UserId == currentUserId);
+						var userRecord = t.Users.FirstOrDefault(x => x != null && string.Equals(x.UserId, currentUserId, StringComparison.OrdinalIgnoreCase));
 						if (userRecord != null)
 						{
 						  if (!userRecord.Viewed)
@@ -109,14 +108,14 @@
 						  }
 						}
 					  }
-					  else if (canUpdateTraining || t.CreatedByUserId == currentUserId)
+					  else if (t.OpenToAllMembers || (Model.Scope != null && Model.Scope.CanManage(t)))
 					  {
-                        @* Not assigned, but manages or created it: the View action admits any department member. *@
+                        @* Not assigned, but it is open to all members or they manage it: the View action admits them. *@
                         <a href="@Url.Action("View", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-primary'>@localizer["ViewTrainingButton"]</a>
 					  }
                     </td>
                     <td>
-                      @if (canUpdateTraining)
+                      @if (Model.Scope != null && Model.Scope.CanManage(t))
 					  {
                         <a href="@Url.Action("Edit", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-info'>
                           <i class='icon-pencil'></i> @localizer["EditButton"]
@@ -125,7 +124,7 @@
                           <i class='icon-eye-open'></i> @localizer["ReportButton"]
                         </a>
 					  }
-                      @if (canDeleteTraining)
+                      @if (Model.Scope != null && Model.Scope.CanManage(t))
 					  {
                         <form method="post" action="@Url.Action("DeleteTraining", "Trainings", new { area = "User", trainingId = t.TrainingId })" style="display: inline;">
                           @Html.AntiForgeryToken()

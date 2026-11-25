@@ -168,6 +168,12 @@
   <data name="AddAllPersonnelLabel" xml:space="preserve">
     <value>&#1573;&#1590;&#1575;&#1601;&#1577; &#1580;&#1605;&#1610;&#1593; &#1575;&#1604;&#1605;&#1608;&#1592;&#1601;&#1610;&#1606;</value>
   </data>
+  <data name="OpenToAllMembersLabel" xml:space="preserve">
+    <value>مفتوح لجميع الأعضاء</value>
+  </data>
+  <data name="OpenToAllMembersHelp" xml:space="preserve">
+    <value>يمكن لأي عضو عرض هذا التدريب دون تعيينه له. يتم تتبع الأعضاء المعيّنين فقط وهم من يؤدون الاختبار.</value>
+  </data>
   <data name="AddGroupsLabel" xml:space="preserve">
     <value>&#1573;&#1590;&#1575;&#1601;&#1577; &#1605;&#1580;&#1605;&#1608;&#1593;&#1575;&#1578;</value>
   </data>

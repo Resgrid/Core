@@ -29,6 +29,14 @@ namespace Resgrid.Model
 
 		public bool IsDisabled { get; set; }
 
+		/// <summary>
+		/// A deleted protocol stays as a row because the calls it was used on cite it. It is left out of lists, matching and
+		/// new calls; a call that already carries it still shows it.
+		/// </summary>
+		public bool IsDeleted { get; set; }
+
+		public DateTime? DeletedOn { get; set; }
+
 		[MaxLength(500)]
 		public string Description { get; set; }
 

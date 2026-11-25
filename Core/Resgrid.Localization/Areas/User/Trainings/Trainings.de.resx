@@ -168,6 +168,12 @@
   <data name="AddAllPersonnelLabel" xml:space="preserve">
     <value>Gesamtes Personal hinzuf&#252;gen</value>
   </data>
+  <data name="OpenToAllMembersLabel" xml:space="preserve">
+    <value>F&#252;r alle Mitglieder sichtbar</value>
+  </data>
+  <data name="OpenToAllMembersHelp" xml:space="preserve">
+    <value>Jedes Mitglied kann diese Schulung ohne Zuweisung ansehen. Nur zugewiesene Mitglieder werden erfasst und legen das Quiz ab.</value>
+  </data>
   <data name="AddGroupsLabel" xml:space="preserve">
     <value>Gruppen hinzuf&#252;gen</value>
   </data>

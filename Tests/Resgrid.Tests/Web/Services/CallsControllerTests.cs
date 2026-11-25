@@ -474,6 +474,58 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
+		public async Task GetCall_LeavesOutAProtocolOwnedByAnotherDepartment()
+		{
+			var call = new Call
+			{
+				CallId = 42,
+				DepartmentId = DepartmentId,
+				Name = "Structure Fire",
+				Address = "123 Main St",
+				LoggedOn = DateTime.UtcNow,
+				Protocols = new Collection<CallProtocol>
+				{
+					new CallProtocol { CallProtocolId = 1, CallId = 42, DispatchProtocolId = 5 },
+					new CallProtocol { CallProtocolId = 2, CallId = 42, DispatchProtocolId = 6 }
+				}
+			};
+
+			_callsService
+				.Setup(service => service.GetCallByIdAsync(42, It.IsAny<bool>()))
+				.ReturnsAsync(call);
+			_callsService
+				.Setup(service => service.PopulateCallData(call, It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
+					It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
+					It.IsAny<bool>(), It.IsAny<bool>()))
+				.ReturnsAsync(call);
+			_authorizationService
+				.Setup(service => service.CanUserViewCallAsync(UserId, 42))
+				.ReturnsAsync(true);
+
+			DispatchProtocol Protocol(int id, int departmentId) => new DispatchProtocol
+			{
+				DispatchProtocolId = id,
+				DepartmentId = departmentId,
+				Name = "Protocol " + id,
+				Code = "P" + id,
+				ProtocolText = "Text of protocol " + id,
+				Triggers = new Collection<DispatchProtocolTrigger>(),
+				Attachments = new Collection<DispatchProtocolAttachment>(),
+				Questions = new Collection<DispatchProtocolQuestion>()
+			};
+
+			_protocolsService.Setup(service => service.GetProtocolByIdAsync(5)).ReturnsAsync(Protocol(5, DepartmentId));
+			// A row that points at another department's protocol, as a crafted call form could once store.
+			_protocolsService.Setup(service => service.GetProtocolByIdAsync(6)).ReturnsAsync(Protocol(6, 77));
+
+			var response = await _controller.GetCall("42");
+
+			var result = response.Result.Should().BeOfType<OkObjectResult>().Subject.Value
+				.Should().BeOfType<CallResult>().Subject;
+			result.Data.Protocols.Should().ContainSingle().Which.Id.Should().Be("5");
+		}
+
+		[Test]
 		public async Task GetCall_ForASystemKeyNamingAnotherDepartment_TakesTheTypeIconFromThatDepartment()
 		{
 			const int otherDepartmentId = 77;

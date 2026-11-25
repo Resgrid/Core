@@ -168,6 +168,12 @@
   <data name="AddAllPersonnelLabel" xml:space="preserve">
     <value>Agregar todo el personal</value>
   </data>
+  <data name="OpenToAllMembersLabel" xml:space="preserve">
+    <value>Abierto a todos los miembros</value>
+  </data>
+  <data name="OpenToAllMembersHelp" xml:space="preserve">
+    <value>Cualquier miembro puede ver esta capacitaci&#243;n sin tenerla asignada. Solo los miembros asignados tienen seguimiento y realizan el cuestionario.</value>
+  </data>
   <data name="AddGroupsLabel" xml:space="preserve">
     <value>Agregar grupos</value>
   </data>

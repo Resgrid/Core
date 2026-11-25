@@ -168,6 +168,12 @@
   <data name="AddAllPersonnelLabel" xml:space="preserve">
     <value>Lägg till all personal</value>
   </data>
+  <data name="OpenToAllMembersLabel" xml:space="preserve">
+    <value>Öppen för alla medlemmar</value>
+  </data>
+  <data name="OpenToAllMembersHelp" xml:space="preserve">
+    <value>Alla medlemmar kan se utbildningen utan att vara tilldelade. Endast tilldelade medlemmar följs upp och gör quizet.</value>
+  </data>
   <data name="AddGroupsLabel" xml:space="preserve">
     <value>Lägg till grupper</value>
   </data>

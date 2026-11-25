@@ -54,7 +54,7 @@ namespace Resgrid.Workers.Framework.Logic
 			catch (Exception ex)
 			{
 				// One training that fails must not stop the rest of the run.
-				Logging.LogException(ex);
+				Logging.LogException(ex, $"Training notifier failed for training {item?.Training?.TrainingId} in department {item?.Training?.DepartmentId}");
 				success = false;
 				result = ex.ToString();
 			}

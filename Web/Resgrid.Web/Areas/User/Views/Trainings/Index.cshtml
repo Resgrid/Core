@@ -80,9 +80,10 @@
 					  }
                     </td>
                     <td>
-                      @if (t.Users != null && t.Users.Any(x => x.UserId == currentUserId))
+                      @* Ids are matched without regard to case, as the controller's access check does (TrainingManagementScope.IsAssigned). *@
+                      @if (t.Users != null && t.Users.Any(x => x != null && string.Equals(x.UserId, currentUserId, StringComparison.OrdinalIgnoreCase)))
 					  {
-						var userRecord = t.Users.FirstOrDefault(x => x.UserId == currentUserId);
+						var userRecord = t.Users.FirstOrDefault(x => x != null && string.Equals(x.UserId, currentUserId, StringComparison.OrdinalIgnoreCase));
 						if (userRecord != null)
 						{
 						  if (!userRecord.Viewed)

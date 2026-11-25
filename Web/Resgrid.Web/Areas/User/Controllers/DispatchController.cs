@@ -269,12 +269,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		/// <summary>
-		/// The protocols, linked calls and dispatch lists the call forms post as one form key per selected item. Read
-		/// the same way they are unpacked when saving, so the policy sees what was actually submitted.
+		/// The linked calls and dispatch lists the call forms post as one form key per selected item. Read the same way
+		/// they are unpacked when saving, so the policy sees what was actually submitted. Protocols are not here: a posted
+		/// protocol id only counts once it is known to be this department's (HasOwnedPostedProtocolsAsync).
 		/// </summary>
 		private sealed class PostedCallSelections
 		{
-			public bool HasProtocols { get; init; }
 			public bool HasLinkedCall { get; init; }
 			public bool HasDispatchList { get; init; }
 
@@ -286,9 +286,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				return new PostedCallSelections
 				{
-					// A pending protocol only counts when it is actually ticked.
-					HasProtocols = HasKeyStartingWith("activeProtocol_") ||
-								   keys.Any(x => x.StartsWith("pendingProtocol_", StringComparison.OrdinalIgnoreCase) && collection[x] == "1"),
 					HasLinkedCall = HasKeyStartingWith("linkedCall_"),
 					// Only the four prefixes the dispatch lists actually post. A bare "dispatch" prefix also
 					// swallows anything else the form happens to name that way.
@@ -337,6 +334,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		/// <summary>
+		/// True when the post carries a protocol that will be attached to the call. This is what a required Protocols field
+		/// is checked against: a posted id that is dropped on save (another department's, or a protocol deleted while the
+		/// form was open) must not satisfy the requirement and leave the call saved with no protocol.
+		/// </summary>
+		private async Task<bool> HasOwnedPostedProtocolsAsync(IFormCollection collection)
+		{
+			return (await OwnedProtocolIdsAsync(PostedProtocolIds(collection))).Count > 0;
+		}
+
+		/// <summary>
 		/// Adds a model error for every field the department's new-call policy requires that the call would be left
 		/// without, named by the label the department sees on its settings screen.
 		/// </summary>
@@ -353,7 +360,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// Adds a model error for every field the department's new-call policy requires but the new (or archived) call
 		/// form left blank. <paramref name="unsupportedKeys"/> are fields that form has no way to collect.
 		/// </summary>
-		private void ApplyNewCallFieldPolicy(NewCallView model, IFormCollection collection, params string[] unsupportedKeys)
+		private async Task ApplyNewCallFieldPolicyAsync(NewCallView model, IFormCollection collection, params string[] unsupportedKeys)
 		{
 			var policy = model.FieldPolicy;
 
@@ -361,6 +368,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return;
 
 			var selections = PostedCallSelections.From(collection);
+			// Only looked up when the answer decides something: the department requires a protocol on the call.
+			var hasProtocols = policy.IsRequired(NewCallFieldKeys.Protocols) && await HasOwnedPostedProtocolsAsync(collection);
 
 			var values = new NewCallFieldValues
 			{
@@ -383,7 +392,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				DestinationGeolocation = model.ShowsDestination() ? model.PostedDestinationPoint() : null,
 				DestinationW3W = model.ShowsDestination() ? model.Call?.DestinationW3W : null,
 				IndoorMapZoneId = collection?["IndoorMapZoneId"].FirstOrDefault(),
-				HasProtocols = selections.HasProtocols,
+				HasProtocols = hasProtocols,
 				HasLinkedCall = selections.HasLinkedCall,
 				DispatchOn = model.ScheduleDispatchDate,
 				HasDispatchList = selections.HasDispatchList,
@@ -440,7 +449,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// Same policy the apps apply and the v4 API enforces: a call-taker cannot forward an
 			// incident to the field until the information the crews need is on it. Departments with no
 			// policy configured are unaffected.
-			ApplyNewCallFieldPolicy(model, collection);
+			await ApplyNewCallFieldPolicyAsync(model, collection);
 
 			if (ModelState.IsValid)
 			{
@@ -1367,7 +1376,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 						: (call.DestinationPoiId.HasValue ? null : call.DestinationW3W),
 					IndoorMapZoneId = Shows(NewCallFieldKeys.IndoorLocation) ? indoorMapZoneId : call.IndoorMapZoneId,
 					// Protocols are only ever added on this form, and a list or link left off the post keeps the call's own.
-					HasProtocols = selections.HasProtocols || (call.Protocols?.Any() ?? false),
+					// A posted protocol counts only when it will be attached: this department's, and not deleted.
+					HasProtocols = (call.Protocols?.Any() ?? false) ||
+								   (policy.IsRequired(NewCallFieldKeys.Protocols) && await HasOwnedPostedProtocolsAsync(collection)),
 					HasLinkedCall = selections.HasLinkedCall || (call.References?.Any() ?? false),
 					HasDispatchList = selections.HasDispatchList || (call.Dispatches?.Any() ?? false) || (call.GroupDispatches?.Any() ?? false) ||
 									  (call.UnitDispatches?.Any() ?? false) || (call.RoleDispatches?.Any() ?? false),
@@ -2321,7 +2332,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			// The department's field policy covers archived calls too. One has already happened, so it has no dispatch
 			// time to require.
-			ApplyNewCallFieldPolicy(model, collection, NewCallFieldKeys.DispatchOn);
+			await ApplyNewCallFieldPolicyAsync(model, collection, NewCallFieldKeys.DispatchOn);
 
 			if (ModelState.IsValid)
 			{

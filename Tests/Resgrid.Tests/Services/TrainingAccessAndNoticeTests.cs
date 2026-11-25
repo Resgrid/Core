@@ -138,6 +138,45 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task A_training_whose_assignees_could_not_be_read_is_left_for_a_later_run()
+		{
+			var now = DateTime.UtcNow;
+			_trainings.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<Training>
+			{
+				new Training { TrainingId = 5, DepartmentId = 10, Name = "Read fails", CreatedOn = now.AddHours(-2) },
+				new Training { TrainingId = 9, DepartmentId = 10, Name = "Read works", CreatedOn = now.AddHours(-1) }
+			});
+			// The repository answers null when the read throws. Returned with no assignees, the training would be marked
+			// notified with nobody told and its notice would never go out.
+			_trainings.Setup(x => x.GetTrainingByTrainingIdAsync(5)).ReturnsAsync((Training)null);
+			_trainings.Setup(x => x.GetTrainingByTrainingIdAsync(9)).ReturnsAsync(new Training
+			{
+				TrainingId = 9,
+				DepartmentId = 10,
+				Users = new List<TrainingUser> { new TrainingUser { UserId = "a" } }
+			});
+
+			var result = await _service.GetTrainingsToNotifyAsync(now);
+
+			result.Select(x => x.TrainingId).Should().Equal(9);
+		}
+
+		[Test]
+		public async Task A_training_read_with_no_assignees_is_still_returned_to_be_marked()
+		{
+			var now = DateTime.UtcNow;
+			_trainings.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<Training>
+			{
+				new Training { TrainingId = 5, DepartmentId = 10, Name = "Nobody assigned", CreatedOn = now.AddHours(-2) }
+			});
+			_trainings.Setup(x => x.GetTrainingByTrainingIdAsync(5)).ReturnsAsync(new Training { TrainingId = 5, DepartmentId = 10, Users = new List<TrainingUser>() });
+
+			var result = await _service.GetTrainingsToNotifyAsync(now);
+
+			result.Should().ContainSingle(x => x.TrainingId == 5).Which.Users.Should().BeEmpty();
+		}
+
+		[Test]
 		public async Task A_stale_unannounced_training_is_returned_to_be_marked_without_loading_assignees()
 		{
 			var now = DateTime.UtcNow;
@@ -266,6 +305,29 @@ namespace Resgrid.Tests.Services
 			scope.CanManage(TrainingFor("officer", "other")).Should().BeTrue();
 			scope.CanManage(foreign).Should().BeFalse();
 			scope.CanOpen(foreign).Should().BeFalse();
+		}
+
+		[Test]
+		public void An_assignee_is_matched_without_regard_to_the_casing_of_their_id()
+		{
+			TrainingManagementScope.None("ME", DepartmentId).IsAssigned(TrainingFor("officer", "me")).Should().BeTrue();
+		}
+
+		/// <summary>
+		/// The trainings list decides on its own which button an assignee gets. It must find the assignee the way the scope
+		/// does: an id stored in another casing matched nothing, and the member was left with no way to open the training.
+		/// </summary>
+		[Test]
+		public void The_trainings_list_matches_assignee_ids_the_way_the_scope_does()
+		{
+			var directory = new System.IO.DirectoryInfo(TestContext.CurrentContext.TestDirectory);
+			while (directory != null && !System.IO.File.Exists(System.IO.Path.Combine(directory.FullName, "Resgrid.sln")))
+				directory = directory.Parent;
+
+			var view = System.IO.File.ReadAllText(System.IO.Path.Combine(directory.FullName, "Web", "Resgrid.Web", "Areas", "User", "Views", "Trainings", "Index.cshtml"));
+
+			view.Should().NotContain("x.UserId == currentUserId");
+			System.Text.RegularExpressions.Regex.Matches(view, @"string\.Equals\(x\.UserId, currentUserId, StringComparison\.OrdinalIgnoreCase\)").Count.Should().Be(2);
 		}
 	}
 

@@ -118,6 +118,28 @@ namespace Resgrid.Tests.Services
 			source.Should().Contain("_protocolsService.GetProtocolIdsOwnedByDepartmentAsync(DepartmentId, ids)");
 		}
 
+		/// <summary>
+		/// A department can require a protocol on every call. The requirement is checked against the protocols that will be
+		/// attached, not the ids in the post: an id the ownership filter drops (another department's, or a protocol deleted
+		/// while the form was open) used to satisfy it, and the call was saved with no protocol.
+		/// </summary>
+		[Test]
+		public void A_required_protocol_is_checked_against_the_departments_own_posted_protocols()
+		{
+			var source = System.IO.File.ReadAllText(Path.Combine(RepositoryRoot(), "Web", "Resgrid.Web", "Areas", "User", "Controllers", "DispatchController.cs"));
+
+			// Nothing reads "has protocols" off the raw form keys any more.
+			source.Should().NotContain("selections.HasProtocols");
+			source.Should().Contain("private async Task<bool> HasOwnedPostedProtocolsAsync(IFormCollection collection)");
+
+			// New Call and Add Archived Call (one shared check), and Update Call, which also counts what the call already has.
+			Regex.Matches(source, @"HasProtocols = ").Count.Should().Be(2);
+			source.Should().Contain("var hasProtocols = policy.IsRequired(NewCallFieldKeys.Protocols) && await HasOwnedPostedProtocolsAsync(collection);");
+			source.Should().Contain("HasProtocols = hasProtocols,");
+			Regex.IsMatch(source, @"HasProtocols = \(call\.Protocols\?\.Any\(\) \?\? false\) \|\|\s+\(policy\.IsRequired\(NewCallFieldKeys\.Protocols\) && await HasOwnedPostedProtocolsAsync\(collection\)\)")
+				.Should().BeTrue("Update Call must count the call's own protocols or the department's own posted ones");
+		}
+
 		private static string RepositoryRoot()
 		{
 			var directory = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
